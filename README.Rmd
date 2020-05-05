@@ -1,0 +1,21 @@
+---
+output: github_document
+---
+
+<!-- README.md is generated from README.Rmd. Please edit that file -->
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+# heads_thesis
+
+<!-- badges: start -->
+[![Launch binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/franzbischoff/heads_thesis/master?urlpath=rstudio)
+<!-- badges: end -->
+
+The goal of heads_thesis is to ...
+
