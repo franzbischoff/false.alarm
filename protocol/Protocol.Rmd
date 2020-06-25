@@ -1,166 +1,255 @@
 ---
-title: "Protocolo"
-author: "Francisco Bischoff"
-date: "6/5/2020"
-output: pdf_document
+title: "Research Protocol"
+bibliography: references.bib
+csl: https://raw.githubusercontent.com/citation-style-language/styles/master/american-medical-association.csl
+output: 
+  html_notebook: 
+    toc: yes
+    code_folding: none
+    fig_width: 10
+    fig_height: 5
+    number_sections: yes
 ---
 
 # Identification of the project
 
-# Title of the protocol (in Portuguese and English)
+```{r setup, echo = FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+suppressPackageStartupMessages(library(dplyr))
+suppressPackageStartupMessages(library(gt))
+suppressPackageStartupMessages(library(lubridate))
 
-Anomaly detection (life-threathening patterns?) in Point-of-care ECG using efficient memory and processor power.
+print_duration <- function(x, y) {
+  period <- as.period(date(x) %--% date(y))
+  paste(period@month, "months", period@day, "days")
+}
+```
+
+## Title of the protocol (in Portuguese and English)
+
+"Detecting life-threatening patterns in Point-of-care ECG using efficient memory and processor power."
+
+"Detectando padrões de risco de vida no ECG no local de atendimento usando memória e potência do processador eficientes."
 
 ## Author(s)
 
-Francisco Bischoff, Pedro Pereira Rodrigues
+Francisco Bischoff, Andrew H. Van Benschoten, Tyler W. Marrs, Pedro Pereira Rodrigues
 
 ## Key-words
 
-anomaly detection, ECG, fading factors, matrix profile, time series, point of care
-(review with MESH terms)
+anomaly detection, ECG, fading factors, matrix profile, time series, point-of-care
 
 ## Project start date and duration
 
-Authors (student and supervisors) must consider the dates defined in the scholar calendar, by FMUP
+From the 3rd quarter of 2020 to the fourth quarter of 2022.
 
 # Abstract or Summary (in Portuguese and English)
 
-Currently Point of Care (POC) ECG monitoring works either as plotting devices and/or alarms for abnormal cardiac rhythms using predefined normal ranges. On the other hand, full 12-derivation ECG machines are complex to use as simple monitors and are used using strict techniques for formal diagnostics of hearth electric conduction pathologies, and the automatic diagnostics are derived from a full analysis of the 12 dimension data, after it is fully collected. Both systems doesn't handle disconnected leads and patient motions, being strictly necessary to have a good stable signal to allow diagnosis.
+Currently, Point-of-Care (POC) ECG monitoring works either as plot devices or alarms for abnormal cardiac rhythms using predefined normal trigger ranges. On the other hand, full 12-derivation ECG machines are complex to use as simple monitors and are used with strict techniques for formal diagnostics of hearth electric conduction pathologies, and the automatic diagnostics are derived from a full analysis of the 12-dimension data after it is fully collected. Both systems do not handle disconnected leads and patient's motions, being strictly necessary to have a good and stable signal to allow proper diagnosis.
 
-This research aims to identify on streaming data abnormal hearth electric patterns, specifically those who are life-threatening, being a reliable signal for Intensive Care Units to respond quickly to those situations.
-This research also aims to accomplish this task using state of the art technology for time series analysis that allows minimum space and processor power to solve this problem.
-In addition, we expect that fading factors can improve the state of the art technology.
+This research aims to identify abnormal hearth electric patterns using streaming data, specifically those who are life-threatening, being a reliable signal for Intensive Care Units to respond quickly to those situations.
 
-<!-- Para background e probelms está ok. -->
-<!-- Falta principalmente metodologia e resultados esperados -->
-<!-- Matilde -->
+The study design is comparable to a Diagnostic study, where high accuracy is essential. It will use the Physionet datasets, and the algorithm will try to minimize the false negatives and false positives. 
 
+The expected result is the concretization of a new method that, besides being accurate, accomplishes this task using state of the art technology for time series analysis that allows minimum space and processor power to solve this problem. Also, we expect that fading factors can improve the state of the art technology.
+
+The research team is well experienced in time-series and has studied the Matrix Profile since its beginning, being founders of the Matrix Profile Foundation whose goal is to have a concise and stable cross-language API for developing with the Matrix Profile technology.
 
 # Rationale
 
-<!-- The rationale allows the reader to establish the need for the study, meaning, an adequate explanation of the motivation of the present research / logical rational for the hypothesis raise is stated.   -->
-<!-- For this, a summarized but adequate current state-of-art / knowledge is described where important facts are described, that should be supported by citations. Important figures and tables may be included as addenda. Most importantly, a clear and concise statement of the research idea or focus should be described (authors should also name what they are not addressing). -->
-<!-- Students must include also some statement on the relevance of this thesis for his or her career and future work. -->
-<!-- (Maximum of 500 Words) -->
-
-Currently Point of Care (POC) ECG monitoring works either as plotting devices and/or alarms for abnormal cardiac rhythms using predefined normal ranges. On the other hand, full 12-derivation ECG machines are complex to use as simple monitors and are used using strict techniques for formal diagnostics of hearth electric conduction pathologies, and the automatic diagnostics are derived from a full analysis of the 12 dimension data, after it is fully collected. Both systems doesn't handle disconnected leads and patient motions, being strictly necessary to have a good stable signal to allow diagnosis.
+Currently, Point-of-Care (POC) ECG monitoring works either as plot devices and/or alarms for abnormal cardiac rhythms using predefined normal trigger ranges. On the other hand, full 12-derivation ECG machines are complex to use as simple monitors and are used with strict techniques for formal diagnostics of hearth electric conduction pathologies, and the automatic diagnostics are derived from a full analysis of the 12-dimension data after it is fully collected. In CinC/Physionet Challenge 2015, it has been reported that up to 86% resulting of the alarms are false and this can lead to decreased staff attention and increase in patients delirium [@Lawless1994; @Chambrin2001; @Parthasarathy2004].
 
 # Research question and aims
-<!-- The question should be adequately stated [identifying population, intervention, comparison (if applicable) and outcome(s)] (PICO). -->
-<!-- The primary and secondary aims for each article that will be included in the Thesis must be stated. Up to 3 articles are recommended. Authors may consider limiting the number of specific aims (up to 3!) by each primary aim. -->
-<!-- (Maximum of 200 words) -->
 
-This research aims to identify on streaming data abnormal hearth electric patterns, specifically those who are life-threatening, being a reliable signal for Intensive Care Units to respond quickly to those situations.
-This research also aims to accomplish this task using state of the art technology for time series analysis that allows minimum space and processor power to solve this problem.
-In addition, we expect that fading factors can improve the state of the art technology.
+This research aims to identify, on streaming data, abnormal hearth electric patterns, specifically those who are life-threatening, in order to be a reliable signal for Intensive Care Units to respond quickly to those situations. It also may be able to continuously analyze new data and correct itself shutting off false alarms.
+Primarily an experiment will be conducted using 2 main algorithms that use Matrix Profile in detecting context changes: SDTD and FLOSS. One uses whole data training and testing, and the other uses a streaming approach that is our main interest. The goal will be detecting the transition from normal to flutter/FA to normal condition with special attention to not rely on rhythm changes.
+Being this successful, a more generalistic approach will be attempted: to detect changes from normal to abnormal to normal conditions, with special attention to handle with disconnected leads or patient movements.
+Finally, this research can prove to be a good addition to the Matrix Profile method, using fading factors in order to reduce memory and space consumption, lowering the processor power needed, allowing this algorithm to be used in almost any device.
 
 # Background / Literature review
 
 A literature review will be conducted to assess the state of the art for ECG automatic processing:
 
-- The memory and space used to perform the main goal of the algorithm (sound an alarm for ex.)
-- The algorithms used to identify ECG anomalies
-- The algorithms used to identify specific diagnosis (like flutter, hyperkalemia, etc.)
+- The memory and space used to perform the main goal of the algorithm (sound an alarm for ex.) will be collected if available.
+- The type of algorithms used to identify ECG anomalies
+- The type of algorithms used to identify specific diagnosis (like a flutter, hyperkalemia, etc.)
+- Their performance (accuracy, ROC, etc.)
 
-A broad search will be conducted on Pubmed, Scopus, device manuals, etc.
+A broad search will be conducted on Pubmed, Scopus, Google Scholar, device manuals, and other specific sources.
 
 Keywords: 
-- ecg AND monitoring AND ICU
-- ecg AND [time series]
-- ecg AND automatic AND interpretation
 
+- ECG AND monitoring AND ICU
+- ECG AND [time series]
+- ECG AND automatic AND interpretation
 
-<!-- The goal of this section is to include a critical literature review. Simply referring to previous work without commenting on the contribution that makes to your proposed project or without mentioning its limitations is neither significant nor useful.  -->
-<!-- Students may consider a systematic approach but time frame for thesis presentation should be regarded carefully. If applicable, previous results of authors are viewed favourably. -->
-<!-- (Maximum of 1000 words) -->
-
+Articles published after “The PhysioNet/Computing in Cardiology Challenge 2015: Reducing False Arrhythmia Alarms in the ICU”, will also be analyzed.
 
 # Research plan and methods
-<!-- This section should be clear and structured. Authors should present an overview of the methodologies to be adopted, which will be elaborated in detail for each task in the following subsection. -->
-<!-- They may consider the structure presented below and argue if this chapter answers the questions posed by their hypothesis, if the design permits the achievement of project goals, and if the project output is generalizable or transferable. -->
-<!-- (Maximum of 2000 words) -->
-
-<!-- Importantly consider to repeat this section for each different study (I, II, … n)  according to the foreseen papers.  -->
 
 ## Type of study
 
-<!-- Authors should clearly state the description and correct name for the study design. -->
+This will be a diagnostic study as the algorithm must classify the change in pattern as positive or negative for life-threatening.
 
-## Selection of participants
+## Selection of data
 
-<!-- Authors should name the target population and sampling methods.  Inclusion and exclusion criteria should be adequately described. -->
+Initially, the data used for exploring the properties of the algorithm will be publicly available data on Physionet[@Goldberger2000; @Clifford2015].
+
+It will be asked for Physionet’s permission to use more sensitive data if needed.
+
+It is desirable that real data extracted from Portuguese ICU could be used in the final stage to assess in real settings the validity of the model.
 
 ## Sample size
 
-<!-- Authors should present an estimate of the sample size, indicating the references for data used in calculus. -->
-
-## Data collection methods
-
-<!-- A description of all procedures used for data collection should be made; authors should include references to unusual methods or instruments.  -->
-<!-- Please note that if the protocol aim is a systematic review, methods used in searching, selecting, extracting and synthesizing data should be clearly stated. -->
+There is no upper size limitation for the sample size. At least one hundred cases may be reasonable to start with.
 
 ## Variables
 
-<!-- A clear definition of expected outcome, predictive/independent variables and other variables is expected. -->
+The first available dataset contains either 549 conventional 12-lead resting ECGs or the corresponding measured Frank Lead System ECGs. 
+The ECGs are digitized at a sampling rate of 1000Hz (0.5 µV/LSB; 16 Bit ADC). 
+On special request, this database may be available at sampling rates up to 10,000Hz.
+
+Every patient is supplied with an information string containing age, gender, diagnosis, and where applicable, data on the medical history, medications and interventions, coronary artery pathology, ventriculography, echocardiography, and hemodynamics.
+
+These variables may or may not be useful for increasing the sensitivity or specificity of the algorithm. It is planned to use the minimum set of derivations from the 12-lead ECG to classify at first a common Atrial Fibrillation.
 
 ## Statistical analysis
 
-<!-- An appropriate statistical analysis, including descriptive and analytical methods, should be planned and described. -->
+The Statistical analysis will be performed using R language v3.6.0 or greater, and it will be computed the ROC curve for the algorithm.
 
 # Tasks, milestones and timeline
 ## Tasks
 
-<!-- At this stage, authors should consider every task required to accomplish the implementation of protocol, measurements and thesis/manuscript writing. The sequence should be logical and the timeframe realistic. For each task authors should define (in no more than 400 words): -->
-<!-- 1.Its denomination (task denomination should be self-explanatory); -->
-<!-- 2.Duration (in months);  -->
-<!-- 3.Aim and outputs for the task (and relation with the next task); -->
-<!-- 4.Detailed description for procedures during the task; -->
-<!-- 5.Dependence on other tasks; -->
-<!-- 6.Human resources and level of autonomy of main author (the role each partner and institution will play in the task; -->
-<!-- 7.Financial needs.  -->
+The timeline is composed of larger tasks I call Epics. They contain multiple subtasks that are expected to change frequently.
 
-<!-- Example of important tasks: -->
-<!-- a.Proposal approval by a scientific committee of the Academic programme; -->
-<!-- b.R&D and Ethical committees at Health institutions; -->
-<!-- c.Financial support; -->
-<!-- d.Patients enrolment; -->
-<!-- e.Measurements; -->
-<!-- f.Statistical analysis; -->
-<!-- g.Manuscript and thesis writing -->
+- **Elaboration of Research Protocol**
+  1. Duration: `r print_duration("2020-05-04", "2020-06-16")`;
+  1. Elaboration of this protocol in order to facilitate the management and overview of the project;
+  1. This task was developed by the author with input suggestions from other experts.
+
+- **Literature Review**
+  1. Duration: `r print_duration("2020-06-13", "2020-08-25")`;
+  1. This task aims to survey the literature about what is currently done to tackle the current problem and what the limitations are;
+Aim and outputs for the task (and relation with the next task);
+  1. This task will be done with three independent reviewers using the PRISMA guidelines in the Covidence framework.
+
+- **Obtaining Access to Physionet full data**
+  1. Duration: `r print_duration("2020-07-07", "2020-08-11")`
+  1. All datasets in Physionet are supposed to be Open Access. However, there is a chance that some datasets may need permissions.
+  1. If any dataset needs permission, it will be first evaluated the real need and asked the proper way to access it.
+
+- **First Experimentation with Public data**
+  1. Duration: `r print_duration("2020-07-25", "2020-10-04")`
+  1. The Physionet Challenge from 2015 will be the first dataset to be analyzed and will be *a study in scarlet* for the problems we may face in this kind of dataset;
+  1. The datasets will be studied in the case of data preparation for the modeling process.
+
+- **Development of the First Algorithm**
+  1. Duration: `r print_duration("2020-08-11", "2020-12-24")`;
+  1. In this task, the first model will be constructed: the Atrial Fibrillation start/end detection;
+  1. The state of the art methods will be used to detect such changes, with maximum precision and lowest memory and processor usage;
+  1. This task depends on the knowledge about the dataset we have from the previous task.
+
+- **Dissertation First Draft**
+  1. Duration: `r print_duration("2020-12-05", "2021-02-08")`;
+  1. This task aims to, at the same time, create a draft for the final dissertation, and the content for an actual article to be published;
+  1. This task depends on the concretization of the previous task.
+
+- **Publication of the First Algorithm**
+  1. Duration: `r print_duration("2020-12-27", "2021-04-25")`
+  1. This task aims to refine the text, review, and submit it for publication.
+  1. The length of this task depends on several variables, including the journal review time;
+  1. This task depends on the previous task;
+  1. Financial needs: Publication fees.
+
+- **Development of the Second Algorithm**
+  1. Duration: `r print_duration("2021-04-24", "2021-07-08")`
+  1. In this task, the second model will be constructed: an attempt to generalize it for any life-threatening ECG change;
+  1. The state of the art methods will be used to detect such changes, with maximum precision and lowest memory and processor usage;
+
+- **Dissertation Second Draft**
+  1. Duration: `r print_duration("2021-07-10", "2021-11-04")`
+  1. This task aims to, at the same time, create a second draft for the final dissertation, and the content for an actual article to be published;
+  1. This task depends on the concretization of the previous task.
+
+- **Publication of the Second Algorithm**
+  1. Duration: `r print_duration("2021-08-14", "2021-12-11")`
+  1. This task aims to refine the text, review, and submit it for publication.
+  1. The length of this task depends on several variables, including the journal review time;
+  1. This task depends on the previous task;
+  1. Financial needs: Publication fees.
+  
+- **Dissertation Review**
+  1. Duration: `r print_duration("2021-11-05", "2021-12-20")`
+  1. This task will be a time to review all the work done and prepare it for final presentation;
+  1. Ideally, two or mode independent expert shall read the thesis and give feedback for improvement;
+
+- **Proof Reading**
+  1. Duration: `r print_duration("2021-12-21", "2022-01-15")`
+  1. This task comprises in careful reading, ideally by a professional in the English language;
+  1. It depends on the previous tasks;
+  1. Financial needs: Proofreading fees
+  
+- **Presentation**
+  1. Duration: `r print_duration("2022-02-28", "2022-04-08")`
+  1. This task comprises in preparation for public presentation;
+  1. It includes the formulation of the slides or any multimedia support that shall be needed;
+  1. This task depends on having the dissertation done.
 
 ## Milestones
 
-<!-- A milestone or marker is a date by which a certain objective should be achieved or a phase should be completed.  Enter a scheduled list of milestones that will allow to verify whether or not the project work is progressing towards the objective stated in the proposal. For each milestone, include a name (60 characters max.), a date and a description (300 characters max.) of what should be demonstrated or reported by that date.  -->
+<br/>
+```{r milestones, echo=FALSE}
+miles <- tribble(
+  ~Milestone, ~Date, ~Name, ~Description,
+  "M1", "Jul, 2020", "Protocol", "Finish and Deliver Protocol",
+  "M2", "Oct, 2020", "Literature Review", "Finish Literature Review",
+  "M3", "Apr, 2021", "Paper 1", "Finish and Submit for Publication Paper 1",
+  "M4", "Jan, 2022", "Paper 2", "Finish and Submit for Publication Paper 2",
+  "M5", "Dec, 2022", "Thesis", "Finish and Deliver Ph.D. Thesis"
+)
 
-<!-- Examples of milestones:  -->
-<!-- MilestoneDateNameDescription -->
-<!-- M1Month 8Preparation of a test or questionnaireValidation of the measuring tool -->
-<!-- M2Month 19Automatic counting systemA system that automatically counts the number of parts in the transporter and marks those that have manufacturing defects by analysing data from infrared sensors. -->
+miles %>%
+  gt() %>%
+  tab_header(md("**Milestones**")) %>%
+  tab_options(table.width = pct(80))
+```
+<br/>
 
 ## Timeline
-<!-- Authors should present a chart showing the schedule of tasks and milestone dates describing a timetable for the proposed research (attached timeline.xls). -->
+
+
+[![](timeline.png)](https://app.zenhub.com/workspaces/phd-thesis-5eb2ce34f5f30b3aed0a35af/roadmap)
+Click on the image to open an interactive Gantt webpage
+
 
 # Budget
+<br/>
 
-<!-- Authors should summarize in a Table the financial support needed to accomplish the project and present any current financial support. -->
-<!-- BudgetJustificationFinancial support already obtained -->
-<!-- Travel -->
-<!-- Travel expenses, registration fees, daily allowances, and accommodation. -->
-<!-- Consultants -->
-<!-- Consulting expenses for project support. Foreign scientists residing outside Portugal may collaborate on the project and receive financial support for travel to Portugal and accommodation and may be paid for consulting work done on behalf of the project. -->
-<!-- Goods and Services -->
-<!-- Equipment -->
+
+```{r budget, echo=FALSE}
+budgets <- tribble(
+  ~Items, ~Budget, ~Justification, ~Obtained,
+  "Travel expenses", 5000, "International Conferences", "No",
+  "Conferences", 3000, "Registration Fees", "No",
+  "Tuition Fees", 11000, "Researcher Maintenance", "No"
+)
+
+budgets %>%
+  gt() %>%
+  cols_label(Obtained = md("Financial support already obtained")) %>%
+  fmt_currency(columns = vars(Budget), currency = "EUR") %>%
+  tab_header(md("**Budget**")) %>%
+  tab_options(table.width = pct(70), table.align = "center")
+```
+<br/>
 
 # Expected results and outcomes
 ## Expected results
 
-<!-- Have you shown what the intended results will be, and their benefits and generalizability? Did you show you are aware of the limits to and value of the kinds of results you expect? What long-term intellectual and/or economic benefits can be derived from it?  -->
+It is expected that a novel algorithm to detect life-threatening ECG changes can be achieved using lower memory and processor power than the existing ones, maintaining the overall performance level.
 
 ## Outcomes
 
-<!-- This should be assumed by student and supervisor at first presentation. Two published manuscripts are mandatory, but three are recommended, as outcomes. -->
+This research will yield at least two publications in indexed journals as well as the final thesis will be available in the university repository.
 
 # References
-
-<!-- References should adequately be structured according to Uniform Requirements (recommended style: APA). At least, rationale, background and methods should be adequately referenced. Authors should consider the use of a reference manager. -->
