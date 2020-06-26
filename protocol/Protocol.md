@@ -1,5 +1,8 @@
 Research Protocol
 ================
+Francisco Bischoff
+
+Last Updated: 2020-06-26 10:11:19 UTC
 
 # Identification of the project
 
@@ -261,13 +264,13 @@ multiple subtasks that are expected to change frequently.
 
 ## Milestones
 
-<br/> <!--html_preserve-->
+<!--html_preserve-->
 
 <style>html {
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Helvetica Neue', 'Fira Sans', 'Droid Sans', Arial, sans-serif;
 }
 
-#zzgxhzmyqp .gt_table {
+#oykgnfxdnz .gt_table {
   display: table;
   border-collapse: collapse;
   margin-left: auto;
@@ -290,7 +293,7 @@ multiple subtasks that are expected to change frequently.
   border-left-color: #D3D3D3;
 }
 
-#zzgxhzmyqp .gt_heading {
+#oykgnfxdnz .gt_heading {
   background-color: #FFFFFF;
   text-align: center;
   border-bottom-color: #FFFFFF;
@@ -302,7 +305,7 @@ multiple subtasks that are expected to change frequently.
   border-right-color: #D3D3D3;
 }
 
-#zzgxhzmyqp .gt_title {
+#oykgnfxdnz .gt_title {
   color: #333333;
   font-size: 125%;
   font-weight: initial;
@@ -312,7 +315,7 @@ multiple subtasks that are expected to change frequently.
   border-bottom-width: 0;
 }
 
-#zzgxhzmyqp .gt_subtitle {
+#oykgnfxdnz .gt_subtitle {
   color: #333333;
   font-size: 85%;
   font-weight: initial;
@@ -322,13 +325,13 @@ multiple subtasks that are expected to change frequently.
   border-top-width: 0;
 }
 
-#zzgxhzmyqp .gt_bottom_border {
+#oykgnfxdnz .gt_bottom_border {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
 }
 
-#zzgxhzmyqp .gt_col_headings {
+#oykgnfxdnz .gt_col_headings {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #D3D3D3;
@@ -343,7 +346,7 @@ multiple subtasks that are expected to change frequently.
   border-right-color: #D3D3D3;
 }
 
-#zzgxhzmyqp .gt_col_heading {
+#oykgnfxdnz .gt_col_heading {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -363,7 +366,7 @@ multiple subtasks that are expected to change frequently.
   overflow-x: hidden;
 }
 
-#zzgxhzmyqp .gt_column_spanner_outer {
+#oykgnfxdnz .gt_column_spanner_outer {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -375,15 +378,15 @@ multiple subtasks that are expected to change frequently.
   padding-right: 4px;
 }
 
-#zzgxhzmyqp .gt_column_spanner_outer:first-child {
+#oykgnfxdnz .gt_column_spanner_outer:first-child {
   padding-left: 0;
 }
 
-#zzgxhzmyqp .gt_column_spanner_outer:last-child {
+#oykgnfxdnz .gt_column_spanner_outer:last-child {
   padding-right: 0;
 }
 
-#zzgxhzmyqp .gt_column_spanner {
+#oykgnfxdnz .gt_column_spanner {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
@@ -395,7 +398,7 @@ multiple subtasks that are expected to change frequently.
   width: 100%;
 }
 
-#zzgxhzmyqp .gt_group_heading {
+#oykgnfxdnz .gt_group_heading {
   padding: 8px;
   color: #333333;
   background-color: #FFFFFF;
@@ -417,7 +420,7 @@ multiple subtasks that are expected to change frequently.
   vertical-align: middle;
 }
 
-#zzgxhzmyqp .gt_empty_group_heading {
+#oykgnfxdnz .gt_empty_group_heading {
   padding: 0.5px;
   color: #333333;
   background-color: #FFFFFF;
@@ -432,19 +435,19 @@ multiple subtasks that are expected to change frequently.
   vertical-align: middle;
 }
 
-#zzgxhzmyqp .gt_striped {
+#oykgnfxdnz .gt_striped {
   background-color: rgba(128, 128, 128, 0.05);
 }
 
-#zzgxhzmyqp .gt_from_md > :first-child {
+#oykgnfxdnz .gt_from_md > :first-child {
   margin-top: 0;
 }
 
-#zzgxhzmyqp .gt_from_md > :last-child {
+#oykgnfxdnz .gt_from_md > :last-child {
   margin-bottom: 0;
 }
 
-#zzgxhzmyqp .gt_row {
+#oykgnfxdnz .gt_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -463,7 +466,7 @@ multiple subtasks that are expected to change frequently.
   overflow-x: hidden;
 }
 
-#zzgxhzmyqp .gt_stub {
+#oykgnfxdnz .gt_stub {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -475,7 +478,7 @@ multiple subtasks that are expected to change frequently.
   padding-left: 12px;
 }
 
-#zzgxhzmyqp .gt_summary_row {
+#oykgnfxdnz .gt_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -485,7 +488,7 @@ multiple subtasks that are expected to change frequently.
   padding-right: 5px;
 }
 
-#zzgxhzmyqp .gt_first_summary_row {
+#oykgnfxdnz .gt_first_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -495,7 +498,7 @@ multiple subtasks that are expected to change frequently.
   border-top-color: #D3D3D3;
 }
 
-#zzgxhzmyqp .gt_grand_summary_row {
+#oykgnfxdnz .gt_grand_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -505,7 +508,7 @@ multiple subtasks that are expected to change frequently.
   padding-right: 5px;
 }
 
-#zzgxhzmyqp .gt_first_grand_summary_row {
+#oykgnfxdnz .gt_first_grand_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -515,7 +518,7 @@ multiple subtasks that are expected to change frequently.
   border-top-color: #D3D3D3;
 }
 
-#zzgxhzmyqp .gt_table_body {
+#oykgnfxdnz .gt_table_body {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #D3D3D3;
@@ -524,7 +527,7 @@ multiple subtasks that are expected to change frequently.
   border-bottom-color: #D3D3D3;
 }
 
-#zzgxhzmyqp .gt_footnotes {
+#oykgnfxdnz .gt_footnotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -538,13 +541,13 @@ multiple subtasks that are expected to change frequently.
   border-right-color: #D3D3D3;
 }
 
-#zzgxhzmyqp .gt_footnote {
+#oykgnfxdnz .gt_footnote {
   margin: 0px;
   font-size: 90%;
   padding: 4px;
 }
 
-#zzgxhzmyqp .gt_sourcenotes {
+#oykgnfxdnz .gt_sourcenotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -558,47 +561,47 @@ multiple subtasks that are expected to change frequently.
   border-right-color: #D3D3D3;
 }
 
-#zzgxhzmyqp .gt_sourcenote {
+#oykgnfxdnz .gt_sourcenote {
   font-size: 90%;
   padding: 4px;
 }
 
-#zzgxhzmyqp .gt_left {
+#oykgnfxdnz .gt_left {
   text-align: left;
 }
 
-#zzgxhzmyqp .gt_center {
+#oykgnfxdnz .gt_center {
   text-align: center;
 }
 
-#zzgxhzmyqp .gt_right {
+#oykgnfxdnz .gt_right {
   text-align: right;
   font-variant-numeric: tabular-nums;
 }
 
-#zzgxhzmyqp .gt_font_normal {
+#oykgnfxdnz .gt_font_normal {
   font-weight: normal;
 }
 
-#zzgxhzmyqp .gt_font_bold {
+#oykgnfxdnz .gt_font_bold {
   font-weight: bold;
 }
 
-#zzgxhzmyqp .gt_font_italic {
+#oykgnfxdnz .gt_font_italic {
   font-style: italic;
 }
 
-#zzgxhzmyqp .gt_super {
+#oykgnfxdnz .gt_super {
   font-size: 65%;
 }
 
-#zzgxhzmyqp .gt_footnote_marks {
+#oykgnfxdnz .gt_footnote_marks {
   font-style: italic;
   font-size: 65%;
 }
 </style>
 
-<div id="zzgxhzmyqp" style="overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
+<div id="oykgnfxdnz" style="overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
 
 <table class="gt_table">
 
@@ -806,8 +809,6 @@ Finish and Deliver Ph.D. Thesis
 
 <!--/html_preserve-->
 
-<br/>
-
 ## Timeline
 
 [![](timeline.png)](https://app.zenhub.com/workspaces/phd-thesis-5eb2ce34f5f30b3aed0a35af/roadmap)
@@ -815,15 +816,13 @@ Click on the image to open an interactive Gantt webpage
 
 # Budget
 
-<br/>
-
 <!--html_preserve-->
 
 <style>html {
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Helvetica Neue', 'Fira Sans', 'Droid Sans', Arial, sans-serif;
 }
 
-#ttlxhqxghh .gt_table {
+#wiaebhsqua .gt_table {
   display: table;
   border-collapse: collapse;
   margin-left: auto;
@@ -846,7 +845,7 @@ Click on the image to open an interactive Gantt webpage
   border-left-color: #D3D3D3;
 }
 
-#ttlxhqxghh .gt_heading {
+#wiaebhsqua .gt_heading {
   background-color: #FFFFFF;
   text-align: center;
   border-bottom-color: #FFFFFF;
@@ -858,7 +857,7 @@ Click on the image to open an interactive Gantt webpage
   border-right-color: #D3D3D3;
 }
 
-#ttlxhqxghh .gt_title {
+#wiaebhsqua .gt_title {
   color: #333333;
   font-size: 125%;
   font-weight: initial;
@@ -868,7 +867,7 @@ Click on the image to open an interactive Gantt webpage
   border-bottom-width: 0;
 }
 
-#ttlxhqxghh .gt_subtitle {
+#wiaebhsqua .gt_subtitle {
   color: #333333;
   font-size: 85%;
   font-weight: initial;
@@ -878,13 +877,13 @@ Click on the image to open an interactive Gantt webpage
   border-top-width: 0;
 }
 
-#ttlxhqxghh .gt_bottom_border {
+#wiaebhsqua .gt_bottom_border {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
 }
 
-#ttlxhqxghh .gt_col_headings {
+#wiaebhsqua .gt_col_headings {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #D3D3D3;
@@ -899,7 +898,7 @@ Click on the image to open an interactive Gantt webpage
   border-right-color: #D3D3D3;
 }
 
-#ttlxhqxghh .gt_col_heading {
+#wiaebhsqua .gt_col_heading {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -919,7 +918,7 @@ Click on the image to open an interactive Gantt webpage
   overflow-x: hidden;
 }
 
-#ttlxhqxghh .gt_column_spanner_outer {
+#wiaebhsqua .gt_column_spanner_outer {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -931,15 +930,15 @@ Click on the image to open an interactive Gantt webpage
   padding-right: 4px;
 }
 
-#ttlxhqxghh .gt_column_spanner_outer:first-child {
+#wiaebhsqua .gt_column_spanner_outer:first-child {
   padding-left: 0;
 }
 
-#ttlxhqxghh .gt_column_spanner_outer:last-child {
+#wiaebhsqua .gt_column_spanner_outer:last-child {
   padding-right: 0;
 }
 
-#ttlxhqxghh .gt_column_spanner {
+#wiaebhsqua .gt_column_spanner {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
@@ -951,7 +950,7 @@ Click on the image to open an interactive Gantt webpage
   width: 100%;
 }
 
-#ttlxhqxghh .gt_group_heading {
+#wiaebhsqua .gt_group_heading {
   padding: 8px;
   color: #333333;
   background-color: #FFFFFF;
@@ -973,7 +972,7 @@ Click on the image to open an interactive Gantt webpage
   vertical-align: middle;
 }
 
-#ttlxhqxghh .gt_empty_group_heading {
+#wiaebhsqua .gt_empty_group_heading {
   padding: 0.5px;
   color: #333333;
   background-color: #FFFFFF;
@@ -988,19 +987,19 @@ Click on the image to open an interactive Gantt webpage
   vertical-align: middle;
 }
 
-#ttlxhqxghh .gt_striped {
+#wiaebhsqua .gt_striped {
   background-color: rgba(128, 128, 128, 0.05);
 }
 
-#ttlxhqxghh .gt_from_md > :first-child {
+#wiaebhsqua .gt_from_md > :first-child {
   margin-top: 0;
 }
 
-#ttlxhqxghh .gt_from_md > :last-child {
+#wiaebhsqua .gt_from_md > :last-child {
   margin-bottom: 0;
 }
 
-#ttlxhqxghh .gt_row {
+#wiaebhsqua .gt_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -1019,7 +1018,7 @@ Click on the image to open an interactive Gantt webpage
   overflow-x: hidden;
 }
 
-#ttlxhqxghh .gt_stub {
+#wiaebhsqua .gt_stub {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -1031,7 +1030,7 @@ Click on the image to open an interactive Gantt webpage
   padding-left: 12px;
 }
 
-#ttlxhqxghh .gt_summary_row {
+#wiaebhsqua .gt_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -1041,7 +1040,7 @@ Click on the image to open an interactive Gantt webpage
   padding-right: 5px;
 }
 
-#ttlxhqxghh .gt_first_summary_row {
+#wiaebhsqua .gt_first_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -1051,7 +1050,7 @@ Click on the image to open an interactive Gantt webpage
   border-top-color: #D3D3D3;
 }
 
-#ttlxhqxghh .gt_grand_summary_row {
+#wiaebhsqua .gt_grand_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -1061,7 +1060,7 @@ Click on the image to open an interactive Gantt webpage
   padding-right: 5px;
 }
 
-#ttlxhqxghh .gt_first_grand_summary_row {
+#wiaebhsqua .gt_first_grand_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -1071,7 +1070,7 @@ Click on the image to open an interactive Gantt webpage
   border-top-color: #D3D3D3;
 }
 
-#ttlxhqxghh .gt_table_body {
+#wiaebhsqua .gt_table_body {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #D3D3D3;
@@ -1080,7 +1079,7 @@ Click on the image to open an interactive Gantt webpage
   border-bottom-color: #D3D3D3;
 }
 
-#ttlxhqxghh .gt_footnotes {
+#wiaebhsqua .gt_footnotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -1094,13 +1093,13 @@ Click on the image to open an interactive Gantt webpage
   border-right-color: #D3D3D3;
 }
 
-#ttlxhqxghh .gt_footnote {
+#wiaebhsqua .gt_footnote {
   margin: 0px;
   font-size: 90%;
   padding: 4px;
 }
 
-#ttlxhqxghh .gt_sourcenotes {
+#wiaebhsqua .gt_sourcenotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -1114,47 +1113,47 @@ Click on the image to open an interactive Gantt webpage
   border-right-color: #D3D3D3;
 }
 
-#ttlxhqxghh .gt_sourcenote {
+#wiaebhsqua .gt_sourcenote {
   font-size: 90%;
   padding: 4px;
 }
 
-#ttlxhqxghh .gt_left {
+#wiaebhsqua .gt_left {
   text-align: left;
 }
 
-#ttlxhqxghh .gt_center {
+#wiaebhsqua .gt_center {
   text-align: center;
 }
 
-#ttlxhqxghh .gt_right {
+#wiaebhsqua .gt_right {
   text-align: right;
   font-variant-numeric: tabular-nums;
 }
 
-#ttlxhqxghh .gt_font_normal {
+#wiaebhsqua .gt_font_normal {
   font-weight: normal;
 }
 
-#ttlxhqxghh .gt_font_bold {
+#wiaebhsqua .gt_font_bold {
   font-weight: bold;
 }
 
-#ttlxhqxghh .gt_font_italic {
+#wiaebhsqua .gt_font_italic {
   font-style: italic;
 }
 
-#ttlxhqxghh .gt_super {
+#wiaebhsqua .gt_super {
   font-size: 65%;
 }
 
-#ttlxhqxghh .gt_footnote_marks {
+#wiaebhsqua .gt_footnote_marks {
   font-style: italic;
   font-size: 65%;
 }
 </style>
 
-<div id="ttlxhqxghh" style="overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
+<div id="wiaebhsqua" style="overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
 
 <table class="gt_table">
 
@@ -1305,8 +1304,6 @@ No
 </div>
 
 <!--/html_preserve-->
-
-<br/>
 
 # Expected results and outcomes
 
