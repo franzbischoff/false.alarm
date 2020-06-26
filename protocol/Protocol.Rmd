@@ -9,6 +9,7 @@ output:
     fig_width: 10
     fig_height: 5
     number_sections: yes
+  github_document: default
 ---
 
 # Identification of the project
@@ -53,7 +54,7 @@ The study design is comparable to a Diagnostic study, where high accuracy is ess
 
 The expected result is the concretization of a new method that, besides being accurate, accomplishes this task using state of the art technology for time series analysis that allows minimum space and processor power to solve this problem. Also, we expect that fading factors can improve the state of the art technology.
 
-The research team is well experienced in time-series and has studied the Matrix Profile since its beginning, being founders of the Matrix Profile Foundation whose goal is to have a concise and stable cross-language API for developing with the Matrix Profile technology.
+The research team is well experienced in time-series and has studied the Matrix Profile since its beginning, being founders of the Matrix Profile Foundation whose goal is to have a concise and stable cross-language API for developing with the Matrix Profile technology.[@Bischoff2019a; @VanBenschoten2020]
 
 # Rationale
 
