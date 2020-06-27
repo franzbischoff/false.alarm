@@ -1,16 +1,22 @@
 ---
 title: "Research Protocol"
+author: "Francisco Bischoff"
 bibliography: references.bib
 csl: https://raw.githubusercontent.com/citation-style-language/styles/master/american-medical-association.csl
 output: 
   html_notebook: 
-    toc: yes
+    toc: true
+    toc_depth: 2
     code_folding: none
     fig_width: 10
     fig_height: 5
     number_sections: yes
-  github_document: default
+  github_document:
+    toc: true
+    toc_depth: 2
 ---
+
+Last Updated: `r lubridate::now("UTC")` UTC
 
 # Identification of the project
 
@@ -68,6 +74,39 @@ Being this successful, a more generalistic approach will be attempted: to detect
 Finally, this research can prove to be a good addition to the Matrix Profile method, using fading factors in order to reduce memory and space consumption, lowering the processor power needed, allowing this algorithm to be used in almost any device.
 
 # Background / Literature review
+
+In 2015 the PhysioNet/Computing in Cardiology has launched a challenge to address the problem of high false alarm rates by encouraging the development of new algorithms to improve the specificity of ICU alarms[@Clifford2015].
+This challenge comprised of minimizing the false alarms for five life-threatening arrhythmia: asystole, extreme bradycardia, extreme tachycardia, ventricular tachycardia and ventricular fibrillation or flutter.
+
+There are other arrhytmias that this challenge didn't assessed, like atrial standstill (hyperkalemia), third-degree atrioventricular block and others that may be life-threatening in some settings like atrial fibrillation (AF), a, atrialflutter and paroxysmal supraventricular tachycardia. Pulseless electrical activity is a frequent condition in cardiac arrest but cannot be identified without blood pressure information.
+
+They used as score the following formula:
+
+<center>
+  <img src="https://render.githubusercontent.com/render/math?math=%5Chuge%20Score%3D%5Cfrac%7BTP%2BTN%7D%7BTP%2BTN%2BFP%2B5%20%2A%20FN%7D">
+</center>
+<br/>
+
+The five-best scores (for real-time) in this challenge were:
+
+```{r scores, echo=FALSE}
+miles <- tribble(
+  ~Score, ~Authors,
+   81.39, "Filip Plesinger, Petr Klimes, Josef Halamek, Pavel Jurak",
+   79.44, "Vignesh Kalidas",
+   79.02, "Paula Couto, Ruben Ramalho, Rui Rodrigues",
+   76.11, "Sibylle Fallet, Sasan Yazdani, Jean-Marc Vesin",
+   75.55, "Christoph Hoog Antink, Steffen Leonhardt"
+)
+
+tbls <- miles %>%
+  gt() %>%
+  tab_header(md("**Challenge Results**")) %>%
+  tab_options(table.width = pct(80), column_labels.font.weight = "bold")
+
+as_raw_html(tbls)
+```
+
 
 A literature review will be conducted to assess the state of the art for ECG automatic processing:
 
@@ -198,7 +237,6 @@ Aim and outputs for the task (and relation with the next task);
 
 ## Milestones
 
-<br/>
 ```{r milestones, echo=FALSE}
 miles <- tribble(
   ~Milestone, ~Date, ~Name, ~Description,
@@ -209,12 +247,13 @@ miles <- tribble(
   "M5", "Dec, 2022", "Thesis", "Finish and Deliver Ph.D. Thesis"
 )
 
-miles %>%
+tbl <- miles %>%
   gt() %>%
   tab_header(md("**Milestones**")) %>%
   tab_options(table.width = pct(80))
+
+as_raw_html(tbl)
 ```
-<br/>
 
 ## Timeline
 
@@ -224,8 +263,6 @@ Click on the image to open an interactive Gantt webpage
 
 
 # Budget
-<br/>
-
 
 ```{r budget, echo=FALSE}
 budgets <- tribble(
@@ -235,14 +272,15 @@ budgets <- tribble(
   "Tuition Fees", 11000, "Researcher Maintenance", "No"
 )
 
-budgets %>%
+tbl2 <- budgets %>%
   gt() %>%
   cols_label(Obtained = md("Financial support already obtained")) %>%
   fmt_currency(columns = vars(Budget), currency = "EUR") %>%
   tab_header(md("**Budget**")) %>%
   tab_options(table.width = pct(70), table.align = "center")
+
+as_raw_html(tbl2)
 ```
-<br/>
 
 # Expected results and outcomes
 ## Expected results

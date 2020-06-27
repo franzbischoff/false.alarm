@@ -25,10 +25,10 @@
     },
     "MASS": {
       "Package": "MASS",
-      "Version": "7.3-51.5",
+      "Version": "7.3-51.6",
       "Source": "Repository",
       "Repository": "CRAN",
-      "Hash": "9efe80472b21189ebab1b74169808c26"
+      "Hash": "1dad32ac9dbd8057167b2979fb932ff7"
     },
     "Matrix": {
       "Package": "Matrix",
@@ -88,10 +88,10 @@
     },
     "bookdown": {
       "Package": "bookdown",
-      "Version": "0.19",
+      "Version": "0.20",
       "Source": "Repository",
       "Repository": "CRAN",
-      "Hash": "4f669b7b4f236538e6afc311f32d2c93"
+      "Hash": "31ed5641f4a91cf113de490e0bb006b8"
     },
     "brew": {
       "Package": "brew",
@@ -271,9 +271,14 @@
     "gt": {
       "Package": "gt",
       "Version": "0.2.1",
-      "Source": "Repository",
-      "Repository": "CRAN",
-      "Hash": "73529bef530de603c95edd14e85e0bf3"
+      "Source": "GitHub",
+      "RemoteType": "github",
+      "RemoteHost": "api.github.com",
+      "RemoteRepo": "gt",
+      "RemoteUsername": "rstudio",
+      "RemoteRef": "master",
+      "RemoteSha": "721c9a5253202ca11c552290c11fbf4f5db427ed",
+      "Hash": "157b27c52f39696b5ebe1ffb53584d96"
     },
     "gtable": {
       "Package": "gtable",
@@ -291,10 +296,15 @@
     },
     "htmltools": {
       "Package": "htmltools",
-      "Version": "0.4.0",
-      "Source": "Repository",
-      "Repository": "CRAN",
-      "Hash": "2d7691222f82f41e93f6d30f169bd5e1"
+      "Version": "0.5.0.9000",
+      "Source": "GitHub",
+      "RemoteType": "github",
+      "RemoteHost": "api.github.com",
+      "RemoteRepo": "htmltools",
+      "RemoteUsername": "rstudio",
+      "RemoteRef": "master",
+      "RemoteSha": "a8025f360d70c67d41610e12f5a9ee6349327060",
+      "Hash": "b601661d6e7f1422c3ec413d7cc028d2"
     },
     "htmlwidgets": {
       "Package": "htmlwidgets",
@@ -326,10 +336,10 @@
     },
     "jsonlite": {
       "Package": "jsonlite",
-      "Version": "1.6.1",
+      "Version": "1.7.0",
       "Source": "Repository",
       "Repository": "CRAN",
-      "Hash": "84b0ee361e2f78d6b7d670db9471c0c5"
+      "Hash": "2657f20b9a74c996c602e74ebe540b06"
     },
     "knitr": {
       "Package": "knitr",
@@ -550,10 +560,10 @@
     },
     "rmarkdown": {
       "Package": "rmarkdown",
-      "Version": "2.2",
+      "Version": "2.3",
       "Source": "Repository",
       "Repository": "CRAN",
-      "Hash": "aa82ab08b203d5a32a5b5f404e80c399"
+      "Hash": "202260e1b2c410edc086d5b8f1ed946e"
     },
     "roxygen2": {
       "Package": "roxygen2",
@@ -660,10 +670,10 @@
     },
     "tinytex": {
       "Package": "tinytex",
-      "Version": "0.23",
+      "Version": "0.24",
       "Source": "Repository",
       "Repository": "CRAN",
-      "Hash": "a8c653ef8ce67683f588e6088ed45572"
+      "Hash": "8f24b65b86f4d6d7b1e2d8a4ce2c02fb"
     },
     "usethis": {
       "Package": "usethis",
