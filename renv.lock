@@ -107,13 +107,6 @@
       "Repository": "CRAN",
       "Hash": "643163a00cb536454c624883a10ae0bc"
     },
-    "checkmate": {
-      "Package": "checkmate",
-      "Version": "2.0.0",
-      "Source": "Repository",
-      "Repository": "CRAN",
-      "Hash": "a667800d5f0350371bedeb8b8b950289"
-    },
     "cli": {
       "Package": "cli",
       "Version": "2.0.2",
@@ -267,18 +260,6 @@
       "Source": "Repository",
       "Repository": "CRAN",
       "Hash": "f43e0d5e85ccb0a4045670c0607ee504"
-    },
-    "gt": {
-      "Package": "gt",
-      "Version": "0.2.1",
-      "Source": "GitHub",
-      "RemoteType": "github",
-      "RemoteHost": "api.github.com",
-      "RemoteRepo": "gt",
-      "RemoteUsername": "rstudio",
-      "RemoteRef": "master",
-      "RemoteSha": "721c9a5253202ca11c552290c11fbf4f5db427ed",
-      "Hash": "157b27c52f39696b5ebe1ffb53584d96"
     },
     "gtable": {
       "Package": "gtable",
@@ -592,13 +573,6 @@
       "Source": "Repository",
       "Repository": "CRAN",
       "Hash": "0ec41191f744d0f5afad8c6f35cc36e4"
-    },
-    "sass": {
-      "Package": "sass",
-      "Version": "0.2.0",
-      "Source": "Repository",
-      "Repository": "CRAN",
-      "Hash": "441417bbd40d5bbd07561cc40fb182ed"
     },
     "scales": {
       "Package": "scales",

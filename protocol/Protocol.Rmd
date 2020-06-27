@@ -3,7 +3,10 @@ title: "Research Protocol"
 author: "Francisco Bischoff"
 bibliography: references.bib
 csl: https://raw.githubusercontent.com/citation-style-language/styles/master/american-medical-association.csl
-output: 
+output:
+  github_document:
+    toc: true
+    toc_depth: 2
   html_notebook: 
     toc: true
     toc_depth: 2
@@ -11,9 +14,10 @@ output:
     fig_width: 10
     fig_height: 5
     number_sections: yes
-  github_document:
-    toc: true
+  pdf_document: 
+    toc: yes
     toc_depth: 2
+    number_sections: yes
 ---
 
 Last Updated: `r lubridate::now("UTC")` UTC
@@ -23,11 +27,10 @@ Last Updated: `r lubridate::now("UTC")` UTC
 ```{r setup, echo = FALSE}
 knitr::opts_chunk$set(echo = FALSE)
 suppressPackageStartupMessages(library(dplyr))
-suppressPackageStartupMessages(library(gt))
 suppressPackageStartupMessages(library(lubridate))
 
 print_duration <- function(x, y) {
-  period <- as.period(date(x) %--% date(y))
+  period <- lubridate::as.period(date(x) %--% date(y))
   paste(period@month, "months", period@day, "days")
 }
 ```
@@ -90,7 +93,7 @@ They used as score the following formula:
 The five-best scores (for real-time) in this challenge were:
 
 ```{r scores, echo=FALSE}
-miles <- tribble(
+challenge <- tribble(
   ~Score, ~Authors,
    81.39, "Filip Plesinger, Petr Klimes, Josef Halamek, Pavel Jurak",
    79.44, "Vignesh Kalidas",
@@ -99,12 +102,7 @@ miles <- tribble(
    75.55, "Christoph Hoog Antink, Steffen Leonhardt"
 )
 
-tbls <- miles %>%
-  gt() %>%
-  tab_header(md("**Challenge Results**")) %>%
-  tab_options(table.width = pct(80), column_labels.font.weight = "bold")
-
-as_raw_html(tbls)
+knitr::kable(challenge, caption = "Challenge Results")
 ```
 
 
@@ -247,12 +245,7 @@ miles <- tribble(
   "M5", "Dec, 2022", "Thesis", "Finish and Deliver Ph.D. Thesis"
 )
 
-tbl <- miles %>%
-  gt() %>%
-  tab_header(md("**Milestones**")) %>%
-  tab_options(table.width = pct(80))
-
-as_raw_html(tbl)
+knitr::kable(miles, caption = "Milestones")
 ```
 
 ## Timeline
@@ -272,14 +265,7 @@ budgets <- tribble(
   "Tuition Fees", 11000, "Researcher Maintenance", "No"
 )
 
-tbl2 <- budgets %>%
-  gt() %>%
-  cols_label(Obtained = md("Financial support already obtained")) %>%
-  fmt_currency(columns = vars(Budget), currency = "EUR") %>%
-  tab_header(md("**Budget**")) %>%
-  tab_options(table.width = pct(70), table.align = "center")
-
-as_raw_html(tbl2)
+knitr::kable(budgets, caption = "Expected expenses")
 ```
 
 # Expected results and outcomes
