@@ -5,7 +5,7 @@ Francisco Bischoff
   - [Identification of the project](#identification-of-the-project)
       - [Title of the protocol (in Portuguese and
         English)](#title-of-the-protocol-in-portuguese-and-english)
-      - [Author(s)](#authors)
+      - [Author](#author)
       - [Key-words](#key-words)
       - [Project start date and
         duration](#project-start-date-and-duration)
@@ -20,6 +20,7 @@ Francisco Bischoff
       - [Sample size](#sample-size)
       - [Variables](#variables)
       - [Statistical analysis](#statistical-analysis)
+  - [Research Team](#research-team)
   - [Tasks, milestones and timeline](#tasks-milestones-and-timeline)
       - [Tasks](#tasks)
       - [Milestones](#milestones)
@@ -30,7 +31,7 @@ Francisco Bischoff
       - [Outcomes](#outcomes)
   - [References](#references)
 
-Last Updated: 2020-06-27 18:14:02 UTC
+Last Updated: 2020-07-17 20:13:40 UTC
 
 # Identification of the project
 
@@ -42,10 +43,9 @@ efficient memory and processor power.”
 “Detectando padrões de risco de vida no ECG no local de atendimento
 usando memória e potência do processador eficientes.”
 
-## Author(s)
+## Author
 
-Francisco Bischoff, Andrew H. Van Benschoten, Tyler W. Marrs, Pedro
-Pereira Rodrigues
+Francisco Bischoff
 
 ## Key-words
 
@@ -57,6 +57,42 @@ point-of-care
 From the 3rd quarter of 2020 to the fourth quarter of 2022.
 
 # Abstract or Summary (in Portuguese and English)
+
+*Atualmente, o monitoramento de ECG junto ao doente (point-of-care)
+funciona com dispositivos que apenas mostram informação ou disparam
+alarmes para ritmos cardíacos anormais, usando intervalos normais
+predefinidos como gatilho. Por outro lado, máquinas completas de ECG de
+12 derivações são muito complexas para serem usadas como monitores
+simples e são usadas com técnicas estritas para o diagnóstico formal de
+patologias da condução elétrica cardíaca, e o diagnóstico automático é
+derivado de uma análise completa dos dados das 12 dimensões após
+totalmente coletados. Ambos os sistemas não funcionam com linhas
+desconectadas e movimentos do paciente, sendo estritamente necessário
+ter um sinal bom e estável para permitir o diagnóstico adequado.*
+
+*Esta investigação tem como objetivo identificar padrões elétricos
+cardíacos anormais usando dados em tempo real, especificamente aqueles
+padrões que implicam risco de vida, e fornecer um sinal confiável para
+que as Unidades de Terapia Intensiva respondam rapidamente a essas
+situações.*
+
+*O desenho do estudo é comparável a um estudo de diagnóstico, onde a
+alta precisão é essencial. Serão utilizados os conjuntos de dados da
+Physionet e o algoritmo tentará minimizar os falsos negativos e
+positivos.*
+
+*O resultado esperado é a concretização de um novo método que, além de
+preciso, realiza essa tarefa usando tecnologia de ponta de análise de
+séries temporais que requeira o mínimo de memória e processamento para
+resolver esse problema. Além disso, espera-se que a utilização de
+“fading factors” possam contribuir para o estado da arte desta
+tecnologia.*
+
+*A equipe de pesquisa é experiente em séries temporais e estuda o
+“Matrix Profile” desde suas raizes, sendo fundadores da “Matrix
+Profile Foundation”, cujo objetivo é ter uma API multi-linguagem concisa
+e estável para desenvolvimento com a tecnologia “Matrix
+Profile.”<sup>1,2</sup>*
 
 Currently, Point-of-Care (POC) ECG monitoring works either as plot
 devices or alarms for abnormal cardiac rhythms using predefined normal
@@ -80,8 +116,8 @@ algorithm will try to minimize the false negatives and false positives.
 The expected result is the concretization of a new method that, besides
 being accurate, accomplishes this task using state of the art technology
 for time series analysis that allows minimum space and processor power
-to solve this problem. Also, we expect that fading factors can improve
-the state of the art technology.
+to solve this problem. Also, we expect that fading factors can
+contribute to the state of the art of this technology.
 
 The research team is well experienced in time-series and has studied the
 Matrix Profile since its beginning, being founders of the Matrix Profile
@@ -230,6 +266,12 @@ Fibrillation.
 
 The Statistical analysis will be performed using R language v3.6.0 or
 greater, and it will be computed the ROC curve for the algorithm.
+
+# Research Team
+
+  - Thesis Author: Francisco Bischoff
+  - Supervisor: Pedro Pereira Rodrigues
+  - Co-supervisor: Eamonn Keogh (invitation pending)
 
 # Tasks, milestones and timeline
 
