@@ -37,6 +37,34 @@
       "Repository": "CRAN",
       "Hash": "08588806cba69f04797dab50627428ed"
     },
+    "R.matlab": {
+      "Package": "R.matlab",
+      "Version": "3.6.2",
+      "Source": "Repository",
+      "Repository": "CRAN",
+      "Hash": "efd13af6d239b35898cbdc7401342b42"
+    },
+    "R.methodsS3": {
+      "Package": "R.methodsS3",
+      "Version": "1.8.0",
+      "Source": "Repository",
+      "Repository": "CRAN",
+      "Hash": "23822a838096ceb132e5041c9a68c3ef"
+    },
+    "R.oo": {
+      "Package": "R.oo",
+      "Version": "1.23.0",
+      "Source": "Repository",
+      "Repository": "CRAN",
+      "Hash": "6be65e89d25f79fb4d147d65e19601e8"
+    },
+    "R.utils": {
+      "Package": "R.utils",
+      "Version": "2.9.2",
+      "Source": "Repository",
+      "Repository": "CRAN",
+      "Hash": "63cdbbf467a00d0ed2aa3391f4918d6e"
+    },
     "R6": {
       "Package": "R6",
       "Version": "2.4.1",
