@@ -1,32 +1,32 @@
 ---
-author: 'Your R. Name'
-date: 'May 20xx'
-institution: 'Reed College'
-division: 'Mathematics and Natural Sciences'
-advisor: 'Advisor F. Name'
+author: 'Francisco Bischoff'
+date: 'Jul 2020'
+institution: 'Faculdade de Medicina da Universidade do Porto'
+division: 'CINTESIS'
+advisor: 'Pedro Pereira Rodrigues'
 # If you have more two advisors, un-silence line 7
-#altadvisor: 'Your Other Advisor'
-department: 'Mathematics'
-degree: 'Bachelor of Arts'
-title: 'My Final College Paper'
+altadvisor: 'Eamonn Keogh (pending)'
+department: 'Medical Investigation'
+degree: 'Ph.D. in Health Data Science'
+title: 'Detecting life-threatening patterns in Point-of-care ECG using efficient memory and processor power'
 knit: "bookdown::render_book"
 site: bookdown::bookdown_site
-output: 
-  # thesisdown::thesis_pdf: default
-  thesisdown::thesis_gitbook: default
+output:
+  - thesisdown::thesis_gitbook
+#  - thesisdown::thesis_pdf
 #  thesisdown::thesis_word: default
 #  thesisdown::thesis_epub: default
 # If you are creating a PDF you'll need to write your preliminary content (e.g., abstract, acknowledgements) here or
 # use code similar to line 22-23 for the .RMD files. If you are NOT producing a PDF, you can delete or silence lines 21-32 in this YAML header.
 abstract: |
-  `r if(knitr:::is_latex_output()) paste(readLines("00-abstract.Rmd"), collapse = '\n  ')`
+ `r if(knitr:::is_latex_output()) paste(readLines("00-abstract.Rmd"), collapse = '\n  ')`
 # If you'd rather include the preliminary content in files instead of inline
 # like below, use a command like that for the abstract above.  Note that a tab is 
 # needed on the line after the `|`.
 acknowledgements: |
   I want to thank a few people.
 dedication: |
-  You can have a dedication here if you wish. 
+  You can have a dedication here if you wish.
 preface: |
   This is an example of a thesis setup to use the reed thesis document class
   (for LaTeX) and the R bookdown package, in general.
@@ -66,7 +66,7 @@ library(thesisdown)
 
 <!-- On ordering the chapter files:
 There are two options:
-1. Name your chapter files in the order in which you want them to appear (e.g., 01-Inro, 02-Data, 03-Conclusions). 
+1. Name your chapter files in the order in which you want them to appear (e.g., 01-Intro, 02-Data, 03-Conclusions). 
 2. Otherwise, you can specify the order in which they appear in the _bookdown.yml (for PDF only).
 
 Do not include 00(two-hyphens)prelim.Rmd and 00-abstract.Rmd in the YAML file--they are handled in the YAML above differently for the PDF version.
@@ -78,25 +78,30 @@ on chapters.
 
 # Introduction {.unnumbered}
 
-Welcome to the _R Markdown_ thesis template. This template is based on (and in many places copied directly from) the Reed College LaTeX template, but hopefully it will provide a nicer interface for those that have never used TeX or LaTeX before.  Using _R Markdown_ will also allow you to easily keep track of your analyses in **R** chunks of code, with the resulting plots and output included as well.  The hope is this _R Markdown_ template gets you in the habit of doing reproducible research, which benefits you long-term as a researcher, but also will greatly help anyone that is trying to reproduce or build onto your results down the road.
+Currently, Point-of-Care (POC) ECG monitoring works either as plot devices and/or alarms for abnormal cardiac rhythms using predefined normal trigger ranges. On the other hand, full 12-derivation ECG machines are complex to use as simple monitors and are used with strict techniques for formal diagnostics of hearth electric conduction pathologies, and the automatic diagnostics are derived from a full analysis of the 12-dimension data after it is fully collected. In CinC/Physionet Challenge 2015, it has been reported that up to 86% resulting of the alarms are false and this can lead to decreased staff attention and increase in patients delirium [@Chambrin2001; @Parthasarathy2004].
 
-Hopefully, you won't have much of a learning period to go through and you will reap the benefits of a nicely formatted thesis.  The use of LaTeX in combination with _Markdown_ is more consistent than the output of a word processor, much less prone to corruption or crashing, and the resulting file is smaller than a Word file. While you may have never had problems using Word in the past, your thesis is likely going to be about twice as large and complex as anything you've written before, taxing Word's capabilities.  After working with _Markdown_ and **R** together for a few weeks, we are confident this will be your reporting style of choice going forward.
+**Research question and aims**
+
+This research aims to identify, on streaming data, abnormal hearth electric patterns, specifically those who are life-threatening, in order to be a reliable signal for Intensive Care Units to respond quickly to those situations. It also may be able to continuously analyze new data and correct itself shutting off false alarms.
+Primarily an experiment will be conducted using 2 main algorithms that use Matrix Profile in detecting context changes: SDTD and FLOSS. One uses whole data training and testing, and the other uses a streaming approach that is our main interest. The goal will be detecting the transition from normal to flutter/FA to normal condition with special attention to not rely on rhythm changes.
+Being this successful, a more generalistic approach will be attempted: to detect changes from normal to abnormal to normal conditions, with special attention to handle with disconnected leads or patient movements.
+Finally, this research can prove to be a good addition to the Matrix Profile method, using fading factors in order to reduce memory and space consumption, lowering the processor power needed, allowing this algorithm to be used in almost any device.
+
+
+**About the ongoing project**
+
+The document submitted for approval is [here](https://github.com/franzbischoff/heads_thesis/blob/master/protocol/Protocol.pdf).
+
+The full code is open-sourced and available [here](https://github.com/franzbischoff/heads_thesis/)
+
+To follow the thesis timeline you can access the full Gantt chart at Zenhub. Click [here](https://app.zenhub.com/workspaces/phd-thesis-5eb2ce34f5f30b3aed0a35af/roadmap) (you need a github account, but that's it).
+
+PDF, EPUB and WORD versions will be available at the end of this work.
 
 <!-- 
 If you're still on the fence about using _R Markdown_, check out the resource for newbies available at <https://ismayc.github.io/rbasics-book/> or email us at <data@reed.edu>. 
 -->
 
-**Why use it?**
-
-_R Markdown_ creates a simple and straightforward way to interface with the beauty of LaTeX.  Packages have been written in **R** to work directly with LaTeX to produce nicely formatting tables and paragraphs. In addition to creating a user friendly interface to LaTeX, _R Markdown_ also allows you to read in your data, to analyze it and to visualize it using **R** functions, and also to provide the documentation and commentary on the results of your project.  Further, it allows for **R** results to be passed inline to the commentary of your results.  You'll see more on this later.  
-
 <!-- 
 Having your code and commentary all together in one place has a plethora of benefits!
 -->
-
-**Who should use it?**
-
-Anyone who needs to use data analysis, math, tables, a lot of figures, complex cross-references, or who just cares about the final appearance of their document should use _R Markdown_. Of particular use should be anyone in the sciences, but the user-friendly nature of _Markdown_ and its ability to keep track of and easily include figures, automatically generate a table of contents, index, references, table of figures, etc. should make it of great benefit to nearly anyone writing a thesis project.
-
-**For additional help with bookdown** 
-Please visit [the free online bookdown reference guide](https://bookdown.org/yihui/bookdown/).

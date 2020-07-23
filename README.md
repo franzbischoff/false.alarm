@@ -53,7 +53,7 @@ The document submitted for approval is
 To follow the thesis timeline you can access the full Gantt chart at
 Zenhub. Click
 [here](https://app.zenhub.com/workspaces/phd-thesis-5eb2ce34f5f30b3aed0a35af/roadmap)
-(you need a github account, but that it).
+(you need a github account, but that’s it).
 
 # References
 
