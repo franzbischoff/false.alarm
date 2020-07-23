@@ -145,5 +145,13 @@ rdmat <- function(filename) {
   # Generate time vector
   tm <- seq(0, (N - 1) / Fs, length.out = N)
 
-  return(list(tm = tm, signals = signal, Fs = Fs, siginfo = siginfo))
+  # return(list(tm = tm, signals = signal, Fs = Fs, siginfo = siginfo))
+  output <- ts(data.frame(time = tm, a1 = signal[[1]], a2 = signal[[2]], a3 = signal[[3]]),
+    frequency = Fs, names = c(
+      "time", siginfo[[1]]$description, siginfo[[2]]$description,
+      siginfo[[3]]$description
+    )
+  )
+
+  return(output)
 }
