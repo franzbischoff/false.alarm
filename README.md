@@ -10,6 +10,8 @@ on July 22, 2020
 
 [![Launch
 binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/franzbischoff/heads_thesis/master?urlpath=rstudio)
+[![Read
+Thesis](https://img.shields.io/badge/read-thesis__down-brightgreen)](franzbischoff.github.io/heads_thesis/)
 <!-- badges: end -->
 
 # Abstract
