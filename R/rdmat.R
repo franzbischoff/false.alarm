@@ -1,4 +1,4 @@
-rdmat <- function(filename) {
+rdmat <- function(filename, plot = FALSE) {
   #
   # [tm,signal,Fs,siginfo]=rdmat(recordName)
   #
@@ -93,10 +93,13 @@ rdmat <- function(filename) {
     stop("The file only contains comments.")
   }
 
+  nlines <- length(hea_content)
+
   hea_content <- strsplit(hea_content[i:length(hea_content)], " ")
 
   M <- as.numeric(hea_content[[1]][2]) # Number of signals present
   Fs <- as.numeric(hea_content[[1]][3]) # Frequency of the signal
+
 
 
   # Process Signal Specification lines. Assumes no comments between lines.
@@ -124,11 +127,18 @@ rdmat <- function(filename) {
 
     siginfo[[i - 1]]["gain"] <- gain
     siginfo[[i - 1]]["unit"] <- unit
-
-    # Get Signal Baseline if present TODO: review this, may be a value between ()
     siginfo[[i - 1]]["baseline"] <- as.numeric(hea_content[[i]][5])
     siginfo[[i - 1]]["description"] <- hea_content[[i]][9]
   }
+
+  if(nlines != M) {
+    alarm <- hea_content[[nlines - 1]][1]
+    alarm <- ifelse(substr(alarm, 1, 1) == "#", substring(alarm, 2), alarm)
+    true_false <- hea_content[[nlines]][1]
+    true_false <- ifelse(substr(true_false, 1, 1) == "#", substring(true_false, 2), true_false)
+  }
+
+  siginfo_df <- data.frame(matrix(unlist(siginfo), ncol = M), stringsAsFactors = FALSE, row.names = names(siginfo[[1]]))
 
   mat_content <- R.matlab::readMat(content)
 
@@ -138,20 +148,24 @@ rdmat <- function(filename) {
   # http://www.physionet.org/physiotools/wfdb/app/rdsamp.c
   for (i in seq_len(M)) {
     mat_content$val[i, is.na(mat_content$val[i, ])] <- wfdbNaN
-    signal[[i]] <- (mat_content$val[i, ] - siginfo[[i]]$baseline) / siginfo[[i]]$gain
+    signal[[i]] <- (mat_content$val[i, ] - as.numeric(siginfo_df["baseline",i])) / as.numeric(siginfo_df["gain",i])
   }
 
   N <- length(signal[[1]])
   # Generate time vector
   tm <- seq(0, (N - 1) / Fs, length.out = N)
 
-  # return(list(tm = tm, signals = signal, Fs = Fs, siginfo = siginfo))
-  output <- ts(data.frame(time = tm, a1 = signal[[1]], a2 = signal[[2]], a3 = signal[[3]]),
-    frequency = Fs, names = c(
-      "time", siginfo[[1]]$description, siginfo[[2]]$description,
-      siginfo[[3]]$description
-    )
-  )
+  signal_df <- data.frame(matrix(unlist(signal), nrow = N, byrow = F), stringsAsFactors = FALSE)
+  names(signal_df) <- siginfo_df["description", ]
+
+  output <- ts(cbind(time = tm, signal_df), frequency = Fs)
+
+  attr(output, "result") <- list(alarm = alarm, true = true_false, filename = basename(filename))
+
+  if(plot) {
+    plot.ts(output, nc = 1, main = paste("Output from", basename(filename)))
+    mtext(paste0("tags: ", attr(output, "result")$alarm, ", ", attr(output, "result")$true, " Alarm"), 3, line = 1, adj = 0)
+  }
 
   return(output)
 }
