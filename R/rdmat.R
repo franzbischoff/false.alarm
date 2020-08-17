@@ -158,14 +158,19 @@ rdmat <- function(filename, plot = FALSE) {
   signal_df <- data.frame(matrix(unlist(signal), nrow = N, byrow = F), stringsAsFactors = FALSE)
   names(signal_df) <- siginfo_df["description", ]
 
-  output <- ts(cbind(time = tm, signal_df), frequency = Fs)
+  output <- cbind(time = tm, signal_df)
 
-  attr(output, "result") <- list(alarm = alarm, true = true_false, filename = basename(filename))
+  attr(output, "result") <- list(alarm = alarm, true = true_false, filename = basename(filename), frequency = Fs)
 
   if(plot) {
-    plot.ts(output, nc = 1, main = paste("Output from", basename(filename)))
-    mtext(paste0("tags: ", attr(output, "result")$alarm, ", ", attr(output, "result")$true, " Alarm"), 3, line = 1, adj = 0)
+    plot_ecg(output)
+
+    # plot.ts(output, nc = 1, main = paste("Output from", basename(filename)))
+    # mtext(paste0("tags: ", attr(output, "result")$alarm, ", ", attr(output, "result")$true, " Alarm"), 3, line = 1, adj = 0)
   }
 
   return(output)
 }
+
+
+
