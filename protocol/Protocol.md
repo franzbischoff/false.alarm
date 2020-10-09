@@ -31,7 +31,7 @@ Francisco Bischoff
       - [Outcomes](#outcomes)
   - [References](#references)
 
-Last Updated: 2020-07-17 20:13:40 UTC
+Last Updated: 2020-10-09 14:54:25 UTC
 
 # Identification of the project
 
@@ -270,8 +270,8 @@ greater, and it will be computed the ROC curve for the algorithm.
 # Research Team
 
   - Thesis Author: Francisco Bischoff
-  - Supervisor: Pedro Pereira Rodrigues
-  - Co-supervisor: Eamonn Keogh (invitation pending)
+  - Supervisor: Professor Pedro Pereira Rodrigues
+  - Co-supervisor: Professor Eamonn Keogh (UCR, Riverside)
 
 # Tasks, milestones and timeline
 
@@ -281,33 +281,42 @@ The timeline is composed of larger tasks I call Epics. They contain
 multiple subtasks that are expected to change frequently.
 
   - **Elaboration of Research Protocol**
+    
     1.  Duration: 1 months 12 days;
     2.  Elaboration of this protocol in order to facilitate the
         management and overview of the project;
     3.  This task was developed by the author with input suggestions
         from other experts.
+
   - **Literature Review**
+    
     1.  Duration: 2 months 12 days;
     2.  This task aims to survey the literature about what is currently
         done to tackle the current problem and what the limitations are;
         Aim and outputs for the task (and relation with the next task);
     3.  This task will be done with three independent reviewers using
         the PRISMA guidelines in the Covidence framework.
+
   - **Obtaining Access to Physionet full data**
+    
     1.  Duration: 1 months 4 days
     2.  All datasets in Physionet are supposed to be Open Access.
         However, there is a chance that some datasets may need
         permissions.
     3.  If any dataset needs permission, it will be first evaluated the
         real need and asked the proper way to access it.
+
   - **First Experimentation with Public data**
+    
     1.  Duration: 2 months 9 days
     2.  The Physionet Challenge from 2015 will be the first dataset to
         be analyzed and will be *a study in scarlet* for the problems we
         may face in this kind of dataset;
     3.  The datasets will be studied in the case of data preparation for
         the modeling process.
+
   - **Development of the First Algorithm**
+    
     1.  Duration: 4 months 13 days;
     2.  In this task, the first model will be constructed: the Atrial
         Fibrillation start/end detection;
@@ -316,13 +325,17 @@ multiple subtasks that are expected to change frequently.
         usage;
     4.  This task depends on the knowledge about the dataset we have
         from the previous task.
+
   - **Dissertation First Draft**
+    
     1.  Duration: 2 months 3 days;
     2.  This task aims to, at the same time, create a draft for the
         final dissertation, and the content for an actual article to be
         published;
     3.  This task depends on the concretization of the previous task.
+
   - **Publication of the First Algorithm**
+    
     1.  Duration: 3 months 29 days
     2.  This task aims to refine the text, review, and submit it for
         publication.
@@ -330,20 +343,26 @@ multiple subtasks that are expected to change frequently.
         the journal review time;
     4.  This task depends on the previous task;
     5.  Financial needs: Publication fees.
+
   - **Development of the Second Algorithm**
+    
     1.  Duration: 2 months 14 days
     2.  In this task, the second model will be constructed: an attempt
         to generalize it for any life-threatening ECG change;
     3.  The state of the art methods will be used to detect such
         changes, with maximum precision and lowest memory and processor
         usage;
+
   - **Dissertation Second Draft**
+    
     1.  Duration: 3 months 25 days
     2.  This task aims to, at the same time, create a second draft for
         the final dissertation, and the content for an actual article to
         be published;
     3.  This task depends on the concretization of the previous task.
+
   - **Publication of the Second Algorithm**
+    
     1.  Duration: 3 months 27 days
     2.  This task aims to refine the text, review, and submit it for
         publication.
@@ -351,19 +370,25 @@ multiple subtasks that are expected to change frequently.
         the journal review time;
     4.  This task depends on the previous task;
     5.  Financial needs: Publication fees.
+
   - **Dissertation Review**
+    
     1.  Duration: 1 months 15 days
     2.  This task will be a time to review all the work done and prepare
         it for final presentation;
     3.  Ideally, two or mode independent expert shall read the thesis
         and give feedback for improvement;
+
   - **Proof Reading**
+    
     1.  Duration: 0 months 25 days
     2.  This task comprises in careful reading, ideally by a
         professional in the English language;
     3.  It depends on the previous tasks;
     4.  Financial needs: Proofreading fees
+
   - **Presentation**
+    
     1.  Duration: 1 months 11 days
     2.  This task comprises in preparation for public presentation;
     3.  It includes the formulation of the slides or any multimedia
