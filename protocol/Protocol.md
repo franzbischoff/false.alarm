@@ -31,7 +31,9 @@ Francisco Bischoff
       - [Outcomes](#outcomes)
   - [References](#references)
 
-Last Updated: 2020-10-09 14:54:25 UTC
+Last Updated: 2020-10-10 18:57:49 UTC
+
+<!-- -*- mode: gfm; extensions: +tex_math_dollars+raw_tex -*- -->
 
 # Identification of the project
 
@@ -92,7 +94,7 @@ tecnologia.*
 “Matrix Profile” desde suas raizes, sendo fundadores da “Matrix
 Profile Foundation”, cujo objetivo é ter uma API multi-linguagem concisa
 e estável para desenvolvimento com a tecnologia “Matrix
-Profile.”<sup>1,2</sup>*
+Profile.”<sup>[1](#ref-Bischoff2019a),[2](#ref-VanBenschoten2020)</sup>*
 
 Currently, Point-of-Care (POC) ECG monitoring works either as plot
 devices or alarms for abnormal cardiac rhythms using predefined normal
@@ -122,7 +124,8 @@ contribute to the state of the art of this technology.
 The research team is well experienced in time-series and has studied the
 Matrix Profile since its beginning, being founders of the Matrix Profile
 Foundation whose goal is to have a concise and stable cross-language API
-for developing with the Matrix Profile technology.<sup>1,2</sup>
+for developing with the Matrix Profile
+technology.<sup>[1](#ref-Bischoff2019a),[2](#ref-VanBenschoten2020)</sup>
 
 # Rationale
 
@@ -135,7 +138,8 @@ pathologies, and the automatic diagnostics are derived from a full
 analysis of the 12-dimension data after it is fully collected. In
 CinC/Physionet Challenge 2015, it has been reported that up to 86%
 resulting of the alarms are false and this can lead to decreased staff
-attention and increase in patients delirium.<sup>3–5</sup>
+attention and increase in patients
+delirium.<sup>[3](#ref-Lawless1994)–[5](#ref-Parthasarathy2004)</sup>
 
 # Research question and aims
 
@@ -162,10 +166,10 @@ needed, allowing this algorithm to be used in almost any device.
 In 2015 the PhysioNet/Computing in Cardiology has launched a challenge
 to address the problem of high false alarm rates by encouraging the
 development of new algorithms to improve the specificity of ICU
-alarms<sup>6</sup>. This challenge comprised of minimizing the false
-alarms for five life-threatening arrhythmia: asystole, extreme
-bradycardia, extreme tachycardia, ventricular tachycardia and
-ventricular fibrillation or flutter.
+alarms<sup>[6](#ref-Clifford2015)</sup>. This challenge comprised of
+minimizing the false alarms for five life-threatening arrhythmia:
+asystole, extreme bradycardia, extreme tachycardia, ventricular
+tachycardia and ventricular fibrillation or flutter.
 
 There are other arrhytmias that this challenge didn’t assessed, like
 atrial standstill (hyperkalemia), third-degree atrioventricular block
@@ -179,7 +183,7 @@ They used as score the following formula:
 
 <center>
 
-<img src="https://render.githubusercontent.com/render/math?math=%5Chuge%20Score%3D%5Cfrac%7BTP%2BTN%7D%7BTP%2BTN%2BFP%2B5%20%2A%20FN%7D">
+<img src="https://render.githubusercontent.com/render/math?math=%5Chuge%20Score%3D%5Cfrac%7BTP%2BTN%7D%7BTP%2BTN%2BFP%2B5%20%2A%20FN%7D"/>
 
 </center>
 
@@ -230,7 +234,8 @@ change in pattern as positive or negative for life-threatening.
 ## Selection of data
 
 Initially, the data used for exploring the properties of the algorithm
-will be publicly available data on Physionet<sup>6,7</sup>.
+will be publicly available data on
+Physionet<sup>[6](#ref-Clifford2015),[7](#ref-Goldberger2000)</sup>.
 
 It will be asked for Physionet’s permission to use more sensitive data
 if needed.

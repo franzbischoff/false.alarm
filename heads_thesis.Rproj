@@ -15,4 +15,8 @@ LaTeX: pdfLaTeX
 AutoAppendNewline: Yes
 StripTrailingWhitespace: Yes
 
-MarkdownCanonical: No
+MarkdownWrap: Sentence
+MarkdownReferences: Document
+MarkdownCanonical: Yes
+
+ZoteroLibraries: "My Library"

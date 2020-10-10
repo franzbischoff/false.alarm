@@ -2,8 +2,12 @@
 title: "Detecting life-threatening patterns in Point-of-care ECG using efficient memory and processor power."
 author: "Francisco Bischoff"
 date: "on July 22, 2020"
-bibliography: ./protocol/references.bibtex
+bibliography: ./protocol/references.bib
+link-citations: true
 csl: https://raw.githubusercontent.com/citation-style-language/styles/master/american-medical-association.csl
+editor_options:
+  markdown:
+    mode: markdown
 output: github_document
 ---
 
@@ -31,12 +35,12 @@ Both systems do not handle disconnected leads and patient's motions, being stric
 This research aims to identify abnormal hearth electric patterns using streaming data, specifically those who are life-threatening, being a reliable signal for Intensive Care Units to respond quickly to those situations.
 
 The study design is comparable to a Diagnostic study, where high accuracy is essential.
-It will use the Physionet datasets[\@Clifford2015], and the algorithm will try to minimize the false negatives and false positives.
+It will use the Physionet datasets[@Clifford2015], and the algorithm will try to minimize the false negatives and false positives.
 
 The expected result is the concretization of a new method that, besides being accurate, accomplishes this task using state of the art technology for time series analysis that allows minimum space and processor power to solve this problem.
 Also, we expect that fading factors can contribute to the state of the art of this technology.
 
-The research team is well experienced in time-series and has studied the Matrix Profile since its beginning, being founders of the Matrix Profile Foundation whose goal is to have a concise and stable cross-language API for developing with the Matrix Profile technology.[\@Bischoff2019a; \@VanBenschoten2020]
+The research team is well experienced in time-series and has studied the Matrix Profile since its beginning, being founders of the Matrix Profile Foundation whose goal is to have a concise and stable cross-language API for developing with the Matrix Profile technology.[@Bischoff2019a; @VanBenschoten2020]
 
 # About the ongoing project
 
