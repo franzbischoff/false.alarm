@@ -8,6 +8,7 @@ on July 22, 2020
 
 <!-- badges: start -->
 
+![Binder](https://github.com/franzbischoff/heads_thesis/workflows/Binder/badge.svg)
 [![Launch
 binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/franzbischoff/heads_thesis/master?urlpath=rstudio)
 [![Read
