@@ -55,13 +55,13 @@ This field should be updated when any amendments are made to a published record.
 
 ```{r stages, echo=FALSE}
 challenge <- dplyr::tribble(
-  ~`Stage`, ~Started, ~Completed, 
-   "Preliminary searches", "", "",
-   "Piloting of the study selection process", "", "",
-   "Formal screening of search results against eligibility criteria", "", "",
-   "Data extraction", "", "",
-   "Risk of bias (quality) assessment", "", "",
-   "Data analysis", "", ""
+  ~`Stage`, ~Started, ~Completed,
+  "Preliminary searches", "", "",
+  "Piloting of the study selection process", "", "",
+  "Formal screening of search results against eligibility criteria", "", "",
+  "Data extraction", "", "",
+  "Risk of bias (quality) assessment", "", "",
+  "Data analysis", "", ""
 )
 
 knitr::kable(challenge, caption = "Review Stage")
@@ -106,7 +106,7 @@ Give the organizational affiliations of each member of the review team.
 
 ```{r team, echo=FALSE}
 challenge <- dplyr::tribble(
-  ~Title, ~`First Name`, ~`Last Name`, ~Affiliation, 
+  ~Title, ~`First Name`, ~`Last Name`, ~Affiliation,
   "Reserach lead", "", "", "",
   "SR mentee", "", "", "",
   "Content researcher (Reviewer 1)", "", "", "",
@@ -135,7 +135,7 @@ Give the name, affiliation and role of any individuals or organisations who are 
 
 ```{r collaborators, echo=FALSE}
 challenge <- dplyr::tribble(
-  ~Title, ~`First Name`, ~`Last Name`, ~Affiliation, 
+  ~Title, ~`First Name`, ~`Last Name`, ~Affiliation,
   "", "", "", "",
   "", "", "", "",
   "", "", "", "",

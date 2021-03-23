@@ -1,13 +1,20 @@
 ---
 title: "Research Protocol"
 author: "Francisco Bischoff"
-bibliography: references.bibtex
+editor_options:
+  markdown:
+    mode: markdown
+bibliography: references.bib
+link-citations: true
 csl: https://raw.githubusercontent.com/citation-style-language/styles/master/american-medical-association.csl
 output:
   pdf_document: 
     toc: yes
     toc_depth: 2
     number_sections: yes
+  github_document:
+    toc: true
+    toc_depth: 2
   html_notebook: 
     toc: true
     toc_depth: 2
@@ -15,9 +22,6 @@ output:
     fig_width: 10
     fig_height: 5
     number_sections: yes
-  github_document:
-    toc: true
-    toc_depth: 2
 ---
 
 ```{r setup, echo = FALSE}
@@ -35,6 +39,8 @@ print_duration <- function(start, end) {
 ```
 
 Last Updated: `r lubridate::now("UTC")` UTC
+
+<!-- -*- mode: gfm; extensions: +tex_math_dollars+raw_tex -*- -->
 
 # Identification of the project
 
@@ -109,7 +115,9 @@ Pulseless electrical activity is a frequent condition in cardiac arrest but cann
 They used as score the following formula:
 
 <center>
-  <img src="https://render.githubusercontent.com/render/math?math=%5Chuge%20Score%3D%5Cfrac%7BTP%2BTN%7D%7BTP%2BTN%2BFP%2B5%20%2A%20FN%7D">
+
+<img src="https://render.githubusercontent.com/render/math?math=%5Chuge%20Score%3D%5Cfrac%7BTP%2BTN%7D%7BTP%2BTN%2BFP%2B5%20%2A%20FN%7D"/>
+
 </center>
 
 <br/>
@@ -119,11 +127,11 @@ The five-best scores (for real-time) in this challenge were:
 ```{r scores, echo=FALSE}
 challenge <- tribble(
   ~Score, ~Authors,
-   81.39, "Filip Plesinger, Petr Klimes, Josef Halamek, Pavel Jurak",
-   79.44, "Vignesh Kalidas",
-   79.02, "Paula Couto, Ruben Ramalho, Rui Rodrigues",
-   76.11, "Sibylle Fallet, Sasan Yazdani, Jean-Marc Vesin",
-   75.55, "Christoph Hoog Antink, Steffen Leonhardt"
+  81.39, "Filip Plesinger, Petr Klimes, Josef Halamek, Pavel Jurak",
+  79.44, "Vignesh Kalidas",
+  79.02, "Paula Couto, Ruben Ramalho, Rui Rodrigues",
+  76.11, "Sibylle Fallet, Sasan Yazdani, Jean-Marc Vesin",
+  75.55, "Christoph Hoog Antink, Steffen Leonhardt"
 )
 
 knitr::kable(challenge, caption = "Challenge Results")
@@ -141,7 +149,7 @@ A broad search will be conducted on Pubmed, Scopus, Google Scholar, device manua
 Keywords:
 
 -   ECG AND monitoring AND ICU
--   ECG AND [time series]
+-   ECG AND \[time series\]
 -   ECG AND automatic AND interpretation
 
 Articles published after "The PhysioNet/Computing in Cardiology Challenge 2015: Reducing False Arrhythmia Alarms in the ICU", will also be analyzed.

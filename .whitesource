@@ -1,4 +1,7 @@
 {
+  "generalSettings": {
+    "shouldScanRepo": true
+  },
   "checkRunSettings": {
     "vulnerableCheckRunConclusionLevel": "failure"
   },

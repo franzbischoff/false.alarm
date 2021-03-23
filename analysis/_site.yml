@@ -1,0 +1,29 @@
+name: "false.alarm"
+output_dir: ../docs
+navbar:
+  title: "false.alarm"
+  left:
+  - text: Home
+    href: index.html
+  - text: About
+    href: about.html
+  - text: License
+    href: license.html
+  - text: Thesis
+    href: thesis/index.html
+  - icon: fa fa-github
+    text: Source
+    href: https://github.com/franzbischoff/false.alarm
+  right:
+  - icon: fab fa-twitter
+    href: https://twitter.com/intent/tweet?text=Detecting%20life-threatening%20patterns%20in%20Point-of-care%20ECG%20using%20efficient%20memory%20and%20processor%20power&url=https%3A%2F%2Ffranzbischoff.github.io%2Ffalse.alarm%2F&hashtags=rmarkdown,bookdown
+  - icon: fa fa-facebook
+    href: https://www.facebook.com/sharer/sharer.php?u=https%3A%2F%2Ffranzbischoff.github.io%2Ffalse.alarm%2F
+  - icon: fa fa-share-alt
+    href: https://www.facebook.com/sharer/sharer.php?u=https%3A%2F%2Ffranzbischoff.github.io%2Ffalse.alarm%2F
+output:
+  workflowr::wflow_html:
+    toc: yes
+    toc_float: yes
+    theme: lumen
+    highlight: textmate

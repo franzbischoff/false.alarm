@@ -1,0 +1,20 @@
+---
+title: "License"
+author: "Francisco Bischoff"
+date: "on July 22, 2020"
+output:
+  workflowr::wflow_html:
+    toc: false
+editor_options:
+  chunk_output_type: console
+---
+
+<center>
+
+![Creative Commons License](https://i.creativecommons.org/l/by-nc-sa/4.0/88x31.png)
+
+</center>
+
+This work is licensed under the Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International License.
+
+To view a copy of this license, visit <http://creativecommons.org/licenses/by-nc-sa/4.0/>.
