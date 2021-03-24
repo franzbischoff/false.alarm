@@ -130,4 +130,4 @@ jobs:
           git add --all -- ':!renv'
           git commit -am "Update current branch"
           git branch
-          git checkout develop
+          git checkout origin/develop
