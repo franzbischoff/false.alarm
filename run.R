@@ -11,6 +11,11 @@ if (dir.exists(here("inst/extdata"))) {
   # Uncomment to run targets in parallel
   # on local processes or a Sun Grid Engine cluster.
   # targets::tar_make_clustermq(workers = 2L)
+
+  network <- tar_visnetwork(TRUE, label = c("time", "size", "branches"))
+  saveRDS(network, file = here("output/network.rds"))
+  rm(network)
+
 } else {
   stop("Error installing dataset.")
 }
