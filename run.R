@@ -1,5 +1,5 @@
 # pull data from the internet
-if (!dir.exists(here("inst/extdata"))) {
+if (!dir.exists(here("inst/extdata/physionet"))) {
   download.file("https://bit.ly/39aaZl3", method = "libcurl", destfile = here("inst/data.zip"))
   unzip(here("inst/data.zip"), exdir = here("inst"), setTimes = TRUE, overwrite = FALSE)
   file.remove(here("inst/data.zip"))

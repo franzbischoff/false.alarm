@@ -73,6 +73,7 @@ workspace.RData
 # Targets
 /_targets/*
 .targets-files
+.targets-runs
 
 # Workflowr
 .DS_Store
