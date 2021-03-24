@@ -129,4 +129,5 @@ jobs:
           rm -r _targets
           git add --all -- ':!renv'
           git commit -am "Update current branch"
-          git push origin develop
+          git branch
+          git checkout develop
