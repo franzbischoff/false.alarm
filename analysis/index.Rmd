@@ -10,13 +10,19 @@ editor_options:
   chunk_output_type: console
 ---
 
-```{r setup, message=FALSE, warning=FALSE, include=FALSE}
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
 library(here)
+library(visNetwork)
 ```
 
 <!-- badges init -->
 
 [![minimal R version](https://img.shields.io/badge/R%3E=-3.6.2-brightgreen.svg)](https://cran.r-project.org/) [![Licence](https://mirrors.creativecommons.org/presskit/buttons/80x15/svg/by-nc-sa.svg)](http://creativecommons.org/licenses/by-nc-sa/4.0/)
+
+Dataset hosted by:
+
+[![](https://zenodo.org/badge/DOI/10.5281/zenodo.4634014.svg)](https://doi.org/10.5281/zenodo.4634014)
 
 <!-- badges end -->
 
@@ -29,17 +35,18 @@ It is build joining three frameworks:
 -   [targets](https://docs.ropensci.org/targets/), a [Make](https://www.gnu.org/software/make/)-like pipeline toolkit for Statistics and data science in R. It supersedes [drake](https://books.ropensci.org/drake/) package. This allows to keep track of every step of the data science workflow and helps to understand what needs to be rebuild and what has not changed since last iteration. Every complete analysis shall be registered by one entry in the previous package ([workflowr](https://jdblischak.github.io/workflowr/))
 -   [thesisdown](https://ismayc.github.io/thesisdown_book/), inspired by the package [bookdown](https://github.com/rstudio/bookdown), and helps to write the thesis in rmarkdown that is easily compiled in PDF, Doc, EPUB, and allows to change the theme/format for several universities/journals.
 
-```{r fig, message=FALSE, warning=FALSE, include=FALSE}
+```{r movefig, message=FALSE, warning=FALSE, include=FALSE}
 dir.create(here("docs/images"), showWarnings = FALSE)
 file.copy(here("analysis/workflowr.png"), here("docs/images/workflowr.png"), overwrite = TRUE)
 ```
 
-Use the big button above  to navigate thorough the older commits.
+Use the big button above ![](images/workflowr.png) to navigate thorough the older commits.
 
 Use the top menu for further information and the thesis itself.
 
 Last Targets Run network:
 
-```{r network, message=FALSE, warning=FALSE, echo=FALSE}
-readRDS(here("output/network.rds"))
+```{r network, echo=FALSE, fig.width=10}
+network <- readRDS(here("output/network.rds"))
+visInteraction(network, hover = TRUE, multiselect = TRUE, tooltipDelay = 0)
 ```

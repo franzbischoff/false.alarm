@@ -1,8 +1,9 @@
 # pull data from the internet
 if (!dir.exists(here("inst/extdata/physionet"))) {
-  download.file("https://bit.ly/39aaZl3", method = "libcurl", destfile = here("inst/data.zip"))
-  unzip(here("inst/data.zip"), exdir = here("inst"), setTimes = TRUE, overwrite = FALSE)
-  file.remove(here("inst/data.zip"))
+  dir.create(here("inst/extdata"), recursive = TRUE, showWarnings = FALSE)
+  download.file("https://zenodo.org/record/4634014/files/physionet.zip?download=1", method = "libcurl", destfile = here("inst/extdata/data.zip"))
+  unzip(here("inst/extdata/data.zip"), exdir = here("inst/extdata"), setTimes = TRUE, overwrite = FALSE)
+  file.remove(here("inst/extdata/data.zip"))
 }
 
 if (dir.exists(here("inst/extdata"))) {
@@ -13,8 +14,13 @@ if (dir.exists(here("inst/extdata"))) {
   # targets::tar_make_clustermq(workers = 2L)
 
   network <- tar_visnetwork(TRUE, label = c("time", "size", "branches"))
+  tips <- stringr::str_split_fixed(network$x$nodes$label, pattern = "\n", n = 2)[, 2]
+  tips <- stringr::str_replace_all(tips, "\n", "<br />")
+  network$x$nodes$title <- tips
+  network$x$nodes$label <- network$x$nodes$name
   saveRDS(network, file = here("output/network.rds"))
   rm(network)
+  rm(tips)
 
 } else {
   stop("Error installing dataset.")
