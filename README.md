@@ -2,16 +2,18 @@ Detecting life-threatening patterns in Point-of-care ECG using efficient
 memory and processor power.
 ================
 Francisco Bischoff
-on March 04, 2021
+on March 24, 2021
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
-<!-- badges: start --> 
+
+<!-- badges: start -->
 
 ![Binder](https://github.com/franzbischoff/false.alarm/workflows/Binder/badge.svg)
 [![Launch
 binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/franzbischoff/false.alarm/master?urlpath=rstudio)
 [![Read
 Thesis](https://img.shields.io/badge/read-thesis__down-brightgreen)](https://franzbischoff.github.io/false.alarm/)
+[![](https://zenodo.org/badge/261530912.svg)](https://zenodo.org/badge/latestdoi/261530912)
 
 <!-- badges: end -->
 
@@ -75,56 +77,56 @@ accessible, interoperable, reusable*
 
 ### Research Data Management
 
--   [**RDM
+  - [**RDM
     checklist**](http://www.dcc.ac.uk/sites/default/files/documents/resource/DMP/DMP_Checklist_2013.pdf)<sup>[5](#ref-dcc_2013)</sup>
--   Anticipate **data products** as part of your thesis **outputs**
--   Think about what technologies to use
+  - Anticipate **data products** as part of your thesis **outputs**
+  - Think about what technologies to use
 
 ### Missing values are a fact of life
 
--   Usually, best solution is to **leave blank**
--   **`NA`** or **`NULL`** are also good options
--   **NEVER use `0`**. Avoid numbers like **`-999`**
--   Don’t make up your own code for missing values
+  - Usually, best solution is to **leave blank**
+  - **`NA`** or **`NULL`** are also good options
+  - **NEVER use `0`**. Avoid numbers like **`-999`**
+  - Don’t make up your own code for missing values
 
 ### Raw data are sacrosanct
 
--   Don’t, not even with a barge pole, not for one second, touch or
+  - Don’t, not even with a barge pole, not for one second, touch or
     otherwise edit the raw data files. Do any manipulations in script
 
 ### Three principles for good (file) names
 
 #### Machine readable
 
--   Regular expression and globbing friendly
+  - Regular expression and globbing friendly
+    
+      - Avoid spaces, punctuation, accented characters, case sensitivity
 
-    -   Avoid spaces, punctuation, accented characters, case sensitivity
-
--   Easy to compute on
-
-    -   Deliberate use of delimiters
-
-    -   Deliberate use of `"-"` and `"_"` allows recovery of metadata
+  - Easy to compute on
+    
+      - Deliberate use of delimiters
+    
+      - Deliberate use of `"-"` and `"_"` allows recovery of metadata
         from the filenames:
-
-        -   `"_"` underscore used to delimit units of metadata I want to
+        
+          - `"_"` underscore used to delimit units of metadata I want to
             access later
-
-        -   `"-"` hyphen used to delimit words so our eyes don’t bleed
+        
+          - `"-"` hyphen used to delimit words so our eyes don’t bleed
 
 #### Human readable
 
--   Borrowing the concept from
+  - Borrowing the concept from
     [slugs](https://en.wikipedia.org/wiki/Clean_URL#Slug) from semantic
     URLs
 
 #### Play well with default ordering
 
--   Put something numeric first
+  - Put something numeric first
 
--   Use the ISO 8601 standard for dates
+  - Use the ISO 8601 standard for dates
 
--   Left pad other numbers with zeros
+  - Left pad other numbers with zeros
 
 # License
 
@@ -149,51 +151,45 @@ License](https://creativecommons.org/licenses/by-nc-sa/4.0/).
 
 # References
 
-<div id="refs" class="references csl-bib-body">
+<div id="refs" class="references">
 
-<div id="ref-Clifford2015" class="csl-entry">
+<div id="ref-Clifford2015">
 
-<span class="csl-left-margin">1. </span><span
-class="csl-right-inline">Clifford GD, Silva I, Moody B, et al. The
-PhysioNet/computing in cardiology challenge 2015: Reducing false
-arrhythmia alarms in the ICU. In: *Computing in Cardiology*.; 2015.
-doi:[10.1109/cic.2015.7408639](https://doi.org/10.1109/cic.2015.7408639)</span>
-
-</div>
-
-<div id="ref-Bischoff2019a" class="csl-entry">
-
-<span class="csl-left-margin">2. </span><span
-class="csl-right-inline">Bischoff F, Rodrigues PP. Tsmp: An r package
-for time series with matrix profile. Published online April 2019.
-doi:[10.13140/rg.2.2.13040.30726](https://doi.org/10.13140/rg.2.2.13040.30726)</span>
+1\. Clifford GD, Silva I, Moody B, et al. The physionet/computing in
+cardiology challenge 2015: Reducing false arrhythmia alarms in the icu.
+In: *Computing in Cardiology*.; 2015.
+doi:[10.1109/cic.2015.7408639](https://doi.org/10.1109/cic.2015.7408639)
 
 </div>
 
-<div id="ref-VanBenschoten2020" class="csl-entry">
+<div id="ref-Bischoff2019a">
 
-<span class="csl-left-margin">3. </span><span
-class="csl-right-inline">Van Benschoten A, Ouyang A, Bischoff F, Marrs
-T. MPA: A novel cross-language API for time series analysis. *Journal of
-Open Source Software*. 2020;5(49):2179.
-doi:[10.21105/joss.02179](https://doi.org/10.21105/joss.02179)</span>
+2\. Bischoff F, Rodrigues PP. Tsmp: An r package for time series with
+matrix profile. Published online April 2019.
+doi:[10.13140/rg.2.2.13040.30726](https://doi.org/10.13140/rg.2.2.13040.30726)
 
 </div>
 
-<div id="ref-krystalli_2019" class="csl-entry">
+<div id="ref-VanBenschoten2020">
 
-<span class="csl-left-margin">4. </span><span
-class="csl-right-inline">Krystalli A. *R for Reproducible Research*.
-Published online 2019. <https://annakrystalli.me/rrresearch/></span>
+3\. Van Benschoten A, Ouyang A, Bischoff F, Marrs T. MPA: A novel
+cross-language api for time series analysis. *Journal of Open Source
+Software*. 2020;5(49):2179.
+doi:[10.21105/joss.02179](https://doi.org/10.21105/joss.02179)
 
 </div>
 
-<div id="ref-dcc_2013" class="csl-entry">
+<div id="ref-krystalli_2019">
 
-<span class="csl-left-margin">5. </span><span
-class="csl-right-inline">Centre EDC. Checklist for a data management
-plan. v.4.0. Published 2013.
-<http://www.dcc.ac.uk/resources/data-management-plans></span>
+4\. Krystalli A. *R for Reproducible Research*. Published online 2019.
+<https://annakrystalli.me/rrresearch/>
+
+</div>
+
+<div id="ref-dcc_2013">
+
+5\. Centre EDC. Checklist for a data management plan. V.4.0. Published
+2013. <http://www.dcc.ac.uk/resources/data-management-plans>
 
 </div>
 

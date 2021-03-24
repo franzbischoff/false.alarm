@@ -16,13 +16,13 @@ output: github_document
 ```{r, include = FALSE}
 knitr::opts_chunk$set(
   collapse = TRUE,
-  comment = "#>" 
+  comment = "#>"
 )
 ```
 
 <!-- badges: start -->
 
-![Binder](https://github.com/franzbischoff/false.alarm/workflows/Binder/badge.svg) [![Launch binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/franzbischoff/false.alarm/master?urlpath=rstudio) [![Read Thesis](https://img.shields.io/badge/read-thesis__down-brightgreen)](https://franzbischoff.github.io/false.alarm/)
+![Binder](https://github.com/franzbischoff/false.alarm/workflows/Binder/badge.svg) [![Launch binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/franzbischoff/false.alarm/master?urlpath=rstudio) [![Read Thesis](https://img.shields.io/badge/read-thesis__down-brightgreen)](https://franzbischoff.github.io/false.alarm/) [![](https://zenodo.org/badge/261530912.svg)](https://zenodo.org/badge/latestdoi/261530912)
 
 <!-- badges: end -->
 
