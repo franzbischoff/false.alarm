@@ -32,6 +32,10 @@
 <script src="site_libs/navigation-1.1/tabsets.js"></script>
 <link href="site_libs/highlightjs-9.12.0/textmate.css" rel="stylesheet" />
 <script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
+<script src="site_libs/htmlwidgets-1.5.3/htmlwidgets.js"></script>
+<link href="site_libs/vis-4.20.1/vis.css" rel="stylesheet" />
+<script src="site_libs/vis-4.20.1/vis.min.js"></script>
+<script src="site_libs/visNetwork-binding-2.0.9/visNetwork.js"></script>
 <link href="site_libs/font-awesome-5.1.0/css/all.css" rel="stylesheet" />
 <link href="site_libs/font-awesome-5.1.0/css/v4-shims.css" rel="stylesheet" />
 
@@ -417,16 +421,16 @@ This reproducible <a href="http://rmarkdown.rstudio.com">R Markdown</a> analysis
 <div class="panel panel-default">
 <div class="panel-heading">
 <p class="panel-title">
-<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomfranzbischofffalsealarmtreeecef47eaf8e91bae9d24fc5e6c3eb55e43b6315dtargetblankecef47ea"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Repository version:</strong> <a href="https://github.com/franzbischoff/false.alarm/tree/ecef47eaf8e91bae9d24fc5e6c3eb55e43b6315d" target="_blank">ecef47e</a> </a>
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomfranzbischofffalsealarmtreeeb5a33f7bfcc323ec11d0bbd08626ccabcda31e6targetblankeb5a33fa"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Repository version:</strong> <a href="https://github.com/franzbischoff/false.alarm/tree/eb5a33f7bfcc323ec11d0bbd08626ccabcda31e6" target="_blank">eb5a33f</a> </a>
 </p>
 </div>
-<div id="strongRepositoryversionstrongahrefhttpsgithubcomfranzbischofffalsealarmtreeecef47eaf8e91bae9d24fc5e6c3eb55e43b6315dtargetblankecef47ea" class="panel-collapse collapse">
+<div id="strongRepositoryversionstrongahrefhttpsgithubcomfranzbischofffalsealarmtreeeb5a33f7bfcc323ec11d0bbd08626ccabcda31e6targetblankeb5a33fa" class="panel-collapse collapse">
 <div class="panel-body">
 <p>
 Great! You are using Git for version control. Tracking code development and connecting the code version to the results is critical for reproducibility.
 </p>
 <p>
-The results in this page were generated with repository version <a href="https://github.com/franzbischoff/false.alarm/tree/ecef47eaf8e91bae9d24fc5e6c3eb55e43b6315d" target="_blank">ecef47e</a>. See the <em>Past versions</em> tab to see a history of the changes made to the R Markdown and HTML files.
+The results in this page were generated with repository version <a href="https://github.com/franzbischoff/false.alarm/tree/eb5a33f7bfcc323ec11d0bbd08626ccabcda31e6" target="_blank">eb5a33f</a>. See the <em>Past versions</em> tab to see a history of the changes made to the R Markdown and HTML files.
 </p>
 <p>
 Note that you need to be careful to ensure that all relevant files for the analysis have been committed to Git prior to generating the results (you can use <code>wflow_publish</code> or <code>wflow_git_commit</code>). workflowr only checks the R Markdown file, but you know if there are other scripts or data files that it depends on. Below is the status of the Git repository when the results were generated:
@@ -473,6 +477,40 @@ Message
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+Rmd
+</td>
+<td>
+<a href="https://github.com/franzbischoff/false.alarm/blob/b869025107e353ad227834e0bdde496db13b5c66/analysis/index.Rmd" target="_blank">b869025</a>
+</td>
+<td>
+Francisco Bischoff
+</td>
+<td>
+2021-03-24
+</td>
+<td>
+targets and workflowr
+</td>
+</tr>
+<tr>
+<td>
+html
+</td>
+<td>
+<a href="https://rawcdn.githack.com/franzbischoff/false.alarm/52e7f0b7b022544dd3dafc2a8f8cdf5951fb0f54/docs/index.html" target="_blank">52e7f0b</a>
+</td>
+<td>
+GitHub Actions
+</td>
+<td>
+2021-03-24
+</td>
+<td>
+Build site.
+</td>
+</tr>
 <tr>
 <td>
 Rmd
@@ -567,6 +605,8 @@ gh-pages placeholder
 </div>
 <!-- badges init -->
 <p><a href="https://cran.r-project.org/"><img src="https://img.shields.io/badge/R%3E=-3.6.2-brightgreen.svg" alt="minimal R version" /></a> <a href="http://creativecommons.org/licenses/by-nc-sa/4.0/"><img src="https://mirrors.creativecommons.org/presskit/buttons/80x15/svg/by-nc-sa.svg" alt="Licence" /></a></p>
+<p>Dataset hosted by:</p>
+<p><a href="https://doi.org/10.5281/zenodo.4634014"><img src="https://zenodo.org/badge/DOI/10.5281/zenodo.4634014.svg" /></a></p>
 <!-- badges end -->
 <div id="tldr" class="section level2">
 <h2>TLDR;</h2>
@@ -576,367 +616,11 @@ gh-pages placeholder
 <li><a href="https://docs.ropensci.org/targets/">targets</a>, a <a href="https://www.gnu.org/software/make/">Make</a>-like pipeline toolkit for Statistics and data science in R. It supersedes <a href="https://books.ropensci.org/drake/">drake</a> package. This allows to keep track of every step of the data science workflow and helps to understand what needs to be rebuild and what has not changed since last iteration. Every complete analysis shall be registered by one entry in the previous package (<a href="https://jdblischak.github.io/workflowr/">workflowr</a>)</li>
 <li><a href="https://ismayc.github.io/thesisdown_book/">thesisdown</a>, inspired by the package <a href="https://github.com/rstudio/bookdown">bookdown</a>, and helps to write the thesis in rmarkdown that is easily compiled in PDF, Doc, EPUB, and allows to change the theme/format for several universities/journals.</li>
 </ul>
-<p>Use the big button above to navigate thorough the older commits.</p>
+<p>Use the big button above <img src="images/workflowr.png" /> to navigate thorough the older commits.</p>
 <p>Use the top menu for further information and the thesis itself.</p>
 <p>Last Targets Run network:</p>
-<pre><code>$x
-$x$nodes
-                name    type   status seconds     bytes branches
-1         file_paths pattern uptodate   0.001      2606       12
-2   file_paths_files    stem uptodate   0.001       131       NA
-3          idxs_0.75 pattern uptodate   0.002       883        5
-4           idxs_0.8 pattern uptodate   0.004       880        5
-5    idxs_batch_0.75    stem uptodate   0.000        96       NA
-6     idxs_batch_0.8    stem uptodate   0.000        96       NA
-7         model_0.75 pattern uptodate   0.002       230        5
-8          model_0.8 pattern uptodate   0.000       230        5
-9       results_0.75 pattern uptodate   0.001       260        5
-10       results_0.8 pattern uptodate   0.001       260        5
-11     test_set_0.75 pattern uptodate   0.001  47603390        5
-12      test_set_0.8 pattern uptodate   0.001  43357898        5
-13 training_set_0.75 pattern uptodate   0.003 139687873        5
-14  training_set_0.8 pattern uptodate   0.002 143914330        5
-15     whole_dataset pattern uptodate   0.906  10580544       12
-16  whole_dataset_mp pattern uptodate 197.791  37434291       12
-                  id
-1         file_paths
-2   file_paths_files
-3          idxs_0.75
-4           idxs_0.8
-5    idxs_batch_0.75
-6     idxs_batch_0.8
-7         model_0.75
-8          model_0.8
-9       results_0.75
-10       results_0.8
-11     test_set_0.75
-12      test_set_0.8
-13 training_set_0.75
-14  training_set_0.8
-15     whole_dataset
-16  whole_dataset_mp
-                                                             label level
-1          file_paths\n0.001 seconds\n2.606 kilobytes\n12 branches     2
-2                     file_paths_files\n0.001 seconds\n131 bytes\n     1
-3                  idxs_0.75\n0.002 seconds\n883 bytes\n5 branches     5
-4                   idxs_0.8\n0.004 seconds\n880 bytes\n5 branches     5
-5                           idxs_batch_0.75\n0 seconds\n96 bytes\n     1
-6                            idxs_batch_0.8\n0 seconds\n96 bytes\n     1
-7                 model_0.75\n0.002 seconds\n230 bytes\n5 branches     7
-8                      model_0.8\n0 seconds\n230 bytes\n5 branches     7
-9               results_0.75\n0.001 seconds\n260 bytes\n5 branches     8
-10               results_0.8\n0.001 seconds\n260 bytes\n5 branches     8
-11      test_set_0.75\n0.001 seconds\n47.603 megabytes\n5 branches     6
-12       test_set_0.8\n0.001 seconds\n43.358 megabytes\n5 branches     6
-13 training_set_0.75\n0.003 seconds\n139.688 megabytes\n5 branches     6
-14  training_set_0.8\n0.002 seconds\n143.914 megabytes\n5 branches     6
-15     whole_dataset\n0.906 seconds\n10.581 megabytes\n12 branches     3
-16  whole_dataset_mp\n3.297 minutes\n37.434 megabytes\n12 branches     4
-     color  shape
-1  #354823 square
-2  #354823    dot
-3  #354823 square
-4  #354823 square
-5  #354823    dot
-6  #354823    dot
-7  #354823 square
-8  #354823 square
-9  #354823 square
-10 #354823 square
-11 #354823 square
-12 #354823 square
-13 #354823 square
-14 #354823 square
-15 #354823 square
-16 #354823 square
-
-$x$edges
-                 from                to arrows
-4    file_paths_files        file_paths     to
-90    idxs_batch_0.75         idxs_0.75     to
-93   whole_dataset_mp         idxs_0.75     to
-139          idxs_0.8      test_set_0.8     to
-140  whole_dataset_mp      test_set_0.8     to
-145         idxs_0.75     test_set_0.75     to
-146  whole_dataset_mp     test_set_0.75     to
-169        file_paths     whole_dataset     to
-175         idxs_0.75 training_set_0.75     to
-176  whole_dataset_mp training_set_0.75     to
-214     whole_dataset  whole_dataset_mp     to
-257  training_set_0.8         model_0.8     to
-301        model_0.75      results_0.75     to
-303     test_set_0.75      results_0.75     to
-326 training_set_0.75        model_0.75     to
-377          idxs_0.8  training_set_0.8     to
-378  whole_dataset_mp  training_set_0.8     to
-380         model_0.8       results_0.8     to
-382      test_set_0.8       results_0.8     to
-391    idxs_batch_0.8          idxs_0.8     to
-394  whole_dataset_mp          idxs_0.8     to
-
-$x$nodesToDataframe
-[1] TRUE
-
-$x$edgesToDataframe
-[1] TRUE
-
-$x$options
-$x$options$width
-[1] &quot;100%&quot;
-
-$x$options$height
-[1] &quot;100%&quot;
-
-$x$options$nodes
-$x$options$nodes$shape
-[1] &quot;dot&quot;
-
-$x$options$nodes$physics
-[1] FALSE
-
-
-$x$options$manipulation
-$x$options$manipulation$enabled
-[1] FALSE
-
-
-$x$options$edges
-$x$options$edges$smooth
-$x$options$edges$smooth$type
-[1] &quot;cubicBezier&quot;
-
-$x$options$edges$smooth$forceDirection
-[1] &quot;horizontal&quot;
-
-
-
-$x$options$physics
-$x$options$physics$stabilization
-[1] FALSE
-
-
-$x$options$layout
-$x$options$layout$hierarchical
-$x$options$layout$hierarchical$enabled
-[1] TRUE
-
-$x$options$layout$hierarchical$direction
-[1] &quot;LR&quot;
-
-
-
-
-$x$groups
-NULL
-
-$x$width
-NULL
-
-$x$height
-NULL
-
-$x$idselection
-$x$idselection$enabled
-[1] FALSE
-
-$x$idselection$style
-[1] &quot;width: 150px; height: 26px&quot;
-
-$x$idselection$useLabels
-[1] TRUE
-
-$x$idselection$main
-[1] &quot;Select by id&quot;
-
-
-$x$byselection
-$x$byselection$enabled
-[1] FALSE
-
-$x$byselection$style
-[1] &quot;width: 150px; height: 26px&quot;
-
-$x$byselection$multiple
-[1] FALSE
-
-$x$byselection$hideColor
-[1] &quot;rgba(200,200,200,0.5)&quot;
-
-$x$byselection$highlight
-[1] FALSE
-
-
-$x$main
-$x$main$text
-[1] &quot;&quot;
-
-$x$main$style
-[1] &quot;font-family:Georgia, Times New Roman, Times, serif;font-weight:bold;font-size:20px;text-align:center;&quot;
-
-
-$x$submain
-NULL
-
-$x$footer
-NULL
-
-$x$background
-[1] &quot;rgba(0, 0, 0, 0)&quot;
-
-$x$highlight
-$x$highlight$enabled
-[1] FALSE
-
-$x$highlight$hoverNearest
-[1] FALSE
-
-$x$highlight$degree
-[1] 1
-
-$x$highlight$algorithm
-[1] &quot;all&quot;
-
-$x$highlight$hideColor
-[1] &quot;rgba(200,200,200,0.5)&quot;
-
-$x$highlight$labelOnly
-[1] TRUE
-
-
-$x$collapse
-$x$collapse$enabled
-[1] TRUE
-
-$x$collapse$fit
-[1] FALSE
-
-$x$collapse$resetHighlight
-[1] TRUE
-
-$x$collapse$clusterOptions
-NULL
-
-$x$collapse$keepCoord
-[1] TRUE
-
-$x$collapse$labelSuffix
-[1] &quot;(cluster)&quot;
-
-
-$x$legend
-$x$legend$width
-[1] 0.2
-
-$x$legend$useGroups
-[1] FALSE
-
-$x$legend$position
-[1] &quot;right&quot;
-
-$x$legend$ncol
-[1] 1
-
-$x$legend$stepX
-[1] 100
-
-$x$legend$stepY
-[1] 100
-
-$x$legend$zoom
-[1] TRUE
-
-$x$legend$nodes
-       label   color  shape
-1 Up to date #354823    dot
-2    Pattern #899DA4 square
-3       Stem #899DA4    dot
-
-$x$legend$nodesToDataframe
-[1] TRUE
-
-
-
-$width
-NULL
-
-$height
-NULL
-
-$sizingPolicy
-$sizingPolicy$defaultWidth
-NULL
-
-$sizingPolicy$defaultHeight
-NULL
-
-$sizingPolicy$padding
-NULL
-
-$sizingPolicy$viewer
-$sizingPolicy$viewer$defaultWidth
-NULL
-
-$sizingPolicy$viewer$defaultHeight
-NULL
-
-$sizingPolicy$viewer$padding
-NULL
-
-$sizingPolicy$viewer$fill
-[1] TRUE
-
-$sizingPolicy$viewer$suppress
-[1] FALSE
-
-$sizingPolicy$viewer$paneHeight
-NULL
-
-
-$sizingPolicy$browser
-$sizingPolicy$browser$defaultWidth
-NULL
-
-$sizingPolicy$browser$defaultHeight
-NULL
-
-$sizingPolicy$browser$padding
-NULL
-
-$sizingPolicy$browser$fill
-[1] FALSE
-
-$sizingPolicy$browser$external
-[1] FALSE
-
-
-$sizingPolicy$knitr
-$sizingPolicy$knitr$defaultWidth
-NULL
-
-$sizingPolicy$knitr$defaultHeight
-NULL
-
-$sizingPolicy$knitr$figure
-[1] TRUE
-
-
-
-$dependencies
-NULL
-
-$elementId
-NULL
-
-$preRenderHook
-NULL
-
-$jsHooks
-list()
-
-attr(,&quot;class&quot;)
-[1] &quot;visNetwork&quot; &quot;htmlwidget&quot;
-attr(,&quot;package&quot;)
-[1] &quot;visNetwork&quot;</code></pre>
+<div id="htmlwidget-24512ae3b9d6a760b942" style="width:960px;height:480px;" class="visNetwork html-widget"></div>
+<script type="application/json" data-for="htmlwidget-24512ae3b9d6a760b942">{"x":{"nodes":{"name":["file_paths","file_paths_files","idxs_0.75","idxs_0.8","idxs_batch_0.75","idxs_batch_0.8","model_0.75","model_0.8","results_0.75","results_0.8","test_set_0.75","test_set_0.8","training_set_0.75","training_set_0.8","whole_dataset","whole_dataset_mp"],"type":["pattern","stem","pattern","pattern","stem","stem","pattern","pattern","pattern","pattern","pattern","pattern","pattern","pattern","pattern","pattern"],"status":["uptodate","uptodate","uptodate","uptodate","uptodate","uptodate","uptodate","uptodate","uptodate","uptodate","uptodate","uptodate","uptodate","uptodate","uptodate","uptodate"],"seconds":[0.001,0.001,0.002,0.004,0,0,0.002,0,0.001,0.001,0.001,0.001,0.003,0.002,0.906,197.791],"bytes":[2606,131,883,880,96,96,230,230,260,260,47603390,43357898,139687873,143914330,10580544,37434291],"branches":[12,null,5,5,null,null,5,5,5,5,5,5,5,5,12,12],"id":["file_paths","file_paths_files","idxs_0.75","idxs_0.8","idxs_batch_0.75","idxs_batch_0.8","model_0.75","model_0.8","results_0.75","results_0.8","test_set_0.75","test_set_0.8","training_set_0.75","training_set_0.8","whole_dataset","whole_dataset_mp"],"label":["file_paths","file_paths_files","idxs_0.75","idxs_0.8","idxs_batch_0.75","idxs_batch_0.8","model_0.75","model_0.8","results_0.75","results_0.8","test_set_0.75","test_set_0.8","training_set_0.75","training_set_0.8","whole_dataset","whole_dataset_mp"],"level":[2,1,5,5,1,1,7,7,8,8,6,6,6,6,3,4],"color":["#354823","#354823","#354823","#354823","#354823","#354823","#354823","#354823","#354823","#354823","#354823","#354823","#354823","#354823","#354823","#354823"],"shape":["square","dot","square","square","dot","dot","square","square","square","square","square","square","square","square","square","square"],"title":["0.001 seconds<br />2.606 kilobytes<br />12 branches","0.001 seconds<br />131 bytes<br />","0.002 seconds<br />883 bytes<br />5 branches","0.004 seconds<br />880 bytes<br />5 branches","0 seconds<br />96 bytes<br />","0 seconds<br />96 bytes<br />","0.002 seconds<br />230 bytes<br />5 branches","0 seconds<br />230 bytes<br />5 branches","0.001 seconds<br />260 bytes<br />5 branches","0.001 seconds<br />260 bytes<br />5 branches","0.001 seconds<br />47.603 megabytes<br />5 branches","0.001 seconds<br />43.358 megabytes<br />5 branches","0.003 seconds<br />139.688 megabytes<br />5 branches","0.002 seconds<br />143.914 megabytes<br />5 branches","0.906 seconds<br />10.581 megabytes<br />12 branches","3.297 minutes<br />37.434 megabytes<br />12 branches"]},"edges":{"from":["file_paths_files","idxs_batch_0.75","whole_dataset_mp","idxs_0.8","whole_dataset_mp","idxs_0.75","whole_dataset_mp","file_paths","idxs_0.75","whole_dataset_mp","whole_dataset","training_set_0.8","model_0.75","test_set_0.75","training_set_0.75","idxs_0.8","whole_dataset_mp","model_0.8","test_set_0.8","idxs_batch_0.8","whole_dataset_mp"],"to":["file_paths","idxs_0.75","idxs_0.75","test_set_0.8","test_set_0.8","test_set_0.75","test_set_0.75","whole_dataset","training_set_0.75","training_set_0.75","whole_dataset_mp","model_0.8","results_0.75","results_0.75","model_0.75","training_set_0.8","training_set_0.8","results_0.8","results_0.8","idxs_0.8","idxs_0.8"],"arrows":["to","to","to","to","to","to","to","to","to","to","to","to","to","to","to","to","to","to","to","to","to"]},"nodesToDataframe":true,"edgesToDataframe":true,"options":{"width":"100%","height":"100%","nodes":{"shape":"dot","physics":false},"manipulation":{"enabled":false},"edges":{"smooth":{"type":"cubicBezier","forceDirection":"horizontal"}},"physics":{"stabilization":false},"layout":{"hierarchical":{"enabled":true,"direction":"LR"}},"interaction":{"hover":true,"multiselect":true,"tooltipDelay":0}},"groups":null,"width":null,"height":null,"idselection":{"enabled":false,"style":"width: 150px; height: 26px","useLabels":true,"main":"Select by id"},"byselection":{"enabled":false,"style":"width: 150px; height: 26px","multiple":false,"hideColor":"rgba(200,200,200,0.5)","highlight":false},"main":{"text":"","style":"font-family:Georgia, Times New Roman, Times, serif;font-weight:bold;font-size:20px;text-align:center;"},"submain":null,"footer":null,"background":"rgba(0, 0, 0, 0)","highlight":{"enabled":false,"hoverNearest":false,"degree":1,"algorithm":"all","hideColor":"rgba(200,200,200,0.5)","labelOnly":true},"collapse":{"enabled":true,"fit":false,"resetHighlight":true,"clusterOptions":null,"keepCoord":true,"labelSuffix":"(cluster)"},"legend":{"width":0.2,"useGroups":false,"position":"right","ncol":1,"stepX":100,"stepY":100,"zoom":true,"nodes":{"label":["Up to date","Pattern","Stem"],"color":["#354823","#899DA4","#899DA4"],"shape":["dot","square","dot"]},"nodesToDataframe":true},"tooltipStay":300,"tooltipStyle":"position: fixed;visibility:hidden;padding: 5px;white-space: nowrap;font-family: verdana;font-size:14px;font-color:#000000;background-color: #f5f4ed;-moz-border-radius: 3px;-webkit-border-radius: 3px;border-radius: 3px;border: 1px solid #808074;box-shadow: 3px 3px 10px rgba(0, 0, 0, 0.2);"},"evals":[],"jsHooks":[]}</script>
 <br>
 <p>
 <button type="button" class="btn btn-default btn-workflowr btn-workflowr-sessioninfo" data-toggle="collapse" data-target="#workflowr-sessioninfo" style="display: block;">
@@ -944,7 +628,6 @@ attr(,&quot;package&quot;)
 </button>
 </p>
 <div id="workflowr-sessioninfo" class="collapse">
-<pre class="r"><code>sessionInfo()</code></pre>
 <pre><code>R version 4.0.4 (2021-02-15)
 Platform: x86_64-pc-linux-gnu (64-bit)
 Running under: Ubuntu 20.04.2 LTS
@@ -963,7 +646,8 @@ attached base packages:
 [1] stats     graphics  grDevices datasets  utils     methods   base     
 
 other attached packages:
-[1] tarchetypes_0.1.0 targets_0.2.0     workflowr_1.6.2   here_1.0.1       
+[1] visNetwork_2.0.9  tarchetypes_0.1.0 targets_0.2.0     workflowr_1.6.2  
+[5] here_1.0.1       
 
 loaded via a namespace (and not attached):
  [1] Rcpp_1.0.6        git2r_0.28.0      jquerylib_0.1.3   bslib_0.2.4      
@@ -971,14 +655,14 @@ loaded via a namespace (and not attached):
  [9] digest_0.6.27     jsonlite_1.7.2    evaluate_0.14     lifecycle_1.0.0  
 [13] tibble_3.1.0      debugme_1.1.0     pkgconfig_2.0.3   rlang_0.4.10     
 [17] igraph_1.2.6      cli_2.3.1         yaml_2.2.1        xfun_0.22        
-[21] stringr_1.4.0     withr_2.4.1       knitr_1.31        sass_0.3.1       
-[25] fs_1.5.0          vctrs_0.3.6       rprojroot_2.0.2   tidyselect_1.1.0 
-[29] glue_1.4.2        data.table_1.14.0 R6_2.5.0          processx_3.4.5   
-[33] fansi_0.4.2       rmarkdown_2.7.4   whisker_0.4       callr_3.5.1      
-[37] purrr_0.3.4       magrittr_2.0.1    promises_1.2.0.1  ps_1.6.0         
-[41] codetools_0.2-18  ellipsis_0.3.1    htmltools_0.5.1.1 assertthat_0.2.1 
-[45] renv_0.13.0       httpuv_1.5.5      utf8_1.2.1        stringi_1.5.3    
-[49] crayon_1.4.1     </code></pre>
+[21] stringr_1.4.0     withr_2.4.1       knitr_1.31        htmlwidgets_1.5.3
+[25] sass_0.3.1        fs_1.5.0          vctrs_0.3.6       rprojroot_2.0.2  
+[29] tidyselect_1.1.0  glue_1.4.2        data.table_1.14.0 R6_2.5.0         
+[33] processx_3.4.5    fansi_0.4.2       rmarkdown_2.7.4   whisker_0.4      
+[37] callr_3.5.1       purrr_0.3.4       magrittr_2.0.1    promises_1.2.0.1 
+[41] ps_1.6.0          codetools_0.2-18  ellipsis_0.3.1    htmltools_0.5.1.1
+[45] assertthat_0.2.1  renv_0.13.0       httpuv_1.5.5      utf8_1.2.1       
+[49] stringi_1.5.3     crayon_1.4.1     </code></pre>
 </div>
 </div>
 
