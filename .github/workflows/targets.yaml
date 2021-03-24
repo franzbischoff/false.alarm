@@ -106,6 +106,8 @@ jobs:
 
       - name: Update the current repository without the objects
         run: |
+          git config --local user.name "GitHub Actions"
+          git config --local user.email "actions@github.com"
           git add --all -- ':!renv'
           git commit -am "Update current branch"
 
