@@ -1,6 +1,6 @@
 # pull data from the internet
 if (!dir.exists(here("inst/extdata"))) {
-  download.file("https://bit.ly/3lCrrzu", method = "libcurl", destfile = here("inst/data.zip"))
+  download.file("https://bit.ly/39aaZl3", method = "libcurl", destfile = here("inst/data.zip"))
   unzip(here("inst/data.zip"), exdir = here("inst"), setTimes = TRUE, overwrite = FALSE)
   file.remove(here("inst/data.zip"))
 }
@@ -15,8 +15,7 @@ if (dir.exists(here("inst/extdata"))) {
   stop("Error installing dataset.")
 }
 
-
 # remove data before commit results
-if (dir.exists(here("inst/extdata"))) {
-  unlink(here("inst/extdata"), recursive = TRUE, force = TRUE)
-}
+# if (dir.exists(here("inst/extdata"))) {
+#   unlink(here("inst/extdata"), recursive = TRUE, force = TRUE)
+# }

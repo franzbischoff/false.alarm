@@ -5,8 +5,7 @@ on:
     workflows:
       - Targets
     branches:
-      - main
-      - master
+      - develop
     types:
       - completed
 
@@ -25,6 +24,9 @@ jobs:
         uses: actions/checkout@v2
         with:
           fetch-depth: 0 ## all history
+          ref: ${{ github.event.workflow_run.head_branch }}
+
+      - run: git branch
 
       - name: Install System dependencies
         run: |
@@ -66,7 +68,7 @@ jobs:
 
       - name: Stage thesisdown changes
         run: |
-          git add -A .
+          git add --all -- ':!renv'
 
       - name: Build workflowr that creates the commit
         run: workflowr::wflow_publish(all = TRUE, update = TRUE, verbose = TRUE)

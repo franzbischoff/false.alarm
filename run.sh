@@ -1,2 +1,3 @@
+#!/bin/bash
 # module load R # for clusters
-nohup R CMD BATCH run.R &
+Rscript -e "source('run.R')"

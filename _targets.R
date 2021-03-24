@@ -27,7 +27,7 @@ list(
     #### Read files from directory ----
     tar_files_input(
       file_paths,
-      head(find_all_files(), 11),
+      head(find_all_files(), 12),
       # batches = 2,
       # Use vector for filenames
       # iteration = "vector"

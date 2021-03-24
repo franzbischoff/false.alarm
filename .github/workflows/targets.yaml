@@ -79,12 +79,11 @@ jobs:
         run: git ls-remote --exit-code --heads origin targets-runs
         continue-on-error: true
 
-      - name: Checkout previous run
+      - name: Checking out shallow previous run
         if: steps.runs-exist.outcome == 'success'
         uses: actions/checkout@v2
         with:
           ref: targets-runs
-          fetch-depth: 1
           path: .targets-runs
 
       - name: Restore output files from the previous run
@@ -116,15 +115,18 @@ jobs:
           mv .targets-runs/.git .
           rm -r .targets-runs
 
-      - name: Upload latest run
+      - name: Upload latest run to the runs branch
         run: |
           git config --local user.name "GitHub Actions"
           git config --local user.email "actions@github.com"
-          rm .gitignore
           git add --all -- ':!renv'
-          for file in $(git ls-files -mo --exclude=renv)
-          do
-            git add $file
-          done
+          git add -f _targets
           git commit -am "Run pipeline"
           git push origin targets-runs
+
+      - name: Update the current repository without the objects
+        run: |
+          rm -r _targets
+          git add --all -- ':!renv'
+          git commit -am "Update current branch"
+          git push

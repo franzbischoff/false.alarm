@@ -1,4 +1,8 @@
 # nolint start
+if (.Platform$OS.type == "windows") {
+  Sys.setenv(LC_CTYPE="C")
+}
+
 source("renv/activate.R")
 
 if (Sys.getenv("CI") == "") { # not CI
