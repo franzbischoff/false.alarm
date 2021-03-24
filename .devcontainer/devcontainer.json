@@ -1,0 +1,118 @@
+// For format details, see https://aka.ms/devcontainer.json. For config options, see the README at:
+// https://github.com/microsoft/vscode-dev-containers/tree/v0.188.0/containers/ubuntu
+{
+  "name": "false.alarm dev",
+  "dockerFile": "Dockerfile",
+  // "image": "franzbischoff/false.alarm:latest",
+  "runArgs": [
+    "-e",
+    "GIT_EDITOR=code",
+    "-e",
+    "DOCKER_BUILDKIT=1",
+    "--privileged"
+  ],
+  "containerEnv": {
+    "WORKSPACE_DIRECTORY": "${containerWorkspaceFolder}",
+    "NOT_CRAN": "true",
+    "DEBUGME": "R_GlobalEnv",
+    "PROFFER_PPROF_BIN": "/home/docker/go/pkg/tool/linux_amd64/pprof",
+    "PROFFER_GO_BIN": "/home/docker/go/bin/go",
+    "PROFFER_GRAPHVIZ_BIN": "/usr/bin/dot"
+  },
+  // Set *default* container specific settings.json values on container create.
+  "settings": {
+    "cSpell.allowCompoundWords": true,
+    "cSpell.ignorePaths": [
+      "**/package-lock.json",
+      "**/node_modules/**",
+      "**/vscode-extension/**",
+      "**/.git/objects/**",
+      ".vscode",
+      ".vscode-insiders",
+      "**/.devcontainer/**"
+    ],
+    "terminal.integrated.defaultProfile.linux": "zsh",
+    // "terminal.integrated.allowWorkspaceConfiguration": true,
+    "terminal.integrated.profiles.linux": {
+      "zsh": {
+        "path": "/bin/zsh"
+      }
+    },
+    "terminal.integrated.scrollback": 10000,
+    "terminal.integrated.tabs.enabled": true,
+    "terminal.integrated.tabs.focusMode": "singleClick",
+    "r.alwaysUseActiveTerminal": true,
+    "r.rpath.linux": "/usr/bin/R",
+    "r.rterm.linux": "/usr/bin/R",
+    "r.sessionWatcher": true,
+    "r.debugger.trackTerminals": true,
+    "terminal.integrated.environmentChangesIndicator": "on",
+    "testExplorer.onReload": "retire",
+    "testExplorer.onStart": "retire",
+    "RTestAdapter.RscriptPath": "/usr/bin/Rscript"
+  },
+  // Add the IDs of extensions you want installed when the container is created.
+  "extensions": [
+    "affenwiesel.matlab-formatter",
+    "alefragnani.bookmarks",
+    "alefragnani.project-manager",
+    "apommel.matlab-interactive-terminal",
+    "bibhasdn.unique-lines",
+    "bramvanbilsen.matlab-code-run",
+    "christian-kohler.path-intellisense",
+    "ms-vscode-remote.remote-wsl-recommender",
+    "codezombiech.gitignore",
+    "cschleiden.vscode-github-actions",
+    "davidanson.vscode-markdownlint",
+    "donjayamanne.git-extension-pack",
+    "editorconfig.editorconfig",
+    "esbenp.prettier-vscode",
+    "foxundermoon.shell-format",
+    "gabrielgrinberg.auto-run-command",
+    "gerane.theme-twilight",
+    "gimly81.matlab",
+    "github.vscode-pull-request-github",
+    "gruntfuggly.todo-tree",
+    "guyutongxue.cpp-reference",
+    "hbenl.vscode-test-explorer",
+    "ikuyadeu.r",
+    "james-yu.latex-workshop",
+    "lacroixdavid1.vscode-format-context-menu",
+    "lukas-tr.materialdesignicons-intellisense",
+    "me-dutour-mathieu.vscode-github-actions",
+    "meakbiyik.vscode-r-test-adapter",
+    "mindaro-dev.file-downloader",
+    "ms-azuretools.vscode-docker",
+    "ms-vscode.cpptools",
+    "ms-vscode.makefile-tools",
+    "mutantdino.resourcemonitor",
+    "natqe.reload",
+    "nhoizey.gremlins",
+    "pkief.material-icon-theme",
+    "randomfractalsinc.vscode-data-preview",
+    "rdebugger.r-debugger",
+    "redhat.vscode-yaml",
+    "richie5um2.vscode-sort-json",
+    "spmeesseman.vscode-taskexplorer",
+    "spywhere.guides",
+    "streetsidesoftware.code-spell-checker",
+    "streetsidesoftware.code-spell-checker-medical-terms",
+    "streetsidesoftware.code-spell-checker-portuguese",
+    "tht13.html-preview-vscode",
+    "timonwong.shellcheck",
+    "tyriar.sort-lines",
+    "visualstudioexptteam.vscodeintellicode",
+    "yzhang.markdown-all-in-one",
+    "wdhongtw.gpg-indicator"
+  ],
+  // Use 'forwardPorts' to make a list of ports inside the container available locally.
+  // "forwardPorts": [],
+  // Use 'postCreateCommand' to run commands after the container is created.
+  "postCreateCommand": "uname -a",
+  // Comment out connect as root instead. More info: https://aka.ms/vscode-remote/containers/non-root.
+  "remoteUser": "docker",
+  // "containerUser": "docker",
+  "shutdownAction": "stopContainer",
+  "postStartCommand": "echo postStartCommand",
+  "postAttachCommand": "echo postAttachCommand"
+}

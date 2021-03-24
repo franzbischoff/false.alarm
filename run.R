@@ -1,26 +1,66 @@
 # pull data from the internet
-if (!dir.exists(here("inst/extdata/physionet"))) {
-  download.file("https://bit.ly/39aaZl3", method = "libcurl", destfile = here("inst/data.zip"))
-  unzip(here("inst/data.zip"), exdir = here("inst"), setTimes = TRUE, overwrite = FALSE)
-  file.remove(here("inst/data.zip"))
+if (!dir.exists(here::here("inst/extdata/physionet"))) {
+  dir.create(here::here("inst/extdata"), recursive = TRUE, showWarnings = FALSE)
+  download.file("https://zenodo.org/record/4634014/files/physionet.zip?download=1", method = "libcurl", destfile = here::here("inst/extdata/data.zip"))
+  unzip(here::here("inst/extdata/data.zip"), exdir = here::here("inst/extdata"), setTimes = TRUE, overwrite = FALSE)
+  file.remove(here::here("inst/extdata/data.zip"))
 }
 
-if (dir.exists(here("inst/extdata"))) {
+if (dir.exists(here::here("inst/extdata"))) {
+  if (isTRUE(as.logical(Sys.getenv("CI")))) {
+    Rcpp::compileAttributes()
+    renv::install(".")
+    targets::tar_prune()
+  } else {
+    tryCatch(
+      {
+        pkg_date <- packageDate("false.alarm")
+        files_r <- paste0(here::here("R"), "/", list.files(here::here("R"), pattern = "*.R"))
+        files_cpp <- paste0(here::here("R"), "/", list.files(here::here("src"), pattern = "*.cpp"))
+        files_h <- paste0(here::here("R"), "/", list.files(here::here("src"), pattern = "*.h"))
+        files <- c(files_r, files_cpp, files_h)
+        changed <- na.omit(files[as.Date(file.mtime(files)) > (pkg_date)])
+
+        if (length(changed) > 0) {
+          message("false.alarm is outdated, trying to automatically resolve this.")
+          Rcpp::compileAttributes()
+          renv::install(".")
+        }
+        rm("pkg_date", "files_r", "files_cpp", "files_h", "files", "changed")
+      },
+      error = function(e) {
+        message("false.alarm is not installed, trying to automatically resolve this.")
+        Rcpp::compileAttributes()
+        renv::install(".")
+      },
+      finally = {
+        message("done.")
+      }
+    )
+
+    targets::tar_watch(targets_only = TRUE, outdated = FALSE, label = c("time", "branches", "size"))
+  }
+
   # Uncomment to run targets sequentially on your local machine.
-  targets::tar_make()
+  # targets::tar_make()
   # Uncomment to run targets in parallel
+  targets::tar_make_future(workers = 4L)
   # on local processes or a Sun Grid Engine cluster.
   # targets::tar_make_clustermq(workers = 2L)
 
-  network <- tar_visnetwork(TRUE, label = c("time", "size", "branches"))
-  saveRDS(network, file = here("output/network.rds"))
+  network <- targets::tar_visnetwork(TRUE, label = c("time", "size", "branches"))
+  tips <- stringr::str_split_fixed(network$x$nodes$label, pattern = "\n", n = 2)[, 2]
+  tips <- stringr::str_replace_all(tips, "\n", "<br />")
+  network$x$nodes$title <- tips
+  network$x$nodes$label <- network$x$nodes$name
+  saveRDS(network, file = here::here("output/network.rds"))
   rm(network)
-
+  rm(tips)
 } else {
   stop("Error installing dataset.")
 }
 
 # remove data before commit results
-# if (dir.exists(here("inst/extdata"))) {
-#   unlink(here("inst/extdata"), recursive = TRUE, force = TRUE)
+# if (dir.exists(here::here("inst/extdata"))) {
+#   unlink(here::here("inst/extdata"), recursive = TRUE, force = TRUE)
 # }

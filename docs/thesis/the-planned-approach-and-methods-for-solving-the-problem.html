@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+<head>
+
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <title>3 The planned approach and methods for solving the problem | Detecting life-threatening patterns in Point-of-care ECG using efficient memory and processor power</title>
+  <meta name="description" content="3 The planned approach and methods for solving the problem | Detecting life-threatening patterns in Point-of-care ECG using efficient memory and processor power" />
+  <meta name="generator" content="bookdown 0.22.12 and GitBook 2.6.7" />
+
+  <meta property="og:title" content="3 The planned approach and methods for solving the problem | Detecting life-threatening patterns in Point-of-care ECG using efficient memory and processor power" />
+  <meta property="og:type" content="book" />
+  
+  
+  
+  <meta name="github-repo" content="franzbischoff/false.alarm" />
+
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="3 The planned approach and methods for solving the problem | Detecting life-threatening patterns in Point-of-care ECG using efficient memory and processor power" />
+  
+  
+  
+
+<meta name="author" content="Francisco Bischoff" />
+
+
+
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+  
+  <link rel="shortcut icon" href="favicon.ico" type="image/x-icon" />
+<link rel="prev" href="related-works.html"/>
+<link rel="next" href="whatever.html"/>
+<script src="libs/jquery-2.2.3/jquery.min.js"></script>
+<link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-table.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-bookdown.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-highlight.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-search.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-fontsettings.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-clipboard.css" rel="stylesheet" />
+
+
+
+
+
+
+
+
+
+<script src="libs/accessible-code-block-0.0.1/empty-anchor.js"></script>
+<link href="libs/anchor-sections-1.0.1/anchor-sections.css" rel="stylesheet" />
+<script src="libs/anchor-sections-1.0.1/anchor-sections.js"></script>
+<script src="libs/kePrint-0.0.1/kePrint.js"></script>
+<link href="libs/lightable-0.0.1/lightable.css" rel="stylesheet" />
+
+
+
+
+</head>
+
+<body>
+
+
+
+  <div class="book without-animation with-summary font-size-2 font-family-1" data-basepath=".">
+
+    <div class="book-summary">
+      <nav role="navigation">
+
+<ul class="summary">
+<li><a href='https://franzbischoff.github.io/false.alarm/'>Back to the workflow</a></li>
+<li class="divider"></li>
+<li class="chapter" data-level="" data-path="index.html"><a href="index.html"><i class="fa fa-check"></i>Preliminary Content</a><ul>
+<li class="chapter" data-level="" data-path="index.html"><a href="index.html#acknowledgements"><i class="fa fa-check"></i>Acknowledgements</a></li>
+<li class="chapter" data-level="" data-path="index.html"><a href="index.html#preface"><i class="fa fa-check"></i>Preface</a></li>
+<li class="chapter" data-level="" data-path="index.html"><a href="index.html#dedication"><i class="fa fa-check"></i>Dedication</a></li>
+<li class="chapter" data-level="" data-path="index.html"><a href="index.html#abstract"><i class="fa fa-check"></i>Abstract</a></li>
+</ul></li>
+<li class="chapter" data-level="" data-path="introduction.html"><a href="introduction.html"><i class="fa fa-check"></i>Introduction</a></li>
+<li class="chapter" data-level="1" data-path="objectives-and-the-research-question.html"><a href="objectives-and-the-research-question.html"><i class="fa fa-check"></i><b>1</b> Objectives and the research question</a></li>
+<li class="chapter" data-level="2" data-path="related-works.html"><a href="related-works.html"><i class="fa fa-check"></i><b>2</b> Related Works</a></li>
+<li class="chapter" data-level="3" data-path="the-planned-approach-and-methods-for-solving-the-problem.html"><a href="the-planned-approach-and-methods-for-solving-the-problem.html"><i class="fa fa-check"></i><b>3</b> The planned approach and methods for solving the problem</a><ul>
+<li class="chapter" data-level="3.1" data-path="the-planned-approach-and-methods-for-solving-the-problem.html"><a href="the-planned-approach-and-methods-for-solving-the-problem.html#state-of-the-art"><i class="fa fa-check"></i><b>3.1</b> State of the art</a></li>
+<li class="chapter" data-level="3.2" data-path="the-planned-approach-and-methods-for-solving-the-problem.html"><a href="the-planned-approach-and-methods-for-solving-the-problem.html#research-plan-and-methods"><i class="fa fa-check"></i><b>3.2</b> Research plan and methods</a><ul>
+<li class="chapter" data-level="3.2.1" data-path="the-planned-approach-and-methods-for-solving-the-problem.html"><a href="the-planned-approach-and-methods-for-solving-the-problem.html#type-of-study"><i class="fa fa-check"></i><b>3.2.1</b> Type of study</a></li>
+<li class="chapter" data-level="3.2.2" data-path="the-planned-approach-and-methods-for-solving-the-problem.html"><a href="the-planned-approach-and-methods-for-solving-the-problem.html#the-data"><i class="fa fa-check"></i><b>3.2.2</b> The data</a></li>
+<li class="chapter" data-level="3.2.3" data-path="the-planned-approach-and-methods-for-solving-the-problem.html"><a href="the-planned-approach-and-methods-for-solving-the-problem.html#workflow"><i class="fa fa-check"></i><b>3.2.3</b> Workflow</a></li>
+<li class="chapter" data-level="3.2.4" data-path="the-planned-approach-and-methods-for-solving-the-problem.html"><a href="the-planned-approach-and-methods-for-solving-the-problem.html#statistical-analysis"><i class="fa fa-check"></i><b>3.2.4</b> Statistical analysis</a></li>
+<li class="chapter" data-level="3.2.5" data-path="the-planned-approach-and-methods-for-solving-the-problem.html"><a href="the-planned-approach-and-methods-for-solving-the-problem.html#research-team"><i class="fa fa-check"></i><b>3.2.5</b> Research Team</a></li>
+</ul></li>
+<li class="chapter" data-level="3.3" data-path="the-planned-approach-and-methods-for-solving-the-problem.html"><a href="the-planned-approach-and-methods-for-solving-the-problem.html#expected-results-and-outcomes"><i class="fa fa-check"></i><b>3.3</b> Expected results and outcomes</a></li>
+</ul></li>
+<li class="chapter" data-level="4" data-path="whatever.html"><a href="whatever.html"><i class="fa fa-check"></i><b>4</b> Whatever</a></li>
+<li class="chapter" data-level="" data-path="references.html"><a href="references.html"><i class="fa fa-check"></i>References</a></li>
+</ul>
+
+      </nav>
+    </div>
+
+    <div class="book-body">
+      <div class="body-inner">
+        <div class="book-header" role="navigation">
+          <h1>
+            <i class="fa fa-circle-o-notch fa-spin"></i><a href="./">Detecting life-threatening patterns in Point-of-care ECG using efficient memory and processor power</a>
+          </h1>
+        </div>
+
+        <div class="page-wrapper" tabindex="-1" role="main">
+          <div class="page-inner">
+
+            <section class="normal" id="section-">
+<div id="the-planned-approach-and-methods-for-solving-the-problem" class="section level1">
+<h1><span class="header-section-number">3</span> The planned approach and methods for solving the problem</h1>
+<div id="state-of-the-art" class="section level2">
+<h2><span class="header-section-number">3.1</span> State of the art</h2>
+<p>A literature review of the last ten years is being conducted to assess state of the art for ECG automatic processing
+collecting the following points if available : (1) The memory and space used to perform the primary goal of the
+algorithm (sound an alarm, for ex.). (2) The type of algorithms used to identify ECG anomalies. (3) The type of
+algorithms used to identify specific diagnoses (like a flutter, hyperkalemia, and others). (4) Their performance
+(accuracy, ROC, etc.)</p>
+<p>A broad search will be conducted on Pubmed, Scopus, Google Scholar, device manuals, and other specific sources.</p>
+<p>Keywords:</p>
+<ul>
+<li>ECG AND monitoring AND ICU</li>
+<li>ECG AND[time series]</li>
+<li>ECG AND automatic AND interpretation</li>
+</ul>
+<p>Articles published after “The PhysioNet/Computing in Cardiology Challenge 2015: Reducing False Arrhythmia Alarms in the
+ICU” will also be analyzed.</p>
+</div>
+<div id="research-plan-and-methods" class="section level2">
+<h2><span class="header-section-number">3.2</span> Research plan and methods</h2>
+<p>This research is being conducted using the Research Compendium principles<span class="citation"><sup><a href="references.html#ref-compendium2019" role="doc-biblioref">15</a></sup></span>:</p>
+<ol style="list-style-type: decimal">
+<li>Stick with the convention of your peers;</li>
+<li>Keep data, methods, and output separated;</li>
+<li>Specify your computational environment as clearly as you can.</li>
+</ol>
+<p>Data management is following the FAIR principle (findable, accessible, interoperable, reusable)<span class="citation"><sup><a href="references.html#ref-wilkinson2016" role="doc-biblioref">16</a></sup></span>.</p>
+<p>Currently, the dataset used is stored on a public repository<span class="citation"><sup><a href="references.html#ref-franz_dataset" role="doc-biblioref">17</a></sup></span>, the source code is publicly open and
+stored on Github<span class="citation"><sup><a href="references.html#ref-franz_github" role="doc-biblioref">18</a></sup></span>, while the reports and reproducibility information on each step is found on a public
+website<span class="citation"><sup><a href="references.html#ref-franz_website" role="doc-biblioref">19</a></sup></span>.</p>
+<div id="type-of-study" class="section level3">
+<h3><span class="header-section-number">3.2.1</span> Type of study</h3>
+<p>This thesis will be a diagnostic study as the algorithm must classify the change in pattern as positive or negative for
+life-threatening.</p>
+</div>
+<div id="the-data" class="section level3">
+<h3><span class="header-section-number">3.2.2</span> The data</h3>
+<p>Initially we will use the CinC/Physionet Challenge 2015 dataset that is publicly available on Physionet. This dataset is
+a good start for exploring the main goal of reduce false alarms. This dataset was manually selected for this challenge
+and the events were labeled by experts, so it is not RAW data. All signals have been resampled (using anti-alias
+filters) to 12 bit, 250 Hz and have had FIR bandpass [0.05 to 40Hz] and mains notch filters applied to remove noise.
+Pacemaker and other artifacts may be present on the ECG<span class="citation"><sup><a href="references.html#ref-Clifford2015" role="doc-biblioref">6</a></sup></span>. Furthermore, this dataset contains at least two
+ECG derivations and one or more variables like arterial blood pressure, photoplethysmograph readings, and respiration
+movements.</p>
+<p>These variables may or may not be helpful for increasing the sensitivity or specificity of the algorithm. It is planned
+to use the minimum set of variables as it is known in multi-dimensional analysis that using just two (or some small
+subset) of all the dimensions can be much more accurate than either using all dimensions or a single
+dimension<span class="citation"><sup><a href="references.html#ref-gharghabi2018" role="doc-biblioref">20</a></sup></span>.</p>
+<p>It is desirable that real data extracted from Portuguese ICU could be used in further stage to assess the validity of
+the model in real settings and robustness (using RAW data instead of filtered data). The variables available on
+Physionet’s dataset are commonly available on Portuguese ICU’s.</p>
+</div>
+<div id="workflow" class="section level3">
+<h3><span class="header-section-number">3.2.3</span> Workflow</h3>
+<p>All steps of the process will be managed using the R package <code>targets</code><span class="citation"><sup><a href="references.html#ref-landau2021" role="doc-biblioref">21</a></sup></span> from data extraction to the final
+report, as shown in Fig. .</p>
+<p>The report will then be available on the main webpage<span class="citation"><sup><a href="references.html#ref-franz_website" role="doc-biblioref">19</a></sup></span>, allowing inspection of previous versions managed
+by the R package <code>workflowr</code><span class="citation"><sup><a href="references.html#ref-workflowr2021" role="doc-biblioref">22</a></sup></span>, as we can see in Fig. .</p>
+</div>
+<div id="statistical-analysis" class="section level3">
+<h3><span class="header-section-number">3.2.4</span> Statistical analysis</h3>
+<p>The Statistical analysis will be performed using R language v4.0.5 or greater and it will be computed the ROC curve for
+the algorithm.</p>
+<p>The experiment will be conducted using the Matrix Profile concept<span class="citation"><sup><a href="references.html#ref-yeh2016" role="doc-biblioref">23</a></sup></span>, the state-of-the-art for time series
+analysis. It will be conducted several experiments to identify the best algorithm for this task. One of such algorithms
+is the online semantic segmentation for multi-dimensional time series<span class="citation"><sup><a href="references.html#ref-gharghabi2018" role="doc-biblioref">20</a></sup></span>.</p>
+<p>In addition, we will combine the fading factors<span class="citation"><sup><a href="references.html#ref-Gama2013" role="doc-biblioref">24</a>,<a href="references.html#ref-Rodrigues2010" role="doc-biblioref">25</a></sup></span> strategy to minimize the memory and space
+consumption lowering the processor power needed, allowing this algorithm to be used in almost any device.</p>
+</div>
+<div id="research-team" class="section level3">
+<h3><span class="header-section-number">3.2.5</span> Research Team</h3>
+<ul>
+<li>Thesis Author: Francisco Bischoff</li>
+<li>Supervisor: Professor Pedro Pereira Rodrigues</li>
+<li>Co-supervisor: Professor Eamonn Keogh (UCR, Riverside)</li>
+</ul>
+</div>
+</div>
+<div id="expected-results-and-outcomes" class="section level2">
+<h2><span class="header-section-number">3.3</span> Expected results and outcomes</h2>
+<p>We expect the following results: (1) Identify the obstacles of identifying life-threatening ECG changes within memory,
+space, and CPU constraints. (2) Be able to reduce ECG monitor’s false alarms using the proposed methodology. (3) Assess
+the feasibility of implementing the algorithm in the real world and other settings than ICU monitors.</p>
+<p>And outcomes: (1) To achieve a better score of false alarm reduction than the best on Physionet’s 2015 challenge. (2) To
+push forward the state-of-the-art technology on false alarms reduction, maybe even being domain agnostic. (3) To draw
+more attention to fading factors as a reliable, fast, and cheap approximation of the true value. (4) To draw more
+attention to the matrix profile concept as an efficient, agnostic, and almost parameter-free way to analyze time series.
+(5) To draw more attention of the Patient Monitorization industry on solving the false alarm problem.</p>
+</div>
+</div>
+            </section>
+
+          </div>
+        </div>
+      </div>
+<a href="related-works.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
+<a href="whatever.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
+    </div>
+  </div>
+<script src="libs/gitbook-2.6.7/js/app.min.js"></script>
+<script src="libs/gitbook-2.6.7/js/lunr.js"></script>
+<script src="libs/gitbook-2.6.7/js/clipboard.min.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-search.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-sharing.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-fontsettings.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-bookdown.js"></script>
+<script src="libs/gitbook-2.6.7/js/jquery.highlight.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-clipboard.js"></script>
+<script>
+gitbook.require(["gitbook"], function(gitbook) {
+gitbook.start({
+"sharing": {
+"github": true,
+"facebook": true,
+"twitter": true,
+"linkedin": false,
+"weibo": false,
+"instapaper": false,
+"vk": false,
+"whatsapp": false,
+"all": ["facebook", "twitter", "linkedin", "github", "whatsapp", "instapaper", "weibo", "vk"]
+},
+"fontsettings": {
+"theme": "white",
+"family": "sans",
+"size": 2
+},
+"edit": {
+"link": null,
+"text": null
+},
+"history": {
+"link": null,
+"text": null
+},
+"view": {
+"link": null,
+"text": null
+},
+"download": [["thesis.pdf", "PDF"], ["thesis.epub", "EPUB"], ["thesis.docx", "Word"]],
+"search": {
+"engine": "lunr",
+"options": null
+},
+"toc": {
+"collapse": "section",
+"scroll_highlight": true
+},
+"info": true
+});
+});
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    var src = "true";
+    if (src === "" || src === "true") src = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML";
+    if (location.protocol !== "file:")
+      if (/^https?:/.test(src))
+        src = src.replace(/^https?:/, '');
+    script.src = src;
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+</body>
+
+</html>

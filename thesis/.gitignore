@@ -1,2 +1,6 @@
 *.log
+*.md
+*.out
+*.synctex.gz
+*.aux
 /_bookdown_files/

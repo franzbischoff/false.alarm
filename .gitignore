@@ -1,5 +1,8 @@
 .Rhistory
+.Renviron
 .Rapp.history
+Pprof.out
+Rprof.out
 
 # Session Data files
 .RData
@@ -27,6 +30,7 @@ vignettes/*.R
 
 # OAuth2 token, see https://github.com/hadley/httr/releases/tag/v0.3
 .httr-oauth
+.gitconfig
 
 # knitr and R markdown default cache directories
 *_cache/
@@ -38,6 +42,9 @@ vignettes/*.R
 
 # VSCode
 #.vscode/
+.vscode/*.log
+.devcontainer/gpg-agent.conf
+.devcontainer/gpg.conf
 
 ### R.Bookdown Stack ###
 # R package: bookdown caching files
@@ -46,6 +53,12 @@ vignettes/*.R
 # End of https://www.gitignore.io/api/r
 
 # Personalized
+_targets/*
+.targets-files
+.targets-runs
+
+#Local history plugin
+.history
 
 # use github-actions to build the webpage
 /pkgdown/
@@ -69,11 +82,9 @@ Rplots.pdf
 /revdep/*.html
 README.html
 workspace.RData
-
-# Targets
-/_targets/*
-.targets-files
-.targets-runs
+/.travis.yml
+/R/RcppExports.R
+/src/RcppExports.cpp
 
 # Workflowr
 .DS_Store
@@ -82,3 +93,8 @@ analysis/*png
 analysis/*html
 analysis/*_cache
 analysis/site_libs
+output/*.svg
+protocol/**/*.pdf
+docs/**/*.svg
+protocol/**/*.svg
+mpxtest.RData

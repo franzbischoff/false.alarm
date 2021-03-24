@@ -23,9 +23,10 @@ PackageRoxygenize: rd,collate,namespace,vignette
 
 QuitChildProcessesOnExit: Yes
 
-MarkdownWrap: Sentence
+MarkdownWrap: Column
+MarkdownWrapAtColumn: 100
 MarkdownReferences: Document
-MarkdownCanonical: Yes
+MarkdownCanonical: No
 
 ZoteroLibraries: "My Library"
 

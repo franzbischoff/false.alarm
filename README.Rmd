@@ -2,13 +2,14 @@
 title: "Detecting life-threatening patterns in Point-of-care ECG using efficient memory and processor power."
 author: "Francisco Bischoff"
 date: "on `r format(Sys.time(), '%B %d, %Y')`"
-bibliography: ./protocol/references.bib
+bibliography: ./papers/references.bib
 link-citations: true
-csl: https://raw.githubusercontent.com/citation-style-language/styles/master/american-medical-association.csl
+csl: ./thesis/csl/ama.csl
 editor_options:
   markdown:
     mode: markdown
 output: github_document
+always_allow_html: true
 ---
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
@@ -18,52 +19,91 @@ knitr::opts_chunk$set(
   collapse = TRUE,
   comment = "#>"
 )
+knitr::opts_knit$set(progress = TRUE, verbose = TRUE)
+suppressPackageStartupMessages(library(tibble))
+suppressPackageStartupMessages(library(kableExtra))
 ```
 
 <!-- badges: start -->
 
-![Binder](https://github.com/franzbischoff/false.alarm/workflows/Binder/badge.svg) [![Launch binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/franzbischoff/false.alarm/master?urlpath=rstudio) [![Read Thesis](https://img.shields.io/badge/read-thesis__down-brightgreen)](https://franzbischoff.github.io/false.alarm/)
+![Binder](https://github.com/franzbischoff/false.alarm/workflows/Binder/badge.svg) [![Launch binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/franzbischoff/false.alarm/master?urlpath=rstudio)
+[![Read Thesis](https://img.shields.io/badge/read-thesis__down-brightgreen)](https://franzbischoff.github.io/false.alarm/)
+[![](https://zenodo.org/badge/261530912.svg)](https://zenodo.org/badge/latestdoi/261530912)
+
+
+[![R-CMD-check](https://github.com/franzbischoff/false.alarm/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/franzbischoff/false.alarm/actions/workflows/R-CMD-check.yaml)
+[![codecov](https://codecov.io/gh/franzbischoff/false.alarm/branch/develop/graph/badge.svg?token=w7AmbwhNvn)](https://codecov.io/gh/franzbischoff/false.alarm)
+[![CodeQL](https://github.com/franzbischoff/false.alarm/actions/workflows/codeql-analysis.yaml/badge.svg?branch=master)](https://github.com/github/codeql-action/)
+[![Language grade: C/C++](https://img.shields.io/lgtm/grade/cpp/g/franzbischoff/false.alarm.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/franzbischoff/false.alarm/context:cpp)
+
 
 <!-- badges: end -->
 
 # Abstract
 
-Currently, Point-of-Care (POC) ECG monitoring works either as plot devices or alarms for abnormal cardiac rhythms using predefined normal trigger ranges.
-On the other hand, full 12-derivation ECG machines are complex to use as simple monitors and are used with strict techniques for formal diagnostics of hearth electric conduction pathologies, and the automatic diagnostics are derived from a full analysis of the 12-dimension data after it is fully collected.
-Both systems do not handle disconnected leads and patient's motions, being strictly necessary to have a good and stable signal to allow proper diagnosis.
+Currently, Point-of-Care (POC) ECG monitoring works either as plot devices or alarms for abnormal cardiac rhythms using
+predefined normal trigger ranges and some rhythm analysis, which raises the problem of false alarms. In comparison,
+complex 12-derivation ECG machines are not suitable to use as simple monitors and are used with strict techniques for
+formal diagnostics. We aim to identify, on streaming data, life-threatening hearth electric patterns to reduce the
+number of false alarms, using low CPU and memory maintaining robustness. The study design is comparable to a diagnostic
+study, where high accuracy is essential. Physionet's 2015 challenge yielded very good algorithms for reducing false
+alarms. However, none of the authors reported benchmarks, memory usage, robustness test, or context invariance that
+could assure its implementation on real monitors to reduce alarm fatigue indeed. We expect to identify the obstacles of
+detecting life-threatening ECG changes within memory, space, and CPU constraints and to reduce ECG monitor's false
+alarms using the proposed methodology, and assess the feasibility of implementing the algorithm in the real world and
+other settings than ICU monitors.
 
-This research aims to identify abnormal hearth electric patterns using streaming data, specifically those who are life-threatening, being a reliable signal for Intensive Care Units to respond quickly to those situations.
+The research team is well experienced in time-series and has studied the Matrix Profile since its beginning, being
+founders of the Matrix Profile Foundation whose goal is to have a concise and stable cross-language API for developing
+with the Matrix Profile technology. [@Bischoff2019a; @VanBenschoten2020]
 
-The study design is comparable to a Diagnostic study, where high accuracy is essential.
-It will use the Physionet datasets[@Clifford2015], and the algorithm will try to minimize the false negatives and false positives.
+# Related Works
 
-The expected result is the concretization of a new method that, besides being accurate, accomplishes this task using state of the art technology for time series analysis that allows minimum space and processor power to solve this problem.
-Also, we expect that fading factors can contribute to the state of the art of this technology.
+The CinC/Physionet Challenge 2015 produced several papers aiming to reduce false alarms on their dataset. On the
+following table it is listed the five life-threatening alarms present in their dataset.
 
-The research team is well experienced in time-series and has studied the Matrix Profile since its beginning, being founders of the Matrix Profile Foundation whose goal is to have a concise and stable cross-language API for developing with the Matrix Profile technology.[@Bischoff2019a; @VanBenschoten2020]
+```{r alarms, echo=FALSE}
+alarms <- tribble(
+  ~Alarm, ~Definition,
+  "Asystole", "No QRS for at least 4 seconds",
+  "Extreme Bradycardia", "Heart rate lower than 40 bpm for 5 consecutive beats",
+  "Extreme Tachycardia", "Heart rate higher than 140 bpm for 17 consecutive beats",
+  "Ventricular Tachycardia", "5 or more ventricular beats with heart rate higher than 100 bpm",
+  "Ventricular Flutter/Fibrillation", "Fibrillatory, flutter, or oscillatory waveform for at least 4 seconds"
+)
+
+kbl(alarms, booktabs = TRUE, caption = "Definition of the 5 alarm types used in CinC/Physionet Challenge 2015 challenge.", align = "ll") %>%
+  kable_styling(full_width = TRUE) %>%
+  column_spec(1, width = "5cm") %>%
+  row_spec(0, bold = TRUE)
+```
 
 # About the ongoing project
 
-The document submitted for approval is [here](https://github.com/franzbischoff/false.alarm/blob/master/protocol/Protocol.pdf).
+The document submitted for approval is
+[here](https://github.com/franzbischoff/false.alarm/blob/master/protocol/Protocol.pdf).
 
-To follow the thesis timeline you can access the full Gantt chart at Zenhub.
-Click [here](https://app.zenhub.com/workspaces/phd-thesis-5eb2ce34f5f30b3aed0a35af/roadmap) (you need a github account, but that's it).
+To follow the thesis timeline you can access the full Gantt chart at Zenhub. Click
+[here](https://app.zenhub.com/workspaces/phd-thesis-5eb2ce34f5f30b3aed0a35af/roadmap) (you need a github account, but
+that's it).
 
 # Reproducible Research[@krystalli_2019]
 
 This thesis will follow the compendium principles:
 
-![](https://annakrystalli.me/rrresearch/assets/reproducible-data-analysis-04.png)
+![](docs/figure/compendium_principles.png)
 
-![](https://annakrystalli.me/rrresearch/assets/reproducible-data-analysis-06.png)
+![](docs/figure/compendium_principles2.png)
 
 ## Following Standards
 
-Aiming to create secure materials that are [FAIR](https://www.nature.com/articles/sdata201618) *findable, accessible, interoperable, reusable*
+Aiming to create secure materials that are [FAIR](https://www.nature.com/articles/sdata201618) *findable, accessible,
+interoperable, reusable*
 
 ### Research Data Management
 
--   [**RDM checklist**](http://www.dcc.ac.uk/sites/default/files/documents/resource/DMP/DMP_Checklist_2013.pdf)[@dcc_2013]
+-   [**RDM
+    checklist**](http://www.dcc.ac.uk/sites/default/files/documents/resource/DMP/DMP_Checklist_2013.pdf)[@dcc_2013]
 -   Anticipate **data products** as part of your thesis **outputs**
 -   Think about what technologies to use
 
@@ -76,7 +116,8 @@ Aiming to create secure materials that are [FAIR](https://www.nature.com/article
 
 ### Raw data are sacrosanct
 
--   Don't, not even with a barge pole, not for one second, touch or otherwise edit the raw data files. Do any manipulations in script
+-   Don't, not even with a barge pole, not for one second, touch or otherwise edit the raw data files. Do an
+    manipulations in script
 
 ### Three principles for good (file) names
 
@@ -112,11 +153,13 @@ Aiming to create secure materials that are [FAIR](https://www.nature.com/article
 
 <center>
 
-[![Creative Commons License](https://i.creativecommons.org/l/by-nc-sa/4.0/88x31.png)](https://creativecommons.org/licenses/by-nc-sa/4.0/)
+[![Creative Commons
+License](https://i.creativecommons.org/l/by-nc-sa/4.0/88x31.png)](https://creativecommons.org/licenses/by-nc-sa/4.0/)
 
 </center>
 
-This work is licensed under a [Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International License](https://creativecommons.org/licenses/by-nc-sa/4.0/).
+This work is licensed under a [Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International
+License](https://creativecommons.org/licenses/by-nc-sa/4.0/).
 
 # Package dependencies
 

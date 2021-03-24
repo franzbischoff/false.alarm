@@ -1,0 +1,5 @@
+libgit2-dev
+libharfbuzz-dev
+libcurl4-openssl-dev
+libfribidi-dev
+libzmq3-dev

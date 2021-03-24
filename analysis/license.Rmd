@@ -9,6 +9,15 @@ editor_options:
   chunk_output_type: console
 ---
 
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+library(here)
+knitr::opts_knit$set(root.dir = here("docs"), base.dir = here("docs"))
+```
+
 <center>
 
 ![Creative Commons License](https://i.creativecommons.org/l/by-nc-sa/4.0/88x31.png)

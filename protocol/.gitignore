@@ -1,0 +1,7 @@
+*.log
+*.md
+*.out
+*.synctex.gz
+*.aux
+*.ris
+*.nbib

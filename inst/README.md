@@ -1,4 +1,3 @@
-
 # README
 
 This folder **'inst/extdata'** is where raw data are stored in R packages. Since packages

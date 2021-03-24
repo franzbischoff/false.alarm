@@ -1,0 +1,107 @@
+% This is samplepaper.tex, a sample chapter demonstrating the
+% LLNCS macro package for Springer Computer Science proceedings;
+% Version 2.20 of 2017/10/04
+%
+\documentclass[runningheads]{llncs}
+%
+\usepackage{array}
+\usepackage{multirow}
+\usepackage{wrapfig}
+\usepackage{float}
+\usepackage{colortbl}
+\usepackage{pdflscape}
+\usepackage{tabu}
+\usepackage{threeparttable}
+\usepackage{threeparttablex}
+\usepackage[normalem]{ulem}
+\usepackage{makecell}
+\usepackage{xcolor}
+\usepackage{longtable}
+\usepackage{booktabs}
+\usepackage{amssymb}
+\usepackage{amsmath}
+\usepackage{graphicx}
+\usepackage[utf8]{inputenc}
+\usepackage[hyphens]{url} % not crucial - just used below for the URL
+\usepackage{hyperref}
+\hypersetup{
+    colorlinks=true,
+    linkcolor=blue,
+    filecolor=blue,
+    urlcolor=blue,
+}
+\providecommand{\tightlist}{%
+  \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
+% Used for displaying a sample figure. If possible, figure files should
+% be included in EPS format.
+
+$if(highlighting-macros)$
+$highlighting-macros$
+$endif$
+
+% Pandoc citation processing
+$if(csl-refs)$
+\newlength{\cslhangindent}
+\setlength{\cslhangindent}{1.5em}
+\newlength{\csllabelwidth}
+\setlength{\csllabelwidth}{3em}
+\newenvironment{CSLReferences}[2] % #1 hanging-ident, #2 entry spacing
+ {% don't indent paragraphs
+  \setlength{\parindent}{0pt}
+  % turn on hanging indent if param 1 is 1
+  \ifodd #1 \everypar{\setlength{\hangindent}{\cslhangindent}}\ignorespaces\fi
+  % set entry spacing
+  \ifnum #2 > 0
+  \setlength{\parskip}{#2\baselineskip}
+  \fi
+ }%
+ {}
+\usepackage{calc}
+\newcommand{\CSLBlock}[1]{#1\hfill\break}
+\newcommand{\CSLLeftMargin}[1]{\parbox[t]{\csllabelwidth}{#1}}
+\newcommand{\CSLRightInline}[1]{\parbox[t]{\linewidth - \csllabelwidth}{#1}\break}
+\newcommand{\CSLIndent}[1]{\hspace{\cslhangindent}#1}
+$endif$
+
+\begin{document}
+%
+\title{$title$\thanks{$thanks$}}
+%
+%\titlerunning{Abbreviated paper title}
+% If the paper title is too long for the running head, you can set
+% an abbreviated paper title here
+%
+%
+\author{ $for(authors)$ $it.name$\inst{$it.inst$}\orcidID{$it.orcid$}${sep}\\ $endfor$ }
+
+$if(authorrunning)$
+\authorrunning{ $authorrunning$ }
+$endif$
+% First names are abbreviated in the running head.
+% If there are more than two authors, 'et al.' is used.
+%
+\institute{ $for(institutes)$ \textsuperscript{$it.num$} $it.dept$${sep}\\ $endfor$ }
+
+% \institute{$institutes$}
+
+\maketitle              % typeset the header of the contribution
+%
+
+\begin{abstract}
+  $abstract$
+
+  \keywords{
+    $for(keywords)$
+    $keywords$${sep} \and
+    $endfor$
+  }
+
+\end{abstract}
+%
+%
+% \def\spacingset#1{\renewcommand{\baselinestretch}%
+% {#1}\small\normalsize} \spacingset{1}
+
+$body$
+
+\end{document}

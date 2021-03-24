@@ -1,0 +1,609 @@
+% This is the Reed College LaTeX thesis template. Most of the work
+% for the document class was done by Sam Noble (SN), as well as this
+% template. Later comments etc. by Ben Salzberg (BTS). Additional
+% restructuring and APA support by Jess Youngberg (JY).
+% Your comments and suggestions are more than welcome; please email
+% them to cus@reed.edu
+%
+% See https://www.reed.edu/cis/help/LaTeX/index.html for help. There are a
+% great bunch of help pages there, with notes on
+% getting started, bibtex, etc. Go there and read it if you're not
+% already familiar with LaTeX.
+%
+% Any line that starts with a percent symbol is a comment.
+% They won't show up in the document, and are useful for notes
+% to yourself and explaining commands.
+% Commenting also removes a line from the document;
+% very handy for troubleshooting problems. -BTS
+
+% As far as I know, this follows the requirements laid out in
+% the 2002-2003 Senior Handbook. Ask a librarian to check the
+% document before binding. -SN
+
+%%
+%% Preamble
+%%
+% \documentclass{<something>} must begin each LaTeX document
+\documentclass[12pt,twoside]{reedthesis}
+% Packages are extensions to the basic LaTeX functions. Whatever you
+% want to typeset, there is probably a package out there for it.
+% Chemistry (chemtex), screenplays, you name it.
+% Check out CTAN to see: https://www.ctan.org/
+%%
+\usepackage{graphicx,latexsym}
+\usepackage{amsmath}
+\usepackage{amssymb,amsthm}
+\usepackage{longtable,booktabs,setspace}
+\usepackage{chemarr} %% Useful for one reaction arrow, useless if you're not a chem major
+\usepackage[hyphens]{url}
+% Added by CII
+\usepackage{hyperref}
+\usepackage{lmodern}
+\usepackage{float}
+\floatplacement{figure}{H}
+% Thanks, @Xyv
+\usepackage{calc}
+% End of CII addition
+\usepackage{rotating}
+
+% Next line commented out by CII
+%%% \usepackage{natbib}
+% Comment out the natbib line above and uncomment the following two lines to use the new
+% biblatex-chicago style, for Chicago A. Also make some changes at the end where the
+% bibliography is included.
+%\usepackage{biblatex-chicago}
+%\bibliography{thesis}
+
+
+% Added by CII (Thanks, Hadley!)
+% Use ref for internal links
+\renewcommand{\hyperref}[2][???]{\autoref{#1}}
+\def\chapterautorefname{Chapter}
+\def\sectionautorefname{Section}
+\def\subsectionautorefname{Subsection}
+% End of CII addition
+
+% Added by CII
+\usepackage{caption}
+\captionsetup{width=5in}
+% End of CII addition
+
+% \usepackage{times} % other fonts are available like times, bookman, charter, palatino
+
+% Syntax highlighting #22
+
+% To pass between YAML and LaTeX the dollar signs are added by CII
+\title{Detecting life-threatening patterns in Point-of-care ECG using efficient memory and processor power}
+\author{Francisco Bischoff}
+% The month and year that you submit your FINAL draft TO THE LIBRARY (May or December)
+\date{Jul 2020}
+\division{CINTESIS}
+\advisor{Pedro Pereira Rodrigues}
+\institution{Faculdade de Medicina da Universidade do Porto}
+\degree{Ph.D.~in Health Data Science}
+%If you have two advisors for some reason, you can use the following
+% Uncommented out by CII
+\altadvisor{Eamonn Keogh}
+% End of CII addition
+
+%%% Remember to use the correct department!
+\department{Medical Investigation}
+% if you're writing a thesis in an interdisciplinary major,
+% uncomment the line below and change the text as appropriate.
+% check the Senior Handbook if unsure.
+%\thedivisionof{The Established Interdisciplinary Committee for}
+% if you want the approval page to say "Approved for the Committee",
+% uncomment the next line
+%\approvedforthe{Committee}
+
+% Added by CII
+%%% Copied from knitr
+%% maxwidth is the original width if it's less than linewidth
+%% otherwise use linewidth (to make sure the graphics do not exceed the margin)
+\makeatletter
+\def\maxwidth{ %
+  \ifdim\Gin@nat@width>\linewidth
+    \linewidth
+  \else
+    \Gin@nat@width
+  \fi
+}
+\makeatother
+
+% From {rticles}
+\newlength{\csllabelwidth}
+\setlength{\csllabelwidth}{3em}
+\newlength{\cslhangindent}
+\setlength{\cslhangindent}{1.5em}
+% for Pandoc 2.8 to 2.10.1
+\newenvironment{cslreferences}%
+  {}%
+  {\par}
+% For Pandoc 2.11+
+% As noted by @mirh [2] is needed instead of [3] for 2.12
+\newenvironment{CSLReferences}[2] % #1 hanging-ident, #2 entry spacing
+ {% don't indent paragraphs
+  \setlength{\parindent}{0pt}
+  % turn on hanging indent if param 1 is 1
+  \ifodd #1 \everypar{\setlength{\hangindent}{\cslhangindent}}\ignorespaces\fi
+  % set entry spacing
+  \ifnum #2 > 0
+  \setlength{\parskip}{#2\baselineskip}
+  \fi
+ }%
+ {}
+\usepackage{calc} % for calculating minipage widths
+\newcommand{\CSLBlock}[1]{#1\hfill\break}
+\newcommand{\CSLLeftMargin}[1]{\parbox[t]{\csllabelwidth}{#1}}
+\newcommand{\CSLRightInline}[1]{\parbox[t]{\linewidth - \csllabelwidth}{#1}}
+\newcommand{\CSLIndent}[1]{\hspace{\cslhangindent}#1}
+
+\renewcommand{\contentsname}{Table of Contents}
+% End of CII addition
+
+\setlength{\parskip}{0pt}
+
+% Added by CII
+
+\providecommand{\tightlist}{%
+  \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
+
+\Acknowledgements{
+
+}
+
+\Dedication{
+
+}
+
+\Preface{
+
+}
+
+\Abstract{
+
+}
+
+	\usepackage{booktabs}
+ \usepackage{longtable}
+ \usepackage{array}
+ \usepackage{multirow}
+ \usepackage{wrapfig}
+ \usepackage{float}
+ \usepackage{colortbl}
+ \usepackage{pdflscape}
+ \usepackage{tabu}
+ \usepackage{threeparttable}
+ \usepackage{threeparttablex}
+ \usepackage[normalem]{ulem}
+ \usepackage{makecell}
+ \usepackage{xcolor}
+% End of CII addition
+%%
+%% End Preamble
+%%
+%
+\begin{document}
+
+% Everything below added by CII
+  \maketitle
+
+\frontmatter % this stuff will be roman-numbered
+\pagestyle{empty} % this removes page numbers from the frontmatter
+
+
+
+  \hypersetup{linkcolor=black}
+  \setcounter{secnumdepth}{2}
+  \setcounter{tocdepth}{2}
+  \tableofcontents
+
+  \listoftables
+
+  \listoffigures
+
+
+
+\mainmatter % here the regular arabic numbering starts
+\pagestyle{fancyplain} % turns page numbering back on
+
+\hypertarget{acknowledgements}{%
+\section*{Acknowledgements}\label{acknowledgements}}
+\addcontentsline{toc}{section}{Acknowledgements}
+
+I want to thank a few people.
+
+\hypertarget{preface}{%
+\section*{Preface}\label{preface}}
+\addcontentsline{toc}{section}{Preface}
+
+This is an example of a thesis setup to use the reed thesis document class (for LaTeX) and the R bookdown package, in
+general.
+
+\hypertarget{dedication}{%
+\section*{Dedication}\label{dedication}}
+\addcontentsline{toc}{section}{Dedication}
+
+You can have a dedication here if you wish.
+
+\hypertarget{abstract}{%
+\section*{Abstract}\label{abstract}}
+\addcontentsline{toc}{section}{Abstract}
+
+Currently, Point-of-Care (POC) ECG monitoring works either as plot devices or alarms for abnormal cardiac rhythms using
+predefined normal trigger ranges and some rhythm analysis, which raises the problem of false alarms. In comparison,
+complex 12-derivation ECG machines are not suitable to use as simple monitors and are used with strict techniques for
+formal diagnostics. We aim to identify, on streaming data, life-threatening hearth electric patterns to reduce the
+number of false alarms, using low CPU and memory maintaining robustness. The study design is comparable to a diagnostic
+study, where high accuracy is essential. Physionet's 2015 challenge yielded very good algorithms for reducing false
+alarms. However, none of the authors reported benchmarks, memory usage, robustness test, or context invariance that
+could assure its implementation on real monitors to reduce alarm fatigue indeed. We expect to identify the obstacles of
+detecting life-threatening ECG changes within memory, space, and CPU constraints and to reduce ECG monitor's false
+alarms using the proposed methodology, and assess the feasibility of implementing the algorithm in the real world and
+other settings than ICU monitors.
+
+\hypertarget{introduction}{%
+\chapter*{Introduction}\label{introduction}}
+\addcontentsline{toc}{chapter}{Introduction}
+
+Currently, Point-of-Care (POC) ECG monitoring works either as plot devices or alarms for abnormal cardiac rhythms using
+predefined normal trigger ranges. Modern devices also incorporate algorithms to analyze arrhythmias improving their
+specificity. On the other hand, full 12-derivation ECG machines are complex, are not suited to use as simple monitors
+and are used with strict techniques for formal diagnostics of hearth electric conduction pathologies. The automatic
+diagnostics are derived from a complete analysis of the 12-dimension data after it is fully and well collected. Both
+systems do not handle disconnected leads and patient's motions, being strictly necessary to have a good and stable
+signal to allow proper diagnosis. These interferences with the data collection frequently originate false alarms
+increasing both patient and staff's stress; depending on how it is measured, the rate of false alarms (overall) in ICU
+is estimated at 65 to 95\%\textsuperscript{\protect\hyperlink{ref-donchin2002}{1}}.
+
+Alarm fatigue is a well-known problem that consists of a sensory overload of nurses and clinicians, resulting in
+desensitization to alarms and missed alarms (the ``crying wolf'' situation). Patient deaths have been attributed to alarm
+fatigue\textsuperscript{\protect\hyperlink{ref-sendelbach2013}{2}}. In 1982 it was recognized the increase in alarms with ``no end in sight''; studies have
+demonstrated that most alarm signals have no clinical relevance and lead to clinical personnel's delayed response.
+Ultimately patient deaths were reported related to inappropriate responses to alarms\textsuperscript{\protect\hyperlink{ref-sendelbach2013}{2}}.
+
+In April of 2013, The Joint Commission\textsuperscript{\protect\hyperlink{ref-the_jc}{3}} issued the Sentinel Event Alert\textsuperscript{\protect\hyperlink{ref-JointCommission2013}{4}}, establishing
+alarm system safety as a top hospital priority in the National Patient Safety Goal. Nowadays (2021), this subject still
+on their list, in fourth place of importance\textsuperscript{\protect\hyperlink{ref-the_jc2021}{5}}.
+
+In February of 2015, the CinC/Physionet Challenge 2015 was about "Reducing False Arrhythmia Alarms in the
+ICU\textsuperscript{\protect\hyperlink{ref-Clifford2015}{6}}. The introduction article stated that it had been reported that up to 86\% resulting of the alarms are
+false, and this can lead to decreased staff attention and an increase in patients' delirium\textsuperscript{\protect\hyperlink{ref-Lawless1994}{7}--\protect\hyperlink{ref-Parthasarathy2004}{9}}.
+
+Due to this matter's importance, this research aims to identify abnormal hearth electric patterns using streaming data,
+specifically those who are life-threatening, reducing the false alarms, being a reliable signal for Intensive Care Units
+to respond quickly to those situations.
+
+\hypertarget{objectives-and-the-research-question}{%
+\chapter{Objectives and the research question}\label{objectives-and-the-research-question}}
+
+This research aims to identify, on streaming data, abnormal hearth electric patterns, specifically those which are
+life-threatening, to be a reliable signal for Intensive Care Units to respond quickly to those situations. It also may
+be able to continuously analyze new data and correct itself shutting off false alarms.
+
+As it is known, this goal is not a new problem, so the main questions to solve are: (1) Can we reduce the number of
+false alarms in the ICU setting? (2) Can we accomplish this objective using a minimalist approach (low CPU, low memory)
+while maintaining robustness? (3) Can this approach be used in other health domains other than ICU or ECG?
+
+\hypertarget{related-works}{%
+\chapter{Related Works}\label{related-works}}
+
+The CinC/Physionet Challenge 2015 produced several papers aiming to reduce false alarms on their dataset. On Table
+\ref{tab:alarms} it is listed the five life-threatening alarms present in their dataset.
+\begin{table}
+
+\caption{\label{tab:alarms}Definition of the 5 alarm types used in CinC/Physionet Challenge 2015 challenge.}
+\centering
+\begin{tabu} to \linewidth {>{\raggedright\arraybackslash}p{5cm}>{\raggedright}X}
+\toprule
+\textbf{Alarm} & \textbf{Definition}\\
+\midrule
+Asystole & No QRS for at least 4 seconds\\
+Extreme Bradycardia & Heart rate lower than 40 bpm for 5 consecutive beats\\
+Extreme Tachycardia & Heart rate higher than 140 bpm for 17 consecutive beats\\
+Ventricular Tachycardia & 5 or more ventricular beats with heart rate higher than 100 bpm\\
+Ventricular Flutter/Fibrillation & Fibrillatory, flutter, or oscillatory waveform for at least 4 seconds\\
+\bottomrule
+\end{tabu}
+\end{table}
+They used as score the following formula, which penalizes five times the false negatives (since we do not want to miss
+any real event):
+
+\[Score=\frac{TP+TN}{TP+TN+FP+5*FN}\]
+
+The five-best scores in this challenge are presented on Table \ref{tab:scores}\textsuperscript{\protect\hyperlink{ref-plesinger2015}{10}--\protect\hyperlink{ref-hoogantink2015}{14}}.
+\begin{table}
+
+\caption{\label{tab:scores}Challenge Results on Streaming}
+\centering
+\begin{tabu} to \linewidth {>{\centering}X>{\raggedright\arraybackslash}p{9cm}}
+\toprule
+\textbf{Score} & \textbf{Authors}\\
+\midrule
+81.39 & Filip Plesinger, Petr Klimes, Josef Halamek, Pavel Jurak\\
+79.44 & Vignesh Kalidas\\
+79.02 & Paula Couto, Ruben Ramalho, Rui Rodrigues\\
+76.11 & Sibylle Fallet, Sasan Yazdani, Jean-Marc Vesin\\
+75.55 & Christoph Hoog Antink, Steffen Leonhardt\\
+\bottomrule
+\end{tabu}
+\end{table}
+Their algorithm did a pretty good job on the Physionet test-set. However, independently of their approach to this
+problem, none of the authors reported benchmarks, memory usage, robustness test, or context invariance that could assure
+its implementation on real monitors to reduce alarm fatigue indeed.
+
+There are other arrhythmias that this challenge did not assess, like atrial standstill (hyperkalemia), third-degree
+atrioventricular block, and others that may be life-threatening in some settings. Pulseless electrical activity is a
+frequent condition in cardiac arrest but cannot be identified without blood pressure information. This information is
+usually present in ICU settings but not in other locations.
+
+\hypertarget{the-planned-approach-and-methods-for-solving-the-problem}{%
+\chapter{The planned approach and methods for solving the problem}\label{the-planned-approach-and-methods-for-solving-the-problem}}
+
+\hypertarget{state-of-the-art}{%
+\section{State of the art}\label{state-of-the-art}}
+
+A literature review of the last ten years is being conducted to assess state of the art for ECG automatic processing
+collecting the following points if available : (1) The memory and space used to perform the primary goal of the
+algorithm (sound an alarm, for ex.). (2) The type of algorithms used to identify ECG anomalies. (3) The type of
+algorithms used to identify specific diagnoses (like a flutter, hyperkalemia, and others). (4) Their performance
+(accuracy, ROC, etc.)
+
+A broad search will be conducted on Pubmed, Scopus, Google Scholar, device manuals, and other specific sources.
+
+Keywords:
+\begin{itemize}
+\tightlist
+\item
+  ECG AND monitoring AND ICU
+\item
+  ECG AND{[}time series{]}
+\item
+  ECG AND automatic AND interpretation
+\end{itemize}
+Articles published after ``The PhysioNet/Computing in Cardiology Challenge 2015: Reducing False Arrhythmia Alarms in the
+ICU'' will also be analyzed.
+
+\hypertarget{research-plan-and-methods}{%
+\section{Research plan and methods}\label{research-plan-and-methods}}
+
+This research is being conducted using the Research Compendium principles\textsuperscript{\protect\hyperlink{ref-compendium2019}{15}}:
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\tightlist
+\item
+  Stick with the convention of your peers;
+\item
+  Keep data, methods, and output separated;
+\item
+  Specify your computational environment as clearly as you can.
+\end{enumerate}
+Data management is following the FAIR principle (findable, accessible, interoperable, reusable)\textsuperscript{\protect\hyperlink{ref-wilkinson2016}{16}}.
+
+Currently, the dataset used is stored on a public repository\textsuperscript{\protect\hyperlink{ref-franz_dataset}{17}}, the source code is publicly open and
+stored on Github\textsuperscript{\protect\hyperlink{ref-franz_github}{18}}, while the reports and reproducibility information on each step is found on a public
+website\textsuperscript{\protect\hyperlink{ref-franz_website}{19}}.
+
+\hypertarget{type-of-study}{%
+\subsection{Type of study}\label{type-of-study}}
+
+This thesis will be a diagnostic study as the algorithm must classify the change in pattern as positive or negative for
+life-threatening.
+
+\hypertarget{the-data}{%
+\subsection{The data}\label{the-data}}
+
+Initially we will use the CinC/Physionet Challenge 2015 dataset that is publicly available on Physionet. This dataset is
+a good start for exploring the main goal of reduce false alarms. This dataset was manually selected for this challenge
+and the events were labeled by experts, so it is not RAW data. All signals have been resampled (using anti-alias
+filters) to 12 bit, 250 Hz and have had FIR bandpass {[}0.05 to 40Hz{]} and mains notch filters applied to remove noise.
+Pacemaker and other artifacts may be present on the ECG\textsuperscript{\protect\hyperlink{ref-Clifford2015}{6}}. Furthermore, this dataset contains at least two
+ECG derivations and one or more variables like arterial blood pressure, photoplethysmograph readings, and respiration
+movements.
+
+These variables may or may not be helpful for increasing the sensitivity or specificity of the algorithm. It is planned
+to use the minimum set of variables as it is known in multi-dimensional analysis that using just two (or some small
+subset) of all the dimensions can be much more accurate than either using all dimensions or a single
+dimension\textsuperscript{\protect\hyperlink{ref-gharghabi2018}{20}}.
+
+It is desirable that real data extracted from Portuguese ICU could be used in further stage to assess the validity of
+the model in real settings and robustness (using RAW data instead of filtered data). The variables available on
+Physionet's dataset are commonly available on Portuguese ICU's.
+
+\hypertarget{workflow}{%
+\subsection{Workflow}\label{workflow}}
+
+All steps of the process will be managed using the R package \texttt{targets}\textsuperscript{\protect\hyperlink{ref-landau2021}{21}} from data extraction to the final
+report, as shown in Fig. \ref{fig:targets}.
+
+The report will then be available on the main webpage\textsuperscript{\protect\hyperlink{ref-franz_website}{19}}, allowing inspection of previous versions managed
+by the R package \texttt{workflowr}\textsuperscript{\protect\hyperlink{ref-workflowr2021}{22}}, as we can see in Fig. \ref{fig:workflow_workflowr}.
+
+\hypertarget{statistical-analysis}{%
+\subsection{Statistical analysis}\label{statistical-analysis}}
+
+The Statistical analysis will be performed using R language v4.0.4 or greater and it will be computed the ROC curve for
+the algorithm.
+
+The experiment will be conducted using the Matrix Profile concept\textsuperscript{\protect\hyperlink{ref-yeh2016}{23}}, the state-of-the-art for time series
+analysis. It will be conducted several experiments to identify the best algorithm for this task. One of such algorithms
+is the online semantic segmentation for multi-dimensional time series\textsuperscript{\protect\hyperlink{ref-gharghabi2018}{20}}.
+
+In addition, we will combine the fading factors\textsuperscript{\protect\hyperlink{ref-Gama2013}{24},\protect\hyperlink{ref-Rodrigues2010}{25}} strategy to minimize the memory and space
+consumption lowering the processor power needed, allowing this algorithm to be used in almost any device.
+
+\hypertarget{research-team}{%
+\subsection{Research Team}\label{research-team}}
+\begin{itemize}
+\tightlist
+\item
+  Thesis Author: Francisco Bischoff
+\item
+  Supervisor: Professor Pedro Pereira Rodrigues
+\item
+  Co-supervisor: Professor Eamonn Keogh (UCR, Riverside)
+\end{itemize}
+\hypertarget{expected-results-and-outcomes}{%
+\section{Expected results and outcomes}\label{expected-results-and-outcomes}}
+
+We expect the following results: (1) Identify the obstacles of identifying life-threatening ECG changes within memory,
+space, and CPU constraints. (2) Be able to reduce ECG monitor's false alarms using the proposed methodology. (3) Assess
+the feasibility of implementing the algorithm in the real world and other settings than ICU monitors.
+
+And outcomes: (1) To achieve a better score of false alarm reduction than the best on Physionet's 2015 challenge. (2) To
+push forward the state-of-the-art technology on false alarms reduction, maybe even being domain agnostic. (3) To draw
+more attention to fading factors as a reliable, fast, and cheap approximation of the true value. (4) To draw more
+attention to the matrix profile concept as an efficient, agnostic, and almost parameter-free way to analyze time series.
+(5) To draw more attention of the Patient Monitorization industry on solving the false alarm problem.
+
+\hypertarget{whatever}{%
+\chapter{Whatever}\label{whatever}}
+
+\textbf{Research question and aims}
+
+This research aims to identify, on streaming data, abnormal hearth electric patterns, specifically those who are
+life-threatening, in order to be a reliable signal for Intensive Care Units to respond quickly to those situations. It
+also may be able to continuously analyze new data and correct itself shutting off false alarms. Primarily an experiment
+will be conducted using 2 main algorithms that use Matrix Profile in detecting context changes: SDTD and FLOSS. One uses
+whole data training and testing, and the other uses a streaming approach that is our main interest. The goal will be
+detecting the transition from normal to flutter/FA to normal condition with special attention to not rely on rhythm
+changes. Being this successful, a more generalistic approach will be attempted: to detect changes from normal to
+abnormal to normal conditions, with special attention to handle with disconnected leads or patient movements. Finally,
+this research can prove to be a good addition to the Matrix Profile method, using fading factors in order to reduce
+memory and space consumption, lowering the processor power needed, allowing this algorithm to be used in almost any
+device.
+
+\textbf{About the ongoing project}
+
+The document submitted for approval is
+\href{https://github.com/franzbischoff/false.alarm/blob/master/protocol/Protocol.pdf}{here}.
+
+The full code is open-sourced and available \href{https://github.com/franzbischoff/false.alarm/}{here}
+
+To follow the thesis timeline you can access the full Gantt chart at Zenhub. Click
+\href{https://app.zenhub.com/workspaces/phd-thesis-5eb2ce34f5f30b3aed0a35af/roadmap}{here} (you need a github account, but
+that's it).
+
+PDF, EPUB and WORD versions will be available at the end of this work.
+
+\backmatter
+
+\hypertarget{references}{%
+\chapter*{References}\label{references}}
+\addcontentsline{toc}{chapter}{References}
+
+\markboth{References}{References}
+
+\noindent
+
+\setlength{\parindent}{-0.20in}
+\setlength{\leftskip}{0.20in}
+\setlength{\parskip}{8pt}
+
+\hypertarget{refs}{}
+\begin{CSLReferences}{0}{0}
+\leavevmode\vadjust pre{\hypertarget{ref-donchin2002}{}}%
+\CSLLeftMargin{1. }
+\CSLRightInline{Donchin Y, Seagull FJ. The hostile environment of the intensive care unit. \emph{Current Opinion in Critical Care}. 2002;8(4):316-320. doi:\href{https://doi.org/10.1097/00075198-200208000-00008}{10.1097/00075198-200208000-00008}}
+
+\leavevmode\vadjust pre{\hypertarget{ref-sendelbach2013}{}}%
+\CSLLeftMargin{2. }
+\CSLRightInline{Sendelbach S, Funk M. Alarm Fatigue. \emph{AACN Advanced Critical Care}. 2013;24(4):378-386. doi:\href{https://doi.org/10.4037/nci.0b013e3182a903f9}{10.4037/nci.0b013e3182a903f9}}
+
+\leavevmode\vadjust pre{\hypertarget{ref-the_jc}{}}%
+\CSLLeftMargin{3. }
+\CSLRightInline{The joint commission. Published 2021. Accessed April 8, 2021. \url{https://www.jointcommission.org}}
+
+\leavevmode\vadjust pre{\hypertarget{ref-JointCommission2013}{}}%
+\CSLLeftMargin{4. }
+\CSLRightInline{Joint Commission. {Sentinel event alert - Medical device alarm safety in hospitals.} 2013;(50):1-3.}
+
+\leavevmode\vadjust pre{\hypertarget{ref-the_jc2021}{}}%
+\CSLLeftMargin{5. }
+\CSLRightInline{The joint commission - national patient safety goals. Published 2021. Accessed April 8, 2021. \url{https://www.jointcommission.org/standards/national-patient-safety-goals/hospital-national-patient-safety-goals/}}
+
+\leavevmode\vadjust pre{\hypertarget{ref-Clifford2015}{}}%
+\CSLLeftMargin{6. }
+\CSLRightInline{Clifford GD, Silva I, Moody B, et al. The PhysioNet/computing in cardiology challenge 2015: Reducing false arrhythmia alarms in the ICU. In: \emph{Computing in Cardiology}.; 2015. doi:\href{https://doi.org/10.1109/cic.2015.7408639}{10.1109/cic.2015.7408639}}
+
+\leavevmode\vadjust pre{\hypertarget{ref-Lawless1994}{}}%
+\CSLLeftMargin{7. }
+\CSLRightInline{Lawless ST. Crying wolf: False alarms in a pediatric intensive care unit. \emph{Critical care medicine}. 1994;22(6):981-985.}
+
+\leavevmode\vadjust pre{\hypertarget{ref-Chambrin2001}{}}%
+\CSLLeftMargin{8. }
+\CSLRightInline{Chambrin MC. Alarms in the intensive care unit: How can the number of false alarms be reduced? \emph{Critical care (London, England)}. 2001;5(4):184-188. doi:\href{https://doi.org/10.1186/cc1021}{10.1186/cc1021}}
+
+\leavevmode\vadjust pre{\hypertarget{ref-Parthasarathy2004}{}}%
+\CSLLeftMargin{9. }
+\CSLRightInline{Parthasarathy S, Tobin MJ. Sleep in the intensive care unit. \emph{Intensive Care Medicine}. 2004;30(2):197-206. doi:\href{https://doi.org/10.1007/s00134-003-2030-6}{10.1007/s00134-003-2030-6}}
+
+\leavevmode\vadjust pre{\hypertarget{ref-plesinger2015}{}}%
+\CSLLeftMargin{10. }
+\CSLRightInline{Plesinger F, Klimes P, Halamek J, Jurak P. 2015 computing in cardiology conference (CinC). In: IEEE; 2015. doi:\href{https://doi.org/10.1109/cic.2015.7408641}{10.1109/cic.2015.7408641}}
+
+\leavevmode\vadjust pre{\hypertarget{ref-kalidas2015}{}}%
+\CSLLeftMargin{11. }
+\CSLRightInline{Kalidas V, Tamil LS. 2015 computing in cardiology conference (CinC). In: IEEE; 2015. doi:\href{https://doi.org/10.1109/cic.2015.7411015}{10.1109/cic.2015.7411015}}
+
+\leavevmode\vadjust pre{\hypertarget{ref-couto2015}{}}%
+\CSLLeftMargin{12. }
+\CSLRightInline{Couto P, Ramalho R, Rodrigues R. 2015 computing in cardiology conference (CinC). In: IEEE; 2015. doi:\href{https://doi.org/10.1109/cic.2015.7411019}{10.1109/cic.2015.7411019}}
+
+\leavevmode\vadjust pre{\hypertarget{ref-fallet2015}{}}%
+\CSLLeftMargin{13. }
+\CSLRightInline{Fallet S, Yazdani S, Vesin J-M. 2015 computing in cardiology conference (CinC). In: IEEE; 2015. doi:\href{https://doi.org/10.1109/cic.2015.7408640}{10.1109/cic.2015.7408640}}
+
+\leavevmode\vadjust pre{\hypertarget{ref-hoogantink2015}{}}%
+\CSLLeftMargin{14. }
+\CSLRightInline{Hoog Antink C, Leonhardt S. 2015 computing in cardiology conference (CinC). In: IEEE; 2015. doi:\href{https://doi.org/10.1109/cic.2015.7408642}{10.1109/cic.2015.7408642}}
+
+\leavevmode\vadjust pre{\hypertarget{ref-compendium2019}{}}%
+\CSLLeftMargin{15. }
+\CSLRightInline{Research compendium. Published 2019. Accessed April 8, 2021. \url{https://research-compendium.science}}
+
+\leavevmode\vadjust pre{\hypertarget{ref-wilkinson2016}{}}%
+\CSLLeftMargin{16. }
+\CSLRightInline{Wilkinson MD, Dumontier M, Aalbersberg IjJ, et al. The FAIR Guiding Principles for scientific data management and stewardship. \emph{Scientific Data}. 2016;3(1). doi:\href{https://doi.org/10.1038/sdata.2016.18}{10.1038/sdata.2016.18}}
+
+\leavevmode\vadjust pre{\hypertarget{ref-franz_dataset}{}}%
+\CSLLeftMargin{17. }
+\CSLRightInline{The PhysioNet computing in cardiology challenge 2015 - dataset. Published 2021. Accessed April 8, 2021. \url{https://zenodo.org/record/4634014}}
+
+\leavevmode\vadjust pre{\hypertarget{ref-franz_github}{}}%
+\CSLLeftMargin{18. }
+\CSLRightInline{Franzbischoff/false.alarm: PhD programme in health data science. Published 2020. Accessed April 8, 2021. \url{https://github.com/franzbischoff/false.alarm}}
+
+\leavevmode\vadjust pre{\hypertarget{ref-franz_website}{}}%
+\CSLLeftMargin{19. }
+\CSLRightInline{Franzbischoff/false.alarm: Reproducible reports. Published 2021. Accessed April 8, 2021. \url{https://franzbischoff.github.io/false.alarm}}
+
+\leavevmode\vadjust pre{\hypertarget{ref-gharghabi2018}{}}%
+\CSLLeftMargin{20. }
+\CSLRightInline{Gharghabi S, Yeh C-CM, Ding Y, et al. Domain agnostic online semantic segmentation for multi-dimensional time series. \emph{Data Mining and Knowledge Discovery}. 2018;33(1):96-130. doi:\href{https://doi.org/10.1007/s10618-018-0589-3}{10.1007/s10618-018-0589-3}}
+
+\leavevmode\vadjust pre{\hypertarget{ref-landau2021}{}}%
+\CSLLeftMargin{21. }
+\CSLRightInline{Landau W, Landau W, Warkentin MT, et al. \emph{Ropensci/Targets, Dynamic Function-Oriented 'Make'-Like Declarative Workflows}. Zenodo; 2021. doi:\href{https://doi.org/10.5281/ZENODO.4062936}{10.5281/ZENODO.4062936}}
+
+\leavevmode\vadjust pre{\hypertarget{ref-workflowr2021}{}}%
+\CSLLeftMargin{22. }
+\CSLRightInline{Blischak JD, Carbonetto P, Stephens M. Creating and sharing reproducible research code the workflowr way {[}version 1; peer review: 3 approved{]}. \emph{F1000Research}. 2019;8(1749). doi:\href{https://doi.org/10.12688/f1000research.20843.1}{10.12688/f1000research.20843.1}}
+
+\leavevmode\vadjust pre{\hypertarget{ref-yeh2016}{}}%
+\CSLLeftMargin{23. }
+\CSLRightInline{Yeh C-CM, Zhu Y, Ulanova L, et al. 2016 IEEE 16th international conference on data mining (ICDM). In: IEEE; 2016. doi:\href{https://doi.org/10.1109/icdm.2016.0179}{10.1109/icdm.2016.0179}}
+
+\leavevmode\vadjust pre{\hypertarget{ref-Gama2013}{}}%
+\CSLLeftMargin{24. }
+\CSLRightInline{Gama J, Sebastião R, Rodrigues PP. {On evaluating stream learning algorithms}. \emph{Machine Learning}. 2013;90(3):317-346. doi:\href{https://doi.org/10.1007/s10994-012-5320-9}{10.1007/s10994-012-5320-9}}
+
+\leavevmode\vadjust pre{\hypertarget{ref-Rodrigues2010}{}}%
+\CSLLeftMargin{25. }
+\CSLRightInline{Rodrigues PP, Gama J, Sebastião R. {Memoryless Fading Windows in Ubiquitous Settings}. In: \emph{Proceedings of the First Ubiquitous Data Mining Workshop}.; 2010:23-27.}
+
+\end{CSLReferences}
+
+% Index?
+
+\end{document}

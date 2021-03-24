@@ -1,0 +1,312 @@
+---
+title: "Report"
+author: "Francisco Bischoff"
+date: "on `r format(Sys.time(), '%B %d, %Y')`"
+output:
+  workflowr::wflow_html:
+    number_sections: true
+    fig_caption: yes
+    toc: false
+bibliography: ../papers/references.bib
+link-citations: true
+# Download your specific csl file and refer to it in the line below.
+csl: https://raw.githubusercontent.com/citation-style-language/styles/master/american-medical-association.csl
+---
+
+```{=html}
+<style>
+div.polaroid {
+  width: 80%;
+  height: auto;
+  margin-left: auto;
+  margin-right: auto;
+  background-color: white;
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+}
+
+svg.svglite {
+  width: 100%;
+  height: auto;
+}
+
+div.polcont {
+  text-align: center;
+  padding-top: 15px;
+  font-weight: bold;
+}
+div.polaroid {
+  width: 80%;
+  height: auto;
+  margin-left: auto;
+  margin-right: auto;
+  background-color: white;
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+}
+div.figure {
+  padding: 10px;
+  margin: 20px 0px 20px 0px;
+  background-color: white;
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+}
+p.caption {
+  font-size: 19px;
+}
+</style>
+```
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE, fig.align = "center")
+library(here)
+library(visNetwork)
+library(tibble)
+library(kableExtra)
+library(targets)
+knitr::opts_knit$set(root.dir = here("docs"), base.dir = here("docs"))
+```
+
+# Current Work Status
+
+## Principles
+
+This research is being conducted using the Research Compendium principles [@compendium2019]:
+
+1.  Stick with the convention of your peers;
+2.  Keep data, methods, and output separated;
+3.  Specify your computational environment as clearly as you can.
+
+Data management is following the FAIR principle (findable, accessible, interoperable, reusable)
+[@wilkinson2016].
+
+## The data
+
+The current dataset used is the CinC/Physionet Challenge 2015 public dataset, modified to include
+only the actual data and the header files in order to be read by the pipeline and is hosted by
+Zenodo [@bischoff2021] under the same license as Physionet.
+
+The dataset is composed of 750 patients with at least five minutes records. All signals have been
+resampled (using anti-alias filters) to 12 bit, 250 Hz and have had FIR bandpass (0.05 to 40Hz) and
+mains notch filters applied to remove noise. Pacemaker and other artifacts still present on the ECG
+[@Clifford2015]. Furthermore, this dataset contains at least two ECG derivations and one or more
+variables like arterial blood pressure, photoplethysmograph readings, and respiration movements.
+
+The *event* we seek to improve is the detection of a life-threatening arrhythmia as defined by
+Physionet in Table \ref{tab:alarms}.
+
+```{r alarms, echo=FALSE}
+alarms <- tribble(
+  ~Alarm, ~Definition,
+  "Asystole", "No QRS for at least 4 seconds",
+  "Extreme Bradycardia", "Heart rate lower than 40 bpm for 5 consecutive beats",
+  "Extreme Tachycardia", "Heart rate higher than 140 bpm for 17 consecutive beats",
+  "Ventricular Tachycardia", "5 or more ventricular beats with heart rate higher than 100 bpm",
+  "Ventricular Flutter/Fibrillation", "Fibrillatory, flutter, or oscillatory waveform for at least 4 seconds"
+)
+
+kbl(alarms, booktabs = TRUE, caption = "Definition of the five alarm types used in CinC/Physionet Challenge 2015 challenge.", align = "ll") %>%
+  kable_styling(full_width = TRUE) %>%
+  # column_spec(c(1,2), width = "50px") %>%
+  row_spec(0, bold = TRUE)
+```
+
+The fifth minute is precisely where the alarm has been triggered on the original recording set. To
+meet the ANSI/AAMI EC13 Cardiac Monitor Standards [@AAMI2002], the onset of the event is within 10
+seconds of the alarm (i.e., between 4:50 and 5:00 of the record). That doesn't mean that there are
+no other arrhythmias before, but those were not labeled.
+
+## Workflow
+
+All steps of the process are being managed using the R package `targets` [@landau2021] from data
+extraction to the final report, as shown in Fig. \ref{fig:targets}.
+
+```{r targets, echo=FALSE, out.width="100%", fig.cap="Reproducible research workflow using `targets`."}
+knitr::include_graphics("figure/targets.png")
+```
+
+The report is available on the main webpage [@franz_website], allowing inspection of previous
+versions managed by the R package `workflowr`[@workflowr2021], as shown in Fig.
+\ref{fig:workflowr}.
+
+```{r workflowr, echo=FALSE, out.width="100%", fig.cap="Reproducible reports using `workflowr`."}
+knitr::include_graphics("figure/workflowr_print.png")
+```
+
+## Work in Progress
+
+### Project start
+
+The project started with a literature survey on the databases Scopus, Pubmed, Web of Science, and
+Google Scholar with the following query (the syntax was adapted for each database):
+
+    TITLE-ABS-KEY ( algorithm  OR  'point of care'  OR  'signal processing'  OR  'computer assisted'  OR  'support vector machine'  OR  'decision support system*'  OR  'neural network*'  OR  'automatic interpretation' OR 'machine learning')  AND  TITLE-ABS-KEY ( electrocardiography  OR  cardiography  OR  'electrocardiographic tracing'  OR  ecg OR  electrocardiogram  OR  cardiogram )  AND  TITLE-ABS-KEY ( 'Intensive care unit' OR 'cardiologic care unit'  OR  'intensive care center'  OR  'cardiologic care center' )
+
+\
+
+The inclusion and exclusion criteria were defined as in Table \ref{tab:criteria}.
+
+```{r criteria, echo=FALSE}
+criteria <- tribble(
+  ~"Inclusion criteria", ~"Exclusion criteria",
+  "ECG automatic interpretation", "Manual interpretation",
+  "ECG anomaly detection", "Publication older than ten years",
+  "ECG context change detection", "Do not attempt to identify life-threatening arrhythmias, namely asystole, extreme bradycardia, extreme tachycardia, ventricular tachycardia, and ventricular flutter/fibrillation",
+  "Online Stream ECG analysis", "No performance measurements reported",
+  "Specific diagnosis (like a flutter, hyperkalemia, etc.)", ""
+)
+
+kbl(criteria, booktabs = TRUE, caption = "Literature review criteria.", align = "ll") %>%
+  kable_styling(full_width = TRUE) %>%
+  column_spec(1, width = "10cm") %>%
+  row_spec(0, bold = TRUE)
+```
+
+The current stage of the review is on Data Extraction, from the resulting screening shown in Fig.
+\ref{fig:prisma}.
+
+```{r prisma, echo=FALSE, out.width="80%", fig.cap="Prisma results"}
+knitr::include_graphics("figure/PRISMA.png")
+```
+
+Meanwhile, the project pipeline has been set up on GitHub, Inc. [@bischoffrepo2021] leveraging on
+Github A ions [@gitactions2021] for the Continuous Integration lifecycle, the repository is
+available at [@bischoffrepo2021], and the resulting report is available at [@franz_website] for
+transparency while the roadmap and tasks are managed using the integrated Zenhub [@zenhub2021].
+
+As it is known worldwide, 2020 was hard on every project, which required changes on the timeline. In
+Fig. \ref{fig:zenhub1} it is shown the initial roadmap (as of May 2020) and Fig. \ref{fig:zenhub2}
+the modified roadmap (as of July 2021).
+
+```{r zenhub1, echo=FALSE, out.width="100%", fig.cap="Roadmap original"}
+knitr::include_graphics("figure/roadmap_original.png")
+```
+
+```{r zenhub2, echo=FALSE, out.width="100%", fig.cap="Roadmap updated"}
+knitr::include_graphics("figure/roadmap_updated.png")
+```
+
+### Preliminary Experimentations
+
+**RAW Data**
+
+While programming the pipeline for the current dataset, it has been acquired a Single Lead Heart
+Rate Monitor breakout from Sparkfun^TM^ [@sparkfun2021] using the AD8232 [@AnalogDevices2020]
+microchip from Analog Devices Inc., compatible with Arduino^(R)^ [@arduino2021], for an in-house
+experiment (Figs. \ref{fig:ad8232} and \ref{fig:fullsetup}).
+
+```{r ad8232, echo=FALSE, out.width="50%", fig.cap="Single Lead Heart Rate Monitor"}
+knitr::include_graphics("figure/sparkfun.jpg")
+```
+
+```{r fullsetup, echo=FALSE, out.width="50%", fig.cap="Single Lead Heart Rate Monitor"}
+knitr::include_graphics("figure/FullSetup.jpg")
+```
+
+The output gives us a RAW signal as shown in Fig. \ref{fig:rawsignal}.
+
+```{r rawsignal, echo=FALSE, out.width="50%", fig.cap="RAW output from Arduino at ~300hz"}
+knitr::include_graphics("figure/arduino_plot.jpg")
+```
+
+After applying the same settings as the Physionet database (collecting the data at 500hz, resample
+to 250hz, pass-filter, and notch filter), the signal is much better as shown in Fig.
+\ref{fig:filtersignal}. Note: the leads were not placed on the correct location.
+
+```{r filtersignal, echo=FALSE, out.width="100%", fig.cap="Gray is RAW, Red is filtered"}
+knitr::include_graphics("figure/filtered_ecg.png")
+```
+
+So in this way, we allow us to import RAW data from other devices and build our own test dataset in
+the future.
+
+**Detecting Regime Changes**
+
+The regime change approach will be using the *Arc Counts*, as explained elsewhere [@gharghabi2018].
+The current implementation of the Matrix Profile in R, maintained by the first author of this
+thesis, is being used to accomplish the computations. This package was published in R Journal
+[@RJ-2020-021].
+
+A new concept was needed to be implemented on the algorithm in order to emulate (in this first
+iteration) the behavior of the real-time sensor: the search must only look for previous information
+within a time constraint. Thus, both the Matrix Profile computation and the *Arc Counts* needed to
+be adapted for this task.
+
+At the same time, the ECG data needs to be "cleaned" for proper evaluation. That is different from
+the initial filtering process. Several SQIs (Signal Quality Indexes) are used on literature
+[@eerikainen2015], some trivial measures as *kurtosis*, *skewness*, median local noise level, other
+more complex as pcaSQI (the ratio of the sum of the five largest eigenvalues associated with the
+principal components over the sum of all eigenvalues obtained by principal component analysis
+applied to the time aligned ECG segments in the window). By experimentation (yet to be validated), a
+simple formula gives us the "complexity" of the signal and correlates well with the noisy data is
+shown in Equation (1).
+
+$$
+\sqrt{\sum_{i=1}^w((x_{i+1}-x_i)^2)}, \quad \text{where}\; w \; \text{is the window size} \tag{1}
+$$
+
+\
+\
+The Fig. \ref{fig:sqi} shows some SQIs.
+
+```{r sqi, echo=FALSE, out.width="100%", fig.cap="Green line is the \"complexity\" of the signal"}
+knitr::include_graphics("figure/noise.png")
+```
+
+Finally, a sample of the regime change detection is shown in Figs. \ref{fig:regimefilter} to
+\ref{fig:regimetrue}.
+
+Fig. \ref{fig:regimefilter} shows that noisy data (probably patient muscle movements) are marked
+with a blue point and thus are ignored by the algorithm. Also, valid for the following plots, the
+green and red lines on the data mark the 10 seconds window where the "event" that triggers the alarm
+is supposed to happen.
+
+```{r regimefilter, echo=FALSE, out.width="100%", fig.cap="Regime changes with noisy data - false alarm"}
+knitr::include_graphics("figure/regime_filter.png")
+```
+
+In Fig. \ref{fig:regimefalse}, the data is clean; thus, nothing is excluded. Interestingly one of
+the detected regime changes is inside the "green-red" window. But it is a false alarm.
+
+```{r regimefalse, echo=FALSE, out.width="100%", fig.cap="Regime changes with good data - false alarm"}
+knitr::include_graphics("figure/regime_false.png")
+```
+
+The last plot (Fig. \ref{fig:regimetrue}) shows the algorithm's robustness, not excluding good data
+with a wandering baseline, and the last regime change is correctly detected inside the "green-red"
+window.
+
+```{r regimetrue, echo=FALSE, out.width="100%", fig.cap="Regime changes with good but wandering data - true alarm"}
+knitr::include_graphics("figure/regime_true.png")
+```
+
+
+```{r load_target, results='asis'}
+
+# fluss_plots <- tar_read("fluss_plots")
+#
+# files <- names(fluss_plots)
+# checkmate::qassert(files, "S")
+#
+# for (f in files) {
+#   alarm <- attr(fluss_plots[[f]], "info")$alarm
+#   true <- attr(fluss_plots[[f]], "info")$true
+#
+#   series <- names(fluss_plots[[f]])
+#   series <- setdiff(series, c("time", "ABP", "PLETH", "RESP"))
+#
+#
+#   for (s in series) {
+#
+#     svg <- attr(fluss_plots[[f]][[s]], "plot")
+#
+#     cat("<div class=\"polaroid\">\n")
+#     cat("<div class=\"polcont\">\n")
+#     cat(sprintf("File: %s - \n", f))
+#     cat(sprintf("Alarm: %s - \n", alarm))
+#     cat(sprintf("True alarm: %s - \n", true))
+#     cat(sprintf("Data stream: %s\n", s))
+#     cat("</div>\n")
+#     cat(svg)
+#     cat("</div><br/>\n")
+#   }
+#
+#   cat("<br/>\n")
+# }
+```

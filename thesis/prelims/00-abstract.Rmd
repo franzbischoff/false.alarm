@@ -1,0 +1,21 @@
+---
+editor_options:
+  markdown:
+    canonical: true
+    mode: markdown
+    wrap: 120
+---
+
+## Abstract {.unnumbered}
+
+Currently, Point-of-Care (POC) ECG monitoring works either as plot devices or alarms for abnormal cardiac rhythms using
+predefined normal trigger ranges and some rhythm analysis, which raises the problem of false alarms. In comparison,
+complex 12-derivation ECG machines are not suitable to use as simple monitors and are used with strict techniques for
+formal diagnostics. We aim to identify, on streaming data, life-threatening hearth electric patterns to reduce the
+number of false alarms, using low CPU and memory maintaining robustness. The study design is comparable to a diagnostic
+study, where high accuracy is essential. Physionet's 2015 challenge yielded very good algorithms for reducing false
+alarms. However, none of the authors reported benchmarks, memory usage, robustness test, or context invariance that
+could assure its implementation on real monitors to reduce alarm fatigue indeed. We expect to identify the obstacles of
+detecting life-threatening ECG changes within memory, space, and CPU constraints and to reduce ECG monitor's false
+alarms using the proposed methodology, and assess the feasibility of implementing the algorithm in the real world and
+other settings than ICU monitors.

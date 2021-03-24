@@ -4,7 +4,7 @@
             "name": "Rtools40-x64",
             "intelliSenseMode": "gcc-x64",
             "includePath": [
-                "C:/Program Files/R/R-4.0.3/include",
+                "C:/Program Files/R/R-4.1.0/include",
                 "${workspaceFolder}/src"
             ],
             "defines": [
@@ -24,7 +24,7 @@
             "name": "Rtools40-x86",
             "intelliSenseMode": "gcc-x86",
             "includePath": [ // renv might be on i386-w64-mingw32 if R-32bits
-                "C:/Program Files/R/R-4.0.3/include",
+                "C:/Program Files/R/R-4.1.0/include",
                 "${workspaceFolder}/src"
             ],
             "defines": [
@@ -45,11 +45,16 @@
         },
         {
             "name": "Ubuntu16+",
-            "includePath": [ // renv might be on i386-pc-linux-gnu if R-32bits
-                "/usr/share/R/include",
-                "${workspaceFolder}/src"
+            "includePath": [
+                "/usr/share/R/include/**",
+                "${workspaceFolder}/src/**",
+                "${workspaceFolder}/renv/library/R-4.1/x86_64-pc-linux-gnu/Rcpp/include/**",
+                "${workspaceFolder}/renv/library/R-4.1/x86_64-pc-linux-gnu/RcppParallel/include/**",
+                "${workspaceFolder}/renv/library/R-4.1/x86_64-pc-linux-gnu/RcppThread/include/**",
+                "${workspaceFolder}/renv/library/R-4.1/x86_64-pc-linux-gnu/RcppProgress/include/**"
             ],
             "defines": [
+                "RCPP_PARALLEL_USE_TBB",
                 "UNICODE",
                 "_UNICODE",
                 "NDEBUG"

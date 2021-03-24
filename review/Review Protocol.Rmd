@@ -2,19 +2,19 @@
 title: "SYSTEMATIC REVIEW PROTOCOL"
 author: "Francisco Bischoff"
 bibliography: ../protocol/references.bib
-csl: https://raw.githubusercontent.com/citation-style-language/styles/master/american-medical-association.csl
+csl: https://raw.githubusercontent.com/citation-style-language/styles/e1acabea97a6869a631deb8c419ff70e98b9ffc8/american-medical-association.csl
 output:
   github_document:
     toc: true
     toc_depth: 2
-  html_notebook: 
+  html_notebook:
     toc: true
     toc_depth: 2
     code_folding: none
     fig_width: 10
     fig_height: 5
     number_sections: yes
-  pdf_document: 
+  pdf_document:
     toc: yes
     toc_depth: 2
     number_sections: yes

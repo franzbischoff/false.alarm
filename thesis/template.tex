@@ -5,7 +5,7 @@
 % Your comments and suggestions are more than welcome; please email
 % them to cus@reed.edu
 %
-% See http://web.reed.edu/cis/help/latex.html for help. There are a
+% See https://www.reed.edu/cis/help/LaTeX/index.html for help. There are a
 % great bunch of help pages there, with notes on
 % getting started, bibtex, etc. Go there and read it if you're not
 % already familiar with LaTeX.
@@ -28,7 +28,7 @@
 % Packages are extensions to the basic LaTeX functions. Whatever you
 % want to typeset, there is probably a package out there for it.
 % Chemistry (chemtex), screenplays, you name it.
-% Check out CTAN to see: http://www.ctan.org/
+% Check out CTAN to see: https://www.ctan.org/
 %%
 \usepackage{graphicx,latexsym}
 \usepackage{amsmath}
@@ -41,6 +41,8 @@
 \usepackage{lmodern}
 \usepackage{float}
 \floatplacement{figure}{H}
+% Thanks, @Xyv
+\usepackage{calc}
 % End of CII addition
 \usepackage{rotating}
 
@@ -113,14 +115,35 @@ $endif$
 }
 \makeatother
 
-%Added by @MyKo101, code provided by @GerbrichFerdinands
+% From {rticles}
 $if(csl-refs)$
+\newlength{\csllabelwidth}
+\setlength{\csllabelwidth}{3em}
 \newlength{\cslhangindent}
 \setlength{\cslhangindent}{1.5em}
+% for Pandoc 2.8 to 2.10.1
 \newenvironment{cslreferences}%
   {$if(csl-hanging-indent)$\setlength{\parindent}{0pt}%
   \everypar{\setlength{\hangindent}{\cslhangindent}}\ignorespaces$endif$}%
   {\par}
+% For Pandoc 2.11+
+% As noted by @mirh [2] is needed instead of [3] for 2.12
+\newenvironment{CSLReferences}[2] % #1 hanging-ident, #2 entry spacing
+ {% don't indent paragraphs
+  \setlength{\parindent}{0pt}
+  % turn on hanging indent if param 1 is 1
+  \ifodd #1 \everypar{\setlength{\hangindent}{\cslhangindent}}\ignorespaces\fi
+  % set entry spacing
+  \ifnum #2 > 0
+  \setlength{\parskip}{#2\baselineskip}
+  \fi
+ }%
+ {}
+\usepackage{calc} % for calculating minipage widths
+\newcommand{\CSLBlock}[1]{#1\hfill\break}
+\newcommand{\CSLLeftMargin}[1]{\parbox[t]{\csllabelwidth}{#1}}
+\newcommand{\CSLRightInline}[1]{\parbox[t]{\linewidth - \csllabelwidth}{#1}}
+\newcommand{\CSLIndent}[1]{\hspace{\cslhangindent}#1}
 $endif$
 
 \renewcommand{\contentsname}{Table of Contents}
@@ -186,6 +209,7 @@ $endif$
 
 $if(toc)$
   \hypersetup{linkcolor=$if(toccolor)$$toccolor$$else$black$endif$}
+  \setcounter{secnumdepth}{$toc-depth$}
   \setcounter{tocdepth}{$toc-depth$}
   \tableofcontents
 $endif$
@@ -219,4 +243,3 @@ $body$
 % Index?
 
 \end{document}
-
