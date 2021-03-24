@@ -63,7 +63,7 @@ jobs:
 
       - name: Knit thesisdown
         run: |
-          bookdown::render_book("index")
+          bookdown::render_book("thesis")
         shell: Rscript {0}
 
       - name: Stage thesisdown changes
