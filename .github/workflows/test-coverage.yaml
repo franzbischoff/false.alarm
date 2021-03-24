@@ -1,0 +1,72 @@
+# This action will test the code coverage of all R files that contains examples and
+# Unit tests. This will be triggered using `workflow_run` after a successful run of
+# the Lint action.
+#
+# This file must live on `main` branch, and any version in other branches will not
+# be triggered. This is a "feature" of GH-actions. The workaround for working with
+# the right branch is using the 'github.event.workflow_run.head_branch' on action
+# 'actions/checkout'. Thanks to Potherca https://stackoverflow.com/a/65081720/2195337
+
+name: Covr
+
+on:
+  workflow_run:
+    workflows:
+      - Lint
+    branches:
+      - main
+      - master
+      - develop
+    types:
+      - completed
+
+  workflow_dispatch:
+  repository_dispatch:
+
+jobs:
+  test-coverage:
+    runs-on: ubuntu-latest
+    if: ${{ github.event.workflow_run.conclusion == 'success' && contains(github.event.head_commit.message, 'coverage') }}
+    env:
+      GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
+      RENV_PATHS_ROOT: ~/.local/share/renv
+      CODECOV_TOKEN: "4676dbf0-8296-4fd8-9542-a476503b0118"
+    steps:
+      - name: Checking out shallow repository
+        uses: actions/checkout@v2
+        with:
+          ref: ${{ github.event.workflow_run.head_branch }}
+
+      - run: git branch
+
+      - name: Install System dependencies
+        run: |
+          sudo apt-fast update
+          sudo apt-fast install -y libgit2-dev libharfbuzz-dev libcurl4-openssl-dev \
+          libfribidi-dev libzmq3-dev
+
+      - name: Setting up R installation
+        uses: r-lib/actions/setup-r@v1
+
+      - name: Setting up pandoc and pandoc-citeproc
+        uses: r-lib/actions/setup-pandoc@v1
+
+      - name: Cache R packages
+        uses: actions/cache@v2.1.4
+        id: cache-packages
+        with:
+          path: ${{ env.RENV_PATHS_ROOT }}
+          key: ${{ runner.os }}-renv-${{ hashFiles('**/renv.lock') }}-targets-v2
+          restore-keys: |
+            ${{ runner.os }}-renv-
+
+      - name: Install dependencies
+        run: |
+          if (!requireNamespace("renv", quietly = TRUE)) install.packages("renv")
+          Sys.unsetenv("GITHUB_PAT")
+          renv::restore()
+        shell: Rscript {0}
+
+      - name: Test coverage
+        run: covr::codecov()
+        shell: Rscript {0}

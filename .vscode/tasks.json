@@ -1,0 +1,230 @@
+{
+  // See https://go.microsoft.com/fwlink/?LinkId=733558
+  // for the documentation about the tasks.json format
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "type": "process",
+      "label": "R: style project",
+      "command": "C:/Program Files/R/R-4.0.3/bin/x64/Rscript.exe",
+      "linux": {
+        "command": "/usr/lib/R/bin/Rscript"
+      },
+      "args": [
+        "-e",
+        "styler:::style_dir(filetype = c('R', 'Rmd'), recursive = TRUE, exclude_dirs = c('dev', 'renv'))"
+      ],
+      "options": {
+        "cwd": "${workspaceFolder}"
+      },
+      "group": "none",
+      "presentation": {
+        "clear": true,
+        "reveal": "always",
+        "panel": "shared"
+      },
+      "problemMatcher": []
+    },
+    {
+      "type": "process",
+      "label": "R: lint project",
+      "command": "C:/Program Files/R/R-4.0.3/bin/x64/Rscript.exe",
+      "linux": {
+        "command": "/usr/lib/R/bin/Rscript"
+      },
+      "args": [
+        "-e",
+        "for(i in c('analysis', 'R', 'review', 'index', 'output', 'src')) {print(lintr::lint_dir(i))}"
+      ],
+      "options": {
+        "cwd": "${workspaceFolder}"
+      },
+      "group": "none",
+      "presentation":
+      {
+        "clear": true,
+        "reveal": "always",
+        "panel": "shared"
+      },
+      "problemMatcher": [
+        "$gcc"
+      ]
+    },
+    {
+      "type": "process",
+      "label": "R: test units",
+      "command": "C:/Program Files/R/R-4.0.3/bin/x64/Rscript.exe",
+      "linux": {
+        "command": "/usr/lib/R/bin/Rscript"
+      },
+      "args": [
+        "-e",
+        "testthat::test_local(reporter = testthat::SummaryReporter)"
+      ],
+      "options": {
+        "cwd": "${workspaceFolder}"
+      },
+      "group": {
+        "kind": "test",
+        "isDefault": true
+      },
+      "presentation": {
+        "reveal": "always",
+        "panel": "dedicated",
+        "clear": true
+      },
+      "problemMatcher": []
+    },
+    {
+      "type": "process",
+      "label": "R: test coverage",
+      "dependsOn": "R: test units",
+      "command": "C:/Program Files/R/R-4.0.3/bin/x64/Rscript.exe",
+      "linux": {
+        "command": "/usr/lib/R/bin/Rscript"
+      },
+      "args": [
+        "-e",
+        "covr::package_coverage()"
+      ],
+      "options": {
+        "cwd": "${workspaceFolder}"
+      },
+      "group": "test",
+      "presentation": {
+        "reveal": "always",
+        "panel": "dedicated",
+        "clear": true
+      },
+      "problemMatcher": []
+    },
+    {
+      "type": "shell",
+      "label": "Cpp: build current file",
+      "command": "C:/rtools40/${input:compiler}/bin/g++.exe",
+      "linux": {
+        "command": "/usr/bin/g++"
+      },
+      "osx": {
+        "command": "/usr/bin/clang++"
+      },
+      "detail": "compiler: g++/clang++",
+      "args": [
+        "-std=gnu++11",
+        "-DNDEBUG",
+        "-I\"C:/PROGRA~1/R/R-40~1.3/include\"",
+        // "-I\"${workspaceFolder}/renv/library/R-4.0/${input:renv_arch}/Rcpp/include\"",
+        // "-I\"${workspaceFolder}/renv/library/R-4.0/${input:renv_arch}/RcppParallel/include\"",
+        // "-I\"${workspaceFolder}/renv/library/R-4.0/${input:renv_arch}/RcppProgress/include\"",
+        // "-I\"${workspaceFolder}/renv/library/R-4.0/${input:renv_arch}/RcppThread/include\"",
+        // "-DRCPP_PARALLEL_USE_TBB=1",
+        "-O2",
+        "-Wall",
+        "-mfpmath=sse",
+        "-msse2",
+        "-mstackrealign",
+        "-c",
+        "${fileBasename}",
+        "-o",
+        "${fileBasenameNoExtension}.o"
+      ],
+      "options": {
+        "cwd": "${workspaceFolder}/src"
+      },
+      "problemMatcher": [
+        "$gcc"
+      ],
+      "group": {
+        "kind": "build",
+        "isDefault": true
+      }
+    },
+    {
+      // config file is stored on ./index/_bookdown.yml
+      "type": "process",
+      "label": "R: thesis down",
+      "command": "C:/Program Files/R/R-4.0.3/bin/x64/Rscript.exe",
+      "linux": {
+        "command": "/usr/lib/R/bin/Rscript"
+      },
+      "args": [
+        "-e",
+        "testthat::test_local(reporter = testthat::SummaryReporter)"
+      ],
+      "options": {
+        "cwd": "${workspaceFolder}"
+      },
+      "group": {
+        "kind": "test",
+        "isDefault": true
+      },
+      "presentation": {
+        "reveal": "always",
+        "panel": "dedicated",
+        "clear": true
+      },
+      "problemMatcher": []
+    },
+    {
+      // config file is stored on ./analysis/_site.yml
+      "type": "process",
+      "label": "R: workflowr build",
+      "command": "C:/Program Files/R/R-4.0.3/bin/x64/Rscript.exe",
+      "linux": {
+        "command": "/usr/lib/R/bin/Rscript"
+      },
+      "args": [
+        "-e",
+        "workflowr::wflow_build(update = TRUE)"
+      ],
+      "options": {
+        "cwd": "${workspaceFolder}"
+      },
+      "presentation": {
+        "reveal": "always",
+        "panel": "dedicated",
+        "clear": true
+      },
+      "problemMatcher": []
+    },
+    {
+      "type": "process",
+      "label": "R: targets",
+      "command": "C:/Program Files/R/R-4.0.3/bin/x64/Rscript.exe",
+      "linux": {
+        "command": "/usr/lib/R/bin/Rscript"
+      },
+      "args": [
+        "-e",
+        "targets::tar_make(reporter = 'summary')"
+      ],
+      "options": {
+        "cwd": "${workspaceFolder}"
+      },
+      "group": {
+        "kind": "test",
+        "isDefault": true
+      },
+      "presentation": {
+        "reveal": "always",
+        "panel": "dedicated",
+        "clear": true
+      },
+      "problemMatcher": []
+    }
+  ],
+  "inputs": [
+    {
+      "id": "renv_arch",
+      "type": "command",
+      "command": "cpptools.activeConfigCustomVariable",
+      "args": "renv_arch"
+    },
+    {
+      "id": "compiler",
+      "type": "command",
+      "command": "cpptools.activeConfigCustomVariable",
+      "args": "compiler"
+    }
+  ]
+}
