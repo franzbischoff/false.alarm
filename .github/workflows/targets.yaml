@@ -127,7 +127,7 @@ jobs:
           git config --local user.name "GitHub Actions"
           git config --local user.email "actions@github.com"
           git add --all -- ':!renv'
-          git add -f .target-files
+          git add -f .targets-files
           git add -f _targets
           git commit -am "Run pipeline"
           git push origin targets-runs
