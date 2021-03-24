@@ -68,8 +68,11 @@ Rplots.pdf
 /revdep/data.sqlite
 /revdep/*.html
 README.html
-/_targets/*
 workspace.RData
+
+# Targets
+/_targets/*
+.targets-files
 
 # Workflowr
 .DS_Store

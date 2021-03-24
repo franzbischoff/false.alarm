@@ -104,6 +104,11 @@ jobs:
       - name: Identify files that the targets pipeline produced
         run: git ls-files -mo --exclude=renv > .targets-files
 
+      - name: Update the current repository without the objects
+        run: |
+          git add --all -- ':!renv'
+          git commit -am "Update current branch"
+
       - name: Create the runs branch if it does not already exist
         if: steps.runs-exist.outcome != 'success'
         run: git checkout --orphan targets-runs
@@ -120,14 +125,8 @@ jobs:
           git config --local user.name "GitHub Actions"
           git config --local user.email "actions@github.com"
           git add --all -- ':!renv'
+          git add -f .target-files
           git add -f _targets
           git commit -am "Run pipeline"
           git push origin targets-runs
 
-      - name: Update the current repository without the objects
-        run: |
-          rm -r _targets
-          git add --all -- ':!renv'
-          git commit -am "Update current branch"
-          git branch
-          git checkout origin/develop
