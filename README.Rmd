@@ -1,7 +1,7 @@
 ---
 title: "Detecting life-threatening patterns in Point-of-care ECG using efficient memory and processor power."
 author: "Francisco Bischoff"
-date: "on July 22, 2020"
+date: "on `r format(Sys.time(), '%B %d, %Y')`"
 bibliography: ./protocol/references.bib
 link-citations: true
 csl: https://raw.githubusercontent.com/citation-style-language/styles/master/american-medical-association.csl
@@ -22,7 +22,7 @@ knitr::opts_chunk$set(
 
 <!-- badges: start -->
 
-![Binder](https://github.com/franzbischoff/heads_thesis/workflows/Binder/badge.svg) [![Launch binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/franzbischoff/heads_thesis/master?urlpath=rstudio) [![Read Thesis](https://img.shields.io/badge/read-thesis__down-brightgreen)](https://franzbischoff.github.io/heads_thesis/)
+![Binder](https://github.com/franzbischoff/false.alarm/workflows/Binder/badge.svg) [![Launch binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/franzbischoff/false.alarm/master?urlpath=rstudio) [![Read Thesis](https://img.shields.io/badge/read-thesis__down-brightgreen)](https://franzbischoff.github.io/false.alarm/)
 
 <!-- badges: end -->
 
@@ -44,9 +44,89 @@ The research team is well experienced in time-series and has studied the Matrix 
 
 # About the ongoing project
 
-The document submitted for approval is [here](https://github.com/franzbischoff/heads_thesis/blob/master/protocol/Protocol.pdf).
+The document submitted for approval is [here](https://github.com/franzbischoff/false.alarm/blob/master/protocol/Protocol.pdf).
 
 To follow the thesis timeline you can access the full Gantt chart at Zenhub.
 Click [here](https://app.zenhub.com/workspaces/phd-thesis-5eb2ce34f5f30b3aed0a35af/roadmap) (you need a github account, but that's it).
+
+# Reproducible Research[@krystalli_2019]
+
+This thesis will follow the compendium principles:
+
+![](https://annakrystalli.me/rrresearch/assets/reproducible-data-analysis-04.png)
+
+![](https://annakrystalli.me/rrresearch/assets/reproducible-data-analysis-06.png)
+
+## Following Standards
+
+Aiming to create secure materials that are [FAIR](https://www.nature.com/articles/sdata201618) *findable, accessible, interoperable, reusable*
+
+### Research Data Management
+
+-   [**RDM checklist**](http://www.dcc.ac.uk/sites/default/files/documents/resource/DMP/DMP_Checklist_2013.pdf)[@dcc_2013]
+-   Anticipate **data products** as part of your thesis **outputs**
+-   Think about what technologies to use
+
+### Missing values are a fact of life
+
+-   Usually, best solution is to **leave blank**
+-   **`NA`** or **`NULL`** are also good options
+-   **NEVER use `0`**. Avoid numbers like **`-999`**
+-   Don't make up your own code for missing values
+
+### Raw data are sacrosanct
+
+-   Don't, not even with a barge pole, not for one second, touch or otherwise edit the raw data files. Do any manipulations in script
+
+### Three principles for good (file) names
+
+#### Machine readable
+
+-   Regular expression and globbing friendly
+
+    -   Avoid spaces, punctuation, accented characters, case sensitivity
+
+-   Easy to compute on
+
+    -   Deliberate use of delimiters
+
+    -   Deliberate use of `"-"` and `"_"` allows recovery of metadata from the filenames:
+
+        -   `"_"` underscore used to delimit units of metadata I want to access later
+
+        -   `"-"` hyphen used to delimit words so our eyes don't bleed
+
+#### Human readable
+
+-   Borrowing the concept from [slugs](https://en.wikipedia.org/wiki/Clean_URL#Slug) from semantic URLs
+
+#### Play well with default ordering
+
+-   Put something numeric first
+
+-   Use the ISO 8601 standard for dates
+
+-   Left pad other numbers with zeros
+
+# License
+
+<center>
+
+[![Creative Commons License](https://i.creativecommons.org/l/by-nc-sa/4.0/88x31.png)](https://creativecommons.org/licenses/by-nc-sa/4.0/)
+
+</center>
+
+This work is licensed under a [Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International License](https://creativecommons.org/licenses/by-nc-sa/4.0/).
+
+# Package dependencies
+
+<center>
+
+```{r dependency_plot, echo = FALSE, fig.width = 16, fig.height = 10, message = FALSE, warning = FALSE, fig.path = "man/figures/"}
+source("https://gist.githubusercontent.com/franzbischoff/3b83243dfdfa73e459935112f3f783e3/raw/239548243f984843b3a87d8cc82f99395a8ed26e/plot_dependencies.R")
+plot_dependencies()
+```
+
+</center>
 
 # References

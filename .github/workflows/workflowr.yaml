@@ -27,9 +27,9 @@ jobs:
           ref: ${{ github.event.workflow_run.head_branch }}
 
       - run: git branch
-      
+
       - run: echo ${{ github.event.head_commit.message }}
-      
+
       - name: Install System dependencies
         run: |
           sudo apt-fast update

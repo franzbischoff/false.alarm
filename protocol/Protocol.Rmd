@@ -127,11 +127,11 @@ The five-best scores (for real-time) in this challenge were:
 ```{r scores, echo=FALSE}
 challenge <- tribble(
   ~Score, ~Authors,
-   81.39, "Filip Plesinger, Petr Klimes, Josef Halamek, Pavel Jurak",
-   79.44, "Vignesh Kalidas",
-   79.02, "Paula Couto, Ruben Ramalho, Rui Rodrigues",
-   76.11, "Sibylle Fallet, Sasan Yazdani, Jean-Marc Vesin",
-   75.55, "Christoph Hoog Antink, Steffen Leonhardt"
+  81.39, "Filip Plesinger, Petr Klimes, Josef Halamek, Pavel Jurak",
+  79.44, "Vignesh Kalidas",
+  79.02, "Paula Couto, Ruben Ramalho, Rui Rodrigues",
+  76.11, "Sibylle Fallet, Sasan Yazdani, Jean-Marc Vesin",
+  75.55, "Christoph Hoog Antink, Steffen Leonhardt"
 )
 
 knitr::kable(challenge, caption = "Challenge Results")

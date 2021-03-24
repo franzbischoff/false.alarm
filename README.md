@@ -2,17 +2,17 @@ Detecting life-threatening patterns in Point-of-care ECG using efficient
 memory and processor power.
 ================
 Francisco Bischoff
-on July 22, 2020
+on March 24, 2021
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
 <!-- badges: start -->
 
-![Binder](https://github.com/franzbischoff/heads_thesis/workflows/Binder/badge.svg)
+![Binder](https://github.com/franzbischoff/false.alarm/workflows/Binder/badge.svg)
 [![Launch
-binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/franzbischoff/heads_thesis/master?urlpath=rstudio)
+binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/franzbischoff/false.alarm/master?urlpath=rstudio)
 [![Read
-Thesis](https://img.shields.io/badge/read-thesis__down-brightgreen)](https://franzbischoff.github.io/heads_thesis/)
+Thesis](https://img.shields.io/badge/read-thesis__down-brightgreen)](https://franzbischoff.github.io/false.alarm/)
 
 <!-- badges: end -->
 
@@ -53,12 +53,100 @@ technology.<sup>[2](#ref-Bischoff2019a),[3](#ref-VanBenschoten2020)</sup>
 # About the ongoing project
 
 The document submitted for approval is
-[here](https://github.com/franzbischoff/heads_thesis/blob/master/protocol/Protocol.pdf).
+[here](https://github.com/franzbischoff/false.alarm/blob/master/protocol/Protocol.pdf).
 
 To follow the thesis timeline you can access the full Gantt chart at
 Zenhub. Click
 [here](https://app.zenhub.com/workspaces/phd-thesis-5eb2ce34f5f30b3aed0a35af/roadmap)
 (you need a github account, but that’s it).
+
+# Reproducible Research<sup><span class="citeproc-not-found" data-reference-id="krystalli_2019">**???**</span></sup>
+
+This thesis will follow the compendium principles:
+
+![](https://annakrystalli.me/rrresearch/assets/reproducible-data-analysis-04.png)
+
+![](https://annakrystalli.me/rrresearch/assets/reproducible-data-analysis-06.png)
+
+## Following Standards
+
+Aiming to create secure materials that are
+[FAIR](https://www.nature.com/articles/sdata201618) *findable,
+accessible, interoperable, reusable*
+
+### Research Data Management
+
+  - [**RDM
+    checklist**](http://www.dcc.ac.uk/sites/default/files/documents/resource/DMP/DMP_Checklist_2013.pdf)<sup><span class="citeproc-not-found" data-reference-id="dcc_2013">**???**</span></sup>
+  - Anticipate **data products** as part of your thesis **outputs**
+  - Think about what technologies to use
+
+### Missing values are a fact of life
+
+  - Usually, best solution is to **leave blank**
+  - **`NA`** or **`NULL`** are also good options
+  - **NEVER use `0`**. Avoid numbers like **`-999`**
+  - Don’t make up your own code for missing values
+
+### Raw data are sacrosanct
+
+  - Don’t, not even with a barge pole, not for one second, touch or
+    otherwise edit the raw data files. Do any manipulations in script
+
+### Three principles for good (file) names
+
+#### Machine readable
+
+  - Regular expression and globbing friendly
+    
+      - Avoid spaces, punctuation, accented characters, case sensitivity
+
+  - Easy to compute on
+    
+      - Deliberate use of delimiters
+    
+      - Deliberate use of `"-"` and `"_"` allows recovery of metadata
+        from the filenames:
+        
+          - `"_"` underscore used to delimit units of metadata I want to
+            access later
+        
+          - `"-"` hyphen used to delimit words so our eyes don’t bleed
+
+#### Human readable
+
+  - Borrowing the concept from
+    [slugs](https://en.wikipedia.org/wiki/Clean_URL#Slug) from semantic
+    URLs
+
+#### Play well with default ordering
+
+  - Put something numeric first
+
+  - Use the ISO 8601 standard for dates
+
+  - Left pad other numbers with zeros
+
+# License
+
+<center>
+
+[![Creative Commons
+License](https://i.creativecommons.org/l/by-nc-sa/4.0/88x31.png)](https://creativecommons.org/licenses/by-nc-sa/4.0/)
+
+</center>
+
+This work is licensed under a [Creative Commons
+Attribution-NonCommercial-ShareAlike 4.0 International
+License](https://creativecommons.org/licenses/by-nc-sa/4.0/).
+
+# Package dependencies
+
+<center>
+
+![](man/figures/dependency_plot-1.png)<!-- -->
+
+</center>
 
 # References
 
