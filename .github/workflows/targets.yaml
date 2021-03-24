@@ -102,7 +102,7 @@ jobs:
         continue-on-error: true # if the pipeline fails, the workspace is saved for inspection.
 
       - name: Identify files that the targets pipeline produced
-        run: git ls-files -mo --exclude=renv > .targets-files
+        run: git ls-files -mo -x renv -x inst > .targets-files
 
       - name: Update the current repository without the objects
         run: |
@@ -110,6 +110,7 @@ jobs:
           git config --local user.email "actions@github.com"
           git add --all -- ':!renv'
           git commit -am "Update current branch"
+          git push
 
       - name: Create the runs branch if it does not already exist
         if: steps.runs-exist.outcome != 'success'

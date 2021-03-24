@@ -15,7 +15,7 @@ on:
 jobs:
   workflowr:
     runs-on: ubuntu-latest
-    if: ${{ github.event.workflow_run.conclusion == 'success' && contains(github.event.head_commit.message, 'workflowr') }}
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
     env:
       GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
       RENV_PATHS_ROOT: ~/.local/share/renv
@@ -27,6 +27,8 @@ jobs:
           ref: ${{ github.event.workflow_run.head_branch }}
 
       - run: git branch
+
+      - run: echo ${{ github.event.head_commit.message }}
 
       - name: Install System dependencies
         run: |
@@ -63,7 +65,7 @@ jobs:
 
       - name: Knit thesisdown
         run: |
-          bookdown::render_book("index")
+          bookdown::render_book("thesis")
         shell: Rscript {0}
 
       - name: Stage thesisdown changes
