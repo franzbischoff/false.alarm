@@ -1,5 +1,6 @@
 Asystole
 Benschoten
+Bischoff
 Centre
 EDC
 Gantt
@@ -11,18 +12,19 @@ NonCommercial
 Ouyang
 PLETH
 POC
-PhysioNet
 Physionet
 RDM
 RDMAT
 RDSAMP
 Rodrigues
 ShareAlike
+TRain
 Tsmp
 WFDB
 Zenhub
 al
 annakrystalli
+api
 cic
 concretization
 dcc
@@ -35,6 +37,7 @@ hea
 htm
 http
 https
+icu
 interoperable
 joss
 multiresolution

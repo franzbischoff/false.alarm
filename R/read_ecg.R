@@ -58,7 +58,7 @@ read_ecg <- function(filename, plot = FALSE) {
   checkmate::assert_string(filename, 3)
   checkmate::qassert(plot, "B")
   #
-  # Set default pararameter values
+  # Set default parameter values
   def_gain <- 200 # Default value for missing gains
   wfdb_nan <- -32768 # This should be the case for all WFDB signal format types currently supported by RDMAT
 

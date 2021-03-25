@@ -4,7 +4,7 @@
             "name": "Rtools40-x64",
             "intelliSenseMode": "gcc-x64",
             "includePath": [
-                "C:/Program Files/R/R-4.0.3/include",
+                "C:/Program Files/R/R-4.0.4/include",
                 "${workspaceFolder}/src"
             ],
             "defines": [
@@ -24,7 +24,7 @@
             "name": "Rtools40-x86",
             "intelliSenseMode": "gcc-x86",
             "includePath": [ // renv might be on i386-w64-mingw32 if R-32bits
-                "C:/Program Files/R/R-4.0.3/include",
+                "C:/Program Files/R/R-4.0.4/include",
                 "${workspaceFolder}/src"
             ],
             "defines": [

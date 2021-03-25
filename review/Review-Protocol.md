@@ -159,7 +159,7 @@ each member of the review team.
 
 | Title                                                                              | First Name | Last Name | Affiliation |
 | :--------------------------------------------------------------------------------- | :--------- | :-------- | :---------- |
-| Reserach lead                                                                      |            |           |             |
+| Research lead                                                                      |            |           |             |
 | SR mentee                                                                          |            |           |             |
 | Content researcher (Reviewer 1)                                                    |            |           |             |
 | Content researcher (Reviewer 2)                                                    |            |           |             |
@@ -180,12 +180,12 @@ to the review by the individuals or bodies listed should be included.
 ## Conflicts of interest
 
 List any conditions that could lead to actual or perceived undue
-influence on judgements concerning the main topic investigated in the
+influence on judgments concerning the main topic investigated in the
 review.
 
 ## Collaborators
 
-Give the name, affiliation and role of any individuals or organisations
+Give the name, affiliation and role of any individuals or organizations
 who are working on the review but who are not listed as review team
 members
 

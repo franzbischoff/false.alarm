@@ -42,7 +42,7 @@ Last Updated: 2020-10-10 18:57:49 UTC
 “Detecting life-threatening patterns in Point-of-care ECG using
 efficient memory and processor power.”
 
-“Detectando padrões de risco de vida no ECG no local de atendimento
+“Detetando padrões de risco de vida no ECG no local de atendimento
 usando memória e potência do processador eficientes.”
 
 ## Author
@@ -91,7 +91,7 @@ resolver esse problema. Além disso, espera-se que a utilização de
 tecnologia.*
 
 *A equipe de pesquisa é experiente em séries temporais e estuda o
-“Matrix Profile” desde suas raizes, sendo fundadores da “Matrix
+“Matrix Profile” desde suas raízes, sendo fundadores da “Matrix
 Profile Foundation”, cujo objetivo é ter uma API multi-linguagem concisa
 e estável para desenvolvimento com a tecnologia “Matrix
 Profile.”<sup>[1](#ref-Bischoff2019a),[2](#ref-VanBenschoten2020)</sup>*
@@ -171,7 +171,7 @@ minimizing the false alarms for five life-threatening arrhythmia:
 asystole, extreme bradycardia, extreme tachycardia, ventricular
 tachycardia and ventricular fibrillation or flutter.
 
-There are other arrhytmias that this challenge didn’t assessed, like
+There are other arrhythmias that this challenge didn’t assessed, like
 atrial standstill (hyperkalemia), third-degree atrioventricular block
 and others that may be life-threatening in some settings like atrial
 fibrillation (AF), a, atrialflutter and paroxysmal supraventricular
@@ -286,7 +286,7 @@ The timeline is composed of larger tasks I call Epics. They contain
 multiple subtasks that are expected to change frequently.
 
   - **Elaboration of Research Protocol**
-    
+
     1.  Duration: 1 months 12 days;
     2.  Elaboration of this protocol in order to facilitate the
         management and overview of the project;
@@ -294,7 +294,7 @@ multiple subtasks that are expected to change frequently.
         from other experts.
 
   - **Literature Review**
-    
+
     1.  Duration: 2 months 12 days;
     2.  This task aims to survey the literature about what is currently
         done to tackle the current problem and what the limitations are;
@@ -303,7 +303,7 @@ multiple subtasks that are expected to change frequently.
         the PRISMA guidelines in the Covidence framework.
 
   - **Obtaining Access to Physionet full data**
-    
+
     1.  Duration: 1 months 4 days
     2.  All datasets in Physionet are supposed to be Open Access.
         However, there is a chance that some datasets may need
@@ -312,7 +312,7 @@ multiple subtasks that are expected to change frequently.
         real need and asked the proper way to access it.
 
   - **First Experimentation with Public data**
-    
+
     1.  Duration: 2 months 9 days
     2.  The Physionet Challenge from 2015 will be the first dataset to
         be analyzed and will be *a study in scarlet* for the problems we
@@ -321,7 +321,7 @@ multiple subtasks that are expected to change frequently.
         the modeling process.
 
   - **Development of the First Algorithm**
-    
+
     1.  Duration: 4 months 13 days;
     2.  In this task, the first model will be constructed: the Atrial
         Fibrillation start/end detection;
@@ -332,7 +332,7 @@ multiple subtasks that are expected to change frequently.
         from the previous task.
 
   - **Dissertation First Draft**
-    
+
     1.  Duration: 2 months 3 days;
     2.  This task aims to, at the same time, create a draft for the
         final dissertation, and the content for an actual article to be
@@ -340,7 +340,7 @@ multiple subtasks that are expected to change frequently.
     3.  This task depends on the concretization of the previous task.
 
   - **Publication of the First Algorithm**
-    
+
     1.  Duration: 3 months 29 days
     2.  This task aims to refine the text, review, and submit it for
         publication.
@@ -350,7 +350,7 @@ multiple subtasks that are expected to change frequently.
     5.  Financial needs: Publication fees.
 
   - **Development of the Second Algorithm**
-    
+
     1.  Duration: 2 months 14 days
     2.  In this task, the second model will be constructed: an attempt
         to generalize it for any life-threatening ECG change;
@@ -359,7 +359,7 @@ multiple subtasks that are expected to change frequently.
         usage;
 
   - **Dissertation Second Draft**
-    
+
     1.  Duration: 3 months 25 days
     2.  This task aims to, at the same time, create a second draft for
         the final dissertation, and the content for an actual article to
@@ -367,7 +367,7 @@ multiple subtasks that are expected to change frequently.
     3.  This task depends on the concretization of the previous task.
 
   - **Publication of the Second Algorithm**
-    
+
     1.  Duration: 3 months 27 days
     2.  This task aims to refine the text, review, and submit it for
         publication.
@@ -377,7 +377,7 @@ multiple subtasks that are expected to change frequently.
     5.  Financial needs: Publication fees.
 
   - **Dissertation Review**
-    
+
     1.  Duration: 1 months 15 days
     2.  This task will be a time to review all the work done and prepare
         it for final presentation;
@@ -385,7 +385,7 @@ multiple subtasks that are expected to change frequently.
         and give feedback for improvement;
 
   - **Proof Reading**
-    
+
     1.  Duration: 0 months 25 days
     2.  This task comprises in careful reading, ideally by a
         professional in the English language;
@@ -393,7 +393,7 @@ multiple subtasks that are expected to change frequently.
     4.  Financial needs: Proofreading fees
 
   - **Presentation**
-    
+
     1.  Duration: 1 months 11 days
     2.  This task comprises in preparation for public presentation;
     3.  It includes the formulation of the slides or any multimedia
