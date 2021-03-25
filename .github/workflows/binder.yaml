@@ -2,7 +2,11 @@ name: Binder
 on:
   push:
     branches:
-      - future
+      - master
+      - main
+
+  workflow_dispatch:
+  repository_dispatch:
 
 jobs:
   Create-MyBinderOrg-Cache:

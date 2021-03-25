@@ -8,7 +8,7 @@ The {#rmd-basics} text after the chapter declaration will allow us to link throu
 
 # R Markdown Basics {#rmd-basics}
 
-Here is a brief introduction into using _R Markdown_. _Markdown_ is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. _R Markdown_ provides the flexibility of _Markdown_ with the implementation of **R** input and output.  For more details on using _R Markdown_ see <http://rmarkdown.rstudio.com>.  
+Here is a brief introduction into using _R Markdown_. _Markdown_ is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. _R Markdown_ provides the flexibility of _Markdown_ with the implementation of **R** input and output.  For more details on using _R Markdown_ see <http://rmarkdown.rstudio.com>.
 
 Be careful with your spacing in _Markdown_ documents.  While whitespace largely is ignored, it does at times give _Markdown_ signals as to how to proceed.  As a habit, try to keep everything left aligned whenever possible, especially as you type a new paragraph.  In other words, there is no need to indent basic text in the Rmd document (in fact, it might cause your text to do funny things if you do).
 
@@ -41,7 +41,7 @@ Make sure to add white space between lines if you'd like to start a new paragrap
 Here is the first sentence.  Here is another sentence.  Here is the last sentence to end the paragraph.
 This should be a new paragraph.
 
-*Now for the correct way:* 
+*Now for the correct way:*
 
 Here is the first sentence.  Here is another sentence.  Here is the last sentence to end the paragraph.
 
@@ -59,7 +59,7 @@ summary(cars)
 
 If you'd like to put the results of your analysis directly into your discussion, add inline code like this:
 
-> The `cos` of $2 \pi$ is `r cos(2*pi)`. 
+> The `cos` of $2 \pi$ is `r cos(2*pi)`.
 
 Another example would be the direct calculation of the standard deviation:
 
@@ -71,7 +71,7 @@ One last neat feature is the use of the `ifelse` conditional statement which can
 
 Note the use of `>` here, which signifies a quotation environment that will be indented.
 
-As you see with `$2 \pi$` above, mathematics can be added by surrounding the mathematical text with dollar signs.  More examples of this are in [Mathematics and Science] if you uncomment the code in [Math].  
+As you see with `$2 \pi$` above, mathematics can be added by surrounding the mathematical text with dollar signs.  More examples of this are in [Mathematics and Science] if you uncomment the code in [Math].
 
 ## Including plots
 
@@ -81,7 +81,7 @@ You can also embed plots.  For example, here is a way to use the base **R** grap
 plot(pressure)
 ```
 
-Note that the `echo=FALSE` parameter was added to the code chunk to prevent printing of the **R** code that generated the plot.  There are plenty of other ways to add chunk options.  More information is available at <http://yihui.name/knitr/options/>.  
+Note that the `echo=FALSE` parameter was added to the code chunk to prevent printing of the **R** code that generated the plot.  There are plenty of other ways to add chunk options.  More information is available at <http://yihui.name/knitr/options/>.
 
 Another useful chunk option is the setting of `cache=TRUE` as you see here.  If document rendering becomes time consuming due to long computations or plots that are expensive to generate you can use knitr caching to improve performance.  Later in this file, you'll see a way to reference plots created in **R** or external figures.
 
@@ -116,12 +116,12 @@ We begin by checking to ensure that needed packages are installed and then we lo
 # List of packages required for this analysis
 pkg <- c("dplyr", "ggplot2", "knitr", "bookdown", "devtools")
 # Check if packages are not installed and assign the
-# names of the packages not installed to the variable new.pkg
-new.pkg <- pkg[!(pkg %in% installed.packages())]
+# names of the packages not installed to the variable new_pkg
+new_pkg <- pkg[!(pkg %in% installed.packages())]
 # If there are any packages in the list that aren't installed,
 # install them
-if (length(new.pkg)) {
-  install.packages(new.pkg, repos = "http://cran.rstudio.com")
+if (length(new_pkg)) {
+  install.packages(new_pkg, repos = "http://cran.rstudio.com")
 }
 # Load packages (thesisdown will load all of the packages as well)
 library(thesisdown)
@@ -131,7 +131,7 @@ library(thesisdown)
 
 The example we show here does the following:
 
-- Selects only the `carrier_name` and `arr_delay` from the `flights` dataset and then assigns this subset to a new variable called `flights2`. 
+- Selects only the `carrier_name` and `arr_delay` from the `flights` dataset and then assigns this subset to a new variable called `flights2`.
 
 - Using `flights2`, we determine the largest arrival delay for each of the carriers.
 
