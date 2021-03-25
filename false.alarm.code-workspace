@@ -17,8 +17,8 @@
     "editor.tabSize": 2,
     "editor.wordWrapColumn": 120,
     "files.associations": {
-      "*.json": "jsonc",
       "*.ipp": "cpp",
+      "*.json": "jsonc",
       "*.tcc": "cpp",
       "algorithm": "cpp",
       "array": "cpp",
@@ -134,6 +134,14 @@
       "**/renv/**": true,
       "**/tmp/**": true
     },
+    "github-actions.workflows.pinned.refresh.enabled": true,
+    "github-actions.workflows.pinned.refresh.interval": 500,
+    "github-actions.workflows.pinned.workflows": [
+      ".github/workflows/lint.yaml",
+      ".github/workflows/test-coverage.yaml",
+      ".github/workflows/targets.yaml",
+      ".github/workflows/workflowr.yaml"
+    ],
     "taskExplorer.exclude": [
       "**/dist/**",
       "**/log/**",
