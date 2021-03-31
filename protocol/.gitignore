@@ -3,4 +3,5 @@
 *.out
 *.synctex.gz
 *.aux
-/_bookdown_files/
+*.ris
+*.nbib
