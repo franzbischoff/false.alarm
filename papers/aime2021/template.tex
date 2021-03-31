@@ -56,7 +56,7 @@ $endif$
 \author{ $for(authors)$ $it.name$\inst{$it.inst$}\orcidID{$it.orcid$}${sep}, $endfor$ }
 
 $if(authorrunning)$
-    \authorrunning{ $authorrunning$ }
+\authorrunning{ $authorrunning$ }
 $endif$
 % First names are abbreviated in the running head.
 % If there are more than two authors, 'et al.' is used.
@@ -69,13 +69,13 @@ $endif$
 %
 
 \begin{abstract}
-$abstract$
+    $abstract$
 
-\keywords{
-    $for(keywords)$
-    $keywords$${sep} \and
-    $endfor$
-}
+    \keywords{
+        $for(keywords)$
+        $keywords$${sep} \and
+        $endfor$
+    }
 
 \end{abstract}
 %
