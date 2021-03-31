@@ -1,0 +1,119 @@
+---
+title: "Framework for ECG analysis"
+titlerunning: Framework for ECG analysis
+authorrunning: Bischoff F., Van Benschoten AH., Rodrigues PP.
+output:
+  pdf_document:
+    keep_tex: yes
+    template: template.tex
+authors:
+- name: Francisco Bischoff
+  inst: 1, 2
+  orcid: 0000-0002-5301-8672
+- name: Andrew Van Benschoten
+  inst: 1, 2
+  orcid: 0000-0000-0000-0000
+- name: Pedro Pereira Rodrigues
+  inst: 1, 2
+  orcid: 0000-0000-0000-0000
+institutes:
+- num: 1
+  dept: TODO Department of Community Medicine, Information and Health Decision Sciences (MEDCIDS), Faculty of Medicine, University of Porto, Porto, Portugal
+- num: 2
+  dept: TODO Center for Health Technology and Services Research (CINTESIS), Faculty of Medicine, University of Porto, Porto, Portugal
+keywords:
+- TODO
+- Clinical Coding
+- Computer-Assisted Coding
+- Machine Learning
+- Artificial Intelligence
+- Automated Coding
+abstract: |
+  *TODO* Since its first developments in 1900, clinical coding has been used for several purposes, including research, morbidity and mortality reporting, clinical decision making, surveillance, and health care reimbursement. Nevertheless, the manual process is time-consuming, and its subjective nature can often lead to several errors impacting data quality, especially in terms of loss of objectivity and reliability. Over the last decade, there was a growing literature on data-driven approaches and Artificial Intelligence techniques for automated clinical coding, mostly involving Natural Language Processing (NLP) machine learning algorithms. Despite developments in supporting automated clinical coding, challenges remain. In this paper, we describe important methods and challenges for automated clinical coding. Data quality issues, the highly non-structured nature of medical records, including the high dimensionality of coding terminologies and unbalanced datasets, are considered the main challenges for automated coding. Rule-based systems incorporating knowledge from experts have often been explored for automated clinical coding. Still, it depends upon greater amounts of human resources to be maintained and updated. Keyword-based methods linking terms to text and codes may achieve faster results, but it is more prone to errors. NLP approaches constructing predictive models based on Machine Learning algorithms, and deep learning has been currently preferred for automated clinical coding. However, they lack causal and counterfactual reasoning, thereby requiring human validation. Automated clinical coding methods can potentially enhance manual clinical coding by reducing time and data quality issues. Future developments will likely need to focus on effective ways of combining both predictive models and human interventions.
+bibliography: bibliography.bib
+csl: llncs-alpha.csl
+thanks: |
+  *TODO* Supported by the project "Clikode - Automatic Processing of Clinical Coding, (3I) Innovation, Research of AI models for hospital coding of Procedures and Diagnoses", POCI-05-5762-FSE-000230, is financed by Portugal 2020, through the European Social Fund, within the scope of COMPETE 2020 (Operational Programme Competitiveness and Internationalization of Portugal 2020).
+---
+
+# Introduction {#introduction}
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+```
+
+This is an R Markdown document.
+Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents.
+For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+
+When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document.
+You can embed an R code chunk like this:
+
+```{r cars}
+summary(cars)
+```
+
+## Rules
+
+### Submission
+
+Unlike other conference submissions, a Doctoral Consortium submission pertains specifically to the PhD thesis as a whole or part thereof (thereafter both will be termed the research work).
+Submissions should describe (in 2000-2500 words, approx. 4-5 pages) a research plan on a topic related to AI in medicine and include the following elements:
+
+-   Title and author,
+
+-   The problem, with an argument of why it is important,
+
+-   The goal and the research questions,
+
+-   The planned approach and methods for solving the problem,
+
+-   An outline of what is already known about the research problem,
+
+-   The expected results from the research work like overviews, algorithms, better understanding of a concept, a pilot, model or system,
+
+-   Any questions you might have or problems you encounter for which you specifically would like feedback on such as:
+
+    -   Do I need to write a systematic review before I start?
+
+    -   How should I proceed?
+
+    -   Where should I consider publishing?
+
+    -   How should I evaluate my work?
+
+    -   Which courses would suit me best to carry out the work?
+
+    -   Is it normal to meet my supervisor once a week/month/year?
+
+Submissions be formatted according to the [Springer's LNCS format](http://www.springer.de/comp/lncs/authors.html) and send by e-mail in PDF format to David Riaño with the subject line AIME21 Doctoral Consortium submission.
+(Note: Each submission will be confirmed by a return message. If a confirmation message has not been received within 5 days after submission, please contact David Riaño to inform about it).\
+\
+Submissions will be reviewed by members of the Academic Panel and by submitting students (each student will be asked to review one submission prepared by another person)
+. Based on reviews, the Doctoral Consortium chair will select about 6 submissions to be presented and discussed during the meeting
+. The selection will be based on the relevancy to AI in medicine topics (see for example the scope for AIME 2021), relevancy to the doctoral consortium (there is for example no point to present finished work at the meeting), the clarity of writing, and the resulting spectrum of presented topics
+. Selected submissions will appear in workshop notes that will be distributed among conference participants.\
+\
+For more information about the Doctoral Consortium please contact to David Riaño ([david.riano\@urv.cat](mailto:david.riano@urv.cat))
+
+# The evaluation {#the-evaluation}
+
+Since all that glitters is not gold, we must not be so excited with the resulting metrics.
+We focus too much attention on selecting the best measurement, like F-score, AUC, accuracy, that we forget the basics.
+What is good coding?
+How will the new system improve the overall quality of the data and coding practices?
+Are we learning the coders' mistakes too?
+There is a baseline algorithm?
+Is the model a Coding System or a CACS?
+Suleiman *et al.* point out that *"a good measure of performance for each recommender system is not only how often it correctly recommends the addition of a code, namely coverage, but also by how often it makes superfluous recommendations which will not be actioned by the coder"*[@Suleiman2020]. Some used the Levenshtein distance (the minimum number of insertions, deletions, or substitutions required to change one word into the other) as the baseline. Others an Expert Validated list[@Atutxa2019; @Suleiman2020].
+
+# Conclusion {#conclusion}
+
+The main takeaway here may be that there is not only one road that leads to Rome.
+This circles back to the beginning of this article: we are not even close to matching a human coder.
+Just as they did thirty years ago, machine learning algorithms operate entirely in associational mode[@Pearl2018].
+They lack causal and counterfactual reasoning and still need human validation.
+On the other hand, they can enhance human capabilities of solving problems and at a faster rate.
+At least for now.
+
+# References
