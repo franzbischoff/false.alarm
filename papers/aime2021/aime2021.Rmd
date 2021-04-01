@@ -4,7 +4,7 @@ titlerunning: Framework for ECG analysis
 authorrunning: Bischoff F., Van Benschoten AH., Rodrigues PP.
 output:
   pdf_document:
-    keep_tex: yes
+    keep_tex: no
     template: template.tex
 authors:
 - name: Francisco Bischoff
@@ -105,7 +105,9 @@ How will the new system improve the overall quality of the data and coding pract
 Are we learning the coders' mistakes too?
 There is a baseline algorithm?
 Is the model a Coding System or a CACS?
-Suleiman *et al.* point out that *"a good measure of performance for each recommender system is not only how often it correctly recommends the addition of a code, namely coverage, but also by how often it makes superfluous recommendations which will not be actioned by the coder"*[@Suleiman2020]. Some used the Levenshtein distance (the minimum number of insertions, deletions, or substitutions required to change one word into the other) as the baseline. Others an Expert Validated list[@Atutxa2019; @Suleiman2020].
+Suleiman *et al.* point out that *"a good measure of performance for each recommender system is not only how often it correctly recommends the addition of a code, namely coverage, but also by how often it makes superfluous recommendations which will not be actioned by the coder"*[@Suleiman2020].
+Some used the Levenshtein distance (the minimum number of insertions, deletions, or substitutions required to change one word into the other) as the baseline.
+Others an Expert Validated list[@Atutxa2019; @Suleiman2020].
 
 # Conclusion {#conclusion}
 

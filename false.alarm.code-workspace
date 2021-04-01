@@ -186,6 +186,28 @@
       "title"
     ],
     "latex-workshop.latex.autoBuild.run": "never",
-    "latex-workshop.chktex.enabled": true
+    "latex-workshop.chktex.args.active": [
+      "-wall",
+      "-n22",
+      "-n30",
+      "-e16",
+      "-q",
+      "-n46",
+      "-n8",
+      "-n1"
+    ],
+    "latex-workshop.chktex.args.root": [
+      "-wall",
+      "-n22",
+      "-n30",
+      "-e16",
+      "-q",
+      "-n46",
+      "-n8",
+      "-n1"
+    ],
+    "latex-workshop.chktex.enabled": true,
+    "latex-workshop.view.autoFocus.enabled": true,
+    "latex-workshop.view.pdf.viewer": "tab"
   }
 }

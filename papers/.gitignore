@@ -1,3 +1,13 @@
-*.ris
+*.log
 *.md
+*.out
+*.synctex.gz
+*.aux
+*.ris
 *.nbib
+*.fls
+*.fdb_latexmk
+*.bbl
+*.blg
+*.dvi
+*.txt
