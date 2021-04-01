@@ -2,60 +2,61 @@
 title: "Framework for ECG analysis"
 titlerunning: Framework for ECG analysis
 authorrunning: Bischoff F., Van Benschoten AH., Rodrigues PP.
+editor_options:
+  markdown:
+    mode: markdown
 output:
   pdf_document:
-    keep_tex: no
+    keep_tex: yes
     template: template.tex
 authors:
 - name: Francisco Bischoff
   inst: 1, 2
   orcid: 0000-0002-5301-8672
 - name: Andrew Van Benschoten
-  inst: 1, 2
+  inst: 3
   orcid: 0000-0000-0000-0000
 - name: Pedro Pereira Rodrigues
   inst: 1, 2
   orcid: 0000-0000-0000-0000
 institutes:
 - num: 1
-  dept: TODO Department of Community Medicine, Information and Health Decision Sciences (MEDCIDS), Faculty of Medicine, University of Porto, Porto, Portugal
+  dept: Department of Community Medicine, Information and Health Decision Sciences (MEDCIDS), Faculty of Medicine, University of Porto, Porto, Portugal
 - num: 2
-  dept: TODO Center for Health Technology and Services Research (CINTESIS), Faculty of Medicine, University of Porto, Porto, Portugal
+  dept: Center for Health Technology and Services Research (CINTESIS), Faculty of Medicine, University of Porto, Porto, Portugal
+- num: 3
+  dept: Matrix Profile Foundation, Minnesota, USA
 keywords:
-- TODO
-- Clinical Coding
-- Computer-Assisted Coding
-- Machine Learning
-- Artificial Intelligence
-- Automated Coding
+- anomaly detection
+- ECG
+- fading factors
+- matrix profile
+- time series
+- point-of-care
 abstract: |
-  *TODO* Since its first developments in 1900, clinical coding has been used for several purposes, including research, morbidity and mortality reporting, clinical decision making, surveillance, and health care reimbursement. Nevertheless, the manual process is time-consuming, and its subjective nature can often lead to several errors impacting data quality, especially in terms of loss of objectivity and reliability. Over the last decade, there was a growing literature on data-driven approaches and Artificial Intelligence techniques for automated clinical coding, mostly involving Natural Language Processing (NLP) machine learning algorithms. Despite developments in supporting automated clinical coding, challenges remain. In this paper, we describe important methods and challenges for automated clinical coding. Data quality issues, the highly non-structured nature of medical records, including the high dimensionality of coding terminologies and unbalanced datasets, are considered the main challenges for automated coding. Rule-based systems incorporating knowledge from experts have often been explored for automated clinical coding. Still, it depends upon greater amounts of human resources to be maintained and updated. Keyword-based methods linking terms to text and codes may achieve faster results, but it is more prone to errors. NLP approaches constructing predictive models based on Machine Learning algorithms, and deep learning has been currently preferred for automated clinical coding. However, they lack causal and counterfactual reasoning, thereby requiring human validation. Automated clinical coding methods can potentially enhance manual clinical coding by reducing time and data quality issues. Future developments will likely need to focus on effective ways of combining both predictive models and human interventions.
-bibliography: bibliography.bib
-csl: llncs-alpha.csl
+  Currently, Point-of-Care (POC) ECG monitoring works either as plot devices or alarms for abnormal cardiac rhythms using predefined normal trigger ranges. On the other hand, full 12-derivation ECG machines are complex to use as simple monitors and are used with strict techniques for formal diagnostics of hearth electric conduction pathologies, and the automatic diagnostics are derived from a full analysis of the 12-dimension data after it is fully collected. Both systems do not handle disconnected leads and patient's motions, being strictly necessary to have a good and stable signal to allow proper diagnosis. This research aims to identify abnormal hearth electric patterns using streaming data, specifically those who are life-threatening, being a reliable signal for Intensive Care Units to respond quickly to those situations. The study design is comparable to a Diagnostic study, where high accuracy is essential. It will use the Physionet datasets, and the algorithm will try to minimize the false negatives and false positives. The expected result is the concretization of a new method that, besides being accurate, accomplishes this task using state of the art technology for time series analysis that allows minimum space and processor power to solve this problem. Also, we expect that fading factors can contribute to the state of the art of this technology. The research team is well experienced in time-series and has studied the Matrix Profile since its beginning, being founders of the Matrix Profile Foundation whose goal is to have a concise and stable cross-language API for developing with the Matrix Profile technology.[@Bischoff2019a; @VanBenschoten2020]
+bibliography: ../../protocol/references.bib
+link-citations: true
+csl: https://raw.githubusercontent.com/citation-style-language/styles/bfa3b6d80f0e108aff3a81a0c2ab06f1525d1eed/springer-lecture-notes-in-computer-science-alphabetical.csl
 thanks: |
   *TODO* Supported by the project "Clikode - Automatic Processing of Clinical Coding, (3I) Innovation, Research of AI models for hospital coding of Procedures and Diagnoses", POCI-05-5762-FSE-000230, is financed by Portugal 2020, through the European Social Fund, within the scope of COMPETE 2020 (Operational Programme Competitiveness and Internationalization of Portugal 2020).
 ---
 
-# Introduction {#introduction}
-
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = FALSE)
+
+suppressPackageStartupMessages(library(dplyr))
+suppressPackageStartupMessages(library(lubridate))
+suppressPackageStartupMessages(library(tibble))
+print_duration <- function(start, end) {
+  period <- lubridate::as.period(lubridate::interval(lubridate::date(start), lubridate::date(end)))
+  paste(period@month, "months", period@day, "days")
+}
 ```
 
-This is an R Markdown document.
-Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents.
-For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+<!-- -*- mode: gfm; extensions: +tex_math_dollars+raw_tex -*- -->
 
-When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document.
-You can embed an R code chunk like this:
-
-```{r cars}
-summary(cars)
-```
-
-## Rules
-
-### Submission
+# Rules
 
 Unlike other conference submissions, a Doctoral Consortium submission pertains specifically to the PhD thesis as a whole or part thereof (thereafter both will be termed the research work).
 Submissions should describe (in 2000-2500 words, approx. 4-5 pages) a research plan on a topic related to AI in medicine and include the following elements:
@@ -96,26 +97,258 @@ Submissions will be reviewed by members of the Academic Panel and by submitting 
 \
 For more information about the Doctoral Consortium please contact to David Riaño ([david.riano\@urv.cat](mailto:david.riano@urv.cat))
 
-# The evaluation {#the-evaluation}
+# Introduction {#introduction}
 
-Since all that glitters is not gold, we must not be so excited with the resulting metrics.
-We focus too much attention on selecting the best measurement, like F-score, AUC, accuracy, that we forget the basics.
-What is good coding?
-How will the new system improve the overall quality of the data and coding practices?
-Are we learning the coders' mistakes too?
-There is a baseline algorithm?
-Is the model a Coding System or a CACS?
-Suleiman *et al.* point out that *"a good measure of performance for each recommender system is not only how often it correctly recommends the addition of a code, namely coverage, but also by how often it makes superfluous recommendations which will not be actioned by the coder"*[@Suleiman2020].
-Some used the Levenshtein distance (the minimum number of insertions, deletions, or substitutions required to change one word into the other) as the baseline.
-Others an Expert Validated list[@Atutxa2019; @Suleiman2020].
+Currently, Point-of-Care (POC) ECG monitoring works either as plot devices or alarms for abnormal cardiac rhythms using predefined normal trigger ranges.
+On the other hand, full 12-derivation ECG machines are complex to use as simple monitors and are used with strict techniques for formal diagnostics of hearth electric conduction pathologies, and the automatic diagnostics are derived from a full analysis of the 12-dimension data after it is fully collected.
+Both systems do not handle disconnected leads and patient's motions, being strictly necessary to have a good and stable signal to allow proper diagnosis.
 
-# Conclusion {#conclusion}
+This research aims to identify abnormal hearth electric patterns using streaming data, specifically those who are life-threatening, being a reliable signal for Intensive Care Units to respond quickly to those situations.
 
-The main takeaway here may be that there is not only one road that leads to Rome.
-This circles back to the beginning of this article: we are not even close to matching a human coder.
-Just as they did thirty years ago, machine learning algorithms operate entirely in associational mode[@Pearl2018].
-They lack causal and counterfactual reasoning and still need human validation.
-On the other hand, they can enhance human capabilities of solving problems and at a faster rate.
-At least for now.
+The study design is comparable to a Diagnostic study, where high accuracy is essential.
+It will use the Physionet datasets, and the algorithm will try to minimize the false negatives and false positives.
+
+The expected result is the concretization of a new method that, besides being accurate, accomplishes this task using state of the art technology for time series analysis that allows minimum space and processor power to solve this problem.
+Also, we expect that fading factors can contribute to the state of the art of this technology.
+
+The research team is well experienced in time-series and has studied the Matrix Profile since its beginning, being founders of the Matrix Profile Foundation whose goal is to have a concise and stable cross-language API for developing with the Matrix Profile technology.[@Bischoff2019a; @VanBenschoten2020]
+
+# Rationale
+
+Currently, Point-of-Care (POC) ECG monitoring works either as plot devices and/or alarms for abnormal cardiac rhythms using predefined normal trigger ranges.
+On the other hand, full 12-derivation ECG machines are complex to use as simple monitors and are used with strict techniques for formal diagnostics of hearth electric conduction pathologies, and the automatic diagnostics are derived from a full analysis of the 12-dimension data after it is fully collected.
+In CinC/Physionet Challenge 2015, it has been reported that up to 86% resulting of the alarms are false and this can lead to decreased staff attention and increase in patients delirium [@Lawless1994; @Chambrin2001; @Parthasarathy2004].
+
+# Research question and aims
+
+This research aims to identify, on streaming data, abnormal hearth electric patterns, specifically those who are life-threatening, in order to be a reliable signal for Intensive Care Units to respond quickly to those situations.
+It also may be able to continuously analyze new data and correct itself shutting off false alarms.
+Primarily an experiment will be conducted using 2 main algorithms that use Matrix Profile in detecting context changes: SDTD and FLOSS.
+One uses whole data training and testing, and the other uses a streaming approach that is our main interest.
+The goal will be detecting the transition from normal to flutter/FA to normal condition with special attention to not rely on rhythm changes.
+Being this successful, a more generalistic approach will be attempted: to detect changes from normal to abnormal to normal conditions, with special attention to handle with disconnected leads or patient movements.
+Finally, this research can prove to be a good addition to the Matrix Profile method, using fading factors in order to reduce memory and space consumption, lowering the processor power needed, allowing this algorithm to be used in almost any device.
+
+# Background / Literature review
+
+In 2015 the PhysioNet/Computing in Cardiology has launched a challenge to address the problem of high false alarm rates by encouraging the development of new algorithms to improve the specificity of ICU alarms[@Clifford2015].
+This challenge comprised of minimizing the false alarms for five life-threatening arrhythmia: asystole, extreme bradycardia, extreme tachycardia, ventricular tachycardia and ventricular fibrillation or flutter.
+
+There are other arrhytmias that this challenge didn't assessed, like atrial standstill (hyperkalemia), third-degree atrioventricular block and others that may be life-threatening in some settings like atrial fibrillation (AF), a, atrialflutter and paroxysmal supraventricular tachycardia.
+Pulseless electrical activity is a frequent condition in cardiac arrest but cannot be identified without blood pressure information.
+
+They used as score the following formula:
+
+<center>
+
+<img src="https://render.githubusercontent.com/render/math?math=%5Chuge%20Score%3D%5Cfrac%7BTP%2BTN%7D%7BTP%2BTN%2BFP%2B5%20%2A%20FN%7D"/>
+
+</center>
+
+The five-best scores (for real-time) in this challenge were:
+
+```{r scores, echo=FALSE}
+challenge <- tribble(
+  ~Score, ~Authors,
+  81.39, "Filip Plesinger, Petr Klimes, Josef Halamek, Pavel Jurak",
+  79.44, "Vignesh Kalidas",
+  79.02, "Paula Couto, Ruben Ramalho, Rui Rodrigues",
+  76.11, "Sibylle Fallet, Sasan Yazdani, Jean-Marc Vesin",
+  75.55, "Christoph Hoog Antink, Steffen Leonhardt"
+)
+
+# knitr::kable(challenge, caption = "Challenge Results", format = "latex")
+```
+
+A literature review will be conducted to assess the state of the art for ECG automatic processing:
+
+-   The memory and space used to perform the main goal of the algorithm (sound an alarm for ex.) will be collected if available.
+-   The type of algorithms used to identify ECG anomalies
+-   The type of algorithms used to identify specific diagnosis (like a flutter, hyperkalemia, etc.)
+-   Their performance (accuracy, ROC, etc.)
+
+A broad search will be conducted on Pubmed, Scopus, Google Scholar, device manuals, and other specific sources.
+
+Keywords:
+
+-   ECG AND monitoring AND ICU
+-   ECG AND \[time series\]
+-   ECG AND automatic AND interpretation
+
+Articles published after "The PhysioNet/Computing in Cardiology Challenge 2015: Reducing False Arrhythmia Alarms in the ICU", will also be analyzed.
+
+# Research plan and methods
+
+## Type of study
+
+This will be a diagnostic study as the algorithm must classify the change in pattern as positive or negative for life-threatening.
+
+## Selection of data
+
+Initially, the data used for exploring the properties of the algorithm will be publicly available data on Physionet[@Goldberger2000; @Clifford2015].
+
+It will be asked for Physionet's permission to use more sensitive data if needed.
+
+It is desirable that real data extracted from Portuguese ICU could be used in the final stage to assess in real settings the validity of the model.
+
+## Sample size
+
+There is no upper size limitation for the sample size.
+At least one hundred cases may be reasonable to start with.
+
+## Variables
+
+The first available dataset contains either 549 conventional 12-lead resting ECGs or the corresponding measured Frank Lead System ECGs.
+The ECGs are digitized at a sampling rate of 1000Hz (0.5 µV/LSB; 16 Bit ADC).
+On special request, this database may be available at sampling rates up to 10,000Hz.
+
+Every patient is supplied with an information string containing age, gender, diagnosis, and where applicable, data on the medical history, medications and interventions, coronary artery pathology, ventriculography, echocardiography, and hemodynamics.
+
+These variables may or may not be useful for increasing the sensitivity or specificity of the algorithm.
+It is planned to use the minimum set of derivations from the 12-lead ECG to classify at first a common Atrial Fibrillation.
+
+## Statistical analysis
+
+The Statistical analysis will be performed using R language v3.6.0 or greater, and it will be computed the ROC curve for the algorithm.
+
+# Research Team
+
+-   Thesis Author: Francisco Bischoff
+-   Supervisor: Professor Pedro Pereira Rodrigues
+-   Co-supervisor: Professor Eamonn Keogh (UCR, Riverside)
+
+# Tasks, milestones and timeline
+
+## Tasks
+
+The timeline is composed of larger tasks I call Epics.
+They contain multiple subtasks that are expected to change frequently.
+
+-   **Elaboration of Research Protocol**
+
+    1.  Duration: `r print_duration("2020-05-04", "2020-06-16")`;
+    2.  Elaboration of this protocol in order to facilitate the management and overview of the project;
+    3.  This task was developed by the author with input suggestions from other experts.
+
+-   **Literature Review**
+
+    1.  Duration: `r print_duration("2020-06-13", "2020-08-25")`;
+    2.  This task aims to survey the literature about what is currently done to tackle the current problem and what the limitations are; Aim and outputs for the task (and relation with the next task);
+    3.  This task will be done with three independent reviewers using the PRISMA guidelines in the Covidence framework.
+
+-   **Obtaining Access to Physionet full data**
+
+    1.  Duration: `r print_duration("2020-07-07", "2020-08-11")`
+    2.  All datasets in Physionet are supposed to be Open Access. However, there is a chance that some datasets may need permissions.
+    3.  If any dataset needs permission, it will be first evaluated the real need and asked the proper way to access it.
+
+-   **First Experimentation with Public data**
+
+    1.  Duration: `r print_duration("2020-07-25", "2020-10-04")`
+    2.  The Physionet Challenge from 2015 will be the first dataset to be analyzed and will be *a study in scarlet* for the problems we may face in this kind of dataset;
+    3.  The datasets will be studied in the case of data preparation for the modeling process.
+
+-   **Development of the First Algorithm**
+
+    1.  Duration: `r print_duration("2020-08-11", "2020-12-24")`;
+    2.  In this task, the first model will be constructed: the Atrial Fibrillation start/end detection;
+    3.  The state of the art methods will be used to detect such changes, with maximum precision and lowest memory and processor usage;
+    4.  This task depends on the knowledge about the dataset we have from the previous task.
+
+-   **Dissertation First Draft**
+
+    1.  Duration: `r print_duration("2020-12-05", "2021-02-08")`;
+    2.  This task aims to, at the same time, create a draft for the final dissertation, and the content for an actual article to be published;
+    3.  This task depends on the concretization of the previous task.
+
+-   **Publication of the First Algorithm**
+
+    1.  Duration: `r print_duration("2020-12-27", "2021-04-25")`
+    2.  This task aims to refine the text, review, and submit it for publication.
+    3.  The length of this task depends on several variables, including the journal review time;
+    4.  This task depends on the previous task;
+    5.  Financial needs: Publication fees.
+
+-   **Development of the Second Algorithm**
+
+    1.  Duration: `r print_duration("2021-04-24", "2021-07-08")`
+    2.  In this task, the second model will be constructed: an attempt to generalize it for any life-threatening ECG change;
+    3.  The state of the art methods will be used to detect such changes, with maximum precision and lowest memory and processor usage;
+
+-   **Dissertation Second Draft**
+
+    1.  Duration: `r print_duration("2021-07-10", "2021-11-04")`
+    2.  This task aims to, at the same time, create a second draft for the final dissertation, and the content for an actual article to be published;
+    3.  This task depends on the concretization of the previous task.
+
+-   **Publication of the Second Algorithm**
+
+    1.  Duration: `r print_duration("2021-08-14", "2021-12-11")`
+    2.  This task aims to refine the text, review, and submit it for publication.
+    3.  The length of this task depends on several variables, including the journal review time;
+    4.  This task depends on the previous task;
+    5.  Financial needs: Publication fees.
+
+-   **Dissertation Review**
+
+    1.  Duration: `r print_duration("2021-11-05", "2021-12-20")`
+    2.  This task will be a time to review all the work done and prepare it for final presentation;
+    3.  Ideally, two or mode independent expert shall read the thesis and give feedback for improvement;
+
+-   **Proof Reading**
+
+    1.  Duration: `r print_duration("2021-12-21", "2022-01-15")`
+    2.  This task comprises in careful reading, ideally by a professional in the English language;
+    3.  It depends on the previous tasks;
+    4.  Financial needs: Proofreading fees
+
+-   **Presentation**
+
+    1.  Duration: `r print_duration("2022-02-28", "2022-04-08")`
+    2.  This task comprises in preparation for public presentation;
+    3.  It includes the formulation of the slides or any multimedia support that shall be needed;
+    4.  This task depends on having the dissertation done.
+
+## Milestones
+
+```{r milestones, echo=FALSE}
+miles <- tribble(
+  ~Milestone, ~Date, ~Name, ~Description,
+  "M1", "Jul, 2020", "Protocol", "Finish and Deliver Protocol",
+  "M2", "Oct, 2020", "Literature Review", "Finish Literature Review",
+  "M3", "Apr, 2021", "Paper 1", "Finish and Submit for Publication Paper 1",
+  "M4", "Jan, 2022", "Paper 2", "Finish and Submit for Publication Paper 2",
+  "M5", "Dec, 2022", "Thesis", "Finish and Deliver Ph.D. Thesis"
+)
+
+# knitr::kable(miles, caption = "Milestones", format = "latex")
+```
+
+## Timeline
+
+[![](timeline.png)](https://app.zenhub.com/workspaces/phd-thesis-5eb2ce34f5f30b3aed0a35af/roadmap) Click on the image to open an interactive Gantt webpage
+
+# Budget
+
+```{r budget, echo=FALSE}
+budgets <- tribble(
+  ~Items, ~Budget, ~Justification, ~Obtained,
+  "Travel expenses", 5000, "International Conferences", "No",
+  "Conferences", 3000, "Registration Fees", "No",
+  "Tuition Fees", 11000, "Researcher Maintenance", "No"
+)
+
+# knitr::kable(budgets, caption = "Expected expenses", format = "latex")
+```
+
+# Expected results and outcomes
+
+## Expected results
+
+It is expected that a novel algorithm to detect life-threatening ECG changes can be achieved using lower memory and processor power than the existing ones, maintaining the overall performance level.
+
+## Outcomes
+
+This research will yield at least two publications in indexed journals as well as the final thesis will be available in the university repository.
 
 # References
