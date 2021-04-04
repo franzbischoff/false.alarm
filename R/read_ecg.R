@@ -45,16 +45,11 @@
 #' @export
 #'
 #' @examples
-#'
 #' \dontrun{
-#'   \donttest{
-#'      signal <- read_ecg("data/a103l")
-#'   }
+#' signal <- read_ecg("data/a103l")
 #' }
 #'
-
 read_ecg <- function(filename, plot = FALSE) {
-
   checkmate::assert_string(filename, 3)
   checkmate::qassert(plot, "B")
   #

@@ -47,6 +47,9 @@ vignettes/*.R
 
 # Personalized
 
+#Local history plugin
+.history
+
 # use github-actions to build the webpage
 /pkgdown/
 /code/

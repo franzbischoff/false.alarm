@@ -96,13 +96,11 @@
       "vector": "cpp"
     },
     "files.exclude": {
-      ".{b,l,h}*": true,
-      ".edit*": true,
-      ".git{i,a}*": true,
-      ".R*": true,
-      ".white*": true,
-      "**/.DS_Store": true,
       "**/.git": true,
+      "**/.svn": true,
+      "**/.hg": true,
+      "**/CVS": true,
+      "**/.DS_Store": true,
       "**/.git/objects/**": true,
       "**/.git/subtree-cache/**": true,
       "**/.Rproj.user": true,
@@ -112,10 +110,12 @@
       "**/logs/**": true,
       "**/man/**": true,
       "**/pdfs/**": true,
-      "**/R/RcppExports.R": true,
       "**/renv/**": true,
       "**/tmp/**": true,
-      "renv.lock": true
+      "**/.history": true,
+      "**/.RData": true,
+      "**/.Rhistory": true,
+      "**/.httr-oauth": true
     },
     "files.insertFinalNewline": true,
     "files.trimTrailingWhitespace": true,
@@ -194,7 +194,9 @@
       "-q",
       "-n46",
       "-n8",
-      "-n1"
+      "-n1",
+      "-n25",
+      "-n45"
     ],
     "latex-workshop.chktex.args.root": [
       "-wall",
@@ -204,10 +206,27 @@
       "-q",
       "-n46",
       "-n8",
-      "-n1"
+      "-n1",
+      "-n25",
+      "-n45"
     ],
     "latex-workshop.chktex.enabled": true,
     "latex-workshop.view.autoFocus.enabled": true,
-    "latex-workshop.view.pdf.viewer": "tab"
+    "latex-workshop.view.pdf.viewer": "tab",
+    "taskExplorer.enableGulp": false,
+    "taskExplorer.enableGrunt": false,
+    "taskExplorer.enableAppPublisher": false,
+    "taskExplorer.enableAnt": false,
+    "taskExplorer.enableAnsiconForAnt": false,
+    "taskExplorer.enableNpm": false,
+    "taskExplorer.enableNsis": false,
+    "taskExplorer.enablePerl": false,
+    "taskExplorer.enablePowershell": false,
+    "taskExplorer.enablePython": false,
+    "taskExplorer.enableRuby": false,
+    "taskExplorer.enableSideBar": true,
+    "taskExplorer.enableTsc": false,
+    "taskExplorer.showLastTasks": false,
+    "workbench.colorCustomizations": {},
   }
 }

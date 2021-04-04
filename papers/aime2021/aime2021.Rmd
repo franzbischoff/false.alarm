@@ -5,10 +5,18 @@ authorrunning: Bischoff F., Van Benschoten AH., Rodrigues PP.
 editor_options:
   markdown:
     mode: markdown
+    extensions: +escaped_line_breaks+blank_before_header+header_attributes
+    wrap: 120
 output:
   pdf_document:
     keep_tex: yes
+    keep_md: yes
+    fig_crop: yes
+    fig_caption: yes
+    latex_engine: pdflatex
+    citation_package: default # default is pandoc-citeproc
     template: template.tex
+    md_extensions: +tex_math_double_backslash-tex_math_single_backslash
 authors:
 - name: Francisco Bischoff
   inst: 1, 2
@@ -54,24 +62,24 @@ print_duration <- function(start, end) {
 }
 ```
 
-<!-- -*- mode: gfm; extensions: +tex_math_dollars+raw_tex -*- -->
+# Rules {#rules}
 
-# Rules
+Unlike other conference submissions, a Doctoral Consortium submission pertains specifically to the PhD thesis as a whole
+or part thereof (thereafter both will be termed the research work). Submissions should **describe (in 2000-2500 words,
+approx. 4-5 pages) a research plan** on a topic related to AI in medicine and include the following elements:
 
-Unlike other conference submissions, a Doctoral Consortium submission pertains specifically to the PhD thesis as a whole or part thereof (thereafter both will be termed the research work).
-Submissions should describe (in 2000-2500 words, approx. 4-5 pages) a research plan on a topic related to AI in medicine and include the following elements:
+-   [x] Title and author,
 
--   Title and author,
+-   [ ] The problem, with an argument of why it is important,
 
--   The problem, with an argument of why it is important,
+-   [ ] The goal and the research questions,
 
--   The goal and the research questions,
+-   [ ] The planned approach and methods for solving the problem,
 
--   The planned approach and methods for solving the problem,
+-   [ ] An outline of what is already known about the research problem,
 
--   An outline of what is already known about the research problem,
-
--   The expected results from the research work like overviews, algorithms, better understanding of a concept, a pilot, model or system,
+-   [ ] The expected results from the research work like overviews, algorithms, better understanding of a concept, a
+    pilot, model or system,
 
 -   Any questions you might have or problems you encounter for which you specifically would like feedback on such as:
 
@@ -87,63 +95,92 @@ Submissions should describe (in 2000-2500 words, approx. 4-5 pages) a research p
 
     -   Is it normal to meet my supervisor once a week/month/year?
 
-Submissions be formatted according to the [Springer's LNCS format](http://www.springer.de/comp/lncs/authors.html) and send by e-mail in PDF format to David Riaño with the subject line AIME21 Doctoral Consortium submission.
-(Note: Each submission will be confirmed by a return message. If a confirmation message has not been received within 5 days after submission, please contact David Riaño to inform about it).\
-\
-Submissions will be reviewed by members of the Academic Panel and by submitting students (each student will be asked to review one submission prepared by another person)
-. Based on reviews, the Doctoral Consortium chair will select about 6 submissions to be presented and discussed during the meeting
-. The selection will be based on the relevancy to AI in medicine topics (see for example the scope for AIME 2021), relevancy to the doctoral consortium (there is for example no point to present finished work at the meeting), the clarity of writing, and the resulting spectrum of presented topics
-. Selected submissions will appear in workshop notes that will be distributed among conference participants.\
-\
-For more information about the Doctoral Consortium please contact to David Riaño ([david.riano\@urv.cat](mailto:david.riano@urv.cat))
+Submissions be formatted according to the [Springer's LNCS format](http://www.springer.de/comp/lncs/authors.html) and
+send by e-mail in PDF format to David Riaño with the subject line AIME21 Doctoral Consortium submission. (Note: Each
+submission will be confirmed by a return message. If a confirmation message has not been received within 5 days after
+submission, please contact David Riaño to inform about it).
 
-# Introduction {#introduction}
+Submissions will be reviewed by members of the Academic Panel and by submitting students (each student will be asked to
+review one submission prepared by another person) . Based on reviews, the Doctoral Consortium chair will select about 6
+submissions to be presented and discussed during the meeting . The selection will be based on the relevancy to AI in
+medicine topics (see for example the scope for AIME 2021), relevancy to the doctoral consortium (there is for example no
+point to present finished work at the meeting), the clarity of writing, and the resulting spectrum of presented topics .
+Selected submissions will appear in workshop notes that will be distributed among conference participants.
 
-Currently, Point-of-Care (POC) ECG monitoring works either as plot devices or alarms for abnormal cardiac rhythms using predefined normal trigger ranges.
-On the other hand, full 12-derivation ECG machines are complex to use as simple monitors and are used with strict techniques for formal diagnostics of hearth electric conduction pathologies, and the automatic diagnostics are derived from a full analysis of the 12-dimension data after it is fully collected.
-Both systems do not handle disconnected leads and patient's motions, being strictly necessary to have a good and stable signal to allow proper diagnosis.
+For more information about the Doctoral Consortium please contact to David Riaño
+([david.riano\@urv.cat](mailto:david.riano@urv.cat))
 
-This research aims to identify abnormal hearth electric patterns using streaming data, specifically those who are life-threatening, being a reliable signal for Intensive Care Units to respond quickly to those situations.
+# Introduction
 
-The study design is comparable to a Diagnostic study, where high accuracy is essential.
-It will use the Physionet datasets, and the algorithm will try to minimize the false negatives and false positives.
+Currently, Point-of-Care (POC) ECG monitoring works either as plot devices or alarms for abnormal cardiac rhythms using
+predefined normal trigger ranges. On the other hand, full 12-derivation ECG machines are complex to use as simple
+monitors and are used with strict techniques for formal diagnostics of hearth electric conduction pathologies, and the
+automatic diagnostics are derived from a full analysis of the 12-dimension data after it is fully collected. Both
+systems do not handle disconnected leads and patient's motions, being strictly necessary to have a good and stable
+signal to allow proper diagnosis.
 
-The expected result is the concretization of a new method that, besides being accurate, accomplishes this task using state of the art technology for time series analysis that allows minimum space and processor power to solve this problem.
-Also, we expect that fading factors can contribute to the state of the art of this technology.
+This research aims to identify abnormal hearth electric patterns using streaming data, specifically those who are
+life-threatening, being a reliable signal for Intensive Care Units to respond quickly to those situations.
 
-The research team is well experienced in time-series and has studied the Matrix Profile since its beginning, being founders of the Matrix Profile Foundation whose goal is to have a concise and stable cross-language API for developing with the Matrix Profile technology.[@Bischoff2019a; @VanBenschoten2020]
+The study design is comparable to a Diagnostic study, where high accuracy is essential. It will use the Physionet
+datasets, and the algorithm will try to minimize the false negatives and false positives.
 
-# Rationale
+The expected result is the concretization of a new method that, besides being accurate, accomplishes this task using
+state of the art technology for time series analysis that allows minimum space and processor power to solve this
+problem. Also, we expect that fading factors can contribute to the state of the art of this technology.
 
-Currently, Point-of-Care (POC) ECG monitoring works either as plot devices and/or alarms for abnormal cardiac rhythms using predefined normal trigger ranges.
-On the other hand, full 12-derivation ECG machines are complex to use as simple monitors and are used with strict techniques for formal diagnostics of hearth electric conduction pathologies, and the automatic diagnostics are derived from a full analysis of the 12-dimension data after it is fully collected.
-In CinC/Physionet Challenge 2015, it has been reported that up to 86% resulting of the alarms are false and this can lead to decreased staff attention and increase in patients delirium [@Lawless1994; @Chambrin2001; @Parthasarathy2004].
+The research team is well experienced in time-series and has studied the Matrix Profile since its beginning, being
+founders of the Matrix Profile Foundation whose goal is to have a concise and stable cross-language API for developing
+with the Matrix Profile technology.[@Bischoff2019a; @VanBenschoten2020]
 
-# Research question and aims
+# \[ \] The problem, with an argument of why it is important
 
-This research aims to identify, on streaming data, abnormal hearth electric patterns, specifically those who are life-threatening, in order to be a reliable signal for Intensive Care Units to respond quickly to those situations.
-It also may be able to continuously analyze new data and correct itself shutting off false alarms.
-Primarily an experiment will be conducted using 2 main algorithms that use Matrix Profile in detecting context changes: SDTD and FLOSS.
-One uses whole data training and testing, and the other uses a streaming approach that is our main interest.
-The goal will be detecting the transition from normal to flutter/FA to normal condition with special attention to not rely on rhythm changes.
-Being this successful, a more generalistic approach will be attempted: to detect changes from normal to abnormal to normal conditions, with special attention to handle with disconnected leads or patient movements.
-Finally, this research can prove to be a good addition to the Matrix Profile method, using fading factors in order to reduce memory and space consumption, lowering the processor power needed, allowing this algorithm to be used in almost any device.
+## Rationale
 
-# Background / Literature review
+Currently, Point-of-Care (POC) ECG monitoring works either as plot devices and/or alarms for abnormal cardiac rhythms
+using predefined normal trigger ranges. On the other hand, full 12-derivation ECG machines are complex to use as simple
+monitors and are used with strict techniques for formal diagnostics of hearth electric conduction pathologies, and the
+automatic diagnostics are derived from a full analysis of the 12-dimension data after it is fully collected. In
+CinC/Physionet Challenge 2015, it has been reported that up to 86% resulting of the alarms are false and this can lead
+to decreased staff attention and increase in patients delirium [@Lawless1994; @Chambrin2001; @Parthasarathy2004].
 
-In 2015 the PhysioNet/Computing in Cardiology has launched a challenge to address the problem of high false alarm rates by encouraging the development of new algorithms to improve the specificity of ICU alarms[@Clifford2015].
-This challenge comprised of minimizing the false alarms for five life-threatening arrhythmia: asystole, extreme bradycardia, extreme tachycardia, ventricular tachycardia and ventricular fibrillation or flutter.
+# \[ \] The goal and the research questions
 
-There are other arrhytmias that this challenge didn't assessed, like atrial standstill (hyperkalemia), third-degree atrioventricular block and others that may be life-threatening in some settings like atrial fibrillation (AF), a, atrialflutter and paroxysmal supraventricular tachycardia.
-Pulseless electrical activity is a frequent condition in cardiac arrest but cannot be identified without blood pressure information.
+## Research question and aims
+
+This research aims to identify, on streaming data, abnormal hearth electric patterns, specifically those who are
+life-threatening, in order to be a reliable signal for Intensive Care Units to respond quickly to those situations. It
+also may be able to continuously analyze new data and correct itself shutting off false alarms. Primarily an experiment
+will be conducted using 2 main algorithms that use Matrix Profile in detecting context changes: SDTD and FLOSS. One uses
+whole data training and testing, and the other uses a streaming approach that is our main interest. The goal will be
+detecting the transition from normal to flutter/FA to normal condition with special attention to not rely on rhythm
+changes. Being this successful, a more generalistic approach will be attempted: to detect changes from normal to
+abnormal to normal conditions, with special attention to handle with disconnected leads or patient movements. Finally,
+this research can prove to be a good addition to the Matrix Profile method, using fading factors in order to reduce
+memory and space consumption, lowering the processor power needed, allowing this algorithm to be used in almost any
+device.
+
+# \[ \] An outline of what is already known about the research problem
+
+## Current works
+
+TODO: write what we got already from the review.
+
+## Background / Literature review
+
+In 2015 the PhysioNet/Computing in Cardiology has launched a challenge to address the problem of high false alarm rates
+by encouraging the development of new algorithms to improve the specificity of ICU alarms[@Clifford2015]. This challenge
+comprised of minimizing the false alarms for five life-threatening arrhythmia: asystole, extreme bradycardia, extreme
+tachycardia, ventricular tachycardia and ventricular fibrillation or flutter.
+
+There are other arrhytmias that this challenge didn't assessed, like atrial standstill (hyperkalemia), third-degree
+atrioventricular block and others that may be life-threatening in some settings like atrial fibrillation (AF), a,
+atrialflutter and paroxysmal supraventricular tachycardia. Pulseless electrical activity is a frequent condition in
+cardiac arrest but cannot be identified without blood pressure information.
 
 They used as score the following formula:
 
-<center>
-
-<img src="https://render.githubusercontent.com/render/math?math=%5Chuge%20Score%3D%5Cfrac%7BTP%2BTN%7D%7BTP%2BTN%2BFP%2B5%20%2A%20FN%7D"/>
-
-</center>
+$$Score=\frac{TP+TN}{TP+TN+FP+5*FN}$$
 
 The five-best scores (for real-time) in this challenge were:
 
@@ -157,12 +194,13 @@ challenge <- tribble(
   75.55, "Christoph Hoog Antink, Steffen Leonhardt"
 )
 
-# knitr::kable(challenge, caption = "Challenge Results", format = "latex")
+knitr::kable(challenge, caption = "Challenge Results")
 ```
 
 A literature review will be conducted to assess the state of the art for ECG automatic processing:
 
--   The memory and space used to perform the main goal of the algorithm (sound an alarm for ex.) will be collected if available.
+-   The memory and space used to perform the main goal of the algorithm (sound an alarm for ex.) will be collected if
+    available.
 -   The type of algorithms used to identify ECG anomalies
 -   The type of algorithms used to identify specific diagnosis (like a flutter, hyperkalemia, etc.)
 -   Their performance (accuracy, ROC, etc.)
@@ -175,54 +213,62 @@ Keywords:
 -   ECG AND \[time series\]
 -   ECG AND automatic AND interpretation
 
-Articles published after "The PhysioNet/Computing in Cardiology Challenge 2015: Reducing False Arrhythmia Alarms in the ICU", will also be analyzed.
+Articles published after "The PhysioNet/Computing in Cardiology Challenge 2015: Reducing False Arrhythmia Alarms in the
+ICU", will also be analyzed.
 
-# Research plan and methods
+# \[ \] The planned approach and methods for solving the problem
 
-## Type of study
+## Research plan and methods
 
-This will be a diagnostic study as the algorithm must classify the change in pattern as positive or negative for life-threatening.
+### Type of study
 
-## Selection of data
+This will be a diagnostic study as the algorithm must classify the change in pattern as positive or negative for
+life-threatening.
 
-Initially, the data used for exploring the properties of the algorithm will be publicly available data on Physionet[@Goldberger2000; @Clifford2015].
+### Selection of data
+
+Initially, the data used for exploring the properties of the algorithm will be publicly available data on
+Physionet[@Goldberger2000; @Clifford2015].
 
 It will be asked for Physionet's permission to use more sensitive data if needed.
 
-It is desirable that real data extracted from Portuguese ICU could be used in the final stage to assess in real settings the validity of the model.
+It is desirable that real data extracted from Portuguese ICU could be used in the final stage to assess in real settings
+the validity of the model.
 
-## Sample size
+### Sample size
 
-There is no upper size limitation for the sample size.
-At least one hundred cases may be reasonable to start with.
+There is no upper size limitation for the sample size. At least one hundred cases may be reasonable to start with.
 
-## Variables
+### Variables
 
-The first available dataset contains either 549 conventional 12-lead resting ECGs or the corresponding measured Frank Lead System ECGs.
-The ECGs are digitized at a sampling rate of 1000Hz (0.5 µV/LSB; 16 Bit ADC).
-On special request, this database may be available at sampling rates up to 10,000Hz.
+The first available dataset contains either 549 conventional 12-lead resting ECGs or the corresponding measured Frank
+Lead System ECGs. The ECGs are digitized at a sampling rate of 1000Hz (0.5 µV/LSB; 16 Bit ADC). On special request, this
+database may be available at sampling rates up to 10,000Hz.
 
-Every patient is supplied with an information string containing age, gender, diagnosis, and where applicable, data on the medical history, medications and interventions, coronary artery pathology, ventriculography, echocardiography, and hemodynamics.
+Every patient is supplied with an information string containing age, gender, diagnosis, and where applicable, data on
+the medical history, medications and interventions, coronary artery pathology, ventriculography, echocardiography, and
+hemodynamics.
 
-These variables may or may not be useful for increasing the sensitivity or specificity of the algorithm.
-It is planned to use the minimum set of derivations from the 12-lead ECG to classify at first a common Atrial Fibrillation.
+These variables may or may not be useful for increasing the sensitivity or specificity of the algorithm. It is planned
+to use the minimum set of derivations from the 12-lead ECG to classify at first a common Atrial Fibrillation.
 
-## Statistical analysis
+### Statistical analysis
 
-The Statistical analysis will be performed using R language v3.6.0 or greater, and it will be computed the ROC curve for the algorithm.
+The Statistical analysis will be performed using R language v3.6.0 or greater, and it will be computed the ROC curve for
+the algorithm.
 
-# Research Team
+## Research Team
 
 -   Thesis Author: Francisco Bischoff
 -   Supervisor: Professor Pedro Pereira Rodrigues
 -   Co-supervisor: Professor Eamonn Keogh (UCR, Riverside)
 
-# Tasks, milestones and timeline
+## Tasks, milestones and timeline
 
-## Tasks
+### Tasks
 
-The timeline is composed of larger tasks I call Epics.
-They contain multiple subtasks that are expected to change frequently.
+The timeline is composed of larger tasks I call Epics. They contain multiple subtasks that are expected to change
+frequently.
 
 -   **Elaboration of Research Protocol**
 
@@ -233,32 +279,37 @@ They contain multiple subtasks that are expected to change frequently.
 -   **Literature Review**
 
     1.  Duration: `r print_duration("2020-06-13", "2020-08-25")`;
-    2.  This task aims to survey the literature about what is currently done to tackle the current problem and what the limitations are; Aim and outputs for the task (and relation with the next task);
+    2.  This task aims to survey the literature about what is currently done to tackle the current problem and what the
+        limitations are; Aim and outputs for the task (and relation with the next task);
     3.  This task will be done with three independent reviewers using the PRISMA guidelines in the Covidence framework.
 
 -   **Obtaining Access to Physionet full data**
 
     1.  Duration: `r print_duration("2020-07-07", "2020-08-11")`
-    2.  All datasets in Physionet are supposed to be Open Access. However, there is a chance that some datasets may need permissions.
+    2.  All datasets in Physionet are supposed to be Open Access. However, there is a chance that some datasets may need
+        permissions.
     3.  If any dataset needs permission, it will be first evaluated the real need and asked the proper way to access it.
 
 -   **First Experimentation with Public data**
 
     1.  Duration: `r print_duration("2020-07-25", "2020-10-04")`
-    2.  The Physionet Challenge from 2015 will be the first dataset to be analyzed and will be *a study in scarlet* for the problems we may face in this kind of dataset;
+    2.  The Physionet Challenge from 2015 will be the first dataset to be analyzed and will be *a study in scarlet* for
+        the problems we may face in this kind of dataset;
     3.  The datasets will be studied in the case of data preparation for the modeling process.
 
 -   **Development of the First Algorithm**
 
     1.  Duration: `r print_duration("2020-08-11", "2020-12-24")`;
     2.  In this task, the first model will be constructed: the Atrial Fibrillation start/end detection;
-    3.  The state of the art methods will be used to detect such changes, with maximum precision and lowest memory and processor usage;
+    3.  The state of the art methods will be used to detect such changes, with maximum precision and lowest memory and
+        processor usage;
     4.  This task depends on the knowledge about the dataset we have from the previous task.
 
 -   **Dissertation First Draft**
 
     1.  Duration: `r print_duration("2020-12-05", "2021-02-08")`;
-    2.  This task aims to, at the same time, create a draft for the final dissertation, and the content for an actual article to be published;
+    2.  This task aims to, at the same time, create a draft for the final dissertation, and the content for an actual
+        article to be published;
     3.  This task depends on the concretization of the previous task.
 
 -   **Publication of the First Algorithm**
@@ -272,13 +323,16 @@ They contain multiple subtasks that are expected to change frequently.
 -   **Development of the Second Algorithm**
 
     1.  Duration: `r print_duration("2021-04-24", "2021-07-08")`
-    2.  In this task, the second model will be constructed: an attempt to generalize it for any life-threatening ECG change;
-    3.  The state of the art methods will be used to detect such changes, with maximum precision and lowest memory and processor usage;
+    2.  In this task, the second model will be constructed: an attempt to generalize it for any life-threatening ECG
+        change;
+    3.  The state of the art methods will be used to detect such changes, with maximum precision and lowest memory and
+        processor usage;
 
 -   **Dissertation Second Draft**
 
     1.  Duration: `r print_duration("2021-07-10", "2021-11-04")`
-    2.  This task aims to, at the same time, create a second draft for the final dissertation, and the content for an actual article to be published;
+    2.  This task aims to, at the same time, create a second draft for the final dissertation, and the content for an
+        actual article to be published;
     3.  This task depends on the concretization of the previous task.
 
 -   **Publication of the Second Algorithm**
@@ -309,7 +363,7 @@ They contain multiple subtasks that are expected to change frequently.
     3.  It includes the formulation of the slides or any multimedia support that shall be needed;
     4.  This task depends on having the dissertation done.
 
-## Milestones
+### Milestones
 
 ```{r milestones, echo=FALSE}
 miles <- tribble(
@@ -321,14 +375,16 @@ miles <- tribble(
   "M5", "Dec, 2022", "Thesis", "Finish and Deliver Ph.D. Thesis"
 )
 
-# knitr::kable(miles, caption = "Milestones", format = "latex")
+knitr::kable(miles, caption = "Milestones")
 ```
 
-## Timeline
+### Timeline
 
-[![](timeline.png)](https://app.zenhub.com/workspaces/phd-thesis-5eb2ce34f5f30b3aed0a35af/roadmap) Click on the image to open an interactive Gantt webpage
+```{r timeline, echo=FALSE, out.width="100%", fig.cap="Click on the image to open an interactive Gantt webpage"}
+knitr::include_graphics("timeline.png")
+```
 
-# Budget
+## Budget
 
 ```{r budget, echo=FALSE}
 budgets <- tribble(
@@ -338,17 +394,21 @@ budgets <- tribble(
   "Tuition Fees", 11000, "Researcher Maintenance", "No"
 )
 
-# knitr::kable(budgets, caption = "Expected expenses", format = "latex")
+knitr::kable(budgets, caption = "Expected expenses")
 ```
 
-# Expected results and outcomes
+# \[ \] The expected results from the research work like overviews, algorithms, better understanding of a concept, a pilot, model or system
 
-## Expected results
+## Expected results and outcomes
 
-It is expected that a novel algorithm to detect life-threatening ECG changes can be achieved using lower memory and processor power than the existing ones, maintaining the overall performance level.
+### Expected results
 
-## Outcomes
+It is expected that a novel algorithm to detect life-threatening ECG changes can be achieved using lower memory and
+processor power than the existing ones, maintaining the overall performance level.
 
-This research will yield at least two publications in indexed journals as well as the final thesis will be available in the university repository.
+### Outcomes
+
+This research will yield at least two publications in indexed journals as well as the final thesis will be available in
+the university repository.
 
 # References

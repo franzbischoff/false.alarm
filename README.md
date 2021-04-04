@@ -1,6 +1,7 @@
 Detecting life-threatening patterns in Point-of-care ECG using efficient
 memory and processor power.
 ================
+
 Francisco Bischoff
 on March 24, 2021
 
@@ -11,8 +12,7 @@ on March 24, 2021
 ![Binder](https://github.com/franzbischoff/false.alarm/workflows/Binder/badge.svg)
 [![Launch
 binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/franzbischoff/false.alarm/master?urlpath=rstudio)
-[![Read
-Thesis](https://img.shields.io/badge/read-thesis__down-brightgreen)](https://franzbischoff.github.io/false.alarm/)
+[![Read Thesis](https://img.shields.io/badge/read-thesis__down-brightgreen)](https://franzbischoff.github.io/false.alarm/)
 [![](https://zenodo.org/badge/261530912.svg)](https://zenodo.org/badge/latestdoi/261530912)
 
 <!-- badges: end -->
@@ -77,56 +77,56 @@ accessible, interoperable, reusable*
 
 ### Research Data Management
 
-  - [**RDM
+- [**RDM
     checklist**](http://www.dcc.ac.uk/sites/default/files/documents/resource/DMP/DMP_Checklist_2013.pdf)<sup>[5](#ref-dcc_2013)</sup>
-  - Anticipate **data products** as part of your thesis **outputs**
-  - Think about what technologies to use
+- Anticipate **data products** as part of your thesis **outputs**
+- Think about what technologies to use
 
 ### Missing values are a fact of life
 
-  - Usually, best solution is to **leave blank**
-  - **`NA`** or **`NULL`** are also good options
-  - **NEVER use `0`**. Avoid numbers like **`-999`**
-  - Don’t make up your own code for missing values
+- Usually, best solution is to **leave blank**
+- **`NA`** or **`NULL`** are also good options
+- **NEVER use `0`**. Avoid numbers like **`-999`**
+- Don’t make up your own code for missing values
 
 ### Raw data are sacrosanct
 
-  - Don’t, not even with a barge pole, not for one second, touch or
+- Don’t, not even with a barge pole, not for one second, touch or
     otherwise edit the raw data files. Do any manipulations in script
 
 ### Three principles for good (file) names
 
 #### Machine readable
 
-  - Regular expression and globbing friendly
-    
-      - Avoid spaces, punctuation, accented characters, case sensitivity
+- Regular expression and globbing friendly
 
-  - Easy to compute on
-    
-      - Deliberate use of delimiters
-    
-      - Deliberate use of `"-"` and `"_"` allows recovery of metadata
+  - Avoid spaces, punctuation, accented characters, case sensitivity
+
+- Easy to compute on
+
+  - Deliberate use of delimiters
+
+  - Deliberate use of `"-"` and `"_"` allows recovery of metadata
         from the filenames:
-        
-          - `"_"` underscore used to delimit units of metadata I want to
+
+    - `"_"` underscore used to delimit units of metadata I want to
             access later
-        
-          - `"-"` hyphen used to delimit words so our eyes don’t bleed
+
+    - `"-"` hyphen used to delimit words so our eyes don’t bleed
 
 #### Human readable
 
-  - Borrowing the concept from
+- Borrowing the concept from
     [slugs](https://en.wikipedia.org/wiki/Clean_URL#Slug) from semantic
     URLs
 
 #### Play well with default ordering
 
-  - Put something numeric first
+- Put something numeric first
 
-  - Use the ISO 8601 standard for dates
+- Use the ISO 8601 standard for dates
 
-  - Left pad other numbers with zeros
+- Left pad other numbers with zeros
 
 # License
 

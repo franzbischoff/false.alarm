@@ -21,7 +21,6 @@ if (dir.exists(here("inst/extdata"))) {
   saveRDS(network, file = here("output/network.rds"))
   rm(network)
   rm(tips)
-
 } else {
   stop("Error installing dataset.")
 }

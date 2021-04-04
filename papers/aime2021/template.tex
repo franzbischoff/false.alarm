@@ -4,6 +4,9 @@
 %
 \documentclass[runningheads]{llncs}
 %
+\usepackage{longtable}
+\usepackage{booktabs}
+\usepackage{amssymb}
 \usepackage{amsmath}
 \usepackage{graphicx}
 \usepackage[utf8]{inputenc}
@@ -19,6 +22,10 @@
   \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
 % Used for displaying a sample figure. If possible, figure files should
 % be included in EPS format.
+
+$if(highlighting-macros)$
+$highlighting-macros$
+$endif$
 
 % Pandoc citation processing
 $if(csl-refs)$
@@ -53,7 +60,7 @@ $endif$
 % an abbreviated paper title here
 %
 %
-\author{ $for(authors)$ $it.name$\inst{$it.inst$}\orcidID{$it.orcid$}${sep}, $endfor$ }
+\author{ $for(authors)$ $it.name$\inst{$it.inst$}\orcidID{$it.orcid$}${sep}\\ $endfor$ }
 
 $if(authorrunning)$
 \authorrunning{ $authorrunning$ }
