@@ -228,5 +228,14 @@
     "taskExplorer.enableTsc": false,
     "taskExplorer.showLastTasks": false,
     "workbench.colorCustomizations": {},
+    "local-history.exclude": [
+      "**/*.md",
+      "**/.history/**",
+      "**/.vscode/**",
+      "**/node_modules/**",
+      "**/typings/**",
+      "**/out/**",
+      "**/Code/User/**"
+    ],
   }
 }

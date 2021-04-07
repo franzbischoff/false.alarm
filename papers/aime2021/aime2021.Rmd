@@ -5,25 +5,20 @@ authorrunning: Bischoff F., Van Benschoten AH., Rodrigues PP.
 editor_options:
   markdown:
     mode: markdown
-    extensions: +escaped_line_breaks+blank_before_header+header_attributes
+    extensions: +escaped_line_breaks+blank_before_header
     wrap: 120
 output:
-  pdf_document:
+  pdf_document: 
     keep_tex: yes
     keep_md: yes
-    fig_crop: yes
     fig_caption: yes
-    latex_engine: pdflatex
-    citation_package: default # default is pandoc-citeproc
+    citation_package: default
     template: template.tex
-    md_extensions: +tex_math_double_backslash-tex_math_single_backslash
+    md_extensions: -tex_math_single_backslash-tex_math_double_backslash
 authors:
 - name: Francisco Bischoff
   inst: 1, 2
   orcid: 0000-0002-5301-8672
-- name: Andrew Van Benschoten
-  inst: 3
-  orcid: 0000-0000-0000-0000
 - name: Pedro Pereira Rodrigues
   inst: 1, 2
   orcid: 0000-0000-0000-0000
@@ -32,8 +27,6 @@ institutes:
   dept: Department of Community Medicine, Information and Health Decision Sciences (MEDCIDS), Faculty of Medicine, University of Porto, Porto, Portugal
 - num: 2
   dept: Center for Health Technology and Services Research (CINTESIS), Faculty of Medicine, University of Porto, Porto, Portugal
-- num: 3
-  dept: Matrix Profile Foundation, Minnesota, USA
 keywords:
 - anomaly detection
 - ECG
@@ -47,7 +40,7 @@ bibliography: ../../protocol/references.bib
 link-citations: true
 csl: https://raw.githubusercontent.com/citation-style-language/styles/bfa3b6d80f0e108aff3a81a0c2ab06f1525d1eed/springer-lecture-notes-in-computer-science-alphabetical.csl
 thanks: |
-  *TODO* Supported by the project "Clikode - Automatic Processing of Clinical Coding, (3I) Innovation, Research of AI models for hospital coding of Procedures and Diagnoses", POCI-05-5762-FSE-000230, is financed by Portugal 2020, through the European Social Fund, within the scope of COMPETE 2020 (Operational Programme Competitiveness and Internationalization of Portugal 2020).
+  This work has been done under the scope of - and funded by - the PhD Program in Health Data Science of the Faculty of Medicine of the University of Porto, Portugal - heads.med.up.pt
 ---
 
 ```{r setup, include=FALSE}
@@ -81,7 +74,8 @@ approx. 4-5 pages) a research plan** on a topic related to AI in medicine and in
 -   [ ] The expected results from the research work like overviews, algorithms, better understanding of a concept, a
     pilot, model or system,
 
--   Any questions you might have or problems you encounter for which you specifically would like feedback on such as:
+-   [ ] Any questions you might have or problems you encounter for which you specifically would like feedback on such
+    as:
 
     -   Do I need to write a systematic review before I start?
 
@@ -110,14 +104,26 @@ Selected submissions will appear in workshop notes that will be distributed amon
 For more information about the Doctoral Consortium please contact to David Riaño
 ([david.riano\@urv.cat](mailto:david.riano@urv.cat))
 
-# Introduction
+# Introduction - The problem, with an argument of why it is important
 
 Currently, Point-of-Care (POC) ECG monitoring works either as plot devices or alarms for abnormal cardiac rhythms using
-predefined normal trigger ranges. On the other hand, full 12-derivation ECG machines are complex to use as simple
-monitors and are used with strict techniques for formal diagnostics of hearth electric conduction pathologies, and the
-automatic diagnostics are derived from a full analysis of the 12-dimension data after it is fully collected. Both
-systems do not handle disconnected leads and patient's motions, being strictly necessary to have a good and stable
-signal to allow proper diagnosis.
+predefined normal trigger ranges. Modern devices also incorporate algorithms to analyze arrhythmias improving their
+specificity. On the other hand, full 12-derivation ECG machines are complex are not suited to use as simple monitors and
+are used with strict techniques for formal diagnostics of hearth electric conduction pathologies, and the automatic
+diagnostics are derived from a full analysis of the 12-dimension data after it is fully and well collected. Both systems
+do not handle disconnected leads and patient's motions, being strictly necessary to have a good and stable signal to
+allow proper diagnosis. These interferences with the data collection frequently originate false alarms increasing both
+patient and staff's stress; depending how it is measured, the rate of false alarms (overall) in ICU is estimated at 65
+to 95%[@donchin2002].
+
+The alarm fatigue is a well known problem that consists of a sensory overload of nurses and clinicians which can result
+in desensitization to alarms and missed alarms (the "crying wolf" situation). Patient deaths have been attributed to
+alarm fatigue[@sendelbach2013\]. Back in 1982 it was recognized the increase on alarms with "no end in sight"; studies
+have demonstrated that most alarm signals have no clinical relevance and lead to delayed response of clinical personnel,
+and ultimately patient deaths were reported related to improper responses to alarms\[ @sendelbach2013].
+
+In April of 2013, The Joint Commission\[@the_jc\] issued the Sentinel Event Alert\[@JointCommission2013\] establish
+alarm system safety as a top hospital priority in the National Patient Safety Goal
 
 This research aims to identify abnormal hearth electric patterns using streaming data, specifically those who are
 life-threatening, being a reliable signal for Intensive Care Units to respond quickly to those situations.
@@ -131,9 +137,7 @@ problem. Also, we expect that fading factors can contribute to the state of the 
 
 The research team is well experienced in time-series and has studied the Matrix Profile since its beginning, being
 founders of the Matrix Profile Foundation whose goal is to have a concise and stable cross-language API for developing
-with the Matrix Profile technology.[@Bischoff2019a; @VanBenschoten2020]
-
-# \[ \] The problem, with an argument of why it is important
+with the Matrix Profile technology[@Bischoff2019a; @VanBenschoten2020].
 
 ## Rationale
 
@@ -142,9 +146,9 @@ using predefined normal trigger ranges. On the other hand, full 12-derivation EC
 monitors and are used with strict techniques for formal diagnostics of hearth electric conduction pathologies, and the
 automatic diagnostics are derived from a full analysis of the 12-dimension data after it is fully collected. In
 CinC/Physionet Challenge 2015, it has been reported that up to 86% resulting of the alarms are false and this can lead
-to decreased staff attention and increase in patients delirium [@Lawless1994; @Chambrin2001; @Parthasarathy2004].
+to decreased staff attention and increase in patients delirium[@Lawless1994; @Chambrin2001; @Parthasarathy2004].
 
-# \[ \] The goal and the research questions
+# - The goal and the research questions
 
 ## Research question and aims
 
@@ -160,11 +164,15 @@ this research can prove to be a good addition to the Matrix Profile method, usin
 memory and space consumption, lowering the processor power needed, allowing this algorithm to be used in almost any
 device.
 
-# \[ \] An outline of what is already known about the research problem
+# - An outline of what is already known about the research problem
 
-## Current works
+## Related Works
 
 TODO: write what we got already from the review.
+
+While the literature on time series classification is vast, see \[17\] and the references therein, there is very little
+on time series labeling \[6\]. Our proposed algorithm is superficially like active learning \[13\]; however, there are
+enough differences that the large active learning literature is of little help. In particular:
 
 ## Background / Literature review
 
@@ -216,7 +224,7 @@ Keywords:
 Articles published after "The PhysioNet/Computing in Cardiology Challenge 2015: Reducing False Arrhythmia Alarms in the
 ICU", will also be analyzed.
 
-# \[ \] The planned approach and methods for solving the problem
+# - The planned approach and methods for solving the problem
 
 ## Research plan and methods
 
@@ -397,7 +405,7 @@ budgets <- tribble(
 knitr::kable(budgets, caption = "Expected expenses")
 ```
 
-# \[ \] The expected results from the research work like overviews, algorithms, better understanding of a concept, a pilot, model or system
+# - The expected results from the research work like overviews, algorithms, better understanding of a concept, a pilot, model or system
 
 ## Expected results and outcomes
 

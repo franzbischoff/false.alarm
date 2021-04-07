@@ -23,7 +23,8 @@ PackageRoxygenize: rd,collate,namespace,vignette
 
 QuitChildProcessesOnExit: Yes
 
-MarkdownWrap: Sentence
+MarkdownWrap: Column
+MarkdownWrapAtColumn: 120
 MarkdownReferences: Document
 MarkdownCanonical: Yes
 
