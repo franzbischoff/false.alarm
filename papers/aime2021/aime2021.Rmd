@@ -1,12 +1,11 @@
 ---
 title: "Framework for ECG analysis"
 titlerunning: Framework for ECG analysis
-authorrunning: Bischoff F., Van Benschoten AH., Rodrigues PP.
+authorrunning: Bischoff F., Rodrigues PP.
 editor_options:
   markdown:
     doctype: pandoc
     mode: markdown
-    extensions: +escaped_line_breaks+blank_before_header
     wrap: 120
 output:
   pdf_document:
@@ -44,9 +43,13 @@ thanks: |
   This work has been done under the scope of - and funded by - the PhD Program in Health Data Science of the Faculty of Medicine of the University of Porto, Portugal - heads.med.up.pt
 ---
 
-```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = FALSE)
+```{r setup, include=FALSE, message = FALSE, warning = FALSE}
+knitr::opts_chunk$set(
+	echo = FALSE
+)
+knitr::opts_knit$set(progress = TRUE, verbose = TRUE)
 suppressPackageStartupMessages(library(tibble))
+suppressPackageStartupMessages(library(kableExtra))
 ```
 
 # Introduction
@@ -101,8 +104,8 @@ any real event):
 
 $$Score=\frac{TP+TN}{TP+TN+FP+5*FN}$$
 
-The five-best scores (for real-time) in this challenge are presented on Table 1 [@plesinger2015; @kalidas2015;
-@couto2015; @fallet2015; @hoogantink2015].
+The five-best scores in this challenge are presented on Table \ref{tab:scores}[@plesinger2015; @kalidas2015; @couto2015;
+@fallet2015; @hoogantink2015].
 
 ```{r scores, echo=FALSE}
 challenge <- tribble(
@@ -114,7 +117,11 @@ challenge <- tribble(
 75.55, "Christoph Hoog Antink, Steffen Leonhardt"
 )
 
-knitr::kable(challenge, caption = "Challenge Results")
+kbl(challenge, booktabs = TRUE, caption = "Challenge Results on Streaming", align = "cl") %>%
+  kable_styling(full_width = TRUE) %>%
+  column_spec(2, width = "9cm") %>%
+  row_spec(0, bold = TRUE)
+
 ```
 
 Their algorithm did quite a good job on Physionet test-set. But, independently of their approach to this problem, none
@@ -201,15 +208,15 @@ dimension[@gharghabi2018].
 
 ### Workflow
 
-All steps of the process will be managed using the R package *targets*[@landau2021], since data extraction to the final
-report, as shown on Fig. 1.
+All steps of the process will be managed using the R package `targets`[@landau2021], since data extraction to the final
+report, as shown on Fig. \ref{fig:targets}.
 
-```{r targets, echo=FALSE, out.width="100%", fig.cap="Reprodutible research workflow using targets."}
+```{r targets, echo=FALSE, out.width="100%", fig.cap="Reprodutible research workflow using `targets`."}
 knitr::include_graphics("targets.png")
 ```
 
 The report will be then available at the main webpage[@franz_website] allowing inspection of previous versions managed
-by the R package *workflowr*[@workflowr2021], as we can see on Fig. 2.
+by the R package `workflowr`[@workflowr2021], as we can see on Fig. \ref{fig:workflow_workflowr}.
 
 ```{r workflow_workflowr, echo=FALSE, out.width="100%", fig.cap="Reprodutible reports using workflowr."}
 knitr::include_graphics("workflowr.png")
