@@ -35,7 +35,7 @@ keywords:
 - time series
 - point-of-care
 abstract: |
-  Currently, Point-of-Care (POC) ECG monitoring works either as plot devices or alarms for abnormal cardiac rhythms using predefined normal trigger ranges. On the other hand, full 12-derivation ECG machines are complex to use as simple monitors and are used with strict techniques for formal diagnostics of hearth electric conduction pathologies, and the automatic diagnostics are derived from a full analysis of the 12-dimension data after it is fully collected. Both systems do not handle disconnected leads and patient's motions, being strictly necessary to have a good and stable signal to allow proper diagnosis. This research aims to identify abnormal hearth electric patterns using streaming data, specifically those who are life-threatening, being a reliable signal for Intensive Care Units to respond quickly to those situations. The study design is comparable to a Diagnostic study, where high accuracy is essential. It will use the Physionet datasets, and the algorithm will try to minimize the false negatives and false positives. The expected result is the concretization of a new method that, besides being accurate, accomplishes this task using state of the art technology for time series analysis that allows minimum space and processor power to solve this problem. Also, we expect that fading factors can contribute to the state of the art of this technology. The research team is well experienced in time-series and has studied the Matrix Profile since its beginning, being founders of the Matrix Profile Foundation whose goal is to have a concise and stable cross-language API for developing with the Matrix Profile technology.[@Bischoff2019a; @VanBenschoten2020] send by e-mail in PDF format to  David Riaño (david.riano@urv.cat)
+  WIP: Currently, Point-of-Care (POC) ECG monitoring works either as plot devices or alarms for abnormal cardiac rhythms using predefined normal trigger ranges. On the other hand, full 12-derivation ECG machines are complex to use as simple monitors and are used with strict techniques for formal diagnostics of hearth electric conduction pathologies, and the automatic diagnostics are derived from a full analysis of the 12-dimension data after it is fully collected. Both systems do not handle disconnected leads and patient's motions, being strictly necessary to have a good and stable signal to allow proper diagnosis. This research aims to identify abnormal hearth electric patterns using streaming data, specifically those who are life-threatening, being a reliable signal for Intensive Care Units to respond quickly to those situations. The study design is comparable to a Diagnostic study, where high accuracy is essential. It will use the Physionet datasets, and the algorithm will try to minimize the false negatives and false positives. The expected result is the concretization of a new method that, besides being accurate, accomplishes this task using state of the art technology for time series analysis that allows minimum space and processor power to solve this problem. Also, we expect that fading factors can contribute to the state of the art of this technology. The research team is well experienced in time-series and has studied the Matrix Profile since its beginning, being founders of the Matrix Profile Foundation whose goal is to have a concise and stable cross-language API for developing with the Matrix Profile technology.[@Bischoff2019a; @VanBenschoten2020] send by e-mail in PDF format to  David Riaño (david.riano@urv.cat)
 bibliography: ../../protocol/references.bib
 link-citations: true
 csl: https://raw.githubusercontent.com/citation-style-language/styles/bfa3b6d80f0e108aff3a81a0c2ab06f1525d1eed/springer-lecture-notes-in-computer-science-alphabetical.csl
@@ -56,50 +56,66 @@ suppressPackageStartupMessages(library(kableExtra))
 
 Currently, Point-of-Care (POC) ECG monitoring works either as plot devices or alarms for abnormal cardiac rhythms using
 predefined normal trigger ranges. Modern devices also incorporate algorithms to analyze arrhythmias improving their
-specificity. On the other hand, full 12-derivation ECG machines are complex are not suited to use as simple monitors and
-are used with strict techniques for formal diagnostics of hearth electric conduction pathologies, and the automatic
-diagnostics are derived from a full analysis of the 12-dimension data after it is fully and well collected. Both systems
-do not handle disconnected leads and patient's motions, being strictly necessary to have a good and stable signal to
-allow proper diagnosis. These interferences with the data collection frequently originate false alarms increasing both
-patient and staff's stress; depending how it is measured, the rate of false alarms (overall) in ICU is estimated at 65
-to 95%[@donchin2002].
+specificity. On the other hand, full 12-derivation ECG machines are complex, are not suited to use as simple monitors
+and are used with strict techniques for formal diagnostics of hearth electric conduction pathologies. The automatic
+diagnostics are derived from a complete analysis of the 12-dimension data after it is fully and well collected. Both
+systems do not handle disconnected leads and patient's motions, being strictly necessary to have a good and stable
+signal to allow proper diagnosis. These interferences with the data collection frequently originate false alarms
+increasing both patient and staff's stress; depending on how it is measured, the rate of false alarms (overall) in ICU
+is estimated at 65 to 95%[@donchin2002].
 
-The alarm fatigue is a well known problem that consists of a sensory overload of nurses and clinicians which can result
-in desensitization to alarms and missed alarms (the "crying wolf" situation). Patient deaths have been attributed to
-alarm fatigue[@sendelbach2013]. Back in 1982 it was recognized the increase on alarms with "no end in sight"; studies
-have demonstrated that most alarm signals have no clinical relevance and lead to delayed response of clinical personnel,
-and ultimately patient deaths were reported related to improper responses to alarms[@sendelbach2013].
+Alarm fatigue is a well-known problem that consists of a sensory overload of nurses and clinicians, resulting in
+desensitization to alarms and missed alarms (the "crying wolf" situation). Patient deaths have been attributed to alarm
+fatigue[@sendelbach2013]. In 1982 it was recognized the increase in alarms with "no end in sight"; studies have
+demonstrated that most alarm signals have no clinical relevance and lead to clinical personnel's delayed response.
+Ultimately patient deaths were reported related to inappropriate responses to alarms[@sendelbach2013].
 
-In April of 2013, The Joint Commission[@the_jc] issued the Sentinel Event Alert[@JointCommission2013] establishingalarm
-system safety as a top hospital priority in the National Patient Safety Goal. Nowadays (2021) this subject still in
-their list, in 4th place of importance[@the_jc2021].
+In April of 2013, The Joint Commission[@the_jc] issued the Sentinel Event Alert[@JointCommission2013], establishing
+alarm system safety as a top hospital priority in the National Patient Safety Goal. Nowadays (2021), this subject still
+on their list, in fourth place of importance[@the_jc2021].
 
-In February of 2015, the CinC/Physionet Challenge 2015 as about "Reducing False Arrhythmia Alarms in the
-ICU[@Clifford2015]. The introduction article stated that has been reported that up to 86% resulting of the alarms are
-false and this can lead to decreased staff attention and increase in patients delirium[@Lawless1994; @Chambrin2001;
+In February of 2015, the CinC/Physionet Challenge 2015 was about "Reducing False Arrhythmia Alarms in the
+ICU[@Clifford2015]. The introduction article stated that it had been reported that up to 86% resulting of the alarms are
+false, and this can lead to decreased staff attention and an increase in patients' delirium[@Lawless1994; @Chambrin2001;
 @Parthasarathy2004].
 
-Due to the importance of this matter, this research aims to identify abnormal hearth electric patterns using streaming
-data, specifically those who are life-threatening, reducing the false alarms, being a reliable signal for Intensive Care
-Units to respond quickly to those situations.
+Due to this matter's importance, this research aims to identify abnormal hearth electric patterns using streaming data,
+specifically those who are life-threatening, reducing the false alarms, being a reliable signal for Intensive Care Units
+to respond quickly to those situations.
 
 # Objectives and the research question
 
 This research aims to identify, on streaming data, abnormal hearth electric patterns, specifically those which are
-life-threatening, in order to be a reliable signal for Intensive Care Units to respond quickly to those situations. It
-also may be able to continuously analyze new data and correct itself shutting off false alarms.
+life-threatening, to be a reliable signal for Intensive Care Units to respond quickly to those situations. It also may
+be able to continuously analyze new data and correct itself shutting off false alarms.
 
 As it is known, this goal is not a new problem, so the main questions to solve are:
 
--   Can we reduce the number of false alarms on ICU setting?
--   Can we accomplish this objective using a minimalist approach (low CPU, low memory), while keeping its robustness?
+-   Can we reduce the number of false alarms in the ICU setting?
+-   Can we accomplish this objective using a minimalist approach (low CPU, low memory) while maintaining robustness?
 -   Can this approach be used in other health domains other than ICU or ECG?
 
 # Related Works
 
-The CinC/Physionet Challenge 2015 itself, produced several papers aiming to reduce false alarms on their dataset.
+The CinC/Physionet Challenge 2015 produced several papers aiming to reduce false alarms on their dataset. On Table
+\ref{tab:alarms} it is listed the five life-threatening alarms present in their dataset.
 
-They used as score the following formula, which penalizes five times the false negatives (since we don't want to miss
+```{r alarms, echo=FALSE}
+alarms <- tribble(
+ ~Alarm, ~Definition,
+"Asystole", "No QRS for at least 4 seconds",
+"Extreme Bradycardia", "Heart rate lower than 40 bpm for 5 consecutive beats",
+"Extreme Tachycardia", "Heart rate higher than 140 bpm for 17 consecutive beats",
+"Ventricular Tachycardia", "5 or more ventricular beats with heart rate higher than 100 bpm",
+"Ventricular Flutter/Fibrillation", "Fibrillatory, flutter, or oscillatory waveform for at least 4 seconds")
+
+kbl(alarms, booktabs = TRUE, caption = "Definition of the 5 alarm types used in CinC/Physionet Challenge 2015 challenge.", align = "ll") %>%
+  kable_styling(full_width = TRUE) %>%
+  column_spec(1, width = "5cm") %>%
+  row_spec(0, bold = TRUE)
+```
+
+They used as score the following formula, which penalizes five times the false negatives (since we do not want to miss
 any real event):
 
 $$Score=\frac{TP+TN}{TP+TN+FP+5*FN}$$
@@ -121,29 +137,27 @@ kbl(challenge, booktabs = TRUE, caption = "Challenge Results on Streaming", alig
   kable_styling(full_width = TRUE) %>%
   column_spec(2, width = "9cm") %>%
   row_spec(0, bold = TRUE)
-
 ```
 
-Their algorithm did quite a good job on Physionet test-set. But, independently of their approach to this problem, none
-of the authors reported benchmarks, memory usage, robustness test or context invariance that could assure its
-implementation on real monitors to actually reduce the alarm fatigue.
+Their algorithm did a pretty good job on the Physionet test-set. However, independently of their approach to this
+problem, none of the authors reported benchmarks, memory usage, robustness test, or context invariance that could assure
+its implementation on real monitors to reduce alarm fatigue indeed.
 
-There are other arrhytmias that this challenge didn't assessed, like atrial standstill (hyperkalemia), third-degree
-atrioventricular block and others that may be life-threatening in some settings. Pulseless electrical activity is a
+There are other arrhythmias that this challenge did not assess, like atrial standstill (hyperkalemia), third-degree
+atrioventricular block, and others that may be life-threatening in some settings. Pulseless electrical activity is a
 frequent condition in cardiac arrest but cannot be identified without blood pressure information. This information is
-normally present on ICU settings, but not in other settings.
+usually present in ICU settings but not in other locations.
 
 # The planned approach and methods for solving the problem
 
 ## State of the art
 
-A literature review of the last ten years is being conducted to assess the state of the art for ECG automatic
-processing:
+A literature review of the last ten years is being conducted to assess state of the art for ECG automatic processing:
 
--   The memory and space used to perform the main goal of the algorithm (sound an alarm for ex.) will be collected if
-    available.
+-   The memory and space used to perform the primary goal of the algorithm (sound an alarm, for ex.) will be collected
+    if available.
 -   The type of algorithms used to identify ECG anomalies
--   The type of algorithms used to identify specific diagnosis (like a flutter, hyperkalemia, etc.)
+-   The type of algorithms used to identify specific diagnoses (like a flutter, hyperkalemia, etc.)
 -   Their performance (accuracy, ROC, etc.)
 
 A broad search will be conducted on Pubmed, Scopus, Google Scholar, device manuals, and other specific sources.
@@ -155,85 +169,73 @@ Keywords:
 -   ECG AND automatic AND interpretation
 
 Articles published after "The PhysioNet/Computing in Cardiology Challenge 2015: Reducing False Arrhythmia Alarms in the
-ICU", will also be analyzed.
+ICU" will also be analyzed.
 
 ## Research plan and methods
 
 This research is being conducted using the Research Compendium principles:
 
--   Stick with the convention of your peers
--   Keep data, methods and output separated
--   Specify your computational environment as clearly as you can
+-   Stick with the convention of your peers;
+-   Keep data, methods, and output separated;
+-   Specify your computational environment as clearly as you can.
 
-Data management is following the FAIR principle (findable, accessible, interoperable, reusable)[@wilkinson2016]
+Data management is following the FAIR principle (findable, accessible, interoperable, reusable)[@wilkinson2016].
 
-Currently the dataset used is stored on a public repository[@franz_dataset], the source code is publicly open and stored
-on Github[@franz_github], while the reports and reproducibility information on each step is found on a public
+Currently, the dataset used is stored on a public repository[@franz_dataset], the source code is publicly open and
+stored on Github[@franz_github], while the reports and reproducibility information on each step is found on a public
 website[@franz_website].
 
 ### Type of study
 
-This will be a diagnostic study as the algorithm must classify the change in pattern as positive or negative for
+This thesis will be a diagnostic study as the algorithm must classify the change in pattern as positive or negative for
 life-threatening.
 
-### Selection of data
+### The data
 
-Initially, the data used for exploring the properties of the algorithm will be publicly available data on
-Physionet[@Goldberger2000; @Clifford2015].
+Initially we will use the CinC/Physionet Challenge 2015 dataset that is publicly available on Physionet. This dataset is
+a good start for exploring the main goal of reduce false alarms. This dataset was manually selected for this challenge
+and the events were labeled by experts, so it is not RAW data. All signals have been resampled (using anti-alias
+filters) to 12 bit, 250 Hz and have had FIR bandpass \[0.05 to 40Hz\] and mains notch filters applied to remove noise.
+Pacemaker and other artifacts may be present on the ECG[@Clifford2015]. Furthermore, this dataset contains at least two
+ECG derivations and one or more variables like arterial blood pressure, photoplethysmograph readings, and respiration
+movements.
 
-It will be asked for Physionet's permission to use more sensitive data if needed.
-
-It is desirable that real data extracted from Portuguese ICU could be used in the final stage to assess in real settings
-the validity of the model.
-
-### Sample size
-
-There is no upper size limitation for the sample size. At least one hundred cases may be reasonable to start with.
-
-### Variables
-
-The initial dataset, from Physionet Challenge contains at least two ECG derivations and one or more variables like
-arterial blood pressure, photoplethysmograph readings and respiration movements. All signals have been resampled (using
-anti-alias filters) to 12 bit, 250 Hz and have had FIR band pass \[0.05 to 40Hz\] and mains notch filters applied to
-remove noise. Pacemaker and other nose artifacts may be present on the ECG.
-
-Other available datasets contains either 549 conventional 12-lead resting ECGs or the corresponding measured Frank Lead
-System ECGs. The ECGs are digitized at a sampling rate of 1000Hz (0.5 µV/LSB; 16 Bit ADC). On special request, this
-database may be available at sampling rates up to 10,000Hz. These data may be requested later if needed.
-
-These variables may or may not be useful for increasing the sensitivity or specificity of the algorithm. It is planned
+These variables may or may not be helpful for increasing the sensitivity or specificity of the algorithm. It is planned
 to use the minimum set of variables as it is known in multi-dimensional analysis that using just two (or some small
 subset) of all the dimensions can be much more accurate than either using all dimensions or a single
 dimension[@gharghabi2018].
 
+It is desirable that real data extracted from Portuguese ICU could be used in further stage to assess the validity of
+the model in real settings and robustness (using RAW data instead of filtered data). The variables available on
+Physionet's dataset are commonly available on Portuguese ICU's.
+
 ### Workflow
 
-All steps of the process will be managed using the R package `targets`[@landau2021], since data extraction to the final
-report, as shown on Fig. \ref{fig:targets}.
+All steps of the process will be managed using the R package `targets`[@landau2021] from data extraction to the final
+report, as shown in Fig. \ref{fig:targets}.
 
 ```{r targets, echo=FALSE, out.width="100%", fig.cap="Reprodutible research workflow using `targets`."}
 knitr::include_graphics("targets.png")
 ```
 
-The report will be then available at the main webpage[@franz_website] allowing inspection of previous versions managed
-by the R package `workflowr`[@workflowr2021], as we can see on Fig. \ref{fig:workflow_workflowr}.
+The report will then be available on the main webpage[@franz_website], allowing inspection of previous versions managed
+by the R package `workflowr`[@workflowr2021], as we can see in Fig. \ref{fig:workflow_workflowr}.
 
-```{r workflow_workflowr, echo=FALSE, out.width="100%", fig.cap="Reprodutible reports using workflowr."}
+```{r workflow_workflowr, echo=FALSE, out.width="100%", fig.cap="Reprodutible reports using `workflowr.`"}
 knitr::include_graphics("workflowr.png")
 ```
 
 ### Statistical analysis
 
-The Statistical analysis will be performed using R language v4.0.4 or greater, and it will be computed the ROC curve for
+The Statistical analysis will be performed using R language v4.0.4 or greater and it will be computed the ROC curve for
 the algorithm.
 
-Primarily an experiment will be conducted using algorithms that use Matrix Profile in detecting context changes, like
-FLOSS, using streaming data. The goal will be detecting the transition from normal to flutter/FA to normal condition
-with special attention to not rely on rhythm changes. Being this successful, a more generalistic approach will be
-attempted: to detect changes from normal to abnormal to normal conditions, with special attention to handle with
-disconnected leads or patient movements. Finally, this research can prove to be a good addition to the Matrix Profile
-method, using fading factors in order to reduce memory and space consumption, lowering the processor power needed,
-allowing this algorithm to be used in almost any device.
+The experiment will be conducted using the Matrix Profile concept[@yeh2016], the state-of-the-art for time series
+analysis. It will be conducted several experiments to identify the best algorithm for this task. One of such algorithms
+is the online semantic segmentation for multi-dimensional time series[@gharghabi2018].
+
+In addition, we will combine the fading factors[@gama2009] strategy to minimize the memory and space consumption
+lowering the processor power needed, allowing this algorithm to be used in almost any device.
 
 ### Research Team
 
@@ -241,27 +243,16 @@ allowing this algorithm to be used in almost any device.
 -   Supervisor: Professor Pedro Pereira Rodrigues
 -   Co-supervisor: Professor Eamonn Keogh (UCR, Riverside)
 
-TODO: \# The expected results from the research work like overviews, algorithms, better understanding of a concept, a
-pilot, model or system
-
-The expected result is the concretization of a new method that, besides being accurate, accomplishes this task using
-state of the art technology for time series analysis that allows minimum space and processor power to solve this
-problem. Also, we expect that fading factors can contribute to the state of the art of this technology.
-
-The research team is well experienced in time-series and has studied the Matrix Profile since its beginning, being
-founders of the Matrix Profile Foundation whose goal is to have a concise and stable cross-language API for developing
-with the Matrix Profile technology[@Bischoff2019a; @VanBenschoten2020].
-
 ## Expected results and outcomes
 
-### Expected results
-
-It is expected that a novel algorithm to detect life-threatening ECG changes can be achieved using lower memory and
-processor power than the existing ones, maintaining the overall performance level.
+The expected result is the concretization of a new method for detecting life-threatening ECG changes that, while being
+accurate, accomplishes this task using state-of-the-art technology for time series analysis, allowing minimum space and
+processor power to solve this problem. Also, we expect that the use of fading factors can contribute to the
+state-of-the-art of this technology.
 
 ### Outcomes
 
-This research will yield at least two publications in indexed journals as well as the final thesis will be available in
-the university repository.
+**WIP:** This research will yield at least two publications in indexed journals as well as the final thesis will be
+available in the university repository.
 
 # References
