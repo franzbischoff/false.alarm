@@ -211,7 +211,6 @@
       "-n45"
     ],
     "latex-workshop.chktex.enabled": true,
-    "latex-workshop.view.autoFocus.enabled": true,
     "latex-workshop.view.pdf.viewer": "tab",
     "taskExplorer.enableGulp": false,
     "taskExplorer.enableGrunt": false,
