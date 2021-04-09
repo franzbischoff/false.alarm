@@ -175,6 +175,7 @@
         </else>
       </choose>
       <text variable="DOI" prefix=". https://doi.org/" />
+      <text variable="PMID" prefix=". https://www.ncbi.nlm.nih.gov/pubmed/" />
     </layout>
   </bibliography>
 </style>

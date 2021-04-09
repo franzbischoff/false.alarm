@@ -38,7 +38,7 @@ abstract: |
   WIP: Currently, Point-of-Care (POC) ECG monitoring works either as plot devices or alarms for abnormal cardiac rhythms using predefined normal trigger ranges. On the other hand, full 12-derivation ECG machines are complex to use as simple monitors and are used with strict techniques for formal diagnostics of hearth electric conduction pathologies, and the automatic diagnostics are derived from a full analysis of the 12-dimension data after it is fully collected. Both systems do not handle disconnected leads and patient's motions, being strictly necessary to have a good and stable signal to allow proper diagnosis. This research aims to identify abnormal hearth electric patterns using streaming data, specifically those who are life-threatening, being a reliable signal for Intensive Care Units to respond quickly to those situations. The study design is comparable to a Diagnostic study, where high accuracy is essential. It will use the Physionet datasets, and the algorithm will try to minimize the false negatives and false positives. The expected result is the concretization of a new method that, besides being accurate, accomplishes this task using state of the art technology for time series analysis that allows minimum space and processor power to solve this problem. Also, we expect that fading factors can contribute to the state of the art of this technology. The research team is well experienced in time-series and has studied the Matrix Profile since its beginning, being founders of the Matrix Profile Foundation whose goal is to have a concise and stable cross-language API for developing with the Matrix Profile technology.[@Bischoff2019a; @VanBenschoten2020] send by e-mail in PDF format to  David Riaño (david.riano@urv.cat)
 bibliography: ../../protocol/references.bib
 link-citations: true
-csl: https://raw.githubusercontent.com/citation-style-language/styles/bfa3b6d80f0e108aff3a81a0c2ab06f1525d1eed/springer-lecture-notes-in-computer-science-alphabetical.csl
+csl: llncs-alpha.csl
 thanks: |
   This work has been done under the scope of - and funded by - the PhD Program in Health Data Science of the Faculty of Medicine of the University of Porto, Portugal - heads.med.up.pt
 ---
@@ -173,7 +173,7 @@ ICU" will also be analyzed.
 
 ## Research plan and methods
 
-This research is being conducted using the Research Compendium principles:
+This research is being conducted using the Research Compendium principles[@compendium2019]:
 
 -   Stick with the convention of your peers;
 -   Keep data, methods, and output separated;
@@ -234,8 +234,8 @@ The experiment will be conducted using the Matrix Profile concept[@yeh2016], the
 analysis. It will be conducted several experiments to identify the best algorithm for this task. One of such algorithms
 is the online semantic segmentation for multi-dimensional time series[@gharghabi2018].
 
-In addition, we will combine the fading factors[@gama2009] strategy to minimize the memory and space consumption
-lowering the processor power needed, allowing this algorithm to be used in almost any device.
+In addition, we will combine the fading factors[@Gama2013; @Rodrigues2010] strategy to minimize the memory and space
+consumption lowering the processor power needed, allowing this algorithm to be used in almost any device.
 
 ### Research Team
 
@@ -245,14 +245,19 @@ lowering the processor power needed, allowing this algorithm to be used in almos
 
 ## Expected results and outcomes
 
-The expected result is the concretization of a new method for detecting life-threatening ECG changes that, while being
-accurate, accomplishes this task using state-of-the-art technology for time series analysis, allowing minimum space and
-processor power to solve this problem. Also, we expect that the use of fading factors can contribute to the
-state-of-the-art of this technology.
+We expect the following results:
 
-### Outcomes
+-   Identify the obstacles of identifying life-threatening ECG changes within memory, space, and CPU constraints;
+-   Be able to reduce ECG monitor's false alarms using the proposed methodology;
+-   Assess the feasibility of implementing the algorithm in the real world and other settings than ICU monitors.
 
-**WIP:** This research will yield at least two publications in indexed journals as well as the final thesis will be
-available in the university repository.
+And outcomes:
+
+-   To achieve a better score of false alarm reduction than the best on Physionet's 2015 challenge;
+-   To push forward the state-of-the-art technology on false alarms reduction, maybe even being domain agnostic;
+-   To draw more attention to fading factors as a reliable, fast, and cheap approximation of the true value;
+-   To draw more attention to the matrix profile concept as an efficient, agnostic, and almost parameter-free way to
+    analyze time series;
+-   To draw more attention of the Patient Monitorization industry on solving the false alarm problem.
 
 # References
