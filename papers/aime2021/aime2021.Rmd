@@ -21,7 +21,7 @@ authors:
   orcid: 0000-0002-5301-8672
 - name: Pedro Pereira Rodrigues
   inst: 1, 2
-  orcid: 0000-0000-0000-0000
+  orcid: 0000-0001-7867-6682
 institutes:
 - num: 1
   dept: Department of Community Medicine, Information and Health Decision Sciences (MEDCIDS), Faculty of Medicine, University of Porto, Porto, Portugal
@@ -34,8 +34,9 @@ keywords:
 - matrix profile
 - time series
 - point-of-care
+#  send by e-mail in PDF format to  David Riaño (david.riano@urv.cat)
 abstract: |
-  WIP: Currently, Point-of-Care (POC) ECG monitoring works either as plot devices or alarms for abnormal cardiac rhythms using predefined normal trigger ranges. On the other hand, full 12-derivation ECG machines are complex to use as simple monitors and are used with strict techniques for formal diagnostics of hearth electric conduction pathologies, and the automatic diagnostics are derived from a full analysis of the 12-dimension data after it is fully collected. Both systems do not handle disconnected leads and patient's motions, being strictly necessary to have a good and stable signal to allow proper diagnosis. This research aims to identify abnormal hearth electric patterns using streaming data, specifically those who are life-threatening, being a reliable signal for Intensive Care Units to respond quickly to those situations. The study design is comparable to a Diagnostic study, where high accuracy is essential. It will use the Physionet datasets, and the algorithm will try to minimize the false negatives and false positives. The expected result is the concretization of a new method that, besides being accurate, accomplishes this task using state of the art technology for time series analysis that allows minimum space and processor power to solve this problem. Also, we expect that fading factors can contribute to the state of the art of this technology. The research team is well experienced in time-series and has studied the Matrix Profile since its beginning, being founders of the Matrix Profile Foundation whose goal is to have a concise and stable cross-language API for developing with the Matrix Profile technology.[@Bischoff2019a; @VanBenschoten2020] send by e-mail in PDF format to  David Riaño (david.riano@urv.cat)
+  Currently, Point-of-Care (POC) ECG monitoring works either as plot devices or alarms for abnormal cardiac rhythms using predefined normal trigger ranges and some rhythm analysis, which raises the problem of false alarms. In comparison, complex 12-derivation ECG machines are not suitable to use as simple monitors and are used with strict techniques for formal diagnostics. We aim to identify, on streaming data, life-threatening hearth electric patterns to reduce the number of false alarms, using low CPU and memory maintaining robustness. The study design is comparable to a diagnostic study, where high accuracy is essential. Physionet's 2015 challenge yielded very good algorithms for reducing false alarms. However, none of the authors reported benchmarks, memory usage, robustness test, or context invariance that could assure its implementation on real monitors to reduce alarm fatigue indeed. We expect to identify the obstacles of detecting life-threatening ECG changes within memory, space, and CPU constraints and to reduce ECG monitor's false alarms using the proposed methodology, and assess the feasibility of implementing the algorithm in the real world and other settings than ICU monitors.
 bibliography: ../../protocol/references.bib
 link-citations: true
 csl: llncs-alpha.csl
@@ -89,11 +90,9 @@ This research aims to identify, on streaming data, abnormal hearth electric patt
 life-threatening, to be a reliable signal for Intensive Care Units to respond quickly to those situations. It also may
 be able to continuously analyze new data and correct itself shutting off false alarms.
 
-As it is known, this goal is not a new problem, so the main questions to solve are:
-
--   Can we reduce the number of false alarms in the ICU setting?
--   Can we accomplish this objective using a minimalist approach (low CPU, low memory) while maintaining robustness?
--   Can this approach be used in other health domains other than ICU or ECG?
+As it is known, this goal is not a new problem, so the main questions to solve are: (1) Can we reduce the number of
+false alarms in the ICU setting? (2) Can we accomplish this objective using a minimalist approach (low CPU, low memory)
+while maintaining robustness? (3) Can this approach be used in other health domains other than ICU or ECG?
 
 # Related Works
 
@@ -152,13 +151,11 @@ usually present in ICU settings but not in other locations.
 
 ## State of the art
 
-A literature review of the last ten years is being conducted to assess state of the art for ECG automatic processing:
-
--   The memory and space used to perform the primary goal of the algorithm (sound an alarm, for ex.) will be collected
-    if available.
--   The type of algorithms used to identify ECG anomalies
--   The type of algorithms used to identify specific diagnoses (like a flutter, hyperkalemia, etc.)
--   Their performance (accuracy, ROC, etc.)
+A literature review of the last ten years is being conducted to assess state of the art for ECG automatic processing
+collecting the following points if available : (1) The memory and space used to perform the primary goal of the
+algorithm (sound an alarm, for ex.). (2) The type of algorithms used to identify ECG anomalies. (3) The type of
+algorithms used to identify specific diagnoses (like a flutter, hyperkalemia, and others). (4) Their performance
+(accuracy, ROC, etc.)
 
 A broad search will be conducted on Pubmed, Scopus, Google Scholar, device manuals, and other specific sources.
 
@@ -175,9 +172,9 @@ ICU" will also be analyzed.
 
 This research is being conducted using the Research Compendium principles[@compendium2019]:
 
--   Stick with the convention of your peers;
--   Keep data, methods, and output separated;
--   Specify your computational environment as clearly as you can.
+1.  Stick with the convention of your peers;
+2.  Keep data, methods, and output separated;
+3.  Specify your computational environment as clearly as you can.
 
 Data management is following the FAIR principle (findable, accessible, interoperable, reusable)[@wilkinson2016].
 
@@ -245,19 +242,14 @@ consumption lowering the processor power needed, allowing this algorithm to be u
 
 ## Expected results and outcomes
 
-We expect the following results:
+We expect the following results: (1) Identify the obstacles of identifying life-threatening ECG changes within memory,
+space, and CPU constraints. (2) Be able to reduce ECG monitor's false alarms using the proposed methodology. (3) Assess
+the feasibility of implementing the algorithm in the real world and other settings than ICU monitors.
 
--   Identify the obstacles of identifying life-threatening ECG changes within memory, space, and CPU constraints;
--   Be able to reduce ECG monitor's false alarms using the proposed methodology;
--   Assess the feasibility of implementing the algorithm in the real world and other settings than ICU monitors.
-
-And outcomes:
-
--   To achieve a better score of false alarm reduction than the best on Physionet's 2015 challenge;
--   To push forward the state-of-the-art technology on false alarms reduction, maybe even being domain agnostic;
--   To draw more attention to fading factors as a reliable, fast, and cheap approximation of the true value;
--   To draw more attention to the matrix profile concept as an efficient, agnostic, and almost parameter-free way to
-    analyze time series;
--   To draw more attention of the Patient Monitorization industry on solving the false alarm problem.
+And outcomes: (1) To achieve a better score of false alarm reduction than the best on Physionet's 2015 challenge. (2) To
+push forward the state-of-the-art technology on false alarms reduction, maybe even being domain agnostic. (3) To draw
+more attention to fading factors as a reliable, fast, and cheap approximation of the true value. (4) To draw more
+attention to the matrix profile concept as an efficient, agnostic, and almost parameter-free way to analyze time series.
+(5) To draw more attention of the Patient Monitorization industry on solving the false alarm problem.
 
 # References
