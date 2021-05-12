@@ -33,7 +33,7 @@ jobs:
       CODECOV_TOKEN: "4676dbf0-8296-4fd8-9542-a476503b0118"
     steps:
       - name: Checking out shallow repository
-        uses: actions/checkout@v2
+        uses: actions/checkout@v2.3.4
         with:
           ref: ${{ github.event.workflow_run.head_branch }}
 
