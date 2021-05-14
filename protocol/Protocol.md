@@ -2,36 +2,36 @@ Research Protocol
 ================
 Francisco Bischoff
 
-  - [Identification of the project](#identification-of-the-project)
-      - [Title of the protocol (in Portuguese and
+-   [Identification of the project](#identification-of-the-project)
+    -   [Title of the protocol (in Portuguese and
         English)](#title-of-the-protocol-in-portuguese-and-english)
-      - [Author](#author)
-      - [Key-words](#key-words)
-      - [Project start date and
+    -   [Author](#author)
+    -   [Key-words](#key-words)
+    -   [Project start date and
         duration](#project-start-date-and-duration)
-  - [Abstract or Summary (in Portuguese and
+-   [Abstract or Summary (in Portuguese and
     English)](#abstract-or-summary-in-portuguese-and-english)
-  - [Rationale](#rationale)
-  - [Research question and aims](#research-question-and-aims)
-  - [Background / Literature review](#background-literature-review)
-  - [Research plan and methods](#research-plan-and-methods)
-      - [Type of study](#type-of-study)
-      - [Selection of data](#selection-of-data)
-      - [Sample size](#sample-size)
-      - [Variables](#variables)
-      - [Statistical analysis](#statistical-analysis)
-  - [Research Team](#research-team)
-  - [Tasks, milestones and timeline](#tasks-milestones-and-timeline)
-      - [Tasks](#tasks)
-      - [Milestones](#milestones)
-      - [Timeline](#timeline)
-  - [Budget](#budget)
-  - [Expected results and outcomes](#expected-results-and-outcomes)
-      - [Expected results](#expected-results)
-      - [Outcomes](#outcomes)
-  - [References](#references)
+-   [Rationale](#rationale)
+-   [Research question and aims](#research-question-and-aims)
+-   [Background / Literature review](#background--literature-review)
+-   [Research plan and methods](#research-plan-and-methods)
+    -   [Type of study](#type-of-study)
+    -   [Selection of data](#selection-of-data)
+    -   [Sample size](#sample-size)
+    -   [Variables](#variables)
+    -   [Statistical analysis](#statistical-analysis)
+-   [Research Team](#research-team)
+-   [Tasks, milestones and timeline](#tasks-milestones-and-timeline)
+    -   [Tasks](#tasks)
+    -   [Milestones](#milestones)
+    -   [Timeline](#timeline)
+-   [Budget](#budget)
+-   [Expected results and outcomes](#expected-results-and-outcomes)
+    -   [Expected results](#expected-results)
+    -   [Outcomes](#outcomes)
+-   [References](#references)
 
-Last Updated: 2020-10-10 18:57:49 UTC
+Last Updated: 2021-05-14 15:40:59 UTC
 
 <!-- -*- mode: gfm; extensions: +tex_math_dollars+raw_tex -*- -->
 
@@ -42,7 +42,7 @@ Last Updated: 2020-10-10 18:57:49 UTC
 “Detecting life-threatening patterns in Point-of-care ECG using
 efficient memory and processor power.”
 
-“Detetando padrões de risco de vida no ECG no local de atendimento
+“Detectando padrões de risco de vida no ECG no local de atendimento
 usando memória e potência do processador eficientes.”
 
 ## Author
@@ -91,10 +91,10 @@ resolver esse problema. Além disso, espera-se que a utilização de
 tecnologia.*
 
 *A equipe de pesquisa é experiente em séries temporais e estuda o
-“Matrix Profile” desde suas raízes, sendo fundadores da “Matrix
-Profile Foundation”, cujo objetivo é ter uma API multi-linguagem concisa
-e estável para desenvolvimento com a tecnologia “Matrix
-Profile.”<sup>[1](#ref-Bischoff2019a),[2](#ref-VanBenschoten2020)</sup>*
+“Matrix Profile” desde suas raizes, sendo fundadores da “Matrix Profile
+Foundation,” cujo objetivo é ter uma API multi-linguagem concisa e
+estável para desenvolvimento com a tecnologia “Matrix
+Profile.”*<sup>[1](#ref-Bischoff2019a),[2](#ref-VanBenschoten2020)</sup>
 
 Currently, Point-of-Care (POC) ECG monitoring works either as plot
 devices or alarms for abnormal cardiac rhythms using predefined normal
@@ -171,7 +171,7 @@ minimizing the false alarms for five life-threatening arrhythmia:
 asystole, extreme bradycardia, extreme tachycardia, ventricular
 tachycardia and ventricular fibrillation or flutter.
 
-There are other arrhythmias that this challenge didn’t assessed, like
+There are other arrhytmias that this challenge didn’t assessed, like
 atrial standstill (hyperkalemia), third-degree atrioventricular block
 and others that may be life-threatening in some settings like atrial
 fibrillation (AF), a, atrialflutter and paroxysmal supraventricular
@@ -192,7 +192,7 @@ They used as score the following formula:
 The five-best scores (for real-time) in this challenge were:
 
 | Score | Authors                                                  |
-| ----: | :------------------------------------------------------- |
+|------:|:---------------------------------------------------------|
 | 81.39 | Filip Plesinger, Petr Klimes, Josef Halamek, Pavel Jurak |
 | 79.44 | Vignesh Kalidas                                          |
 | 79.02 | Paula Couto, Ruben Ramalho, Rui Rodrigues                |
@@ -204,24 +204,24 @@ Challenge Results
 A literature review will be conducted to assess the state of the art for
 ECG automatic processing:
 
-  - The memory and space used to perform the main goal of the algorithm
-    (sound an alarm for ex.) will be collected if available.
-  - The type of algorithms used to identify ECG anomalies
-  - The type of algorithms used to identify specific diagnosis (like a
+-   The memory and space used to perform the main goal of the algorithm
+    (sound an alarm for ex.) will be collected i available.
+-   The type of algorithms used to identify ECG anomalies
+-   The type of algorithms used to identify specific diagnosis (like a
     flutter, hyperkalemia, etc.)
-  - Their performance (accuracy, ROC, etc.)
+-   Their performance (accuracy, ROC, etc.)
 
 A broad search will be conducted on Pubmed, Scopus, Google Scholar,
 device manuals, and other specific sources.
 
 Keywords:
 
-  - ECG AND monitoring AND ICU
-  - ECG AND \[time series\]
-  - ECG AND automatic AND interpretation
+-   ECG AND monitoring AND ICU
+-   ECG AND \[time series\]
+-   ECG AND automatic AND interpretation
 
 Articles published after “The PhysioNet/Computing in Cardiology
-Challenge 2015: Reducing False Arrhythmia Alarms in the ICU”, will also
+Challenge 2015: Reducing False Arrhythmia Alarms in the ICU,” will also
 be analyzed.
 
 # Research plan and methods
@@ -274,9 +274,9 @@ greater, and it will be computed the ROC curve for the algorithm.
 
 # Research Team
 
-  - Thesis Author: Francisco Bischoff
-  - Supervisor: Professor Pedro Pereira Rodrigues
-  - Co-supervisor: Professor Eamonn Keogh (UCR, Riverside)
+-   Thesis Author: Francisco Bischoff
+-   Supervisor: Professor Pedro Pereira Rodrigues
+-   Co-supervisor: Professor Eamonn Keogh (UCR, Riverside)
 
 # Tasks, milestones and timeline
 
@@ -285,7 +285,7 @@ greater, and it will be computed the ROC curve for the algorithm.
 The timeline is composed of larger tasks I call Epics. They contain
 multiple subtasks that are expected to change frequently.
 
-  - **Elaboration of Research Protocol**
+-   **Elaboration of Research Protocol**
 
     1.  Duration: 1 months 12 days;
     2.  Elaboration of this protocol in order to facilitate the
@@ -293,53 +293,53 @@ multiple subtasks that are expected to change frequently.
     3.  This task was developed by the author with input suggestions
         from other experts.
 
-  - **Literature Review**
+-   **Literature Review**
 
     1.  Duration: 2 months 12 days;
     2.  This task aims to survey the literature about what is currently
-        done to tackle the current problem and what the limitations are;
+        done to tackle the current problem and what th limitations are;
         Aim and outputs for the task (and relation with the next task);
     3.  This task will be done with three independent reviewers using
         the PRISMA guidelines in the Covidence framework.
 
-  - **Obtaining Access to Physionet full data**
+-   **Obtaining Access to Physionet full data**
 
     1.  Duration: 1 months 4 days
     2.  All datasets in Physionet are supposed to be Open Access.
-        However, there is a chance that some datasets may need
+        However, there is a chance that some datasets may nee
         permissions.
     3.  If any dataset needs permission, it will be first evaluated the
         real need and asked the proper way to access it.
 
-  - **First Experimentation with Public data**
+-   **First Experimentation with Public data**
 
     1.  Duration: 2 months 9 days
     2.  The Physionet Challenge from 2015 will be the first dataset to
-        be analyzed and will be *a study in scarlet* for the problems we
+        be analyzed and will be *a study in scarlet* fo the problems we
         may face in this kind of dataset;
     3.  The datasets will be studied in the case of data preparation for
         the modeling process.
 
-  - **Development of the First Algorithm**
+-   **Development of the First Algorithm**
 
     1.  Duration: 4 months 13 days;
     2.  In this task, the first model will be constructed: the Atrial
         Fibrillation start/end detection;
     3.  The state of the art methods will be used to detect such
-        changes, with maximum precision and lowest memory and processor
+        changes, with maximum precision and lowest memory an processor
         usage;
     4.  This task depends on the knowledge about the dataset we have
         from the previous task.
 
-  - **Dissertation First Draft**
+-   **Dissertation First Draft**
 
     1.  Duration: 2 months 3 days;
     2.  This task aims to, at the same time, create a draft for the
-        final dissertation, and the content for an actual article to be
+        final dissertation, and the content for an actua article to be
         published;
     3.  This task depends on the concretization of the previous task.
 
-  - **Publication of the First Algorithm**
+-   **Publication of the First Algorithm**
 
     1.  Duration: 3 months 29 days
     2.  This task aims to refine the text, review, and submit it for
@@ -349,7 +349,7 @@ multiple subtasks that are expected to change frequently.
     4.  This task depends on the previous task;
     5.  Financial needs: Publication fees.
 
-  - **Development of the Second Algorithm**
+-   **Development of the Second Algorithm**
 
     1.  Duration: 2 months 14 days
     2.  In this task, the second model will be constructed: an attempt
@@ -358,7 +358,7 @@ multiple subtasks that are expected to change frequently.
         changes, with maximum precision and lowest memory and processor
         usage;
 
-  - **Dissertation Second Draft**
+-   **Dissertation Second Draft**
 
     1.  Duration: 3 months 25 days
     2.  This task aims to, at the same time, create a second draft for
@@ -366,7 +366,7 @@ multiple subtasks that are expected to change frequently.
         be published;
     3.  This task depends on the concretization of the previous task.
 
-  - **Publication of the Second Algorithm**
+-   **Publication of the Second Algorithm**
 
     1.  Duration: 3 months 27 days
     2.  This task aims to refine the text, review, and submit it for
@@ -376,7 +376,7 @@ multiple subtasks that are expected to change frequently.
     4.  This task depends on the previous task;
     5.  Financial needs: Publication fees.
 
-  - **Dissertation Review**
+-   **Dissertation Review**
 
     1.  Duration: 1 months 15 days
     2.  This task will be a time to review all the work done and prepare
@@ -384,7 +384,7 @@ multiple subtasks that are expected to change frequently.
     3.  Ideally, two or mode independent expert shall read the thesis
         and give feedback for improvement;
 
-  - **Proof Reading**
+-   **Proof Reading**
 
     1.  Duration: 0 months 25 days
     2.  This task comprises in careful reading, ideally by a
@@ -392,7 +392,7 @@ multiple subtasks that are expected to change frequently.
     3.  It depends on the previous tasks;
     4.  Financial needs: Proofreading fees
 
-  - **Presentation**
+-   **Presentation**
 
     1.  Duration: 1 months 11 days
     2.  This task comprises in preparation for public presentation;
@@ -403,7 +403,7 @@ multiple subtasks that are expected to change frequently.
 ## Milestones
 
 | Milestone | Date      | Name              | Description                               |
-| :-------- | :-------- | :---------------- | :---------------------------------------- |
+|:----------|:----------|:------------------|:------------------------------------------|
 | M1        | Jul, 2020 | Protocol          | Finish and Deliver Protocol               |
 | M2        | Oct, 2020 | Literature Review | Finish Literature Review                  |
 | M3        | Apr, 2021 | Paper 1           | Finish and Submit for Publication Paper 1 |
@@ -420,7 +420,7 @@ Click on the image to open an interactive Gantt webpage
 # Budget
 
 | Items           | Budget | Justification             | Obtained |
-| :-------------- | -----: | :------------------------ | :------- |
+|:----------------|-------:|:--------------------------|:---------|
 | Travel expenses |   5000 | International Conferences | No       |
 | Conferences     |   3000 | Registration Fees         | No       |
 | Tuition Fees    |  11000 | Researcher Maintenance    | No       |
@@ -443,63 +443,72 @@ repository.
 
 # References
 
-<div id="refs" class="references">
+<div id="refs" class="references csl-bib-body">
 
-<div id="ref-Bischoff2019a">
+<div id="ref-Bischoff2019a" class="csl-entry">
 
-1\. Bischoff F, Rodrigues PP. tsmp: An R Package for Time Series with
-Matrix Profile. Published online April 2019.
-doi:[10.13140/RG.2.2.13040.30726](https://doi.org/10.13140/RG.2.2.13040.30726)
-
-</div>
-
-<div id="ref-VanBenschoten2020">
-
-2\. Van Benschoten A, Ouyang A, Bischoff F, Marrs T. MPA: a novel
-cross-language API for time series analysis. *Journal of Open Source
-Software*. 2020;5(49):2179.
-doi:[10.21105/joss.02179](https://doi.org/10.21105/joss.02179)
+<span class="csl-left-margin">1. </span><span
+class="csl-right-inline">Bischoff F, Rodrigues PP. Tsmp: An r package
+for time series with matrix profile. Published online April 2019.
+doi:[10.13140/rg.2.2.13040.30726](https://doi.org/10.13140/rg.2.2.13040.30726)</span>
 
 </div>
 
-<div id="ref-Lawless1994">
+<div id="ref-VanBenschoten2020" class="csl-entry">
 
-3\. Lawless ST. Crying wolf: false alarms in a pediatric intensive care
-unit. *Critical care medicine*. 1994;22(6):981-985.
-<http://www.ncbi.nlm.nih.gov/pubmed/8205831>
-
-</div>
-
-<div id="ref-Chambrin2001">
-
-4\. Chambrin MC. Alarms in the intensive care unit: how can the number
-of false alarms be reduced? *Critical care (London, England)*.
-2001;5(4):184-188. doi:[10.1186/cc1021](https://doi.org/10.1186/cc1021)
+<span class="csl-left-margin">2. </span><span
+class="csl-right-inline">Van Benschoten A, Ouyang A, Bischoff F, Marrs
+T. MPA: A novel cross-language API for time series analysis. *Journal of
+Open Source Software*. 2020;5(49):2179.
+doi:[10.21105/joss.02179](https://doi.org/10.21105/joss.02179)</span>
 
 </div>
 
-<div id="ref-Parthasarathy2004">
+<div id="ref-Lawless1994" class="csl-entry">
 
-5\. Parthasarathy S, Tobin MJ. Sleep in the intensive care unit.
-*Intensive Care Medicine*. 2004;30(2):197-206.
-doi:[10.1007/s00134-003-2030-6](https://doi.org/10.1007/s00134-003-2030-6)
-
-</div>
-
-<div id="ref-Clifford2015">
-
-6\. Clifford GD, Silva I, Moody B, et al. The PhysioNet/Computing in
-Cardiology Challenge 2015: Reducing false arrhythmia alarms in the ICU.
-In: *Computing in Cardiology*.; 2015.
-doi:[10.1109/CIC.2015.7408639](https://doi.org/10.1109/CIC.2015.7408639)
+<span class="csl-left-margin">3. </span><span
+class="csl-right-inline">Lawless ST. Crying wolf: False alarms in a
+pediatric intensive care unit. *Critical care medicine*.
+1994;22(6):981-985.</span>
 
 </div>
 
-<div id="ref-Goldberger2000">
+<div id="ref-Chambrin2001" class="csl-entry">
 
-7\. Goldberger A, Amaral L, Glass L, et al. PhysioBank, PhysioToolkit,
-and PhysioNet: Components of a new research resource for complex
-physiologic signals. *Circulation \[online\]*. 2000;101(23):e215-e220.
+<span class="csl-left-margin">4. </span><span
+class="csl-right-inline">Chambrin MC. Alarms in the intensive care unit:
+How can the number of false alarms be reduced? *Critical care (London,
+England)*. 2001;5(4):184-188.
+doi:[10.1186/cc1021](https://doi.org/10.1186/cc1021)</span>
+
+</div>
+
+<div id="ref-Parthasarathy2004" class="csl-entry">
+
+<span class="csl-left-margin">5. </span><span
+class="csl-right-inline">Parthasarathy S, Tobin MJ. Sleep in the
+intensive care unit. *Intensive Care Medicine*. 2004;30(2):197-206.
+doi:[10.1007/s00134-003-2030-6](https://doi.org/10.1007/s00134-003-2030-6)</span>
+
+</div>
+
+<div id="ref-Clifford2015" class="csl-entry">
+
+<span class="csl-left-margin">6. </span><span
+class="csl-right-inline">Clifford GD, Silva I, Moody B, et al. The
+PhysioNet/computing in cardiology challenge 2015: Reducing false
+arrhythmia alarms in the ICU. In: *Computing in Cardiology*.; 2015.
+doi:[10.1109/cic.2015.7408639](https://doi.org/10.1109/cic.2015.7408639)</span>
+
+</div>
+
+<div id="ref-Goldberger2000" class="csl-entry">
+
+<span class="csl-left-margin">7. </span><span
+class="csl-right-inline">Goldberger A, Amaral L, Glass L, et al.
+PhysioBank, PhysioToolkit, and PhysioNet: Components of a new research
+resource for complex physiologic signals. *Circulation \[online\]*.
+2000;101(23):e215-e220.</span>
 
 </div>
 

@@ -1,0 +1,38 @@
+---
+editor_options:
+  markdown:
+    canonical: true
+    mode: markdown
+    wrap: 120
+---
+
+# Introduction {.unnumbered}
+
+Currently, Point-of-Care (POC) ECG monitoring works either as plot devices or alarms for abnormal cardiac rhythms using
+predefined normal trigger ranges. Modern devices also incorporate algorithms to analyze arrhythmias improving their
+specificity. On the other hand, full 12-derivation ECG machines are complex, are not suited to use as simple monitors
+and are used with strict techniques for formal diagnostics of hearth electric conduction pathologies. The automatic
+diagnostics are derived from a complete analysis of the 12-dimension data after it is fully and well collected. Both
+systems do not handle disconnected leads and patient's motions, being strictly necessary to have a good and stable
+signal to allow proper diagnosis. These interferences with the data collection frequently originate false alarms
+increasing both patient and staff's stress; depending on how it is measured, the rate of false alarms (overall) in ICU
+is estimated at 65 to 95%[@donchin2002].
+
+Alarm fatigue is a well-known problem that consists of a sensory overload of nurses and clinicians, resulting in
+desensitization to alarms and missed alarms (the "crying wolf" situation). Patient deaths have been attributed to alarm
+fatigue[@sendelbach2013]. In 1982 it was recognized the increase in alarms with "no end in sight"; studies have
+demonstrated that most alarm signals have no clinical relevance and lead to clinical personnel's delayed response.
+Ultimately patient deaths were reported related to inappropriate responses to alarms[@sendelbach2013].
+
+In April of 2013, The Joint Commission[@the_jc] issued the Sentinel Event Alert[@JointCommission2013], establishing
+alarm system safety as a top hospital priority in the National Patient Safety Goal. Nowadays (2021), this subject still
+on their list, in fourth place of importance[@the_jc2021].
+
+In February of 2015, the CinC/Physionet Challenge 2015 was about "Reducing False Arrhythmia Alarms in the
+ICU[@Clifford2015]. The introduction article stated that it had been reported that up to 86% resulting of the alarms are
+false, and this can lead to decreased staff attention and an increase in patients' delirium[@Lawless1994; @Chambrin2001;
+@Parthasarathy2004].
+
+Due to this matter's importance, this research aims to identify abnormal hearth electric patterns using streaming data,
+specifically those who are life-threatening, reducing the false alarms, being a reliable signal for Intensive Care Units
+to respond quickly to those situations.

@@ -4,11 +4,11 @@
 
   <meta charset="utf-8" />
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-  <title>Detecting life-threatening patterns in Point-of-care ECG using efficient memory and processor power</title>
-  <meta name="description" content="Detecting life-threatening patterns in Point-of-care ECG using efficient memory and processor power" />
+  <title>Chapter 4 References | Detecting life-threatening patterns in Point-of-care ECG using efficient memory and processor power</title>
+  <meta name="description" content="Chapter 4 References | Detecting life-threatening patterns in Point-of-care ECG using efficient memory and processor power" />
   <meta name="generator" content="bookdown 0.22.2 and GitBook 2.6.7" />
 
-  <meta property="og:title" content="Detecting life-threatening patterns in Point-of-care ECG using efficient memory and processor power" />
+  <meta property="og:title" content="Chapter 4 References | Detecting life-threatening patterns in Point-of-care ECG using efficient memory and processor power" />
   <meta property="og:type" content="book" />
   
   
@@ -16,7 +16,7 @@
   
 
   <meta name="twitter:card" content="summary" />
-  <meta name="twitter:title" content="Detecting life-threatening patterns in Point-of-care ECG using efficient memory and processor power" />
+  <meta name="twitter:title" content="Chapter 4 References | Detecting life-threatening patterns in Point-of-care ECG using efficient memory and processor power" />
   
   
   
@@ -30,8 +30,8 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black" />
   
   
-
-<link rel="next" href="introduction.html"/>
+<link rel="prev" href="3-the-planned-approach-and-methods-for-solving-the-problem.html"/>
+<link rel="next" href="references-1.html"/>
 <script src="libs/header-attrs-2.8.1/header-attrs.js"></script>
 <script src="libs/jquery-2.2.3/jquery.min.js"></script>
 <link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
@@ -117,8 +117,8 @@ div.csl-indent {
 </ul></li>
 <li class="chapter" data-level="3.3" data-path="3-the-planned-approach-and-methods-for-solving-the-problem.html"><a href="3-the-planned-approach-and-methods-for-solving-the-problem.html#expected-results-and-outcomes"><i class="fa fa-check"></i><b>3.3</b> Expected results and outcomes</a></li>
 </ul></li>
-<li class="chapter" data-level="4" data-path="4-whatever.html"><a href="4-whatever.html"><i class="fa fa-check"></i><b>4</b> Whatever</a></li>
-<li class="chapter" data-level="" data-path="references.html"><a href="references.html"><i class="fa fa-check"></i>References</a></li>
+<li class="chapter" data-level="4" data-path="4-references.html"><a href="4-references.html"><i class="fa fa-check"></i><b>4</b> References</a></li>
+<li class="chapter" data-level="" data-path="references-1.html"><a href="references-1.html"><i class="fa fa-check"></i>References</a></li>
 <li class="divider"></li>
 <li><a href="https://github.com/rstudio/bookdown target="blank">Published with bookdown</a></li>
 </ul>
@@ -138,49 +138,43 @@ div.csl-indent {
           <div class="page-inner">
 
             <section class="normal" id="section-">
-<div id="header">
-<h1 class="title">Detecting life-threatening patterns in Point-of-care ECG using efficient memory and processor power</h1>
-<p class="author"><em>Francisco Bischoff</em></p>
-<p class="date" style="margin-top: 1.5em;"><em>Jul 2020</em></p>
-</div>
-<div id="preliminary-content" class="section level1 unnumbered">
-<h1>Preliminary Content</h1>
-<div id="acknowledgements" class="section level2 unnumbered">
-<h2>Acknowledgements</h2>
-<p>I want to thank a few people.</p>
-</div>
-<div id="preface" class="section level2 unnumbered">
-<h2>Preface</h2>
-<p>This is an example of a thesis setup to use the reed thesis document class (for LaTeX) and the R bookdown package, in
-general.</p>
-</div>
-<div id="dedication" class="section level2 unnumbered">
-<h2>Dedication</h2>
-<p>You can have a dedication here if you wish.</p>
-</div>
-<div id="abstract" class="section level2 unnumbered">
-<h2>Abstract</h2>
-<p>Currently, Point-of-Care (POC) ECG monitoring works either as plot devices or alarms for abnormal cardiac rhythms using
-predefined normal trigger ranges and some rhythm analysis, which raises the problem of false alarms. In comparison,
-complex 12-derivation ECG machines are not suitable to use as simple monitors and are used with strict techniques for
-formal diagnostics. We aim to identify, on streaming data, life-threatening hearth electric patterns to reduce the
-number of false alarms, using low CPU and memory maintaining robustness. The study design is comparable to a diagnostic
-study, where high accuracy is essential. Physionet’s 2015 challenge yielded very good algorithms for reducing false
-alarms. However, none of the authors reported benchmarks, memory usage, robustness test, or context invariance that
-could assure its implementation on real monitors to reduce alarm fatigue indeed. We expect to identify the obstacles of
-detecting life-threatening ECG changes within memory, space, and CPU constraints and to reduce ECG monitor’s false
-alarms using the proposed methodology, and assess the feasibility of implementing the algorithm in the real world and
-other settings than ICU monitors.</p>
+<div id="references" class="section level1" number="4">
+<h1><span class="header-section-number">Chapter 4</span> References</h1>
+<p><strong>Research question and aims</strong></p>
+<p>This research aims to identify, on streaming data, abnormal hearth electric patterns, specifically those who are life-threatening, in order to be a reliable signal for Intensive Care Units to respond quickly to those situations. It also may be able to continuously analyze new data and correct itself shutting off false alarms.
+Primarily an experiment will be conducted using 2 main algorithms that use Matrix Profile in detecting context changes: SDTD and FLOSS. One uses whole data training and testing, and the other uses a streaming approach that is our main interest. The goal will be detecting the transition from normal to flutter/FA to normal condition with special attention to not rely on rhythm changes.
+Being this successful, a more generalistic approach will be attempted: to detect changes from normal to abnormal to normal conditions, with special attention to handle with disconnected leads or patient movements.
+Finally, this research can prove to be a good addition to the Matrix Profile method, using fading factors in order to reduce memory and space consumption, lowering the processor power needed, allowing this algorithm to be used in almost any device.</p>
+<p><strong>About the ongoing project</strong></p>
+<p>The document submitted for approval is <a href="https://github.com/franzbischoff/false.alarm/blob/master/protocol/Protocol.pdf">here</a>.</p>
+<p>The full code is open-sourced and available <a href="https://github.com/franzbischoff/false.alarm/">here</a></p>
+<p>To follow the thesis timeline you can access the full Gantt chart at Zenhub. Click <a href="https://app.zenhub.com/workspaces/phd-thesis-5eb2ce34f5f30b3aed0a35af/roadmap">here</a> (you need a github account, but that’s it).</p>
+<p>PDF, EPUB and WORD versions will be available at the end of this work.</p>
+<!--
+If you're still on the fence about using _R Markdown_, check out the resource for newbies available at <https://ismayc.github.io/rbasics-book/> or email us at <data@reed.edu>.
+-->
+<!--
+Having your code and commentary all together in one place has a plethora of benefits!
+-->
 
-</div>
+<!--
+The bib chunk below must go last in this document according to how R Markdown renders.  More info is at http://rmarkdown.rstudio.com/authoring_bibliographies_and_citations.html
+-->```
+\backmatter
+
+```{=html}
+<!-- 
+If you'd like to change the name of the bibliography to something else,
+delete "References" and replace it.
+-->
 </div>
             </section>
 
           </div>
         </div>
       </div>
-
-<a href="introduction.html" class="navigation navigation-next navigation-unique" aria-label="Next page"><i class="fa fa-angle-right"></i></a>
+<a href="3-the-planned-approach-and-methods-for-solving-the-problem.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
+<a href="references-1.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
     </div>
   </div>
 <script src="libs/gitbook-2.6.7/js/app.min.js"></script>

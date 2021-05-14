@@ -1,59 +1,115 @@
 ---
-title: "Framework for ECG analysis"
-titlerunning: Framework for ECG analysis
-authorrunning: Bischoff F., Rodrigues PP.
-editor_options:
-  markdown:
-    doctype: pandoc
-    mode: markdown
-    wrap: 120
+title: 'Detecting life-threatening patterns in Point-of-care ECG using efficient memory and processor power'
+author: 'Francisco Bischoff'
+date: 'Jul 2020'
+institution: 'Faculdade de Medicina da Universidade do Porto'
+division: 'CINTESIS'
+advisor: 'Pedro Pereira Rodrigues'
+# If you have more two advisors, un-silence line 7
+#altadvisor: 'Your Other Advisor'
+altadvisor: 'Eamonn Keogh'
+department: 'Medical Investigation'
+degree: 'Ph.D. in Health Data Science'
+knit: bookdown::render_book
+site: bookdown::bookdown_site
+
+# This will automatically install the {remotes} package and {thesisdown}
+# Change this to FALSE if you'd like to install them manually on your own.
+params:
+  'Install needed packages for {thesisdown}': True
+  
+# Remove the hashtag to specify which version of output you would like.
+# Can only choose one at a time.
 output:
-  pdf_document:
-    keep_tex: yes
+  thesisdown::thesis_pdf:
+  # thesisdown::thesis_gitbook:
+#  thesisdown::thesis_word: default
+#  thesisdown::thesis_epub: default
+    md_extensions: -tex_math_single_backslash
+    # keep_tex: yes
     keep_md: yes
     fig_caption: yes
-    citation_package: default
-    template: template.tex
-    md_extensions: -tex_math_single_backslash-tex_math_double_backslash
-authors:
-- name: Francisco Bischoff
-  inst: 1, 2
-  orcid: 0000-0002-5301-8672
-- name: Pedro Pereira Rodrigues
-  inst: 1, 2
-  orcid: 0000-0001-7867-6682
-institutes:
-- num: 1
-  dept: Department of Community Medicine, Information and Health Decision Sciences (MEDCIDS), Faculty of Medicine, University of Porto, Porto, Portugal
-- num: 2
-  dept: Center for Health Technology and Services Research (CINTESIS), Faculty of Medicine, University of Porto, Porto, Portugal
-keywords:
-- anomaly detection
-- ECG
-- fading factors
-- matrix profile
-- time series
-- point-of-care
-#  send by e-mail in PDF format to  David Riaño (david.riano@urv.cat)
+# If you are creating a PDF you'll need to write your preliminary content 
+# (e.g., abstract, acknowledgements) below or use code similar to line 25-26 
+# for the .RMD files. If you are NOT producing a PDF, delete or silence
+# lines 25-39 in this YAML header.
+
 abstract: |
-  Currently, Point-of-Care (POC) ECG monitoring works either as plot devices or alarms for abnormal cardiac rhythms using predefined normal trigger ranges and some rhythm analysis, which raises the problem of false alarms. In comparison, complex 12-derivation ECG machines are not suitable to use as simple monitors and are used with strict techniques for formal diagnostics. We aim to identify, on streaming data, life-threatening hearth electric patterns to reduce the number of false alarms, using low CPU and memory maintaining robustness. The study design is comparable to a diagnostic study, where high accuracy is essential. Physionet's 2015 challenge yielded very good algorithms for reducing false alarms. However, none of the authors reported benchmarks, memory usage, robustness test, or context invariance that could assure its implementation on real monitors to reduce alarm fatigue indeed. We expect to identify the obstacles of detecting life-threatening ECG changes within memory, space, and CPU constraints and to reduce ECG monitor's false alarms using the proposed methodology, and assess the feasibility of implementing the algorithm in the real world and other settings than ICU monitors.
-bibliography: '`r here::here("papers", "references.bib")`'
+  I want to thank a few people1.
+acknowledgements:  |
+  I want to thank a few people1.
+dedication:  |
+  You can have a dedication here if you wish1.
+preface:  |
+  This is an example of a thesis setup to use the reed thesis document class
+  (for LaTeX) and the R bookdown package, in general1.
+# Specify the location of the bibliography below
+bibliography: 'D:/Workspaces/RStudio/false.alarm/papers/references.bib'
 link-citations: true
-csl: llncs-alpha.csl
-thanks: |
-  This work has been done under the scope of - and funded by - the PhD Program in Health Data Science of the Faculty of Medicine of the University of Porto, Portugal - heads.med.up.pt
+# Download your specific csl file and refer to it in the line below.
+csl: csl/apa.csl
+lot: true
+lof: true
+# If you prefer blank lines between paragraphs, un-silence lines  40-41 (this requires package tikz)
+#header-includes:
+#- \usepackage{tikz}
+editor_options:
+  markdown:
+    canonical: false
+    wrap: 120
 ---
 
-```{r setup, include=FALSE, message = FALSE, warning = FALSE}
-knitr::opts_chunk$set(
-	echo = FALSE
-)
-knitr::opts_knit$set(progress = TRUE, verbose = TRUE)
-suppressPackageStartupMessages(library(tibble))
-suppressPackageStartupMessages(library(kableExtra))
-```
+<!--
+Above is the YAML (YAML Ain't Markup Language) header that includes a lot of metadata used to produce the document.  Be careful with spacing in this header!
 
-# Introduction
+If you'd prefer to not include a Dedication, for example, simply delete the section entirely, or silence them (add # before each line). 
+
+
+
+#'Currently, Point-of-Care (POC) ECG monitoring works either as plot devices or alarms for abnormal cardiac rhythms using
+  predefined normal trigger ranges and some rhythm analysis, which raises the problem of false alarms. In comparison,
+  complex 12-derivation ECG machines are not suitable to use as simple monitors and are used with strict techniques for
+  formal diagnostics. We aim to identify, on streaming data, life-threatening hearth electric patterns to reduce the
+  number of false alarms, using low CPU and memory maintaining robustness. The study design is comparable to a diagnostic
+  study, where high accuracy is essential. Physionet's 2015 challenge yielded very good algorithms for reducing false
+  alarms. However, none of the authors reported benchmarks, memory usage, robustness test, or context invariance that
+  could assure its implementation on real monitors to reduce alarm fatigue indeed. We expect to identify the obstacles of
+  detecting life-threatening ECG changes within memory, space, and CPU constraints and to reduce ECG monitor's false
+  alarms using the proposed methodology, and assess the feasibility of implementing the algorithm in the real world and
+  other settings than ICU monitors.
+  '
+# If you'd rather include the preliminary content in files instead of inline
+# like below, use a command like that for the abstract above.  Note that a tab 
+# is needed on the line after the `|`.
+
+
+
+If you have other LaTeX packages you would like to include, delete the # before header-includes and list the packages after hyphens on new lines.
+
+If you'd like to include a comment that won't be produced in your resulting file enclose it in a block like this.
+
+If you receive a duplicate label error after knitting, make sure to delete the index.Rmd file and then knit again.
+-->
+
+
+
+<!--
+The acknowledgments, preface, dedication, and abstract are added into the PDF
+version automatically by inputting them in the YAML at the top of this file.
+Alternatively, you can put that content in files like 00--prelim.Rmd and
+00-abstract.Rmd like done below.
+-->
+
+
+
+
+
+
+<!-- The {.unnumbered} option here means that the introduction will be 
+"Chapter 0." You can also use {-} for no numbers on chapters.
+-->
+
+# Introduction {.unnumbered}
 
 Currently, Point-of-Care (POC) ECG monitoring works either as plot devices or alarms for abnormal cardiac rhythms using
 predefined normal trigger ranges. Modern devices also incorporate algorithms to analyze arrhythmias improving their
@@ -99,20 +155,22 @@ while maintaining robustness? (3) Can this approach be used in other health doma
 The CinC/Physionet Challenge 2015 produced several papers aiming to reduce false alarms on their dataset. On Table
 \ref{tab:alarms} it is listed the five life-threatening alarms present in their dataset.
 
-```{r alarms, echo=FALSE}
-alarms <- tribble(
- ~Alarm, ~Definition,
-"Asystole", "No QRS for at least 4 seconds",
-"Extreme Bradycardia", "Heart rate lower than 40 bpm for 5 consecutive beats",
-"Extreme Tachycardia", "Heart rate higher than 140 bpm for 17 consecutive beats",
-"Ventricular Tachycardia", "5 or more ventricular beats with heart rate higher than 100 bpm",
-"Ventricular Flutter/Fibrillation", "Fibrillatory, flutter, or oscillatory waveform for at least 4 seconds")
+\begin{table}
 
-kbl(alarms, booktabs = TRUE, caption = "Definition of the 5 alarm types used in CinC/Physionet Challenge 2015 challenge.", align = "ll") %>%
-  kable_styling(full_width = TRUE) %>%
-  column_spec(1, width = "5cm") %>%
-  row_spec(0, bold = TRUE)
-```
+\caption{(\#tab:alarms)Definition of the 5 alarm types used in CinC/Physionet Challenge 2015 challenge.}
+\centering
+\begin{tabu} to \linewidth {>{\raggedright\arraybackslash}p{5cm}>{\raggedright}X}
+\toprule
+\textbf{Alarm} & \textbf{Definition}\\
+\midrule
+Asystole & No QRS for at least 4 seconds\\
+Extreme Bradycardia & Heart rate lower than 40 bpm for 5 consecutive beats\\
+Extreme Tachycardia & Heart rate higher than 140 bpm for 17 consecutive beats\\
+Ventricular Tachycardia & 5 or more ventricular beats with heart rate higher than 100 bpm\\
+Ventricular Flutter/Fibrillation & Fibrillatory, flutter, or oscillatory waveform for at least 4 seconds\\
+\bottomrule
+\end{tabu}
+\end{table}
 
 They used as score the following formula, which penalizes five times the false negatives (since we do not want to miss
 any real event):
@@ -122,21 +180,22 @@ $$Score=\frac{TP+TN}{TP+TN+FP+5*FN}$$
 The five-best scores in this challenge are presented on Table \ref{tab:scores}[@plesinger2015; @kalidas2015; @couto2015;
 @fallet2015; @hoogantink2015].
 
-```{r scores, echo=FALSE}
-challenge <- tribble(
-  ~Score, ~Authors,
-81.39, "Filip Plesinger, Petr Klimes, Josef Halamek, Pavel Jurak",
-79.44, "Vignesh Kalidas",
-79.02, "Paula Couto, Ruben Ramalho, Rui Rodrigues",
-76.11, "Sibylle Fallet, Sasan Yazdani, Jean-Marc Vesin",
-75.55, "Christoph Hoog Antink, Steffen Leonhardt"
-)
+\begin{table}
 
-kbl(challenge, booktabs = TRUE, caption = "Challenge Results on Streaming", align = "cl") %>%
-  kable_styling(full_width = TRUE) %>%
-  column_spec(2, width = "9cm") %>%
-  row_spec(0, bold = TRUE)
-```
+\caption{(\#tab:scores)Challenge Results on Streaming}
+\centering
+\begin{tabu} to \linewidth {>{\centering}X>{\raggedright\arraybackslash}p{9cm}}
+\toprule
+\textbf{Score} & \textbf{Authors}\\
+\midrule
+81.39 & Filip Plesinger, Petr Klimes, Josef Halamek, Pavel Jurak\\
+79.44 & Vignesh Kalidas\\
+79.02 & Paula Couto, Ruben Ramalho, Rui Rodrigues\\
+76.11 & Sibylle Fallet, Sasan Yazdani, Jean-Marc Vesin\\
+75.55 & Christoph Hoog Antink, Steffen Leonhardt\\
+\bottomrule
+\end{tabu}
+\end{table}
 
 Their algorithm did a pretty good job on the Physionet test-set. However, independently of their approach to this
 problem, none of the authors reported benchmarks, memory usage, robustness test, or context invariance that could assure
@@ -211,16 +270,12 @@ Physionet's dataset are commonly available on Portuguese ICU's.
 All steps of the process will be managed using the R package `targets`[@landau2021] from data extraction to the final
 report, as shown in Fig. \ref{fig:targets}.
 
-```{r targets, echo=FALSE, out.width="100%", fig.cap="Reprodutible research workflow using `targets`."}
-knitr::include_graphics("targets.png")
-```
+
 
 The report will then be available on the main webpage[@franz_website], allowing inspection of previous versions managed
 by the R package `workflowr`[@workflowr2021], as we can see in Fig. \ref{fig:workflow_workflowr}.
 
-```{r workflow_workflowr, echo=FALSE, out.width="100%", fig.cap="Reprodutible reports using `workflowr.`"}
-knitr::include_graphics("workflowr.png")
-```
+
 
 ### Statistical analysis
 
@@ -252,4 +307,71 @@ more attention to fading factors as a reliable, fast, and cheap approximation of
 attention to the matrix profile concept as an efficient, agnostic, and almost parameter-free way to analyze time series.
 (5) To draw more attention of the Patient Monitorization industry on solving the false alarm problem.
 
-# References
+# Whatever
+
+**Research question and aims**
+
+This research aims to identify, on streaming data, abnormal hearth electric patterns, specifically those who are life-threatening, in order to be a reliable signal for Intensive Care Units to respond quickly to those situations. It also may be able to continuously analyze new data and correct itself shutting off false alarms.
+Primarily an experiment will be conducted using 2 main algorithms that use Matrix Profile in detecting context changes: SDTD and FLOSS. One uses whole data training and testing, and the other uses a streaming approach that is our main interest. The goal will be detecting the transition from normal to flutter/FA to normal condition with special attention to not rely on rhythm changes.
+Being this successful, a more generalistic approach will be attempted: to detect changes from normal to abnormal to normal conditions, with special attention to handle with disconnected leads or patient movements.
+Finally, this research can prove to be a good addition to the Matrix Profile method, using fading factors in order to reduce memory and space consumption, lowering the processor power needed, allowing this algorithm to be used in almost any device.
+
+
+**About the ongoing project**
+
+The document submitted for approval is [here](https://github.com/franzbischoff/false.alarm/blob/master/protocol/Protocol.pdf).
+
+The full code is open-sourced and available [here](https://github.com/franzbischoff/false.alarm/)
+
+To follow the thesis timeline you can access the full Gantt chart at Zenhub. Click [here](https://app.zenhub.com/workspaces/phd-thesis-5eb2ce34f5f30b3aed0a35af/roadmap) (you need a github account, but that's it).
+
+PDF, EPUB and WORD versions will be available at the end of this work.
+
+<!--
+If you're still on the fence about using _R Markdown_, check out the resource for newbies available at <https://ismayc.github.io/rbasics-book/> or email us at <data@reed.edu>.
+-->
+
+<!--
+Having your code and commentary all together in one place has a plethora of benefits!
+-->
+
+<!--chapter:end:index.Rmd-->
+
+---
+editor_options:
+  markdown:
+    canonical: false
+    wrap: 120
+---
+
+<!--
+The bib chunk below must go last in this document according to how R Markdown renders.  More info is at http://rmarkdown.rstudio.com/authoring_bibliographies_and_citations.html
+-->
+
+\backmatter
+
+<!-- 
+If you'd like to change the name of the bibliography to something else,
+delete "References" and replace it.
+-->
+
+# References {-}
+<!--
+This manually sets the header for this unnumbered chapter.
+-->
+\markboth{References}{References}
+<!--
+To remove the indentation of the first entry.
+-->
+\noindent
+
+<!--
+To create a hanging indent and spacing between entries.  These three lines may need to be removed for styles that don't require the hanging indent.
+-->
+
+\setlength{\parindent}{-0.20in}
+\setlength{\leftskip}{0.20in}
+\setlength{\parskip}{8pt}
+
+<!--chapter:end:99-references.Rmd-->
+

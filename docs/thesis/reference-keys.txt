@@ -1,0 +1,14 @@
+tab:alarms
+tab:scores
+objectives-and-the-research-question
+related-works
+the-planned-approach-and-methods-for-solving-the-problem
+state-of-the-art
+research-plan-and-methods
+type-of-study
+the-data
+workflow
+statistical-analysis
+research-team
+expected-results-and-outcomes
+whatever
