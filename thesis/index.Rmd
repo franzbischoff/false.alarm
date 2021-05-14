@@ -25,7 +25,7 @@ output:
     config:
       toc:
         scroll_highlight: yes
-        before: null
+        before: "<li><a href='https://franzbischoff.github.io/false.alarm/'>Back to the workflow</a></li>"
         after: null
       fontsettings:
         theme: white
