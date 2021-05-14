@@ -1,5 +1,5 @@
 book_filename: "thesis"
-chapter_name: "Chapter"
+chapter_name: ""
 rmd_files: ["index.Rmd", "000-Introduction.Rmd", "001-chap1.Rmd", "099-references.Rmd"]
 download: [
     ["thesis.pdf", "PDF"],
