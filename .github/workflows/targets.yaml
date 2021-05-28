@@ -59,7 +59,7 @@ jobs:
         uses: r-lib/actions/setup-pandoc@v1
 
       - name: Cache R packages
-        uses: actions/cache@v2.1.5
+        uses: actions/cache@v2.1.6
         id: cache-packages
         with:
           path: ${{ env.RENV_PATHS_ROOT }}
