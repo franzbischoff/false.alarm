@@ -58,11 +58,8 @@ These tools are available at: https://archive.physionet.org/physiotools/binaries
 }
 
 \examples{
-
 \dontrun{
-  \donttest{
-     signal <- read_ecg("data/a103l")
-  }
+signal <- read_ecg("data/a103l")
 }
 
 }

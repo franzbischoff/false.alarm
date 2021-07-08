@@ -1,6 +1,6 @@
 # nolint start
 if (.Platform$OS.type == "windows") {
-  Sys.setenv(LC_CTYPE="C")
+  Sys.setenv(LC_CTYPE = "C")
 }
 
 source("renv/activate.R")
@@ -42,6 +42,14 @@ if (Sys.getenv("CI") == "") { # not CI
       vsc.rstudioapi = TRUE
       # error = recover
     )
+    options(
+      vsc.plot = "Beside", vsc.browser = "Two", vsc.viewer = "Two", vsc.page_viewer = "Two",
+      vsc.str.max.level = 2,
+      vsc.show_object_size = TRUE,
+      # vsc.use_httpgd = TRUE,
+      vsc.view = "Two"
+    )
+    options(vsc.dev.args = list(width = 800, height = 800))
 
     suppressMessages(
       suppressWarnings({

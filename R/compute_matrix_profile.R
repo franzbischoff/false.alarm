@@ -13,10 +13,10 @@ compute_matrix_profile <- function(ecg_data, window_size = 200, n_workers = 4) {
 
   names <- setdiff(names, "time")
 
-  for (i in names) {
-    mp <- matrixprofiler::mpx(ecg_data[[file]][[i]], window_size = window_size, n_workers = n_workers, progress = FALSE)
+  for (n in names) {
+    mp <- matrixprofiler::mpx(ecg_data[[file]][[n]], window_size = window_size, n_workers = n_workers, progress = FALSE)
     mp$w <- window_size
-    attr(ecg_data[[file]][[i]], "mp") <- mp
+    attr(ecg_data[[file]][[n]], "mp") <- mp
   }
 
   return(ecg_data)

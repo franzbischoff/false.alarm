@@ -151,7 +151,7 @@ knitr::include_graphics("workflowr.png")
 
 ### Statistical analysis
 
-The Statistical analysis will be performed using R language v4.0.4 or greater and it will be computed the ROC curve for
+The Statistical analysis will be performed using R language v4.0.5 or greater and it will be computed the ROC curve for
 the algorithm.
 
 The experiment will be conducted using the Matrix Profile concept[@yeh2016], the state-of-the-art for time series

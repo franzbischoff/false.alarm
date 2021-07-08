@@ -16,12 +16,9 @@ Returns invisibly the generated plot. Also plots using plotly.
 Plots the ECG data imported using rdmat()
 }
 \examples{
-
 \dontrun{
-  \donttest{
-     data <- read_ecg("data/a103l")
-     plot_ecg(data)
-  }
+data <- read_ecg("data/a103l")
+plot_ecg(data)
 }
 
 }

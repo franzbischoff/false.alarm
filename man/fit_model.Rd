@@ -2,7 +2,7 @@
 % Please edit documentation in R/fit_model.R
 \name{fit_model}
 \alias{fit_model}
-\title{TRain the model}
+\title{Train the model}
 \usage{
 fit_model(dataset)
 }

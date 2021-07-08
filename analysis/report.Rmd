@@ -1,0 +1,77 @@
+---
+title: "Report"
+author: "Francisco Bischoff"
+date: "on `r format(Sys.time(), '%B %d, %Y')`"
+output:
+  workflowr::wflow_html:
+    toc: false
+editor_options:
+  chunk_output_type: console
+---
+
+```{=html}
+<style>
+div.polaroid {
+  width: 80%;
+  height: auto;
+  margin-left: auto;
+  margin-right: auto;
+  background-color: white;
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+}
+
+svg.svglite {
+  width: 100%; 
+  height: auto;
+}
+
+div.polcont {
+  text-align: center;
+  padding-top: 15px;
+  font-weight: bold;
+}
+</style>
+```
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+library(here)
+library(visNetwork)
+library(targets)
+```
+
+## Current Work Status
+
+```{r load_target, results='asis'}
+
+fluss_plots <- tar_read("fluss_plots")
+
+files <- names(fluss_plots)
+checkmate::qassert(files, "S")
+
+for (f in files) {
+  alarm <- attr(fluss_plots[[f]], "info")$alarm
+  true <- attr(fluss_plots[[f]], "info")$true
+  
+  series <- names(fluss_plots[[f]])
+  series <- setdiff(series, "time")
+
+
+  for (s in series) {
+
+    svg <- attr(fluss_plots[[f]][[s]], "plot")
+   
+    cat("<div class=\"polaroid\">\n")
+    cat("<div class=\"polcont\">\n")
+    cat(sprintf("File: %s - \n", f))
+    cat(sprintf("Alarm: %s - \n", alarm))
+    cat(sprintf("True alarm: %s - \n", true))
+    cat(sprintf("Data stream: %s\n", s))
+    cat("</div>\n")
+    cat(svg)
+    cat("</div><br/>\n")
+  }
+  
+  cat("<br/>\n")
+}
+
+```

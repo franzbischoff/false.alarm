@@ -4,7 +4,7 @@
             "name": "Rtools40-x64",
             "intelliSenseMode": "gcc-x64",
             "includePath": [
-                "C:/Program Files/R/R-4.0.4/include",
+                "C:/Program Files/R/R-4.1.0/include",
                 "${workspaceFolder}/src"
             ],
             "defines": [
@@ -24,7 +24,7 @@
             "name": "Rtools40-x86",
             "intelliSenseMode": "gcc-x86",
             "includePath": [ // renv might be on i386-w64-mingw32 if R-32bits
-                "C:/Program Files/R/R-4.0.4/include",
+                "C:/Program Files/R/R-4.1.0/include",
                 "${workspaceFolder}/src"
             ],
             "defines": [
@@ -83,26 +83,26 @@
             "customConfigurationVariables": {
                 "renv_arch": "armv7l-unknown-linux-gnueabihf"
             }
-        },
-        {
-            "name": "MacOS-clang++",
-            "includePath": [ // renv might be on i386-pc-linux-gnu if R-32bits
-                "/usr/share/R/include",
-                "${workspaceFolder}/src"
-            ],
-            "defines": [
-                "UNICODE",
-                "_UNICODE",
-                "NDEBUG"
-            ],
-            "compilerPath": "/usr/bin/clang++",
-            "cStandard": "c11",
-            "cppStandard": "c++11",
-            "intelliSenseMode": "macos-clang-x64",
-            "customConfigurationVariables": {
-                "renv_arch": "x86_64-pc-linux-gnu"
-            }
         }
+        // {
+        //     "name": "MacOS-clang++",
+        //     "includePath": [ // renv might be on i386-pc-linux-gnu if R-32bits
+        //         "/usr/share/R/include",
+        //         "${workspaceFolder}/src"
+        //     ],
+        //     "defines": [
+        //         "UNICODE",
+        //         "_UNICODE",
+        //         "NDEBUG"
+        //     ],
+        //     "compilerPath": "/usr/bin/clang++",
+        //     "cStandard": "c11",
+        //     "cppStandard": "c++11",
+        //     "intelliSenseMode": "macos-clang-x64",
+        //     "customConfigurationVariables": {
+        //         "renv_arch": "x86_64-pc-linux-gnu"
+        //     }
+        // }
     ],
     "version": 4
 }

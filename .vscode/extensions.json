@@ -30,6 +30,7 @@
     "bramvanbilsen.matlab-code-run",
     "esbenp.prettier-vscode",
     "alefragnani.project-manager",
-    "foxundermoon.shell-format"
+    "foxundermoon.shell-format",
+    "alefragnani.bookmarks"
   ]
 }

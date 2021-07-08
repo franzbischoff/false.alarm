@@ -1,1 +1,6 @@
+R/false.alarm-defunct.R
+R/false.alarm-deprecated.R
+R/deprec-*.R
+R/compat-*.R
+R/zzz.R
 renv/**

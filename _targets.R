@@ -2,19 +2,22 @@ library(targets)
 library(tarchetypes)
 # library(false.alarm)
 
-devtools::load_all()
+# Load all scripts
+script_files <- list.files(here::here("R"), pattern = "*.R")
+sapply(here::here("R", script_files), source, .GlobalEnv)
+rm(script_files)
 
 options(tidyverse.quiet = TRUE)
 
 tar_option_set(
-  packages = "false.alarm",
+  # packages = "false.alarm",
   format = "rds",
   resources = list(compress = "xz"),
   garbage_collection = TRUE,
   error = "workspace",
   # iteration = "list",
   # debug = "read_ecg",
-  imports = "false.alarm" # TODO: remove when there is no change on package functions. Clears the graph.
+  # imports = "false.alarm" # TODO: remove when there is no change on package functions. Clears the graph.
 )
 
 options(clustermq.scheduler = "multiprocess")
@@ -42,12 +45,35 @@ list(
       whole_dataset_mp,
       compute_matrix_profile(whole_dataset),
       pattern = map(whole_dataset)
+    ),
+    #### Filter noisy data ----
+    tar_target(
+      whole_dataset_filtered,
+      filter_data(whole_dataset_mp),
+      pattern = map(whole_dataset_mp)
+    ),
+    #### Compute the FLUSS Arcs ----
+    tar_target(
+      whole_dataset_mp_arcs,
+      compute_arcs(whole_dataset_filtered, time_constraint = 30 * 250), # 30s 250hz
+      pattern = map(whole_dataset_filtered)
+    ),
+    #### Extract Regimes ----
+    tar_target(
+      whole_dataset_mp_fluss,
+      fluss_extract(whole_dataset_mp_arcs, 3, exclusion_zone = 100),
+      pattern = map(whole_dataset_mp_arcs)
+    ),
+    tar_target(
+      fluss_plots,
+      plot_fluss(whole_dataset_mp_fluss),
+      pattern = map(whole_dataset_mp_fluss)
     )
   ),
 
   # Static branch for split_values
   tar_map(
-    values = list(split_value = c(0.75, 0.80)),
+    values = list(split_value = 0.80),
     #### Split is last thing, to avoid spurious computations ----
     tar_rep(
       idxs,
