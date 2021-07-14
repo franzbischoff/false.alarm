@@ -38,7 +38,7 @@
       },
       "args": [
         "-e",
-        "styler:::style_dir(filetype = c('R', 'Rmd'), recursive = TRUE, exclude_dirs = c('dev', 'renv'))"
+        "styler:::style_dir(filetype = c('R', 'Rmd'), recursive = TRUE, exclude_dirs = c('dev', 'renv', '.history'))"
       ],
       "options": {
         "cwd": "${workspaceFolder}"

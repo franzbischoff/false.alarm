@@ -46,7 +46,7 @@ thanks: |
 
 ```{r setup, include=FALSE, message = FALSE, warning = FALSE}
 knitr::opts_chunk$set(
-	echo = FALSE
+  echo = FALSE
 )
 knitr::opts_knit$set(progress = TRUE, verbose = TRUE)
 suppressPackageStartupMessages(library(tibble))
@@ -101,12 +101,13 @@ The CinC/Physionet Challenge 2015 produced several papers aiming to reduce false
 
 ```{r alarms, echo=FALSE}
 alarms <- tribble(
- ~Alarm, ~Definition,
-"Asystole", "No QRS for at least 4 seconds",
-"Extreme Bradycardia", "Heart rate lower than 40 bpm for 5 consecutive beats",
-"Extreme Tachycardia", "Heart rate higher than 140 bpm for 17 consecutive beats",
-"Ventricular Tachycardia", "5 or more ventricular beats with heart rate higher than 100 bpm",
-"Ventricular Flutter/Fibrillation", "Fibrillatory, flutter, or oscillatory waveform for at least 4 seconds")
+  ~Alarm, ~Definition,
+  "Asystole", "No QRS for at least 4 seconds",
+  "Extreme Bradycardia", "Heart rate lower than 40 bpm for 5 consecutive beats",
+  "Extreme Tachycardia", "Heart rate higher than 140 bpm for 17 consecutive beats",
+  "Ventricular Tachycardia", "5 or more ventricular beats with heart rate higher than 100 bpm",
+  "Ventricular Flutter/Fibrillation", "Fibrillatory, flutter, or oscillatory waveform for at least 4 seconds"
+)
 
 kbl(alarms, booktabs = TRUE, caption = "Definition of the 5 alarm types used in CinC/Physionet Challenge 2015 challenge.", align = "ll") %>%
   kable_styling(full_width = TRUE) %>%
@@ -125,11 +126,11 @@ The five-best scores in this challenge are presented on Table \ref{tab:scores}[@
 ```{r scores, echo=FALSE}
 challenge <- tribble(
   ~Score, ~Authors,
-81.39, "Filip Plesinger, Petr Klimes, Josef Halamek, Pavel Jurak",
-79.44, "Vignesh Kalidas",
-79.02, "Paula Couto, Ruben Ramalho, Rui Rodrigues",
-76.11, "Sibylle Fallet, Sasan Yazdani, Jean-Marc Vesin",
-75.55, "Christoph Hoog Antink, Steffen Leonhardt"
+  81.39, "Filip Plesinger, Petr Klimes, Josef Halamek, Pavel Jurak",
+  79.44, "Vignesh Kalidas",
+  79.02, "Paula Couto, Ruben Ramalho, Rui Rodrigues",
+  76.11, "Sibylle Fallet, Sasan Yazdani, Jean-Marc Vesin",
+  75.55, "Christoph Hoog Antink, Steffen Leonhardt"
 )
 
 kbl(challenge, booktabs = TRUE, caption = "Challenge Results on Streaming", align = "cl") %>%

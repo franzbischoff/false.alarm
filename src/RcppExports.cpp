@@ -298,8 +298,8 @@ BEGIN_RCPP
 END_RCPP
 }
 // mpx_rcpp
-List mpx_rcpp(NumericVector data_ref, uint64_t window_size, double ez, double s_size, bool idxs, bool euclidean, bool progress);
-RcppExport SEXP _false_alarm_mpx_rcpp(SEXP data_refSEXP, SEXP window_sizeSEXP, SEXP ezSEXP, SEXP s_sizeSEXP, SEXP idxsSEXP, SEXP euclideanSEXP, SEXP progressSEXP) {
+List mpx_rcpp(NumericVector data_ref, uint64_t window_size, double ez, double s_size, bool idxs, bool euclidean, bool progress, uint64_t constraint);
+RcppExport SEXP _false_alarm_mpx_rcpp(SEXP data_refSEXP, SEXP window_sizeSEXP, SEXP ezSEXP, SEXP s_sizeSEXP, SEXP idxsSEXP, SEXP euclideanSEXP, SEXP progressSEXP, SEXP constraintSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -310,7 +310,8 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< bool >::type idxs(idxsSEXP);
     Rcpp::traits::input_parameter< bool >::type euclidean(euclideanSEXP);
     Rcpp::traits::input_parameter< bool >::type progress(progressSEXP);
-    rcpp_result_gen = Rcpp::wrap(mpx_rcpp(data_ref, window_size, ez, s_size, idxs, euclidean, progress));
+    Rcpp::traits::input_parameter< uint64_t >::type constraint(constraintSEXP);
+    rcpp_result_gen = Rcpp::wrap(mpx_rcpp(data_ref, window_size, ez, s_size, idxs, euclidean, progress, constraint));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -731,7 +732,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_false_alarm_inner_product", (DL_FUNC) &_false_alarm_inner_product, 2},
     {"_false_alarm_sum_of_squares", (DL_FUNC) &_false_alarm_sum_of_squares, 1},
     {"_false_alarm_fft_rcpp", (DL_FUNC) &_false_alarm_fft_rcpp, 2},
-    {"_false_alarm_mpx_rcpp", (DL_FUNC) &_false_alarm_mpx_rcpp, 7},
+    {"_false_alarm_mpx_rcpp", (DL_FUNC) &_false_alarm_mpx_rcpp, 8},
     {"_false_alarm_mpxab_rcpp", (DL_FUNC) &_false_alarm_mpxab_rcpp, 7},
     {"_false_alarm_mpx_rcpp_parallel", (DL_FUNC) &_false_alarm_mpx_rcpp_parallel, 7},
     {"_false_alarm_mpxab_rcpp_parallel", (DL_FUNC) &_false_alarm_mpxab_rcpp_parallel, 7},

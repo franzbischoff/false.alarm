@@ -25,7 +25,8 @@ navbar:
     href: https://www.facebook.com/sharer/sharer.php?u=https%3A%2F%2Ffranzbischoff.github.io%2Ffalse.alarm%2F
 output:
   workflowr::wflow_html:
-    toc: yes
-    toc_float: yes
+    toc: true
+    toc_float: true
+    number_sections: false
     theme: lumen
     highlight: textmate

@@ -35,6 +35,7 @@
 ^\.github$
 ^codecov\.yml$
 \.clang-format
+^\.vscode$
 ^Makefile$
 ^docs/_pkgdown\.yml$
 ^_targets*$
@@ -43,6 +44,7 @@
 ^output$
 ^protocol$
 ^review$
+^scripts$
 ^thesis$
 ^data-raw$
 ^inst/extdata$

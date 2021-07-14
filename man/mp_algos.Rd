@@ -36,7 +36,8 @@ mpx(
   idxs = TRUE,
   distance = c("euclidean", "pearson"),
   n_workers = 1,
-  progress = TRUE
+  progress = TRUE,
+  constraint = NULL
 )
 }
 \arguments{
@@ -117,7 +118,7 @@ on Ogita's work for better precision computing mean and standard deviation (part
 }
 }
 \section{This document}{
-Last updated on 2021-07-11 using R version 4.1.0.
+Last updated on 2021-07-13 using R version 4.1.0.
 }
 
 \examples{

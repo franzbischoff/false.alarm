@@ -26,7 +26,7 @@ using namespace RcppParallel;
 // @return data_ref List
 // [[Rcpp::export]]
 List mpx_rcpp(NumericVector data_ref, uint64_t window_size, double ez, double s_size, bool idxs, bool euclidean,
-              bool progress) {
+              bool progress, uint64_t constraint) {
 
   uint64_t exclusion_zone = round(window_size * ez + DBL_EPSILON) + 1;
 
@@ -85,6 +85,10 @@ List mpx_rcpp(NumericVector data_ref, uint64_t window_size, double ez, double s_
       uint64_t i = 1;
       for (int32_t diag : compute_order) {
 
+        if(diag+1 > constraint) {
+          continue;
+        }
+
         if ((i % num_progress) == 0) {
           RcppThread::checkUserInterrupt();
           p.increment();
@@ -104,12 +108,12 @@ List mpx_rcpp(NumericVector data_ref, uint64_t window_size, double ez, double s_
               mpi[offset] = off_diag + 1;
             }
           }
-          if (c_cmp > mp[off_diag]) {
-            mp[off_diag] = c_cmp;
-            if (idxs) {
-              mpi[off_diag] = offset + 1;
-            }
-          }
+          // if (c_cmp > mp[off_diag]) {
+          //   mp[off_diag] = c_cmp;
+          //   if (idxs) {
+          //     mpi[off_diag] = offset + 1;
+          //   }
+          // }
         }
 
         if (stop > 0 && i >= stop) {

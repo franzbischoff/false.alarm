@@ -47,7 +47,7 @@
 #' mp2 <- stomp(ref_data, query_data, window_size = 30)
 #' }
 stomp2 <- function(..., window_size, exclusion_zone = getOption("tsmp.exclusion_zone", 1 / 2), time_constraint = NULL,
-                  verbose = getOption("tsmp.verbose", 2)) {
+                   verbose = getOption("tsmp.verbose", 2)) {
   argv <- list(...)
   argc <- length(argv)
   data <- argv[[1]]
@@ -63,8 +63,7 @@ stomp2 <- function(..., window_size, exclusion_zone = getOption("tsmp.exclusion_
   # transform data into matrix
   if (is.vector(data)) {
     data <- as.matrix(data)
-  }
-  else if (is.matrix(data)) {
+  } else if (is.matrix(data)) {
     if (ncol(data) > nrow(data)) {
       data <- t(data)
     }
@@ -165,7 +164,7 @@ stomp2 <- function(..., window_size, exclusion_zone = getOption("tsmp.exclusion_
 
       last_product[1, 1] <- first_product[i, 1]
       distance_profile <- 2 * (window_size - (last_product - window_size * nn$par$data_mean * nn$par$query_mean[i]) /
-                                 (nn$par$data_sd * nn$par$query_sd[i]))
+        (nn$par$data_sd * nn$par$query_sd[i]))
     }
 
     distance_profile[distance_profile < 0] <- 0

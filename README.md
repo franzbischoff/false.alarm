@@ -2,7 +2,7 @@ Detecting life-threatening patterns in Point-of-care ECG using efficient
 memory and processor power.
 ================
 Francisco Bischoff
-on maio 14, 2021
+on julho 15, 2021
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 <!-- badges: start -->

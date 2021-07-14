@@ -85,8 +85,8 @@ fft_rcpp <- function(z, invert) {
     .Call(`_false_alarm_fft_rcpp`, z, invert)
 }
 
-mpx_rcpp <- function(data_ref, window_size, ez, s_size, idxs, euclidean, progress) {
-    .Call(`_false_alarm_mpx_rcpp`, data_ref, window_size, ez, s_size, idxs, euclidean, progress)
+mpx_rcpp <- function(data_ref, window_size, ez, s_size, idxs, euclidean, progress, constraint) {
+    .Call(`_false_alarm_mpx_rcpp`, data_ref, window_size, ez, s_size, idxs, euclidean, progress, constraint)
 }
 
 mpxab_rcpp <- function(data_ref, query_ref, window_size, s_size, idxs, euclidean, progress) {
