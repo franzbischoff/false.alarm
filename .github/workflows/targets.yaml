@@ -105,7 +105,7 @@ jobs:
       - name: Identify files that the targets pipeline produced
         id: check-new-files
         run: |
-          git ls-files -mo -x renv -x inst > .targets-files
+          git ls-files -mo -x renv -x inst -x src > .targets-files
           ([ -s .targets-files ] && echo "New files produced" && cat .targets-files && echo "::set-output name=newfiles::true") || (echo "Nothing to do" && echo "::set-output name=newfiles::false")
 
       - name: Update the current repository without the objects
@@ -116,10 +116,12 @@ jobs:
           git add --all -- ':!renv'
           git commit -am "Update current branch"
           git push
+        continue-on-error: true # if the pipeline fails, the workspace is saved for inspection.
 
       - name: Create the runs branch if it does not already exist
         if: steps.check-new-files.outputs.newfiles == 'true' && steps.runs-exist.outcome != 'success'
         run: git checkout --orphan targets-runs
+        continue-on-error: true # if the pipeline fails, the workspace is saved for inspection.
 
       - name: Put the worktree in the runs branch if the latter already exists
         if: steps.check-new-files.outputs.newfiles == 'true' && steps.runs-exist.outcome == 'success'
@@ -127,6 +129,7 @@ jobs:
           rm -r .git
           mv .targets-runs/.git .
           rm -r .targets-runs
+        continue-on-error: true # if the pipeline fails, the workspace is saved for inspection.
 
       - name: Upload latest run to the runs branch
         if: steps.check-new-files.outputs.newfiles == 'true'
@@ -138,4 +141,5 @@ jobs:
           git add -f _targets
           git commit -am "Run pipeline"
           git push origin targets-runs
+        continue-on-error: true # if the pipeline fails, the workspace is saved for inspection.
 
