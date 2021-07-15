@@ -14,7 +14,7 @@ output:
     # toc_depth: 2
     fig_caption: yes
     number_sections: yes
-  # html_notebook: 
+  # html_notebook:
   #   toc: yes
   #   toc_depth: 2
   #   code_folding: none
@@ -208,9 +208,9 @@ Google Scholar with the following query (the syntax was adapted for each databas
 \setstretch{1}
 \begin{verbatim}
 TITLE-ABS-KEY ( algorithm  OR  'point of care'  OR  'signal processing'  OR  'computer
-assisted'  OR  'support vector machine'  OR  'decision support system*'  OR  'neural 
-network*'  OR  'automatic interpretation' OR 'machine learning')  AND  TITLE-ABS-KEY 
-( electrocardiography  OR  cardiography  OR  'electrocardiographic tracing'  OR  ecg  
+assisted'  OR  'support vector machine'  OR  'decision support system*'  OR  'neural
+network*'  OR  'automatic interpretation' OR 'machine learning')  AND  TITLE-ABS-KEY
+( electrocardiography  OR  cardiography  OR  'electrocardiographic tracing'  OR  ecg
 OR  electrocardiogram  OR  cardiogram )  AND  TITLE-ABS-KEY ( 'Intensive care unit' OR
 'cardiologic care unit'  OR  'intensive care center'  OR  'cardiologic care center' )
 \end{verbatim}
@@ -314,7 +314,7 @@ simple formula gives us the "complexity" of the signal and correlates well with 
 shown in Equation \@ref(eq:complex).
 
 ```{=tex}
-\begin{equation} 
+\begin{equation}
 \sqrt{\sum_{i=1}^w((x_{i+1}-x_i)^2)}, \quad \text{where}\; w \; \text{is the window size} (\#eq:complex)
 \end{equation}
 ```
@@ -352,6 +352,11 @@ window.
 ```{r regimetrue, echo=FALSE, out.width="100%", fig.cap="Regime changes with good but wandering data - true alarm"}
 knitr::include_graphics("figure/regime_true.png")
 ```
+
+## Scientific outcomes
+
+This research has already yielded two R packages concerning the Matrix Profile algorithms from UCR [@mpucr]. The first package is called `tsmp`, and a paper has also been published in the R Journal [@RJ-2020-021]. The journal is indexed in the Science Citation Index Expanded, and according to the Journal Citation Reports, the journal has a 2020 impact factor of 3.984. The second package is called `matrixprofiler` and improves the first one, using low-level language to improve computational speed. The author has also joined the Matrix Profile Foundation as co-founder together with contributors from Python and Go languages  [@mpf2020].
+
 
 # Research Team
 

@@ -31,7 +31,7 @@ Francisco Bischoff
     -   [Outcomes](#outcomes)
 -   [References](#references)
 
-Last Updated: 2021-05-14 15:40:59 UTC
+Last Updated: 2021-07-15 02:10:16 UTC
 
 <!-- -*- mode: gfm; extensions: +tex_math_dollars+raw_tex -*- -->
 
@@ -94,7 +94,7 @@ tecnologia.*
 “Matrix Profile” desde suas raizes, sendo fundadores da “Matrix Profile
 Foundation,” cujo objetivo é ter uma API multi-linguagem concisa e
 estável para desenvolvimento com a tecnologia “Matrix
-Profile.”*<sup>[1](#ref-Bischoff2019a),[2](#ref-VanBenschoten2020)</sup>
+Profile.”*<sup>[1](#ref-RJ-2020-021),[2](#ref-VanBenschoten2020)</sup>
 
 Currently, Point-of-Care (POC) ECG monitoring works either as plot
 devices or alarms for abnormal cardiac rhythms using predefined normal
@@ -125,7 +125,7 @@ The research team is well experienced in time-series and has studied the
 Matrix Profile since its beginning, being founders of the Matrix Profile
 Foundation whose goal is to have a concise and stable cross-language API
 for developing with the Matrix Profile
-technology.<sup>[1](#ref-Bischoff2019a),[2](#ref-VanBenschoten2020)</sup>
+technology.<sup>[1](#ref-RJ-2020-021),[2](#ref-VanBenschoten2020)</sup>
 
 # Rationale
 
@@ -414,7 +414,7 @@ Milestones
 
 ## Timeline
 
-[![](timeline.png)](https://app.zenhub.com/workspaces/phd-thesis-5eb2ce34f5f30b3aed0a35af/roadmap)
+[![](figure/timeline.png)](https://app.zenhub.com/workspaces/phd-thesis-5eb2ce34f5f30b3aed0a35af/roadmap)
 Click on the image to open an interactive Gantt webpage
 
 # Budget
@@ -445,12 +445,13 @@ repository.
 
 <div id="refs" class="references csl-bib-body">
 
-<div id="ref-Bischoff2019a" class="csl-entry">
+<div id="ref-RJ-2020-021" class="csl-entry">
 
 <span class="csl-left-margin">1. </span><span
-class="csl-right-inline">Bischoff F, Rodrigues PP. Tsmp: An r package
-for time series with matrix profile. Published online April 2019.
-doi:[10.13140/rg.2.2.13040.30726](https://doi.org/10.13140/rg.2.2.13040.30726)</span>
+class="csl-right-inline">Bischoff F, Rodrigues PP. <span
+class="nocase">tsmp: An R Package for Time Series with Matrix
+Profile</span>. *The R Journal*. 2020;12(1):76-86.
+doi:[10.32614/RJ-2020-021](https://doi.org/10.32614/RJ-2020-021)</span>
 
 </div>
 

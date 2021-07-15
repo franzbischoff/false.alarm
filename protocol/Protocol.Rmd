@@ -8,10 +8,6 @@ link-citations: true
 bibliography: '`r here::here("papers", "references.bib")`'
 csl: https://raw.githubusercontent.com/citation-style-language/styles/master/american-medical-association.csl
 output:
-  github_document:
-    toc: true
-    toc_depth: 2
-    md_extensions: -tex_math_single_backslash
   pdf_document:
     toc: yes
     toc_depth: 2
@@ -24,6 +20,10 @@ output:
     fig_width: 10
     fig_height: 5
     number_sections: yes
+    md_extensions: -tex_math_single_backslash
+  github_document:
+    toc: true
+    toc_depth: 2
     md_extensions: -tex_math_single_backslash
 ---
 
@@ -83,7 +83,7 @@ disso, espera-se que a utilização de "fading factors" possam contribuir para o
 
 *A equipe de pesquisa é experiente em séries temporais e estuda o "Matrix Profile" desde suas raizes, sendo fundadores
 da "Matrix Profile Foundation", cujo objetivo é ter uma API multi-linguagem concisa e estável para desenvolvimento com a
-tecnologia "Matrix Profile".* [@Bischoff2019a; @VanBenschoten2020]
+tecnologia "Matrix Profile".* [@RJ-2020-021; @VanBenschoten2020]
 
 Currently, Point-of-Care (POC) ECG monitoring works either as plot devices or alarms for abnormal cardiac rhythms using
 predefined normal trigger ranges. On the other hand, full 12-derivation ECG machines are complex to use as simple
@@ -104,7 +104,7 @@ problem. Also, we expect that fading factors can contribute to the state of the 
 
 The research team is well experienced in time-series and has studied the Matrix Profile since its beginning, being
 founders of the Matrix Profile Foundation whose goal is to have a concise and stable cross-language API for developing
-with the Matrix Profile technology.[@Bischoff2019a; @VanBenschoten2020]
+with the Matrix Profile technology.[@RJ-2020-021; @VanBenschoten2020]
 
 # Rationale
 
@@ -350,7 +350,7 @@ knitr::kable(miles, caption = "Milestones")
 
 ## Timeline
 
-[![](timeline.png)](https://app.zenhub.com/workspaces/phd-thesis-5eb2ce34f5f30b3aed0a35af/roadmap) Click on the image to
+[![](figure/timeline.png)](https://app.zenhub.com/workspaces/phd-thesis-5eb2ce34f5f30b3aed0a35af/roadmap) Click on the image to
 open an interactive Gantt webpage
 
 # Budget

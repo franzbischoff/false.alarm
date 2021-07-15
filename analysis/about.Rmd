@@ -5,7 +5,7 @@ date: "on July 22, 2020"
 bibliography: ../papers/references.bib
 link-citations: true
 csl: https://raw.githubusercontent.com/citation-style-language/styles/master/american-medical-association.csl
-output: 
+output:
   workflowr::wflow_html:
       toc: false
 editor_options:
@@ -51,7 +51,7 @@ problem. Also, we expect that fading factors can contribute to the state of the 
 
 The research team is well experienced in time-series and has studied the Matrix Profile since its beginning, being
 founders of the Matrix Profile Foundation whose goal is to have a concise and stable cross-language API for developing
-with the Matrix Profile technology.[@Bischoff2019a; @VanBenschoten2020]
+with the Matrix Profile technology.[@RJ-2020-021; @VanBenschoten2020]
 
 # About the ongoing project.
 

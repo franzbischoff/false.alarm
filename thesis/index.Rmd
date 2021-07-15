@@ -21,36 +21,36 @@ params:
 always_allow_html: true # for word documents
 
 output:
-  # thesisdown::thesis_gitbook:
-  #   config:
-  #     toc:
-  #       scroll_highlight: yes
-  #       before: "<li><a href='https://franzbischoff.github.io/false.alarm/'>Back to the workflow</a></li>"
-  #       after: null
-  #     fontsettings:
-  #       theme: white
-  #       family: sans
-  #       size: 2
-  #     sharing:
-  #       facebook: yes
-  #       twitter: yes
-  #       github: yes
-  #       all: ['facebook', 'twitter', 'linkedin', 'github', 'whatsapp', 'instapaper', 'weibo', 'vk']
-  #     info: yes
-  #   md_extensions: -tex_math_single_backslash
-  #   fig_caption: yes
-  #   split_by: "chapter" # https://bookdown.org/yihui/bookdown/html.html
-  #   split_bib: no
+  thesisdown::thesis_gitbook:
+    config:
+      toc:
+        scroll_highlight: yes
+        before: "<li><a href='https://franzbischoff.github.io/false.alarm/'>Back to the workflow</a></li>"
+        after: null
+      fontsettings:
+        theme: white
+        family: sans
+        size: 2
+      sharing:
+        facebook: yes
+        twitter: yes
+        github: yes
+        all: ['facebook', 'twitter', 'linkedin', 'github', 'whatsapp', 'instapaper', 'weibo', 'vk']
+      info: yes
+    md_extensions: -tex_math_single_backslash
+    fig_caption: yes
+    split_by: "chapter" # https://bookdown.org/yihui/bookdown/html.html
+    split_bib: no
   # thesisdown::thesis_epub:
   #   md_extensions: -tex_math_single_backslash
   #   fig_caption: yes
   #   chapter_level: 1
-  thesisdown::thesis_pdf:
-    md_extensions: -tex_math_single_backslash
-    fig_caption: yes
-  thesisdown::thesis_word:
-    md_extensions: -tex_math_single_backslash
-    fig_caption: yes
+  # thesisdown::thesis_pdf:
+  #   md_extensions: -tex_math_single_backslash
+  #   fig_caption: yes
+  # thesisdown::thesis_word:
+  #   md_extensions: -tex_math_single_backslash
+  #   fig_caption: yes
     
 # If you are creating a PDF you'll need to write your preliminary content 
 # (e.g., abstract, acknowledgements) below or use code similar to line 25-26 

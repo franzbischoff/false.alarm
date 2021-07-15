@@ -140,14 +140,14 @@ All steps of the process will be managed using the R package `targets`[@landau20
 report, as shown in Fig. \ref{fig:targets}.
 
 ```{r targets, echo=FALSE, eval = FALSE, out.width="100%", fig.cap="Reprodutible research workflow using `targets`."}
-knitr::include_graphics("targets.png")
+knitr::include_graphics("figure/targets.png")
 ```
 
 The report will then be available on the main webpage[@franz_website], allowing inspection of previous versions managed
 by the R package `workflowr`[@workflowr2021], as we can see in Fig. \ref{fig:workflow_workflowr}.
 
 ```{r workflow_workflowr, echo=FALSE, eval = FALSE, out.width="100%", fig.cap="Reprodutible reports using `workflowr.`"}
-knitr::include_graphics("workflowr.png")
+knitr::include_graphics("figure/workflowr.png")
 ```
 
 ### Statistical analysis
@@ -208,4 +208,3 @@ To follow the thesis timeline you can access the full Gantt chart at Zenhub. Cli
 that's it).
 
 PDF, EPUB and WORD versions will be available at the end of this work.
-

@@ -122,9 +122,9 @@ Zenhub. Click
 
 This thesis will follow the compendium principles:
 
-![](https://annakrystalli.me/rrresearch/assets/reproducible-data-analysis-04.png)
+![](docs/figure/compendium_principles.png)
 
-![](https://annakrystalli.me/rrresearch/assets/reproducible-data-analysis-06.png)
+![](docs/figure/compendium_principles2.png)
 
 ## Following Standards
 
