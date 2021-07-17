@@ -83,26 +83,26 @@
             "customConfigurationVariables": {
                 "renv_arch": "armv7l-unknown-linux-gnueabihf"
             }
+        },
+        {
+            "name": "MacOS-clang++",
+            "includePath": [ // renv might be on i386-pc-linux-gnu if R-32bits
+                "/usr/share/R/include",
+                "${workspaceFolder}/src"
+            ],
+            "defines": [
+                "UNICODE",
+                "_UNICODE",
+                "NDEBUG"
+            ],
+            "compilerPath": "/usr/bin/clang++",
+            "cStandard": "c11",
+            "cppStandard": "c++11",
+            "intelliSenseMode": "macos-clang-x64",
+            "customConfigurationVariables": {
+                "renv_arch": "x86_64-pc-linux-gnu"
+            }
         }
-        // {
-        //     "name": "MacOS-clang++",
-        //     "includePath": [ // renv might be on i386-pc-linux-gnu if R-32bits
-        //         "/usr/share/R/include",
-        //         "${workspaceFolder}/src"
-        //     ],
-        //     "defines": [
-        //         "UNICODE",
-        //         "_UNICODE",
-        //         "NDEBUG"
-        //     ],
-        //     "compilerPath": "/usr/bin/clang++",
-        //     "cStandard": "c11",
-        //     "cppStandard": "c++11",
-        //     "intelliSenseMode": "macos-clang-x64",
-        //     "customConfigurationVariables": {
-        //         "renv_arch": "x86_64-pc-linux-gnu"
-        //     }
-        // }
     ],
     "version": 4
 }

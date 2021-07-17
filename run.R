@@ -8,6 +8,7 @@ if (!dir.exists(here("inst/extdata/physionet"))) {
 
 if (dir.exists(here("inst/extdata"))) {
   # Uncomment to run targets sequentially on your local machine.
+  targets::tar_watch(targets_only = TRUE, outdated = FALSE, label = c("time", "branches", "size"))
   targets::tar_make()
   # Uncomment to run targets in parallel
   # on local processes or a Sun Grid Engine cluster.

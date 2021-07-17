@@ -38,6 +38,7 @@ vignettes/*.R
 
 # VSCode
 #.vscode/
+.vscode/*.log
 
 ### R.Bookdown Stack ###
 # R package: bookdown caching files

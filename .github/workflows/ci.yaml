@@ -1,30 +1,7 @@
-# MIT License
-# Copyright (c) 2021 Eli Lilly and Company
-# Author: William Michael Landau (will.landau at gmail)
-# Written with help from public domain (CC0 1.0 Universal) workflow files by Jim Hester:
-# * https://github.com/r-lib/actions/blob/master/examples/check-full.yaml
-# * https://github.com/r-lib/actions/blob/master/examples/blogdown.yaml
-#
-# Permission is hereby granted, free of charge, to any person obtaining a copy
-# of this software and associated documentation files (the "Software"), to deal
-# in the Software without restriction, including without limitation the rights
-# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-# copies of the Software, and to permit persons to whom the Software is
-# furnished to do so, subject to the following conditions:
-#
-# The above copyright notice and this permission notice shall be included in all
-# copies or substantial portions of the Software.
-#
-# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-# SOFTWARE.
+---
+name: CI
 
-name: Targets
-
+# yamllint disable-line rule:truthy
 on:
   push:
     branches:
@@ -34,7 +11,55 @@ on:
   repository_dispatch:
 
 jobs:
+
+  lint:
+    name: Apply lintr in all R and Rmd files
+    runs-on: ubuntu-latest
+    env:
+      GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
+      RENV_PATHS_ROOT: ~/.local/share/renv
+    steps:
+      - name: Checking out shallow repository
+        uses: actions/checkout@v2
+
+      - run: git branch
+
+      - name: Install System dependencies
+        run: |
+          sudo apt-fast update
+          sudo apt-fast install -y libgit2-dev libharfbuzz-dev libcurl4-openssl-dev \
+          libfribidi-dev libzmq3-dev
+
+      - name: Setting up R installation
+        uses: r-lib/actions/setup-r@v1
+
+      - name: Cache R packages
+        uses: actions/cache@v2.1.4
+        id: cache-packages
+        with:
+          path: ${{ env.RENV_PATHS_ROOT }}
+          key: ${{ runner.os }}-renv-${{ hashFiles('**/renv.lock') }}-targets-v2
+          restore-keys: |
+            ${{ runner.os }}-renv-
+
+      - name: Install dependencies
+        run: |
+          if (!requireNamespace("renv", quietly = TRUE)) install.packages("renv")
+          Sys.unsetenv("GITHUB_PAT")
+          renv::restore()
+        shell: Rscript {0}
+
+      - name: Lint
+        run: |
+          for(i in c("analysis", "R", "review", "thesis", "output")) {
+            lintr::lint_dir(i)
+          }
+        shell: Rscript {0}
+
   targets:
+    name: Run targets pileline
+    needs:
+      - lint
     runs-on: ubuntu-latest
     if: "contains(github.event.head_commit.message, 'targets')"
     env:
@@ -142,3 +167,73 @@ jobs:
           git push origin targets-runs
         continue-on-error: true # if the pipeline fails, the workspace is saved for inspection.
 
+  workflowr:
+    name: Runs Workflowr versioning
+    needs:
+      - lintr
+      - targets
+    runs-on: ubuntu-latest
+    if: "!contains(github.event.head_commit.message, 'lint')"
+    env:
+      GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
+      RENV_PATHS_ROOT: ~/.local/share/renv
+    steps:
+      - name: Checking out deep repository
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0 ## all history
+          ref: ${{ github.event.workflow_run.head_branch }}
+
+      - run: git branch
+
+      - run: echo ${{ github.event.head_commit.message }}
+
+      - name: Install System dependencies
+        run: |
+          sudo apt-fast update
+          sudo apt-fast install -y libgit2-dev libharfbuzz-dev libcurl4-openssl-dev \
+          libfribidi-dev libzmq3-dev
+
+      - name: Setting up R installation
+        uses: r-lib/actions/setup-r@v1
+
+      - name: Setting up pandoc and pandoc-citeproc
+        uses: r-lib/actions/setup-pandoc@v1
+
+      - name: Cache R packages
+        uses: actions/cache@v2.1.4
+        id: cache-packages
+        with:
+          path: ${{ env.RENV_PATHS_ROOT }}
+          key: ${{ runner.os }}-renv-${{ hashFiles('**/renv.lock') }}-targets-v2
+          restore-keys: |
+            ${{ runner.os }}-renv-
+
+      - name: Install dependencies
+        run: |
+          if (!requireNamespace("renv", quietly = TRUE)) install.packages("renv")
+          Sys.unsetenv("GITHUB_PAT")
+          renv::restore()
+        shell: Rscript {0}
+
+      - name: Configure git
+        run: |
+          git config --local user.name "GitHub Actions"
+          git config --local user.email "actions@github.com"
+
+      - name: Knit thesisdown
+        run: |
+          bookdown::render_book("thesis")
+        shell: Rscript {0}
+
+      - name: Stage thesisdown changes
+        run: |
+          git add --all -- ':!renv'
+
+      - name: Build workflowr that creates the commit
+        run: workflowr::wflow_publish(all = TRUE, update = TRUE, verbose = TRUE)
+        shell: Rscript {0}
+
+      - name: Push changes
+        run: |
+          git push

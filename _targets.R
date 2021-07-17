@@ -162,4 +162,4 @@ list(
 # tar_manifest() # returns a tibble with all steps
 # tar_manifest(fields = NULL) # shows way more columns
 # tar_renv() # helper function to assure renv capture all package dependencies
-# tar_watch() # frontend to watch the building
+# tar_watch(targets_only = TRUE, label = c("time", "branches", "size")) # frontend to watch the building

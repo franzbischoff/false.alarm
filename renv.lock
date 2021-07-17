@@ -1041,13 +1041,6 @@
       "Repository": "CRAN",
       "Hash": "c38fc071d4def5e642c8dc34c3a082e4"
     },
-    "shinycssloaders": {
-      "Package": "shinycssloaders",
-      "Version": "1.0.0",
-      "Source": "Repository",
-      "Repository": "CRAN",
-      "Hash": "f39bb3c44a9b496723ec7e86f9a771d8"
-    },
     "snow": {
       "Package": "snow",
       "Version": "0.4-3",
@@ -1093,14 +1086,19 @@
       "RemoteRef": "master",
       "RemoteSha": "d31ee93a7d33501f33ae4fc25f6d4b1594008cf1",
       "RemoteHost": "api.github.com",
-      "Hash": "ee69eb24bbf2427785ca88fac5747632"
+      "Hash": "5fc9371baf74938eb72b9ce0a2b5d3b2"
     },
     "svglite": {
       "Package": "svglite",
-      "Version": "2.0.0",
-      "Source": "Repository",
-      "Repository": "CRAN",
-      "Hash": "8fb6188960bf0f90996ce52f9c2106ac"
+      "Version": "2.0.0.9000",
+      "Source": "GitHub",
+      "RemoteType": "github",
+      "RemoteHost": "api.github.com",
+      "RemoteUsername": "r-lib",
+      "RemoteRepo": "svglite",
+      "RemoteRef": "master",
+      "RemoteSha": "654ab4a24f5c5d70caf156641390d5f92a706874",
+      "Hash": "a222898a991084738442d14c06c9d20f"
     },
     "sys": {
       "Package": "sys",
@@ -1142,12 +1140,12 @@
       "Version": "0.2.0.9000",
       "Source": "GitHub",
       "RemoteType": "github",
+      "RemoteHost": "api.github.com",
       "RemoteUsername": "ismayc",
       "RemoteRepo": "thesisdown",
-      "RemoteRef": "HEAD",
+      "RemoteRef": "master",
       "RemoteSha": "3ecf79d9754b91c5728b9c6b0a1938576143bf4c",
-      "RemoteHost": "api.github.com",
-      "Hash": "317a1e2e53b8322227c2501ad2e0e063"
+      "Hash": "8f9cd3908fb0aab2c1d1695eadaf5897"
     },
     "tibble": {
       "Package": "tibble",
