@@ -168,7 +168,7 @@ jobs:
   workflowr:
     name: Runs Workflowr versioning
     runs-on: ubuntu-latest
-    if: always() # "!contains(github.event.head_commit.message, 'lint')"
+    if: "contains(github.event.head_commit.message, 'workflowr')"
     needs:
       - lint
       - targets
