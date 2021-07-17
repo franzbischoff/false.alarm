@@ -11,7 +11,6 @@ on:
   repository_dispatch:
 
 jobs:
-
   lint:
     name: Apply lintr in all R and Rmd files
     runs-on: ubuntu-latest
@@ -58,8 +57,7 @@ jobs:
 
   targets:
     name: Run targets pileline
-    needs:
-      - lint
+    needs: lint
     runs-on: ubuntu-latest
     if: "contains(github.event.head_commit.message, 'targets')"
     env:
@@ -169,11 +167,9 @@ jobs:
 
   workflowr:
     name: Runs Workflowr versioning
-    needs:
-      - lint
-      - targets
     runs-on: ubuntu-latest
     if: "!contains(github.event.head_commit.message, 'lint')"
+    needs: [lint, targets]
     env:
       GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
       RENV_PATHS_ROOT: ~/.local/share/renv
