@@ -1,7 +1,7 @@
 # See here for image contents: https://github.com/microsoft/vscode-dev-containers/tree/v0.188.0/containers/ubuntu/.devcontainer/base.Dockerfile
 
 # [Choice] Ubuntu version: bionic, focal
-ARG VARIANT
+ARG VARIANT=20.04
 FROM rocker/r-ubuntu:${VARIANT}
 
 # FROM ubuntu-latest
