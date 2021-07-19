@@ -42,7 +42,6 @@
 #'   - true: if the alarm is true or not, for ex: "False".
 #'   - filename: the name of the original file, without the extension.
 #'   - frequency: the frequency of the observations, in Hz.
-#' @export
 #'
 #' @examples
 #' \dontrun{

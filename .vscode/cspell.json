@@ -12,7 +12,8 @@
         "**/renv/staging/**",
         "**/dev/**",
         "**/*.cls",
-        "*.code-workspace"
+        "*.code-workspace",
+        "**/.devcontainer/**"
     ],
     "dictionaryDefinitions": [
         {

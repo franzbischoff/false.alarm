@@ -171,7 +171,6 @@ jobs:
     if: "contains(github.event.head_commit.message, 'workflowr')"
     needs:
       - lint
-      - targets
     env:
       GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
       RENV_PATHS_ROOT: ~/.local/share/renv

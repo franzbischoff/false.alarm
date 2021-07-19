@@ -3,29 +3,56 @@ library(tarchetypes)
 # library(false.alarm)
 # devtools::load_all(".")
 
+Sys.setenv(DEBUGME = "R_GlobalEnv")
+# Sys.setenv(DEBUGME_OUTPUT_FILE = "debugme.log")
+
 # Load all scripts
 script_files <- list.files(here::here("scripts"), pattern = "*.R")
-sapply(here::here("scripts", script_files), source, .GlobalEnv)
+sapply(here::here("scripts", script_files), source, local = .GlobalEnv, encoding = "UTF-8")
 rm(script_files)
 
 options(tidyverse.quiet = TRUE)
+options(target_dataset_path = "inst/extdata/physionet/")
 
+# *** If using clustermq for multithreading / clustering ***
+### Localy https://books.ropensci.org/targets/hpc.html#clustermq
+options(clustermq.scheduler = "multiprocess")
+### Remotely
+# options(clustermq.scheduler = "sge", clustermq.template = "sge.tmpl")
+
+# *** If using future for multithreading / clustering ***
+# library(future)
+### Localy
+# library(future.callr)
+# future::plan(callr)
+### Remotely
+# library(future.batchtools)
+# future::plan(batchtools_sge, template = "sge.tmpl")
+
+
+# use renv::install(".") to update the rcpp functions
 tar_option_set(
   packages = "false.alarm",
   format = "rds",
-  resources = list(compress = "xz"),
+  resources = list(
+    # *** If using clustermq for multithreading / clustering ***
+    clustermq = tar_resources_clustermq(template = list(num_cores = 4)),
+    # *** If using future for multithreading / clustering ***
+    # future = tar_resources_future(resources = list(num_cores = 4)),
+    compress = "xz"
+  ),
   garbage_collection = TRUE,
   error = "workspace"
+  # envir = globalenv(),
   # iteration = "list",
   # debug = "read_ecg",
   # imports = "false.alarm" # TODO: remove when there is no change on package functions. Clears the graph.
 )
 
-options(clustermq.scheduler = "multiprocess")
-options(target_dataset_path = "inst/extdata/physionet/")
-future::plan(future::multisession) # tried at least on the split step and seems not worth it for now.
+# tar_make_clustermq(workers = 4)
 # debug(read_ecg)
 
+# start debugme after loading all functions
 debugme::debugme()
 
 list(
@@ -94,22 +121,22 @@ list(
         time_constraint = 20 * 250
       ), # 30s 250hz
       pattern = map(whole_dataset_mp_filtered)
-    ),
-    #### Extract Regimes ----
-    tar_target(
-      whole_dataset_mp_fluss,
-      fluss_extract(whole_dataset_mp_arcs,
-        exclude = c("time", "ABP", "PLETH", "RESP"),
-        num_segments = 5,
-        exclusion_zone = 25
-      ),
-      pattern = map(whole_dataset_mp_arcs)
-    ),
-    tar_target(
-      fluss_plots,
-      plot_fluss(whole_dataset_mp_fluss),
-      pattern = map(whole_dataset_mp_fluss)
     )
+    # #### Extract Regimes ----
+    # tar_target(
+    #   whole_dataset_mp_fluss,
+    #   fluss_extract(whole_dataset_mp_arcs,
+    #     exclude = c("time", "ABP", "PLETH", "RESP"),
+    #     num_segments = 5,
+    #     exclusion_zone = 25
+    #   ),
+    #   pattern = map(whole_dataset_mp_arcs)
+    # ),
+    # tar_target(
+    #   fluss_plots,
+    #   plot_fluss(whole_dataset_mp_fluss),
+    #   pattern = map(whole_dataset_mp_fluss)
+    # )
   )
 
   # # Static branch for split_values
