@@ -1123,10 +1123,15 @@
     },
     "targets": {
       "Package": "targets",
-      "Version": "0.4.2",
-      "Source": "Repository",
-      "Repository": "CRAN",
-      "Hash": "a46df8ab3d40fd1627deeca2783df151"
+      "Version": "0.5.0.9002",
+      "Source": "GitHub",
+      "RemoteType": "github",
+      "RemoteHost": "api.github.com",
+      "RemoteUsername": "ropensci",
+      "RemoteRepo": "targets",
+      "RemoteRef": "main",
+      "RemoteSha": "99dc2d8611611f92481fbc83e57511bb7426aa45",
+      "Hash": "51806aaaea8ff11584f09027118b9f8f"
     },
     "testthat": {
       "Package": "testthat",

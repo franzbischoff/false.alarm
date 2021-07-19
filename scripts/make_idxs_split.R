@@ -3,7 +3,6 @@
 #' This function reads the tuple data.mat and data.hea that contains the signal and the header with information about
 #' the signal.
 #'
-#' @export
 
 make_idxs_split <- function(size, prop = 0.75) {
   sequence <- seq_len(size)

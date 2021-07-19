@@ -3,9 +3,11 @@
 #' This function reads the tuple data.mat and data.hea that contains the signal and the header with information about
 #' the signal.
 #'
-#' @export
 
 find_all_files <- function(path = getOption("target_dataset_path", default = "inst/extdata/physionet/"), long = FALSE) {
+
+  "!DEBUG Starting process"
+
   if (long) {
     files <- paste0(
       path,
