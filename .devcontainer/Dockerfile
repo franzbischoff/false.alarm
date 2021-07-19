@@ -1,16 +1,14 @@
 # See here for image contents: https://github.com/microsoft/vscode-dev-containers/tree/v0.188.0/containers/ubuntu/.devcontainer/base.Dockerfile
 
 # [Choice] Ubuntu version: bionic, focal
-ARG VARIANT=20.04
-FROM rocker/r-ubuntu:${VARIANT}
+ARG ORIGIN=rocker/r-ubuntu:20.04
+FROM ${ORIGIN}
 
 # FROM ubuntu-latest
 
 # [Optional] Uncomment this section to install additional OS packages.
 # RUN apt-get update && export DEBIAN_FRONTEND=noninteractive \
 #     && apt-get -y install --no-install-recommends <your-package-list-here>
-
-# WORKDIR /workspaces
 
 ## Remain current
 ## This was not needed before but we need it now
@@ -68,7 +66,14 @@ RUN apt-fast update && apt-fast install -y --no-install-recommends \
   r-cran-devtools \
   r-cran-pkgbuild \
   r-cran-roxygen2 \
-  r-cran-zoo
+  r-cran-zoo \
+  r-cran-codetools \
+  r-cran-lattice \
+  r-cran-mass \
+  r-cran-matrix \
+  r-cran-mgcv \
+  r-cran-nlme \
+  && rm -rf /var/lib/apt/lists/*
 
 # Install some dev stuffs
 RUN apt-fast update && apt-fast install -y --no-install-recommends \
@@ -81,22 +86,32 @@ RUN apt-fast update && apt-fast install -y --no-install-recommends \
 # Install aditional tools
 RUN apt-fast update && apt-fast install -y --no-install-recommends \
   git \
+  curl \
   libgit2-dev \
   libharfbuzz-dev \
   libcurl4-openssl-dev \
   libfribidi-dev \
   libssl-dev \
   libzmq3-dev\
+  gpg-agent \
   zsh \
+  zsh-autosuggestions \
+  zsh-syntax-highlighting \
   && rm -rf /var/lib/apt/lists/*
 
+RUN usermod --shell /bin/zsh docker
 COPY .zshrc /home/docker/.zshrc
+RUN git clone --depth 1 git://github.com/ohmyzsh/ohmyzsh /home/docker/.oh-my-zsh
+RUN chown -R docker:docker /home/docker
+
+
+WORKDIR /workspaces
 
 # Install other packages
 RUN install.r targets tarchetypes \
   clustermq workflowr R.matlab visNetwork \
   thesisdown here Rcpp RcppParallel \
-  RcppProgress RcppThread
+  RcppProgress RcppThread, codetools, lattice, MASS, Matrix, mgcv, nlme
 
 CMD ["zsh"]
 
