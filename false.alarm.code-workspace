@@ -137,10 +137,9 @@
     "github-actions.workflows.pinned.refresh.enabled": true,
     "github-actions.workflows.pinned.refresh.interval": 500,
     "github-actions.workflows.pinned.workflows": [
-      ".github/workflows/lint.yaml",
       ".github/workflows/test-coverage.yaml",
-      ".github/workflows/targets.yaml",
-      ".github/workflows/workflowr.yaml"
+      ".github/workflows/ci.yaml",
+      ".github/workflows/binder.yaml"
     ],
     "taskExplorer.exclude": [
       "**/dist/**",
@@ -246,6 +245,6 @@
       ".vscode",
       ".vscode-insiders",
       "**/.devcontainer/**"
-    ],
+    ]
   }
 }

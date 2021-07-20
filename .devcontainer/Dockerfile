@@ -97,13 +97,16 @@ RUN apt-fast update && apt-fast install -y --no-install-recommends \
   zsh \
   zsh-autosuggestions \
   zsh-syntax-highlighting \
+  mlocate \
   && rm -rf /var/lib/apt/lists/*
 
 RUN usermod --shell /bin/zsh docker
+RUN usermod --shell /bin/zsh root
 COPY .zshrc /home/docker/.zshrc
+COPY .zshrc /root/.zshrc
+RUN git clone --depth 1 git://github.com/ohmyzsh/ohmyzsh /root/.oh-my-zsh
 RUN git clone --depth 1 git://github.com/ohmyzsh/ohmyzsh /home/docker/.oh-my-zsh
 RUN chown -R docker:docker /home/docker
-
 
 WORKDIR /workspaces
 
@@ -111,9 +114,18 @@ WORKDIR /workspaces
 RUN install.r targets tarchetypes \
   clustermq workflowr R.matlab visNetwork \
   thesisdown here Rcpp RcppParallel \
-  RcppProgress RcppThread, codetools, lattice, MASS, Matrix, mgcv, nlme
+  RcppProgress RcppThread codetools \
+  lattice MASS Matrix mgcv nlme \
+  languageserver
+
+RUN updatedb
 
 CMD ["zsh"]
+
+ARG BUILD_NAME="false.alarm dev"
+ARG BUILD_DESCRIPTION="ready to use environment for this PHD Thesis"
+ARG BUILD_VERSION=1
+ARG BUILD_DATE
 
 # Labels
 LABEL \
@@ -125,5 +137,4 @@ LABEL \
   org.opencontainers.image.source="https://github.com/${BUILD_REPOSITORY}" \
   org.opencontainers.image.documentation="https://github.com/${BUILD_REPOSITORY}/blob/main/README.md" \
   org.opencontainers.image.created=${BUILD_DATE} \
-  org.opencontainers.image.revision=${BUILD_REF} \
   org.opencontainers.image.version=${BUILD_VERSION}

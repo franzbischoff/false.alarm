@@ -82,7 +82,7 @@ stomp2 <- function(..., window_size, exclusion_zone = getOption("tsmp.exclusion_
   }
 
   ez <- exclusion_zone # store original
-  exclusion_zone <- round(window_size * exclusion_zone + tsmp:::vars()$eps)
+  exclusion_zone <- round(window_size * exclusion_zone + .Machine$double.eps^0.5)
   data_size <- nrow(data)
   query_size <- nrow(query)
   matrix_profile_size <- data_size - window_size + 1
@@ -127,10 +127,10 @@ stomp2 <- function(..., window_size, exclusion_zone = getOption("tsmp.exclusion_
   first_product <- matrix(0, num_queries, 1)
 
   # forward
-  nn <- dist_profile(data, query, window_size = window_size)
+  nn <- tsmp::dist_profile(data, query, window_size = window_size)
   # reverse
   # This is needed to handle with the join similarity.
-  rnn <- dist_profile(query, data, window_size = window_size)
+  rnn <- tsmp::dist_profile(query, data, window_size = window_size)
 
   first_product[, 1] <- rnn$last_product
 
@@ -150,9 +150,12 @@ stomp2 <- function(..., window_size, exclusion_zone = getOption("tsmp.exclusion_
   last_product <- matrix(0, matrix_profile_size, 1)
   drop_value <- matrix(0, 1, 1)
 
+  debug <- list()
+
   for (i in 1:num_queries) {
     # compute the distance profile
     query_window <- as.matrix(query[i:(i + window_size - 1), 1])
+
 
     if (i == 1) {
       distance_profile[, 1] <- nn$distance_profile
@@ -166,6 +169,8 @@ stomp2 <- function(..., window_size, exclusion_zone = getOption("tsmp.exclusion_
       distance_profile <- 2 * (window_size - (last_product - window_size * nn$par$data_mean * nn$par$query_mean[i]) /
         (nn$par$data_sd * nn$par$query_sd[i]))
     }
+
+    debug[[i]] <- as.numeric(query_window)
 
     distance_profile[distance_profile < 0] <- 0
     distance_profile <- sqrt(distance_profile)
@@ -186,8 +191,8 @@ stomp2 <- function(..., window_size, exclusion_zone = getOption("tsmp.exclusion_
       distance_profile[c(exc_st, exc_ed), 1] <- Inf
     }
 
-    distance_profile[nn$par$data_sd < tsmp:::vars()$eps] <- Inf
-    if (skip_location[i] || any(nn$par$query_sd[i] < tsmp:::vars()$eps)) {
+    distance_profile[nn$par$data_sd < .Machine$double.eps^0.5] <- Inf
+    if (skip_location[i] || any(nn$par$query_sd[i] < .Machine$double.eps^0.5)) {
       distance_profile[] <- Inf
     }
     distance_profile[skip_location] <- Inf
@@ -228,7 +233,10 @@ stomp2 <- function(..., window_size, exclusion_zone = getOption("tsmp.exclusion_
       rmp = right_matrix_profile, rpi = right_profile_index,
       lmp = left_matrix_profile, lpi = left_profile_index,
       w = window_size,
-      ez = ez
+      ez = ez,
+      pars = list(
+        debug = debug
+      )
     )
     class(obj) <- "MatrixProfile"
     attr(obj, "join") <- join
