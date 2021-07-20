@@ -34,7 +34,16 @@
     },
     "terminal.integrated.scrollback": 10000,
     "terminal.integrated.tabs.enabled": true,
-    "terminal.integrated.tabs.focusMode": "singleClick"
+    "terminal.integrated.tabs.focusMode": "singleClick",
+    "r.alwaysUseActiveTerminal": true,
+    "r.rpath.linux": "/usr/bin/R",
+    "r.rterm.linux": "/usr/bin/R",
+    "r.sessionWatcher": true,
+    "r.debugger.trackTerminals": true,
+    "terminal.integrated.environmentChangesIndicator": "on",
+    "testExplorer.onReload": "retire",
+    "testExplorer.onStart": "retire",
+    "RTestAdapter.RscriptPath": "/usr/bin/Rscript"
   },
   // Add the IDs of extensions you want installed when the container is created.
   "extensions": [

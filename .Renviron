@@ -1,0 +1,2 @@
+TESTTHAT_CPUS=2
+DEBUGME=R_GlobalEnv
