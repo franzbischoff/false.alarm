@@ -11,7 +11,8 @@
     "--privileged"
   ],
   "containerEnv": {
-    "WORKSPACE_DIRECTORY": "${containerWorkspaceFolder}"
+    "WORKSPACE_DIRECTORY": "${containerWorkspaceFolder}",
+    "NOT_CRAN": "true"
   },
   // Set *default* container specific settings.json values on container create.
   "settings": {
@@ -47,31 +48,17 @@
   },
   // Add the IDs of extensions you want installed when the container is created.
   "extensions": [
-    "bibhasdn.unique-lines",
-    "davidanson.vscode-markdownlint",
-    "github.vscode-pull-request-github",
-    "lukas-tr.materialdesignicons-intellisense",
-    "meakbiyik.vscode-r-test-adapter",
-    "ms-vscode.makefile-tools",
-    "mutantdino.resourcemonitor",
-    "natqe.reload",
-    "nhoizey.gremlins",
-    "rdebugger.r-debugger",
-    "reditorsupport.r-lsp",
-    "richie5um2.vscode-sort-json",
-    "spywhere.guides",
-    "streetsidesoftware.code-spell-checker",
-    "timonwong.shellcheck",
-    "tyriar.sort-lines",
-    "yzhang.markdown-all-in-one",
     "affenwiesel.matlab-formatter",
     "alefragnani.bookmarks",
     "alefragnani.project-manager",
     "apommel.matlab-interactive-terminal",
+    "bibhasdn.unique-lines",
     "bramvanbilsen.matlab-code-run",
     "christian-kohler.path-intellisense",
+    "ms-vscode-remote.remote-wsl-recommender",
     "codezombiech.gitignore",
     "cschleiden.vscode-github-actions",
+    "davidanson.vscode-markdownlint",
     "donjayamanne.git-extension-pack",
     "editorconfig.editorconfig",
     "esbenp.prettier-vscode",
@@ -79,34 +66,47 @@
     "gabrielgrinberg.auto-run-command",
     "gerane.theme-twilight",
     "gimly81.matlab",
+    "github.vscode-pull-request-github",
     "gruntfuggly.todo-tree",
     "guyutongxue.cpp-reference",
     "hbenl.vscode-test-explorer",
     "ikuyadeu.r",
     "james-yu.latex-workshop",
     "lacroixdavid1.vscode-format-context-menu",
+    "lukas-tr.materialdesignicons-intellisense",
     "me-dutour-mathieu.vscode-github-actions",
     "meakbiyik.vscode-r-test-adapter",
     "mindaro-dev.file-downloader",
     "ms-azuretools.vscode-docker",
     "ms-vscode.cpptools",
+    "ms-vscode.makefile-tools",
     "mutantdino.resourcemonitor",
     "natqe.reload",
+    "nhoizey.gremlins",
     "pkief.material-icon-theme",
     "randomfractalsinc.vscode-data-preview",
+    "rdebugger.r-debugger",
     "redhat.vscode-yaml",
-    "reditorsupport.r-lsp",
     "richie5um2.vscode-sort-json",
     "spmeesseman.vscode-taskexplorer",
+    "spywhere.guides",
+    "streetsidesoftware.code-spell-checker",
     "streetsidesoftware.code-spell-checker-medical-terms",
     "streetsidesoftware.code-spell-checker-portuguese",
     "tht13.html-preview-vscode",
-    "visualstudioexptteam.vscodeintellicode"
+    "timonwong.shellcheck",
+    "tyriar.sort-lines",
+    "visualstudioexptteam.vscodeintellicode",
+    "yzhang.markdown-all-in-one"
   ],
   // Use 'forwardPorts' to make a list of ports inside the container available locally.
   // "forwardPorts": [],
   // Use 'postCreateCommand' to run commands after the container is created.
   "postCreateCommand": "uname -a",
   // Comment out connect as root instead. More info: https://aka.ms/vscode-remote/containers/non-root.
-  "remoteUser": "docker"
+  "remoteUser": "docker",
+  "containerUser": "docker",
+  "shutdownAction": "stopContainer",
+  "postStartCommand": "echo postStartCommand",
+  "postAttachCommand": "echo postAttachCommand"
 }

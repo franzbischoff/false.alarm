@@ -91,3 +91,4 @@ output/*.svg
 protocol/**/*.pdf
 docs/**/*.svg
 protocol/**/*.svg
+mpxtest.RData

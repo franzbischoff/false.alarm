@@ -77,8 +77,8 @@ stompi2 <- function(data, window_size, exclusion_zone = 0.5, verbose = 2) {
     )
   }
   # forward
-  nn <- matrixprofiler::mass_pre(data, window_size)
-  dp <- matrixprofiler::mass(nn, data)
+  nn <- false.alarm::mass_pre(data, window_size)
+  dp <- false.alarm::mass(nn, data)
 
   first_product <- dp$last_product
   distance_profile <- dp$distance_profile
@@ -158,7 +158,11 @@ stompi2 <- function(data, window_size, exclusion_zone = 0.5, verbose = 2) {
       w = window_size,
       ez = ez,
       pars = list(
-        nn = nn,
+        data_fft = nn$data_fft,
+        data_mean = nn$data_mean,
+        data_sd = nn$data_sd,
+        query_mean = nn$query_mean,
+        query_sd = nn$query_sd,
         drop_value = drop_value,
         first_product = first_product,
         last_product = last_product,
