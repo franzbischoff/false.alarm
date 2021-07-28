@@ -25,8 +25,332 @@ using namespace RcppParallel;
 // @param data_ref Time Series
 // @return data_ref List
 // [[Rcpp::export]]
+List mpxi_rcpp(NumericVector data_ref, uint64_t window_size, double ez, double s_size, bool idxs, bool euclidean,
+               bool progress, uint64_t start, List old) {
+
+  uint64_t exclusion_zone = round(window_size * ez + DBL_EPSILON) + 1;
+
+  try {
+    double c, c_cmp;
+    uint32_t off_max, off_diag, offset, off_start;
+    bool partial = false;
+    // matrix profile using cross correlation,
+    uint32_t n = data_ref.length();
+
+    List msd = muinvn_rcpp(data_ref, window_size);
+
+    NumericVector mmu = msd["avg"];
+    NumericVector ssig = msd["sig"];
+    double *mu = &mmu[0];
+    double *sig = &ssig[0];
+
+    uint32_t profile_len = n - window_size + 1;
+
+    IntegerVector compute_order;
+
+    compute_order = Range(exclusion_zone, profile_len - 1);
+
+    NumericVector mlmp(profile_len, -1.0);
+    IntegerVector mlpi(profile_len, -1);
+
+    double *lmp = &mlmp[0];
+    int *lpi = &mlpi[0];
+
+    if (start > 0) {
+
+      mlmp[Range(start, profile_len - 1)] = as<NumericVector>(old["right_matrix_profile"]);
+      mlpi[Range(start, profile_len - 1)] = as<IntegerVector>(old["right_profile_index"]);
+
+      // add indexes
+      for (uint32_t id = (start + exclusion_zone); id < profile_len; id++) {
+        mlpi[id] = mlpi[id] + start;
+      }
+    }
+
+    // differentials have 0 as their first entry. This simplifies index
+    // calculations slightly and allows us to avoid special "first line"
+    // handling.
+
+    // ddf is the diff(data_ref, lag = window_size) / 2
+    NumericVector ddf = 0.5 * (data_ref[Range(window_size, n - 1)] - data_ref[Range(0, n - window_size - 1)]);
+    ddf.push_front(0);
+    // ddg: (data[(w+1):data_len] - mov_avg[2:(data_len - w + 1)]) + (data[1:(data_len - w)] - mov_avg[1:(data_len -
+    // w)]) (subtract the mov_mean of all data, but the first window) + (subtract the mov_mean of all data, but the last
+    // window)
+    NumericVector ddg = (data_ref[Range(window_size, n - 1)] - mmu[Range(1, profile_len - 1)]) +
+                        (data_ref[Range(0, n - window_size - 1)] - mmu[Range(0, n - window_size - 1)]);
+    ddg.push_front(0);
+
+    double *df = &ddf[0];
+    double *dg = &ddg[0];
+
+    // first window demeaned
+    NumericVector ww = (data_ref[Range(0, window_size - 1)] - mmu[0]);
+
+    uint64_t num_progress =
+        ceil((double)compute_order.size() / 100); // added double inside sqrt to avoid ambiguity on Solaris
+
+    Progress p(100, progress);
+
+    // compute_order = sample(compute_order, compute_order.size());
+
+    uint64_t stop = 0;
+
+    if (s_size < 1.0) {
+      stop = round(compute_order.size() * s_size + DBL_EPSILON);
+    }
+
+    uint64_t gg = 1;
+
+    try {
+      uint64_t i = 1;
+
+      // IntegerVector new_order(compute_order.length());
+
+      // std::reverse_copy(compute_order.begin(), compute_order.end(), new_order.begin());
+
+      for (int32_t diag : compute_order) {
+
+        if ((i % num_progress) == 0) {
+          RcppThread::checkUserInterrupt();
+          p.increment();
+        }
+
+        // this always use the first window (ww); c is the sum of element-wise product
+        c = inner_product((data_ref[Range(diag, (diag + window_size - 1))] - mu[diag]), ww);
+
+        // off_max goes from profile_len - ez to 0
+        if (start > 0)
+          off_max = MIN(start, (profile_len - diag));
+        else
+          off_max = (profile_len - diag);
+        off_start = 0;
+
+        for (offset = off_start; offset < off_max; offset++) {
+          // min is offset + diag; max is (profile_len - 1); each iteration has the size of off_max
+          off_diag = offset + diag;
+
+          c = c + df[offset] * dg[off_diag] + df[off_diag] * dg[offset];
+          c_cmp = c * sig[offset] * sig[off_diag];
+
+          // LMP?
+          if (c_cmp > lmp[off_diag]) {
+            lmp[off_diag] = c_cmp;
+            if (idxs) {
+              lpi[off_diag] = offset + 1;
+            }
+          }
+
+          gg++;
+        }
+
+        if (stop > 0 && i >= stop) {
+          partial = true;
+          break;
+        }
+        i++;
+      }
+    } catch (RcppThread::UserInterruptException &ex) {
+      partial = true;
+      Rcout << "Process terminated by the user successfully, partial results were returned." << std::endl;
+    }
+
+    Rcout << "gg: " << gg << std::endl;
+
+    // to do ed
+    // mmp[mmp > 1.0] = 1.0;
+    // mrmp[mrmp > 1.0] = 1.0;
+    mlmp[mlmp > 1.0] = 1.0;
+
+    if (euclidean) { // correlation to ed
+      // mmp = sqrt(2 * window_size * (1 - mmp));
+      // mrmp = sqrt(2 * window_size * (1 - mrmp));
+      mlmp = sqrt(2 * window_size * (1 - mlmp));
+      // mmp[mmpi < 0] = R_PosInf;
+      // mrmp[mrpi < 0] = R_PosInf;
+      mlmp[mlpi < 0] = R_PosInf;
+    }
+
+    if (idxs) {
+      return (List::create(Rcpp::Named("right_matrix_profile") = mlmp, Rcpp::Named("right_profile_index") = mlpi,
+                           Rcpp::Named("partial") = partial));
+    } else {
+      return (List::create(Rcpp::Named("right_matrix_profile") = mlmp, Rcpp::Named("partial") = partial));
+    }
+  } catch (...) {
+    ::Rf_error("c++ exception (unknown reason)");
+  }
+}
+
+// MPX
+//
+// @param data_ref Time Series
+// @return data_ref List
+// [[Rcpp::export]]
+List mpxileft_rcpp(NumericVector data_ref, uint64_t window_size, double ez, double s_size, bool idxs, bool euclidean,
+               bool progress, uint64_t start, List old) {
+
+  uint64_t exclusion_zone = round(window_size * ez + DBL_EPSILON) + 1;
+
+  try {
+    double c, c_cmp;
+    uint32_t off_max, off_diag, offset, off_start;
+    bool partial = false;
+    // matrix profile using cross correlation,
+    uint32_t n = data_ref.length();
+
+    List msd = muinvn_rcpp(data_ref, window_size);
+
+    NumericVector mmu = msd["avg"];
+    NumericVector ssig = msd["sig"];
+    double *mu = &mmu[0];
+    double *sig = &ssig[0];
+
+    uint32_t profile_len = n - window_size + 1;
+
+    IntegerVector compute_order;
+
+    compute_order = Range(exclusion_zone, profile_len - 1);
+
+    NumericVector mlmp(profile_len, -1.0);
+    IntegerVector mlpi(profile_len, -1);
+
+    double *lmp = &mlmp[0];
+    int *lpi = &mlpi[0];
+
+    if (start > 0) {
+
+      mlmp[Range(start, profile_len - 1)] = as<NumericVector>(old["left_matrix_profile"]);
+      mlpi[Range(start, profile_len - 1)] = as<IntegerVector>(old["left_profile_index"]);
+
+      // add indexes
+      for (uint32_t id = (start + exclusion_zone); id < profile_len; id++) {
+        mlpi[id] = mlpi[id] + start;
+      }
+    }
+
+    // differentials have 0 as their first entry. This simplifies index
+    // calculations slightly and allows us to avoid special "first line"
+    // handling.
+
+    // ddf is the diff(data_ref, lag = window_size) / 2
+    NumericVector ddf = 0.5 * (data_ref[Range(window_size, n - 1)] - data_ref[Range(0, n - window_size - 1)]);
+    ddf.push_front(0);
+    // ddg: (data[(w+1):data_len] - mov_avg[2:(data_len - w + 1)]) + (data[1:(data_len - w)] - mov_avg[1:(data_len -
+    // w)]) (subtract the mov_mean of all data, but the first window) + (subtract the mov_mean of all data, but the last
+    // window)
+    NumericVector ddg = (data_ref[Range(window_size, n - 1)] - mmu[Range(1, profile_len - 1)]) +
+                        (data_ref[Range(0, n - window_size - 1)] - mmu[Range(0, n - window_size - 1)]);
+    ddg.push_front(0);
+
+    double *df = &ddf[0];
+    double *dg = &ddg[0];
+
+    // first window demeaned
+    NumericVector ww = (data_ref[Range(0, window_size - 1)] - mmu[0]);
+
+    uint64_t num_progress =
+        ceil((double)compute_order.size() / 100); // added double inside sqrt to avoid ambiguity on Solaris
+
+    Progress p(100, progress);
+
+    // compute_order = sample(compute_order, compute_order.size());
+
+    uint64_t stop = 0;
+
+    if (s_size < 1.0) {
+      stop = round(compute_order.size() * s_size + DBL_EPSILON);
+    }
+
+    uint64_t gg = 1;
+
+    try {
+      uint64_t i = 1;
+
+      // IntegerVector new_order(compute_order.length());
+
+      // std::reverse_copy(compute_order.begin(), compute_order.end(), new_order.begin());
+
+      for (int32_t diag : compute_order) {
+
+        if ((i % num_progress) == 0) {
+          RcppThread::checkUserInterrupt();
+          p.increment();
+        }
+
+        // this always use the first window (ww); c is the sum of element-wise product
+        c = inner_product((data_ref[Range(diag, (diag + window_size - 1))] - mu[diag]), ww);
+
+        // off_max goes from profile_len - ez to 0
+        if (start > 0)
+          off_max = MIN(start, (profile_len - diag));
+        else
+          off_max = (profile_len - diag);
+        off_start = 0;
+
+        for (offset = off_start; offset < off_max; offset++) {
+          // min is offset + diag; max is (profile_len - 1); each iteration has the size of off_max
+          off_diag = offset + diag;
+
+          c = c + df[offset] * dg[off_diag] + df[off_diag] * dg[offset];
+          c_cmp = c * sig[offset] * sig[off_diag];
+
+          // LMP?
+          if (c_cmp > lmp[off_diag]) {
+            lmp[off_diag] = c_cmp;
+            if (idxs) {
+              lpi[off_diag] = offset + 1;
+            }
+          }
+
+          gg++;
+        }
+
+        if (stop > 0 && i >= stop) {
+          partial = true;
+          break;
+        }
+        i++;
+      }
+    } catch (RcppThread::UserInterruptException &ex) {
+      partial = true;
+      Rcout << "Process terminated by the user successfully, partial results were returned." << std::endl;
+    }
+
+    Rcout << "gg: " << gg << std::endl;
+
+    // to do ed
+    // mmp[mmp > 1.0] = 1.0;
+    // mrmp[mrmp > 1.0] = 1.0;
+    mlmp[mlmp > 1.0] = 1.0;
+
+    if (euclidean) { // correlation to ed
+      // mmp = sqrt(2 * window_size * (1 - mmp));
+      // mrmp = sqrt(2 * window_size * (1 - mrmp));
+      mlmp = sqrt(2 * window_size * (1 - mlmp));
+      // mmp[mmpi < 0] = R_PosInf;
+      // mrmp[mrpi < 0] = R_PosInf;
+      mlmp[mlpi < 0] = R_PosInf;
+    }
+
+    if (idxs) {
+      return (List::create(Rcpp::Named("left_matrix_profile") = mlmp, Rcpp::Named("left_profile_index") = mlpi,
+                           Rcpp::Named("partial") = partial));
+    } else {
+      return (List::create(Rcpp::Named("left_matrix_profile") = mlmp, Rcpp::Named("partial") = partial));
+    }
+  } catch (...) {
+    ::Rf_error("c++ exception (unknown reason)");
+  }
+}
+
+// MPX
+//
+// @param data_ref Time Series
+// @return data_ref List
+// [[Rcpp::export]]
 List mpx_rcpp(NumericVector data_ref, uint64_t window_size, double ez, double s_size, bool idxs, bool euclidean,
-              bool progress, uint64_t constraint) {
+              bool progress) {
 
   uint64_t exclusion_zone = round(window_size * ez + DBL_EPSILON) + 1;
 
@@ -49,9 +373,17 @@ List mpx_rcpp(NumericVector data_ref, uint64_t window_size, double ez, double s_
 
     NumericVector mmp(profile_len, -1.0);
     IntegerVector mmpi(profile_len, -1);
+    NumericVector rmmp(profile_len, -1.0);
+    IntegerVector rmmpi(profile_len, -1);
+    NumericVector lmmp(profile_len, -1.0);
+    IntegerVector lmmpi(profile_len, -1);
 
     double *mp = &mmp[0];
     int *mpi = &mmpi[0];
+    double *rmp = &rmmp[0];
+    int *rpi = &rmmpi[0];
+    double *lmp = &lmmp[0];
+    int *lpi = &lmmpi[0];
 
     // differentials have 0 as their first entry. This simplifies index
     // calculations slightly and allows us to avoid special "first line"
@@ -85,10 +417,6 @@ List mpx_rcpp(NumericVector data_ref, uint64_t window_size, double ez, double s_
       uint64_t i = 1;
       for (int32_t diag : compute_order) {
 
-        if(diag+1 > constraint) {
-          continue;
-        }
-
         if ((i % num_progress) == 0) {
           RcppThread::checkUserInterrupt();
           p.increment();
@@ -102,18 +430,36 @@ List mpx_rcpp(NumericVector data_ref, uint64_t window_size, double ez, double s_
           off_diag = offset + diag;
           c = c + df[offset] * dg[off_diag] + df[off_diag] * dg[offset];
           c_cmp = c * sig[offset] * sig[off_diag];
+
+          // RMP
+          if (c_cmp > rmp[offset]) {
+            rmp[offset] = c_cmp;
+            if (idxs) {
+              rpi[offset] = off_diag + 1;
+            }
+          }
+
+          // MP
           if (c_cmp > mp[offset]) {
             mp[offset] = c_cmp;
             if (idxs) {
               mpi[offset] = off_diag + 1;
             }
           }
-          // if (c_cmp > mp[off_diag]) {
-          //   mp[off_diag] = c_cmp;
-          //   if (idxs) {
-          //     mpi[off_diag] = offset + 1;
-          //   }
-          // }
+          if (c_cmp > mp[off_diag]) {
+            mp[off_diag] = c_cmp;
+            if (idxs) {
+              mpi[off_diag] = offset + 1;
+            }
+          }
+
+          // LMP
+          if (c_cmp > lmp[off_diag]) {
+            lmp[off_diag] = c_cmp;
+            if (idxs) {
+              lpi[off_diag] = offset + 1;
+            }
+          }
         }
 
         if (stop > 0 && i >= stop) {
@@ -130,16 +476,26 @@ List mpx_rcpp(NumericVector data_ref, uint64_t window_size, double ez, double s_
 
     // to do ed
     mmp[mmp > 1.0] = 1.0;
+    rmmp[rmmp > 1.0] = 1.0;
+    lmmp[lmmp > 1.0] = 1.0;
 
     if (euclidean) { // correlation to ed
       mmp = sqrt(2 * window_size * (1 - mmp));
+      mmp[mmpi < 0] = R_PosInf;
+      rmmp = sqrt(2 * window_size * (1 - rmmp));
+      rmmp[rmmpi < 0] = R_PosInf;
+      lmmp = sqrt(2 * window_size * (1 - lmmp));
+      lmmp[lmmpi < 0] = R_PosInf;
     }
 
     if (idxs) {
       return (List::create(Rcpp::Named("matrix_profile") = mmp, Rcpp::Named("profile_index") = mmpi,
+                           Rcpp::Named("right_matrix_profile") = rmmp, Rcpp::Named("right_profile_index") = rmmpi,
+                           Rcpp::Named("left_matrix_profile") = lmmp, Rcpp::Named("left_profile_index") = lmmpi,
                            Rcpp::Named("partial") = partial));
     } else {
-      return (List::create(Rcpp::Named("matrix_profile") = mmp, Rcpp::Named("partial") = partial));
+      return (List::create(Rcpp::Named("matrix_profile") = mmp, Rcpp::Named("right_matrix_profile") = rmmp,
+                           Rcpp::Named("left_matrix_profile") = lmmp, Rcpp::Named("partial") = partial));
     }
   } catch (...) {
     ::Rf_error("c++ exception (unknown reason)");

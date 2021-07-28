@@ -46,6 +46,9 @@ mpx <- function(data, window_size, query = NULL, exclusion_zone = 0.5, s_size = 
   n_workers <- as.integer(checkmate::qassert(n_workers, "X+"))
   checkmate::qassert(progress, "B+")
 
+  if(is.null(constraint)) {
+    constraint = length(data)
+  }
   ez <- exclusion_zone
   result <- NULL
 

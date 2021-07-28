@@ -41,11 +41,11 @@ stompi2_update <- function(.mp, new_data, history_size = FALSE) {
   exclusion_zone <- (.mp$ez * .mp$w)
 
   # forward
-  nn <- matrixprofiler::mass_pre(data_upd, .mp$w)
-  dp <- matrixprofiler::mass(nn, data_upd, index = 1)
+  nn <- false.alarm::mass_pre(data_upd, .mp$w)
+  dp <- false.alarm::mass(nn, data_upd, index = 1)
 
   first_product <- dp$last_product
-  query_stats <- matrixprofiler::movmean_std(data_upd[q1_idx:data_upd_size], .mp$w)
+  query_stats <- false.alarm::movmean_std(data_upd[q1_idx:data_upd_size], .mp$w)
   drop_value <- data_upd[q1_idx]
 
   for (i in seq_len(new_data_size)) {
@@ -54,7 +54,7 @@ stompi2_update <- function(.mp, new_data, history_size = FALSE) {
     query <- data_upd[start_idx:end_idx]
 
     if (i == 1) {
-      dp <- matrixprofiler::mass(nn, data_upd, data_upd, index = start_idx)
+      dp <- false.alarm::mass(nn, data_upd, data_upd, index = start_idx)
       distance_profile <- dp$distance_profile
       last_product <- dp$last_product
     } else {

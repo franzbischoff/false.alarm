@@ -94,6 +94,7 @@ RUN apt-fast update && apt-fast install -y --no-install-recommends \
   libssl-dev \
   libzmq3-dev\
   gpg-agent \
+  gpgsm \
   zsh \
   zsh-autosuggestions \
   zsh-syntax-highlighting \

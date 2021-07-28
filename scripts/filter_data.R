@@ -3,8 +3,8 @@
 filter_data <- function(ecg_data, params) {
   window <- params$window
 
-  norm_data <- matrixprofiler::znorm(ecg_data)
-  mean_std <- matrixprofiler::movmean_std(norm_data, window)
+  norm_data <- false.alarm::znorm(ecg_data)
+  mean_std <- false.alarm::movmean_std(norm_data, window)
   mean_of_sd <- mean(mean_std$sd)
 
   filters <- list()

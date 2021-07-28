@@ -34,49 +34,37 @@ stompi3_update <- function(.mp, new_data, history_size = FALSE) {
   rmp_new <- c(.mp$rmp, rep(Inf, new_data_size))
   rpi_new <- c(.mp$rpi, rep(-Inf, new_data_size))
 
-  # q1_idx is actually the pointer to the next position of the matrix profile (length(mp)+1)
-  # q1_idx <- (data_upd_size - .mp$w + 1 - new_data_size + 1)
-  q1_idx <- length(.mp$mp) + 1
+  q1_idx <- (data_upd_size - .mp$w + 1 - new_data_size + 1)
 
   mp_new_size <- length(mp_new)
 
   exclusion_zone <- (.mp$ez * .mp$w)
 
-  if (is.null(.mp$pars)) {
-    # forward
-    old_nn <- matrixprofiler::mass_pre(data_upd, .mp$w)
-    old_dp <- matrixprofiler::mass(old_nn, data_upd, index = 1)
-    old_first_product <- old_dp$last_product
-    old_query_stats <- matrixprofiler::movmean_std(data_upd[q1_idx:data_upd_size], .mp$w)
-    old_drop_value <- data_upd[q1_idx]
-  } else {
-    nn <- matrixprofiler::mass_pre(data_upd, .mp$w)
-    old_dp <- matrixprofiler::mass(nn, data_upd, index = 1)
-    first_product <- old_dp$last_product
-    query_stats <- matrixprofiler::movmean_std(data_upd[q1_idx:data_upd_size], .mp$w)
+  # forward
+  nn <- false.alarm::mass_pre(data_upd, .mp$w)
+  dp <- false.alarm::mass(nn, data_upd, index = 1)
 
-    # first_product <- .mp$pars$last_product
-    last_product <- .mp$pars$last_product
-    drop_value <- .mp$pars$drop_value
-  }
+  first_product <- dp$last_product
+  query_stats <- false.alarm::movmean_std(data_upd[q1_idx:data_upd_size], .mp$w)
+  drop_value <- data_upd[q1_idx]
 
   for (i in seq_len(new_data_size)) {
     start_idx <- (q1_idx + i - 1)
     end_idx <- start_idx + .mp$w - 1
     query <- data_upd[start_idx:end_idx]
 
-    # if (i == 1) {
-    #   dp <- matrixprofiler::mass(nn, data_upd, data_upd, index = start_idx)
-    #   distance_profile <- dp$distance_profile
-    #   last_product <- dp$last_product
-    # } else {
-    last_product[2:(data_upd_size - .mp$w + 1)] <- last_product[1:(data_upd_size - .mp$w)] -
-      data_upd[1:(data_upd_size - .mp$w)] * drop_value +
-      data_upd[(.mp$w + 1):data_upd_size] * query[.mp$w]
-    last_product[1] <- first_product[start_idx]
-    distance_profile <- 2 * (.mp$w - (last_product - .mp$w * nn$data_mean * query_stats$avg[i]) /
-      (nn$data_sd * query_stats$sd[i]))
-    # }
+    if (i == 1) {
+      dp <- false.alarm::mass(nn, data_upd, data_upd, index = start_idx)
+      distance_profile <- dp$distance_profile
+      last_product <- dp$last_product
+    } else {
+      last_product[2:(data_upd_size - .mp$w + 1)] <- last_product[1:(data_upd_size - .mp$w)] -
+        data_upd[1:(data_upd_size - .mp$w)] * drop_value +
+        data_upd[(.mp$w + 1):data_upd_size] * query[.mp$w]
+      last_product[1] <- first_product[start_idx]
+      distance_profile <- 2 * (.mp$w - (last_product - .mp$w * nn$data_mean * query_stats$avg[i]) /
+        (nn$data_sd * query_stats$sd[i]))
+    }
 
     distance_profile[distance_profile < 0] <- 0
     distance_profile <- sqrt(distance_profile)
@@ -98,11 +86,29 @@ stompi3_update <- function(.mp, new_data, history_size = FALSE) {
     rpi_new[upd_idxs] <- start_idx
   }
 
+  if (history_size && (data_upd_size > history_size)) {
+    data_upd <- utils::tail(data_upd, history_size)
+    mp_new_size <- history_size - .mp$w + 1
+    offset <- data_upd_size - history_size
+
+    mp_new <- utils::tail(mp_new, mp_new_size)
+    pi_new <- utils::tail(pi_new - offset, mp_new_size)
+    rmp_new <- utils::tail(rmp_new, mp_new_size)
+    rpi_new <- utils::tail(rpi_new - offset, mp_new_size)
+
+    if (is.null(attr(.mp, "offset"))) {
+      attr(.mp, "offset") <- offset
+    } else {
+      attr(.mp, "offset") <- attr(.mp, "offset") + offset
+    }
+
+    # pi_new <- utils::tail(pi_new - attr(.mp, "offset"), mp_new_size)
+  }
+
   .mp$mp <- mp_new
   .mp$pi <- pi_new
   .mp$rmp <- rmp_new
   .mp$rpi <- rpi_new
-  .mp$pars$last_product <- last_product
   .mp$data[[1]] <- data_upd
   attr(.mp, "new_data") <- new_data_size
 
