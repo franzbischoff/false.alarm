@@ -101,6 +101,7 @@ RUN apt-fast update && apt-fast install -y --no-install-recommends \
   mlocate \
   && rm -rf /var/lib/apt/lists/*
 
+RUN usermod -aG sudo docker
 RUN usermod --shell /bin/zsh docker
 RUN usermod --shell /bin/zsh root
 COPY .zshrc /home/docker/.zshrc
