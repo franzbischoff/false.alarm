@@ -89,6 +89,10 @@ mpxi_rcpp <- function(data_ref, window_size, ez, s_size, idxs, euclidean, progre
     .Call(`_false_alarm_mpxi_rcpp`, data_ref, window_size, ez, s_size, idxs, euclidean, progress, start, old)
 }
 
+mpxileft_rcpp <- function(data_ref, window_size, ez, s_size, idxs, euclidean, progress, start, old) {
+    .Call(`_false_alarm_mpxileft_rcpp`, data_ref, window_size, ez, s_size, idxs, euclidean, progress, start, old)
+}
+
 mpx_rcpp <- function(data_ref, window_size, ez, s_size, idxs, euclidean, progress) {
     .Call(`_false_alarm_mpx_rcpp`, data_ref, window_size, ez, s_size, idxs, euclidean, progress)
 }

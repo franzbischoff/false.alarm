@@ -17,9 +17,16 @@
     "editor.tabSize": 2,
     "editor.wordWrapColumn": 120,
     "files.associations": {
+      ".whitesource": "jsonc",
+      "*.cls": "latex",
       "*.ipp": "cpp",
       "*.json": "jsonc",
+      "*.lock": "json",
+      "*.py": "python",
+      "*.rmd": "markdown",
+      "*.sty": "latex",
       "*.tcc": "cpp",
+      "*.toml": "toml",
       "algorithm": "cpp",
       "array": "cpp",
       "atomic": "cpp",
@@ -93,7 +100,8 @@
       "utility": "cpp",
       "valarray": "cpp",
       "variant": "cpp",
-      "vector": "cpp"
+      "vector": "cpp",
+      "cfloat": "cpp"
     },
     "files.exclude": {
       "**/.git": true,
