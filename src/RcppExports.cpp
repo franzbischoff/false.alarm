@@ -316,6 +316,25 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// mpxileft_rcpp
+List mpxileft_rcpp(NumericVector data_ref, uint64_t window_size, double ez, double s_size, bool idxs, bool euclidean, bool progress, uint64_t start, List old);
+RcppExport SEXP _false_alarm_mpxileft_rcpp(SEXP data_refSEXP, SEXP window_sizeSEXP, SEXP ezSEXP, SEXP s_sizeSEXP, SEXP idxsSEXP, SEXP euclideanSEXP, SEXP progressSEXP, SEXP startSEXP, SEXP oldSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< NumericVector >::type data_ref(data_refSEXP);
+    Rcpp::traits::input_parameter< uint64_t >::type window_size(window_sizeSEXP);
+    Rcpp::traits::input_parameter< double >::type ez(ezSEXP);
+    Rcpp::traits::input_parameter< double >::type s_size(s_sizeSEXP);
+    Rcpp::traits::input_parameter< bool >::type idxs(idxsSEXP);
+    Rcpp::traits::input_parameter< bool >::type euclidean(euclideanSEXP);
+    Rcpp::traits::input_parameter< bool >::type progress(progressSEXP);
+    Rcpp::traits::input_parameter< uint64_t >::type start(startSEXP);
+    Rcpp::traits::input_parameter< List >::type old(oldSEXP);
+    rcpp_result_gen = Rcpp::wrap(mpxileft_rcpp(data_ref, window_size, ez, s_size, idxs, euclidean, progress, start, old));
+    return rcpp_result_gen;
+END_RCPP
+}
 // mpx_rcpp
 List mpx_rcpp(NumericVector data_ref, uint64_t window_size, double ez, double s_size, bool idxs, bool euclidean, bool progress);
 RcppExport SEXP _false_alarm_mpx_rcpp(SEXP data_refSEXP, SEXP window_sizeSEXP, SEXP ezSEXP, SEXP s_sizeSEXP, SEXP idxsSEXP, SEXP euclideanSEXP, SEXP progressSEXP) {
@@ -751,6 +770,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_false_alarm_sum_of_squares", (DL_FUNC) &_false_alarm_sum_of_squares, 1},
     {"_false_alarm_fft_rcpp", (DL_FUNC) &_false_alarm_fft_rcpp, 2},
     {"_false_alarm_mpxi_rcpp", (DL_FUNC) &_false_alarm_mpxi_rcpp, 9},
+    {"_false_alarm_mpxileft_rcpp", (DL_FUNC) &_false_alarm_mpxileft_rcpp, 9},
     {"_false_alarm_mpx_rcpp", (DL_FUNC) &_false_alarm_mpx_rcpp, 7},
     {"_false_alarm_mpxab_rcpp", (DL_FUNC) &_false_alarm_mpxab_rcpp, 7},
     {"_false_alarm_mpx_rcpp_parallel", (DL_FUNC) &_false_alarm_mpx_rcpp_parallel, 7},
