@@ -20,7 +20,7 @@ using namespace RcppParallel;
 
 // FIXME: check skip_locations in mpx
 
-// MPX
+// MPXc
 //
 // @param data_ref Time Series
 // @return data_ref List

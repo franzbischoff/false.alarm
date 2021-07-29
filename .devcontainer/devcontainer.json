@@ -105,7 +105,7 @@
   "postCreateCommand": "uname -a",
   // Comment out connect as root instead. More info: https://aka.ms/vscode-remote/containers/non-root.
   "remoteUser": "docker",
-  "containerUser": "docker",
+  // "containerUser": "docker",
   "shutdownAction": "stopContainer",
   "postStartCommand": "echo postStartCommand",
   "postAttachCommand": "echo postAttachCommand"
