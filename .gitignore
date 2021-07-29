@@ -92,3 +92,5 @@ protocol/**/*.pdf
 docs/**/*.svg
 protocol/**/*.svg
 mpxtest.RData
+.devcontainer/gpg-agent.conf
+.devcontainer/gpg.conf
