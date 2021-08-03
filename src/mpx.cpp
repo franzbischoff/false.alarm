@@ -54,8 +54,6 @@ List mpxiright_rcpp(NumericVector data_ref, uint64_t window_size, double ez, dou
 
     compute_order = new_order;
 
-    // Rcout << "Debug2" << std::endl;
-
     NumericVector rmmp(profile_len, -1.0);
     IntegerVector rmmpi(profile_len, -1);
 
@@ -66,17 +64,11 @@ List mpxiright_rcpp(NumericVector data_ref, uint64_t window_size, double ez, dou
 
       rmmp[Range(0, profile_len - start - 1)] = as<NumericVector>(old["right_matrix_profile"]);
       rmmpi[Range(0, profile_len - start - 1)] = as<IntegerVector>(old["right_profile_index"]);
-
-      // add indexes
-      // for (uint64_t i = (start + exclusion_zone); i < profile_len; i++) {
-      //   rpi[i] = rpi[i] + start;
-      // }
     }
 
     // differentials have 0 as their first entry. This simplifies index
     // calculations slightly and allows us to avoid special "first line"
     // handling.
-    // Rcout << "Debug3" << std::endl;
     // ddf is the diff(data_ref, lag = window_size) / 2
     NumericVector ddf = 0.5 * (data_ref[Range(0, n - window_size - 1)] - data_ref[Range(window_size, n - 1)]);
     ddf.push_back(0);
@@ -96,7 +88,7 @@ List mpxiright_rcpp(NumericVector data_ref, uint64_t window_size, double ez, dou
 
     Progress p(100, progress);
 
-    // compute_order = sample(compute_order, compute_order.size());
+    compute_order = sample(compute_order, compute_order.size());
 
     uint64_t stop = 0;
 
@@ -105,49 +97,33 @@ List mpxiright_rcpp(NumericVector data_ref, uint64_t window_size, double ez, dou
     }
 
     uint64_t gg = 0;
-    // Rcout << "Debug4" << std::endl;
     try {
       uint64_t i = 1;
       // first window demeaned
       NumericVector ww = (data_ref[Range(n - window_size, n - 1)] - mmu[n - window_size]);
 
-      // Rcout << "Debug4.1" << std::endl;
       for (int32_t diag : compute_order) {
 
         if ((i % num_progress) == 0) {
           RcppThread::checkUserInterrupt();
           p.increment();
         }
-        // Rcout << "Debug4.1.1" << std::endl;
         // this always use the first window (ww); c is the sum of element-wise product
         c = inner_product((data_ref[Range(diag, (diag + window_size - 1))] - mu[diag]), ww);
 
-        // Rcout << " cr: " << c;
-
-        // Rcout << "Debug4.1.2" << std::endl;
         // off_max goes from profile_len - ez to 0
         if (start > 0)
           off_min = MAX(n - window_size - start, n - window_size - diag - 1);
         else
           off_min = (profile_len - diag);
         off_start = n - window_size;
-        // Rcout << "Debug4.1.3" << std::endl;
 
         for (offset = off_start; offset > off_min; offset--) {
-          // for (offset = (off_min+1); offset <= off_start; offset++) {
           // min is offset + diag; max is (profile_len - 1); each iteration has the size of off_max
           off_diag = offset - (n - window_size - diag);
-          // Rcout << "off_diag: " << off_diag << " ddd: " << ddd << " offset: " << offset << " diag: " << diag <<
-          // std::endl;
 
-          // Rcout << "Debug4.1.1.1" << std::endl;
           c = c + df[offset] * dg[off_diag] + df[off_diag] * dg[offset];
           c_cmp = c * sig[offset] * sig[off_diag];
-
-          // if(diag < 100 || diag > 970)
-          // Rcout << "offset: " << offset << " off_diag: " << off_diag << " diag : " << diag << " c_cmp: " << c_cmp
-          //       << " df[offset]: " << df[offset] << " dg[off_diag]: " << dg[off_diag]
-          //       << " df[off_diag]: " << df[off_diag] << " dg[offset]: " << dg[offset] << std::endl;
 
           // RMP
           if (c_cmp > rmp[off_diag]) {
@@ -156,7 +132,6 @@ List mpxiright_rcpp(NumericVector data_ref, uint64_t window_size, double ez, dou
               rpi[off_diag] = offset + 1;
             }
           }
-          // Rcout << "Debug4.1.1.3" << std::endl;
           gg++;
         }
 
@@ -174,16 +149,10 @@ List mpxiright_rcpp(NumericVector data_ref, uint64_t window_size, double ez, dou
     Rcout << "gg: " << gg << std::endl;
 
     // to do ed
-    // mmp[mmp > 1.0] = 1.0;
-    // mrmp[mrmp > 1.0] = 1.0;
     rmmp[rmmp > 1.0] = 1.0;
 
     if (euclidean) { // correlation to ed
-      // mmp = sqrt(2 * window_size * (1 - mmp));
-      // mrmp = sqrt(2 * window_size * (1 - mrmp));
       rmmp = sqrt(2 * window_size * (1 - rmmp));
-      // mmp[mmpi < 0] = R_PosInf;
-      // mrmp[mrpi < 0] = R_PosInf;
       rmmp[rmmpi < 0] = R_PosInf;
     }
 
@@ -266,7 +235,7 @@ List mpxileft_rcpp(NumericVector data_ref, uint64_t window_size, double ez, doub
 
     Progress p(100, progress);
 
-    // compute_order = sample(compute_order, compute_order.size());
+    compute_order = sample(compute_order, compute_order.size());
 
     uint64_t stop = 0;
 
@@ -302,17 +271,10 @@ List mpxileft_rcpp(NumericVector data_ref, uint64_t window_size, double ez, doub
           // min is offset + diag; max is (profile_len - 1); each iteration has the size of off_max
           off_diag = offset + diag;
 
-          // Rcout << "off_diff: " << off_max - off_start  << std::endl;
-
           c = c + df[offset] * dg[off_diag] + df[off_diag] * dg[offset];
           c_cmp = c * sig[offset] * sig[off_diag];
 
-          if(diag < 60 || diag > 900)
-          Rcout << "offset: " << offset << " off_diag: " << off_diag << " diag : " << diag << " c_cmp: " << c_cmp
-                << " df[offset]: " << df[offset] << " dg[off_diag]: " << dg[off_diag]
-                << " df[off_diag]: " << df[off_diag] << " dg[offset]: " << dg[offset] << std::endl;
-
-          // LMP?
+          // LMP
           if (c_cmp > lmp[off_diag]) {
             lmp[off_diag] = c_cmp;
             if (idxs) {
@@ -337,16 +299,10 @@ List mpxileft_rcpp(NumericVector data_ref, uint64_t window_size, double ez, doub
     Rcout << "gg: " << gg << std::endl;
 
     // to do ed
-    // mmp[mmp > 1.0] = 1.0;
-    // mrmp[mrmp > 1.0] = 1.0;
     lmmp[lmmp > 1.0] = 1.0;
 
     if (euclidean) { // correlation to ed
-      // mmp = sqrt(2 * window_size * (1 - mmp));
-      // mrmp = sqrt(2 * window_size * (1 - mrmp));
       lmmp = sqrt(2 * window_size * (1 - lmmp));
-      // mmp[mmpi < 0] = R_PosInf;
-      // mrmp[mrpi < 0] = R_PosInf;
       lmmp[lmmpi < 0] = R_PosInf;
     }
 
