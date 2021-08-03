@@ -25,14 +25,14 @@ using namespace RcppParallel;
 // @param data_ref Time Series
 // @return data_ref List
 // [[Rcpp::export]]
-List mpxi_rcpp(NumericVector data_ref, uint64_t window_size, double ez, double s_size, bool idxs, bool euclidean,
-               bool progress, uint64_t start, List old) {
+List mpxiright_rcpp(NumericVector data_ref, uint64_t window_size, double ez, double s_size, bool idxs, bool euclidean,
+                    bool progress, uint64_t start, List old) {
 
   uint64_t exclusion_zone = round(window_size * ez + DBL_EPSILON) + 1;
 
   try {
     double c, c_cmp;
-    uint32_t off_max, off_diag, offset, off_start;
+    uint32_t off_min, off_diag, offset, off_start;
     bool partial = false;
     // matrix profile using cross correlation,
     uint32_t n = data_ref.length();
@@ -46,46 +46,50 @@ List mpxi_rcpp(NumericVector data_ref, uint64_t window_size, double ez, double s
 
     uint32_t profile_len = n - window_size + 1;
 
-    IntegerVector compute_order;
+    IntegerVector compute_order = Range(0, n - window_size - exclusion_zone);
 
-    compute_order = Range(exclusion_zone, profile_len - 1);
+    IntegerVector new_order(compute_order.length());
+
+    std::reverse_copy(compute_order.begin(), compute_order.end(), new_order.begin());
+
+    compute_order = new_order;
+
+    // Rcout << "Debug2" << std::endl;
 
     NumericVector rmmp(profile_len, -1.0);
-    IntegerVector rmpi(profile_len, -1);
+    IntegerVector rmmpi(profile_len, -1);
 
     double *rmp = &rmmp[0];
-    int *rpi = &rmpi[0];
+    int *rpi = &rmmpi[0];
 
     if (start > 0) {
 
       rmmp[Range(0, profile_len - start - 1)] = as<NumericVector>(old["right_matrix_profile"]);
-      rmpi[Range(0, profile_len - start - 1)] = as<IntegerVector>(old["right_profile_index"]);
+      rmmpi[Range(0, profile_len - start - 1)] = as<IntegerVector>(old["right_profile_index"]);
 
       // add indexes
-      for (uint32_t id = (start + exclusion_zone); id < profile_len; id++) {
-        rmpi[id] = rmpi[id] + start;
-      }
+      // for (uint64_t i = (start + exclusion_zone); i < profile_len; i++) {
+      //   rpi[i] = rpi[i] + start;
+      // }
     }
 
     // differentials have 0 as their first entry. This simplifies index
     // calculations slightly and allows us to avoid special "first line"
     // handling.
-
+    // Rcout << "Debug3" << std::endl;
     // ddf is the diff(data_ref, lag = window_size) / 2
-    NumericVector ddf = 0.5 * (data_ref[Range(window_size, n - 1)] - data_ref[Range(0, n - window_size - 1)]);
-    ddf.push_front(0);
+    NumericVector ddf = 0.5 * (data_ref[Range(0, n - window_size - 1)] - data_ref[Range(window_size, n - 1)]);
+    ddf.push_back(0);
+
     // ddg: (data[(w+1):data_len] - mov_avg[2:(data_len - w + 1)]) + (data[1:(data_len - w)] - mov_avg[1:(data_len -
     // w)]) (subtract the mov_mean of all data, but the first window) + (subtract the mov_mean of all data, but the last
     // window)
     NumericVector ddg = (data_ref[Range(window_size, n - 1)] - mmu[Range(1, profile_len - 1)]) +
                         (data_ref[Range(0, n - window_size - 1)] - mmu[Range(0, n - window_size - 1)]);
-    ddg.push_front(0);
+    ddg.push_back(0);
 
     double *df = &ddf[0];
     double *dg = &ddg[0];
-
-    // first window demeaned
-    NumericVector ww = (data_ref[Range(0, window_size - 1)] - mmu[0]);
 
     uint64_t num_progress =
         ceil((double)compute_order.size() / 100); // added double inside sqrt to avoid ambiguity on Solaris
@@ -100,47 +104,59 @@ List mpxi_rcpp(NumericVector data_ref, uint64_t window_size, double ez, double s
       stop = round(compute_order.size() * s_size + DBL_EPSILON);
     }
 
-    uint64_t gg = 1;
-
+    uint64_t gg = 0;
+    // Rcout << "Debug4" << std::endl;
     try {
       uint64_t i = 1;
+      // first window demeaned
+      NumericVector ww = (data_ref[Range(n - window_size, n - 1)] - mmu[n - window_size]);
 
-      // IntegerVector new_order(compute_order.length());
-
-      // std::reverse_copy(compute_order.begin(), compute_order.end(), new_order.begin());
-
+      // Rcout << "Debug4.1" << std::endl;
       for (int32_t diag : compute_order) {
 
         if ((i % num_progress) == 0) {
           RcppThread::checkUserInterrupt();
           p.increment();
         }
-
+        // Rcout << "Debug4.1.1" << std::endl;
         // this always use the first window (ww); c is the sum of element-wise product
         c = inner_product((data_ref[Range(diag, (diag + window_size - 1))] - mu[diag]), ww);
 
+        // Rcout << " cr: " << c;
+
+        // Rcout << "Debug4.1.2" << std::endl;
         // off_max goes from profile_len - ez to 0
         if (start > 0)
-          off_max = MIN(start, (profile_len - diag));
+          off_min = MAX(n - window_size - start, n - window_size - diag - 1);
         else
-          off_max = (profile_len - diag);
-        off_start = 0;
+          off_min = (profile_len - diag);
+        off_start = n - window_size;
+        // Rcout << "Debug4.1.3" << std::endl;
 
-        for (offset = off_start; offset < off_max; offset++) {
+        for (offset = off_start; offset > off_min; offset--) {
+          // for (offset = (off_min+1); offset <= off_start; offset++) {
           // min is offset + diag; max is (profile_len - 1); each iteration has the size of off_max
-          off_diag = offset + diag;
+          off_diag = offset - (n - window_size - diag);
+          // Rcout << "off_diag: " << off_diag << " ddd: " << ddd << " offset: " << offset << " diag: " << diag <<
+          // std::endl;
 
+          // Rcout << "Debug4.1.1.1" << std::endl;
           c = c + df[offset] * dg[off_diag] + df[off_diag] * dg[offset];
           c_cmp = c * sig[offset] * sig[off_diag];
 
+          // if(diag < 100 || diag > 970)
+          // Rcout << "offset: " << offset << " off_diag: " << off_diag << " diag : " << diag << " c_cmp: " << c_cmp
+          //       << " df[offset]: " << df[offset] << " dg[off_diag]: " << dg[off_diag]
+          //       << " df[off_diag]: " << df[off_diag] << " dg[offset]: " << dg[offset] << std::endl;
+
           // RMP
-          if (c_cmp > rmp[offset]) {
-            rmp[offset] = c_cmp;
+          if (c_cmp > rmp[off_diag]) {
+            rmp[off_diag] = c_cmp;
             if (idxs) {
-              rpi[offset] = off_diag + 1;
+              rpi[off_diag] = offset + 1;
             }
           }
-
+          // Rcout << "Debug4.1.1.3" << std::endl;
           gg++;
         }
 
@@ -168,11 +184,11 @@ List mpxi_rcpp(NumericVector data_ref, uint64_t window_size, double ez, double s
       rmmp = sqrt(2 * window_size * (1 - rmmp));
       // mmp[mmpi < 0] = R_PosInf;
       // mrmp[mrpi < 0] = R_PosInf;
-      rmmp[rmpi < 0] = R_PosInf;
+      rmmp[rmmpi < 0] = R_PosInf;
     }
 
     if (idxs) {
-      return (List::create(Rcpp::Named("right_matrix_profile") = rmmp, Rcpp::Named("right_profile_index") = rmpi,
+      return (List::create(Rcpp::Named("right_matrix_profile") = rmmp, Rcpp::Named("right_profile_index") = rmmpi,
                            Rcpp::Named("partial") = partial));
     } else {
       return (List::create(Rcpp::Named("right_matrix_profile") = rmmp, Rcpp::Named("partial") = partial));
@@ -234,6 +250,7 @@ List mpxileft_rcpp(NumericVector data_ref, uint64_t window_size, double ez, doub
     // ddf is the diff(data_ref, lag = window_size) / 2
     NumericVector ddf = 0.5 * (data_ref[Range(window_size, n - 1)] - data_ref[Range(0, n - window_size - 1)]);
     ddf.push_front(0);
+
     // ddg: (data[(w+1):data_len] - mov_avg[2:(data_len - w + 1)]) + (data[1:(data_len - w)] - mov_avg[1:(data_len -
     // w)]) (subtract the mov_mean of all data, but the first window) + (subtract the mov_mean of all data, but the last
     // window)
@@ -244,15 +261,12 @@ List mpxileft_rcpp(NumericVector data_ref, uint64_t window_size, double ez, doub
     double *df = &ddf[0];
     double *dg = &ddg[0];
 
-    // first window demeaned
-    NumericVector ww = (data_ref[Range(0, window_size - 1)] - mmu[0]);
-
     uint64_t num_progress =
         ceil((double)compute_order.size() / 100); // added double inside sqrt to avoid ambiguity on Solaris
 
     Progress p(100, progress);
 
-    compute_order = sample(compute_order, compute_order.size());
+    // compute_order = sample(compute_order, compute_order.size());
 
     uint64_t stop = 0;
 
@@ -260,10 +274,12 @@ List mpxileft_rcpp(NumericVector data_ref, uint64_t window_size, double ez, doub
       stop = round(compute_order.size() * s_size + DBL_EPSILON);
     }
 
-    uint64_t gg = 1;
+    uint64_t gg = 0;
 
     try {
       uint64_t i = 1;
+      // first window demeaned
+      NumericVector ww = (data_ref[Range(0, window_size - 1)] - mmu[0]);
 
       for (int32_t diag : compute_order) {
 
@@ -286,8 +302,15 @@ List mpxileft_rcpp(NumericVector data_ref, uint64_t window_size, double ez, doub
           // min is offset + diag; max is (profile_len - 1); each iteration has the size of off_max
           off_diag = offset + diag;
 
+          // Rcout << "off_diff: " << off_max - off_start  << std::endl;
+
           c = c + df[offset] * dg[off_diag] + df[off_diag] * dg[offset];
           c_cmp = c * sig[offset] * sig[off_diag];
+
+          if(diag < 60 || diag > 900)
+          Rcout << "offset: " << offset << " off_diag: " << off_diag << " diag : " << diag << " c_cmp: " << c_cmp
+                << " df[offset]: " << df[offset] << " dg[off_diag]: " << dg[off_diag]
+                << " df[off_diag]: " << df[off_diag] << " dg[offset]: " << dg[offset] << std::endl;
 
           // LMP?
           if (c_cmp > lmp[off_diag]) {

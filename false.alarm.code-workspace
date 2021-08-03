@@ -253,6 +253,7 @@
       ".vscode",
       ".vscode-insiders",
       "**/.devcontainer/**"
-    ]
+    ],
+    "terminal.integrated.scrollback": 10000
   }
 }
