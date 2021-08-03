@@ -2,7 +2,8 @@
 // https://github.com/microsoft/vscode-dev-containers/tree/v0.188.0/containers/ubuntu
 {
   "name": "false.alarm dev",
-  "image": "franzbischoff/false.alarm:latest",
+  "dockerFile": "Dockerfile",
+  // "image": "franzbischoff/false.alarm:latest",
   "runArgs": [
     "-e",
     "GIT_EDITOR=code",

@@ -85,8 +85,8 @@ fft_rcpp <- function(z, invert) {
     .Call(`_false_alarm_fft_rcpp`, z, invert)
 }
 
-mpxi_rcpp <- function(data_ref, window_size, ez, s_size, idxs, euclidean, progress, start, old) {
-    .Call(`_false_alarm_mpxi_rcpp`, data_ref, window_size, ez, s_size, idxs, euclidean, progress, start, old)
+mpxiright_rcpp <- function(data_ref, window_size, ez, s_size, idxs, euclidean, progress, start, old) {
+    .Call(`_false_alarm_mpxiright_rcpp`, data_ref, window_size, ez, s_size, idxs, euclidean, progress, start, old)
 }
 
 mpxileft_rcpp <- function(data_ref, window_size, ez, s_size, idxs, euclidean, progress, start, old) {
