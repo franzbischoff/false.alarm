@@ -297,6 +297,20 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// mpxi_rcpp
+List mpxi_rcpp(NumericVector new_data, List object, uint64_t keep, bool progress);
+RcppExport SEXP _false_alarm_mpxi_rcpp(SEXP new_dataSEXP, SEXP objectSEXP, SEXP keepSEXP, SEXP progressSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< NumericVector >::type new_data(new_dataSEXP);
+    Rcpp::traits::input_parameter< List >::type object(objectSEXP);
+    Rcpp::traits::input_parameter< uint64_t >::type keep(keepSEXP);
+    Rcpp::traits::input_parameter< bool >::type progress(progressSEXP);
+    rcpp_result_gen = Rcpp::wrap(mpxi_rcpp(new_data, object, keep, progress));
+    return rcpp_result_gen;
+END_RCPP
+}
 // mpxiright_rcpp
 List mpxiright_rcpp(NumericVector data_ref, uint64_t window_size, double ez, double s_size, bool idxs, bool euclidean, bool progress, uint64_t start, List old);
 RcppExport SEXP _false_alarm_mpxiright_rcpp(SEXP data_refSEXP, SEXP window_sizeSEXP, SEXP ezSEXP, SEXP s_sizeSEXP, SEXP idxsSEXP, SEXP euclideanSEXP, SEXP progressSEXP, SEXP startSEXP, SEXP oldSEXP) {
@@ -769,6 +783,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_false_alarm_inner_product", (DL_FUNC) &_false_alarm_inner_product, 2},
     {"_false_alarm_sum_of_squares", (DL_FUNC) &_false_alarm_sum_of_squares, 1},
     {"_false_alarm_fft_rcpp", (DL_FUNC) &_false_alarm_fft_rcpp, 2},
+    {"_false_alarm_mpxi_rcpp", (DL_FUNC) &_false_alarm_mpxi_rcpp, 4},
     {"_false_alarm_mpxiright_rcpp", (DL_FUNC) &_false_alarm_mpxiright_rcpp, 9},
     {"_false_alarm_mpxileft_rcpp", (DL_FUNC) &_false_alarm_mpxileft_rcpp, 9},
     {"_false_alarm_mpx_rcpp", (DL_FUNC) &_false_alarm_mpx_rcpp, 7},
