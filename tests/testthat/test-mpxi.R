@@ -28,10 +28,28 @@ test_that("Normal mpx + update batch right", {
   expect_equal(as.numeric(tester0100$right_matrix_profile), as.numeric(tester00100$right_matrix_profile))
 })
 
+test_that("Normal mpx + update batch right new", {
+  tester00100 <- mpxi_rcpp(datar0100[1001:1100], tester0, 0, FALSE) # 93050
+
+  expect_equal(as.numeric(tester0100$right_profile_index), as.numeric(tester00100$right_profile_index))
+  expect_equal(as.numeric(tester0100$right_matrix_profile), as.numeric(tester00100$right_matrix_profile))
+})
+
+
 test_that("Normal mpx + increment right", {
   testerr00100 <- tester0
   for (i in 1:100) {
     testerr00100 <- mpxiright_rcpp(datar0100[1:(1100 - 100 + i)], 80, 0.5, 1.0, TRUE, FALSE, FALSE, 1, testerr00100)
+  }
+
+  expect_equal(as.numeric(tester0100$right_profile_index), as.numeric(testerr00100$right_profile_index))
+  expect_equal(as.numeric(tester0100$right_matrix_profile), as.numeric(testerr00100$right_matrix_profile))
+})
+
+test_that("Normal mpx + increment right new", {
+  testerr00100 <- tester0
+  for (i in 1:100) {
+    testerr00100 <- mpxi_rcpp(datar0100[1000 + i], testerr00100, 0, FALSE) # 93050
   }
 
   expect_equal(as.numeric(tester0100$right_profile_index), as.numeric(testerr00100$right_profile_index))

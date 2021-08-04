@@ -57,5 +57,5 @@ Config/testthat/parallel: false
 Remotes:
     rstudio/bookdown,
     ismayc/thesisdown,
-    r-lib/styler
+    r-lib/styler,
     r-lib/testthat
