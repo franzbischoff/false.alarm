@@ -4,7 +4,7 @@ author: "Francisco Bischoff"
 date: "on `r format(Sys.time(), '%B %d, %Y')`"
 bibliography: ./papers/references.bib
 link-citations: true
-csl: https://raw.githubusercontent.com/citation-style-language/styles/master/american-medical-association.csl
+csl: ./thesis/csl/ama.csl
 editor_options:
   markdown:
     mode: markdown
@@ -26,11 +26,15 @@ suppressPackageStartupMessages(library(kableExtra))
 
 <!-- badges: start -->
 
-![Binder](https://github.com/franzbischoff/false.alarm/workflows/Binder/badge.svg) [![Launch
-binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/franzbischoff/false.alarm/master?urlpath=rstudio)
-[![Read
-Thesis](https://img.shields.io/badge/read-thesis__down-brightgreen)](https://franzbischoff.github.io/false.alarm/)
+![Binder](https://github.com/franzbischoff/false.alarm/workflows/Binder/badge.svg) [![Launch binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/franzbischoff/false.alarm/master?urlpath=rstudio)
+[![Read Thesis](https://img.shields.io/badge/read-thesis__down-brightgreen)](https://franzbischoff.github.io/false.alarm/)
 [![](https://zenodo.org/badge/261530912.svg)](https://zenodo.org/badge/latestdoi/261530912)
+
+
+[![codecov](https://codecov.io/gh/franzbischoff/false.alarm/branch/develop/graph/badge.svg?token=w7AmbwhNvn)](https://codecov.io/gh/franzbischoff/false.alarm)
+[![CodeQL](https://github.com/franzbischoff/false.alarm/actions/workflows/codeql-analysis.yaml/badge.svg?branch=master)](https://github.com/github/codeql-action/)
+[![Language grade: C/C++](https://img.shields.io/lgtm/grade/cpp/g/franzbischoff/false.alarm.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/franzbischoff/false.alarm/context:cpp)
+
 
 <!-- badges: end -->
 

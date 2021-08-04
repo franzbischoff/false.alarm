@@ -11,14 +11,10 @@ name: Covr
 
 on:
   workflow_run:
-    workflows:
-      - Lint
     branches:
       - main
       - master
       - develop
-    types:
-      - completed
 
   workflow_dispatch:
   repository_dispatch:
@@ -26,7 +22,7 @@ on:
 jobs:
   test-coverage:
     runs-on: ubuntu-latest
-    if: ${{ github.event.workflow_run.conclusion == 'success' && contains(github.event.head_commit.message, 'coverage') }}
+    if: ${{ contains(github.event.head_commit.message, 'coverage') }}
     env:
       GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
       RENV_PATHS_ROOT: ~/.local/share/renv

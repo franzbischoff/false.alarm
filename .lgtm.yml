@@ -1,9 +1,14 @@
+path_classifiers:
+  test:
+    - "src/*"
 extraction:
   cpp:
     prepare:
       packages:
       - "r-base"
+      - "r-base-dev"
       - "libgit2-dev"
+      - "libcurl4-openssl-dev"
     configure:
       command:
       - "Rscript -e \"install.packages(c('remotes', 'devtools'))\""
