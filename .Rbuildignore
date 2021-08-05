@@ -52,3 +52,4 @@
 ^thesis$
 ^data-raw$
 ^inst/extdata$
+^inst/testfiles$

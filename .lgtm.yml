@@ -11,6 +11,7 @@ extraction:
       - "libcurl4-openssl-dev"
     configure:
       command:
+      - "sed -i 's/>= 4.0/>= 3.6.1/g' DESCRIPTION"
       - "Rscript -e \"install.packages(c('remotes', 'devtools'))\""
       - "Rscript -e \"remotes::install_github('ropensci/git2r', configure.args='--without-libgit2')\""
       - "Rscript -e \"remotes::install_deps(dependencies = TRUE)\""

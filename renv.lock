@@ -219,10 +219,10 @@
     },
     "cli": {
       "Package": "cli",
-      "Version": "3.0.0",
+      "Version": "3.0.1",
       "Source": "Repository",
       "Repository": "CRAN",
-      "Hash": "096829b701eec2d2b4538be63de97e75"
+      "Hash": "e3ae5d68dea0c55a12ea12a9fda02e61"
     },
     "clipr": {
       "Package": "clipr",
@@ -485,10 +485,15 @@
     },
     "git2r": {
       "Package": "git2r",
-      "Version": "0.28.0",
-      "Source": "Repository",
-      "Repository": "CRAN",
-      "Hash": "f64fd34026f6025de71a4354800e6d79"
+      "Version": "0.28.0.9000",
+      "Source": "GitHub",
+      "RemoteType": "github",
+      "RemoteHost": "api.github.com",
+      "RemoteRepo": "git2r",
+      "RemoteUsername": "ropensci",
+      "RemoteRef": "HEAD",
+      "RemoteSha": "7075ac37b66ddd46fe8fc83e16bec0b54a80d166",
+      "Hash": "68c6a919cea3baf6edf47b9a51677754"
     },
     "gitcreds": {
       "Package": "gitcreds",
@@ -765,17 +770,17 @@
     },
     "parallelly": {
       "Package": "parallelly",
-      "Version": "1.26.1",
+      "Version": "1.27.0",
       "Source": "Repository",
       "Repository": "CRAN",
-      "Hash": "267fe92836a0eb43becabd3306cc75d1"
+      "Hash": "e38aabb0dde91e5622b83747b559bfc2"
     },
     "pillar": {
       "Package": "pillar",
-      "Version": "1.6.1",
+      "Version": "1.6.2",
       "Source": "Repository",
       "Repository": "CRAN",
-      "Hash": "8672ae02bd20f6479bce2d06c7ff1401"
+      "Hash": "43f228eb4b49093d1c8a5c93cae9efe9"
     },
     "pingr": {
       "Package": "pingr",
@@ -940,15 +945,15 @@
     },
     "rmarkdown": {
       "Package": "rmarkdown",
-      "Version": "2.9.3",
+      "Version": "2.9.7",
       "Source": "GitHub",
       "RemoteType": "github",
-      "RemoteUsername": "rstudio",
-      "RemoteRepo": "rmarkdown",
-      "RemoteRef": "master",
-      "RemoteSha": "2700baf4c39229ef49bff48d841d8be5c7e54e15",
       "RemoteHost": "api.github.com",
-      "Hash": "ff739492b9b327ad425610f6cb359ac7"
+      "RemoteRepo": "rmarkdown",
+      "RemoteUsername": "rstudio",
+      "RemoteRef": "master",
+      "RemoteSha": "99df4e7db5ba0108c51557639e661df05554bf1b",
+      "Hash": "651cb375ad5088edd3a1f32a9f257eac"
     },
     "roxygen2": {
       "Package": "roxygen2",
@@ -1057,10 +1062,10 @@
     },
     "stringi": {
       "Package": "stringi",
-      "Version": "1.7.2",
+      "Version": "1.7.3",
       "Source": "Repository",
       "Repository": "CRAN",
-      "Hash": "45c84ccfd359febce4c7545fee3d36cb"
+      "Hash": "7943cfae120c77a255025e5f63856532"
     },
     "stringr": {
       "Package": "stringr",
@@ -1147,10 +1152,10 @@
     },
     "tibble": {
       "Package": "tibble",
-      "Version": "3.1.2",
+      "Version": "3.1.3",
       "Source": "Repository",
       "Repository": "CRAN",
-      "Hash": "349b40a9f144516d537c875e786ec8b8"
+      "Hash": "038455513fde65e79c25e724e0c84ca2"
     },
     "tidyr": {
       "Package": "tidyr",
@@ -1189,10 +1194,10 @@
     },
     "utf8": {
       "Package": "utf8",
-      "Version": "1.2.1",
+      "Version": "1.2.2",
       "Source": "Repository",
       "Repository": "CRAN",
-      "Hash": "c3ad47dc6da0751f18ed53c4613e3ac7"
+      "Hash": "c9c462b759a5cc844ae25b5942654d13"
     },
     "vctrs": {
       "Package": "vctrs",
