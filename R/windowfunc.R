@@ -46,7 +46,7 @@
 #' @rdname windowfunc
 #' @order 1
 #' @examples
-#' mov <- mov_mean(motifs_discords_small, 50)
+#' mov <- mov_mean(tsmp::motifs_discords_small, 50)
 mov_mean <- function(data, window_size, type = c("ogita", "normal", "weighted", "fading"), eps = 0.90) {
   # Parse arguments ---------------------------------
   "!!!DEBUG Parsing Arguments"
@@ -94,7 +94,7 @@ mov_mean <- function(data, window_size, type = c("ogita", "normal", "weighted", 
 #' @rdname windowfunc
 #' @order 2
 #' @examples
-#' mov <- mov_var(motifs_discords_small, 50)
+#' mov <- mov_var(tsmp::motifs_discords_small, 50)
 mov_var <- function(data, window_size, type = c("ogita", "normal", "weighted", "fading"), eps = 0.90) {
   # Parse arguments ---------------------------------
   "!!!DEBUG Parsing Arguments"
@@ -141,7 +141,7 @@ mov_var <- function(data, window_size, type = c("ogita", "normal", "weighted", "
 #' @rdname windowfunc
 #' @order 3
 #' @examples
-#' mov <- mov_sum(motifs_discords_small, 50)
+#' mov <- mov_sum(tsmp::motifs_discords_small, 50)
 mov_sum <- function(data, window_size, type = c("ogita", "normal", "weighted", "fading"), eps = 0.90) {
   # Parse arguments ---------------------------------
   "!!!DEBUG Parsing Arguments"
@@ -189,7 +189,7 @@ mov_sum <- function(data, window_size, type = c("ogita", "normal", "weighted", "
 #' @rdname windowfunc
 #' @order 4
 #' @examples
-#' mov <- mov_max(motifs_discords_small, 50)
+#' mov <- mov_max(tsmp::motifs_discords_small, 50)
 mov_max <- function(data, window_size) {
   # Parse arguments ---------------------------------
   "!!!DEBUG Parsing Arguments"
@@ -229,7 +229,7 @@ mov_max <- function(data, window_size) {
 #' @rdname windowfunc
 #' @order 5
 #' @examples
-#' mov <- mov_min(motifs_discords_small, 50)
+#' mov <- mov_min(tsmp::motifs_discords_small, 50)
 mov_min <- function(data, window_size) {
   # Parse arguments ---------------------------------
   "!!!DEBUG Parsing Arguments"
@@ -273,7 +273,7 @@ mov_min <- function(data, window_size) {
 #' @rdname windowfunc
 #' @order 6
 #' @examples
-#' mov <- mov_std(motifs_discords_small, 50)
+#' mov <- mov_std(tsmp::motifs_discords_small, 50)
 mov_std <- function(data, window_size, rcpp = TRUE) {
   # Parse arguments ---------------------------------
   "!!!DEBUG Parsing Arguments"
@@ -317,7 +317,7 @@ mov_std <- function(data, window_size, rcpp = TRUE) {
 #' @rdname windowfunc
 #' @order 7
 #' @examples
-#' mov <- movmean_std(motifs_discords_small, 50)
+#' mov <- movmean_std(tsmp::motifs_discords_small, 50)
 movmean_std <- function(data, window_size, rcpp = TRUE) {
   if (window_size < 2) {
     stop("'window_size' must be at least 2.")
@@ -359,7 +359,7 @@ movmean_std <- function(data, window_size, rcpp = TRUE) {
 #' @rdname windowfunc
 #' @order 8
 #' @examples
-#' mov <- muinvn(motifs_discords_small, 50)
+#' mov <- muinvn(tsmp::motifs_discords_small, 50)
 muinvn <- function(data, window_size, n_workers = 1) {
   if (window_size < 2) {
     stop("'window_size' must be at least 2.")
@@ -383,7 +383,7 @@ muinvn <- function(data, window_size, n_workers = 1) {
 #' @rdname windowfunc
 #' @order 9
 #' @examples
-#' zero_cross <- zero_crossing(motifs_discords_small, 50)
+#' zero_cross <- zero_crossing(tsmp::motifs_discords_small, 50)
 zero_crossing <- function(data, window_size) {
   checkmate::qassert(data, "N+")
   window_size <- as.integer(checkmate::qassert(window_size, "X+"))

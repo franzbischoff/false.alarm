@@ -80,7 +80,7 @@ that may or not be slower.}
 \code{binary_split()}: Creates a vector with the indexes of binary split.
 }
 \examples{
-normalized <- znorm(motifs_discords_small)
+normalized <- znorm(tsmp::motifs_discords_small)
 fake_data <- c(rep(3, 100), rep(2, 100), rep(1, 100))
 correlation <- ed_corr(fake_data, 50)
 fake_data <- c(rep(0.5, 100), rep(1, 100), rep(0.1, 100))

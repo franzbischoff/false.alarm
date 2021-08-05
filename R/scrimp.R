@@ -14,7 +14,7 @@
 #' @rdname mp_algos
 #' @order 3
 #' @examples
-#' mp <- scrimp(motifs_discords_small, 50)
+#' mp <- scrimp(tsmp::motifs_discords_small, 50)
 scrimp <- function(data, window_size, query = NULL, exclusion_zone = 0.5, s_size = 1.0, pre_scrimp = 0.25,
                    n_workers = 1, progress = TRUE) {
 

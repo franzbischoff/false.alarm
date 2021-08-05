@@ -32,13 +32,10 @@
 #' @references Website: <http://www.cs.ucr.edu/~eamonn/MatrixProfile.html>
 #'
 #' @examples
-#' mp <- stomp(mp_toy_data$data[1:200, 1], window_size = 30, verbose = 0)
+#' mp <- stomp(tsmp::mp_toy_data$data[1:200, 1], window_size = 30, verbose = 0)
 #' \donttest{
-#' #' # using threads
-#' mp <- stomp_par(mp_toy_data$data[1:400, 1], window_size = 30, verbose = 0)
-#'
-#' ref_data <- mp_toy_data$data[, 1]
-#' query_data <- mp_toy_data$data[, 2]
+#' ref_data <- tsmp::mp_toy_data$data[, 1]
+#' query_data <- tsmp::mp_toy_data$data[, 2]
 #' # self similarity
 #' mp <- stomp(ref_data, window_size = 30)
 #' # join similarity

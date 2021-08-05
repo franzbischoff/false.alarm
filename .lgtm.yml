@@ -12,6 +12,7 @@ extraction:
     configure:
       command:
       - "Rscript -e \"install.packages(c('remotes', 'devtools'))\""
+      - "Rscript -e \"remotes::install_github('ropensci/git2r')\""
       - "Rscript -e \"remotes::install_deps(dependencies = TRUE)\""
       - "Rscript -e \"Rcpp::compileAttributes()\""
     index:

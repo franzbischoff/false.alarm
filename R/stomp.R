@@ -16,6 +16,8 @@
 #' @param window_size an `int`. Size of the sliding window.
 #' @param exclusion_zone a `numeric`. Size of the exclusion zone, based on window size (default is
 #'   `1/2`). See details.
+#' @param time_constraint an `int`. Max distance where to look for the best match in matrix profile.
+#' (default is NULL).
 #' @param verbose an `int`. See details. (Default is `2`).
 #'
 #' @return Returns a `MatrixProfile` object, a `list` with the matrix profile `mp`, profile index `pi`
@@ -34,19 +36,16 @@
 #' @references Website: <http://www.cs.ucr.edu/~eamonn/MatrixProfile.html>
 #'
 #' @examples
-#' mp <- stomp(mp_toy_data$data[1:200, 1], window_size = 30, verbose = 0)
+#' mp <- stomp(tsmp::mp_toy_data$data[1:200, 1], window_size = 30, verbose = 0)
 #' \donttest{
-#' #' # using threads
-#' mp <- stomp_par(mp_toy_data$data[1:400, 1], window_size = 30, verbose = 0)
-#'
-#' ref_data <- mp_toy_data$data[, 1]
-#' query_data <- mp_toy_data$data[, 2]
+#' ref_data <- tsmp::mp_toy_data$data[, 1]
+#' query_data <- tsmp::mp_toy_data$data[, 2]
 #' # self similarity
 #' mp <- stomp(ref_data, window_size = 30)
 #' # join similarity
 #' mp2 <- stomp(ref_data, query_data, window_size = 30)
 #' }
-stomp2 <- function(..., window_size, exclusion_zone = getOption("tsmp.exclusion_zone", 1 / 2), time_constraint = NULL,
+stomp <- function(..., window_size, exclusion_zone = getOption("tsmp.exclusion_zone", 1 / 2), time_constraint = NULL,
                    verbose = getOption("tsmp.verbose", 2)) {
   argv <- list(...)
   argc <- length(argv)
@@ -118,10 +117,6 @@ stomp2 <- function(..., window_size, exclusion_zone = getOption("tsmp.exclusion_
       format = "STOMP [:bar] :percent at :tick_rate it/s, elapsed: :elapsed, eta: :eta",
       clear = FALSE, total = num_queries, width = 80
     )
-  }
-
-  if (verbose > 2) {
-    on.exit(beep(sounds[[1]]), TRUE)
   }
 
   first_product <- matrix(0, num_queries, 1)

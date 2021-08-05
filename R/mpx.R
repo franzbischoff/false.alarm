@@ -5,6 +5,8 @@
 #' @param idxs (`mpx()` only) A logical. Specifies if the computation will return the Profile Index or not. Defaults to
 #'   `TRUE`.
 #' @param distance (`mpx()` only) A string. Currently accepts `euclidean` and `pearson`. Defaults to `euclidean`.
+#' @param constraint an `int`. Max distance where to look for the best match in matrix profile.
+#' (default is NULL).
 #'
 #' @details ## mpx
 #' This algorithm was developed apart from the main Matrix Profile branch that relies on Fast Fourier Transform (FFT) at
@@ -20,7 +22,7 @@
 #' @rdname mp_algos
 #' @order 4
 #' @examples
-#' mp <- mpx(motifs_discords_small, 50)
+#' mp <- mpx(tsmp::motifs_discords_small, 50)
 mpx <- function(data, window_size, query = NULL, exclusion_zone = 0.5, s_size = 1.0, idxs = TRUE,
                 distance = c("euclidean", "pearson"), n_workers = 1, progress = TRUE, constraint = NULL) {
 
@@ -105,8 +107,7 @@ mpx <- function(data, window_size, query = NULL, exclusion_zone = 0.5, s_size = 
             s_size,
             as.logical(idxs),
             as.logical(dist),
-            as.logical(progress),
-            constraint
+            as.logical(progress)
           )
         }
       },

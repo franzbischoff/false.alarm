@@ -104,13 +104,13 @@ function used by \code{mpx()}. It returns the \code{sig} (stable inverse centere
 \code{1 / (std * sqrt(window_size))}).
 }
 \examples{
-mov <- mov_mean(motifs_discords_small, 50)
-mov <- mov_var(motifs_discords_small, 50)
-mov <- mov_sum(motifs_discords_small, 50)
-mov <- mov_max(motifs_discords_small, 50)
-mov <- mov_min(motifs_discords_small, 50)
-mov <- mov_std(motifs_discords_small, 50)
-mov <- movmean_std(motifs_discords_small, 50)
-mov <- muinvn(motifs_discords_small, 50)
-zero_cross <- zero_crossing(motifs_discords_small, 50)
+mov <- mov_mean(tsmp::motifs_discords_small, 50)
+mov <- mov_var(tsmp::motifs_discords_small, 50)
+mov <- mov_sum(tsmp::motifs_discords_small, 50)
+mov <- mov_max(tsmp::motifs_discords_small, 50)
+mov <- mov_min(tsmp::motifs_discords_small, 50)
+mov <- mov_std(tsmp::motifs_discords_small, 50)
+mov <- movmean_std(tsmp::motifs_discords_small, 50)
+mov <- muinvn(tsmp::motifs_discords_small, 50)
+zero_cross <- zero_crossing(tsmp::motifs_discords_small, 50)
 }

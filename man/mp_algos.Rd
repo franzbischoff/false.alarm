@@ -66,6 +66,9 @@ This parameter is ignored when using multithread or AB-join.}
 \code{TRUE}.}
 
 \item{distance}{(\code{mpx()} only) A string. Currently accepts \code{euclidean} and \code{pearson}. Defaults to \code{euclidean}.}
+
+\item{constraint}{an \code{int}. Max distance where to look for the best match in matrix profile.
+(default is NULL).}
 }
 \value{
 Returns a \code{list} with the \code{matrix_profile}, \code{profile_index} (if \code{idxs} is \code{TRUE} in \code{mpx()}), and some
@@ -118,13 +121,13 @@ on Ogita's work for better precision computing mean and standard deviation (part
 }
 }
 \section{This document}{
-Last updated on 2021-07-29 using R version 4.1.0.
+Last updated on 2021-08-05 using R version 4.1.0.
 }
 
 \examples{
-mp <- stamp(motifs_discords_small, 50)
-mp <- scrimp(motifs_discords_small, 50)
-mp <- mpx(motifs_discords_small, 50)
+mp <- stamp(tsmp::motifs_discords_small, 50)
+mp <- scrimp(tsmp::motifs_discords_small, 50)
+mp <- mpx(tsmp::motifs_discords_small, 50)
 }
 \references{
 \itemize{
@@ -151,9 +154,9 @@ Website: \url{http://www.cs.ucr.edu/~eamonn/MatrixProfile.html}
 \code{mpxab()} for the forward and reverse join-similarity.
 
 Other matrix profile computations: 
-\code{\link{stomp2}()}
+\code{\link{stomp}()}
 
 Other matrix profile computations: 
-\code{\link{stomp2}()}
+\code{\link{stomp}()}
 }
 \concept{matrix profile computations}

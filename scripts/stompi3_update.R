@@ -10,9 +10,9 @@
 #' @return Returns the input `.mp` updated with the new information.
 #'
 #' @examples
-#' mp <- tsmp(mp_toy_data$data[1:200, 1], window_size = 30, verbose = 0)
-#' mpi <- stompi_update(mp, mp_toy_data$data[201:300, 1])
-#' mp <- tsmp(mp_toy_data$data[1:300, 1], window_size = 30, verbose = 0)
+#' mp <- tsmp(tsmp::mp_toy_data$data[1:200, 1], window_size = 30, verbose = 0)
+#' mpi <- stompi_update(mp, tsmp::mp_toy_data$data[201:300, 1])
+#' mp <- tsmp(tsmp::mp_toy_data$data[1:300, 1], window_size = 30, verbose = 0)
 #' all.equal(mp, mpi, check.attributes = FALSE)
 stompi3_update <- function(.mp, new_data, history_size = FALSE) {
   if (is.null(new_data) || is.na(new_data) || is.infinite(new_data)) {

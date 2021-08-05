@@ -1,10 +1,13 @@
+Asystole
 Benschoten
 CCM
 Centre
 CinC
+CodeQL
 Conf
 Dau
 EDC
+Fibrillatory
 Funning
 GPUs
 Gantt
@@ -26,6 +29,7 @@ Physionet
 Physionet's
 Physionet’s
 Proc
+QRS
 RDM
 Rcpp
 RcppParallel
@@ -42,6 +46,8 @@ Zenhub
 Zhu
 al
 annakrystalli
+api
+codecov
 dcc
 doi
 et
@@ -52,7 +58,6 @@ http
 https
 interoperable
 joss
-julho
 macOS
 mpx
 multithread

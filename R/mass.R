@@ -20,8 +20,8 @@
 #' @order 2
 #'
 #' @examples
-#' pre <- mass_pre(motifs_discords_small, 50)
-#' dist_profile <- mass(pre, motifs_discords_small)
+#' pre <- mass_pre(tsmp::motifs_discords_small, 50)
+#' dist_profile <- mass(pre, tsmp::motifs_discords_small)
 mass_pre <- function(data, window_size, query = NULL, type = c("normalized", "non_normalized", "absolute", "weighted"),
                      weights = NULL) {
   # Parse arguments ---------------------------------
@@ -100,8 +100,8 @@ mass_pre <- function(data, window_size, query = NULL, type = c("normalized", "no
 #' @rdname mass
 #' @order 1
 #' @examples
-#' pre <- mass_pre(motifs_discords_small, 50)
-#' dist_profile <- mass(pre, motifs_discords_small)
+#' pre <- mass_pre(tsmp::motifs_discords_small, 50)
+#' dist_profile <- mass(pre, tsmp::motifs_discords_small)
 mass <- function(pre_obj, data, query = data, index = 1, version = c("v3", "v2"), n_workers = 1) {
   checkmate::qassert(pre_obj, "L+")
   type <- match.arg(pre_obj$type, c("normalized", "non_normalized", "absolute", "weighted"))

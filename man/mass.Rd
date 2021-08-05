@@ -66,8 +66,8 @@ There are currently four ways to compare the window with the data:
 }
 }
 \examples{
-pre <- mass_pre(motifs_discords_small, 50)
-dist_profile <- mass(pre, motifs_discords_small)
-pre <- mass_pre(motifs_discords_small, 50)
-dist_profile <- mass(pre, motifs_discords_small)
+pre <- mass_pre(tsmp::motifs_discords_small, 50)
+dist_profile <- mass(pre, tsmp::motifs_discords_small)
+pre <- mass_pre(tsmp::motifs_discords_small, 50)
+dist_profile <- mass(pre, tsmp::motifs_discords_small)
 }

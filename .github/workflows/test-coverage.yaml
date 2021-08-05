@@ -10,7 +10,7 @@
 name: Covr
 
 on:
-  workflow_run:
+  push:
     branches:
       - main
       - master

@@ -15,7 +15,7 @@
 #' @order 1
 #' @rdname math_tools
 #' @examples
-#' normalized <- znorm(motifs_discords_small)
+#' normalized <- znorm(tsmp::motifs_discords_small)
 znorm <- function(data, rcpp = TRUE) {
   # Rcpp is faster
   if (rcpp) {

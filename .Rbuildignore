@@ -38,12 +38,16 @@
 ^\.vscode$
 ^Makefile$
 ^docs/_pkgdown\.yml$
-^_targets*$
+^_targets$
 ^_targets\.R$
+^run\.R$
+^run\.sh$
+^_targets_packages\.R$
 ^analysis$
 ^output$
 ^protocol$
 ^review$
+^papers$
 ^scripts$
 ^thesis$
 ^data-raw$

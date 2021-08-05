@@ -40,8 +40,8 @@
 #'
 #' @examples
 #'
-#' w <- mp_toy_data$sub_len
-#' ref_data <- mp_toy_data$data[, 1]
+#' w <- tsmp::mp_toy_data$sub_len
+#' ref_data <- tsmp::mp_toy_data$data[, 1]
 #' # minimum example, data and query
 #' nn <- dist_profile(ref_data, ref_data[1:w])
 #' distance_profile <- sqrt(nn$distance_profile)

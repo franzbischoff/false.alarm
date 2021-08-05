@@ -60,7 +60,7 @@
 #' @order 1
 #'
 #' @examples
-#' mp <- stamp(motifs_discords_small, 50)
+#' mp <- stamp(tsmp::motifs_discords_small, 50)
 stamp <- function(data, window_size, query = NULL, exclusion_zone = 0.5, s_size = 1.0, n_workers = 1, progress = TRUE) {
 
   # Parse arguments ---------------------------------
