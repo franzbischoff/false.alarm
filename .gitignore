@@ -94,3 +94,4 @@ protocol/**/*.svg
 mpxtest.RData
 .devcontainer/gpg-agent.conf
 .devcontainer/gpg.conf
+/.travis.yml
