@@ -66,7 +66,7 @@
 #' )
 #' distance_profile <- sqrt(nn$distance_profile)
 dist_profile2 <- function(data, query, ..., window_size = NULL, method = "v3", index = 1, k = NULL,
-                         weight = NULL, paa = 1) {
+                          weight = NULL, paa = 1) {
 
   ## ---- Verify if method exists ----
   # set as v3 if no method is entered

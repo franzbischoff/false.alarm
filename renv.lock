@@ -72,12 +72,26 @@
       "Repository": "CRAN",
       "Hash": "b203113193e70978a696b2809525649d"
     },
+    "RApiSerialize": {
+      "Package": "RApiSerialize",
+      "Version": "0.1.0",
+      "Source": "Repository",
+      "Repository": "CRAN",
+      "Hash": "c5a68b4db79cfe8502878b3ed2b59853"
+    },
     "RColorBrewer": {
       "Package": "RColorBrewer",
       "Version": "1.1-2",
       "Source": "Repository",
       "Repository": "CRAN",
       "Hash": "e031418365a7f7a766181ab5a41a5716"
+    },
+    "RInside": {
+      "Package": "RInside",
+      "Version": "0.2.16",
+      "Source": "Repository",
+      "Repository": "CRAN",
+      "Hash": "0c9f73d6615c1056714cc304f4403369"
     },
     "RJSONIO": {
       "Package": "RJSONIO",
@@ -92,6 +106,25 @@
       "Source": "Repository",
       "Repository": "CRAN",
       "Hash": "dab19adae4440ae55aa8a9d238b246bb"
+    },
+    "RcppArmadillo": {
+      "Package": "RcppArmadillo",
+      "Version": "0.10.6.0.0",
+      "Source": "Repository",
+      "Repository": "CRAN",
+      "Hash": "d34bcef6e2df81ab2d44c7fbe8b4d3f0"
+    },
+    "RcppDeepState": {
+      "Package": "RcppDeepState",
+      "Version": "1.0",
+      "Source": "GitHub",
+      "RemoteType": "github",
+      "RemoteHost": "api.github.com",
+      "RemoteRepo": "RcppDeepState",
+      "RemoteUsername": "akhikolla",
+      "RemoteRef": "HEAD",
+      "RemoteSha": "6e17de4f1a409ce97bcc02d1936d3750a115478e",
+      "Hash": "fbc435de11ce974734d6ced17dc61217"
     },
     "RcppParallel": {
       "Package": "RcppParallel",
@@ -754,6 +787,13 @@
       "Repository": "CRAN",
       "Hash": "c64865aba235f36a49d798613cbfccf7"
     },
+    "nc": {
+      "Package": "nc",
+      "Version": "2020.8.6",
+      "Source": "Repository",
+      "Repository": "CRAN",
+      "Hash": "82df36f7d0ca6e38d652d3ed56295ee8"
+    },
     "nlme": {
       "Package": "nlme",
       "Version": "3.1-152",
@@ -879,6 +919,13 @@
       "Source": "Repository",
       "Repository": "CRAN",
       "Hash": "97def703420c8ab10d8f0e6c72101e02"
+    },
+    "qs": {
+      "Package": "qs",
+      "Version": "0.25.1",
+      "Source": "Repository",
+      "Repository": "CRAN",
+      "Hash": "d0aa38b78543513496180ddd02eedc12"
     },
     "rappdirs": {
       "Package": "rappdirs",
@@ -1060,6 +1107,13 @@
       "Repository": "CRAN",
       "Hash": "b8c899a5c83f0d897286550481c91798"
     },
+    "stringfish": {
+      "Package": "stringfish",
+      "Version": "0.15.2",
+      "Source": "Repository",
+      "Repository": "CRAN",
+      "Hash": "f769216ea83899eacff12ba03796d960"
+    },
     "stringi": {
       "Package": "stringi",
       "Version": "1.7.3",
@@ -1135,8 +1189,8 @@
       "RemoteUsername": "r-lib",
       "RemoteRepo": "testthat",
       "RemoteRef": "master",
-      "RemoteSha": "7a13013be9e4229009d86271770eec3a501f5b28",
-      "Hash": "45fbac7f38185ac47d136d268e1af11c"
+      "RemoteSha": "18b2c6c5cc8c4254da499d0d17ba4694faac1d1d",
+      "Hash": "0026420c082e0a36833d8d24f10593dc"
     },
     "thesisdown": {
       "Package": "thesisdown",

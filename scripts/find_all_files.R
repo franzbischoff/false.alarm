@@ -5,7 +5,6 @@
 #'
 
 find_all_files <- function(path = getOption("target_dataset_path", default = "inst/extdata/physionet/"), long = FALSE) {
-
   "!DEBUG Starting process"
 
   if (long) {

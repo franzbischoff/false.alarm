@@ -106,7 +106,7 @@
       },
       "args": [
         "-e",
-        "styler:::style_dir(filetype = c('R', 'Rmd'), recursive = TRUE, exclude_dirs = c('dev', 'renv', '.history'))"
+        "styler:::style_dir(filetype = c('R', 'Rmd'), recursive = TRUE, exclude_files = 'R/RcppExports.R', exclude_dirs = c('dev', 'renv', '.history'))"
       ],
       "options": {
         "cwd": "${workspaceFolder}"
@@ -206,17 +206,23 @@
       "args": [
         "-std=gnu++11",
         "-DNDEBUG",
-        "-I\"C:/PROGRA~1/R/R-40~1.3/include\"",
-        // "-I\"${workspaceFolder}/renv/library/R-4.0/${input:renv_arch}/Rcpp/include\"",
-        // "-I\"${workspaceFolder}/renv/library/R-4.0/${input:renv_arch}/RcppParallel/include\"",
-        // "-I\"${workspaceFolder}/renv/library/R-4.0/${input:renv_arch}/RcppProgress/include\"",
-        // "-I\"${workspaceFolder}/renv/library/R-4.0/${input:renv_arch}/RcppThread/include\"",
-        // "-DRCPP_PARALLEL_USE_TBB=1",
+        "-I\"/usr/share/R/include\"",
+        "-I\"${workspaceFolder}/renv/library/R-4.1/${input:renv_arch}/Rcpp/include\"",
+        "-I\"${workspaceFolder}/renv/library/R-4.1/${input:renv_arch}/RcppParallel/include\"",
+        "-I\"${workspaceFolder}/renv/library/R-4.1/${input:renv_arch}/RcppProgress/include\"",
+        "-I\"${workspaceFolder}/renv/library/R-4.1/${input:renv_arch}/RcppThread/include\"",
+        "-DRCPP_PARALLEL_USE_TBB=1",
+        "-DSTRICT_R_HEADERS",
+        "-fpic",
+        "-g",
         "-O2",
+        "-fstack-protector-strong",
         "-Wall",
-        "-mfpmath=sse",
-        "-msse2",
-        "-mstackrealign",
+        "-D_FORTIFY_SOURCE=2",
+        // "-mfpmath=sse",
+        // "-msse2",
+        // "-mstackrealign",
+        "-fdiagnostics-color=always",
         "-c",
         "${fileBasename}",
         "-o",
