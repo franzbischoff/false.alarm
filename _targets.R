@@ -1,10 +1,13 @@
 library(targets)
 library(tarchetypes)
-# library(false.alarm)
-# devtools::load_all(".")
 
-Sys.setenv(DEBUGME = "R_GlobalEnv")
-# Sys.setenv(DEBUGME_OUTPUT_FILE = "debugme.log")
+dev_mode <- !identical(Sys.getenv("DEBUGME"), "")
+
+if (dev_mode) {
+  # I know I shall not use this
+  # devtools::load_all(".")
+  # Sys.setenv(DEBUGME_OUTPUT_FILE = "debugme.log")
+}
 
 # Load all scripts
 script_files <- list.files(here::here("scripts"), pattern = "*.R")
@@ -16,15 +19,15 @@ options(target_dataset_path = "inst/extdata/physionet/")
 
 # *** If using clustermq for multithreading / clustering ***
 ### Localy https://books.ropensci.org/targets/hpc.html#clustermq
-options(clustermq.scheduler = "multiprocess")
+# options(clustermq.scheduler = "multiprocess")
 ### Remotely
 # options(clustermq.scheduler = "sge", clustermq.template = "sge.tmpl")
 
 # *** If using future for multithreading / clustering ***
-# library(future)
+library(future)
 ### Localy
-# library(future.callr)
-# future::plan(callr)
+library(future.callr)
+future::plan(callr)
 ### Remotely
 # library(future.batchtools)
 # future::plan(batchtools_sge, template = "sge.tmpl")
@@ -34,26 +37,24 @@ options(clustermq.scheduler = "multiprocess")
 tar_option_set(
   packages = "false.alarm",
   format = "rds",
-  resources = list(
-    # *** If using clustermq for multithreading / clustering ***
-    clustermq = tar_resources_clustermq(template = list(num_cores = 4)),
-    # *** If using future for multithreading / clustering ***
-    # future = tar_resources_future(resources = list(num_cores = 4)),
-    compress = "xz"
+  resources = tar_resources(
+  #   # *** If using clustermq for multithreading / clustering ***
+    # clustermq = tar_resources_clustermq(template = list(n_cores  = 1)) # or n_jobs??
+  #   # *** If using future for multithreading / clustering ***
+    future = tar_resources_future(resources = list(n_cores = 4))
   ),
   garbage_collection = TRUE,
-  error = "workspace"
+  workspace_on_error = TRUE
   # envir = globalenv(),
   # iteration = "list",
   # debug = "read_ecg",
   # imports = "false.alarm" # TODO: remove when there is no change on package functions. Clears the graph.
 )
 
-# tar_make_clustermq(workers = 4)
-# debug(read_ecg)
-
 # start debugme after loading all functions
-debugme::debugme()
+if (dev_mode) {
+  debugme::debugme()
+}
 
 list(
   list(
@@ -70,58 +71,75 @@ list(
       read_ecg(file_paths),
       pattern = map(file_paths)
     ),
-    #### Compute filters for noisy data ----
-    tar_target(
-      whole_dataset_filter,
-      process_ts_in_file(whole_dataset,
-        exclude = c("time", "ABP", "PLETH", "RESP"),
-        fun = filter_data,
-        params = list(
-          attribute = "filters",
-          window = 200,
-          cplx_lim = 8
-        )
-      ),
-      pattern = map(whole_dataset)
-    ),
-    #### Compute the Matrix Profile ----
+    # #### Compute filters for noisy data ----
+    # tar_target(
+    #   whole_dataset_filter,
+    #   process_ts_in_file(whole_dataset,
+    #     exclude = c("time", "ABP", "PLETH", "RESP"),
+    #     fun = filter_data,
+    #     params = list(
+    #       attribute = "filters",
+    #       window = 200,
+    #       cplx_lim = 8
+    #     )
+    #   ),
+    #   pattern = map(whole_dataset)
+    # ),
+    #### Compute the Right Matrix Profile ----
     tar_target(
       whole_dataset_mp,
-      process_ts_in_file(whole_dataset_filter,
+      process_ts_in_file(whole_dataset,
         exclude = c("time", "ABP", "PLETH", "RESP"),
-        fun = compute_matrix_profile,
+        fun = compute_streaming_profile,
         params = list(
           attribute = "mp",
-          window_size = 200, ez = 0.5, idxs = TRUE,
-          s_size = 1.0, progress = FALSE,
-          distance = "euclidean",
+          window_size = 200,
+          ez = 0.5,
+          progress = FALSE,
+          batch = 100,
           constraint = 20 * 250
         )
       ),
-      pattern = map(whole_dataset_filter)
-    ),
-    ### Apply Filter on MP ----
-    tar_target(
-      whole_dataset_mp_filtered,
-      process_ts_in_file(whole_dataset_mp,
-        exclude = c("time", "ABP", "PLETH", "RESP"),
-        fun = filter_mp,
-        params = list(
-          attribute = "mp",
-          filter = "complex_lim"
-        )
-      ),
-      pattern = map(whole_dataset_mp)
-    ),
-    #### Compute the FLUSS Arcs ----
-    tar_target(
-      whole_dataset_mp_arcs,
-      compute_arcs(whole_dataset_mp_filtered,
-        exclude = c("time", "ABP", "PLETH", "RESP"),
-        time_constraint = 20 * 250
-      ), # 30s 250hz
-      pattern = map(whole_dataset_mp_filtered)
+      pattern = map(whole_dataset)
     )
+    # #### Compute the Matrix Profile ----
+    # tar_target(
+    #   whole_dataset_mp,
+    #   process_ts_in_file(whole_dataset_filter,
+    #     exclude = c("time", "ABP", "PLETH", "RESP"),
+    #     fun = compute_matrix_profile,
+    #     params = list(
+    #       attribute = "mp",
+    #       window_size = 200, ez = 0.5, idxs = TRUE,
+    #       s_size = 1.0, progress = FALSE,
+    #       distance = "euclidean",
+    #       constraint = 20 * 250
+    #     )
+    #   ),
+    #   pattern = map(whole_dataset_filter)
+    # ),
+    # ### Apply Filter on MP ----
+    # tar_target(
+    #   whole_dataset_mp_filtered,
+    #   process_ts_in_file(whole_dataset_mp,
+    #     exclude = c("time", "ABP", "PLETH", "RESP"),
+    #     fun = filter_mp,
+    #     params = list(
+    #       attribute = "mp",
+    #       filter = "complex_lim"
+    #     )
+    #   ),
+    #   pattern = map(whole_dataset_mp)
+    # ),
+    # #### Compute the FLUSS Arcs ----
+    # tar_target(
+    #   whole_dataset_mp_arcs,
+    #   compute_arcs(whole_dataset_mp_filtered,
+    #     exclude = c("time", "ABP", "PLETH", "RESP"),
+    #     time_constraint = 20 * 250
+    #   ), # 30s 250hz
+    #   pattern = map(whole_dataset_mp_filtered)
+    # )
     # #### Extract Regimes ----
     # tar_target(
     #   whole_dataset_mp_fluss,

@@ -1,3 +1,20 @@
+
+#' @export
+#' @rdname mp_algos
+
+mpx_stream_start <- function(data, window_size, exclusion_zone = 0.5, progress = TRUE) {
+  mpx_rcpp(data, window_size, exclusion_zone, 1.0, TRUE, FALSE, progress)
+}
+
+#' @export
+#' @rdname mp_algos
+
+
+mpx_stream_right <- function(new_data, start_obj, constraint = 0, progress = TRUE) {
+  mpxi_rcpp(new_data, start_obj, constraint, progress)
+}
+
+
 #' Matrix Profile Computation
 #'
 #' MPX is by far the fastest implementation with the caveat that is not anytime as STAMP or SCRIMP.
@@ -5,8 +22,6 @@
 #' @param idxs (`mpx()` only) A logical. Specifies if the computation will return the Profile Index or not. Defaults to
 #'   `TRUE`.
 #' @param distance (`mpx()` only) A string. Currently accepts `euclidean` and `pearson`. Defaults to `euclidean`.
-#' @param constraint an `int`. Max distance where to look for the best match in matrix profile.
-#' (default is NULL).
 #'
 #' @details ## mpx
 #' This algorithm was developed apart from the main Matrix Profile branch that relies on Fast Fourier Transform (FFT) at
@@ -24,7 +39,7 @@
 #' @examples
 #' mp <- mpx(tsmp::motifs_discords_small, 50)
 mpx <- function(data, window_size, query = NULL, exclusion_zone = 0.5, s_size = 1.0, idxs = TRUE,
-                distance = c("euclidean", "pearson"), n_workers = 1, progress = TRUE, constraint = NULL) {
+                distance = c("euclidean", "pearson"), n_workers = 1, progress = TRUE) {
 
 
   # Parse arguments ---------------------------------
@@ -48,9 +63,6 @@ mpx <- function(data, window_size, query = NULL, exclusion_zone = 0.5, s_size = 
   n_workers <- as.integer(checkmate::qassert(n_workers, "X+"))
   checkmate::qassert(progress, "B+")
 
-  if (is.null(constraint)) {
-    constraint <- length(data)
-  }
   ez <- exclusion_zone
   result <- NULL
 

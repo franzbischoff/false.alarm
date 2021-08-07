@@ -1,0 +1,6 @@
+reporter_make: timestamp
+reporter_outdated: forecast
+script: _targets.R
+shortcut: no
+store: _targets
+workers: '2'

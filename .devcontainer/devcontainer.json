@@ -13,7 +13,8 @@
   ],
   "containerEnv": {
     "WORKSPACE_DIRECTORY": "${containerWorkspaceFolder}",
-    "NOT_CRAN": "true"
+    "NOT_CRAN": "true",
+    "DEBUGME" : "R_GlobalEnv"
   },
   // Set *default* container specific settings.json values on container create.
   "settings": {

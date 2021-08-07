@@ -7,10 +7,13 @@ if (!dir.exists(here::here("inst/extdata/physionet"))) {
 }
 
 if (dir.exists(here::here("inst/extdata"))) {
+
+  # renv::install(".")
   # Uncomment to run targets sequentially on your local machine.
   targets::tar_watch(targets_only = TRUE, outdated = FALSE, label = c("time", "branches", "size"))
-  targets::tar_make()
+  # targets::tar_make()
   # Uncomment to run targets in parallel
+  targets::tar_make_future(workers = 4L)
   # on local processes or a Sun Grid Engine cluster.
   # targets::tar_make_clustermq(workers = 2L)
 

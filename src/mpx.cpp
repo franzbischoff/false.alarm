@@ -18,10 +18,8 @@ using namespace RcppParallel;
 #include "tthread/tinythread.h"
 #endif
 
-// MPXc
-//
-// @param data_ref Time Series
-// @return data_ref List
+// MPX stream version for the right side, aiming to compute only the necessary. MP is in pearson values
+
 // [[Rcpp::export]]
 List mpxi_rcpp(NumericVector new_data, List object, uint64_t keep, bool progress) {
 
@@ -65,8 +63,6 @@ List mpxi_rcpp(NumericVector new_data, List object, uint64_t keep, bool progress
     uint32_t profile_len = n - window_size + 1;
 
     IntegerVector compute_order = Range(0, n - window_size - exclusion_zone);
-
-    // Rcout << "Debug " << __LINE__ << std::endl;
 
     NumericVector rmmp(profile_len, -1.0);
     IntegerVector rmmpi(profile_len, -1);
@@ -127,7 +123,6 @@ List mpxi_rcpp(NumericVector new_data, List object, uint64_t keep, bool progress
     compute_order = sample(compute_order, compute_order.size());
 
     uint64_t stop = 0;
-    uint64_t gg = 0;
 
     try {
       uint64_t i = 1;
@@ -159,7 +154,6 @@ List mpxi_rcpp(NumericVector new_data, List object, uint64_t keep, bool progress
             rmp[off_diag] = c_cmp;
             rpi[off_diag] = offset + 1;
           }
-          gg++;
         }
 
         if (stop > 0 && i >= stop) {
@@ -172,8 +166,6 @@ List mpxi_rcpp(NumericVector new_data, List object, uint64_t keep, bool progress
       partial = true;
       Rcout << "Process terminated by the user successfully, partial results were returned." << std::endl;
     }
-
-    // Rcout << "gg: " << gg << std::endl;
 
     // to do ed
     rmmp[rmmp > 1.0] = 1.0;
@@ -206,10 +198,8 @@ List mpxi_rcpp(NumericVector new_data, List object, uint64_t keep, bool progress
   }
 }
 
-// MPXc
-//
-// @param data_ref Time Series
-// @return data_ref List
+// MPX stream version for the right side, but recomputes all again
+
 // [[Rcpp::export]]
 List mpxiright_rcpp(NumericVector data_ref, uint64_t window_size, double ez, double s_size, bool idxs, bool euclidean,
                     bool progress, uint64_t start, List old) {
@@ -276,7 +266,6 @@ List mpxiright_rcpp(NumericVector data_ref, uint64_t window_size, double ez, dou
       stop = round(compute_order.size() * s_size + DBL_EPSILON);
     }
 
-    uint64_t gg = 0;
     try {
       uint64_t i = 1;
       // first window demeaned
@@ -312,7 +301,6 @@ List mpxiright_rcpp(NumericVector data_ref, uint64_t window_size, double ez, dou
               rpi[off_diag] = offset + 1;
             }
           }
-          gg++;
         }
 
         if (stop > 0 && i >= stop) {
@@ -325,8 +313,6 @@ List mpxiright_rcpp(NumericVector data_ref, uint64_t window_size, double ez, dou
       partial = true;
       Rcout << "Process terminated by the user successfully, partial results were returned." << std::endl;
     }
-
-    // Rcout << "gg: " << gg << std::endl;
 
     // to do ed
     rmmp[rmmp > 1.0] = 1.0;
@@ -349,10 +335,8 @@ List mpxiright_rcpp(NumericVector data_ref, uint64_t window_size, double ez, dou
   }
 }
 
-// MPX
-//
-// @param data_ref Time Series
-// @return data_ref List
+// MPX stream version for the left side, but recomputes all again
+
 // [[Rcpp::export]]
 List mpxileft_rcpp(NumericVector data_ref, uint64_t window_size, double ez, double s_size, bool idxs, bool euclidean,
                    bool progress, uint64_t start, List old) {
@@ -425,8 +409,6 @@ List mpxileft_rcpp(NumericVector data_ref, uint64_t window_size, double ez, doub
       stop = round(compute_order.size() * s_size + DBL_EPSILON);
     }
 
-    uint64_t gg = 0;
-
     try {
       uint64_t i = 1;
       // first window demeaned
@@ -463,8 +445,6 @@ List mpxileft_rcpp(NumericVector data_ref, uint64_t window_size, double ez, doub
               lpi[off_diag] = offset + 1;
             }
           }
-
-          gg++;
         }
 
         if (stop > 0 && i >= stop) {
@@ -477,8 +457,6 @@ List mpxileft_rcpp(NumericVector data_ref, uint64_t window_size, double ez, doub
       partial = true;
       Rcout << "Process terminated by the user successfully, partial results were returned." << std::endl;
     }
-
-    // Rcout << "gg: " << gg << std::endl;
 
     // to do ed
     lmmp[lmmp > 1.0] = 1.0;
@@ -499,10 +477,8 @@ List mpxileft_rcpp(NumericVector data_ref, uint64_t window_size, double ez, doub
   }
 }
 
-// MPX
-//
-// @param data_ref Time Series
-// @return data_ref List
+// MPX classic version
+
 // [[Rcpp::export]]
 List mpx_rcpp(NumericVector data_ref, uint64_t window_size, double ez, double s_size, bool idxs, bool euclidean,
               bool progress) {
