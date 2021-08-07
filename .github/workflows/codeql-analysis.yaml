@@ -38,6 +38,11 @@ jobs:
         # Learn more:
         # https://docs.github.com/en/free-pro-team@latest/github/finding-security-vulnerabilities-and-errors-in-your-code/configuring-code-scanning#changing-the-languages-that-are-analyzed
 
+    env:
+      R_REMOTES_NO_ERRORS_FROM_WARNINGS: true
+      RENV_PATHS_ROOT: ~/.local/share/renv
+      GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
+
     steps:
       - name: Checkout repository
         uses: actions/checkout@v2
@@ -46,6 +51,8 @@ jobs:
         run: sudo apt-get install libgit2-dev libcurl4-openssl-dev
 
       - uses: r-lib/actions/setup-r@v1
+        with:
+          r-version: release
 
       - name: Query dependencies
         run: |
@@ -65,6 +72,7 @@ jobs:
         run: |
           install.packages(c("remotes", "devtools"))
           remotes::install_deps(dependencies = TRUE)
+          Rcpp::compileAttributes()
         shell: Rscript {0}
 
       # Initializes the CodeQL tools for scanning.
@@ -85,3 +93,10 @@ jobs:
 
       - name: Perform CodeQL Analysis
         uses: github/codeql-action/analyze@v1
+
+      - name: Upload check results
+        if: failure()
+        uses: actions/upload-artifact@main
+        with:
+          name: CodeQL-r${{ matrix.config.r }}-results
+          path: check
