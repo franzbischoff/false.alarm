@@ -45,7 +45,7 @@ jobs:
       RENV_PATHS_ROOT: ~/.local/share/renv
       TESTTHAT: false
       RSPM: ${{ matrix.config.rspm }}
-      GITHUB_PAT: ${{ secrets.GITHUBPAT }}
+      GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
 
     steps:
       - name: Checkout repository
