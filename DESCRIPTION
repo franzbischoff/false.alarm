@@ -57,4 +57,7 @@ SystemRequirements: GNU make
 Config/testthat/edition: 3
 Config/testthat/parallel: false
 Remotes:
-    ismayc/thesisdown
+    rstudio/bookdown,
+    ismayc/thesisdown,
+    r-lib/styler,
+    r-lib/testthat

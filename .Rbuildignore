@@ -40,6 +40,7 @@
 ^docs/_pkgdown\.yml$
 ^_targets$
 ^_targets\.R$
+^_targets\.yaml$
 ^run\.R$
 ^run\.sh$
 ^_targets_packages\.R$

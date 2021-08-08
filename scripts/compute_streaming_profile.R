@@ -11,7 +11,7 @@ compute_streaming_profile <- function(ecg_data, params) {
 
   for (n in new_data_list) {
     "!!DEBUG Split `min(n)` to `max(n)`. Constraint `params$constraint`, batch size `params$batch`"
-    initial_mp <- mpxi_rcpp(ecg_data[n], initial_mp, params$constraint, params$progress)
+    initial_mp <- mpx_stream_right(ecg_data[n], initial_mp, params$constraint, params$progress)
   }
 
   initial_mp$constraint <- params$constraint

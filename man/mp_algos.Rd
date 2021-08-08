@@ -4,6 +4,8 @@
 \alias{stamp}
 \alias{scrimp}
 \alias{mpx}
+\alias{mpx_stream_start}
+\alias{mpx_stream_right}
 \title{Matrix Profile Computation}
 \usage{
 stamp(
@@ -36,9 +38,12 @@ mpx(
   idxs = TRUE,
   distance = c("euclidean", "pearson"),
   n_workers = 1,
-  progress = TRUE,
-  constraint = NULL
+  progress = TRUE
 )
+
+mpx_stream_start(data, window_size, exclusion_zone = 0.5, progress = TRUE)
+
+mpx_stream_right(new_data, start_obj, constraint = 0, progress = TRUE)
 }
 \arguments{
 \item{data}{Required. Any 1-dimension series of numbers (\code{matrix}, \code{vector}, \code{ts} etc.) (See details).}
@@ -66,9 +71,6 @@ This parameter is ignored when using multithread or AB-join.}
 \code{TRUE}.}
 
 \item{distance}{(\code{mpx()} only) A string. Currently accepts \code{euclidean} and \code{pearson}. Defaults to \code{euclidean}.}
-
-\item{constraint}{an \code{int}. Max distance where to look for the best match in matrix profile.
-(default is NULL).}
 }
 \value{
 Returns a \code{list} with the \code{matrix_profile}, \code{profile_index} (if \code{idxs} is \code{TRUE} in \code{mpx()}), and some
@@ -121,7 +123,7 @@ on Ogita's work for better precision computing mean and standard deviation (part
 }
 }
 \section{This document}{
-Last updated on 2021-08-06 using R version 4.1.0.
+Last updated on 2021-08-07 using R version 4.1.0.
 }
 
 \examples{
