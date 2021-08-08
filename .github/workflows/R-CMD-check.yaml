@@ -45,7 +45,7 @@ jobs:
       RENV_PATHS_ROOT: ~/.local/share/renv
       TESTTHAT: false
       RSPM: ${{ matrix.config.rspm }}
-      GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
+      GITHUB_PAT: ${{ secrets.GITHUBPAT }}
 
     steps:
       - name: Checkout repository
@@ -67,10 +67,12 @@ jobs:
       - name: Cache R packages
         if: runner.os != 'Windows'
         uses: actions/cache@v2.1.4
+        id: cache-packages
         with:
-          path: ${{ env.R_LIBS_USER }}
-          key: ${{ runner.os }}-${{ hashFiles('.github/R-version') }}-1-${{ hashFiles('.github/depends.Rds') }}
-          restore-keys: ${{ runner.os }}-${{ hashFiles('.github/R-version') }}-1-
+          path: ${{ env.RENV_PATHS_ROOT }}
+          key: ${{ runner.os }}-renv-${{ hashFiles('**/renv.lock') }}-targets-v2
+          restore-keys: |
+            ${{ runner.os }}-renv-
 
       - name: Install system dependencies
         if: runner.os == 'Linux'
