@@ -24,12 +24,6 @@ jobs:
 
       - run: git branch
 
-      - name: Install System dependencies
-        run: |
-          sudo apt-fast update
-          sudo apt-fast install -y libgit2-dev libharfbuzz-dev libcurl4-openssl-dev \
-          libfribidi-dev libzmq3-dev
-
       - name: Setting up R installation
         uses: r-lib/actions/setup-r@v1
 
@@ -41,6 +35,12 @@ jobs:
           key: ${{ runner.os }}-renv-${{ hashFiles('**/renv.lock') }}-targets-v2
           restore-keys: |
             ${{ runner.os }}-renv-
+
+      - name: Install System dependencies
+        run: |
+          sudo apt-fast update
+          sudo apt-fast install -y libgit2-dev libharfbuzz-dev libcurl4-openssl-dev \
+          libfribidi-dev libzmq3-dev
 
       - name: Install dependencies
         run: |
@@ -71,12 +71,6 @@ jobs:
 
       - run: git branch
 
-      - name: Install System dependencies
-        run: |
-          sudo apt-fast update
-          sudo apt-fast install -y libgit2-dev libharfbuzz-dev libcurl4-openssl-dev \
-          libfribidi-dev libzmq3-dev
-
       - name: Setting up R installation
         uses: r-lib/actions/setup-r@v1
 
@@ -91,6 +85,12 @@ jobs:
           key: ${{ runner.os }}-renv-${{ hashFiles('**/renv.lock') }}-targets-v2
           restore-keys: |
             ${{ runner.os }}-renv-
+
+      - name: Install System dependencies
+        run: |
+          sudo apt-fast update
+          sudo apt-fast install -y libgit2-dev libharfbuzz-dev libcurl4-openssl-dev \
+          libfribidi-dev libzmq3-dev
 
       - name: Install dependencies
         run: |
@@ -188,12 +188,6 @@ jobs:
 
       - run: echo ${{ github.event.head_commit.message }}
 
-      - name: Install System dependencies
-        run: |
-          sudo apt-fast update
-          sudo apt-fast install -y libgit2-dev libharfbuzz-dev libcurl4-openssl-dev \
-          libfribidi-dev libzmq3-dev
-
       - name: Setting up R installation
         uses: r-lib/actions/setup-r@v1
 
@@ -208,6 +202,12 @@ jobs:
           key: ${{ runner.os }}-renv-${{ hashFiles('**/renv.lock') }}-targets-v2
           restore-keys: |
             ${{ runner.os }}-renv-
+
+      - name: Install System dependencies
+        run: |
+          sudo apt-fast update
+          sudo apt-fast install -y libgit2-dev libharfbuzz-dev libcurl4-openssl-dev \
+          libfribidi-dev libzmq3-dev
 
       - name: Install dependencies
         run: |

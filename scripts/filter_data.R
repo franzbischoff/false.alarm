@@ -1,37 +1,25 @@
+filter_data <- function(data_filter, params) {
+  checkmate::qassert(data_filter, "L2")
+  checkmate::assert_true(identical(
+    attr(data_filter[[1]], "info"),
+    attr(data_filter[[2]], "info")
+  ))
 
+  data <- data_filter[[1]]
+  filter <- data_filter[[2]][[params$filter]]
+  data <- data[!filter]
+  info <- attr(data_filter[[1]], "info")
+  info$filter <- filter
+  attr(data, "info") <- info
 
-filter_data <- function(ecg_data, params) {
-  window <- params$window
+  # mp <- attr(ecg_data, params$attribute)
+  # filter <- attr(ecg_data, "filters")
+  # filter <- filter[[params$filter]]
 
-  norm_data <- false.alarm::znorm(ecg_data)
-  mean_std <- false.alarm::movmean_std(norm_data, window)
-  mean_of_sd <- mean(mean_std$sd)
+  # mp$matrix_profile[filter] <- Inf
+  # mp$profile_index[filter] <- which(filter)
 
-  filters <- list()
+  # attr(ecg_data, params$attribute) <- mp
 
-  # # wander
-  # filters$wander <- (mean_of_sd < mean_std$sd)
-  # # mean more than sd
-  # filters$mean_more <- (abs(mean_std$avg) >= mean_std$sd)
-  # complex
-  filters$complex <- win_complex(norm_data, window, 0)
-  filters$complex_lim <- filters$complex > params$cplx_lim
-  # # abs-mean
-  # filters$absmean <- abs(mean_std$avg)
-  # # std
-  # filters$std <- mean_std$sd
-  # # std
-  # filters$sig <- mean_std$sig
-  # # sum
-  # filters$sum <- mean_std$sum
-  # # sqrsum
-  # filters$sqrsum <- mean_std$sqrsum
-  # kurtosis
-  filters$kurtosis <- zoo::rollapply(norm_data, window, e1071::kurtosis, align = "left")
-  # skewness
-  filters$skewness <- zoo::rollapply(norm_data, window, e1071::skewness, align = "left")
-
-  attr(ecg_data, params$attribute) <- filters
-
-  return(ecg_data)
+  return(data)
 }

@@ -144,7 +144,7 @@ read_ecg <- function(filename, plot = FALSE) {
     mat_content$val[i, is.na(mat_content$val[i, ])] <- wfdb_nan
     label <- siginfo[[i]]$description
     signal[[label]] <- (mat_content$val[i, ] - siginfo[[i]]$baseline) / siginfo[[i]]$gain
-    attr(signal[[label]], "info") <- list(baseline = siginfo[[i]]$baseline, gain = siginfo[[i]]$gain, unit = siginfo[[i]]$unit)
+    attr(signal[[label]], "info") <- list(label = label, baseline = siginfo[[i]]$baseline, gain = siginfo[[i]]$gain, unit = siginfo[[i]]$unit)
   }
 
   length_signal <- length(signal[[1]])
@@ -154,7 +154,7 @@ read_ecg <- function(filename, plot = FALSE) {
   output <- list()
   output[[basename]] <- c(list(time = tm), signal)
 
-  attr(output[[basename]], "info") <- list(alarm = alarm, true = as.logical(true_false), filename = basename, frequency = freq_signal)
+  attr(output[[basename]], "info") <- list(alarm = alarm, true = as.logical(true_false), filename = basename, frequency = freq_signal, id = "base", ids = "base")
 
   if (plot) {
     plot_ecg(output[[basename]])

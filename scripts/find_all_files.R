@@ -7,6 +7,8 @@
 find_all_files <- function(path = getOption("target_dataset_path", default = "inst/extdata/physionet/"), long = FALSE) {
   "!DEBUG Starting process"
 
+  checkmate::assert_directory_exists(path, access = "r")
+
   if (long) {
     files <- paste0(
       path,

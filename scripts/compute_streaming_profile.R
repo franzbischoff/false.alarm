@@ -1,4 +1,7 @@
 compute_streaming_profile <- function(ecg_data, params) {
+
+  checkmate::qassert(ecg_data, "n+")
+
   initial_data_vector <- seq.int(1, params$constraint)
 
   initial_mp <- mpx_stream_start(ecg_data[initial_data_vector], params$window_size, params$ez, FALSE)
@@ -14,9 +17,7 @@ compute_streaming_profile <- function(ecg_data, params) {
     initial_mp <- mpx_stream_right(ecg_data[n], initial_mp, params$constraint, params$progress)
   }
 
-  initial_mp$constraint <- params$constraint
-  initial_mp$batch <- params$batch
-  attr(ecg_data, params$attribute) <- initial_mp
+  attr(initial_mp, "info") <- attr(ecg_data, "info")
 
-  return(ecg_data)
+  return(initial_mp)
 }

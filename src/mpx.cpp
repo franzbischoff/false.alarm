@@ -192,7 +192,7 @@ List mpxi_rcpp(NumericVector new_data, List object, uint64_t keep, bool progress
                          Rcpp::Named("data") = data_ref, Rcpp::Named("w") = window_size, Rcpp::Named("ez") = ez,
                          Rcpp::Named("ddf") = ddf, Rcpp::Named("ddg") = ddg, Rcpp::Named("avg") = mmu,
                          Rcpp::Named("sig") = ssig, Rcpp::Named("partial") = partial));
-    ;
+
   } catch (...) {
     ::Rf_error("c++ exception (unknown reason)");
   }
