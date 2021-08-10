@@ -123,7 +123,7 @@ jobs:
         shell: Rscript {0}
 
       - name: Run targets pipeline
-        run: source('run.R')
+        run: renv::run('run.R')
         shell: Rscript {0}
         continue-on-error: true # if the pipeline fails, the workspace is saved for inspection.
 
