@@ -161,12 +161,24 @@ jobs:
         run: |
           git config --local user.name "GitHub Actions"
           git config --local user.email "actions@github.com"
+          rm -r .github/workflows
           git add --all -- ':!renv'
           git add -f .targets-files
           git add -f _targets
           git commit -am "Run pipeline"
           git push origin targets-runs
         continue-on-error: true # if the pipeline fails, the workspace is saved for inspection.
+
+      - name: Prepare failure artifact
+        if: failure()
+        run: rm -rf .git .github .targets-files .targets-runs
+
+      - name: Post failure artifact
+        if: failure()
+        uses: actions/upload-artifact@main
+        with:
+          name: ${{ runner.os }}-r-targets-results
+          path: .
 
   workflowr:
     name: Runs Workflowr versioning

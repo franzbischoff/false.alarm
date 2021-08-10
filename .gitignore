@@ -1,6 +1,8 @@
 .Rhistory
 .Renviron
 .Rapp.history
+Pprof.out
+Rprof.out
 
 # Session Data files
 .RData
@@ -51,6 +53,9 @@ vignettes/*.R
 # End of https://www.gitignore.io/api/r
 
 # Personalized
+_targets/*
+.targets-files
+.targets-runs
 
 #Local history plugin
 .history

@@ -7,6 +7,7 @@ mpx_stream_start <- function(data, window_size, exclusion_zone = 0.5, progress =
 }
 
 #' @param new_data a vector with the new data
+#' @param start_obj obj from another run
 #' @param constraint an `int`. Max distance where to look for the best match in matrix profile.
 #' (default is NULL).
 #' @export

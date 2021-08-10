@@ -81,6 +81,10 @@ RUN apt-fast update && apt-fast install -y --no-install-recommends \
   r-base-dev \
   r-recommended \
   r-cran-rcpp \
+  protobuf-compiler \
+  libprotobuf-dev \
+  libprotoc-dev \
+  graphviz \
   && rm -rf /var/lib/apt/lists/*
 
 # Install aditional tools
@@ -102,14 +106,18 @@ RUN apt-fast update && apt-fast install -y --no-install-recommends \
   sudo \
   && rm -rf /var/lib/apt/lists/*
 
-RUN usermod -aG sudo docker
-RUN usermod --shell /bin/zsh docker
-RUN usermod --shell /bin/zsh root
+# Install go + protobuf
+RUN curl -o /home/docker/gobuf.tar.gz https://dl.google.com/go/go1.14.linux-amd64.tar.gz \
+  && tar -xf '/home/docker/gobuf.tar.gz' -C '/home/docker' \
+  && rm /home/docker/gobuf.tar.gz
+
+RUN usermod -aG sudo docker \
+  && usermod --shell /bin/zsh docker \
+  && usermod --shell /bin/zsh root
 COPY .zshrc /home/docker/.zshrc
 COPY .zshrc /root/.zshrc
 RUN git clone --depth 1 git://github.com/ohmyzsh/ohmyzsh /root/.oh-my-zsh
 RUN git clone --depth 1 git://github.com/ohmyzsh/ohmyzsh /home/docker/.oh-my-zsh
-RUN chown -R docker:docker /home/docker
 
 WORKDIR /workspaces
 
@@ -118,8 +126,16 @@ RUN install.r targets tarchetypes \
   clustermq workflowr R.matlab visNetwork \
   thesisdown here Rcpp RcppParallel \
   RcppProgress RcppThread codetools \
-  lattice MASS Matrix mgcv nlme \
+  lattice MASS Matrix mgcv nlme proffer\
   languageserver
+
+# fill next stuff here, avoid adding slow things above this line
+
+# etc install blabla
+
+# this is the last section, avoid adding slow things below this line
+
+RUN chown -R docker:docker /home/docker
 
 RUN updatedb
 

@@ -10,6 +10,7 @@ if (dir.exists(here::here("inst/extdata"))) {
   if (isTRUE(as.logical(Sys.getenv("CI")))) {
     Rcpp::compileAttributes()
     renv::install(".")
+    targets::tar_prune()
   } else {
     tryCatch(
       {
@@ -36,10 +37,11 @@ if (dir.exists(here::here("inst/extdata"))) {
         message("done.")
       }
     )
+
+    targets::tar_watch(targets_only = TRUE, outdated = FALSE, label = c("time", "branches", "size"))
   }
 
   # Uncomment to run targets sequentially on your local machine.
-  targets::tar_watch(targets_only = TRUE, outdated = FALSE, label = c("time", "branches", "size"))
   # targets::tar_make()
   # Uncomment to run targets in parallel
   targets::tar_make_future(workers = 4L)
