@@ -99,6 +99,7 @@ RUN apt-fast update && apt-fast install -y --no-install-recommends \
   zsh-autosuggestions \
   zsh-syntax-highlighting \
   mlocate \
+  sudo \
   && rm -rf /var/lib/apt/lists/*
 
 RUN usermod -aG sudo docker

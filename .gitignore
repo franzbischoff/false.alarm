@@ -41,6 +41,8 @@ vignettes/*.R
 # VSCode
 #.vscode/
 .vscode/*.log
+.devcontainer/gpg-agent.conf
+.devcontainer/gpg.conf
 
 ### R.Bookdown Stack ###
 # R package: bookdown caching files
@@ -75,11 +77,9 @@ Rplots.pdf
 /revdep/*.html
 README.html
 workspace.RData
-
-# Targets
-/_targets/*
-.targets-files
-.targets-runs
+/.travis.yml
+/R/RcppExports.R
+/src/RcppExports.cpp
 
 # Workflowr
 .DS_Store
@@ -93,8 +93,3 @@ protocol/**/*.pdf
 docs/**/*.svg
 protocol/**/*.svg
 mpxtest.RData
-.devcontainer/gpg-agent.conf
-.devcontainer/gpg.conf
-/.travis.yml
-/R/RcppExports.R
-/src/RcppExports.cpp
