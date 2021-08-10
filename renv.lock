@@ -158,8 +158,8 @@
       "RemoteUsername": "rstudio",
       "RemoteRepo": "bookdown",
       "RemoteRef": "main",
-      "RemoteSha": "7be12f28318304cf2f901aeb616f8ca68d7e0c72",
-      "Hash": "c2e9562db56220ff9c31f136624b9be8"
+      "RemoteSha": "513851cdcc5c0a118e9512c6b48e9b94f8ff0d4d",
+      "Hash": "8fce0f06948ac6783a2e1870d9b58d26"
     },
     "brew": {
       "Package": "brew",
@@ -447,6 +447,13 @@
       "Source": "Repository",
       "Repository": "CRAN",
       "Hash": "f25fad6bee82b7ab01f055e2d813b96f"
+    },
+    "future.callr": {
+      "Package": "future.callr",
+      "Version": "0.6.1",
+      "Source": "Repository",
+      "Repository": "CRAN",
+      "Hash": "2777ddd75a7aff236990c98825144d0a"
     },
     "generics": {
       "Package": "generics",
