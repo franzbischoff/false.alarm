@@ -6,6 +6,9 @@ mpx_stream_start <- function(data, window_size, exclusion_zone = 0.5, progress =
   mpx_rcpp(data, window_size, exclusion_zone, 1.0, TRUE, FALSE, progress)
 }
 
+#' @param new_data a vector with the new data
+#' @param constraint an `int`. Max distance where to look for the best match in matrix profile.
+#' (default is NULL).
 #' @export
 #' @rdname mp_algos
 

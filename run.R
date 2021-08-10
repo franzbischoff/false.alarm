@@ -7,32 +7,36 @@ if (!dir.exists(here::here("inst/extdata/physionet"))) {
 }
 
 if (dir.exists(here::here("inst/extdata"))) {
+  if (isTRUE(as.logical(Sys.getenv("CI")))) {
+    Rcpp::compileAttributes()
+    renv::install(".")
+  } else {
+    tryCatch(
+      {
+        pkg_date <- packageDate("false.alarm")
+        files_r <- paste0(here::here("R"), "/", list.files(here::here("R"), pattern = "*.R"))
+        files_cpp <- paste0(here::here("R"), "/", list.files(here::here("src"), pattern = "*.cpp"))
+        files_h <- paste0(here::here("R"), "/", list.files(here::here("src"), pattern = "*.h"))
+        files <- c(files_r, files_cpp, files_h)
+        changed <- na.omit(files[as.Date(file.mtime(files)) > (pkg_date)])
 
-  tryCatch(
-    {
-      pkg_date <- packageDate("false.alarm")
-      files_r <- paste0(here::here("R"), "/", list.files(here::here("R"), pattern = "*.R"))
-      files_cpp <- paste0(here::here("R"), "/", list.files(here::here("src"), pattern = "*.cpp"))
-      files_h <- paste0(here::here("R"), "/", list.files(here::here("src"), pattern = "*.h"))
-      files <- c(files_r, files_cpp, files_h)
-      changed <- na.omit(files[as.Date(file.mtime(files)) > (pkg_date)])
-
-      if (length(changed) > 0) {
-        message("false.alarm is outdated, trying to automatically resolve this.")
+        if (length(changed) > 0) {
+          message("false.alarm is outdated, trying to automatically resolve this.")
+          Rcpp::compileAttributes()
+          renv::install(".")
+        }
+        rm("pkg_date", "files_r", "files_cpp", "files_h", "files", "changed")
+      },
+      error = function(e) {
+        message("false.alarm is not installed, trying to automatically resolve this.")
         Rcpp::compileAttributes()
         renv::install(".")
+      },
+      finally = {
+        message("done.")
       }
-      rm("pkg_date", "files_r", "files_cpp", "files_h", "files", "changed")
-    },
-    error = function(e) {
-      message("false.alarm is not installed, trying to automatically resolve this.")
-      Rcpp::compileAttributes()
-      renv::install(".")
-    },
-    finally = {
-      message("done.")
-    }
-  )
+    )
+  }
 
   # Uncomment to run targets sequentially on your local machine.
   targets::tar_watch(targets_only = TRUE, outdated = FALSE, label = c("time", "branches", "size"))

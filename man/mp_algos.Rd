@@ -71,6 +71,11 @@ This parameter is ignored when using multithread or AB-join.}
 \code{TRUE}.}
 
 \item{distance}{(\code{mpx()} only) A string. Currently accepts \code{euclidean} and \code{pearson}. Defaults to \code{euclidean}.}
+
+\item{new_data}{a vector with the new data}
+
+\item{constraint}{an \code{int}. Max distance where to look for the best match in matrix profile.
+(default is NULL).}
 }
 \value{
 Returns a \code{list} with the \code{matrix_profile}, \code{profile_index} (if \code{idxs} is \code{TRUE} in \code{mpx()}), and some
