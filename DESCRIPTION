@@ -41,6 +41,7 @@ Suggests:
     knitr (>= 1.33),
     progress (>= 1.2.2),
     tsmp  (>= 0.4.14),
+    DT (>= 0.18)
 LinkingTo:
     Rcpp (>= 1.0.6),
     RcppParallel (>= 5.1.4),

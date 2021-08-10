@@ -123,7 +123,7 @@ on Ogita's work for better precision computing mean and standard deviation (part
 }
 }
 \section{This document}{
-Last updated on 2021-08-07 using R version 4.1.0.
+Last updated on 2021-08-10 using R version 4.1.0.
 }
 
 \examples{
