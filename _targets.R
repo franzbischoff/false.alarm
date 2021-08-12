@@ -16,7 +16,7 @@ sapply(here::here("scripts", script_files), source, local = .GlobalEnv, encoding
 rm(script_files)
 
 options(tidyverse.quiet = TRUE)
-options(target_dataset_path = "inst/extdata/physionet/")
+options(target_ds_path = "inst/extdata/physionet/")
 
 # *** If using clustermq for multithreading / clustering ***
 ### Localy https://books.ropensci.org/targets/hpc.html#clustermq
@@ -26,7 +26,7 @@ options(target_dataset_path = "inst/extdata/physionet/")
 
 # *** If using future for multithreading / clustering ***
 library(future)
-### Localy
+## Localy
 library(future.callr)
 future::plan(callr)
 ### Remotely
@@ -40,7 +40,7 @@ tar_option_set(
   format = "rds",
   resources = tar_resources(
     #   # *** If using clustermq for multithreading / clustering ***
-    # clustermq = tar_resources_clustermq(template = list(n_cores  = 1)) # or n_jobs??
+    # clustermq = tar_resources_clustermq(template = list(n_cores  = 4)) # or n_jobs??
     #   # *** If using future for multithreading / clustering ***
     future = tar_resources_future(resources = list(n_cores = 4))
   ),
@@ -52,8 +52,15 @@ tar_option_set(
   # imports = "false.alarm" # TODO: remove when there is no change on package functions. Clears the graph.
 )
 
+var_head <- 3
+var_exclude <- c("time", "ABP", "PLETH", "RESP")
+var_mp_batch <- 100
+var_mp_constraint <- 20 * 250
+var_window_size <- 200
+var_ez <- 0.5
+
 # debug(process_ts_in_file)
-# tar_make(names = dataset_mp_filtered, callr_function = NULL)
+# tar_make(names = ds_mp_filtered, callr_function = NULL)
 
 
 # start debugme after loading all functions
@@ -66,7 +73,7 @@ list(
     #### Read files from directory ----
     tar_files_input(
       file_paths,
-      head(find_all_files(), 3),
+      head(find_all_files(), var_head),
       # batches = 2,
       # Use vector for filenames
       # iteration = "vector"
@@ -83,109 +90,158 @@ list(
         id = "filters",
         fun = compute_filters,
         params = list(
-          window_size = 200,
+          window_size = var_window_size,
           cplx_lim = 8
         ),
-        exclude = c("time", "ABP", "PLETH", "RESP")
+        exclude = var_exclude
       ),
       pattern = map(dataset)
     ),
-    #### Compute the Right Matrix Profile ----
+    #### Compute Stats ----
     tar_target(
-      dataset_stats,
+      ds_stats,
       process_ts_in_file(dataset,
         id = "comp_stats",
         fun = compute_companion_stats,
         params = list(
-          window_size = 200,
+          window_size = var_window_size,
           n_workers = 1
-        )
-        # exclude = c("time")
+        ),
+        exclude = var_exclude
       ),
       pattern = map(dataset)
     ),
     ### Apply Filter on Data ----
     tar_target(
-      dataset_filtered,
+      ds_filtered,
       process_ts_in_file(c(dataset, filters),
         id = "filter_data",
         fun = filter_data,
         params = list(
           filter = "complex_lim"
-        )
-        # exclude = c("time")
+        ),
+        exclude = var_exclude
       ),
       pattern = map(dataset, filters)
     ),
-    #### Compute the Right Matrix Profile ----
+    #### Compute Stats on Filtered Data ----
     tar_target(
-      dataset_filtered_mps,
-      process_ts_in_file(dataset_filtered,
-        id = "mp_stream",
+      ds_stats_filtered,
+      process_ts_in_file(ds_filtered,
+        id = "comp_stats_filtered",
+        fun = compute_companion_stats,
+        params = list(
+          window_size = var_window_size,
+          n_workers = 1
+        ),
+        exclude = var_exclude
+      ),
+      pattern = map(ds_filtered)
+    ),
+    #### Compute the Matrix Profile With Stats ----
+    tar_target(
+      ds_stats_mps,
+      process_ts_in_file(c(dataset, ds_stats),
+        id = "mps_raw_stats",
+        fun = compute_s_profile_with_stats,
+        params = list(
+          window_size = var_window_size,
+          ez = var_ez,
+          progress = FALSE,
+          batch = var_mp_batch,
+          constraint = var_mp_constraint
+        ),
+        exclude = var_exclude
+      ),
+      pattern = map(dataset, ds_stats)
+    ),
+    #### Compute the Right Matrix Profile Raw Data ----
+    tar_target(
+      ds_mps,
+      process_ts_in_file(dataset,
+        id = "mps_raw",
         fun = compute_streaming_profile,
         params = list(
-          window_size = 200,
-          ez = 0.5,
+          window_size = var_window_size,
+          ez = var_ez,
           progress = FALSE,
-          batch = 100,
-          constraint = 20 * 250
-        )
-        # exclude = c("time")
+          batch = var_mp_batch,
+          constraint = var_mp_constraint
+        ),
+        exclude = var_exclude
       ),
-      pattern = map(dataset_filtered)
+      pattern = map(dataset)
+    ),
+    #### Compute the Right Matrix Profile Filtered Data ----
+    tar_target(
+      ds_filtered_mps,
+      process_ts_in_file(ds_filtered,
+        id = "mps_filtered",
+        fun = compute_streaming_profile,
+        params = list(
+          window_size = var_window_size,
+          ez = var_ez,
+          progress = FALSE,
+          batch = var_mp_batch,
+          constraint = var_mp_constraint
+        ),
+        exclude = var_exclude
+      ),
+      pattern = map(ds_filtered)
+    ),
+    #### Compute the Matrix Profile With Filtered Data with Stats ----
+    tar_target(
+      ds_stats_filtered_mps,
+      process_ts_in_file(c(ds_filtered, ds_stats_filtered),
+        id = "mps_filtered_stats",
+        fun = compute_s_profile_with_stats,
+        params = list(
+          window_size = var_window_size,
+          ez = var_ez,
+          progress = FALSE,
+          batch = var_mp_batch,
+          constraint = var_mp_constraint
+        ),
+        exclude = var_exclude
+      ),
+      pattern = map(ds_filtered, ds_stats_filtered)
     )
-    # #### Compute the Matrix Profile ----
-    # tar_target(
-    #   dataset_mp,
-    #   process_ts_in_file(dataset_filter,
-    #     exclude = c("time", "ABP", "PLETH", "RESP"),
-    #     fun = compute_matrix_profile,
-    #     params = list(
-    #       attribute = "mp",
-    #       window_size = 200, ez = 0.5, idxs = TRUE,
-    #       s_size = 1.0, progress = FALSE,
-    #       distance = "euclidean",
-    #       constraint = 20 * 250
-    #     )
-    #   ),
-    #   pattern = map(dataset_filter)
-    # ),
     # ### Apply Filter on MP ----
     # tar_target(
-    #   dataset_mp_filtered,
-    #   process_ts_in_file(dataset_mp,
-    #     exclude = c("time", "ABP", "PLETH", "RESP"),
+    #   ds_mp_filtered,
+    #   process_ts_in_file(ds_mp,
+    #     exclude = var_exclude,
     #     fun = filter_mp,
     #     params = list(
     #       attribute = "mp",
     #       filter = "complex_lim"
     #     )
     #   ),
-    #   pattern = map(dataset_mp)
+    #   pattern = map(ds_mp)
     # ),
     # #### Compute the FLUSS Arcs ----
     # tar_target(
-    #   dataset_mp_arcs,
-    #   compute_arcs(dataset_mp_filtered,
-    #     exclude = c("time", "ABP", "PLETH", "RESP"),
-    #     time_constraint = 20 * 250
+    #   ds_mp_arcs,
+    #   compute_arcs(ds_mp_filtered,
+    #     exclude = var_exclude,
+    #     time_constraint = var_mp_constraint
     #   ), # 30s 250hz
-    #   pattern = map(dataset_mp_filtered)
+    #   pattern = map(ds_mp_filtered)
     # )
     # #### Extract Regimes ----
     # tar_target(
-    #   dataset_mp_fluss,
-    #   fluss_extract(dataset_mp_arcs,
-    #     exclude = c("time", "ABP", "PLETH", "RESP"),
+    #   ds_mp_fluss,
+    #   fluss_extract(ds_mp_arcs,
+    #     exclude = var_exclude,
     #     num_segments = 5,
     #     exclusion_zone = 25
     #   ),
-    #   pattern = map(dataset_mp_arcs)
+    #   pattern = map(ds_mp_arcs)
     # ),
     # tar_target(
     #   fluss_plots,
-    #   plot_fluss(dataset_mp_fluss),
-    #   pattern = map(dataset_mp_fluss)
+    #   plot_fluss(ds_mp_fluss),
+    #   pattern = map(ds_mp_fluss)
     # )
   )
 
@@ -195,17 +251,17 @@ list(
   #   #### Split is last thing, to avoid spurious computations ----
   #   tar_rep(
   #     idxs,
-  #     make_idxs_split(length(dataset_mp), split_value),
+  #     make_idxs_split(length(ds_mp), split_value),
   #     batches = 5, # branches
   #   ),
   #   tar_target(
   #     training_set,
-  #     dataset_mp[idxs$training],
+  #     ds_mp[idxs$training],
   #     map(idxs)
   #   ),
   #   tar_target(
   #     test_set,
-  #     dataset_mp[idxs$test],
+  #     ds_mp[idxs$test],
   #     map(idxs)
   #   ),
   #

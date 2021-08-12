@@ -371,7 +371,7 @@
       },
       "args": [
         "-e",
-        "targets::tar_make(reporter = 'summary')"
+        "targets::tar_make_future(workers = 4L, reporter = 'summary')"
       ],
       "options": {
         "cwd": "${workspaceFolder}"

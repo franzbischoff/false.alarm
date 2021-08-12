@@ -1,4 +1,4 @@
-process_ts_in_file <- function(ecg_data, id, fun, params, exclude = c("time", "ABP", "PLETH", "RESP")) {
+process_ts_in_file <- function(ecg_data, id, fun, params, exclude = c("time")) {
   checkmate::qassert(ecg_data, "L+")
   "!DEBUG receiving `length(ecg_data)` input."
   file <- unique(names(ecg_data))

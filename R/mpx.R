@@ -18,6 +18,18 @@ mpx_stream_right <- function(new_data, start_obj, constraint = 0, progress = TRU
   mpxi_rcpp(new_data, start_obj, constraint, progress)
 }
 
+#' @param batch_size size of the new data
+#' @param start_obj obj from another run
+#' @param stats obj with stats for mpx
+#' @param constraint an `int`. Max distance where to look for the best match in matrix profile.
+#' (default is NULL).
+#' @export
+#' @rdname mp_algos
+
+mpx_stream_s_right <- function(data, batch_size, start_obj, stats, constraint = 0, progress = TRUE) {
+  mpxis_rcpp(data, batch_size, start_obj, stats, constraint, progress)
+}
+
 
 #' Matrix Profile Computation
 #'

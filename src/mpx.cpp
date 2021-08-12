@@ -18,6 +18,138 @@ using namespace RcppParallel;
 #include "tthread/tinythread.h"
 #endif
 
+// MPX stream version for the right side, getting stats from input
+
+// [[Rcpp::export]]
+List mpxis_rcpp(NumericVector data_ref, uint64_t batch_size, List object, List stats, uint64_t keep, bool progress) {
+
+  try {
+    double c, c_cmp, ez;
+    uint32_t off_min, off_diag, offset, off_start;
+    uint32_t n, window_size, exclusion_zone, profile_len;
+    uint64_t mp_offset;
+    NumericVector data, ddf_t, ddg_t;
+    bool initial = false;
+    bool partial = false;
+
+    mp_offset = (uint64_t)object["offset"] + batch_size;
+    window_size = (uint32_t)object["w"];
+    ez = (double)object["ez"];
+    exclusion_zone = round(window_size * ez + DBL_EPSILON) + 1;
+    n = data_ref.length();
+    profile_len = n - window_size + 1;
+
+    if (n == batch_size) {
+      initial = true;
+    }
+
+    // matrix profile using cross correlation,
+
+    NumericVector mmu = as<NumericVector>(stats["avg"]);  // shallow copy
+    NumericVector ssig = as<NumericVector>(stats["sig"]); // shallow copy
+    NumericVector ddf = as<NumericVector>(stats["ddf"]);  // shallow copy
+    NumericVector ddg = as<NumericVector>(stats["ddg"]);  // shallow copy
+
+    double *mu = &mmu[0];
+    double *sig = &ssig[0];
+    double *df = &ddf[0];
+    double *dg = &ddg[0];
+
+    IntegerVector compute_order = Range(0, n - window_size - exclusion_zone);
+
+    NumericVector rmmp(profile_len, -1.0);
+    IntegerVector rmmpi(profile_len, -1);
+
+    if (!initial) {
+      // copy the current profiles
+      rmmp[Range(0, n - window_size - batch_size)] = as<NumericVector>(object["right_matrix_profile"]);
+      rmmpi[Range(0, n - window_size - batch_size)] = as<IntegerVector>(object["right_profile_index"]);
+    }
+
+    double *rmp = &rmmp[0];
+    int *rpi = &rmmpi[0];
+
+    uint64_t num_progress =
+        ceil((double)compute_order.size() / 100); // added double inside sqrt to avoid ambiguity on Solaris
+
+    Progress p(100, progress);
+
+    // compute_order = sample(compute_order, compute_order.size());
+
+    uint64_t stop = 0;
+
+    try {
+      uint64_t i = 1;
+      // first window demeaned
+      NumericVector ww = (data_ref[Range(n - window_size, n - 1)] - mmu[n - window_size]);
+
+      for (int32_t diag : compute_order) {
+
+        if ((i % num_progress) == 0) {
+          RcppThread::checkUserInterrupt();
+          p.increment();
+        }
+        // this always use the first window (ww); c is the sum of element-wise product
+        c = inner_product((data_ref[Range(diag, (diag + window_size - 1))] - mu[diag]), ww);
+
+        // off_max goes from profile_len - ez to 0
+        if (initial) {
+          off_min = n - window_size - diag - 1;
+        } else {
+          off_min = MAX(n - window_size - batch_size, n - window_size - diag - 1);
+        }
+        off_start = n - window_size;
+
+        for (offset = off_start; offset > off_min; offset--) {
+          // min is offset + diag; max is (profile_len - 1); each iteration has the size of off_max
+          off_diag = offset - (n - window_size - diag);
+
+          c = c + df[offset] * dg[off_diag] + df[off_diag] * dg[offset];
+          c_cmp = c * sig[offset] * sig[off_diag];
+
+          // RMP
+          if (c_cmp > rmp[off_diag]) {
+            rmp[off_diag] = c_cmp;
+            rpi[off_diag] = offset + 1;
+          }
+        }
+
+        if (stop > 0 && i >= stop) {
+          partial = true;
+          break;
+        }
+        i++;
+      }
+    } catch (RcppThread::UserInterruptException &ex) {
+      partial = true;
+      Rcout << "Process terminated by the user successfully, partial results were returned." << std::endl;
+    }
+
+    // to do ed
+    rmmp[rmmp > 1.0] = 1.0;
+
+    // if (euclidean) { // correlation to ed
+    //   rmmp = sqrt(2 * window_size * (1 - rmmp));
+    //   rmmp[rmmpi < 0] = R_PosInf;
+    // }
+
+    if (keep > 0 && (n > keep)) {
+      uint64_t mp_new_size = keep - window_size + 1;
+      uint32_t diff = n - keep;
+      rmmp = tail(rmmp, mp_new_size);
+      rmmpi = tail((rmmpi - diff), mp_new_size);
+      rmmpi[rmmpi < -1] = -1;
+    }
+
+    return (List::create(Rcpp::Named("right_matrix_profile") = rmmp, Rcpp::Named("right_profile_index") = rmmpi,
+                         Rcpp::Named("w") = window_size, Rcpp::Named("ez") = ez, Rcpp::Named("offset") = mp_offset,
+                         Rcpp::Named("partial") = partial));
+
+  } catch (...) {
+    ::Rf_error("c++ exception (unknown reason)");
+  }
+}
+
 // MPX stream version for the right side, aiming to compute only the necessary. MP is in pearson values
 
 // [[Rcpp::export]]
@@ -27,11 +159,12 @@ List mpxi_rcpp(NumericVector new_data, List object, uint64_t keep, bool progress
     double c, c_cmp, ez;
     uint32_t off_min, off_diag, offset, off_start;
     uint32_t upd_size, n, window_size, exclusion_zone;
-    uint64_t data_size;
+    uint64_t data_size, mp_offset;
     NumericVector data, ddf_t, ddg_t;
     bool partial = false;
 
     upd_size = new_data.length();
+    mp_offset = (uint64_t)object["offset"] + upd_size;
     window_size = (uint32_t)object["w"];
     ez = (double)object["ez"];
     data = as<NumericVector>(object["data"]);
@@ -77,7 +210,7 @@ List mpxi_rcpp(NumericVector new_data, List object, uint64_t keep, bool progress
     ddf_t = as<NumericVector>(object["ddf"]); // shallow copy
     ddg_t = as<NumericVector>(object["ddg"]); // shallow copy
 
-    if (ddf_t[0] == 0) { // object comes from non streaming version
+    if (ddf_t[0] == 0) {                               // object comes from non streaming version
       ddf_t = clone(as<NumericVector>(object["ddf"])); // deep copy
       ddg_t = clone(as<NumericVector>(object["ddg"])); // deep copy
 
@@ -191,7 +324,8 @@ List mpxi_rcpp(NumericVector new_data, List object, uint64_t keep, bool progress
     return (List::create(Rcpp::Named("right_matrix_profile") = rmmp, Rcpp::Named("right_profile_index") = rmmpi,
                          Rcpp::Named("data") = data_ref, Rcpp::Named("w") = window_size, Rcpp::Named("ez") = ez,
                          Rcpp::Named("ddf") = ddf, Rcpp::Named("ddg") = ddg, Rcpp::Named("avg") = mmu,
-                         Rcpp::Named("sig") = ssig, Rcpp::Named("partial") = partial));
+                         Rcpp::Named("offset") = mp_offset, Rcpp::Named("sig") = ssig,
+                         Rcpp::Named("partial") = partial));
 
   } catch (...) {
     ::Rf_error("c++ exception (unknown reason)");
