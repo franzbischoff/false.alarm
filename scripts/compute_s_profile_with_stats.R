@@ -27,8 +27,13 @@ compute_s_profile_with_stats <- function(data_with_stats, params) {
   initial_mp <- list(w = params$window_size, ez = params$ez, offset = 0)
   current_mp <- mpx_stream_s_right(data[initial_data_vector], batch_size = params$constraint, initial_mp, initial_stats, constraint = 0, progress = params$progress)
 
-  new_data_vector <- seq.int(current_mp$offset + 1, length(data))
+  new_data_vector <- seq.int(params$constraint + 1, length(data))
+
+  "!DEBUG Data Size `length(data)`."
+
   new_data_list <- split(new_data_vector, ceiling(seq_along(new_data_vector) / params$batch))
+
+  "!DEBUG Data List Size `length(new_data_list)`."
 
   profiles <- list()
   profiles[[1]] <- current_mp

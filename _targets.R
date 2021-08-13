@@ -6,7 +6,7 @@ dev_mode <- !identical(Sys.getenv("DEBUGME"), "")
 
 if (dev_mode) {
   # I know I shall not use this
-  # devtools::load_all(".")
+  devtools::load_all(".")
   # Sys.setenv(DEBUGME_OUTPUT_FILE = "debugme.log")
 }
 

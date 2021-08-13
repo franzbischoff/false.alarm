@@ -3,7 +3,18 @@
 #' @rdname mp_algos
 
 mpx_stream_start <- function(data, window_size, exclusion_zone = 0.5, progress = TRUE) {
-  mpx_rcpp(data, window_size, exclusion_zone, 1.0, TRUE, FALSE, progress)
+  result <- mpx_rcpp(data, window_size, exclusion_zone, 1.0, TRUE, FALSE, progress)
+  # result$matrix_profile <- NULL
+  # result$left_matrix_profile <- NULL
+  # result$profile_index <- NULL
+  # result$left_profile_index <- NULL
+  if (!is.null(result$ddf)) {
+    result$ddf <- c(tail(result$ddf, -1) * -1, 0)
+  }
+  if (!is.null(result$ddg)) {
+    result$ddg <- c(tail(result$ddg, -1), 0)
+  }
+  return(result)
 }
 
 #' @param new_data a vector with the new data

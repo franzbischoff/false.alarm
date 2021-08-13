@@ -1,7 +1,6 @@
 
 
 compute_filters <- function(ecg_data, params) {
-
   checkmate::qassert(ecg_data, "N+")
 
   norm_data <- false.alarm::znorm(ecg_data)
@@ -32,7 +31,7 @@ compute_filters <- function(ecg_data, params) {
   # skewness
   filters$skewness <- zoo::rollapply(norm_data, params$window_size, e1071::skewness, align = "left")
 
-    attr(filters, "info") <- attr(ecg_data, "info")
+  attr(filters, "info") <- attr(ecg_data, "info")
 
   return(filters)
 }

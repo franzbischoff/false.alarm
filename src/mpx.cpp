@@ -134,8 +134,13 @@ List mpxis_rcpp(NumericVector data_ref, uint64_t batch_size, List object, List s
     // }
 
     if (keep > 0 && (n > keep)) {
+      data_ref = tail(data_ref, keep);
       uint64_t mp_new_size = keep - window_size + 1;
       uint32_t diff = n - keep;
+      ddf = tail(ddf, mp_new_size);
+      ddg = tail(ddg, mp_new_size);
+      mmu = tail(mmu, mp_new_size);
+      ssig = tail(ssig, mp_new_size);
       rmmp = tail(rmmp, mp_new_size);
       rmmpi = tail((rmmpi - diff), mp_new_size);
       rmmpi[rmmpi < -1] = -1;
@@ -143,7 +148,8 @@ List mpxis_rcpp(NumericVector data_ref, uint64_t batch_size, List object, List s
 
     return (List::create(Rcpp::Named("right_matrix_profile") = rmmp, Rcpp::Named("right_profile_index") = rmmpi,
                          Rcpp::Named("w") = window_size, Rcpp::Named("ez") = ez, Rcpp::Named("offset") = mp_offset,
-                         Rcpp::Named("partial") = partial));
+                         Rcpp::Named("ddf") = ddf, Rcpp::Named("ddg") = ddg, Rcpp::Named("avg") = mmu,
+                         Rcpp::Named("sig") = ssig, Rcpp::Named("data") = data_ref, Rcpp::Named("partial") = partial));
 
   } catch (...) {
     ::Rf_error("c++ exception (unknown reason)");
@@ -164,13 +170,24 @@ List mpxi_rcpp(NumericVector new_data, List object, uint64_t keep, bool progress
     bool partial = false;
 
     upd_size = new_data.length();
-    mp_offset = (uint64_t)object["offset"] + upd_size;
+
+    if (object.containsElementNamed("offset"))
+      mp_offset = (uint64_t)object["offset"] + upd_size;
+    else
+      mp_offset = upd_size;
+
     window_size = (uint32_t)object["w"];
+
     ez = (double)object["ez"];
+
     data = as<NumericVector>(object["data"]);
+
     data_size = data.length();
+
     exclusion_zone = round(window_size * ez + DBL_EPSILON) + 1;
+
     NumericVector data_ref(data_size + upd_size);
+
     n = data_ref.length();
 
     // data concatenation
@@ -210,22 +227,6 @@ List mpxi_rcpp(NumericVector new_data, List object, uint64_t keep, bool progress
     ddf_t = as<NumericVector>(object["ddf"]); // shallow copy
     ddg_t = as<NumericVector>(object["ddg"]); // shallow copy
 
-    if (ddf_t[0] == 0) {                               // object comes from non streaming version
-      ddf_t = clone(as<NumericVector>(object["ddf"])); // deep copy
-      ddg_t = clone(as<NumericVector>(object["ddg"])); // deep copy
-
-      double *df = &ddf_t[0];
-      double *dg = &ddg_t[0];
-
-      for (uint64_t i = 0; i < (data_size - window_size); i++) {
-        df[i] = df[i + 1] * -1.0;
-        dg[i] = dg[i + 1];
-      }
-
-      df[(data_size - window_size)] = 0.0;
-      dg[(data_size - window_size)] = 0.0;
-    }
-
     // differentials have 0 as their first entry. This simplifies index
     // calculations slightly and allows us to avoid special "first line"
     // handling.
@@ -238,6 +239,7 @@ List mpxi_rcpp(NumericVector new_data, List object, uint64_t keep, bool progress
     // ddg: (data[(w+1):data_len] - mov_avg[2:(data_len - w + 1)]) + (data[1:(data_len - w)] - mov_avg[1:(data_len -
     // w)]) (subtract the mov_mean of all data, but the first window) + (subtract the mov_mean of all data, but the last
     // window)
+
     NumericVector ddg(n - window_size + 1, 0);
     ddg[Range(0, data_size - window_size)] = ddg_t;
     ddg[Range(data_size - window_size, n - window_size - 1)] =

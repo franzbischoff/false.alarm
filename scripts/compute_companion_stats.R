@@ -1,5 +1,4 @@
 compute_companion_stats <- function(ecg_data, params) {
-
   checkmate::qassert(ecg_data, "N+")
 
   data_len <- length(ecg_data)

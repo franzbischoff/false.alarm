@@ -5,9 +5,13 @@ compute_streaming_profile <- function(ecg_data, params) {
 
   initial_mp <- mpx_stream_start(ecg_data[initial_data_vector], params$window_size, params$ez, FALSE)
 
-  new_data_vector <- seq.int(params$constraint, length(ecg_data))
+  "!DEBUG Data Size `length(ecg_data)`."
+
+  new_data_vector <- seq.int(params$constraint + 1, length(ecg_data))
 
   new_data_list <- split(new_data_vector, ceiling(seq_along(new_data_vector) / params$batch))
+
+  "!DEBUG Data List Size `length(new_data_list)`."
 
   "!DEBUG Constraint `params$constraint`, batch size `params$batch`"
 

@@ -158,15 +158,15 @@
     },
     "bookdown": {
       "Package": "bookdown",
-      "Version": "0.22.17",
+      "Version": "0.23.1",
       "Source": "GitHub",
       "RemoteType": "github",
       "RemoteHost": "api.github.com",
       "RemoteUsername": "rstudio",
       "RemoteRepo": "bookdown",
       "RemoteRef": "main",
-      "RemoteSha": "513851cdcc5c0a118e9512c6b48e9b94f8ff0d4d",
-      "Hash": "8fce0f06948ac6783a2e1870d9b58d26"
+      "RemoteSha": "18c08ce99b47a031a379fbbf44cac7601a8068be",
+      "Hash": "7a39da44afbb823661bbc18bc1827383"
     },
     "brew": {
       "Package": "brew",
