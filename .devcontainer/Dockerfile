@@ -136,15 +136,14 @@ RUN install.r targets tarchetypes \
 RUN chown -R docker:docker /home/docker
 
 # gitpod start
-ENV WORKSPACE_DIRECTORY "/workspaces"
+ENV WORKSPACE_DIRECTORY "/workspace"
 ENV NOT_CRAN "true"
 ENV PROFFER_PPROF_BIN "~/go/pkg/tool/linux_amd64/pprof"
 ENV PROFFER_GO_BIN "~/go/bin/go"
 ENV PROFFER_GRAPHVIZ_BIN "/usr/bin/dot"
-
 # gitpod end
 
-WORKDIR /workspaces
+WORKDIR /workspace
 
 RUN updatedb
 

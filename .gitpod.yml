@@ -32,5 +32,9 @@ image: franzbischoff/false.alarm:latest
 tasks:
   - name: Setup
     before: /usr/lib/R/bin/Rscript --vanilla -e "source('renv/activate.R')"
-    init: cp -R /home/docker/* /home/gitpod && chown -R gitpod:gitpod /home/gitpod && /usr/lib/R/bin/Rscript --vanilla -e "source('renv/activate.R'); renv::restore()"
+    init: |
+      cp -R /home/docker/* /home/gitpod
+      chown -R gitpod:gitpod /home/gitpod
+      /usr/lib/R/bin/Rscript --vanilla -e "source('renv/activate.R'); renv::restore()"
+      code -r false.alarm.code-workspace
     command: R
