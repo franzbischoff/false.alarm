@@ -5,12 +5,8 @@
     }
   ],
   "settings": {
-    "C_Cpp.default.browse.path": [
-      "${workspaceRoot}/src"
-    ],
-    "C_Cpp.default.defines": [
-      "RC_INVOKED"
-    ],
+    "C_Cpp.default.browse.path": ["${workspaceRoot}/src"],
+    "C_Cpp.default.defines": ["RC_INVOKED"],
     "C_Cpp.intelliSenseEngineFallback": "Enabled",
     "cSpell.allowCompoundWords": true,
     "cSpell.diagnosticLevel": "Information",
@@ -161,10 +157,7 @@
       ".github/workflows/binder.yaml"
     ],
     "latex-workshop.bibtex-format.sort.enabled": true,
-    "latex-workshop.bibtex-format.sortby": [
-      "key",
-      "title"
-    ],
+    "latex-workshop.bibtex-format.sortby": ["key", "title"],
     "latex-workshop.chktex.args.active": [
       "-wall",
       "-n22",
@@ -200,6 +193,13 @@
       "**/typings/**",
       "**/out/**",
       "**/Code/User/**"
+    ],
+    "auto-run-command.rules": [
+      {
+        "command": "r.createRTerm",
+        "condition": "hasFile: *.Rproj",
+        "message": "R Project detected, openning Console."
+      }
     ],
     "taskExplorer.enableAnsiconForAnt": false,
     "taskExplorer.enableAnt": false,

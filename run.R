@@ -41,6 +41,8 @@ if (dir.exists(here::here("inst/extdata"))) {
     targets::tar_watch(targets_only = TRUE, outdated = FALSE, label = c("time", "branches", "size"))
   }
 
+  Sys.setenv(TAR_WARN = "false")
+
   # Uncomment to run targets sequentially on your local machine.
   # targets::tar_make()
   # Uncomment to run targets in parallel
