@@ -194,13 +194,6 @@
       "**/out/**",
       "**/Code/User/**"
     ],
-    "auto-run-command.rules": [
-      {
-        "command": "r.createRTerm",
-        "condition": "hasFile: *.Rproj",
-        "message": "R Project detected, openning Console."
-      }
-    ],
     "taskExplorer.enableAnsiconForAnt": false,
     "taskExplorer.enableAnt": false,
     "taskExplorer.enableAppPublisher": false,

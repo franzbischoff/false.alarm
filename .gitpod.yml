@@ -22,7 +22,6 @@ vscode:
     - donjayamanne.githistory
     - eamodio.gitlens
     - ziyasal.vscode-open-in-github
-    - https://marketplace.visualstudio.com/_apis/public/gallery/publishers/gabrielgrinberg/vsextensions/auto-run-command/1.6.0/vspackage
     - https://marketplace.visualstudio.com/_apis/public/gallery/publishers/spmeesseman/vsextensions/vscode-taskexplorer/2.5.1/vspackage
     - https://github.com/meakbiyik/vscode-r-test-adapter/releases/download/v0.4.1/vscode-r-test-adapter-0.4.1.vsix
     - github.vscode-pull-request-github
@@ -32,4 +31,6 @@ image: franzbischoff/false.alarm:latest
 
 tasks:
   - name: Setup
-    init: cp -R /home/docker/* /home/gitpod && chown -R gitpod:gitpod /home/gitpod && /usr/lib/R/bin/Rscript -e "renv::restore()"
+    before: /usr/lib/R/bin/Rscript --vanilla -e "source('renv/activate.R')"
+    init: cp -R /home/docker/* /home/gitpod && chown -R gitpod:gitpod /home/gitpod && /usr/lib/R/bin/Rscript --vanilla -e "renv::restore()"
+    command: R
