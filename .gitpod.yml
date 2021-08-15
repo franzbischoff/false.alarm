@@ -1,0 +1,30 @@
+vscode:
+  extensions:
+    - streetsidesoftware.code-spell-checker
+    - gruntfuggly.todo-tree
+    - ikuyadeu.r
+    - hbenl.vscode-test-explorer
+    - streetsidesoftware.code-spell-checker-portuguese
+    - streetsidesoftware.code-spell-checker-medical-terms
+    - cschleiden.vscode-github-actions
+    - editorconfig.editorconfig
+    - donjayamanne.git-extension-pack
+    - codezombiech.gitignore
+    - james-yu.latex-workshop
+    - richie5um2.vscode-sort-json
+    - redhat.vscode-yaml
+    - christian-kohler.path-intellisense
+    - pkief.material-icon-theme
+    - esbenp.prettier-vscode
+    - foxundermoon.shell-format
+    - alefragnani.bookmarks
+    - ms-python.python
+    - donjayamanne.githistory
+    - eamodio.gitlens
+    - ziyasal.vscode-open-in-github
+
+image: franzbischoff/false.alarm:latest
+
+tasks:
+  - name: Setup
+    init: cp -R /home/docker/* /home/gitpod && chown -R gitpod:gitpod /home/gitpod

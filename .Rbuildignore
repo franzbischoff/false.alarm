@@ -34,6 +34,7 @@
 ^API$
 ^\.github$
 ^codecov\.yml$
+^\.gitpod\.yml$
 \.clang-format
 ^\.vscode$
 ^Makefile$
