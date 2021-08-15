@@ -32,5 +32,4 @@ image: franzbischoff/false.alarm:latest
 
 tasks:
   - name: Setup
-    init: cp -R /home/docker/* /home/gitpod && chown -R gitpod:gitpod /home/gitpod
-    before: /usr/lib/R/bin/Rscript -e renv::restore()
+    init: cp -R /home/docker/* /home/gitpod && chown -R gitpod:gitpod /home/gitpod && /usr/lib/R/bin/Rscript -e "renv::restore()"
