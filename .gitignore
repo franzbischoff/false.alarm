@@ -43,6 +43,7 @@ vignettes/*.R
 # VSCode
 #.vscode/
 .vscode/*.log
+.devcontainer/exts
 .devcontainer/gpg-agent.conf
 .devcontainer/gpg.conf
 

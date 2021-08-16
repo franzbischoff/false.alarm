@@ -21,8 +21,6 @@ vscode:
     - donjayamanne.githistory
     - eamodio.gitlens
     - ziyasal.vscode-open-in-github
-    - https://marketplace.visualstudio.com/_apis/public/gallery/publishers/spmeesseman/vsextensions/vscode-taskexplorer/2.5.1/vspackage
-    - https://github.com/meakbiyik/vscode-r-test-adapter/releases/download/v0.4.1/vscode-r-test-adapter-0.4.1.vsix
     - github.vscode-pull-request-github
     - bierner.markdown-preview-github-styles
     - yzhang.markdown-all-in-one
@@ -37,6 +35,13 @@ tasks:
       sed -i 's/home\/docker/home\/gitpod/' /home/gitpod/.zshrc
       code .github/gitpod-Instructions.md
     init: |
+      code --install-extension ~/exts/project-manager.vsix
+      code --install-extension ~/exts/reload.vsix
+      code --install-extension ~/exts/resourcemonitor.vsix
+      code --install-extension ~/exts/r-test-adapter.vsix
+      code --install-extension ~/exts/sort-json.vsix
+      code --install-extension ~/exts/taskexplorer.vsix
+      code --install-extension ~/exts/twilight-theme.vsix
       Rscript --vanilla -e "source('renv/activate.R'); renv::restore(); Rcpp::compileAttributes(); renv::install('.'); renv::isolate()"
     command: gp sync-done setup && exit
 

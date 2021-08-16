@@ -136,6 +136,9 @@ RUN install.r targets tarchetypes \
 RUN chown -R docker:docker /home/docker
 
 # gitpod start
+RUN mkdir /home/docker/exts
+COPY exts/*.vsix /home/docker/exts
+
 ENV WORKSPACE_DIRECTORY "/workspace"
 ENV NOT_CRAN "true"
 ENV PROFFER_PPROF_BIN "~/go/pkg/tool/linux_amd64/pprof"
