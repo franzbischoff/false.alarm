@@ -31,7 +31,7 @@ image: franzbischoff/false.alarm:latest
 
 tasks:
   - name: Instructions
-      code .github/gitpod-Instructions.md
+    init: code .github/gitpod-Instructions.md
   - name: Setup
     before: |
       Rscript --vanilla -e "source('renv/activate.R')"
