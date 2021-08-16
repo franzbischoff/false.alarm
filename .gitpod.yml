@@ -34,7 +34,7 @@ tasks:
     before: |
       code .github/gitpod-Instructions.md
       Rscript --vanilla -e "source('renv/activate.R'); renv::install('languageserver'); renv::isolate()"
-      code -r false.alarm.code-workspace
+      exit
     init: |
       code .github/gitpod-Instructions.md
       cp -RT /home/docker /home/gitpod
@@ -43,5 +43,7 @@ tasks:
       gp sync-done setup
       exit
   - name: R Interactive
-    init: gp sync-await setup
+    init: |
+      gp sync-await setup
+      code -r false.alarm.code-workspace
     command: R --no-save, --no-restore --interactive
