@@ -32,11 +32,11 @@ image: franzbischoff/false.alarm:latest
 tasks:
   - name: Setup
     before: |
-      code .github/gitpod-Instructions.md
       cp -RT /home/docker /home/gitpod
       chown -R gitpod:gitpod /home/gitpod
       sed -i 's/home\/docker/home\/gitpod/' /home/gitpod/.zshrc
       code -r false.alarm.code-workspace
+      code .github/gitpod-Instructions.md
     init: |
       Rscript --vanilla -e "source('renv/activate.R'); renv::restore(); renv::isolate()"
     command: gp sync-done setup
