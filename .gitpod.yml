@@ -34,7 +34,6 @@ tasks:
     before: |
       code .github/gitpod-Instructions.md
       Rscript --vanilla -e "source('renv/activate.R'); renv::install('languageserver'); renv::isolate()"
-      exit
     init: |
       code .github/gitpod-Instructions.md
       cp -RT /home/docker /home/gitpod
