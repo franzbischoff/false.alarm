@@ -36,18 +36,17 @@ tasks:
       cp -RT /home/docker /home/gitpod
       chown -R gitpod:gitpod /home/gitpod
       sed -i 's/home\/docker/home\/gitpod/' /home/gitpod/.zshrc
+      code -r false.alarm.code-workspace
     init: |
       Rscript --vanilla -e "source('renv/activate.R'); renv::restore(); renv::isolate()"
     command: gp sync-done setup
 
-  - name: Activate Workspace
-    before: |
-      gp sync-await setup
-      code -r false.alarm.code-workspace
-      gp sync-done reload
+  - name: Activate R
+    before: gp sync-await setup
+    init: code --install-extension ikuyadeu.r
+    command: gp sync-done languageserver
 
   - name: R Interactive
-    before: gp sync-await reload
-    init: code --install-extension ikuyadeu.r
+    before: gp sync-await languageserver
     command: code --command r.createRTerm
 
