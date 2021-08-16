@@ -53,4 +53,5 @@ tasks:
   - name: R Interactive
     init: |
       gp sync-await setup
+      code --install-extension ikuyadeu.r
       code --command r.createRTerm
