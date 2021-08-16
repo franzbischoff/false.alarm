@@ -37,7 +37,7 @@ tasks:
       sed -i 's/home\/docker/home\/gitpod/' /home/gitpod/.zshrc
       code .github/gitpod-Instructions.md
     init: |
-      Rscript --vanilla -e "source('renv/activate.R'); renv::restore(); Rcpp::compileAttributes(); renv::install("."); renv::isolate()"
+      Rscript --vanilla -e "source('renv/activate.R'); renv::restore(); Rcpp::compileAttributes(); renv::install('.'); renv::isolate()"
     command: gp sync-done setup && exit
 
   - name: Activate R
