@@ -2,7 +2,6 @@ vscode:
   extensions:
     - streetsidesoftware.code-spell-checker
     - gruntfuggly.todo-tree
-    - ikuyadeu.r
     - hbenl.vscode-test-explorer
     - streetsidesoftware.code-spell-checker-portuguese
     - streetsidesoftware.code-spell-checker-medical-terms
@@ -26,21 +25,30 @@ vscode:
     - https://github.com/meakbiyik/vscode-r-test-adapter/releases/download/v0.4.1/vscode-r-test-adapter-0.4.1.vsix
     - github.vscode-pull-request-github
     - bierner.markdown-preview-github-styles
+    - yzhang.markdown-all-in-one
 
 image: franzbischoff/false.alarm:latest
 
 tasks:
+  - name: Instructions
+    before: code .github/gitpod-Instructions.md
+    command: exit
   - name: Setup
     before: |
       code .github/gitpod-Instructions.md
-      Rscript --vanilla -e "source('renv/activate.R'); renv::install('languageserver'); renv::isolate()"
+      Rscript --vanilla -e "source('renv/activate.R')"
     init: |
-      code .github/gitpod-Instructions.md
       cp -RT /home/docker /home/gitpod
       chown -R gitpod:gitpod /home/gitpod
+      sed -i 's/home\/docker/home\/gitpod/' /home/gitpod/.zshrc
       Rscript --vanilla -e "source('renv/activate.R'); renv::restore(); renv::isolate()"
       code -r false.alarm.code-workspace
       gp sync-done setup
+      exit
+  - name: Activate R
+    before: |
+      gp sync-await steup
+      code --install-extension ikuyadeu.r
       exit
   - name: R Interactive
     init: |

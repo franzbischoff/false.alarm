@@ -5,8 +5,12 @@
     }
   ],
   "settings": {
-    "C_Cpp.default.browse.path": ["${workspaceRoot}/src"],
-    "C_Cpp.default.defines": ["RC_INVOKED"],
+    "C_Cpp.default.browse.path": [
+      "${workspaceRoot}/src"
+    ],
+    "C_Cpp.default.defines": [
+      "RC_INVOKED"
+    ],
     "C_Cpp.intelliSenseEngineFallback": "Enabled",
     "cSpell.allowCompoundWords": true,
     "cSpell.diagnosticLevel": "Information",
@@ -157,7 +161,10 @@
       ".github/workflows/binder.yaml"
     ],
     "latex-workshop.bibtex-format.sort.enabled": true,
-    "latex-workshop.bibtex-format.sortby": ["key", "title"],
+    "latex-workshop.bibtex-format.sortby": [
+      "key",
+      "title"
+    ],
     "latex-workshop.chktex.args.active": [
       "-wall",
       "-n22",
@@ -194,6 +201,7 @@
       "**/out/**",
       "**/Code/User/**"
     ],
+    "r.alwaysUseActiveTerminal": true,
     "taskExplorer.enableAnsiconForAnt": false,
     "taskExplorer.enableAnt": false,
     "taskExplorer.enableAppPublisher": false,
@@ -220,7 +228,16 @@
       "**/dev/**"
     ],
     "taskExplorer.showLastTasks": false,
+    "terminal.integrated.defaultProfile.linux": "zsh",
+    // "terminal.integrated.allowWorkspaceConfiguration": true,
+    "terminal.integrated.profiles.linux": {
+      "zsh": {
+        "path": "/bin/zsh"
+      }
+    },
     "terminal.integrated.scrollback": 10000,
+    "terminal.integrated.tabs.enabled": true,
+    "terminal.integrated.tabs.focusMode": "singleClick",
     "testing.enableProblemDiagnostics": true,
     "todo-tree.filtering.includeGlobs": [
       "**/src/**",
@@ -251,6 +268,8 @@
     "yaml.schemas": {
       "**/.github/workflows/*.yaml": "https://json.schemastore.org/github-workflow.json"
     },
-    "r.alwaysUseActiveTerminal": true
+    "autoOpenPreviewPanel.languages": "markdown,md",
+    "autoOpenPreviewPanel.openPreviewToSide": true,
+    "markdown.extension.preview.autoShowPreviewToSide": true
   }
 }
