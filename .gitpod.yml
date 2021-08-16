@@ -47,7 +47,7 @@ tasks:
       exit
   - name: Activate R
     before: |
-      gp sync-await steup
+      gp sync-await setup
       code --install-extension ikuyadeu.r
       exit
   - name: R Interactive
