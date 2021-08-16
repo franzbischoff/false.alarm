@@ -46,6 +46,4 @@ tasks:
       exit
   - name: R Interactive
     init: gp sync-await setup
-    command: |
-      R
-      .vsc.attach()
+    command: R --no-save, --no-restore --interactive
