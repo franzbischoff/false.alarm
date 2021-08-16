@@ -12,8 +12,9 @@ The project will be ready when the workspace is reloaded and you see the title *
 
 Checklist:
 
--   [ ] Ignore a warning about "X extensions are suggested but..."
+-   [ ] Ignore a warning about "X extensions are suggested but...".
+-   [ ] Ignore the "languageserver" error, it will be fixed in the end of the setup.
 -   [ ] The R terminal is started.
 -   [ ] In the status bar (down-right), check for the status `R xxx` where xxx is a number. If no terminal is attached `R: (not attached)`, close the terminal using the command `q()` and click on the `R xxx` message to start a new and attached terminal (or use the command palette `R: Create R terminal`).
--   [ ] Confirm that `renv` is activated: `Project '/workspace/false.alarm' loaded. [renv 0.13.2]`
+-   [ ] Confirm that `renv` is activated: `Project '/workspace/false.alarm' loaded. [renv 0.13.2]`.
 -   [ ] On the first run, the folder inst/extdata will be missing/empty. You need to run the `run.R` script first to download the dataset and start the first `targets` run.

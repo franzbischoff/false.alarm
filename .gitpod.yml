@@ -31,16 +31,21 @@ image: franzbischoff/false.alarm:latest
 
 tasks:
   - name: Instructions
-    init: code .github/gitpod-Instructions.md
+    init: |
+      code .github/gitpod-Instructions.md
+      exit
   - name: Setup
     before: |
-      Rscript --vanilla -e "source('renv/activate.R'); renv::install('languageserver')"
+      Rscript --vanilla -e "source('renv/activate.R'); renv::install('languageserver'); renv::isolate()"
+      code -r false.alarm.code-workspace
     init: |
       cp -RT /home/docker /home/gitpod
       chown -R gitpod:gitpod /home/gitpod
-      Rscript --vanilla -e "source('renv/activate.R'); renv::restore()"
-      code -r false.alarm.code-workspace
+      Rscript --vanilla -e "source('renv/activate.R'); renv::restore(); renv::isolate()"
       gp sync-done setup
+      exit
   - name: R Interactive
     init: gp sync-await setup
-    command: R
+    command: |
+      R
+      .vsc.attach()
