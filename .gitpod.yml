@@ -30,15 +30,13 @@ vscode:
 image: franzbischoff/false.alarm:latest
 
 tasks:
-  - name: Instructions
-    init: |
-      code .github/gitpod-Instructions.md
-      exit
   - name: Setup
     before: |
+      code .github/gitpod-Instructions.md
       Rscript --vanilla -e "source('renv/activate.R'); renv::install('languageserver'); renv::isolate()"
       code -r false.alarm.code-workspace
     init: |
+      code .github/gitpod-Instructions.md
       cp -RT /home/docker /home/gitpod
       chown -R gitpod:gitpod /home/gitpod
       Rscript --vanilla -e "source('renv/activate.R'); renv::restore(); renv::isolate()"

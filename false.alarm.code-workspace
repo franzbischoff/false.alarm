@@ -250,6 +250,7 @@
     "xml.validation.resolveExternalEntities": true,
     "yaml.schemas": {
       "**/.github/workflows/*.yaml": "https://json.schemastore.org/github-workflow.json"
-    }
+    },
+    "r.alwaysUseActiveTerminal": true
   }
 }
