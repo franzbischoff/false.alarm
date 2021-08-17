@@ -49,6 +49,7 @@
 
 
 
+<script src="libs/accessible-code-block-0.0.1/empty-anchor.js"></script>
 <link href="libs/anchor-sections-1.0.1/anchor-sections.css" rel="stylesheet" />
 <script src="libs/anchor-sections-1.0.1/anchor-sections.js"></script>
 <script src="libs/kePrint-0.0.1/kePrint.js"></script>
@@ -131,16 +132,16 @@ ICU” will also be analyzed.</p>
 </div>
 <div id="research-plan-and-methods" class="section level2">
 <h2><span class="header-section-number">3.2</span> Research plan and methods</h2>
-<p>This research is being conducted using the Research Compendium principles<span class="citation"><sup><a href="references.html#ref-compendium2019">15</a></sup></span>:</p>
+<p>This research is being conducted using the Research Compendium principles<span class="citation"><sup><a href="references.html#ref-compendium2019" role="doc-biblioref">15</a></sup></span>:</p>
 <ol style="list-style-type: decimal">
 <li>Stick with the convention of your peers;</li>
 <li>Keep data, methods, and output separated;</li>
 <li>Specify your computational environment as clearly as you can.</li>
 </ol>
-<p>Data management is following the FAIR principle (findable, accessible, interoperable, reusable)<span class="citation"><sup><a href="references.html#ref-wilkinson2016">16</a></sup></span>.</p>
-<p>Currently, the dataset used is stored on a public repository<span class="citation"><sup><a href="references.html#ref-franz_dataset">17</a></sup></span>, the source code is publicly open and
-stored on Github<span class="citation"><sup><a href="references.html#ref-franz_github">18</a></sup></span>, while the reports and reproducibility information on each step is found on a public
-website<span class="citation"><sup><a href="references.html#ref-franz_website">19</a></sup></span>.</p>
+<p>Data management is following the FAIR principle (findable, accessible, interoperable, reusable)<span class="citation"><sup><a href="references.html#ref-wilkinson2016" role="doc-biblioref">16</a></sup></span>.</p>
+<p>Currently, the dataset used is stored on a public repository<span class="citation"><sup><a href="references.html#ref-franz_dataset" role="doc-biblioref">17</a></sup></span>, the source code is publicly open and
+stored on Github<span class="citation"><sup><a href="references.html#ref-franz_github" role="doc-biblioref">18</a></sup></span>, while the reports and reproducibility information on each step is found on a public
+website<span class="citation"><sup><a href="references.html#ref-franz_website" role="doc-biblioref">19</a></sup></span>.</p>
 <div id="type-of-study" class="section level3">
 <h3><span class="header-section-number">3.2.1</span> Type of study</h3>
 <p>This thesis will be a diagnostic study as the algorithm must classify the change in pattern as positive or negative for
@@ -152,32 +153,32 @@ life-threatening.</p>
 a good start for exploring the main goal of reduce false alarms. This dataset was manually selected for this challenge
 and the events were labeled by experts, so it is not RAW data. All signals have been resampled (using anti-alias
 filters) to 12 bit, 250 Hz and have had FIR bandpass [0.05 to 40Hz] and mains notch filters applied to remove noise.
-Pacemaker and other artifacts may be present on the ECG<span class="citation"><sup><a href="references.html#ref-Clifford2015">6</a></sup></span>. Furthermore, this dataset contains at least two
+Pacemaker and other artifacts may be present on the ECG<span class="citation"><sup><a href="references.html#ref-Clifford2015" role="doc-biblioref">6</a></sup></span>. Furthermore, this dataset contains at least two
 ECG derivations and one or more variables like arterial blood pressure, photoplethysmograph readings, and respiration
 movements.</p>
 <p>These variables may or may not be helpful for increasing the sensitivity or specificity of the algorithm. It is planned
 to use the minimum set of variables as it is known in multi-dimensional analysis that using just two (or some small
 subset) of all the dimensions can be much more accurate than either using all dimensions or a single
-dimension<span class="citation"><sup><a href="references.html#ref-gharghabi2018">20</a></sup></span>.</p>
+dimension<span class="citation"><sup><a href="references.html#ref-gharghabi2018" role="doc-biblioref">20</a></sup></span>.</p>
 <p>It is desirable that real data extracted from Portuguese ICU could be used in further stage to assess the validity of
 the model in real settings and robustness (using RAW data instead of filtered data). The variables available on
 Physionet’s dataset are commonly available on Portuguese ICU’s.</p>
 </div>
 <div id="workflow" class="section level3">
 <h3><span class="header-section-number">3.2.3</span> Workflow</h3>
-<p>All steps of the process will be managed using the R package <code>targets</code><span class="citation"><sup><a href="references.html#ref-landau2021">21</a></sup></span> from data extraction to the final
+<p>All steps of the process will be managed using the R package <code>targets</code><span class="citation"><sup><a href="references.html#ref-landau2021" role="doc-biblioref">21</a></sup></span> from data extraction to the final
 report, as shown in Fig. .</p>
-<p>The report will then be available on the main webpage<span class="citation"><sup><a href="references.html#ref-franz_website">19</a></sup></span>, allowing inspection of previous versions managed
-by the R package <code>workflowr</code><span class="citation"><sup><a href="references.html#ref-workflowr2021">22</a></sup></span>, as we can see in Fig. .</p>
+<p>The report will then be available on the main webpage<span class="citation"><sup><a href="references.html#ref-franz_website" role="doc-biblioref">19</a></sup></span>, allowing inspection of previous versions managed
+by the R package <code>workflowr</code><span class="citation"><sup><a href="references.html#ref-workflowr2021" role="doc-biblioref">22</a></sup></span>, as we can see in Fig. .</p>
 </div>
 <div id="statistical-analysis" class="section level3">
 <h3><span class="header-section-number">3.2.4</span> Statistical analysis</h3>
 <p>The Statistical analysis will be performed using R language v4.0.5 or greater and it will be computed the ROC curve for
 the algorithm.</p>
-<p>The experiment will be conducted using the Matrix Profile concept<span class="citation"><sup><a href="references.html#ref-yeh2016">23</a></sup></span>, the state-of-the-art for time series
+<p>The experiment will be conducted using the Matrix Profile concept<span class="citation"><sup><a href="references.html#ref-yeh2016" role="doc-biblioref">23</a></sup></span>, the state-of-the-art for time series
 analysis. It will be conducted several experiments to identify the best algorithm for this task. One of such algorithms
-is the online semantic segmentation for multi-dimensional time series<span class="citation"><sup><a href="references.html#ref-gharghabi2018">20</a></sup></span>.</p>
-<p>In addition, we will combine the fading factors<span class="citation"><sup><a href="references.html#ref-Gama2013">24</a>,<a href="references.html#ref-Rodrigues2010">25</a></sup></span> strategy to minimize the memory and space
+is the online semantic segmentation for multi-dimensional time series<span class="citation"><sup><a href="references.html#ref-gharghabi2018" role="doc-biblioref">20</a></sup></span>.</p>
+<p>In addition, we will combine the fading factors<span class="citation"><sup><a href="references.html#ref-Gama2013" role="doc-biblioref">24</a>,<a href="references.html#ref-Rodrigues2010" role="doc-biblioref">25</a></sup></span> strategy to minimize the memory and space
 consumption lowering the processor power needed, allowing this algorithm to be used in almost any device.</p>
 </div>
 <div id="research-team" class="section level3">
