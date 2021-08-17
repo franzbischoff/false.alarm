@@ -257,6 +257,9 @@ $(document).ready(function () {
   <a href="index.html">Home</a>
 </li>
 <li>
+  <a href="blog.html">Blog</a>
+</li>
+<li>
   <a href="report.html">Report</a>
 </li>
 <li>
@@ -313,7 +316,7 @@ $(document).ready(function () {
 
 <p>
 <button type="button" class="btn btn-default btn-workflowr btn-workflowr-report" data-toggle="collapse" data-target="#workflowr-report">
-<span class="glyphicon glyphicon-list" aria-hidden="true"></span> workflowr <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span>
+<span class="glyphicon glyphicon-list" aria-hidden="true"></span> workflowr <span class="glyphicon glyphicon-exclamation-sign text-danger" aria-hidden="true"></span>
 </button>
 </p>
 <div id="workflowr-report" class="collapse">
@@ -322,7 +325,7 @@ $(document).ready(function () {
 <a data-toggle="tab" href="#summary">Summary</a>
 </li>
 <li>
-<a data-toggle="tab" href="#checks"> Checks <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> </a>
+<a data-toggle="tab" href="#checks"> Checks <span class="glyphicon glyphicon-exclamation-sign text-danger" aria-hidden="true"></span> </a>
 </li>
 <li>
 <a data-toggle="tab" href="#versions">Past versions</a>
@@ -331,13 +334,13 @@ $(document).ready(function () {
 <div class="tab-content">
 <div id="summary" class="tab-pane fade in active">
 <p>
-<strong>Last updated:</strong> 2021-07-15
+<strong>Last updated:</strong> 2021-08-16
 </p>
 <p>
-<strong>Checks:</strong> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> 7 <span class="glyphicon glyphicon-exclamation-sign text-danger" aria-hidden="true"></span> 0
+<strong>Checks:</strong> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> 6 <span class="glyphicon glyphicon-exclamation-sign text-danger" aria-hidden="true"></span> 1
 </p>
 <p>
-<strong>Knit directory:</strong> <code>false.alarm/</code> <span class="glyphicon glyphicon-question-sign" aria-hidden="true" title="This is the local directory in which the code in this file was executed."> </span>
+<strong>Knit directory:</strong> <code>workspace/</code> <span class="glyphicon glyphicon-question-sign" aria-hidden="true" title="This is the local directory in which the code in this file was executed."> </span>
 </p>
 <p>
 This reproducible <a href="http://rmarkdown.rstudio.com">R Markdown</a> analysis was created with <a
@@ -350,12 +353,12 @@ This reproducible <a href="http://rmarkdown.rstudio.com">R Markdown</a> analysis
 <div class="panel panel-default">
 <div class="panel-heading">
 <p class="panel-title">
-<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRMarkdownfilestronguptodate"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>R Markdown file:</strong> up-to-date </a>
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRMarkdownfilestronguncommittedchanges"> <span class="glyphicon glyphicon-exclamation-sign text-danger" aria-hidden="true"></span> <strong>R Markdown file:</strong> uncommitted changes </a>
 </p>
 </div>
-<div id="strongRMarkdownfilestronguptodate" class="panel-collapse collapse">
+<div id="strongRMarkdownfilestronguncommittedchanges" class="panel-collapse collapse">
 <div class="panel-body">
-<p>Great! Since the R Markdown file has been committed to the Git repository, you know the exact version of the code that produced these results.</p>
+<p>The R Markdown file has staged changes. To know which version of the R Markdown file created these results, you’ll want to first commit it to the Git repo. If you’re still working on the analysis, you can ignore this warning. When you’re finished, you can run <code>wflow_publish</code> to commit the R Markdown file and build the HTML.</p>
 </div>
 </div>
 </div>
@@ -422,24 +425,57 @@ This reproducible <a href="http://rmarkdown.rstudio.com">R Markdown</a> analysis
 <div class="panel panel-default">
 <div class="panel-heading">
 <p class="panel-title">
-<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomfranzbischofffalsealarmtree64efa8b33607ef60adf929a1de9cf9901630ce61targetblank64efa8ba"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Repository version:</strong> <a href="https://github.com/franzbischoff/false.alarm/tree/64efa8b33607ef60adf929a1de9cf9901630ce61" target="_blank">64efa8b</a> </a>
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomfranzbischofffalsealarmtreef86f6b1814acd87d95e242613ab1e91fc279381ftargetblankf86f6b1a"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Repository version:</strong> <a href="https://github.com/franzbischoff/false.alarm/tree/f86f6b1814acd87d95e242613ab1e91fc279381f" target="_blank">f86f6b1</a> </a>
 </p>
 </div>
-<div id="strongRepositoryversionstrongahrefhttpsgithubcomfranzbischofffalsealarmtree64efa8b33607ef60adf929a1de9cf9901630ce61targetblank64efa8ba" class="panel-collapse collapse">
+<div id="strongRepositoryversionstrongahrefhttpsgithubcomfranzbischofffalsealarmtreef86f6b1814acd87d95e242613ab1e91fc279381ftargetblankf86f6b1a" class="panel-collapse collapse">
 <div class="panel-body">
 <p>
 Great! You are using Git for version control. Tracking code development and connecting the code version to the results is critical for reproducibility.
 </p>
 <p>
-The results in this page were generated with repository version <a href="https://github.com/franzbischoff/false.alarm/tree/64efa8b33607ef60adf929a1de9cf9901630ce61" target="_blank">64efa8b</a>. See the <em>Past versions</em> tab to see a history of the changes made to the R Markdown and HTML files.
+The results in this page were generated with repository version <a href="https://github.com/franzbischoff/false.alarm/tree/f86f6b1814acd87d95e242613ab1e91fc279381f" target="_blank">f86f6b1</a>. See the <em>Past versions</em> tab to see a history of the changes made to the R Markdown and HTML files.
 </p>
 <p>
 Note that you need to be careful to ensure that all relevant files for the analysis have been committed to Git prior to generating the results (you can use <code>wflow_publish</code> or <code>wflow_git_commit</code>). workflowr only checks the R Markdown file, but you know if there are other scripts or data files that it depends on. Below is the status of the Git repository when the results were generated:
 </p>
 <pre><code>
 Ignored files:
+    Ignored:    .Renviron
+    Ignored:    .devcontainer/exts/
+    Ignored:    .httr-oauth
+    Ignored:    R/RcppExports.R
+    Ignored:    _targets/
+    Ignored:    dev/
+    Ignored:    inst/extdata/
     Ignored:    renv/library/
     Ignored:    renv/staging/
+    Ignored:    src/RcppExports.cpp
+    Ignored:    src/RcppExports.o
+    Ignored:    src/false.alarm.so
+    Ignored:    src/fft.o
+    Ignored:    src/mass.o
+    Ignored:    src/math.o
+    Ignored:    src/mpx.o
+    Ignored:    src/scrimp.o
+    Ignored:    src/stamp.o
+    Ignored:    src/stomp.o
+    Ignored:    src/windowfunc.o
+    Ignored:    workspace.RData
+
+Unstaged changes:
+    Modified:   analysis/about.Rmd
+    Modified:   analysis/report.Rmd
+
+Staged changes:
+    Modified:   analysis/_site.yml
+    Modified:   analysis/about.Rmd
+    New:        analysis/blog.Rmd
+    Modified:   analysis/report.Rmd
+    Modified:   protocol/FirstReport.Rmd
+    Modified:   protocol/Protocol.Rmd
+    Modified:   scripts/find_all_files.R
+    Modified:   thesis/index.Rmd
 
 </code></pre>
 <p>
@@ -478,6 +514,23 @@ Message
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+html
+</td>
+<td>
+<a href="https://rawcdn.githack.com/franzbischoff/false.alarm/e7e5d4861f1f3b21e25787e0ed6b6066b57ff857/docs/report.html" target="_blank">e7e5d48</a>
+</td>
+<td>
+GitHub Actions
+</td>
+<td>
+2021-07-15
+</td>
+<td>
+Build site.
+</td>
+</tr>
 <tr>
 <td>
 Rmd
@@ -646,18 +699,18 @@ p.caption {
 <h1><span class="header-section-number">1</span> Current Work Status</h1>
 <div id="principles" class="section level2">
 <h2><span class="header-section-number">1.1</span> Principles</h2>
-<p>This research is being conducted using the Research Compendium principles:<span class="citation"><sup><a href="#ref-compendium2019" role="doc-biblioref">1</a></sup></span></p>
+<p>This research is being conducted using the Research Compendium principles<span class="citation"><sup><a href="#ref-compendium2019">1</a></sup></span>:</p>
 <ol style="list-style-type: decimal">
 <li>Stick with the convention of your peers;</li>
 <li>Keep data, methods, and output separated;</li>
 <li>Specify your computational environment as clearly as you can.</li>
 </ol>
-<p>Data management is following the FAIR principle (findable, accessible, interoperable, reusable).<span class="citation"><sup><a href="#ref-wilkinson2016" role="doc-biblioref">2</a></sup></span></p>
+<p>Data management is following the FAIR principle (findable, accessible, interoperable, reusable)<span class="citation"><sup><a href="#ref-wilkinson2016">2</a></sup></span>.</p>
 </div>
 <div id="the-data" class="section level2">
 <h2><span class="header-section-number">1.2</span> The data</h2>
-<p>The current dataset used is the CinC/Physionet Challenge 2015 public dataset, modified to include only the actual data and the header files in order to be read by the pipeline and is hosted by Zenodo<span class="citation"><sup><a href="#ref-bischoff2021" role="doc-biblioref">3</a></sup></span> under the same license as Physionet.</p>
-<p>The dataset is composed of 750 patients with at least five minutes records. All signals have been resampled (using anti-alias filters) to 12 bit, 250 Hz and have had FIR bandpass (0.05 to 40Hz) and mains notch filters applied to remove noise. Pacemaker and other artifacts still present on the ECG.<span class="citation"><sup><a href="#ref-Clifford2015" role="doc-biblioref">4</a></sup></span> Furthermore, this dataset contains at least two ECG derivations and one or more variables like arterial blood pressure, photoplethysmograph readings, and respiration movements.</p>
+<p>The current dataset used is the CinC/Physionet Challenge 2015 public dataset, modified to include only the actual data and the header files in order to be read by the pipeline and is hosted by Zenodo<span class="citation"><sup><a href="#ref-bischoff2021">3</a></sup></span> under the same license as Physionet.</p>
+<p>The dataset is composed of 750 patients with at least five minutes records. All signals have been resampled (using anti-alias filters) to 12 bit, 250 Hz and have had FIR bandpass (0.05 to 40Hz) and mains notch filters applied to remove noise. Pacemaker and other artifacts still present on the ECG<span class="citation"><sup><a href="#ref-Clifford2015">4</a></sup></span>. Furthermore, this dataset contains at least two ECG derivations and one or more variables like arterial blood pressure, photoplethysmograph readings, and respiration movements.</p>
 <p>The <em>event</em> we seek to improve is the detection of a life-threatening arrhythmia as defined by Physionet in Table .</p>
 <table class="table" style="margin-left: auto; margin-right: auto;">
 <caption>
@@ -716,11 +769,11 @@ Fibrillatory, flutter, or oscillatory waveform for at least 4 seconds
 </tr>
 </tbody>
 </table>
-<p>The fifth minute is precisely where the alarm has been triggered on the original recording set. To meet the ANSI/AAMI EC13 Cardiac Monitor Standards,<span class="citation"><sup><a href="#ref-AAMI2002" role="doc-biblioref">5</a></sup></span> the onset of the event is within 10 seconds of the alarm (i.e., between 4:50 and 5:00 of the record). That doesn’t mean that there are no other arrhythmias before, but those were not labeled.</p>
+<p>The fifth minute is precisely where the alarm has been triggered on the original recording set. To meet the ANSI/AAMI EC13 Cardiac Monitor Standards<span class="citation"><sup><a href="#ref-AAMI2002">5</a></sup></span>, the onset of the event is within 10 seconds of the alarm (i.e., between 4:50 and 5:00 of the record). That doesn’t mean that there are no other arrhythmias before, but those were not labeled.</p>
 </div>
 <div id="workflow" class="section level2">
 <h2><span class="header-section-number">1.3</span> Workflow</h2>
-<p>All steps of the process are being managed using the R package <code>targets</code><span class="citation"><sup><a href="#ref-landau2021" role="doc-biblioref">6</a></sup></span> from data extraction to the final report, as shown in Fig. .</p>
+<p>All steps of the process are being managed using the R package <code>targets</code><span class="citation"><sup><a href="#ref-landau2021">6</a></sup></span> from data extraction to the final report, as shown in Fig. .</p>
 <div class="figure" style="text-align: center">
 <img src="figure/targets.png" alt="Reproducible research workflow using `targets`." width="100%" />
 <p class="caption">
@@ -764,7 +817,7 @@ Francisco Bischoff
 </table>
 </div>
 </div>
-<p>The report is available on the main webpage,<span class="citation"><sup><a href="#ref-franz_website" role="doc-biblioref">7</a></sup></span> allowing inspection of previous versions managed by the R package <code>workflowr</code><span class="citation"><sup><a href="#ref-workflowr2021" role="doc-biblioref">8</a></sup></span>, as shown in Fig. .</p>
+<p>The report is available on the main webpage<span class="citation"><sup><a href="#ref-franz_website">7</a></sup></span>, allowing inspection of previous versions managed by the R package <code>workflowr</code><span class="citation"><sup><a href="#ref-workflowr2021">8</a></sup></span>, as shown in Fig. .</p>
 <div class="figure" style="text-align: center">
 <img src="figure/workflowr_print.png" alt="Reproducible reports using `workflowr`." width="100%" />
 <p class="caption">
@@ -918,7 +971,7 @@ Francisco Bischoff
 </table>
 </div>
 </div>
-<p>Meanwhile, the project pipeline has been set up on GitHub, Inc. <span class="citation"><sup><a href="#ref-bischoffrepo2021" role="doc-biblioref">9</a></sup></span> leveraging on Github A ions<span class="citation"><sup><a href="#ref-gitactions2021" role="doc-biblioref">10</a></sup></span> for the Continuous Integration lifecycle, the repository is available at,<span class="citation"><sup><a href="#ref-bischoffrepo2021" role="doc-biblioref">9</a></sup></span> and the resulting report is available at<span class="citation"><sup><a href="#ref-franz_website" role="doc-biblioref">7</a></sup></span> for transparency while the roadmap and tasks are managed using the integrated Zenhub.<span class="citation"><sup><a href="#ref-zenhub2021" role="doc-biblioref">11</a></sup></span></p>
+<p>Meanwhile, the project pipeline has been set up on GitHub, Inc. <span class="citation"><sup><a href="#ref-bischoffrepo2021">9</a></sup></span> leveraging on Github A ions<span class="citation"><sup><a href="#ref-gitactions2021">10</a></sup></span> for the Continuous Integration lifecycle, the repository is available at<span class="citation"><sup><a href="#ref-bischoffrepo2021">9</a></sup></span>, and the resulting report is available at<span class="citation"><sup><a href="#ref-franz_website">7</a></sup></span> for transparency while the roadmap and tasks are managed using the integrated Zenhub<span class="citation"><sup><a href="#ref-zenhub2021">11</a></sup></span>.</p>
 <p>As it is known worldwide, 2020 was hard on every project, which required changes on the timeline. In Fig.  it is shown the initial roadmap (as of May 2020) and Fig.  the modified roadmap (as of July 2021).</p>
 <div class="figure" style="text-align: center">
 <img src="figure/roadmap_original.png" alt="Roadmap original" width="100%" />
@@ -1010,7 +1063,7 @@ Francisco Bischoff
 <div id="preliminary-experimentations" class="section level3">
 <h3><span class="header-section-number">1.4.2</span> Preliminary Experimentations</h3>
 <p><strong>RAW Data</strong></p>
-<p>While programming the pipeline for the current dataset, it has been acquired a Single Lead Heart Rate Monitor breakout from Sparkfun<sup>TM</sup><span class="citation"><sup><a href="#ref-sparkfun2021" role="doc-biblioref">12</a></sup></span> using the AD8232<span class="citation"><sup><a href="#ref-AnalogDevices2020" role="doc-biblioref">13</a></sup></span> microchip from Analog Devices Inc., compatible with Arduino<sup>(R)</sup>,<span class="citation"><sup><a href="#ref-arduino2021" role="doc-biblioref">14</a></sup></span> for an in-house experiment (Figs.  and ).</p>
+<p>While programming the pipeline for the current dataset, it has been acquired a Single Lead Heart Rate Monitor breakout from Sparkfun<sup>TM</sup><span class="citation"><sup><a href="#ref-sparkfun2021">12</a></sup></span> using the AD8232<span class="citation"><sup><a href="#ref-AnalogDevices2020">13</a></sup></span> microchip from Analog Devices Inc., compatible with Arduino<sup>(R)</sup><span class="citation"><sup><a href="#ref-arduino2021">14</a></sup></span>, for an in-house experiment (Figs.  and ).</p>
 <div class="figure" style="text-align: center">
 <img src="figure/sparkfun.jpg" alt="Single Lead Heart Rate Monitor" width="50%" />
 <p class="caption">
@@ -1187,9 +1240,9 @@ Francisco Bischoff
 </div>
 <p>So in this way, we allow us to import RAW data from other devices and build our own test dataset in the future.</p>
 <p><strong>Detecting Regime Changes</strong></p>
-<p>The regime change approach will be using the <em>Arc Counts</em>, as explained elsewhere.<span class="citation"><sup><a href="#ref-gharghabi2018" role="doc-biblioref">15</a></sup></span> The current implementation of the Matrix Profile in R, maintained by the first author of this thesis, is being used to accomplish the computations. This package was published in R Journal.<span class="citation"><sup><a href="#ref-RJ-2020-021" role="doc-biblioref">16</a></sup></span></p>
+<p>The regime change approach will be using the <em>Arc Counts</em>, as explained elsewhere<span class="citation"><sup><a href="#ref-gharghabi2018">15</a></sup></span>. The current implementation of the Matrix Profile in R, maintained by the first author of this thesis, is being used to accomplish the computations. This package was published in R Journal<span class="citation"><sup><a href="#ref-RJ-2020-021">16</a></sup></span>.</p>
 <p>A new concept was needed to be implemented on the algorithm in order to emulate (in this first iteration) the behavior of the real-time sensor: the search must only look for previous information within a time constraint. Thus, both the Matrix Profile computation and the <em>Arc Counts</em> needed to be adapted for this task.</p>
-<p>At the same time, the ECG data needs to be “cleaned” for proper evaluation. That is different from the initial filtering process. Several SQIs (Signal Quality Indexes) are used on literature,<span class="citation"><sup><a href="#ref-eerikainen2015" role="doc-biblioref">17</a></sup></span> some trivial measures as <em>kurtosis</em>, <em>skewness</em>, median local noise level, other more complex as pcaSQI (the ratio of the sum of the five largest eigenvalues associated with the principal components over the sum of all eigenvalues obtained by principal component analysis applied to the time aligned ECG segments in the window). By experimentation (yet to be validated), a simple formula gives us the “complexity” of the signal and correlates well with the noisy data is shown in Equation (1).</p>
+<p>At the same time, the ECG data needs to be “cleaned” for proper evaluation. That is different from the initial filtering process. Several SQIs (Signal Quality Indexes) are used on literature<span class="citation"><sup><a href="#ref-eerikainen2015">17</a></sup></span>, some trivial measures as <em>kurtosis</em>, <em>skewness</em>, median local noise level, other more complex as pcaSQI (the ratio of the sum of the five largest eigenvalues associated with the principal components over the sum of all eigenvalues obtained by principal component analysis applied to the time aligned ECG segments in the window). By experimentation (yet to be validated), a simple formula gives us the “complexity” of the signal and correlates well with the noisy data is shown in Equation (1).</p>
 <p><span class="math display">\[
 \sqrt{\sum_{i=1}^w((x_{i+1}-x_i)^2)}, \quad \text{where}\; w \; \text{is the window size} \tag{1}
 \]</span></p>
@@ -1441,34 +1494,42 @@ BLAS:   /usr/lib/x86_64-linux-gnu/blas/libblas.so.3.9.0
 LAPACK: /usr/lib/x86_64-linux-gnu/lapack/liblapack.so.3.9.0
 
 locale:
- [1] LC_CTYPE=C.UTF-8       LC_NUMERIC=C           LC_TIME=C.UTF-8       
- [4] LC_COLLATE=C.UTF-8     LC_MONETARY=C.UTF-8    LC_MESSAGES=C.UTF-8   
- [7] LC_PAPER=C.UTF-8       LC_NAME=C              LC_ADDRESS=C          
-[10] LC_TELEPHONE=C         LC_MEASUREMENT=C.UTF-8 LC_IDENTIFICATION=C   
+ [1] LC_CTYPE=en_US.UTF-8       LC_NUMERIC=C              
+ [3] LC_TIME=en_US.UTF-8        LC_COLLATE=en_US.UTF-8    
+ [5] LC_MONETARY=en_US.UTF-8    LC_MESSAGES=en_US.UTF-8   
+ [7] LC_PAPER=en_US.UTF-8       LC_NAME=C                 
+ [9] LC_ADDRESS=C               LC_TELEPHONE=C            
+[11] LC_MEASUREMENT=en_US.UTF-8 LC_IDENTIFICATION=C       
 
 attached base packages:
 [1] stats     graphics  grDevices datasets  utils     methods   base     
 
 other attached packages:
-[1] kableExtra_1.3.4  tibble_3.1.2      visNetwork_2.0.9  tarchetypes_0.2.1
-[5] targets_0.4.2     workflowr_1.6.2   here_1.0.1       
+[1] targets_0.6.0    kableExtra_1.3.4 tibble_3.1.3     visNetwork_2.0.9
+[5] here_1.0.1      
 
 loaded via a namespace (and not attached):
- [1] tidyselect_1.1.1  xfun_0.24         bslib_0.2.5.1     purrr_0.3.4      
- [5] colorspace_2.0-2  vctrs_0.3.8       viridisLite_0.4.0 htmltools_0.5.1.1
- [9] yaml_2.2.1        utf8_1.2.1        rlang_0.4.11      later_1.2.0      
-[13] pillar_1.6.1      jquerylib_0.1.4   glue_1.4.2        withr_2.4.2      
-[17] lifecycle_1.0.0   stringr_1.4.0     munsell_0.5.0     rvest_1.0.0      
-[21] htmlwidgets_1.5.3 codetools_0.2-18  evaluate_0.14     knitr_1.33       
-[25] callr_3.7.0       httpuv_1.6.1      ps_1.6.0          fansi_0.5.0      
-[29] highr_0.9         Rcpp_1.0.7        renv_0.13.2       promises_1.2.0.1 
-[33] scales_1.1.1      webshot_0.5.2     jsonlite_1.7.2    systemfonts_1.0.2
-[37] fs_1.5.0          digest_0.6.27     stringi_1.7.2     processx_3.5.2   
-[41] rprojroot_2.0.2   cli_3.0.0         tools_4.1.0       magrittr_2.0.1   
-[45] sass_0.4.0        crayon_1.4.1      whisker_0.4       pkgconfig_2.0.3  
-[49] ellipsis_0.3.2    data.table_1.14.0 xml2_1.3.2        svglite_2.0.0    
-[53] rmarkdown_2.9.3   httr_1.4.2        rstudioapi_0.13   R6_2.5.0         
-[57] igraph_1.2.6      compiler_4.1.0    git2r_0.28.0     </code></pre>
+ [1] tidyselect_1.1.1      xfun_0.24             bslib_0.2.5.1        
+ [4] purrr_0.3.4           colorspace_2.0-2      vctrs_0.3.8          
+ [7] htmltools_0.5.1.1     viridisLite_0.4.0     yaml_2.2.1           
+[10] utf8_1.2.2            rlang_0.4.11          jquerylib_0.1.4      
+[13] later_1.2.0           pillar_1.6.2          withr_2.4.2          
+[16] glue_1.4.2            lifecycle_1.0.0       stringr_1.4.0        
+[19] munsell_0.5.0         workflowr_1.6.2       rvest_1.0.0          
+[22] htmlwidgets_1.5.3     codetools_0.2-18      evaluate_0.14        
+[25] languageserver_0.3.10 knitr_1.33            callr_3.7.0          
+[28] httpuv_1.6.1          ps_1.6.0              fansi_0.5.0          
+[31] highr_0.9             Rcpp_1.0.7            renv_0.13.2          
+[34] promises_1.2.0.1      scales_1.1.1          webshot_0.5.2        
+[37] debugme_1.1.0         jsonlite_1.7.2        fs_1.5.0             
+[40] systemfonts_1.0.2     digest_0.6.27         stringi_1.7.3        
+[43] processx_3.5.2        rprojroot_2.0.2       cli_3.0.1            
+[46] tools_4.1.0           magrittr_2.0.1        sass_0.4.0           
+[49] crayon_1.4.1          whisker_0.4           pkgconfig_2.0.3      
+[52] ellipsis_0.3.2        data.table_1.14.0     xml2_1.3.2           
+[55] rmarkdown_2.9.7       svglite_2.0.0.9000    httr_1.4.2           
+[58] rstudioapi_0.13       R6_2.5.0              igraph_1.2.6         
+[61] git2r_0.28.0.9000     compiler_4.1.0       </code></pre>
 </div>
 </div>
 </div>

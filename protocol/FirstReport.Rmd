@@ -3,7 +3,7 @@ title: "Research Progress Report"
 author: "Francisco Bischoff"
 link-citations: true
 bibliography: ../papers/references.bib
-csl: https://raw.githubusercontent.com/citation-style-language/styles/master/american-medical-association.csl
+csl: ../thesis/csl/ama.csl
 linestretch: 1.5
 indent: true
 output:

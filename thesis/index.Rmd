@@ -51,9 +51,9 @@ output:
   # thesisdown::thesis_word:
   #   md_extensions: -tex_math_single_backslash
   #   fig_caption: yes
-    
-# If you are creating a PDF you'll need to write your preliminary content 
-# (e.g., abstract, acknowledgements) below or use code similar to line 25-26 
+
+# If you are creating a PDF you'll need to write your preliminary content
+# (e.g., abstract, acknowledgements) below or use code similar to line 25-26
 # for the .RMD files. If you are NOT producing a PDF, delete or silence
 # lines 25-39 in this YAML header.
 # abstract is being output for: github, word, pdf
@@ -61,7 +61,7 @@ output:
 bibliography: '`r here::here("papers", "references.bib")`'
 link-citations: true
 # Download your specific csl file and refer to it in the line below.
-csl: https://raw.githubusercontent.com/citation-style-language/styles/master/american-medical-association.csl
+csl: ./csl/ama.csl
 lot: true
 lof: true
 # If you have other LaTeX packages you would like to include, delete the # before header-includes and list the packages after hyphens on new lines.

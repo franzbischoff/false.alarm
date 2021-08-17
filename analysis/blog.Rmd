@@ -1,0 +1,94 @@
+---
+title: "Blog"
+author: "Francisco Bischoff"
+date: "on `r format(Sys.time(), '%B %d, %Y')`"
+output:
+  workflowr::wflow_html:
+    number_sections: true
+    fig_caption: yes
+    toc: yes
+bibliography: ../papers/references.bib
+link-citations: true
+# Download your specific csl file and refer to it in the line below.
+csl: ../thesis/csl/ama.csl
+---
+
+```{=html}
+<style>
+div.polaroid {
+  width: 80%;
+  height: auto;
+  margin-left: auto;
+  margin-right: auto;
+  background-color: white;
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+}
+
+svg.svglite {
+  width: 100%;
+  height: auto;
+}
+
+div.polcont {
+  text-align: center;
+  padding-top: 15px;
+  font-weight: bold;
+}
+div.polaroid {
+  width: 80%;
+  height: auto;
+  margin-left: auto;
+  margin-right: auto;
+  background-color: white;
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+}
+div.figure {
+  padding: 10px;
+  margin: 20px 0px 20px 0px;
+  background-color: white;
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+}
+p.caption {
+  font-size: 19px;
+}
+</style>
+```
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE, fig.align = "center")
+library(here)
+# library(visNetwork)
+# library(tibble)
+# library(kableExtra)
+# library(targets)
+knitr::opts_knit$set(root.dir = here("docs"), base.dir = here("docs"))
+```
+
+# Purpose
+
+This blog is a continuation of the thesis Report [link](report.html). The reader must follow this page from top to bottom.
+
+## 2021, August Update #1
+
+The first workflow presented in July has changed. Its purpose was to define a "big picture" of the process.
+
+The main changes introduced were:
+
+### The Data
+
+Initially, the data had been carried along the workflow, being copied at each new step. That obviously is not the way to
+handle it. Thus, the raw data is stored only on the "dataset" object and reused where needed.
+
+Now, any modification to the raw data will create a new object, for example, "ds_filtered" where the SQI filter is applied
+over the data.
+
+### Streaming paradigm
+
+The goal of this work is to operate with streaming data. Thus, the Matrix Profile computation algorithm has been rewritten
+to handle as receiving data in chunks. The algorithm can simulate one observation at a time or a batch of observations
+(for efficiency). The result will always be as if one observation had been received individually by the model.
+
+To avoid unnecessary recomputations for this analysis phase, the companion statistics needed by the model are pre-computed
+and fed alongside the data the algorithm needs to process. The pre-computation also allows experimenting with parameters
+during this process.
+
+

@@ -4,7 +4,7 @@
 #' the signal.
 #'
 
-find_all_files <- function(path = getOption("target_dataset_path", default = "inst/extdata/physionet/"), long = FALSE) {
+find_all_files <- function(path = getOption("target_ds_path", default = "inst/extdata/physionet/"), long = FALSE) {
   "!DEBUG Starting process"
 
   checkmate::assert_directory_exists(path, access = "r")

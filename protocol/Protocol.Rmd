@@ -6,7 +6,7 @@ editor_options:
     mode: markdown
 link-citations: true
 bibliography: '`r here::here("papers", "references.bib")`'
-csl: https://raw.githubusercontent.com/citation-style-language/styles/master/american-medical-association.csl
+csl: ../thesis/csl/ama.csl
 output:
   pdf_document:
     toc: yes

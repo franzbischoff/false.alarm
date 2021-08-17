@@ -1,7 +1,7 @@
 ---
 title: "Report"
 author: "Francisco Bischoff"
-date: "on `r format(Sys.time(), '%B %d, %Y')`"
+date: "on July 15, 2021"
 output:
   workflowr::wflow_html:
     number_sections: true
@@ -10,7 +10,7 @@ output:
 bibliography: ../papers/references.bib
 link-citations: true
 # Download your specific csl file and refer to it in the line below.
-csl: https://raw.githubusercontent.com/citation-style-language/styles/master/american-medical-association.csl
+csl: ../thesis/csl/ama.csl
 ---
 
 ```{=html}

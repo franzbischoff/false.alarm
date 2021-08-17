@@ -17,7 +17,7 @@ site: bookdown::bookdown_site
 # Change this to FALSE if you'd like to install them manually on your own.
 params:
   'Install needed packages for {thesisdown}': True
-  
+
 # Remove the hashtag to specify which version of output you would like.
 # Can only choose one at a time.
 output:
@@ -29,13 +29,13 @@ output:
     keep_tex: yes
     keep_md: yes
     fig_caption: yes
-# If you are creating a PDF you'll need to write your preliminary content 
-# (e.g., abstract, acknowledgements) below or use code similar to line 25-26 
+# If you are creating a PDF you'll need to write your preliminary content
+# (e.g., abstract, acknowledgements) below or use code similar to line 25-26
 # for the .RMD files. If you are NOT producing a PDF, delete or silence
 # lines 25-39 in this YAML header.
 abstract: ''
 # If you'd rather include the preliminary content in files instead of inline
-# like below, use a command like that for the abstract above.  Note that a tab 
+# like below, use a command like that for the abstract above.  Note that a tab
 # is needed on the line after the `|`.
 acknowledgements: |
   I want to thank a few people1.
@@ -45,10 +45,10 @@ preface: |
   This is an example of a thesis setup to use the reed thesis document class
   (for LaTeX) and the R bookdown package, in general1.
 # Specify the location of the bibliography below
-bibliography: 'D:/Workspaces/RStudio/false.alarm/papers/references.bib'
+bibliography: '../papers/references.bib'
 link-citations: true
 # Download your specific csl file and refer to it in the line below.
-csl: https://raw.githubusercontent.com/citation-style-language/styles/master/american-medical-association.csl
+csl: ./csl/ama.csl
 lot: true
 lof: true
 # If you prefer blank lines between paragraphs, un-silence lines  40-41 (this requires package tikz)
@@ -63,7 +63,7 @@ editor_options:
 <!--
 Above is the YAML (YAML Ain't Markup Language) header that includes a lot of metadata used to produce the document.  Be careful with spacing in this header!
 
-If you'd prefer to not include a Dedication, for example, simply delete the section entirely, or silence them (add # before each line). 
+If you'd prefer to not include a Dedication, for example, simply delete the section entirely, or silence them (add # before each line).
 
 If you have other LaTeX packages you would like to include, delete the # before header-includes and list the packages after hyphens on new lines.
 
@@ -114,7 +114,7 @@ alarms using the proposed methodology, and assess the feasibility of implementin
 other settings than ICU monitors.
 
 
-<!-- The {.unnumbered} option here means that the introduction will be 
+<!-- The {.unnumbered} option here means that the introduction will be
 "Chapter 0." You can also use {-} for no numbers on chapters.
 -->
 
@@ -389,7 +389,7 @@ The bib chunk below must go last in this document according to how R Markdown re
 
 \backmatter
 
-<!-- 
+<!--
 If you'd like to change the name of the bibliography to something else,
 delete "References" and replace it.
 -->
