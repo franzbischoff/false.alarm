@@ -165,8 +165,8 @@
       "RemoteUsername": "rstudio",
       "RemoteRepo": "bookdown",
       "RemoteRef": "main",
-      "RemoteSha": "18c08ce99b47a031a379fbbf44cac7601a8068be",
-      "Hash": "7a39da44afbb823661bbc18bc1827383"
+      "RemoteSha": "6643bb9a23962c6de5a13ec99c9dbf826ede02c1",
+      "Hash": "8a8d6f3c8609d81e0577d95cccfb3319"
     },
     "brew": {
       "Package": "brew",
@@ -579,6 +579,13 @@
       "Repository": "CRAN",
       "Hash": "6fdaa86d0700f8b3e92ee3c445a5a10d"
     },
+    "httpgd": {
+      "Package": "httpgd",
+      "Version": "1.1.1",
+      "Source": "Repository",
+      "Repository": "CRAN",
+      "Hash": "f10f19113d87a038dc7bdb0de22a433c"
+    },
     "httpuv": {
       "Package": "httpuv",
       "Version": "1.6.1",
@@ -837,6 +844,13 @@
       "Source": "Repository",
       "Repository": "CRAN",
       "Hash": "a555924add98c99d2f411e37e7d25e9f"
+    },
+    "prettycode": {
+      "Package": "prettycode",
+      "Version": "1.1.0",
+      "Source": "Repository",
+      "Repository": "CRAN",
+      "Hash": "1127b6ce86f2be28af0a9250a268a909"
     },
     "prettyunits": {
       "Package": "prettyunits",

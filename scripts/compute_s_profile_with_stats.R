@@ -13,11 +13,11 @@ compute_s_profile_with_stats <- function(data_with_stats, params) {
     attr(stats, "params")$window_size == params$window_size
   )
 
-  "!DEBUG Constraint `params$constraint`, batch size `params$batch`"
+  "!DEBUG History `params$history`, batch size `params$batch`"
 
-  profile_len <- params$constraint - params$window_size + 1
+  profile_len <- params$history - params$window_size + 1
 
-  initial_data_vector <- seq.int(1, params$constraint)
+  initial_data_vector <- seq.int(1, params$history)
   initial_stats_vector <- seq.int(1, profile_len)
 
   initial_stats <- purrr::map(stats, function(x) x[initial_stats_vector])
@@ -25,9 +25,9 @@ compute_s_profile_with_stats <- function(data_with_stats, params) {
   initial_stats$ddg[profile_len] <- 0
 
   initial_mp <- list(w = params$window_size, ez = params$ez, offset = 0)
-  current_mp <- mpx_stream_s_right(data[initial_data_vector], batch_size = params$constraint, initial_mp, initial_stats, constraint = 0, progress = params$progress)
+  current_mp <- mpx_stream_s_right(data[initial_data_vector], batch_size = params$history, initial_mp, initial_stats, history = 0, time_constraint = params$time_constraint, progress = params$progress)
 
-  new_data_vector <- seq.int(params$constraint + 1, length(data))
+  new_data_vector <- seq.int(params$history + 1, length(data))
 
   "!DEBUG Data Size `length(data)`."
 
@@ -41,7 +41,7 @@ compute_s_profile_with_stats <- function(data_with_stats, params) {
 
   for (n in new_data_list) {
     batch <- length(n)
-    start <- current_mp$offset - params$constraint + 1
+    start <- current_mp$offset - params$history + 1
     end <- current_mp$offset + batch
     data_vector <- seq.int(start, end)
     profile_len <- length(data_vector) - params$window_size + 1
@@ -49,7 +49,7 @@ compute_s_profile_with_stats <- function(data_with_stats, params) {
     current_stats <- purrr::map(stats, function(x) x[stats_vector])
     current_stats$ddf[profile_len] <- 0
     current_stats$ddg[profile_len] <- 0
-    current_mp <- mpx_stream_s_right(data[data_vector], batch_size = batch, current_mp, current_stats, params$constraint, params$progress)
+    current_mp <- mpx_stream_s_right(data[data_vector], batch_size = batch, current_mp, current_stats, params$history, params$time_constraint, params$progress)
 
     profiles[[i]] <- current_mp
     i <- i + 1

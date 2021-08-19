@@ -1,4 +1,4 @@
-compute_arcs <- function(ecg_data, exclude, time_constraint = NULL, exclusion_zone = NULL) {
+compute_arcs2 <- function(ecg_data, exclude, time_constraint = NULL, exclusion_zone = NULL) {
   checkmate::qassert(ecg_data, "L")
   checkmate::qassert(exclusion_zone, c("0", "N"))
   checkmate::qassert(time_constraint, c("0", "N"))

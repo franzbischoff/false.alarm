@@ -129,7 +129,12 @@ RUN install.r targets tarchetypes \
 
 # fill next stuff here, avoid adding slow things above this line
 
-# etc install blabla
+# Install aditional tools
+RUN apt-fast update && apt-fast install -y --no-install-recommends \
+  cargo \
+  libavfilter-dev \
+  && rm -rf /var/lib/apt/lists/*
+
 
 # this is the last section, avoid adding slow things below this line
 

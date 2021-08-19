@@ -54,6 +54,7 @@ vignettes/*.R
 # End of https://www.gitignore.io/api/r
 
 # Personalized
+tmp/*
 _targets/*
 .targets-files
 .targets-runs

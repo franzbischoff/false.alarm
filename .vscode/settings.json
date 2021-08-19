@@ -246,7 +246,6 @@
   "todo-tree.tree.expanded": true,
   "todo-tree.tree.scanMode": "workspace",
   "todo-tree.tree.showScanModeButton": true,
-  "workbench.colorCustomizations": {},
   "xml.format.enforceQuoteStyle": "preferred",
   "xml.format.joinCDATALines": true,
   "xml.format.joinCommentLines": true,
@@ -257,5 +256,10 @@
   },
   "autoOpenPreviewPanel.languages": "markdown,md",
   "autoOpenPreviewPanel.openPreviewToSide": true,
-  "markdown.extension.preview.autoShowPreviewToSide": true
+  "markdown.extension.preview.autoShowPreviewToSide": true,
+  "r.rterm.option": [
+    "--no-save",
+    "--no-restore",
+    "--encoding=UTF-8"
+  ]
 }

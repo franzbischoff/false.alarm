@@ -55,3 +55,4 @@
 ^data-raw$
 ^inst/extdata$
 ^inst/testfiles$
+^tmp$

@@ -55,13 +55,13 @@ tar_option_set(
 var_head <- 3
 var_exclude <- c("time", "ABP", "PLETH", "RESP")
 var_mp_batch <- 100
-var_mp_constraint <- 20 * 250
+var_mp_constraint <- 20 * 250 # 20 secs
+var_time_constraint <- 5 * 250 # 5 secs
 var_window_size <- 200
 var_ez <- 0.5
 
 # debug(process_ts_in_file)
 # tar_make(names = ds_mp_filtered, callr_function = NULL)
-
 
 # start debugme after loading all functions
 if (dev_mode) {
@@ -149,7 +149,7 @@ list(
           ez = var_ez,
           progress = FALSE,
           batch = var_mp_batch,
-          constraint = var_mp_constraint
+          history = var_mp_constraint
         ),
         exclude = var_exclude
       ),
@@ -166,7 +166,7 @@ list(
           ez = var_ez,
           progress = FALSE,
           batch = var_mp_batch,
-          constraint = var_mp_constraint
+          history = var_mp_constraint
         ),
         exclude = var_exclude
       ),
@@ -183,7 +183,7 @@ list(
           ez = var_ez,
           progress = FALSE,
           batch = var_mp_batch,
-          constraint = var_mp_constraint
+          history = var_mp_constraint
         ),
         exclude = var_exclude
       ),
@@ -200,12 +200,73 @@ list(
           ez = var_ez,
           progress = FALSE,
           batch = var_mp_batch,
-          constraint = var_mp_constraint
+          history = var_mp_constraint
         ),
         exclude = var_exclude
       ),
       pattern = map(ds_filtered, ds_stats_filtered)
+    ),
+    ### Apply Filter on MP ----
+    tar_target(
+      ds_stats_mps_floss,
+      process_ts_in_file(ds_stats_mps,
+        id = "floss_constr",
+        exclude = var_exclude,
+        fun = compute_floss,
+        params = list(
+          ez = var_ez * var_window_size,
+          time_constraint = var_time_constraint,
+          threshold = FALSE
+        )
+      ),
+      pattern = map(ds_stats_mps)
+    ),
+    ### Apply Filter on MP ----
+    tar_target(
+      ds_stats_mps_floss2,
+      process_ts_in_file(ds_stats_mps,
+        id = "floss_no_constr",
+        exclude = var_exclude,
+        fun = compute_floss,
+        params = list(
+          ez = var_ez * var_window_size,
+          time_constraint = 0,
+          threshold = FALSE
+        )
+      ),
+      pattern = map(ds_stats_mps)
+    ),
+    ### Apply Filter on MP ----
+    tar_target(
+      ds_stats_mps_floss3,
+      process_ts_in_file(ds_stats_mps,
+        id = "floss_const_thr",
+        exclude = var_exclude,
+        fun = compute_floss,
+        params = list(
+          ez = var_ez * var_window_size,
+          time_constraint = var_time_constraint,
+          threshold = TRUE
+        )
+      ),
+      pattern = map(ds_stats_mps)
+    ),
+    ### Apply Filter on MP ----
+    tar_target(
+      ds_stats_mps_floss4,
+      process_ts_in_file(ds_stats_mps,
+        id = "floss_no_const_thr",
+        exclude = var_exclude,
+        fun = compute_floss,
+        params = list(
+          ez = var_ez * var_window_size,
+          time_constraint = 0,
+          threshold = TRUE
+        )
+      ),
+      pattern = map(ds_stats_mps)
     )
+
     # ### Apply Filter on MP ----
     # tar_target(
     #   ds_mp_filtered,

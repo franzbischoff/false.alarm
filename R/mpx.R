@@ -2,8 +2,8 @@
 #' @export
 #' @rdname mp_algos
 
-mpx_stream_start <- function(data, window_size, exclusion_zone = 0.5, progress = TRUE) {
-  result <- mpx_rcpp(data, window_size, exclusion_zone, 1.0, TRUE, FALSE, progress)
+mpx_stream_start <- function(data, window_size, exclusion_zone = 0.5, time_constraint = 0, progress = TRUE) {
+  result <- mpx_rcpp(data, window_size, exclusion_zone, time_constraint, 1.0, TRUE, FALSE, progress)
   # result$matrix_profile <- NULL
   # result$left_matrix_profile <- NULL
   # result$profile_index <- NULL
@@ -19,26 +19,26 @@ mpx_stream_start <- function(data, window_size, exclusion_zone = 0.5, progress =
 
 #' @param new_data a vector with the new data
 #' @param start_obj obj from another run
-#' @param constraint an `int`. Max distance where to look for the best match in matrix profile.
+#' @param history an `int`. Max distance where to look for the best match in matrix profile.
 #' (default is NULL).
 #' @export
 #' @rdname mp_algos
 
 
-mpx_stream_right <- function(new_data, start_obj, constraint = 0, progress = TRUE) {
-  mpxi_rcpp(new_data, start_obj, constraint, progress)
+mpx_stream_right <- function(new_data, start_obj, history = 0, time_constraint = 0, progress = TRUE) {
+  mpxi_rcpp(new_data, start_obj, history, time_constraint, progress)
 }
 
 #' @param batch_size size of the new data
 #' @param start_obj obj from another run
 #' @param stats obj with stats for mpx
-#' @param constraint an `int`. Max distance where to look for the best match in matrix profile.
+#' @param history an `int`. Max distance where to look for the best match in matrix profile.
 #' (default is NULL).
 #' @export
 #' @rdname mp_algos
 
-mpx_stream_s_right <- function(data, batch_size, start_obj, stats, constraint = 0, progress = TRUE) {
-  mpxis_rcpp(data, batch_size, start_obj, stats, constraint, progress)
+mpx_stream_s_right <- function(data, batch_size, start_obj, stats, history = 0, time_constraint = 0, progress = TRUE) {
+  mpxis_rcpp(data, batch_size, start_obj, stats, history, time_constraint, progress)
 }
 
 
@@ -143,6 +143,7 @@ mpx <- function(data, window_size, query = NULL, exclusion_zone = 0.5, s_size = 
             data,
             window_size,
             ez,
+            0,
             s_size,
             as.logical(idxs),
             as.logical(dist),
