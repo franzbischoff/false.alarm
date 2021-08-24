@@ -142,7 +142,7 @@ RUN chown -R docker:docker /home/docker
 
 # gitpod start
 RUN mkdir /home/docker/exts
-COPY exts/*.vsix /home/docker/exts
+# COPY exts/*.vsix /home/docker/exts
 
 ENV WORKSPACE_DIRECTORY "/workspace"
 ENV NOT_CRAN "true"

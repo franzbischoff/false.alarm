@@ -20,7 +20,6 @@ process_ts_in_file <- function(ecg_data, id, fun, params, exclude = "time") {
     "!DEBUG keeping names `names(x)`."
     x
   })
-
   ecg_data <- purrr::transpose(ecg_data)
 
   params$exclude <- exclude
@@ -28,12 +27,12 @@ process_ts_in_file <- function(ecg_data, id, fun, params, exclude = "time") {
   result <- list()
   result[[file]] <- purrr::map(ecg_data, function(x) { ## attributes are lost with 2 lists
     "!DEBUG calling `fun_name`() for TS `names(x)`."
+
     if (checkmate::qtest(x, "L1")) {
       x <- x[[1]]
     }
     fun(x, params)
   })
-
   attr(result[[file]], "info") <- info
   attr(result[[file]], "params") <- params
 

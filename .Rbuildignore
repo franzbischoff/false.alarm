@@ -56,3 +56,4 @@
 ^inst/extdata$
 ^inst/testfiles$
 ^tmp$
+^debugme\.log$

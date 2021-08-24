@@ -38,7 +38,10 @@ if (dir.exists(here::here("inst/extdata"))) {
       }
     )
 
-    targets::tar_watch(targets_only = TRUE, outdated = FALSE, label = c("time", "branches", "size"))
+    targets::tar_watch(
+      targets_only = TRUE, supervise = TRUE, seconds = 30, display = "graph", browse = FALSE, outdated = FALSE,
+      label = c("time", "branches", "size"), port = 55444
+    )
   }
 
   Sys.setenv(TAR_WARN = "false")

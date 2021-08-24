@@ -5,6 +5,7 @@
   "dockerFile": "Dockerfile",
   "workspaceFolder": "/workspace",
   "workspaceMount": "source=${localWorkspaceFolder},target=/workspace,type=bind,consistency=cached",
+  // "workspaceMount": "source=/home/franz/workspaces/false.alarm,target=/workspace,type=volume",
   // "image": "franzbischoff/false.alarm:latest",
   "containerEnv": {
     "WORKSPACE_DIRECTORY": "/workspace",

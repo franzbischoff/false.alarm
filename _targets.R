@@ -3,10 +3,12 @@ library(tarchetypes)
 library(purrr)
 
 dev_mode <- !identical(Sys.getenv("DEBUGME"), "")
+cluster <- FALSE
+backend <- "CLUSTERMQ"
 
 if (dev_mode) {
   # I know I shall not use this
-  devtools::load_all(".")
+  # devtools::load_all(".")
   # Sys.setenv(DEBUGME_OUTPUT_FILE = "debugme.log")
 }
 
@@ -18,38 +20,65 @@ rm(script_files)
 options(tidyverse.quiet = TRUE)
 options(target_ds_path = "inst/extdata/physionet/")
 
-# *** If using clustermq for multithreading / clustering ***
-### Localy https://books.ropensci.org/targets/hpc.html#clustermq
-# options(clustermq.scheduler = "multiprocess")
-### Remotely
-# options(clustermq.scheduler = "sge", clustermq.template = "sge.tmpl")
+if (isFALSE(cluster)) { ## Locally
+  if (backend == "FUTURE") {
+    library(future)
+    library(future.callr)
+    future::plan(callr)
+  } else {
+    options(
+      clustermq.scheduler = "multiprocess",
+      clustermq.ssh.host = NULL,
+      clustermq.ssh.log = NULL
+    )
+    library(clustermq)
+  }
+} else {
+  if (backend == "FUTURE") { ## cluster # tar_make_future(workers = 4)
+    # *** If using future for multithreading / clustering ***
+    library(future)
+    library(future.batchtools)
 
-# *** If using future for multithreading / clustering ***
-library(future)
-## Localy
-library(future.callr)
-future::plan(callr)
-### Remotely
-# library(future.batchtools)
-# future::plan(batchtools_sge, template = "sge.tmpl")
-
+    future::plan(
+      strategy = future.batchtools::batchtools_custom,
+      cluster.functions = batchtools::makeClusterFunctionsSSH(
+        list(
+          batchtools::Worker$new("franz@192.168.1.237", ncpus = 4)
+          # batchtools::Worker$new("localhost", ncpus = 4)
+        ),
+        fs.latency = 1000
+      )
+    )
+  } else { # tar_make_clustermq(workers = 3)
+    options(
+      clustermq.scheduler = "ssh",
+      clustermq.ssh.host = "franz@192.168.1.237", # use your user and host, obviously
+      clustermq.ssh.log = "~/cmq_ssh.log" # log for easier debugging # nolint
+    )
+    library(clustermq)
+  }
+}
 
 # use renv::install(".") to update the rcpp functions
 tar_option_set(
   packages = "false.alarm",
   format = "rds",
   resources = tar_resources(
-    #   # *** If using clustermq for multithreading / clustering ***
-    # clustermq = tar_resources_clustermq(template = list(n_cores  = 4)) # or n_jobs??
-    #   # *** If using future for multithreading / clustering ***
-    future = tar_resources_future(resources = list(n_cores = 4))
+    #   #   #   # *** If using clustermq for multithreading / clustering ***
+    clustermq = tar_resources_clustermq(template = list(num_cores = 4)) # or n_jobs??
+    #   #   #   # *** If using future for multithreading / clustering ***
+    # future = tar_resources_future(
+    #   resources = list(num_cores = 4)
+    # )
   ),
   garbage_collection = TRUE,
-  workspace_on_error = TRUE
+  workspace_on_error = TRUE,
+  # memory = "transient",
+  # storage = "main",
   # envir = globalenv(),
   # iteration = "list",
   # debug = "process_ts_in_file"
-  # imports = "false.alarm" # TODO: remove when there is no change on package functions. Clears the graph.
+  imports = "false.alarm" # TODO: remove when there is no change on package functions. Clears the graph.
 )
 
 var_head <- 3
@@ -149,7 +178,8 @@ list(
           ez = var_ez,
           progress = FALSE,
           batch = var_mp_batch,
-          history = var_mp_constraint
+          history = var_mp_constraint,
+          time_constraint = var_time_constraint
         ),
         exclude = var_exclude
       ),
@@ -166,7 +196,8 @@ list(
           ez = var_ez,
           progress = FALSE,
           batch = var_mp_batch,
-          history = var_mp_constraint
+          history = var_mp_constraint,
+          time_constraint = var_time_constraint
         ),
         exclude = var_exclude
       ),
@@ -183,7 +214,8 @@ list(
           ez = var_ez,
           progress = FALSE,
           batch = var_mp_batch,
-          history = var_mp_constraint
+          history = var_mp_constraint,
+          time_constraint = var_time_constraint
         ),
         exclude = var_exclude
       ),
@@ -200,7 +232,8 @@ list(
           ez = var_ez,
           progress = FALSE,
           batch = var_mp_batch,
-          history = var_mp_constraint
+          history = var_mp_constraint,
+          time_constraint = var_time_constraint
         ),
         exclude = var_exclude
       ),

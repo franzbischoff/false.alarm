@@ -194,6 +194,28 @@
     },
     {
       "type": "process",
+      "label": "R: Watch",
+      "command": "C:/Program Files/R/R-4.1.0/bin/x64/Rscript.exe",
+      "linux": {
+        "command": "/usr/lib/R/bin/Rscript"
+      },
+      "args": [
+        "-e",
+        "targets::tar_watch(targets_only = TRUE, seconds = 30, display = 'graph', browse = FALSE, outdated = FALSE, label = c('time', 'branches', 'size'), port = 55444); Sys.sleep(Inf)"
+      ],
+      "options": {
+        "cwd": "${workspaceFolder}"
+      },
+      "group": "test",
+      "presentation": {
+        "reveal": "always",
+        "panel": "dedicated",
+        "clear": true
+      },
+      "problemMatcher": []
+    },
+    {
+      "type": "process",
       "label": "zR: DESTROY targets",
       "command": "C:/Program Files/R/R-4.1.0/bin/x64/Rscript.exe",
       "linux": {

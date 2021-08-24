@@ -72,9 +72,9 @@ compute_arcs <- function(right_profile_index, window_size, exclusion_zone, time_
   arc_counts <- cumsum(nnmark)
 
   if (time_constraint > 0) {
-    cac <- arc_counts / max(arc_counts)
-    cac[seq.int(1, time_constraint)] <- 1.0
-    cac[seq.int((cac_size - (2 * window_size) - 1), cac_size)] <- 1.0
+    cac <- arc_counts # / max(arc_counts)
+    cac[seq.int(1, time_constraint)] <- NA
+    cac[seq.int((cac_size - (3 * window_size) - 1), cac_size)] <- NA
     # cac[seq.int((cac_size - time_constraint - 1), cac_size)] <- 1.0
   } else {
     x <- seq(0, 1, length.out = cac_size)
@@ -85,7 +85,7 @@ compute_arcs <- function(right_profile_index, window_size, exclusion_zone, time_
 
     cac <- pmin(arc_counts / ideal_arc_counts, 1) # below 1 or 1
     cac[seq.int(1, (2 * window_size))] <- 1.0
-    cac[seq.int((cac_size - (2 * window_size) - 1), cac_size)] <- 1.0
+    cac[seq.int((cac_size - (3 * window_size) - 1), cac_size)] <- 1.0
     cac[cac < 0 | is.na(cac)] <- 1.0
   }
 

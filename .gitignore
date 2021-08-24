@@ -58,6 +58,7 @@ tmp/*
 _targets/*
 .targets-files
 .targets-runs
+debugme.log
 
 #Local history plugin
 .history
