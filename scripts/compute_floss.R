@@ -6,7 +6,7 @@ compute_floss <- function(mp_data, params) {
 
   checkmate::qassert(ez, c("0", "N"))
 
-  info <- attr(data, "info")
+  info <- attr(mp_data, "info")
 
   "!DEBUG Time constraint `time_constraint`."
 
@@ -24,6 +24,7 @@ compute_floss <- function(mp_data, params) {
   "!DEBUG Finished `length(result_floss)` profiles."
 
   attr(result_floss, "info") <- info
+  attr(result_floss, "params") <- params
 
   return(result_floss)
 }

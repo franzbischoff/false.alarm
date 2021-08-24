@@ -32,6 +32,7 @@ compute_filters <- function(ecg_data, params) {
   filters$skewness <- zoo::rollapply(norm_data, params$window_size, e1071::skewness, align = "left")
 
   attr(filters, "info") <- attr(ecg_data, "info")
+  attr(filters, "params") <- params
 
   return(filters)
 }

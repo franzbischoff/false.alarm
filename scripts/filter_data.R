@@ -11,6 +11,7 @@ filter_data <- function(data_filter, params) {
   info <- attr(data_filter[[1]], "info")
   info$filter <- filter
   attr(data, "info") <- info
+  attr(data, "params") <- params
 
   # mp <- attr(ecg_data, params$attribute)
   # filter <- attr(ecg_data, "filters")
