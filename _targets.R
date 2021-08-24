@@ -133,7 +133,6 @@ list(
       ),
       exclude = var_exclude
     ),
-    priority = 0.5,
     pattern = cross(var_window_size, dataset)
   ),
   #### Compute Stats ----
@@ -148,7 +147,6 @@ list(
       ),
       exclude = var_exclude
     ),
-    priority = 0.5,
     pattern = cross(dataset, var_window_size)
   ),
   # ### Apply Filter on Data ----
@@ -163,7 +161,6 @@ list(
       ),
       exclude = var_exclude
     ),
-    priority = 0.5,
     pattern = map(cross(var_window_size, dataset), filters)
   ),
   #### Compute the Right Matrix Profile Raw Data ----

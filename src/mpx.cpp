@@ -142,13 +142,13 @@ List mpxis_rcpp(NumericVector data_ref, uint64_t batch_size, List object, List s
     // }
 
     if (history > 0 && (n > history)) {
-      data_ref = tail(data_ref, history);
+      // data_ref = tail(data_ref, history);
       uint64_t mp_new_size = history - window_size + 1;
       uint32_t diff = n - history;
-      ddf = tail(ddf, mp_new_size);
-      ddg = tail(ddg, mp_new_size);
-      mmu = tail(mmu, mp_new_size);
-      ssig = tail(ssig, mp_new_size);
+      // ddf = tail(ddf, mp_new_size);
+      // ddg = tail(ddg, mp_new_size);
+      // mmu = tail(mmu, mp_new_size);
+      // ssig = tail(ssig, mp_new_size);
       rmmp = tail(rmmp, mp_new_size);
       rmmpi = tail((rmmpi - diff), mp_new_size);
       rmmpi[rmmpi < -1] = -1;
@@ -157,8 +157,10 @@ List mpxis_rcpp(NumericVector data_ref, uint64_t batch_size, List object, List s
     return (List::create(Rcpp::Named("right_matrix_profile") = rmmp, Rcpp::Named("right_profile_index") = rmmpi,
                          Rcpp::Named("w") = window_size, Rcpp::Named("ez") = ez,
                          Rcpp::Named("time_constraint") = time_constraint, Rcpp::Named("offset") = mp_offset,
-                         Rcpp::Named("ddf") = ddf, Rcpp::Named("ddg") = ddg, Rcpp::Named("avg") = mmu,
-                         Rcpp::Named("sig") = ssig, Rcpp::Named("data") = data_ref, Rcpp::Named("partial") = partial));
+                        //  Rcpp::Named("ddf") = ddf, Rcpp::Named("ddg") = ddg, Rcpp::Named("avg") = mmu,
+                        //  Rcpp::Named("sig") = ssig,
+                        //  Rcpp::Named("data") = data_ref,
+                         Rcpp::Named("partial") = partial));
 
   } catch (...) {
     ::Rf_error("c++ exception (unknown reason)");
@@ -340,7 +342,8 @@ List mpxi_rcpp(NumericVector new_data, List object, uint64_t history, uint64_t t
     }
 
     return (List::create(Rcpp::Named("right_matrix_profile") = rmmp, Rcpp::Named("right_profile_index") = rmmpi,
-                         Rcpp::Named("data") = data_ref, Rcpp::Named("w") = window_size, Rcpp::Named("ez") = ez,
+                         Rcpp::Named("data") = data_ref,
+                         Rcpp::Named("w") = window_size, Rcpp::Named("ez") = ez,
                          Rcpp::Named("time_constraint") = time_constraint, Rcpp::Named("ddf") = ddf,
                          Rcpp::Named("ddg") = ddg, Rcpp::Named("avg") = mmu, Rcpp::Named("offset") = mp_offset,
                          Rcpp::Named("sig") = ssig, Rcpp::Named("partial") = partial));
@@ -482,9 +485,11 @@ List mpxiright_rcpp(NumericVector data_ref, uint64_t window_size, double ez, uin
 
     if (idxs) {
       return (List::create(Rcpp::Named("right_matrix_profile") = rmmp, Rcpp::Named("right_profile_index") = rmmpi,
-                           Rcpp::Named("data") = data_ref, Rcpp::Named("w") = window_size, Rcpp::Named("ez") = ez,
-                           Rcpp::Named("time_constraint") = time_constraint, Rcpp::Named("ddf") = ddf,
-                           Rcpp::Named("ddg") = ddg, Rcpp::Named("avg") = mmu, Rcpp::Named("sig") = ssig,
+                          //  Rcpp::Named("data") = data_ref,
+                           Rcpp::Named("w") = window_size, Rcpp::Named("ez") = ez,
+                           Rcpp::Named("time_constraint") = time_constraint,
+                          //  Rcpp::Named("ddf") = ddf,
+                          //  Rcpp::Named("ddg") = ddg, Rcpp::Named("avg") = mmu, Rcpp::Named("sig") = ssig,
                            Rcpp::Named("partial") = partial));
     } else {
       return (List::create(Rcpp::Named("right_matrix_profile") = rmmp, Rcpp::Named("partial") = partial));

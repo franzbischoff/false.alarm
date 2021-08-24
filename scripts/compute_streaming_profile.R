@@ -1,16 +1,12 @@
 compute_streaming_profile <- function(ecg_data, params) {
   checkmate::qassert(ecg_data, "N+")
 
-
-
   initial_data_vector <- seq.int(1, params$history)
 
   initial_mp <- mpx_stream_start(
     data = ecg_data[initial_data_vector], window_size = params$window_size,
     exclusion_zone = params$ez, time_constraint = params$time_constraint, progress = params$progress
   )
-
-
 
   "!DEBUG Data Size `length(ecg_data)`."
 
@@ -30,7 +26,6 @@ compute_streaming_profile <- function(ecg_data, params) {
   for (n in new_data_list) {
     "!!DEBUG Split `min(n)` to `max(n)`. History `params$history`, batch size `params$batch`"
     initial_mp <- mpx_stream_right(ecg_data[n], initial_mp, params$history, params$time_constraint, params$progress)
-
     profiles[[i]] <- initial_mp
     i <- i + 1
   }

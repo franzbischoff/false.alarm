@@ -1,6 +1,6 @@
 {
   "R": {
-    "Version": "4.1.0",
+    "Version": "4.1.1",
     "Repositories": [
       {
         "Name": "CRAN",
@@ -172,15 +172,15 @@
     },
     "bookdown": {
       "Package": "bookdown",
-      "Version": "0.23.2",
+      "Version": "0.23.4",
       "Source": "GitHub",
       "RemoteType": "github",
       "RemoteHost": "api.github.com",
       "RemoteUsername": "rstudio",
       "RemoteRepo": "bookdown",
       "RemoteRef": "main",
-      "RemoteSha": "ec7db6f16d7b6db0b55e6759d799e4fd45584e02",
-      "Hash": "c68c25cf30c23ae559b8d4595d5bf17d"
+      "RemoteSha": "a2e30b3870130f01f1fd1092f13f6c34acf354cc",
+      "Hash": "998dbd3197d2af36ff0496d488068d00"
     },
     "brew": {
       "Package": "brew",

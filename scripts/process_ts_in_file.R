@@ -9,9 +9,9 @@ process_ts_in_file <- function(ecg_data, id, fun, params, exclude = "time") {
 
   paas <- attr(ecg_data[[1]], "params")
 
-  "!DEBUG assert paas: `paas$window_size`, params: `params$window_size`."
-  "!DEBUG assert paas: `paas$time_constraint`, params: `params$time_constraint`."
-  "!DEBUG assert paas: `paas$history`, params: `params$history`."
+  "!!DEBUG assert paas: `paas$window_size`, params: `params$window_size`."
+  "!!DEBUG assert paas: `paas$time_constraint`, params: `params$time_constraint`."
+  "!!DEBUG assert paas: `paas$history`, params: `params$history`."
 
   if (!is.null(paas$window_size)) {
     checkmate::assert_true(identical(paas$window_size, params$window_size))
@@ -31,9 +31,9 @@ process_ts_in_file <- function(ecg_data, id, fun, params, exclude = "time") {
   if (length(ecg_data) > 1) {
     pars <- attr(ecg_data[[2]], "params")
 
-    "!DEBUG assert pars: `pars$window_size`, params: `params$window_size`."
-    "!DEBUG assert pars: `pars$time_constraint`, params: `params$time_constraint`."
-    "!DEBUG assert pars: `pars$history`, params: `params$history`."
+    "!!DEBUG assert pars: `pars$window_size`, params: `params$window_size`."
+    "!!DEBUG assert pars: `pars$time_constraint`, params: `params$time_constraint`."
+    "!!DEBUG assert pars: `pars$history`, params: `params$history`."
 
     if (!is.null(pars$window_size)) {
       checkmate::assert_true(identical(pars$window_size, params$window_size))
