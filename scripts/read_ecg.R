@@ -48,7 +48,7 @@
 #' signal <- read_ecg("data/a103l")
 #' }
 #'
-read_ecg <- function(filename, plot = FALSE) {
+read_ecg <- function(filename, plot = FALSE, subset = FALSE) {
   checkmate::assert_string(filename, 3)
   checkmate::qassert(plot, "B")
   #
@@ -144,6 +144,11 @@ read_ecg <- function(filename, plot = FALSE) {
     mat_content$val[i, is.na(mat_content$val[i, ])] <- wfdb_nan
     label <- siginfo[[i]]$description
     signal[[label]] <- (mat_content$val[i, ] - siginfo[[i]]$baseline) / siginfo[[i]]$gain
+
+    if (!isFALSE(subset)) {
+      signal[[label]] <- signal[[label]][subset]
+    }
+
     attr(signal[[label]], "info") <- list(label = label, baseline = siginfo[[i]]$baseline, gain = siginfo[[i]]$gain, unit = siginfo[[i]]$unit)
   }
 

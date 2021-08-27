@@ -55,7 +55,13 @@ process_ts_in_file <- function(ecg_data, id, fun, params, exclude = "time") {
     "!DEBUG keeping names `names(x)`."
     x
   })
+
+  nms <- purrr::reduce(purrr::map(ecg_data, names), union)
+  # "!DEBUG names = `nms`."
+  # ecg_data <- purrr::transpose(ecg_data, .names = nms)
   ecg_data <- purrr::transpose(ecg_data)
+
+  checkmate::assert_true(all.equal(nms, attributes(ecg_data)$names))
 
   params$exclude <- exclude
 

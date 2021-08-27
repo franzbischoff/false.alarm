@@ -1,6 +1,7 @@
 ^renv$
 ^renv\.lock$
 ^\.history$
+^\.radian_history$
 ^\.vscode$
 ^\.editorconfig$
 ^.*\.code-workspace$
@@ -41,6 +42,8 @@
 ^docs/_pkgdown\.yml$
 ^_targets$
 ^_targets\.R$
+^_targets_beta$
+^_targets_beta\.R$
 ^_targets\.yaml$
 ^run\.R$
 ^run\.sh$

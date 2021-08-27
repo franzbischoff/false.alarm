@@ -256,10 +256,5 @@
   },
   "autoOpenPreviewPanel.languages": "markdown,md",
   "autoOpenPreviewPanel.openPreviewToSide": true,
-  "markdown.extension.preview.autoShowPreviewToSide": true,
-  "r.rterm.option": [
-    "--no-save",
-    "--no-restore",
-    "--encoding=UTF-8"
-  ]
+  "markdown.extension.preview.autoShowPreviewToSide": true
 }

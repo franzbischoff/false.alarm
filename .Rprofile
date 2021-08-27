@@ -94,12 +94,14 @@ if (Sys.getenv("CI") == "") { # not CI
       })
     }
 
-    loadhistory() # if no file, no problem.
+    if (Sys.getenv("RADIAN_VERSION") == "") {
+      loadhistory() # if no file, no problem.
 
-    # Cleaning up function
-    .Last <- function() {
-      savehistory() # comment this line if you don't want to save history
-      cat("bye bye...\n") # print this so we see if any non-interactive session is lost here
+      # Cleaning up function
+      .Last <- function() {
+        savehistory() # comment this line if you don't want to save history
+        cat("bye bye...\n") # print this so we see if any non-interactive session is lost here
+      }
     }
   }
 } else { # is CI

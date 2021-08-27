@@ -1,6 +1,10 @@
 render_floss_video <- function(video_file = here::here("dev", "floss_default.mp4"), ecg_data, arc_counts, title = "Online Semantic Segmentation", framerate = 25, data_constraint = 5000, window_size = 200, batch_size = 100) {
   done <- FALSE
 
+  checkmate::qassert(video_file, "S")
+  checkmate::qassert(ecg_data, "N+")
+  checkmate::qassert(arc_counts, "L")
+
   # Register exit point ----------------------
   "!DEBUG Register exit point"
   on.exit(

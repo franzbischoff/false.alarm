@@ -56,6 +56,8 @@ vignettes/*.R
 # Personalized
 tmp/*
 _targets/*
+_targets_beta
+_targets_beta.R
 .targets-files
 .targets-runs
 .future
@@ -63,6 +65,7 @@ debugme.log
 
 #Local history plugin
 .history
+.radian_history
 
 # use github-actions to build the webpage
 /pkgdown/

@@ -693,10 +693,10 @@
     },
     "languageserver": {
       "Package": "languageserver",
-      "Version": "0.3.10",
+      "Version": "0.3.11",
       "Source": "Repository",
       "Repository": "CRAN",
-      "Hash": "04c5fd96fbc4df0c2917c85d73e5a9de"
+      "Hash": "867f8fd66bbd57d52daf256c390b7471"
     },
     "later": {
       "Package": "later",
@@ -749,10 +749,10 @@
     },
     "magick": {
       "Package": "magick",
-      "Version": "2.7.2",
+      "Version": "2.7.3",
       "Source": "Repository",
       "Repository": "CRAN",
-      "Hash": "db36bbb91bf293f0550c51ecbf6f1928"
+      "Hash": "56fbad418aa50939ed8c3028126af8d7"
     },
     "magrittr": {
       "Package": "magrittr",

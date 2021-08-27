@@ -3,7 +3,6 @@
 #' @rdname mp_algos
 
 mpx_stream_start <- function(data, window_size, exclusion_zone = 0.5, time_constraint = 0, progress = TRUE) {
-
   result <- mpx_rcpp(data, window_size, exclusion_zone, time_constraint, 1.0, TRUE, FALSE, progress)
   # result$matrix_profile <- NULL
   # result$left_matrix_profile <- NULL
