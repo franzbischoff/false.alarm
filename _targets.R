@@ -87,6 +87,9 @@ var_head <- 15
 var_exclude <- c("time", "ABP", "PLETH", "RESP")
 var_mp_batch <- 100
 var_mp_constraint <- 20 * 250 # 20 secs
+var_window_size <- c(200, 250, 300)
+var_time_constraint <- c(0, 2 * 250, 5 * 250)
+var_filter_w_size <- c(100, 200)
 var_ez <- 0.5
 var_subset <- 55001:75000 # last 80 secs
 
@@ -113,192 +116,147 @@ list(
     read_ecg(file_paths, subset = var_subset),
     pattern = map(file_paths)
   ),
-  tar_target(
-    var_window_size,
-    c(200, 250, 300)
-  ),
-  tar_target(
-    var_time_constraint,
-    c(0, 2 * 250, 5 * 250)
-  ),
-  # #### Compute filters for noisy data ----
-  tar_target(
-    filters,
-    process_ts_in_file(dataset,
-      id = "filters",
-      fun = compute_filters,
-      params = list(
-        filter_w_size = var_window_size,
-        cplx_lim = 8
+  # without filter
+  tar_map(
+    list(map_window_size = var_window_size),
+    #### Compute Stats ----
+    tar_target(
+      ds_stats,
+      process_ts_in_file(dataset,
+        id = "comp_stats",
+        fun = compute_companion_stats,
+        params = list(
+          window_size = map_window_size,
+          n_workers = 1
+        ),
+        exclude = var_exclude
       ),
-      exclude = var_exclude
+      pattern = map(dataset)
     ),
-    pattern = cross(var_window_size, dataset)
-  ),
-  #### Compute Stats ----
-  tar_target(
-    ds_stats,
-    process_ts_in_file(dataset,
-      id = "comp_stats",
-      fun = compute_companion_stats,
-      params = list(
-        window_size = var_window_size,
-        n_workers = 1
+    tar_map(
+      list(map_time_constraint = var_time_constraint),
+      #### Compute the Matrix Profile With Stats ----
+      tar_target(
+        ds_stats_mps,
+        process_ts_in_file(c(dataset, ds_stats),
+          id = "mps_raw_stats",
+          fun = compute_s_profile_with_stats,
+          params = list(
+            window_size = map_window_size,
+            ez = var_ez,
+            progress = FALSE,
+            batch = var_mp_batch,
+            history = var_mp_constraint,
+            time_constraint = map_time_constraint
+          ),
+          exclude = var_exclude
+        ),
+        pattern = map(dataset, ds_stats)
       ),
-      exclude = var_exclude
-    ),
-    pattern = cross(dataset, var_window_size)
-  ),
-  # ### Apply Filter on Data ----
-  tar_target(
-    ds_filtered,
-    process_ts_in_file(c(dataset, filters),
-      id = "filter_data",
-      fun = filter_data,
-      params = list(
-        window_size = var_window_size,
-        filter = "complex_lim"
-      ),
-      exclude = var_exclude
-    ),
-    pattern = map(cross(var_window_size, dataset), filters)
-  ),
-  # #### Compute the Right Matrix Profile Raw Data ----
-  # tar_target(
-  #   ds_mps,
-  #   process_ts_in_file(dataset,
-  #     id = "mps_raw",
-  #     fun = compute_streaming_profile,
-  #     params = list(
-  #       window_size = var_window_size,
-  #       ez = var_ez,
-  #       progress = FALSE,
-  #       batch = var_mp_batch,
-  #       history = var_mp_constraint,
-  #       time_constraint = var_time_constraint
-  #     ),
-  #     exclude = var_exclude
-  #   ),
-  #   pattern = cross(dataset, var_time_constraint, var_window_size)
-  # ),
-  # ### Compute FLOSS ----
-  # tar_target(
-  #   ds_mps_floss,
-  #   process_ts_in_file(ds_mps,
-  #     id = "floss",
-  #     exclude = var_exclude,
-  #     fun = compute_floss,
-  #     params = list(
-  #       window_size = var_window_size,
-  #       ez = var_ez * var_window_size,
-  #       time_constraint = var_time_constraint,
-  #       history = var_mp_constraint,
-  #       threshold = FALSE
-  #     )
-  #   ),
-  #   pattern = map(cross(dataset, var_time_constraint, var_window_size), ds_mps)
-  # ),
-  #### Compute the Matrix Profile With Stats ----
-  tar_target(
-    ds_stats_mps,
-    process_ts_in_file(c(dataset, ds_stats),
-      id = "mps_raw_stats",
-      fun = compute_s_profile_with_stats,
-      params = list(
-        window_size = var_window_size,
-        ez = var_ez,
-        progress = FALSE,
-        batch = var_mp_batch,
-        history = var_mp_constraint,
-        time_constraint = var_time_constraint
-      ),
-      exclude = var_exclude
-    ),
-    pattern = cross(map(cross(dataset, var_window_size), ds_stats), var_time_constraint)
-  ),
-  ### Compute FLOSS ----
-  tar_target(
-    ds_stats_mps_floss,
-    process_ts_in_file(ds_stats_mps,
-      id = "floss",
-      exclude = var_exclude,
-      fun = compute_floss,
-      params = list(
-        window_size = var_window_size,
-        ez = var_ez * var_window_size,
-        time_constraint = var_time_constraint,
-        history = var_mp_constraint,
-        threshold = FALSE
+      ### Compute FLOSS ----
+      tar_target(
+        ds_stats_mps_floss,
+        process_ts_in_file(ds_stats_mps,
+          id = "floss",
+          exclude = var_exclude,
+          fun = compute_floss,
+          params = list(
+            window_size = map_window_size,
+            ez = var_ez * map_window_size,
+            time_constraint = map_time_constraint,
+            history = var_mp_constraint,
+            threshold = FALSE
+          )
+        ),
+        pattern = map(ds_stats_mps)
       )
-    ),
-    pattern = map(cross(dataset, var_window_size, var_time_constraint), ds_stats_mps)
+    )
   ),
-  # #### Compute the Right Matrix Profile Filtered Data ----
-  # tar_target(
-  #   ds_filtered_mps,
-  #   process_ts_in_file(ds_filtered,
-  #     id = "mps_filtered",
-  #     fun = compute_streaming_profile,
-  #     params = list(
-  #       window_size = var_window_size,
-  #       ez = var_ez,
-  #       progress = FALSE,
-  #       batch = var_mp_batch,
-  #       history = var_mp_constraint,
-  #       time_constraint = var_time_constraint
-  #     ),
-  #     exclude = var_exclude
-  #   ),
-  #   pattern = cross(map(cross(var_window_size, dataset), ds_filtered), var_time_constraint)
-  # ),
-  #### Compute Stats on Filtered Data ----
-  tar_target(
-    ds_filtered_stats,
-    process_ts_in_file(ds_filtered,
-      id = "comp_stats_filtered",
-      fun = compute_companion_stats,
-      params = list(
-        window_size = var_window_size,
-        n_workers = 1
+  # with filters
+  tar_map(
+    list(map_filter_w_size = var_filter_w_size),
+    # #### Compute filters for noisy data ----
+    tar_target(
+      filters,
+      process_ts_in_file(dataset,
+        id = "filters",
+        fun = compute_filters,
+        params = list(
+          filter_w_size = map_filter_w_size,
+          cplx_lim = 8
+        ),
+        exclude = var_exclude
       ),
-      exclude = var_exclude
+      pattern = map(dataset)
     ),
-    pattern = map(cross(var_window_size, dataset), ds_filtered)
-  ),
-  #### Compute the Matrix Profile With Filtered Data with Stats ----
-  tar_target(
-    ds_filtered_stats_mps,
-    process_ts_in_file(c(ds_filtered, ds_filtered_stats),
-      id = "mps_filtered_stats",
-      fun = compute_s_profile_with_stats,
-      params = list(
-        window_size = var_window_size,
-        ez = var_ez,
-        progress = FALSE,
-        batch = var_mp_batch,
-        history = var_mp_constraint,
-        time_constraint = var_time_constraint
+    # ### Apply Filter on Data ----
+    tar_target(
+      ds_filtered,
+      process_ts_in_file(c(dataset, filters),
+        id = "filter_data",
+        fun = filter_data,
+        params = list(
+          filter = "complex_lim"
+        ),
+        exclude = var_exclude
       ),
-      exclude = var_exclude
+      pattern = map(dataset, filters)
     ),
-    pattern = cross(map(cross(var_window_size, dataset), ds_filtered, ds_filtered_stats), var_time_constraint)
-  ),
-  ### Compute FLOSS ----
-  tar_target(
-    ds_filtered_stats_mps_floss,
-    process_ts_in_file(ds_filtered_stats_mps,
-      id = "floss",
-      exclude = var_exclude,
-      fun = compute_floss,
-      params = list(
-        window_size = var_window_size,
-        ez = var_ez * var_window_size,
-        time_constraint = var_time_constraint,
-        history = var_mp_constraint,
-        threshold = FALSE
+    tar_map(
+      list(map_window_size = var_window_size),
+      #### Compute Stats on Filtered Data ----
+      tar_target(
+        ds_filtered_stats,
+        process_ts_in_file(ds_filtered,
+          id = "comp_stats_filtered",
+          fun = compute_companion_stats,
+          params = list(
+            window_size = map_window_size,
+            n_workers = 1
+          ),
+          exclude = var_exclude
+        ),
+        pattern = map(ds_filtered)
+      ),
+      tar_map(
+        list(map_time_constraint = var_time_constraint),
+        #### Compute the Matrix Profile With Filtered Data with Stats ----
+        tar_target(
+          ds_filtered_stats_mps,
+          process_ts_in_file(c(ds_filtered, ds_filtered_stats),
+            id = "mps_filtered_stats",
+            fun = compute_s_profile_with_stats,
+            params = list(
+              window_size = map_window_size,
+              ez = var_ez,
+              progress = FALSE,
+              batch = var_mp_batch,
+              history = var_mp_constraint,
+              time_constraint = map_time_constraint
+            ),
+            exclude = var_exclude
+          ),
+          pattern = map(ds_filtered, ds_filtered_stats)
+        ),
+        ### Compute FLOSS ----
+        tar_target(
+          ds_filtered_stats_mps_floss,
+          process_ts_in_file(ds_filtered_stats_mps,
+            id = "floss",
+            exclude = var_exclude,
+            fun = compute_floss,
+            params = list(
+              window_size = map_window_size,
+              ez = var_ez * map_window_size,
+              history = var_mp_constraint,
+              time_constraint = map_time_constraint,
+              threshold = FALSE
+            )
+          ),
+          pattern = map(ds_filtered_stats_mps)
+        )
       )
-    ),
-    pattern = map(ds_filtered_stats_mps, cross(var_window_size, dataset, var_time_constraint))
+    )
   )
 )
 
@@ -316,3 +274,59 @@ list(
 # tar_manifest(fields = NULL) # shows way more columns
 # tar_renv() # helper function to assure renv capture all package dependencies
 # tar_watch(targets_only = TRUE, label = c("time", "branches", "size")) # frontend to watch the building
+
+
+# #### Compute the Right Matrix Profile Raw Data ----
+# tar_target(
+#   ds_mps,
+#   process_ts_in_file(dataset,
+#     id = "mps_raw",
+#     fun = compute_streaming_profile,
+#     params = list(
+#       window_size = var_window_size,
+#       ez = var_ez,
+#       progress = FALSE,
+#       batch = var_mp_batch,
+#       history = var_mp_constraint,
+#       time_constraint = var_time_constraint
+#     ),
+#     exclude = var_exclude
+#   ),
+#   pattern = cross(dataset, var_time_constraint, var_window_size)
+# ),
+# ### Compute FLOSS ----
+# tar_target(
+#   ds_mps_floss,
+#   process_ts_in_file(ds_mps,
+#     id = "floss",
+#     exclude = var_exclude,
+#     fun = compute_floss,
+#     params = list(
+#       window_size = var_window_size,
+#       ez = var_ez * var_window_size,
+#       time_constraint = var_time_constraint,
+#       history = var_mp_constraint,
+#       threshold = FALSE
+#     )
+#   ),
+#   pattern = map(cross(dataset, var_time_constraint, var_window_size), ds_mps)
+# ),
+
+# #### Compute the Right Matrix Profile Filtered Data ----
+# tar_target(
+#   ds_filtered_mps,
+#   process_ts_in_file(ds_filtered,
+#     id = "mps_filtered",
+#     fun = compute_streaming_profile,
+#     params = list(
+#       window_size = var_window_size,
+#       ez = var_ez,
+#       progress = FALSE,
+#       batch = var_mp_batch,
+#       history = var_mp_constraint,
+#       time_constraint = var_time_constraint
+#     ),
+#     exclude = var_exclude
+#   ),
+#   pattern = cross(map(cross(var_window_size, dataset), ds_filtered), var_time_constraint)
+# ),
