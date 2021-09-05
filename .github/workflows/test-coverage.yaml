@@ -35,11 +35,18 @@ jobs:
 
       - run: git branch
 
-      - name: Install System dependencies
+      - name: Install system dependencies
+        if: runner.os == 'Linux'
         run: |
-          sudo apt-fast update
-          sudo apt-fast install -y libgit2-dev libharfbuzz-dev libcurl4-openssl-dev \
-          libfribidi-dev libzmq3-dev
+          while read -r cmd
+          do
+            eval sudo $cmd
+          done < <(Rscript -e 'writeLines(remotes::system_requirements("ubuntu", "20.04"))')
+
+      - name: Install other dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libharfbuzz-dev libfribidi-dev libmagick++-dev
 
       - name: Setting up R installation
         uses: r-lib/actions/setup-r@v1
