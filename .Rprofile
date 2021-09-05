@@ -56,6 +56,7 @@ if (Sys.getenv("CI") == "") { # not CI
     options(vsc.dev.args = list(width = 800, height = 600))
 
     # if httpgd is installed, let's use it
+    # This breaks rendering video
     # if ("httpgd" %in% .packages(all.available = TRUE)) {
     #   options(vsc.plot = FALSE)
     #   options(device = function(...) {

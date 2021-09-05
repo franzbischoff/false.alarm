@@ -54,7 +54,8 @@ vignettes/*.R
 # End of https://www.gitignore.io/api/r
 
 # Personalized
-tmp/*
+/tmp/
+/tmp_*/
 _targets/*
 _targets_beta
 _targets_beta.R

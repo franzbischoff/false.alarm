@@ -2,15 +2,17 @@ library(targets)
 library(tarchetypes)
 library(purrr)
 
-dev_mode <- FALSE # !identical(Sys.getenv("DEBUGME"), "")
+dev_mode <- TRUE # !identical(Sys.getenv("DEBUGME"), "")
 cluster <- FALSE
-backend <- "FUTURE"
+backend <- "CLUSTERMQ"
 
 if (dev_mode) {
   # I know I shall not use this
   # devtools::load_all(".")
-  # Sys.setenv(DEBUGME_OUTPUT_FILE = "debugme.log")
+  Sys.setenv(DEBUGME_OUTPUT_FILE = "debugme.log")
 }
+
+# examples: a109l_aVF_300_0_raw
 
 # Load all scripts
 script_files <- list.files(here::here("scripts"), pattern = "*.R")
@@ -83,15 +85,15 @@ tar_option_set(
   imports = "false.alarm" # TODO: remove when there is no change on package functions. Clears the graph.
 )
 
-var_head <- 15
+var_head <- 10
 var_exclude <- c("time", "ABP", "PLETH", "RESP")
 var_mp_batch <- 100
 var_mp_constraint <- 20 * 250 # 20 secs
 var_window_size <- c(200, 250, 300)
-var_time_constraint <- c(0, 2 * 250, 5 * 250)
+var_time_constraint <- c(0, 3 * 250, 5 * 250, 10 * 250)
 var_filter_w_size <- c(100, 200)
 var_ez <- 0.5
-var_subset <- 55001:75000 # last 80 secs
+var_subset <- FALSE # 55001:75000 # last 80 secs
 
 
 # debug(process_ts_in_file)
@@ -116,6 +118,10 @@ list(
     read_ecg(file_paths, subset = var_subset),
     pattern = map(file_paths)
   ),
+  tar_target(
+    neg_training_floss,
+    create_floss_training()
+  ),
   # without filter
   tar_map(
     list(map_window_size = var_window_size),
@@ -135,6 +141,21 @@ list(
     ),
     tar_map(
       list(map_time_constraint = var_time_constraint),
+      tar_target(
+        floss_threshold,
+        get_minimum_cacs(
+          neg_training_floss,
+          list(
+            batch = var_mp_batch,
+            history = var_mp_constraint,
+            window_size = map_window_size,
+            time_constraint = map_time_constraint,
+            ez = var_ez,
+            only_mins = TRUE,
+            progress = FALSE
+          )
+        )
+      ),
       #### Compute the Matrix Profile With Stats ----
       tar_target(
         ds_stats_mps,
@@ -169,6 +190,25 @@ list(
           )
         ),
         pattern = map(ds_stats_mps)
+      ),
+      ### Extract regime changes ----
+      tar_target(
+        regimes,
+        process_ts_in_file(ds_stats_mps_floss,
+          id = "regimes",
+          fun = extract_regimes,
+          params = list(
+            window_size = map_window_size,
+            ez = var_ez,
+            min_cac = floss_threshold,
+            progress = FALSE,
+            batch = var_mp_batch,
+            history = var_mp_constraint,
+            time_constraint = map_time_constraint
+          ),
+          exclude = var_exclude
+        ),
+        pattern = map(ds_stats_mps_floss)
       )
     )
   ),
