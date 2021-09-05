@@ -83,6 +83,12 @@ render_floss_video <- function(video_file = here::here("dev", "floss_default.mp4
     a <- a + ggplot2::annotate("segment", y = data_min, yend = data_min, x = data_constraint - window_size, xend = data_constraint, color = "blue", size = 0.1) +
       ggplot2::annotate("text", x = data_constraint - (window_size / 2), y = data_min * 0.85, label = "Window size", color = "blue", size = 0.8)
 
+    if (arc_counts[[d]]$trigger$trigger_abs_idx > 0) {
+      a <- a + ggplot2::annotate("segment", y = data_min, yend = data_max, x = arc_counts[[d]]$trigger$trigger_abs_idx - (arc_counts[[d]]$offset - data_constraint),
+       xend = arc_counts[[d]]$trigger$trigger_abs_idx - (arc_counts[[d]]$offset - data_constraint), color = "blue", size = 0.1) +
+        ggplot2::annotate("text", x = data_constraint - (window_size / 2), y = data_min * 0.85, label = "Change", color = "blue", size = 0.8)
+    }
+
     if (arc_counts[[d]]$offset > event_line) {
       curr_event_line <- data_constraint - (arc_counts[[d]]$offset - event_line)
       a <- a + ggplot2::annotate("segment", y = data_min, yend = data_max, x = curr_event_line, xend = curr_event_line, color = "blue", size = 0.1) +

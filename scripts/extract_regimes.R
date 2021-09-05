@@ -2,6 +2,7 @@ extract_regimes <- function(floss_list, params) {
   checkmate::qassert(floss_list, "L+")
   checkmate::qassert(params, "L+")
 
+  info <- attr(floss_list, "info")
   pars <- attr(floss_list, "params")
 
   checkmate::assert_true(
@@ -56,6 +57,9 @@ extract_regimes <- function(floss_list, params) {
 
     x
   })
+
+  attr(regime_changes, "info") <- info
+  attr(regime_changes, "params") <- params
 
   return(regime_changes)
 }

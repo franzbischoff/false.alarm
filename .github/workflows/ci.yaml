@@ -40,7 +40,7 @@ jobs:
         run: |
           sudo apt-fast update
           sudo apt-fast install -y libgit2-dev libharfbuzz-dev libcurl4-openssl-dev \
-          libfribidi-dev libzmq3-dev
+          libfribidi-dev libzmq3-dev libmagick++-dev
 
       - name: Install dependencies
         run: |
