@@ -46,7 +46,8 @@ jobs:
       - name: Install other dependencies
         run: |
           sudo apt-get update
-          sudo apt-get install -y libharfbuzz-dev libfribidi-dev libmagick++-dev
+          sudo apt-get install -y libgit2-dev libharfbuzz-dev libcurl4-openssl-dev \
+          libfribidi-dev libzmq3-dev libmagick++-dev
 
       - name: Setting up R installation
         uses: r-lib/actions/setup-r@v1
