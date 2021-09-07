@@ -18,7 +18,9 @@ compute_floss <- function(mp_data, params) {
     }
 
     aic_avg <- rowMeans(as.data.frame(iac))
-    aic_avg[seq.int(time_constraint, pro_size - time_constraint * 0.9)] <- time_constraint / 2
+    if (time_constraint < (pro_size / 2)) {
+      aic_avg[seq.int(time_constraint, pro_size - time_constraint * 0.9)] <- time_constraint / 2
+    }
   } else {
     aic_avg <- NULL
   }
@@ -31,7 +33,7 @@ compute_floss <- function(mp_data, params) {
       aic_avg,
       threshold
     )
-    list(cac = cac, w = x$w, ez = curr_ez, offset = x$offset)
+    list(cac = cac$cac, iac = cac$iac, arcs = cac$arcs, w = x$w, ez = curr_ez, offset = x$offset)
   })
 
   "!DEBUG Finished `length(result_floss)` profiles."
@@ -78,12 +80,14 @@ compute_arcs <- function(right_profile_index, window_size, exclusion_zone, aic_a
   }
 
   arc_counts <- cumsum(nnmark)
+  iac <- NULL
 
   if (!is.null(aic_avg)) {
-    cac <- pmin(arc_counts / aic_avg, 1) # below 1 or 1
-    # cac <- arc_counts / aic_avg # below 1 or 1
-    cac[seq.int(1, (2 * window_size))] <- 1.0
-    cac[seq.int((cac_size - (window_size / 2) - 1), cac_size)] <- 1.0
+    iac <- aic_avg
+    cac <- pmin(arc_counts / iac, 1) # below 1 or 1
+    # cac <- arc_counts / iac # below 1 or 1
+    cac[seq.int(1, (window_size / 2))] <- 1.0
+    cac[seq.int((cac_size - (250 / 3) - 1), cac_size)] <- 1.0
     cac[cac < 0 | is.na(cac)] <- 1.0
 
     # cac <- arc_counts # / max(arc_counts)
@@ -95,15 +99,16 @@ compute_arcs <- function(right_profile_index, window_size, exclusion_zone, aic_a
     mode <- 0.6311142 # best point to analize the segment change
     a <- 1.939274
     b <- 1.69815
-    ideal_arc_counts <- a * b * x^(a - 1) * (1 - x^a)^(b - 1) * cac_size / 4.035477 # nolint # kumaraswamy distribution
+    iac <- a * b * x^(a - 1) * (1 - x^a)^(b - 1) * cac_size / 4.035477 # nolint # kumaraswamy distribution
 
-    cac <- pmin(arc_counts / ideal_arc_counts, 1) # below 1 or 1
-    cac[seq.int(1, (2 * window_size))] <- 1.0
-    cac[seq.int((cac_size - (3 * window_size) - 1), cac_size)] <- 1.0
+    cac <- pmin(arc_counts / iac, 1) # below 1 or 1
+    cac[seq.int(1, (window_size / 2))] <- 1.0
+    # cac[seq.int((cac_size - (3 * window_size) - 1), cac_size)] <- 1.0
+    cac[seq.int((cac_size - (250 / 3) - 1), cac_size)] <- 1.0
     cac[cac < 0 | is.na(cac)] <- 1.0
   }
 
-  return(cac)
+  return(list(arcs = arc_counts, iac = iac, cac = cac))
 }
 
 

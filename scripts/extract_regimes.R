@@ -14,7 +14,7 @@ extract_regimes <- function(floss_list, params) {
   )
 
   # TODO: compute the min cac
-  min_cac <- mean(params$min_cac) - (2 * sd(params$min_cac))
+  min_cac <- mean(params$min_cac) - (1 * sd(params$min_cac))
 
   if (params$time_constraint > 0) {
     floss_constraint <- params$time_constraint
