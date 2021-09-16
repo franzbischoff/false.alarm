@@ -18,7 +18,7 @@ get_minimum_cacs <- function(training_set, params) {
       ez = params$ez * params$window_size,
       time_constraint = params$time_constraint,
       history = params$history,
-      threshold = FALSE
+      sample_freq = params$sample_freq
     ))
   })
 

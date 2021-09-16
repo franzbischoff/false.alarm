@@ -2,7 +2,7 @@ library(targets)
 library(tarchetypes)
 library(purrr)
 
-dev_mode <- TRUE # !identical(Sys.getenv("DEBUGME"), "")
+dev_mode <- FALSE # !identical(Sys.getenv("DEBUGME"), "")
 cluster <- FALSE
 backend <- "FUTURE"
 
@@ -14,6 +14,13 @@ if (dev_mode) {
 
 # examples: a109l_aVF_300_0_raw
 #           a161l (asystole) 300_1250, false neg
+
+# TODO: how near to consider to update the MP
+# TODO: visualize the arcs
+
+# TODO: density of similarity changes a little bit from the size of constraint, but a lot due to the window size
+# TODO: but, the sum of the density from 50-100 doesnt change in any case
+
 
 # Load all scripts
 script_files <- list.files(here::here("scripts"), pattern = "*.R")
@@ -87,15 +94,17 @@ tar_option_set(
 )
 
 var_head <- 10
+var_limit_per_type <- 2
+const_sample_freq <- 250
 var_exclude <- c("time", "V", "ABP", "PLETH", "RESP")
 var_mp_batch <- 100
-var_mp_constraint <- 20 * 250 # 20 secs
-var_window_size <- c(300, 500, 750) # c(200, 250, 300)
-var_time_constraint <- c(0, 5 * 250, 10 * 250, 17 * 250)
+var_mp_constraint <- 20 * const_sample_freq # 20 secs
+var_window_size <- c(200, 300, 500) # c(200, 250, 300)
+var_time_constraint <- c(0, 5 * const_sample_freq, 10 * const_sample_freq, 17 * const_sample_freq)
 var_filter_w_size <- 100 # c(100, 200)
 var_ez <- 0.5
-var_subset <- FALSE # 55001:75000 # last 80 secs
-
+var_subset <- seq.int(240 * const_sample_freq, 300 * const_sample_freq) # last 60 secs
+var_mp_threshold <- c(0, 0.5, 0.6, 0.9, 50, 60, 90)
 
 # debug(process_ts_in_file)
 # tar_make(names = ds_mp_filtered, callr_function = NULL)
@@ -109,15 +118,40 @@ list(
   #### Read files from directory ----
   tar_files_input(
     file_paths,
-    tail(head(find_all_files(), var_head), 1),
+    # tail(head(find_all_files(types = "all"), var_head), 10),
+    find_all_files(types = "all")
     # batches = 2,
     # Use vector for filenames
     # iteration = "vector"
   ),
   tar_target(
-    dataset,
-    read_ecg(file_paths, subset = var_subset),
-    pattern = map(file_paths)
+    dataset1,
+    read_ecg(file_paths,
+      subset = var_subset,
+      alarm_type = TRUE
+    ),
+    pattern = map(file_paths),
+  ),
+  tar_target(
+    dataset, # TODO: this is needed to remove the empty branches. Hack needed
+    {
+      types <- list()
+      purrr::compact(dataset1, function(x) {
+        info <- attr(x, "info")
+
+        if (is.null(types[[info$alarm]])) {
+          types[[info$alarm]] <<- 1
+        } else {
+          types[[info$alarm]] <<- types[[info$alarm]] + 1
+        }
+
+        if (types[[info$alarm]] > var_limit_per_type) {
+          return(NULL)
+        } else {
+          return(x)
+        }
+      })
+    }
   ),
   tar_target(
     neg_training_floss,
@@ -141,75 +175,98 @@ list(
       pattern = map(dataset)
     ),
     tar_map(
-      list(map_time_constraint = var_time_constraint),
-      tar_target(
-        floss_threshold,
-        get_minimum_cacs(
-          neg_training_floss,
-          list(
-            batch = var_mp_batch,
-            history = var_mp_constraint,
-            window_size = map_window_size,
-            time_constraint = map_time_constraint,
-            ez = var_ez,
-            only_mins = TRUE,
-            progress = FALSE
-          )
+      list(map_mp_threshold = var_mp_threshold),
+      tar_map(
+        list(map_time_constraint = var_time_constraint),
+        tar_target(
+          floss_threshold,
+          c(0.7, 0.79, 0.75)
+          # get_minimum_cacs(
+          #   neg_training_floss,
+          #   list(
+          #     batch = var_mp_batch,
+          #     history = var_mp_constraint,
+          #     window_size = map_window_size,
+          #     time_constraint = map_time_constraint,
+          #     ez = var_ez,
+          #     only_mins = TRUE,
+          #     progress = FALSE,
+          #     sample_freq = const_sample_freq
+          #   )
+          # )
+        ),
+        # tar_target(
+        #   ds_stats_mps,
+        #   process_ts_in_file(dataset,
+        #     id = "mps_raw",
+        #     fun = compute_streaming_profile,
+        #     params = list(
+        #       window_size = map_window_size,
+        #       ez = var_ez,
+        #       progress = FALSE,
+        #       batch = var_mp_batch,
+        #       history = var_mp_constraint,
+        #       time_constraint = map_time_constraint
+        #     ),
+        #     exclude = var_exclude
+        #   ),
+        #   pattern = map(dataset)
+        # ),
+        #### Compute the Matrix Profile With Stats ----
+        tar_target(
+          ds_stats_mps,
+          process_ts_in_file(c(dataset, ds_stats),
+            id = "mps_raw_stats",
+            fun = compute_s_profile_with_stats,
+            params = list(
+              window_size = map_window_size,
+              ez = var_ez,
+              progress = FALSE,
+              batch = var_mp_batch,
+              history = var_mp_constraint,
+              time_constraint = map_time_constraint,
+              threshold = map_mp_threshold
+            ),
+            exclude = var_exclude
+          ),
+          pattern = map(dataset, ds_stats)
+        ),
+        ### Compute FLOSS ----
+        tar_target(
+          ds_stats_mps_floss,
+          process_ts_in_file(ds_stats_mps,
+            id = "floss",
+            exclude = var_exclude,
+            fun = compute_floss,
+            params = list(
+              window_size = map_window_size,
+              ez = var_ez * map_window_size,
+              time_constraint = map_time_constraint,
+              history = var_mp_constraint,
+              sample_freq = const_sample_freq
+            )
+          ),
+          pattern = map(ds_stats_mps)
+        ),
+        ### Extract regime changes ----
+        tar_target(
+          regimes,
+          process_ts_in_file(ds_stats_mps_floss,
+            id = "regimes",
+            fun = extract_regimes,
+            params = list(
+              window_size = map_window_size,
+              ez = var_ez,
+              min_cac = floss_threshold,
+              progress = FALSE,
+              batch = var_mp_batch,
+              history = var_mp_constraint,
+              time_constraint = map_time_constraint
+            ),
+            exclude = var_exclude
+          ),
+          pattern = map(ds_stats_mps_floss)
         )
-      ),
-      #### Compute the Matrix Profile With Stats ----
-      tar_target(
-        ds_stats_mps,
-        process_ts_in_file(c(dataset, ds_stats),
-          id = "mps_raw_stats",
-          fun = compute_s_profile_with_stats,
-          params = list(
-            window_size = map_window_size,
-            ez = var_ez,
-            progress = FALSE,
-            batch = var_mp_batch,
-            history = var_mp_constraint,
-            time_constraint = map_time_constraint
-          ),
-          exclude = var_exclude
-        ),
-        pattern = map(dataset, ds_stats)
-      ),
-      ### Compute FLOSS ----
-      tar_target(
-        ds_stats_mps_floss,
-        process_ts_in_file(ds_stats_mps,
-          id = "floss",
-          exclude = var_exclude,
-          fun = compute_floss,
-          params = list(
-            window_size = map_window_size,
-            ez = var_ez * map_window_size,
-            time_constraint = map_time_constraint,
-            history = var_mp_constraint,
-            threshold = TRUE
-          )
-        ),
-        pattern = map(ds_stats_mps)
-      ),
-      ### Extract regime changes ----
-      tar_target(
-        regimes,
-        process_ts_in_file(ds_stats_mps_floss,
-          id = "regimes",
-          fun = extract_regimes,
-          params = list(
-            window_size = map_window_size,
-            ez = var_ez,
-            min_cac = floss_threshold,
-            progress = FALSE,
-            batch = var_mp_batch,
-            history = var_mp_constraint,
-            time_constraint = map_time_constraint
-          ),
-          exclude = var_exclude
-        ),
-        pattern = map(ds_stats_mps_floss)
       )
     )
   )
@@ -290,8 +347,7 @@ list(
   #             window_size = map_window_size,
   #             ez = var_ez * map_window_size,
   #             history = var_mp_constraint,
-  #             time_constraint = map_time_constraint,
-  #             threshold = FALSE
+  #             time_constraint = map_time_constraint
   #           )
   #         ),
   #         pattern = map(ds_filtered_stats_mps)
@@ -346,8 +402,7 @@ list(
 #       window_size = var_window_size,
 #       ez = var_ez * var_window_size,
 #       time_constraint = var_time_constraint,
-#       history = var_mp_constraint,
-#       threshold = FALSE
+#       history = var_mp_constraint
 #     )
 #   ),
 #   pattern = map(cross(dataset, var_time_constraint, var_window_size), ds_mps)

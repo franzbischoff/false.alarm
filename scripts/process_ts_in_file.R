@@ -76,7 +76,7 @@ process_ts_in_file <- function(ecg_data, id, fun, params, exclude = "time") {
   })
   attr(result[[file]], "info") <- info
 
-  endpars <- purrr::list_modify(params, !!!pars)
+  endpars <- purrr::list_modify(params, !!!pars, !!!paas)
   attr(result[[file]], "params") <- endpars
 
   checkmate::qassert(result, "L1")

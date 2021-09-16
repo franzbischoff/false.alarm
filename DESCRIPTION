@@ -1,7 +1,7 @@
 Type: Package
 Package: false.alarm
 Title: Detecting life-threatening patterns in Point-of-care ECG using efficient memory and processor power
-Version: 0.0.0.9101
+Version: 0.0.0.9103
 Authors@R:
     person(given = "Francisco",
            family = "Bischoff",

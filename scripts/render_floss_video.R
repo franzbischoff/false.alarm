@@ -40,13 +40,6 @@ render_floss_video <- function(video_file = here::here("dev", "floss_default.mp4
     event_line <- event_line - event_offset
   }
 
-  data_min <- min(ecg_data)
-  data_max <- max(ecg_data)
-
-  data_idxs <- seq.int(1, data_constraint)
-  cac_idxs <- seq.int(1, data_constraint - window_size + 1)
-  cac_size <- length(cac_idxs)
-
   if (dir.exists(here::here("tmp", temp_dir))) {
     unlink(here::here("tmp", temp_dir))
   }
@@ -56,11 +49,6 @@ render_floss_video <- function(video_file = here::here("dev", "floss_default.mp4
   message("This will take a while:")
   cat("Plotting frames.")
 
-  curr_cac_min <- Inf
-  mid_idx <- data_constraint / 2 # for 5000 this means 10 seconds
-  kumarovski_idx <- round(cac_size * 0.6311142)
-  nocac <- is.na(max(arc_counts[[1]]$cac)) # if not corrected the initial values will be NA
-  curr_cac_max <- 1
 
   ## *** Parallel messes up with min and max... dont use
   ## cl <- parallel::makePSOCKcluster(4, outfile = "")
@@ -68,7 +56,9 @@ render_floss_video <- function(video_file = here::here("dev", "floss_default.mp4
   ## `%dopar%` <- foreach::`%dopar%`
   ## foreach::foreach(d = seq_along(arc_counts)) %dopar% {
 
-
+  curr_cac_min <- NULL
+  data_min <- min(ecg_data)
+  data_max <- max(ecg_data)
 
   for (d in seq_along(arc_counts)) {
     if (!isFALSE(subset)) {
@@ -81,118 +71,34 @@ render_floss_video <- function(video_file = here::here("dev", "floss_default.mp4
     }
 
     if (isTRUE(sample)) {
-      d <- length(arc_counts) - 10
+      d <- length(arc_counts) - 5
     }
 
     data_idxs_subset <- seq.int(arc_counts[[d]]$offset - data_constraint + 1, arc_counts[[d]]$offset)
 
-    aa <- ggplot2::ggplot(data.frame(x = data_idxs, y = ecg_data[data_idxs_subset]), ggplot2::aes(x, y)) +
-      ggplot2::geom_line(size = 0.1)
-
-    aa <- aa + ggplot2::annotate("segment", y = data_min, yend = data_min, x = data_constraint - window_size, xend = data_constraint, color = "blue", size = 0.1) +
-      ggplot2::annotate("text", x = data_constraint - (window_size / 2), y = data_min * 0.85, label = "Window size", color = "blue", size = 0.8)
-
-    if (arc_counts[[d]]$trigger$trigger_abs_idx > 0) {
-      aa <- aa + ggplot2::annotate("segment",
-        y = data_min, yend = data_max, x = arc_counts[[d]]$trigger$trigger_abs_idx - (arc_counts[[d]]$offset - data_constraint),
-        xend = arc_counts[[d]]$trigger$trigger_abs_idx - (arc_counts[[d]]$offset - data_constraint), color = "blue", size = 0.1
-      ) +
-        ggplot2::annotate("text", x = data_constraint - (window_size / 2), y = data_min * 0.85, label = "Change", color = "blue", size = 0.8)
-    }
-
-    if (arc_counts[[d]]$offset > event_line) {
-      curr_event_line <- data_constraint - (arc_counts[[d]]$offset - event_line)
-      aa <- aa + ggplot2::annotate("segment", y = data_min, yend = data_max, x = curr_event_line, xend = curr_event_line, color = "blue", size = 0.1) +
-        ggplot2::annotate("text", x = curr_event_line - 40, y = data_min * 0.5, label = "Event limit", color = "blue", size = 1, angle = 90)
-    }
-
-    if (time_constraint > 0) {
-      curr_ts_constr <- (data_constraint - time_constraint)
-      aa <- aa + ggplot2::annotate("segment", y = data_min, yend = data_max, x = curr_ts_constr, xend = curr_ts_constr, color = "red", size = 0.1) +
-        ggplot2::annotate("text", x = curr_ts_constr - 40, y = data_min * 0.4, label = "Time constraint", color = "red", size = 1, angle = 90)
-    }
-
-    aa <- aa + ggplot2::theme_grey(base_size = 7) + ggplot2::theme(
-      axis.text.y = ggplot2::element_text(hjust = 0.5, size = 3, angle = 90),
-      axis.text.x = ggplot2::element_text(hjust = 0.5, size = 4)
-    ) +
-      ggplot2::xlim(0, (data_constraint + batch_size)) +
-      ggplot2::ylim(data_min, data_max) +
-      ggplot2::ggtitle("ECG") +
-      ggplot2::ylab("value") +
-      ggplot2::xlab(sprintf("time %4.1fs", arc_counts[[d]]$offset / rate)) # 2.5 is 250hz/batch_size
+    aa <- plot_ecg_streaming(ecg_data[data_idxs_subset], data_constraint, window_size,
+      time_constraint = time_constraint,
+      offset = arc_counts[[d]]$offset,
+      trigger_abs_idx = arc_counts[[d]]$trigger$trigger_abs_idx,
+      ylim = c(data_min, data_max),
+      batch_size = batch_size, rate = rate, event_line = event_line
+    )
 
     # cac_min_idx <- which.min(arc_counts[[d]]$cac[seq.int(kumarovski_idx, cac_size)]) + kumarovski_idx - 1
 
-    if (!nocac && tail_clip > 0) {
-      arc_counts[[d]]$cac[seq.int(cac_size - tail_clip, cac_size)] <- 1.0
-    }
+    bb <- plot_cac_streaming(arc_counts[[d]]$cac, data_constraint, window_size, time_constraint,
+      arc_counts[[d]]$offset,
+      tail_clip = tail_clip, batch_size = batch_size, rate = rate, curr_cac_min
+    )
+    curr_cac_min <- bb$curr_cac_min
 
-    if (time_constraint > 0) {
-      cac_left_idx <- (data_constraint - time_constraint)
-    } else {
-      cac_left_idx <- mid_idx
-    }
+    cc <- plot_raw_arcs(arc_counts[[d]]$arcs, arc_counts[[d]]$iac, data_constraint, time_constraint,
+      arc_counts[[d]]$offset, batch_size,
+      rate = rate
+    )
 
-    cac_min_idx <- which.min(arc_counts[[d]]$cac[seq.int(cac_left_idx, cac_size)]) + cac_left_idx - 1 # min AC in the last 10 seconds
-    cac_min <- arc_counts[[d]]$cac[cac_min_idx]
-    if (nocac) {
-      cmax <- max(arc_counts[[d]]$cac, na.rm = TRUE)
-      if (cmax > curr_cac_max) {
-        curr_cac_max <- cmax
-      }
-    }
-
-    if (cac_min < curr_cac_min) {
-      curr_cac_min <- cac_min
-    }
-
-    bb<- ggplot2::ggplot(data.frame(x = cac_idxs, y = arc_counts[[d]]$cac), ggplot2::aes(x, y)) +
-      ggplot2::geom_line(size = 0.1) +
-      ggplot2::theme_grey(base_size = 7) +
-      ggplot2::theme(
-        axis.text.y = ggplot2::element_text(hjust = 0.5, size = 3, angle = 90),
-        axis.text.x = ggplot2::element_text(hjust = 0.5, size = 4)
-      ) +
-      ggplot2::geom_vline(xintercept = cac_min_idx, color = "red", size = 0.1) +
-      ggplot2::annotate("text", x = cac_min_idx + 125, y = cac_min + 0.1, label = sprintf("%.2f", cac_min), color = "red", size = 1.5) +
-      ggplot2::annotate("text", x = cac_min_idx + 125, y = 0.1, label = sprintf("%d", cac_min_idx), color = "red", size = 1.5) +
-      ggplot2::annotate("segment", y = curr_cac_min, yend = curr_cac_min, x = mid_idx - 2 * window_size, xend = mid_idx + 2 * window_size, color = "blue", size = 0.1) +
-      ggplot2::annotate("text", x = mid_idx, y = curr_cac_min + 0.1, label = sprintf("%.2f", curr_cac_min), color = "blue", size = 1.5) +
-      ggplot2::xlim(0, (data_constraint + batch_size)) +
-      ggplot2::ylim(0, curr_cac_max) +
-      ggplot2::ggtitle("FLOSS") +
-      ggplot2::ylab("cac/similarity") +
-      ggplot2::xlab(sprintf("time %4.1fs", arc_counts[[d]]$offset / rate))
-
-    cc <- ggplot2::ggplot(data.frame(x = cac_idxs, y = arc_counts[[d]]$arcs), ggplot2::aes(x, y)) +
-      ggplot2::geom_line(size = 0.1) +
-      ggplot2::theme_grey(base_size = 7) +
-      ggplot2::theme(
-        axis.text.y = ggplot2::element_text(hjust = 0.5, size = 3, angle = 90),
-        axis.text.x = ggplot2::element_text(hjust = 0.5, size = 4)
-      ) +
-      ggplot2::xlim(0, (data_constraint + batch_size)) +
-      ggplot2::ylim(0, ifelse(time_constraint > 0, time_constraint * 0.6, data_constraint * 0.6)) +
-      ggplot2::ggtitle("FLOSS - ARCS") +
-      ggplot2::ylab("cac/similarity") +
-      ggplot2::xlab(sprintf("time %4.1fs", arc_counts[[d]]$offset / rate))
-
-    dd <- ggplot2::ggplot(data.frame(x = cac_idxs, y = arc_counts[[d]]$iac), ggplot2::aes(x, y)) +
-      ggplot2::geom_line(size = 0.1) +
-      ggplot2::theme_grey(base_size = 7) +
-      ggplot2::theme(
-        axis.text.y = ggplot2::element_text(hjust = 0.5, size = 3, angle = 90),
-        axis.text.x = ggplot2::element_text(hjust = 0.5, size = 4)
-      ) +
-      ggplot2::xlim(0, (data_constraint + batch_size)) +
-      ggplot2::ylim(0, ifelse(time_constraint > 0, time_constraint * 0.6, data_constraint * 0.6)) +
-      ggplot2::ggtitle("FLOSS - IAC") +
-      ggplot2::ylab("cac/similarity") +
-      ggplot2::xlab(sprintf("time %4.1fs", arc_counts[[d]]$offset / rate))
-
-    gg <- gridExtra::grid.arrange(aa, bb, cc, dd,
-      nrow = 4, newpage = FALSE,
+    gg <- gridExtra::grid.arrange(aa, bb, cc,
+      nrow = 3, newpage = FALSE,
       top = grid::textGrob(title,
         gp = grid::gpar(fontsize = 8)
       )
@@ -200,8 +106,8 @@ render_floss_video <- function(video_file = here::here("dev", "floss_default.mp4
 
     if (isTRUE(sample)) {
       ggplot2::ggsave(
-        plot = gg, filename = here::here("dev", sprintf("sample_plot%03d.png", d)),
-        device = "png", width = 5, height = 3, scale = 0.8
+        plot = gg, filename = here::here("dev", sprintf("%s_%d.png", fs::path_file(video_file), d)),
+        device = "png", width = 5, height = 7, scale = 0.8
       )
 
       done <- TRUE
@@ -211,7 +117,7 @@ render_floss_video <- function(video_file = here::here("dev", "floss_default.mp4
 
     ggplot2::ggsave(
       plot = gg, filename = here::here("tmp", temp_dir, sprintf("plot%03d.png", d)),
-      device = "png", width = 5, height = 10, scale = 0.8
+      device = "png", width = 5, height = 7, scale = 0.8
     )
     if (!(d %% 10)) {
       cat(".")
@@ -243,4 +149,132 @@ render_floss_video <- function(video_file = here::here("dev", "floss_default.mp4
 
   done <- TRUE
   message("Done.")
+}
+
+plot_ecg_streaming <- function(ecg_data, data_constraint, window_size, time_constraint,
+                               offset = 0, trigger_abs_idx = 0, ylim = c(min(ecg_data), max(ecg_data)),
+                               batch_size = 100, rate = 250, event_line = 290 * rate) {
+  data_idxs <- seq.int(1, data_constraint)
+
+  aa <- ggplot2::ggplot(data.frame(x = data_idxs, y = ecg_data), ggplot2::aes(x, y)) +
+    ggplot2::geom_line(size = 0.1)
+
+  aa <- aa + ggplot2::annotate("segment", y = ylim[1], yend = ylim[1], x = data_constraint - window_size, xend = data_constraint, color = "blue", size = 0.1) +
+    ggplot2::annotate("text", x = data_constraint - (window_size / 2), y = ylim[1] * 0.85, label = "Window size", color = "blue", size = 0.8)
+
+  if (!is.null(trigger_abs_idx) && trigger_abs_idx > 0) {
+    aa <- aa + ggplot2::annotate("segment",
+      y = ylim[1], yend = ylim[2], x = trigger_abs_idx - (offset - data_constraint),
+      xend = trigger_abs_idx - (offset - data_constraint), color = "orange", size = 0.1
+    ) +
+      ggplot2::annotate("text", x = data_constraint - (window_size / 2), y = ylim[2] * 0.85, label = "Change", color = "orange", size = 1)
+  }
+
+  if (offset > event_line) {
+    curr_event_line <- data_constraint - (offset - event_line)
+    aa <- aa + ggplot2::annotate("segment", y = ylim[1], yend = ylim[2], x = curr_event_line, xend = curr_event_line, color = "blue", size = 0.1) +
+      ggplot2::annotate("text", x = curr_event_line - 40, y = ylim[1] * 0.5, label = "Event limit", color = "blue", size = 1, angle = 90)
+  }
+
+  if (time_constraint > 0) {
+    curr_ts_constr <- (data_constraint - time_constraint)
+    aa <- aa + ggplot2::annotate("segment", y = ylim[1], yend = ylim[2], x = curr_ts_constr, xend = curr_ts_constr, color = "red", size = 0.1) +
+      ggplot2::annotate("text", x = curr_ts_constr - 40, y = ylim[1] * 0.4, label = "Time constraint", color = "red", size = 1, angle = 90)
+  }
+
+  aa <- aa + ggplot2::theme_grey(base_size = 7) + ggplot2::theme(
+    axis.text.y = ggplot2::element_text(hjust = 0.5, size = 3, angle = 90),
+    axis.text.x = ggplot2::element_text(hjust = 0.5, size = 4)
+  ) +
+    ggplot2::xlim(0, (data_constraint + batch_size)) +
+    ggplot2::ylim(ylim[1], ylim[2]) +
+    ggplot2::ggtitle("ECG") +
+    ggplot2::ylab("value") +
+    ggplot2::xlab(sprintf("time %4.1fs", offset / rate)) # 2.5 is 250hz/batch_size
+
+  return(aa)
+}
+
+plot_cac_streaming <- function(arcs, data_constraint, window_size, time_constraint, offset,
+                               tail_clip = 0, batch_size = 100, rate = 250, curr_cac_min = NULL) {
+  cac_size <- length(arcs)
+  cac_idxs <- seq.int(1, cac_size)
+  nocac <- is.na(arcs[1]) # if not corrected the initial values will be NA
+
+  if (!nocac && tail_clip > 0) {
+    arcs[seq.int(cac_size - tail_clip, cac_size)] <- 1.0
+  }
+
+  mid_idx <- data_constraint / 2
+  # kumarovski_idx <- round(cac_size * 0.6311142)
+
+  if (time_constraint > 0) {
+    cac_left_idx <- (data_constraint - time_constraint)
+  } else {
+    cac_left_idx <- mid_idx
+  }
+
+  cac_min_idx <- which.min(arcs[seq.int(cac_left_idx, cac_size)]) + cac_left_idx - 1 # min AC in the last 10 seconds
+  cac_min <- arcs[cac_min_idx]
+
+  if (nocac) {
+    cac_max <- max(arcs, na.rm = TRUE)
+  } else {
+    cac_max <- 1
+  }
+
+  if (!is.null(curr_cac_min)) {
+    if (cac_min < curr_cac_min) {
+      curr_cac_min <- cac_min
+    }
+  } else {
+    curr_cac_min <- cac_min
+  }
+
+  bb <- ggplot2::ggplot(data.frame(x = cac_idxs, y = arcs), ggplot2::aes(x, y)) +
+    ggplot2::geom_line(size = 0.1) +
+    ggplot2::theme_grey(base_size = 7) +
+    ggplot2::theme(
+      axis.text.y = ggplot2::element_text(hjust = 0.5, size = 3, angle = 90),
+      axis.text.x = ggplot2::element_text(hjust = 0.5, size = 4)
+    )
+
+  bb <- bb + ggplot2::geom_vline(xintercept = cac_min_idx, color = "red", size = 0.1) +
+    ggplot2::annotate("text", x = cac_min_idx + 125, y = cac_min + 0.1, label = sprintf("%.2f", cac_min), color = "red", size = 1.5) +
+    ggplot2::annotate("text", x = cac_min_idx + 125, y = 0.1, label = sprintf("%d", cac_min_idx), color = "red", size = 1.5) +
+    ggplot2::annotate("segment", y = curr_cac_min, yend = curr_cac_min, x = mid_idx - 2 * window_size, xend = mid_idx + 2 * window_size, color = "blue", size = 0.1) +
+    ggplot2::annotate("text", x = mid_idx, y = curr_cac_min + 0.1, label = sprintf("%.2f", curr_cac_min), color = "blue", size = 1.5)
+
+
+  bb <- bb + ggplot2::xlim(0, (data_constraint + batch_size)) +
+    ggplot2::ylim(0, cac_max) +
+    ggplot2::ggtitle("FLOSS") +
+    ggplot2::ylab("cac/similarity") +
+    ggplot2::xlab(sprintf("time %4.1fs", offset / rate))
+
+  bb$curr_cac_min <- curr_cac_min
+
+  return(bb)
+}
+
+plot_raw_arcs <- function(arcs, iac, data_constraint, time_constraint, offset,
+                          batch_size = 100, rate = 250) {
+  cac_size <- length(arcs)
+  cac_idxs <- seq.int(1, cac_size)
+
+  cc <- ggplot2::ggplot(data.frame(x = cac_idxs, y = arcs, z = iac), ggplot2::aes(x, y)) +
+    ggplot2::geom_line(size = 0.1) +
+    ggplot2::geom_line(ggplot2::aes(x, z), size = 0.1, color = "red") +
+    ggplot2::theme_grey(base_size = 7) +
+    ggplot2::theme(
+      axis.text.y = ggplot2::element_text(hjust = 0.5, size = 3, angle = 90),
+      axis.text.x = ggplot2::element_text(hjust = 0.5, size = 4)
+    ) +
+    ggplot2::xlim(0, (data_constraint + batch_size)) +
+    ggplot2::ylim(0, ifelse(time_constraint > 0, time_constraint * 0.6, data_constraint * 0.6)) +
+    ggplot2::ggtitle("FLOSS - ARCS") +
+    ggplot2::ylab("cac/similarity") +
+    ggplot2::xlab(sprintf("time %4.1fs", offset / rate))
+
+  return(cc)
 }

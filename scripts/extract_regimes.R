@@ -15,6 +15,7 @@ extract_regimes <- function(floss_list, params) {
 
   # TODO: compute the min cac
   min_cac <- mean(params$min_cac) - (1 * sd(params$min_cac))
+  window_size <- params$window_size
 
   if (params$time_constraint > 0) {
     floss_constraint <- params$time_constraint
@@ -30,7 +31,7 @@ extract_regimes <- function(floss_list, params) {
     # browser()
     cac <- x$cac
     cac[cac > min_cac] <- 1
-    cac[seq.int(1, params$history - floss_constraint)] <- 1
+    cac[seq.int(1, params$history - (4 * 250))] <- 1
     min_trigger_idx <- which.min(cac)
 
     if (min_trigger_idx > (params$history - floss_constraint)) {

@@ -52,10 +52,12 @@ create_floss_training <- function() {
   j <- 1
   for (i in seq_along(targets_dataset)) {
     filename <- attr(targets_dataset[[i]], "info")$filename
+    frequency <- attr(targets_dataset[[i]], "info")$frequency
     idxs <- dplyr::filter(training, file == filename)
 
     if (nrow(idxs) == 1) {
       training_data[[j]] <- targets_dataset[[i]]$II[seq.int(idxs$start, idxs$end)]
+      attr(training_data[[j]], "info") <- list(frequency = frequency)
       j <- j + 1
     }
   }

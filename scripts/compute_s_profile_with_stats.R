@@ -25,7 +25,11 @@ compute_s_profile_with_stats <- function(data_with_stats, params) {
   initial_stats$ddg[profile_len] <- 0
 
   initial_mp <- list(w = params$window_size, ez = params$ez, offset = 0)
-  current_mp <- mpx_stream_s_right(data[initial_data_vector], batch_size = params$history, initial_mp, initial_stats, history = 0, time_constraint = params$time_constraint, progress = params$progress)
+  current_mp <- mpx_stream_s_right(data[initial_data_vector],
+    batch_size = params$history, initial_mp,
+    initial_stats, history = 0, time_constraint = params$time_constraint, progress = params$progress,
+    threshold = params$threshold
+  )
 
   new_data_vector <- seq.int(params$history + 1, length(data))
 
@@ -49,7 +53,13 @@ compute_s_profile_with_stats <- function(data_with_stats, params) {
     current_stats <- purrr::map(stats, function(x) x[stats_vector])
     current_stats$ddf[profile_len] <- 0
     current_stats$ddg[profile_len] <- 0
-    current_mp <- mpx_stream_s_right(data[data_vector], batch_size = batch, current_mp, current_stats, params$history, params$time_constraint, params$progress)
+    current_mp <- mpx_stream_s_right(data[data_vector],
+      batch_size = batch, current_mp,
+      current_stats, history = params$history,
+      time_constraint = params$time_constraint,
+      progress = params$progress,
+      threshold = params$threshold
+    )
 
     profiles[[i]] <- current_mp
     i <- i + 1

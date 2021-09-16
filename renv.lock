@@ -1,6 +1,6 @@
 {
   "R": {
-    "Version": "4.1.1",
+    "Version": "4.1.0",
     "Repositories": [
       {
         "Name": "CRAN",
@@ -172,15 +172,15 @@
     },
     "bookdown": {
       "Package": "bookdown",
-      "Version": "0.23.4",
+      "Version": "0.24.1",
       "Source": "GitHub",
       "RemoteType": "github",
       "RemoteHost": "api.github.com",
       "RemoteUsername": "rstudio",
       "RemoteRepo": "bookdown",
       "RemoteRef": "main",
-      "RemoteSha": "a2e30b3870130f01f1fd1092f13f6c34acf354cc",
-      "Hash": "998dbd3197d2af36ff0496d488068d00"
+      "RemoteSha": "7ce6dc65b39ffe846e2ff88c160a69f2348a5a92",
+      "Hash": "2a8e4c901053ba3d86099e7b0aaacd86"
     },
     "brew": {
       "Package": "brew",
@@ -1203,8 +1203,8 @@
       "RemoteUsername": "ismayc",
       "RemoteRepo": "thesisdown",
       "RemoteRef": "master",
-      "RemoteSha": "3ecf79d9754b91c5728b9c6b0a1938576143bf4c",
-      "Hash": "8f9cd3908fb0aab2c1d1695eadaf5897"
+      "RemoteSha": "1615a82745212bc4e8cf48eb4225f33dd158b05c",
+      "Hash": "b632a23473112b9ad569b3ba9082a5a6"
     },
     "tibble": {
       "Package": "tibble",

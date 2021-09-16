@@ -48,10 +48,35 @@
 #' signal <- read_ecg("data/a103l")
 #' }
 #'
-read_ecg <- function(filename, plot = FALSE, subset = FALSE) {
+read_ecg <- function(filename, plot = FALSE, subset = FALSE,
+                     types = c("all", "asystole", "bradycardia", "tachycardia", "vfib", "vtachy"),
+                     alarm_type = NULL) {
   checkmate::assert_string(filename, 3)
   checkmate::qassert(plot, "B")
-  #
+  checkmate::qassert(alarm_type, c("0", "B"))
+  types <- match.arg(types, several.ok = TRUE)
+
+  if (!("all" %in% types)) {
+    filtered <- NULL
+
+    for (type in types) {
+      res <- switch(type,
+        asystole = grep("a\\d*.\\.hea", filename, value = TRUE),
+        bradycardia = grep("b\\d*.\\.hea", filename, value = TRUE),
+        tachycardia = grep("t\\d*.\\.hea", filename, value = TRUE),
+        vfib = grep("f\\d*.\\.hea", filename, value = TRUE),
+        vtachy = grep("c\\d*.\\.hea", filename, value = TRUE)
+      )
+
+      filtered <- c(filtered, res)
+    }
+
+    if (rlang::is_empty(filtered)) {
+      message("File skiped: ", filename)
+      return(NULL)
+    }
+  }
+
   # Set default parameter values
   def_gain <- 200 # Default value for missing gains
   wfdb_nan <- -32768 # This should be the case for all WFDB signal format types currently supported by RDMAT
@@ -130,6 +155,13 @@ read_ecg <- function(filename, plot = FALSE, subset = FALSE) {
     alarm <- ifelse(substr(alarm, 1, 1) == "#", substring(alarm, 2), alarm)
     true_false <- hea_content[[nlines]][1]
     true_false <- ifelse(substr(true_false, 1, 1) == "#", substring(true_false, 2), true_false)
+  }
+
+  if (!is.null(alarm_type)) {
+    if (alarm_type != as.logical(true_false)) {
+      message("File skiped: ", filename)
+      return(NULL)
+    }
   }
 
   mat_file <- gzfile(content, "rb")

@@ -37,8 +37,8 @@ mpx_stream_right <- function(new_data, start_obj, history = 0, time_constraint =
 #' @export
 #' @rdname mp_algos
 
-mpx_stream_s_right <- function(data, batch_size, start_obj, stats, history = 0, time_constraint = 0, progress = TRUE) {
-  mpxis_rcpp(data, batch_size, start_obj, stats, history, time_constraint, progress)
+mpx_stream_s_right <- function(data, batch_size, start_obj, stats, history = 0, time_constraint = 0, progress = TRUE, threshold = -1.0) {
+  mpxis_rcpp(data, batch_size, start_obj, stats, history, time_constraint, progress, threshold)
 }
 
 

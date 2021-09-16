@@ -70,6 +70,7 @@ create_animation <- function(ds_objects_names, floss_objects_names, include = c(
         }
 
         params <- attr(floss_data[[s]], "params")
+        threshold <- params$threshold
         window_size <- params$window_size ##
         time_constraint <- params$time_constraint ##
         ds_info <- attr(dataset[[s]], "info")
@@ -88,16 +89,16 @@ create_animation <- function(ds_objects_names, floss_objects_names, include = c(
           track <- t_info$label
 
           if (!is.null(filter_w_size) && filter_w_size != 0) {
-            etc <- sprintf("filter_%d", filter_w_size)
+            filter_size <- sprintf("filter_%d", filter_w_size)
           } else {
             filter_w_size <- 0 # TODO: add filter_w_size on ecg_data attributes
-            etc <- "raw"
+            filter_size <- "raw"
           }
 
-          temp_dir <- sprintf("tmp_%s_%s_%s", filename, track, etc)
+          temp_dir <- sprintf("tmp_%s_%s_%s", filename, track, filter_size)
 
-          file <- sprintf("%s_%s_%d_%d_%s.mp4", filename, track, window_size, time_constraint, etc)
-          title <- sprintf("FLOSS - %s-%s, w: %d, c: %d, %s-%s", filename, track, window_size, time_constraint, alarm, alarm_true)
+          file <- sprintf("%s_%s_%d_%.1f_%d_%s.mp4", filename, track, window_size, threshold, ifelse(time_constraint == 0, 5000, time_constraint), filter_size)
+          title <- sprintf("FLOSS - %s-%s, w: %d, t: %.1f, c: %d, %s-%s", filename, track, window_size, threshold, time_constraint, alarm, alarm_true)
 
           message("Rendering file: ", file)
           message("With title: ", title)
@@ -117,9 +118,9 @@ create_animation <- function(ds_objects_names, floss_objects_names, include = c(
               return(invisible(FALSE))
             }
 
-            if (isTRUE(sample)) {
-              return()
-            }
+            # if (isTRUE(sample)) {
+            #   return()
+            # }
           }
         }
       }

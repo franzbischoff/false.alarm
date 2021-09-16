@@ -22,7 +22,7 @@ using namespace RcppParallel;
 
 // [[Rcpp::export]]
 List mpxis_rcpp(NumericVector data_ref, uint64_t batch_size, List object, List stats, uint64_t history,
-                uint64_t time_constraint, bool progress) {
+                uint64_t time_constraint, bool progress, float threshold) {
 
   try {
     double c, c_cmp, ez;
@@ -116,9 +116,39 @@ List mpxis_rcpp(NumericVector data_ref, uint64_t batch_size, List object, List s
           c_cmp = c * sig[offset] * sig[off_diag];
 
           // RMP
-          if (c_cmp > rmp[off_diag]) {
-            rmp[off_diag] = c_cmp;
-            rpi[off_diag] = offset + 1;
+          if (threshold > 0) {
+            // v1 ~ v2 doesn't matter for FLOSS, since it only cares about the rpi
+            // if (c_cmp >= threshold) {
+            //   if (c_cmp > rmp[off_diag]) {
+            //     rmp[off_diag] = c_cmp;
+            //   }
+            //   rpi[off_diag] = offset + 1;
+            // }
+
+            if (threshold >= 10) {
+              threshold /= 10;
+              // hard
+              // v2
+              if (c_cmp >= threshold) {
+                rmp[off_diag] = c_cmp;
+                rpi[off_diag] = offset + 1;
+              }
+            } else {
+              // soft
+              // v3
+              if (c_cmp >= threshold) {
+                if (c_cmp > rmp[off_diag]) {
+                  rmp[off_diag] = c_cmp;
+                  rpi[off_diag] = offset + 1;
+                }
+              }
+            }
+
+          } else {
+            if (c_cmp > rmp[off_diag]) {
+              rmp[off_diag] = c_cmp;
+              rpi[off_diag] = offset + 1;
+            }
           }
         }
 
@@ -157,9 +187,9 @@ List mpxis_rcpp(NumericVector data_ref, uint64_t batch_size, List object, List s
     return (List::create(Rcpp::Named("right_matrix_profile") = rmmp, Rcpp::Named("right_profile_index") = rmmpi,
                          Rcpp::Named("w") = window_size, Rcpp::Named("ez") = ez,
                          Rcpp::Named("time_constraint") = time_constraint, Rcpp::Named("offset") = mp_offset,
-                        //  Rcpp::Named("ddf") = ddf, Rcpp::Named("ddg") = ddg, Rcpp::Named("avg") = mmu,
-                        //  Rcpp::Named("sig") = ssig,
-                        //  Rcpp::Named("data") = data_ref,
+                         //  Rcpp::Named("ddf") = ddf, Rcpp::Named("ddg") = ddg, Rcpp::Named("avg") = mmu,
+                         //  Rcpp::Named("sig") = ssig,
+                         //  Rcpp::Named("data") = data_ref,
                          Rcpp::Named("partial") = partial));
 
   } catch (...) {
@@ -342,8 +372,7 @@ List mpxi_rcpp(NumericVector new_data, List object, uint64_t history, uint64_t t
     }
 
     return (List::create(Rcpp::Named("right_matrix_profile") = rmmp, Rcpp::Named("right_profile_index") = rmmpi,
-                         Rcpp::Named("data") = data_ref,
-                         Rcpp::Named("w") = window_size, Rcpp::Named("ez") = ez,
+                         Rcpp::Named("data") = data_ref, Rcpp::Named("w") = window_size, Rcpp::Named("ez") = ez,
                          Rcpp::Named("time_constraint") = time_constraint, Rcpp::Named("ddf") = ddf,
                          Rcpp::Named("ddg") = ddg, Rcpp::Named("avg") = mmu, Rcpp::Named("offset") = mp_offset,
                          Rcpp::Named("sig") = ssig, Rcpp::Named("partial") = partial));
@@ -485,11 +514,11 @@ List mpxiright_rcpp(NumericVector data_ref, uint64_t window_size, double ez, uin
 
     if (idxs) {
       return (List::create(Rcpp::Named("right_matrix_profile") = rmmp, Rcpp::Named("right_profile_index") = rmmpi,
-                          //  Rcpp::Named("data") = data_ref,
+                           //  Rcpp::Named("data") = data_ref,
                            Rcpp::Named("w") = window_size, Rcpp::Named("ez") = ez,
                            Rcpp::Named("time_constraint") = time_constraint,
-                          //  Rcpp::Named("ddf") = ddf,
-                          //  Rcpp::Named("ddg") = ddg, Rcpp::Named("avg") = mmu, Rcpp::Named("sig") = ssig,
+                           //  Rcpp::Named("ddf") = ddf,
+                           //  Rcpp::Named("ddg") = ddg, Rcpp::Named("avg") = mmu, Rcpp::Named("sig") = ssig,
                            Rcpp::Named("partial") = partial));
     } else {
       return (List::create(Rcpp::Named("right_matrix_profile") = rmmp, Rcpp::Named("partial") = partial));

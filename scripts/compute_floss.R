@@ -2,7 +2,7 @@ compute_floss <- function(mp_data, params) {
   checkmate::qassert(mp_data, "L")
   ez <- params$ez
   time_constraint <- params$time_constraint
-  threshold <- params$threshold
+  sample_freq <- params$sample_freq
 
   checkmate::qassert(ez, c("0", "N"))
 
@@ -31,7 +31,7 @@ compute_floss <- function(mp_data, params) {
       x$right_profile_index, x$w,
       curr_ez,
       aic_avg,
-      threshold
+      sample_freq
     )
     list(cac = cac$cac, iac = cac$iac, arcs = cac$arcs, w = x$w, ez = curr_ez, offset = x$offset)
   })
@@ -44,9 +44,10 @@ compute_floss <- function(mp_data, params) {
   return(result_floss)
 }
 
-compute_arcs <- function(right_profile_index, window_size, exclusion_zone, aic_avg, threshold) {
+compute_arcs <- function(right_profile_index, window_size, exclusion_zone, aic_avg, sample_freq) {
   checkmate::qassert(right_profile_index, "N")
   checkmate::qassert(exclusion_zone, "N")
+  checkmate::assert_true(sample_freq > 50)
 
   "!!DEBUG Compute ARCS"
 
@@ -55,12 +56,12 @@ compute_arcs <- function(right_profile_index, window_size, exclusion_zone, aic_a
   cac_size <- length(right_profile_index)
   nnmark <- vector(mode = "numeric", cac_size)
 
-  if (isTRUE(threshold)) {
-    profile <- head(right_profile_index, -ez - 1)
-    threshold <- max(abs(profile - seq_along(profile)))
-  } else {
+  # if (isTRUE(threshold)) {
+  #   profile <- head(right_profile_index, -ez - 1)
+  #   threshold <- max(abs(profile - seq_along(profile)))
+  # } else {
     threshold <- cac_size
-  }
+  # }
 
   for (i in seq.int(1, (cac_size - ez - 1))) {
     j <- right_profile_index[i]
@@ -85,15 +86,9 @@ compute_arcs <- function(right_profile_index, window_size, exclusion_zone, aic_a
   if (!is.null(aic_avg)) {
     iac <- aic_avg
     cac <- pmin(arc_counts / iac, 1) # below 1 or 1
-    # cac <- arc_counts / iac # below 1 or 1
     cac[seq.int(1, (window_size / 2))] <- 1.0
-    cac[seq.int((cac_size - (250 / 3) - 1), cac_size)] <- 1.0
+    cac[seq.int((cac_size - window_size), cac_size)] <- 1.0
     cac[cac < 0 | is.na(cac)] <- 1.0
-
-    # cac <- arc_counts # / max(arc_counts)
-    # cac[seq.int(1, time_constraint)] <- NA
-    # cac[seq.int((cac_size - (3 * window_size) - 1), cac_size)] <- NA
-    # # cac[seq.int((cac_size - time_constraint - 1), cac_size)] <- 1.0
   } else {
     x <- seq(0, 1, length.out = cac_size)
     mode <- 0.6311142 # best point to analize the segment change
@@ -103,8 +98,7 @@ compute_arcs <- function(right_profile_index, window_size, exclusion_zone, aic_a
 
     cac <- pmin(arc_counts / iac, 1) # below 1 or 1
     cac[seq.int(1, (window_size / 2))] <- 1.0
-    # cac[seq.int((cac_size - (3 * window_size) - 1), cac_size)] <- 1.0
-    cac[seq.int((cac_size - (250 / 3) - 1), cac_size)] <- 1.0
+    cac[seq.int((cac_size - window_size), cac_size)] <- 1.0
     cac[cac < 0 | is.na(cac)] <- 1.0
   }
 
