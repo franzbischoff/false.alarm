@@ -60,3 +60,4 @@
 ^inst/testfiles$
 ^tmp$
 ^debugme\.log$
+^\.httr-oauth$

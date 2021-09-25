@@ -126,7 +126,7 @@ List mpxis_rcpp(NumericVector data_ref, uint64_t batch_size, List object, List s
             // }
 
             if (threshold >= 10) {
-              threshold /= 10;
+              threshold /= 100;
               // hard
               // v2
               if (c_cmp >= threshold) {

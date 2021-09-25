@@ -159,7 +159,7 @@ read_ecg <- function(filename, plot = FALSE, subset = FALSE,
 
   if (!is.null(alarm_type)) {
     if (alarm_type != as.logical(true_false)) {
-      message("File skiped: ", filename)
+      message("File skipped: ", filename)
       return(NULL)
     }
   }
@@ -169,6 +169,10 @@ read_ecg <- function(filename, plot = FALSE, subset = FALSE,
   close(mat_file)
 
   signal <- list()
+  subset_minmax <- FALSE
+  if (!isFALSE(subset)) {
+    subset_minmax <- c(min(subset), max(subset))
+  }
   # Convert from digital units to physical units.
   # Mapping should be similar to that of rdsamp.c:
   # http://www.physionet.org/physiotools/wfdb/app/rdsamp.c
@@ -181,7 +185,7 @@ read_ecg <- function(filename, plot = FALSE, subset = FALSE,
       signal[[label]] <- signal[[label]][subset]
     }
 
-    attr(signal[[label]], "info") <- list(label = label, baseline = siginfo[[i]]$baseline, gain = siginfo[[i]]$gain, unit = siginfo[[i]]$unit)
+    attr(signal[[label]], "info") <- list(label = label, baseline = siginfo[[i]]$baseline, gain = siginfo[[i]]$gain, unit = siginfo[[i]]$unit, subset = subset_minmax)
   }
 
   length_signal <- length(signal[[1]])

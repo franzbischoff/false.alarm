@@ -21,6 +21,13 @@ if (dev_mode) {
 # TODO: density of similarity changes a little bit from the size of constraint, but a lot due to the window size
 # TODO: but, the sum of the density from 50-100 doesnt change in any case
 
+# Asystole: No QRS for at least 4 seconds
+# Ventricular Flutter/Fibrillation: Fibrillatory, flutter, or oscillatory waveform for at least 4 .leap.seconds
+
+# Extreme Bradycardia: Heart rate lower than 40 bpm for 5 consecutive beats
+# Extreme Tachycardia: Heart rate higher than 140 bpm for 17 consecutive beats
+# Ventricular Tachycardia: 5 or more ventricular beats with heart rate higher than 100 bpm
+
 
 # Load all scripts
 script_files <- list.files(here::here("scripts"), pattern = "*.R")
@@ -94,17 +101,18 @@ tar_option_set(
 )
 
 var_head <- 10
-var_limit_per_type <- 2
+var_limit_per_type <- 5
 const_sample_freq <- 250
 var_exclude <- c("time", "V", "ABP", "PLETH", "RESP")
-var_mp_batch <- 100
+var_mp_batch <- 50
 var_mp_constraint <- 20 * const_sample_freq # 20 secs
 var_window_size <- c(200, 300, 500) # c(200, 250, 300)
 var_time_constraint <- c(0, 5 * const_sample_freq, 10 * const_sample_freq, 17 * const_sample_freq)
 var_filter_w_size <- 100 # c(100, 200)
 var_ez <- 0.5
-var_subset <- seq.int(240 * const_sample_freq, 300 * const_sample_freq) # last 60 secs
+var_subset <- seq.int(240 * const_sample_freq + 1, 300 * const_sample_freq) # last 60 secs
 var_mp_threshold <- c(0, 0.5, 0.6, 0.9, 50, 60, 90)
+var_floss_landmark <- 3 * const_sample_freq # 3 seconds from the end
 
 # debug(process_ts_in_file)
 # tar_make(names = ds_mp_filtered, callr_function = NULL)
@@ -119,7 +127,7 @@ list(
   tar_files_input(
     file_paths,
     # tail(head(find_all_files(types = "all"), var_head), 10),
-    find_all_files(types = "all")
+    find_all_files(types = c("asystole", "bradycardia", "tachycardia", "vfib", "vtachy"))
     # batches = 2,
     # Use vector for filenames
     # iteration = "vector"
@@ -180,7 +188,7 @@ list(
         list(map_time_constraint = var_time_constraint),
         tar_target(
           floss_threshold,
-          c(0.7, 0.79, 0.75)
+          c(0.3, 0.31, 0.32)
           # get_minimum_cacs(
           #   neg_training_floss,
           #   list(
@@ -258,6 +266,7 @@ list(
               window_size = map_window_size,
               ez = var_ez,
               min_cac = floss_threshold,
+              floss_landmark = var_floss_landmark, # 3 sec from the end
               progress = FALSE,
               batch = var_mp_batch,
               history = var_mp_constraint,

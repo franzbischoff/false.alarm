@@ -29,15 +29,17 @@ render_floss_video <- function(video_file = here::here("dev", "floss_default.mp4
   window_size <- params$window_size
   data_constraint <- params$history
   time_constraint <- params$time_constraint
+  landmark <- data_constraint - params$floss_landmark
   batch_size <- arc_counts[[2]]$offset - arc_counts[[1]]$offset
 
-  event_line <- last_ten_secs
+  abs_event_line <- last_ten_secs
   info <- attr(ecg_data, "info")
+  abs_subset_start <- ifelse(isFALSE(info$subset), 0, info$subset[1] - 1)
 
   if (!is.null(info$filter)) {
-    filter <- head(info$filter, last_ten_secs - filter_w_size + 1)
+    filter <- head(info$filter, abs_event_line - filter_w_size + 1)
     event_offset <- sum(filter) # total of points skipped by the filter
-    event_line <- event_line - event_offset
+    abs_event_line <- abs_event_line - event_offset
   }
 
   if (dir.exists(here::here("tmp", temp_dir))) {
@@ -74,14 +76,14 @@ render_floss_video <- function(video_file = here::here("dev", "floss_default.mp4
       d <- length(arc_counts) - 5
     }
 
-    data_idxs_subset <- seq.int(arc_counts[[d]]$offset - data_constraint + 1, arc_counts[[d]]$offset)
+    data_idxs_subset <- seq.int((arc_counts[[d]]$offset - abs_subset_start) - data_constraint + 1, (arc_counts[[d]]$offset - abs_subset_start))
 
     aa <- plot_ecg_streaming(ecg_data[data_idxs_subset], data_constraint, window_size,
       time_constraint = time_constraint,
       offset = arc_counts[[d]]$offset,
       trigger_abs_idx = arc_counts[[d]]$trigger$trigger_abs_idx,
       ylim = c(data_min, data_max),
-      batch_size = batch_size, rate = rate, event_line = event_line
+      batch_size = batch_size, rate = rate, abs_event_line = abs_event_line
     )
 
     # cac_min_idx <- which.min(arc_counts[[d]]$cac[seq.int(kumarovski_idx, cac_size)]) + kumarovski_idx - 1
@@ -153,33 +155,39 @@ render_floss_video <- function(video_file = here::here("dev", "floss_default.mp4
 
 plot_ecg_streaming <- function(ecg_data, data_constraint, window_size, time_constraint,
                                offset = 0, trigger_abs_idx = 0, ylim = c(min(ecg_data), max(ecg_data)),
-                               batch_size = 100, rate = 250, event_line = 290 * rate) {
+                               batch_size = 100, rate = 250, abs_event_line = 290 * rate) {
   data_idxs <- seq.int(1, data_constraint)
+  y_amp <- (ylim[2] - ylim[1])
+  last_3_secs <- length(ecg_data) - (3 * rate) # this is the max detection delay needed for Asystole and Vfib
 
   aa <- ggplot2::ggplot(data.frame(x = data_idxs, y = ecg_data), ggplot2::aes(x, y)) +
     ggplot2::geom_line(size = 0.1)
 
   aa <- aa + ggplot2::annotate("segment", y = ylim[1], yend = ylim[1], x = data_constraint - window_size, xend = data_constraint, color = "blue", size = 0.1) +
-    ggplot2::annotate("text", x = data_constraint - (window_size / 2), y = ylim[1] * 0.85, label = "Window size", color = "blue", size = 0.8)
+    ggplot2::annotate("text", x = data_constraint - (window_size / 2), y = ylim[1] + (y_amp * 0.03), label = "Window size", color = "blue", size = 1)
 
   if (!is.null(trigger_abs_idx) && trigger_abs_idx > 0) {
+    curr_trigger_line <- data_constraint - (offset - trigger_abs_idx)
     aa <- aa + ggplot2::annotate("segment",
-      y = ylim[1], yend = ylim[2], x = trigger_abs_idx - (offset - data_constraint),
-      xend = trigger_abs_idx - (offset - data_constraint), color = "orange", size = 0.1
+      y = ylim[1], yend = ylim[2], x = curr_trigger_line,
+      xend = curr_trigger_line, color = "orange", size = 0.2
     ) +
-      ggplot2::annotate("text", x = data_constraint - (window_size / 2), y = ylim[2] * 0.85, label = "Change", color = "orange", size = 1)
+      ggplot2::annotate("text", x = data_constraint - (window_size / 2), y = ylim[1] + (y_amp * 0.95), label = "Change", color = "orange", size = 1.5)
   }
 
-  if (offset > event_line) {
-    curr_event_line <- data_constraint - (offset - event_line)
+  aa <- aa + ggplot2::annotate("segment", y = ylim[1], yend = ylim[2], x = last_3_secs, xend = last_3_secs, color = "firebrick", size = 0.1) +
+    ggplot2::annotate("text", x = last_3_secs - 40, y = ylim[1] + (y_amp * 0.13), label = "Detection limit", color = "firebrick", size = 1.2, angle = 90)
+
+  if (offset > abs_event_line) {
+    curr_event_line <- data_constraint - (offset - abs_event_line)
     aa <- aa + ggplot2::annotate("segment", y = ylim[1], yend = ylim[2], x = curr_event_line, xend = curr_event_line, color = "blue", size = 0.1) +
-      ggplot2::annotate("text", x = curr_event_line - 40, y = ylim[1] * 0.5, label = "Event limit", color = "blue", size = 1, angle = 90)
+      ggplot2::annotate("text", x = curr_event_line - 40, y = ylim[1] + (y_amp * 0.2), label = "Event limit", color = "blue", size = 1, angle = 90)
   }
 
   if (time_constraint > 0) {
     curr_ts_constr <- (data_constraint - time_constraint)
     aa <- aa + ggplot2::annotate("segment", y = ylim[1], yend = ylim[2], x = curr_ts_constr, xend = curr_ts_constr, color = "red", size = 0.1) +
-      ggplot2::annotate("text", x = curr_ts_constr - 40, y = ylim[1] * 0.4, label = "Time constraint", color = "red", size = 1, angle = 90)
+      ggplot2::annotate("text", x = curr_ts_constr - 40, y = ylim[1] + (y_amp * 0.4), label = "Time constraint", color = "red", size = 1.5, angle = 90)
   }
 
   aa <- aa + ggplot2::theme_grey(base_size = 7) + ggplot2::theme(
@@ -240,10 +248,10 @@ plot_cac_streaming <- function(arcs, data_constraint, window_size, time_constrai
     )
 
   bb <- bb + ggplot2::geom_vline(xintercept = cac_min_idx, color = "red", size = 0.1) +
-    ggplot2::annotate("text", x = cac_min_idx + 125, y = cac_min + 0.1, label = sprintf("%.2f", cac_min), color = "red", size = 1.5) +
-    ggplot2::annotate("text", x = cac_min_idx + 125, y = 0.1, label = sprintf("%d", cac_min_idx), color = "red", size = 1.5) +
+    ggplot2::annotate("text", x = cac_min_idx + 125, y = cac_min + 0.05, label = sprintf("%.2f", cac_min), color = "red", size = 1.5) +
+    ggplot2::annotate("text", x = cac_min_idx + 125, y = 0.05, label = sprintf("%d", cac_min_idx), color = "red", size = 1.5) +
     ggplot2::annotate("segment", y = curr_cac_min, yend = curr_cac_min, x = mid_idx - 2 * window_size, xend = mid_idx + 2 * window_size, color = "blue", size = 0.1) +
-    ggplot2::annotate("text", x = mid_idx, y = curr_cac_min + 0.1, label = sprintf("%.2f", curr_cac_min), color = "blue", size = 1.5)
+    ggplot2::annotate("text", x = mid_idx, y = curr_cac_min + 0.05, label = sprintf("%.2f", curr_cac_min), color = "blue", size = 1.5)
 
 
   bb <- bb + ggplot2::xlim(0, (data_constraint + batch_size)) +

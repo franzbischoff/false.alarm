@@ -6,6 +6,8 @@ compute_s_profile_with_stats <- function(data_with_stats, params) {
   ))
 
   data <- data_with_stats[[1]]
+  data_info <- attr(data, "info")
+  subset_start <- ifelse(isFALSE(data_info$subset), 0, data_info$subset[1] - 1)
   stats <- data_with_stats[[2]]
 
   # don't compute if the stats are not compatible
@@ -24,7 +26,7 @@ compute_s_profile_with_stats <- function(data_with_stats, params) {
   initial_stats$ddf[profile_len] <- 0
   initial_stats$ddg[profile_len] <- 0
 
-  initial_mp <- list(w = params$window_size, ez = params$ez, offset = 0)
+  initial_mp <- list(w = params$window_size, ez = params$ez, offset = subset_start)
   current_mp <- mpx_stream_s_right(data[initial_data_vector],
     batch_size = params$history, initial_mp,
     initial_stats, history = 0, time_constraint = params$time_constraint, progress = params$progress,
@@ -45,8 +47,8 @@ compute_s_profile_with_stats <- function(data_with_stats, params) {
 
   for (n in new_data_list) {
     batch <- length(n)
-    start <- current_mp$offset - params$history + 1
-    end <- current_mp$offset + batch
+    start <- (current_mp$offset - subset_start) - params$history + 1
+    end <- (current_mp$offset - subset_start) + batch
     data_vector <- seq.int(start, end)
     profile_len <- length(data_vector) - params$window_size + 1
     stats_vector <- seq.int(start, start + profile_len - 1)
@@ -69,10 +71,10 @@ compute_s_profile_with_stats <- function(data_with_stats, params) {
   "!DEBUG Finished `length(profiles)` profiles."
 
   checkmate::assert_true(
-    current_mp$offset == length(data)
+    current_mp$offset == length(data) + subset_start
   )
 
-  attr(profiles, "info") <- attr(data, "info")
+  attr(profiles, "info") <- data_info
 
   return(profiles)
 }
