@@ -15,7 +15,7 @@ extract_regimes <- function(floss_list, params) {
   )
 
   # TODO: compute the min cac
-  min_cac <- mean(params$min_cac) - (1 * sd(params$min_cac))
+  min_cac <- params$min_cac
   window_size <- params$window_size
   history <- params$history
   landmark <- history - params$floss_landmark # here is where we look for the minimum value
@@ -30,10 +30,11 @@ extract_regimes <- function(floss_list, params) {
   current_abs_min_idx <- 0
   current_abs_min_value <- 1
 
-  all_regimes <- 0
+  all_regimes_idxs <- NULL
+  all_regimes_values <- NULL
 
   # iterates over all cacs of this time series
-  regime_changes <- purrr::map(floss_list, function(x) {
+  purrr::map(floss_list, function(x) {
     cac <- x$cac
     # cac[cac > min_cac] <- 1
     # cac[seq.int(1, history - (4 * 250))] <- 1
@@ -46,18 +47,22 @@ extract_regimes <- function(floss_list, params) {
     if (cac[landmark] < min_cac) {
       abs_min_idx <- x$offset - history + landmark + 1
       if ((abs_min_idx - current_abs_min_idx) > floss_constraint) {
+        message("abs_min_idx at ", abs_min_idx, " value ", cac[landmark], ".")
         current_abs_min_idx <<- abs_min_idx
         current_abs_min_value <<- cac[landmark]
+        all_regimes_idxs <<- c(all_regimes_idxs, current_abs_min_idx)
+        all_regimes_values <<- c(all_regimes_values, current_abs_min_value)
       }
       if (cac[landmark] < current_abs_min_value) {
         if ((abs_min_idx - current_abs_min_idx) < (10 * 250)) {
+          message("abs_min_idx2 at ", abs_min_idx, " value ", cac[landmark], ".")
           current_abs_min_idx <<- abs_min_idx
           current_abs_min_value <<- cac[landmark]
+          all_regimes_idxs <<- c(all_regimes_idxs, current_abs_min_idx)
+          all_regimes_values <<- c(all_regimes_values, current_abs_min_value)
         }
       }
     }
-
-    all_regimes <<- c(all_regimes, current_abs_min_idx)
 
     # if (min_trigger_idx > (history - floss_constraint)) {
     #   min_trigger_abs_idx <- min_trigger_idx + x$offset - history
@@ -75,21 +80,18 @@ extract_regimes <- function(floss_list, params) {
     #     current_abs_min_value <<- min_trigger_value
     #   }
     # }
-
-    x$trigger <- list(
-      trigger_abs_idx = current_abs_min_idx,
-      trigger_value = current_abs_min_value
-    )
-
     x
   })
 
-  all_regimes <- sort(unique(all_regimes))
+  if (!is.null(all_regimes_idxs)) {
+    regimes <- tibble::as_tibble(list(idxs = all_regimes_idxs, values = all_regimes_values))
+    regimes <- dplyr::distinct(regimes, idxs, .keep_all = TRUE) %>% dplyr::arrange(idxs)
+  } else {
+    regimes <- FALSE
+  }
 
-  info$all_regimes <- all_regimes
+  attr(regimes, "info") <- info
+  attr(regimes, "params") <- params
 
-  attr(regime_changes, "info") <- info
-  attr(regime_changes, "params") <- params
-
-  return(regime_changes)
+  return(regimes)
 }

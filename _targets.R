@@ -80,23 +80,31 @@ if (isFALSE(cluster)) { ## Locally
 tar_option_set(
   packages = "false.alarm",
   format = "rds",
-  resources = tar_resources(
-    #   #   #   # *** If using clustermq for multithreading / clustering ***
-    clustermq = tar_resources_clustermq(
-      template = list(num_cores = 4)
-    ), # or n_jobs??
-    #   #   #   # *** If using future for multithreading / clustering ***
-    future = tar_resources_future(
-      resources = list(num_cores = 4)
-    )
-  ),
+  # resources = tar_resources(
+  #   #   #   #   # *** If using clustermq for multithreading / clustering ***
+  #   clustermq = tar_resources_clustermq(
+  #     template = list(num_cores = 4)
+  #   ), # or n_jobs??
+  #   #   #   #   # *** If using future for multithreading / clustering ***
+  #   future = tar_resources_future(
+  #     resources = list(num_cores = 4)
+  #   )
+  # ),
   garbage_collection = TRUE,
   workspace_on_error = TRUE,
-  # memory = "transient",
+  memory = "transient",
   # storage = "main",
   # envir = globalenv(),
   # iteration = "list",
   # debug = "process_ts_in_file"
+  # cue = tar_cue(
+  #   mode = "thorough",
+  #   command = TRUE,
+  #   depend = TRUE,
+  #   format = TRUE,
+  #   iteration = TRUE,
+  #   file = FALSE
+  # ),
   imports = "false.alarm" # TODO: remove when there is no change on package functions. Clears the graph.
 )
 
@@ -113,6 +121,7 @@ var_ez <- 0.5
 var_subset <- seq.int(240 * const_sample_freq + 1, 300 * const_sample_freq) # last 60 secs
 var_mp_threshold <- c(0, 0.5, 0.6, 0.9, 50, 60, 90)
 var_floss_landmark <- 3 * const_sample_freq # 3 seconds from the end
+var_floss_threshold <- c(0.1, 0.2, 0.3, 0.4, 0.5)
 
 # debug(process_ts_in_file)
 # tar_make(names = ds_mp_filtered, callr_function = NULL)
@@ -186,23 +195,6 @@ list(
       list(map_mp_threshold = var_mp_threshold),
       tar_map(
         list(map_time_constraint = var_time_constraint),
-        tar_target(
-          floss_threshold,
-          c(0.3, 0.31, 0.32)
-          # get_minimum_cacs(
-          #   neg_training_floss,
-          #   list(
-          #     batch = var_mp_batch,
-          #     history = var_mp_constraint,
-          #     window_size = map_window_size,
-          #     time_constraint = map_time_constraint,
-          #     ez = var_ez,
-          #     only_mins = TRUE,
-          #     progress = FALSE,
-          #     sample_freq = const_sample_freq
-          #   )
-          # )
-        ),
         # tar_target(
         #   ds_stats_mps,
         #   process_ts_in_file(dataset,
@@ -256,25 +248,48 @@ list(
           ),
           pattern = map(ds_stats_mps)
         ),
-        ### Extract regime changes ----
-        tar_target(
-          regimes,
-          process_ts_in_file(ds_stats_mps_floss,
-            id = "regimes",
-            fun = extract_regimes,
-            params = list(
-              window_size = map_window_size,
-              ez = var_ez,
-              min_cac = floss_threshold,
-              floss_landmark = var_floss_landmark, # 3 sec from the end
-              progress = FALSE,
-              batch = var_mp_batch,
-              history = var_mp_constraint,
-              time_constraint = map_time_constraint
+        tar_map(
+          list(map_floss_threshold = var_floss_threshold),
+          ### Extract regime changes ----
+          tar_target(
+            regimes,
+            process_ts_in_file(ds_stats_mps_floss,
+              id = "regimes",
+              fun = extract_regimes,
+              params = list(
+                window_size = map_window_size,
+                ez = var_ez,
+                min_cac = map_floss_threshold,
+                floss_landmark = var_floss_landmark, # 3 sec from the end
+                progress = FALSE,
+                batch = var_mp_batch,
+                history = var_mp_constraint,
+                time_constraint = map_time_constraint
+              ),
+              exclude = var_exclude
             ),
-            exclude = var_exclude
+            pattern = map(ds_stats_mps_floss)
           ),
-          pattern = map(ds_stats_mps_floss)
+          ### Extract regime changes ----
+          tar_target(
+            graph_regime,
+            process_ts_in_file(c(dataset, regimes),
+              id = "plot_regimes",
+              fun = plot_regimes,
+              params = list(
+                window_size = map_window_size,
+                # ez = var_ez, # TODO: check process_ts_in_file for more params match
+                min_cac = map_floss_threshold,
+                # floss_landmark = var_floss_landmark, # 3 sec from the end
+                # progress = FALSE,
+                # batch = var_mp_batch,
+                history = var_mp_constraint,
+                time_constraint = map_time_constraint
+              ),
+              exclude = var_exclude
+            ),
+            pattern = map(dataset, regimes)
+          )
         )
       )
     )
