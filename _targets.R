@@ -78,7 +78,7 @@ if (isFALSE(cluster)) { ## Locally
 
 # use renv::install(".") to update the rcpp functions
 tar_option_set(
-  packages = "false.alarm",
+  packages = c("dplyr", "false.alarm"),
   format = "rds",
   # resources = tar_resources(
   #   #   #   #   # *** If using clustermq for multithreading / clustering ***
@@ -259,7 +259,7 @@ list(
               params = list(
                 window_size = map_window_size,
                 ez = var_ez,
-                min_cac = map_floss_threshold,
+                floss_threshold = map_floss_threshold,
                 floss_landmark = var_floss_landmark, # 3 sec from the end
                 progress = FALSE,
                 batch = var_mp_batch,
@@ -279,7 +279,8 @@ list(
               params = list(
                 window_size = map_window_size,
                 # ez = var_ez, # TODO: check process_ts_in_file for more params match
-                min_cac = map_floss_threshold,
+                floss_threshold = map_floss_threshold,
+                threshold = map_mp_threshold,
                 # floss_landmark = var_floss_landmark, # 3 sec from the end
                 # progress = FALSE,
                 # batch = var_mp_batch,

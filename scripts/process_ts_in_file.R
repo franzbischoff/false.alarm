@@ -72,7 +72,7 @@ process_ts_in_file <- function(ecg_data, id, fun, params, exclude = "time") {
     if (checkmate::qtest(x, "L1")) {
       x <- x[[1]]
     }
-    fun(x, params)
+    fun(x, params, info)
   })
   attr(result[[file]], "info") <- info
 

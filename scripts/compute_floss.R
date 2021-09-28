@@ -56,17 +56,17 @@ compute_arcs <- function(right_profile_index, window_size, exclusion_zone, aic_a
   cac_size <- length(right_profile_index)
   nnmark <- vector(mode = "numeric", cac_size)
 
-  # if (isTRUE(threshold)) {
+  # if (isTRUE(arcs_threshold)) {
   #   profile <- head(right_profile_index, -ez - 1)
-  #   threshold <- max(abs(profile - seq_along(profile)))
+  #   arcs_threshold <- max(abs(profile - seq_along(profile)))
   # } else {
-    threshold <- cac_size
+    arcs_threshold <- cac_size
   # }
 
   for (i in seq.int(1, (cac_size - ez - 1))) {
     j <- right_profile_index[i]
 
-    if (abs(j - i) <= threshold) {
+    if (abs(j - i) <= arcs_threshold) {
       if (j == i) {
         next
       }

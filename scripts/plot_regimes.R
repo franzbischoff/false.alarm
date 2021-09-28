@@ -1,14 +1,10 @@
-plot_regimes <- function(data_with_regimes, params) {
+plot_regimes <- function(data_with_regimes, params, infos) {
   checkmate::qassert(data_with_regimes, "L2")
   checkmate::qassert(params, "L+")
   checkmate::assert_true(identical(
     attr(data_with_regimes[[1]], "info"),
     attr(data_with_regimes[[2]], "info")
   ))
-
-  filename <- names(data_with_regimes[1])
-  size_filename <- nchar(filename)
-  filename <- substr(filename, size_filename - 4, size_filename)
 
   data <- data_with_regimes[[1]]
   data_info <- attr(data, "info")
@@ -26,21 +22,21 @@ plot_regimes <- function(data_with_regimes, params) {
     )
   )
 
-  # TODO: compute the min cac
-  # TODO: add mp_threshold
-  threshold <- params$min_cac
+  filename <- infos$filename
+  threshold <- params$threshold
+  floss_threshold <- params$floss_threshold
   window_size <- params$window_size
   history <- params$history
-  landmark <- params$floss_landmark # here is where we look for the minimum value
   time_constraint <- ifelse(params$time_constraint == 0, history, params$time_constraint)
   track <- data_info$label
-  # alarm <- info$alarm # TODO
-  # alarm_true <- info$true # TODO
+  alarm <- infos$alarm
+  alarm_true <- infos$true
+  filter_size <- "raw" # TODO
 
-  file <- sprintf("%s_%s_%d_%.1f_%d.png", filename, track, window_size, threshold, time_constraint)
-  title <- sprintf("FLOSS-Regimes - %s-%s, w: %d, ct: %.1f, c: %d", filename, track, window_size, threshold, time_constraint)
+  file <- sprintf("%s_%s_%d_%.1f_%d_%.1f_%s.png", filename, track, window_size, threshold, time_constraint, floss_threshold, filter_size)
+  title <- sprintf("FLOSS-Regimes - %s-%s, w: %d, t: %.1f, ct: %.1f, c: %d, %s-%s", filename, track, window_size, threshold, floss_threshold, time_constraint, alarm, alarm_true)
 
-  a <- plot_ecg_with_regimes(data, regimes, title, params, subset_start)
+  a <- plot_ecg_with_regimes(data, regimes, title, params, subset_start, ylim = c(min(data), max(data)))
 
   ggplot2::ggsave(
     plot = a, filename = here::here("tmp", file),
@@ -50,14 +46,13 @@ plot_regimes <- function(data_with_regimes, params) {
   return(a)
 }
 
-plot_ecg_with_regimes <- function(ecg_data, regimes, title, params, subset_start) {
+plot_ecg_with_regimes <- function(ecg_data, regimes, title, params, subset_start, ylim) {
   window_size <- params$window_size
   time_constraint <- params$time_constraint
   data_length <- length(ecg_data)
   subset_end <- data_length + subset_start
 
   data_idxs <- seq.int(subset_start + 1, subset_end)
-  ylim <- c(min(ecg_data), max(ecg_data))
   y_amp <- (ylim[2] - ylim[1])
   last_3_secs <- subset_end - (3 * 250) # this is the max detection delay needed for Asystole and Vfib
   last_10_secs <- subset_end - (10 * 250) # this is the max detection delay needed for Asystole and Vfib
