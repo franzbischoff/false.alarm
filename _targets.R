@@ -109,19 +109,19 @@ tar_option_set(
 )
 
 var_head <- 10
-var_limit_per_type <- 5
+var_limit_per_type <- 2
 const_sample_freq <- 250
 var_exclude <- c("time", "V", "ABP", "PLETH", "RESP")
-var_mp_batch <- 50
+var_mp_batch <- 100
 var_mp_constraint <- 20 * const_sample_freq # 20 secs
-var_window_size <- c(200, 300, 500) # c(200, 250, 300)
+var_window_size <- c(200, 300) # c(200, 250, 300)
 var_time_constraint <- c(0, 5 * const_sample_freq, 10 * const_sample_freq, 17 * const_sample_freq)
 var_filter_w_size <- 100 # c(100, 200)
 var_ez <- 0.5
 var_subset <- seq.int(240 * const_sample_freq + 1, 300 * const_sample_freq) # last 60 secs
-var_mp_threshold <- c(0, 0.5, 0.6, 0.9, 50, 60, 90)
+var_mp_threshold <- c(0, 0.5, 0.6, 0.9) #c(0, 0.5, 0.6, 0.9, 50, 60, 90)
 var_floss_landmark <- 3 * const_sample_freq # 3 seconds from the end
-var_floss_threshold <- c(0.1, 0.2, 0.3, 0.4, 0.5)
+var_floss_threshold <- c(0.3, 0.4, 0.5) # c(0.1, 0.2, 0.3, 0.4, 0.5)
 
 # debug(process_ts_in_file)
 # tar_make(names = ds_mp_filtered, callr_function = NULL)
@@ -147,7 +147,7 @@ list(
       subset = var_subset,
       alarm_type = TRUE
     ),
-    pattern = map(file_paths),
+    pattern = map(file_paths)
   ),
   tar_target(
     dataset, # TODO: this is needed to remove the empty branches. Hack needed
@@ -170,10 +170,10 @@ list(
       })
     }
   ),
-  tar_target(
-    neg_training_floss,
-    create_floss_training()
-  ),
+  # tar_target(
+  #   neg_training_floss,
+  #   create_floss_training()
+  # ),
   # without filter
   tar_map(
     list(map_window_size = var_window_size),
@@ -278,12 +278,8 @@ list(
               fun = plot_regimes,
               params = list(
                 window_size = map_window_size,
-                # ez = var_ez, # TODO: check process_ts_in_file for more params match
                 floss_threshold = map_floss_threshold,
                 threshold = map_mp_threshold,
-                # floss_landmark = var_floss_landmark, # 3 sec from the end
-                # progress = FALSE,
-                # batch = var_mp_batch,
                 history = var_mp_constraint,
                 time_constraint = map_time_constraint
               ),

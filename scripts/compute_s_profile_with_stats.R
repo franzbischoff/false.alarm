@@ -1,4 +1,4 @@
-compute_s_profile_with_stats <- function(data_with_stats, params) {
+compute_s_profile_with_stats <- function(data_with_stats, params, infos) {
   checkmate::qassert(data_with_stats, "L2")
   checkmate::assert_true(identical(
     attr(data_with_stats[[1]], "info"),

@@ -1,4 +1,4 @@
-compute_floss <- function(mp_data, params) {
+compute_floss <- function(mp_data, params, infos) {
   checkmate::qassert(mp_data, "L")
   ez <- params$ez
   time_constraint <- params$time_constraint
@@ -60,7 +60,7 @@ compute_arcs <- function(right_profile_index, window_size, exclusion_zone, aic_a
   #   profile <- head(right_profile_index, -ez - 1)
   #   arcs_threshold <- max(abs(profile - seq_along(profile)))
   # } else {
-    arcs_threshold <- cac_size
+  arcs_threshold <- cac_size
   # }
 
   for (i in seq.int(1, (cac_size - ez - 1))) {

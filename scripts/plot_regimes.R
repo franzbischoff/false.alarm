@@ -1,4 +1,4 @@
-plot_regimes <- function(data_with_regimes, params, infos) {
+plot_regimes <- function(data_with_regimes, params, infos, save = FALSE) {
   checkmate::qassert(data_with_regimes, "L2")
   checkmate::qassert(params, "L+")
   checkmate::assert_true(identical(
@@ -38,10 +38,12 @@ plot_regimes <- function(data_with_regimes, params, infos) {
 
   a <- plot_ecg_with_regimes(data, regimes, title, params, subset_start, ylim = c(min(data), max(data)))
 
-  ggplot2::ggsave(
-    plot = a, filename = here::here("tmp", file),
-    device = "png", width = 5, height = 2, scale = 0.8
-  )
+  if (save) {
+    ggplot2::ggsave(
+      plot = a, filename = here::here("tmp", file),
+      device = "png", width = 5, height = 2, scale = 0.8
+    )
+  }
 
   return(a)
 }
@@ -52,6 +54,9 @@ plot_ecg_with_regimes <- function(ecg_data, regimes, title, params, subset_start
   data_length <- length(ecg_data)
   subset_end <- data_length + subset_start
 
+  xlim <- c(subset_start + 1, subset_end)
+  x_amp <- subset_end - (subset_start + 1)
+
   data_idxs <- seq.int(subset_start + 1, subset_end)
   y_amp <- (ylim[2] - ylim[1])
   last_3_secs <- subset_end - (3 * 250) # this is the max detection delay needed for Asystole and Vfib
@@ -61,7 +66,7 @@ plot_ecg_with_regimes <- function(ecg_data, regimes, title, params, subset_start
     ggplot2::geom_line(size = 0.1)
 
   aa <- aa + ggplot2::annotate("segment", y = ylim[1], yend = ylim[1], x = subset_end - window_size, xend = subset_end, color = "blue", size = 0.1) +
-    ggplot2::annotate("text", x = subset_end - (window_size / 2), y = ylim[1] + (y_amp * 0.03), label = "Window size", color = "blue", size = 1)
+    ggplot2::annotate("text", x = subset_end - window_size / 2, y = ylim[1] + y_amp * 0.01, label = "Window size", color = "blue", size = 1, vjust = 0, hjust = 0.5)
 
   if (!isFALSE(regimes)) {
     for (trigger in regimes$idxs) {
@@ -71,22 +76,22 @@ plot_ecg_with_regimes <- function(ecg_data, regimes, title, params, subset_start
       )
     }
 
-    aa <- aa + ggplot2::annotate("text", x = subset_end - (window_size / 2), y = ylim[1] + (y_amp * 0.95), label = "Change", color = "orange", size = 1.5)
+    aa <- aa + ggplot2::annotate("text", x = xlim[2], y = ylim[2], label = "Change", color = "orange", size = 1.2, vjust = 0, hjust = 0)
   }
 
   aa <- aa + ggplot2::annotate("segment", y = ylim[1], yend = ylim[2], x = last_3_secs, xend = last_3_secs, color = "firebrick", size = 0.1) +
-    ggplot2::annotate("text", x = last_3_secs - 100, y = ylim[1] + (y_amp * 0.2), label = "Detection limit", color = "firebrick", size = 1.2, angle = 90)
+    ggplot2::annotate("text", x = last_3_secs - 30, y = ylim[1], label = "Detection limit", color = "firebrick", size = 1, angle = 90, vjust = 0, hjust = 0)
 
   aa <- aa + ggplot2::annotate("segment", y = ylim[1], yend = ylim[2], x = last_10_secs, xend = last_10_secs, color = "blue", size = 0.1) +
-    ggplot2::annotate("text", x = last_10_secs - 100, y = ylim[1] + (y_amp * 0.2), label = "Event limit", color = "blue", size = 1, angle = 90)
+    ggplot2::annotate("text", x = last_10_secs - 30, y = ylim[1], label = "Event limit", color = "blue", size = 1, angle = 90, vjust = 0, hjust = 0)
 
   if (time_constraint > 0) {
     curr_ts_constr <- (subset_end - time_constraint)
     aa <- aa + ggplot2::annotate("segment", y = ylim[1], yend = ylim[2], x = curr_ts_constr, xend = curr_ts_constr, color = "red", size = 0.1) +
-      ggplot2::annotate("text", x = curr_ts_constr - 100, y = ylim[1] + (y_amp * 0.4), label = "Time constraint", color = "red", size = 1.5, angle = 90)
+      ggplot2::annotate("text", x = curr_ts_constr - 30, y = ylim[1], label = "Time constraint", color = "red", size = 1, angle = 90, vjust = 0, hjust = 0)
   }
 
-  aa <- aa + ggplot2::theme_grey(base_size = 7) + ggplot2::theme(
+  aa <- aa + ggplot2::theme_grey(base_size = 6) + ggplot2::theme(
     axis.text.y = ggplot2::element_text(hjust = 0.5, size = 3, angle = 90),
     axis.text.x = ggplot2::element_text(hjust = 0.5, size = 4)
   ) +
