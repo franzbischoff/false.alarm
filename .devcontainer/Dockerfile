@@ -119,8 +119,6 @@ COPY .zshrc /root/.zshrc
 RUN git clone --depth 1 git://github.com/ohmyzsh/ohmyzsh /root/.oh-my-zsh
 RUN git clone --depth 1 git://github.com/ohmyzsh/ohmyzsh /home/docker/.oh-my-zsh
 
-WORKDIR /workspaces
-
 # Install other packages
 RUN install.r targets tarchetypes \
   clustermq workflowr R.matlab visNetwork \
@@ -131,11 +129,29 @@ RUN install.r targets tarchetypes \
 
 # fill next stuff here, avoid adding slow things above this line
 
-# etc install blabla
+# Install aditional tools
+RUN apt-fast update && apt-fast install -y --no-install-recommends \
+  cargo \
+  libavfilter-dev \
+  && rm -rf /var/lib/apt/lists/*
+
 
 # this is the last section, avoid adding slow things below this line
 
 RUN chown -R docker:docker /home/docker
+
+# gitpod start
+RUN mkdir /home/docker/exts
+# COPY exts/*.vsix /home/docker/exts
+
+ENV WORKSPACE_DIRECTORY "/workspace"
+ENV NOT_CRAN "true"
+ENV PROFFER_PPROF_BIN "~/go/pkg/tool/linux_amd64/pprof"
+ENV PROFFER_GO_BIN "~/go/bin/go"
+ENV PROFFER_GRAPHVIZ_BIN "/usr/bin/dot"
+# gitpod end
+
+WORKDIR /workspace
 
 RUN updatedb
 

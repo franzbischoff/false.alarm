@@ -43,6 +43,7 @@ vignettes/*.R
 # VSCode
 #.vscode/
 .vscode/*.log
+.devcontainer/exts
 .devcontainer/gpg-agent.conf
 .devcontainer/gpg.conf
 
@@ -53,12 +54,19 @@ vignettes/*.R
 # End of https://www.gitignore.io/api/r
 
 # Personalized
+/tmp/
+/tmp_*/
 _targets/*
+_targets_beta
+_targets_beta.R
 .targets-files
 .targets-runs
+.future
+debugme.log
 
 #Local history plugin
 .history
+.radian_history
 
 # use github-actions to build the webpage
 /pkgdown/
@@ -95,6 +103,6 @@ analysis/*_cache
 analysis/site_libs
 output/*.svg
 protocol/**/*.pdf
-docs/**/*.svg
+# docs/**/*.svg
 protocol/**/*.svg
 mpxtest.RData

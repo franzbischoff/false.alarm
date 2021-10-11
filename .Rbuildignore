@@ -1,6 +1,7 @@
 ^renv$
 ^renv\.lock$
 ^\.history$
+^\.radian_history$
 ^\.vscode$
 ^\.editorconfig$
 ^.*\.code-workspace$
@@ -34,12 +35,15 @@
 ^API$
 ^\.github$
 ^codecov\.yml$
+^\.gitpod\.yml$
 \.clang-format
 ^\.vscode$
 ^Makefile$
 ^docs/_pkgdown\.yml$
 ^_targets$
 ^_targets\.R$
+^_targets_beta$
+^_targets_beta\.R$
 ^_targets\.yaml$
 ^run\.R$
 ^run\.sh$
@@ -54,3 +58,6 @@
 ^data-raw$
 ^inst/extdata$
 ^inst/testfiles$
+^tmp$
+^debugme\.log$
+^\.httr-oauth$

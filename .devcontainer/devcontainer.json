@@ -3,7 +3,18 @@
 {
   "name": "false.alarm dev",
   "dockerFile": "Dockerfile",
+  "workspaceFolder": "/workspace",
+  "workspaceMount": "source=${localWorkspaceFolder},target=/workspace,type=bind,consistency=cached",
+  // "workspaceMount": "source=/home/franz/workspaces/false.alarm,target=/workspace,type=volume",
   // "image": "franzbischoff/false.alarm:latest",
+  "containerEnv": {
+    "WORKSPACE_DIRECTORY": "/workspace",
+    "NOT_CRAN": "true",
+    "DEBUGME": "R_GlobalEnv",
+    "PROFFER_PPROF_BIN": "/home/docker/go/pkg/tool/linux_amd64/pprof",
+    "PROFFER_GO_BIN": "/home/docker/go/bin/go",
+    "PROFFER_GRAPHVIZ_BIN": "/usr/bin/dot"
+  },
   "runArgs": [
     "-e",
     "GIT_EDITOR=code",
@@ -11,14 +22,6 @@
     "DOCKER_BUILDKIT=1",
     "--privileged"
   ],
-  "containerEnv": {
-    "WORKSPACE_DIRECTORY": "${containerWorkspaceFolder}",
-    "NOT_CRAN": "true",
-    "DEBUGME": "R_GlobalEnv",
-    "PROFFER_PPROF_BIN": "/home/docker/go/pkg/tool/linux_amd64/pprof",
-    "PROFFER_GO_BIN": "/home/docker/go/bin/go",
-    "PROFFER_GRAPHVIZ_BIN": "/usr/bin/dot"
-  },
   // Set *default* container specific settings.json values on container create.
   "settings": {
     "cSpell.allowCompoundWords": true,
@@ -106,7 +109,7 @@
     "wdhongtw.gpg-indicator"
   ],
   // Use 'forwardPorts' to make a list of ports inside the container available locally.
-  // "forwardPorts": [],
+  "forwardPorts": [ 55444 ],
   // Use 'postCreateCommand' to run commands after the container is created.
   "postCreateCommand": "uname -a",
   // Comment out connect as root instead. More info: https://aka.ms/vscode-remote/containers/non-root.

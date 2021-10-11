@@ -85,20 +85,24 @@ fft_rcpp <- function(z, invert) {
     .Call(`_false_alarm_fft_rcpp`, z, invert)
 }
 
-mpxi_rcpp <- function(new_data, object, keep, progress) {
-    .Call(`_false_alarm_mpxi_rcpp`, new_data, object, keep, progress)
+mpxis_rcpp <- function(data_ref, batch_size, object, stats, history, mp_time_constraint, progress, threshold) {
+    .Call(`_false_alarm_mpxis_rcpp`, data_ref, batch_size, object, stats, history, mp_time_constraint, progress, threshold)
 }
 
-mpxiright_rcpp <- function(data_ref, window_size, ez, s_size, idxs, euclidean, progress, start, old) {
-    .Call(`_false_alarm_mpxiright_rcpp`, data_ref, window_size, ez, s_size, idxs, euclidean, progress, start, old)
+mpxi_rcpp <- function(new_data, object, history, mp_time_constraint, progress) {
+    .Call(`_false_alarm_mpxi_rcpp`, new_data, object, history, mp_time_constraint, progress)
+}
+
+mpxiright_rcpp <- function(data_ref, window_size, ez, mp_time_constraint, s_size, idxs, euclidean, progress, start, old) {
+    .Call(`_false_alarm_mpxiright_rcpp`, data_ref, window_size, ez, mp_time_constraint, s_size, idxs, euclidean, progress, start, old)
 }
 
 mpxileft_rcpp <- function(data_ref, window_size, ez, s_size, idxs, euclidean, progress, start, old) {
     .Call(`_false_alarm_mpxileft_rcpp`, data_ref, window_size, ez, s_size, idxs, euclidean, progress, start, old)
 }
 
-mpx_rcpp <- function(data_ref, window_size, ez, s_size, idxs, euclidean, progress) {
-    .Call(`_false_alarm_mpx_rcpp`, data_ref, window_size, ez, s_size, idxs, euclidean, progress)
+mpx_rcpp <- function(data_ref, window_size, ez, mp_time_constraint, s_size, idxs, euclidean, progress) {
+    .Call(`_false_alarm_mpx_rcpp`, data_ref, window_size, ez, mp_time_constraint, s_size, idxs, euclidean, progress)
 }
 
 mpxab_rcpp <- function(data_ref, query_ref, window_size, s_size, idxs, euclidean, progress) {

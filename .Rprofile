@@ -19,10 +19,10 @@ if (Sys.getenv("CI") == "") { # not CI
       "init.R"
     ))),
     silent = TRUE
-    )
+    ) # if this fails we (probably) are in Binder
   })
 
-  if (class(a) == "try-error") {
+  if (class(a) == "try-error") { # we are in Binder session (hopefully)
     message("Starting Binder Session")
     setHook("rstudio.sessionInit", function(newSession) {
       if (newSession & is.null(rstudioapi::getActiveProject())) {
@@ -33,7 +33,7 @@ if (Sys.getenv("CI") == "") { # not CI
 
   rm(a)
 
-  if (interactive()) {
+  if (interactive() && Sys.getenv("RSTUDIO") == "") {
     options(
       warnPartialMatchArgs = FALSE,
       warnPartialMatchDollar = FALSE,
@@ -43,13 +43,27 @@ if (Sys.getenv("CI") == "") { # not CI
       # error = recover
     )
     options(
-      vsc.plot = "Beside", vsc.browser = "Two", vsc.viewer = "Two", vsc.page_viewer = "Two",
+      vsc.browser = "Two",
+      vsc.viewer = "Two",
+      vsc.page_viewer = "Two",
+      vsc.view = "Two",
+      vsc.plot = "Two",
+      vsc.helpPanel = "Two",
       vsc.str.max.level = 2,
       vsc.show_object_size = TRUE,
-      # vsc.use_httpgd = TRUE,
-      vsc.view = "Two"
+      vsc.globalenv = TRUE
     )
-    options(vsc.dev.args = list(width = 800, height = 800))
+    options(vsc.dev.args = list(width = 800, height = 600))
+
+    # if httpgd is installed, let's use it
+    # This breaks rendering video
+    # if ("httpgd" %in% .packages(all.available = TRUE)) {
+    #   options(vsc.plot = FALSE)
+    #   options(device = function(...) {
+    #     httpgd::hgd(silent = TRUE)
+    #     .vsc.browser(httpgd::hgd_url(history = FALSE), viewer = "Beside")
+    #   })
+    # }
 
     suppressMessages(
       suppressWarnings({
@@ -63,7 +77,10 @@ if (Sys.getenv("CI") == "") { # not CI
         require("tarchetypes", quietly = TRUE)
       })
     )
-    # suppressMessages(prettycode::prettycode())
+
+    if (suppressMessages(requireNamespace("prettycode", quietly = TRUE))) {
+      suppressMessages(prettycode::prettycode())
+    }
 
     if (suppressMessages(requireNamespace("prompt", quietly = TRUE))) {
       prompt::set_prompt(function(...) {
@@ -77,6 +94,25 @@ if (Sys.getenv("CI") == "") { # not CI
         )
       })
     }
+
+    if (Sys.getenv("RADIAN_VERSION") == "") {
+      loadhistory() # if no file, no problem.
+
+      # Cleaning up function
+      .Last <- function() {
+        savehistory() # comment this line if you don't want to save history
+        cat("bye bye...\n") # print this so we see if any non-interactive session is lost here
+      }
+    }
+  } else { # is RSTUDIO
+    suppressMessages(
+      suppressWarnings({
+        require("here", quietly = TRUE)
+        require("workflowr", quietly = TRUE)
+        require("targets", quietly = TRUE)
+        require("tarchetypes", quietly = TRUE)
+      })
+    )
   }
 } else { # is CI
   suppressMessages(

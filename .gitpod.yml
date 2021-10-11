@@ -1,0 +1,56 @@
+vscode:
+  extensions:
+    - streetsidesoftware.code-spell-checker
+    - gruntfuggly.todo-tree
+    - hbenl.vscode-test-explorer
+    - streetsidesoftware.code-spell-checker-portuguese
+    - streetsidesoftware.code-spell-checker-medical-terms
+    - cschleiden.vscode-github-actions
+    - editorconfig.editorconfig
+    - donjayamanne.git-extension-pack
+    - codezombiech.gitignore
+    - james-yu.latex-workshop
+    - richie5um2.vscode-sort-json
+    - redhat.vscode-yaml
+    - christian-kohler.path-intellisense
+    - pkief.material-icon-theme
+    - esbenp.prettier-vscode
+    - foxundermoon.shell-format
+    - alefragnani.bookmarks
+    - ms-python.python
+    - donjayamanne.githistory
+    - eamodio.gitlens
+    - ziyasal.vscode-open-in-github
+    - github.vscode-pull-request-github
+    - bierner.markdown-preview-github-styles
+    - yzhang.markdown-all-in-one
+
+image: franzbischoff/false.alarm:latest
+
+tasks:
+  - name: Setup
+    before: |
+      cp -RT /home/docker /home/gitpod
+      chown -R gitpod:gitpod /home/gitpod
+      sed -i 's/home\/docker/home\/gitpod/' /home/gitpod/.zshrc
+      code .github/gitpod-Instructions.md
+    init: |
+      code --install-extension ~/exts/project-manager.vsix
+      code --install-extension ~/exts/reload.vsix
+      code --install-extension ~/exts/resourcemonitor.vsix
+      code --install-extension ~/exts/r-test-adapter.vsix
+      code --install-extension ~/exts/sort-json.vsix
+      code --install-extension ~/exts/taskexplorer.vsix
+      code --install-extension ~/exts/twilight-theme.vsix
+      Rscript --vanilla -e "source('renv/activate.R'); renv::restore(); Rcpp::compileAttributes(); renv::install('.'); renv::isolate()"
+    command: gp sync-done setup && exit
+
+  - name: Activate R
+    before: gp sync-await setup
+    init: code --install-extension ikuyadeu.r
+    command: gp sync-done languageserver && exit
+
+  - name: R Interactive
+    before: gp sync-await languageserver
+    command: code --command r.createRTerm && exit
+

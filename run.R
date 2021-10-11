@@ -38,8 +38,13 @@ if (dir.exists(here::here("inst/extdata"))) {
       }
     )
 
-    targets::tar_watch(targets_only = TRUE, outdated = FALSE, label = c("time", "branches", "size"))
+    targets::tar_watch(
+      targets_only = TRUE, supervise = TRUE, seconds = 30, display = "graph", browse = TRUE, outdated = FALSE,
+      label = c("time", "branches", "size"), port = 55444
+    )
   }
+
+  Sys.setenv(TAR_WARN = "false")
 
   # Uncomment to run targets sequentially on your local machine.
   # targets::tar_make()
@@ -48,14 +53,31 @@ if (dir.exists(here::here("inst/extdata"))) {
   # on local processes or a Sun Grid Engine cluster.
   # targets::tar_make_clustermq(workers = 2L)
 
-  network <- targets::tar_visnetwork(TRUE, label = c("time", "size", "branches"))
-  tips <- stringr::str_split_fixed(network$x$nodes$label, pattern = "\n", n = 2)[, 2]
-  tips <- stringr::str_replace_all(tips, "\n", "<br />")
-  network$x$nodes$title <- tips
-  network$x$nodes$label <- network$x$nodes$name
-  saveRDS(network, file = here::here("output/network.rds"))
-  rm(network)
-  rm(tips)
+  # Finally create the output files what will be used on this current Workflowr release:
+  tryCatch(
+    {
+      message("Creating the outputs for Workflowr.")
+
+      network <- targets::tar_visnetwork(TRUE, label = c("time", "size", "branches"))
+      tips <- stringr::str_split_fixed(network$x$nodes$label, pattern = "\n", n = 2)[, 2]
+      tips <- stringr::str_replace_all(tips, "\n", "<br />")
+      network$x$nodes$title <- tips
+      network$x$nodes$label <- network$x$nodes$name
+      saveRDS(network, file = here::here("output/network.rds"))
+      rm(network)
+      rm(tips)
+
+      source(here::here("scripts/create_output.R"), encoding = "UTF-8")
+      create_output(file = here::here("output/work_output.rds"))
+      rm(create_output)
+    },
+    error = function(e) {
+      message("Could not create the outputs for Workflowr.")
+    },
+    finally = {
+      message("done.")
+    }
+  )
 } else {
   stop("Error installing dataset.")
 }

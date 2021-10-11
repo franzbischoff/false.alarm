@@ -255,6 +255,9 @@ $(document).ready(function () {
   <a href="index.html">Home</a>
 </li>
 <li>
+  <a href="blog.html">Blog</a>
+</li>
+<li>
   <a href="report.html">Report</a>
 </li>
 <li>
@@ -329,13 +332,13 @@ $(document).ready(function () {
 <div class="tab-content">
 <div id="summary" class="tab-pane fade in active">
 <p>
-<strong>Last updated:</strong> 2021-07-15
+<strong>Last updated:</strong> 2021-08-17
 </p>
 <p>
 <strong>Checks:</strong> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> 7 <span class="glyphicon glyphicon-exclamation-sign text-danger" aria-hidden="true"></span> 0
 </p>
 <p>
-<strong>Knit directory:</strong> <code>false.alarm/</code> <span class="glyphicon glyphicon-question-sign" aria-hidden="true" title="This is the local directory in which the code in this file was executed."> </span>
+<strong>Knit directory:</strong> <code>workspace/</code> <span class="glyphicon glyphicon-question-sign" aria-hidden="true" title="This is the local directory in which the code in this file was executed."> </span>
 </p>
 <p>
 This reproducible <a href="http://rmarkdown.rstudio.com">R Markdown</a> analysis was created with <a
@@ -420,24 +423,43 @@ This reproducible <a href="http://rmarkdown.rstudio.com">R Markdown</a> analysis
 <div class="panel panel-default">
 <div class="panel-heading">
 <p class="panel-title">
-<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomfranzbischofffalsealarmtree64efa8b33607ef60adf929a1de9cf9901630ce61targetblank64efa8ba"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Repository version:</strong> <a href="https://github.com/franzbischoff/false.alarm/tree/64efa8b33607ef60adf929a1de9cf9901630ce61" target="_blank">64efa8b</a> </a>
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomfranzbischofffalsealarmtreea5ec160176f456ba8e8f7f2e8650cbf5c68b1e97targetblanka5ec160a"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Repository version:</strong> <a href="https://github.com/franzbischoff/false.alarm/tree/a5ec160176f456ba8e8f7f2e8650cbf5c68b1e97" target="_blank">a5ec160</a> </a>
 </p>
 </div>
-<div id="strongRepositoryversionstrongahrefhttpsgithubcomfranzbischofffalsealarmtree64efa8b33607ef60adf929a1de9cf9901630ce61targetblank64efa8ba" class="panel-collapse collapse">
+<div id="strongRepositoryversionstrongahrefhttpsgithubcomfranzbischofffalsealarmtreea5ec160176f456ba8e8f7f2e8650cbf5c68b1e97targetblanka5ec160a" class="panel-collapse collapse">
 <div class="panel-body">
 <p>
 Great! You are using Git for version control. Tracking code development and connecting the code version to the results is critical for reproducibility.
 </p>
 <p>
-The results in this page were generated with repository version <a href="https://github.com/franzbischoff/false.alarm/tree/64efa8b33607ef60adf929a1de9cf9901630ce61" target="_blank">64efa8b</a>. See the <em>Past versions</em> tab to see a history of the changes made to the R Markdown and HTML files.
+The results in this page were generated with repository version <a href="https://github.com/franzbischoff/false.alarm/tree/a5ec160176f456ba8e8f7f2e8650cbf5c68b1e97" target="_blank">a5ec160</a>. See the <em>Past versions</em> tab to see a history of the changes made to the R Markdown and HTML files.
 </p>
 <p>
 Note that you need to be careful to ensure that all relevant files for the analysis have been committed to Git prior to generating the results (you can use <code>wflow_publish</code> or <code>wflow_git_commit</code>). workflowr only checks the R Markdown file, but you know if there are other scripts or data files that it depends on. Below is the status of the Git repository when the results were generated:
 </p>
 <pre><code>
 Ignored files:
+    Ignored:    .Renviron
+    Ignored:    .devcontainer/exts/
+    Ignored:    .httr-oauth
+    Ignored:    R/RcppExports.R
+    Ignored:    _targets/
+    Ignored:    dev/
+    Ignored:    inst/extdata/
     Ignored:    renv/library/
     Ignored:    renv/staging/
+    Ignored:    src/RcppExports.cpp
+    Ignored:    src/RcppExports.o
+    Ignored:    src/false.alarm.so
+    Ignored:    src/fft.o
+    Ignored:    src/mass.o
+    Ignored:    src/math.o
+    Ignored:    src/mpx.o
+    Ignored:    src/scrimp.o
+    Ignored:    src/stamp.o
+    Ignored:    src/stomp.o
+    Ignored:    src/windowfunc.o
+    Ignored:    workspace.RData
 
 </code></pre>
 <p>
@@ -476,6 +498,91 @@ Message
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+html
+</td>
+<td>
+<a href="https://rawcdn.githack.com/franzbischoff/false.alarm/a5ec160176f456ba8e8f7f2e8650cbf5c68b1e97/docs/about.html" target="_blank">a5ec160</a>
+</td>
+<td>
+Francisco Bischoff
+</td>
+<td>
+2021-08-17
+</td>
+<td>
+Build site.
+</td>
+</tr>
+<tr>
+<td>
+html
+</td>
+<td>
+<a href="https://rawcdn.githack.com/franzbischoff/false.alarm/b51dba2e732b40a1a47c9250b0c70a1889043265/docs/about.html" target="_blank">b51dba2</a>
+</td>
+<td>
+GitHub Actions
+</td>
+<td>
+2021-08-17
+</td>
+<td>
+Build site.
+</td>
+</tr>
+<tr>
+<td>
+Rmd
+</td>
+<td>
+<a href="https://github.com/franzbischoff/false.alarm/blob/c88cbd51e2bfa43b620477512ce369cb1cf43cd3/analysis/about.Rmd" target="_blank">c88cbd5</a>
+</td>
+<td>
+Francisco Bischoff
+</td>
+<td>
+2021-08-17
+</td>
+<td>
+targets workflowr
+</td>
+</tr>
+<tr>
+<td>
+html
+</td>
+<td>
+<a href="https://rawcdn.githack.com/franzbischoff/false.alarm/c88cbd51e2bfa43b620477512ce369cb1cf43cd3/docs/about.html" target="_blank">c88cbd5</a>
+</td>
+<td>
+Francisco Bischoff
+</td>
+<td>
+2021-08-17
+</td>
+<td>
+targets workflowr
+</td>
+</tr>
+<tr>
+<td>
+html
+</td>
+<td>
+<a href="https://rawcdn.githack.com/franzbischoff/false.alarm/e7e5d4861f1f3b21e25787e0ed6b6066b57ff857/docs/about.html" target="_blank">e7e5d48</a>
+</td>
+<td>
+GitHub Actions
+</td>
+<td>
+2021-07-15
+</td>
+<td>
+Build site.
+</td>
+</tr>
 <tr>
 <td>
 Rmd
@@ -586,15 +693,16 @@ Targets
 </div>
 </div>
 <!-- badges: start -->
-<p><img src="https://github.com/franzbischoff/false.alarm/workflows/Binder/badge.svg" alt="Binder" /> <a href="https://mybinder.org/v2/gh/franzbischoff/false.alarm/master?urlpath=rstudio"><img src="https://mybinder.org/badge_logo.svg" alt="Launch binder" /></a> <a href="https://franzbischoff.github.io/false.alarm/"><img src="https://img.shields.io/badge/read-thesis__down-brightgreen" alt="Read Thesis" /></a></p>
+<p><a href="https://gitpod.io/#https://github.com/franzbischoff/false.alarm/tree/develop"><img src="https://img.shields.io/badge/Gitpod-Ready--to--Code-blue?logo=gitpod" alt="Gitpod Ready-to-Code" /></a> <a href="https://mybinder.org/v2/gh/franzbischoff/false.alarm/master?urlpath=rstudio"><img src="https://mybinder.org/badge_logo.svg" alt="Launch binder" /></a> <a href="https://franzbischoff.github.io/false.alarm/"><img src="https://img.shields.io/badge/read-thesis__down-brightgreen" alt="Read Thesis" /></a> <a href="https://zenodo.org/badge/latestdoi/261530912"><img src="https://zenodo.org/badge/261530912.svg" /></a></p>
+<p><a href="https://github.com/franzbischoff/false.alarm/actions/workflows/R-CMD-check.yaml"><img src="https://github.com/franzbischoff/false.alarm/actions/workflows/R-CMD-check.yaml/badge.svg" alt="R-CMD-check" /></a> <a href="https://codecov.io/gh/franzbischoff/false.alarm"><img src="https://codecov.io/gh/franzbischoff/false.alarm/branch/develop/graph/badge.svg?token=w7AmbwhNvn" alt="codecov" /></a> <a href="https://github.com/github/codeql-action/"><img src="https://github.com/franzbischoff/false.alarm/actions/workflows/codeql-analysis.yaml/badge.svg?branch=master" alt="CodeQL" /></a> <a href="https://lgtm.com/projects/g/franzbischoff/false.alarm/context:cpp"><img src="https://img.shields.io/lgtm/grade/cpp/g/franzbischoff/false.alarm.svg?logo=lgtm&amp;logoWidth=18" alt="Language grade: C/C++" /></a></p>
 <!-- badges: end -->
 <div id="abstract" class="section level1">
 <h1>Abstract</h1>
 <p>Currently, Point-of-Care (POC) ECG monitoring works either as plot devices or alarms for abnormal cardiac rhythms using predefined normal trigger ranges. On the other hand, full 12-derivation ECG machines are complex to use as simple monitors and are used with strict techniques for formal diagnostics of hearth electric conduction pathologies, and the automatic diagnostics are derived from a full analysis of the 12-dimension data after it is fully collected. Both systems do not handle disconnected leads and patient’s motions, being strictly necessary to have a good and stable signal to allow proper diagnosis.</p>
 <p>This research aims to identify abnormal hearth electric patterns using streaming data, specifically those who are life-threatening, being a reliable signal for Intensive Care Units to respond quickly to those situations.</p>
-<p>The study design is comparable to a Diagnostic study, where high accuracy is essential. It will use the Physionet datasets<span class="citation"><sup><a href="#ref-Clifford2015" role="doc-biblioref">1</a></sup></span>, and the algorithm will try to minimize the false negatives and false positives.</p>
+<p>The study design is comparable to a Diagnostic study, where high accuracy is essential. It will use the Physionet datasets<span class="citation"><sup><a href="#ref-Clifford2015">1</a></sup></span>, and the algorithm will try to minimize the false negatives and false positives.</p>
 <p>The expected result is the concretization of a new method that, besides being accurate, accomplishes this task using state of the art technology for time series analysis that allows minimum space and processor power to solve this problem. Also, we expect that fading factors can contribute to the state of the art of this technology.</p>
-<p>The research team is well experienced in time-series and has studied the Matrix Profile since its beginning, being founders of the Matrix Profile Foundation whose goal is to have a concise and stable cross-language API for developing with the Matrix Profile technology.<span class="citation"><sup><a href="#ref-RJ-2020-021" role="doc-biblioref">2</a>,<a href="#ref-VanBenschoten2020" role="doc-biblioref">3</a></sup></span></p>
+<p>The research team is well experienced in time-series and has studied the Matrix Profile since its beginning, being founders of the Matrix Profile Foundation whose goal is to have a concise and stable cross-language API for developing with the Matrix Profile technology.<span class="citation"><sup><a href="#ref-RJ-2020-021">2</a>,<a href="#ref-VanBenschoten2020">3</a></sup></span></p>
 </div>
 <div id="about-the-ongoing-project." class="section level1">
 <h1>About the ongoing project.</h1>
@@ -602,7 +710,7 @@ Targets
 <p>To follow the thesis timeline you can access the full Gantt chart at Zenhub. Click <a href="https://app.zenhub.com/workspaces/phd-thesis-5eb2ce34f5f30b3aed0a35af/roadmap">here</a> (you need a github account, but that’s it).</p>
 </div>
 <div id="reproducible-researchkrystalli_2019" class="section level1">
-<h1>Reproducible Research<span class="citation"><sup><a href="#ref-krystalli_2019" role="doc-biblioref">4</a></sup></span></h1>
+<h1>Reproducible Research<span class="citation"><sup><a href="#ref-krystalli_2019">4</a></sup></span></h1>
 <p>This thesis will follow the compendium principles:</p>
 <p><img src="https://annakrystalli.me/rrresearch/assets/reproducible-data-analysis-04.png" /></p>
 <p><img src="https://annakrystalli.me/rrresearch/assets/reproducible-data-analysis-06.png" /></p>
@@ -612,7 +720,7 @@ Targets
 <div id="research-data-management" class="section level3">
 <h3>Research Data Management</h3>
 <ul>
-<li><a href="http://www.dcc.ac.uk/sites/default/files/documents/resource/DMP/DMP_Checklist_2013.pdf"><strong>RDM checklist</strong></a><span class="citation"><sup><a href="#ref-dcc_2013" role="doc-biblioref">5</a></sup></span></li>
+<li><a href="http://www.dcc.ac.uk/sites/default/files/documents/resource/DMP/DMP_Checklist_2013.pdf"><strong>RDM checklist</strong></a><span class="citation"><sup><a href="#ref-dcc_2013">5</a></sup></span></li>
 <li>Anticipate <strong>data products</strong> as part of your thesis <strong>outputs</strong></li>
 <li>Think about what technologies to use</li>
 </ul>
@@ -712,30 +820,34 @@ Targets
 #&gt; LAPACK: /usr/lib/x86_64-linux-gnu/lapack/liblapack.so.3.9.0
 #&gt; 
 #&gt; locale:
-#&gt;  [1] LC_CTYPE=C.UTF-8       LC_NUMERIC=C           LC_TIME=C.UTF-8       
-#&gt;  [4] LC_COLLATE=C.UTF-8     LC_MONETARY=C.UTF-8    LC_MESSAGES=C.UTF-8   
-#&gt;  [7] LC_PAPER=C.UTF-8       LC_NAME=C              LC_ADDRESS=C          
-#&gt; [10] LC_TELEPHONE=C         LC_MEASUREMENT=C.UTF-8 LC_IDENTIFICATION=C   
+#&gt;  [1] LC_CTYPE=en_US.UTF-8       LC_NUMERIC=C              
+#&gt;  [3] LC_TIME=en_US.UTF-8        LC_COLLATE=en_US.UTF-8    
+#&gt;  [5] LC_MONETARY=en_US.UTF-8    LC_MESSAGES=en_US.UTF-8   
+#&gt;  [7] LC_PAPER=en_US.UTF-8       LC_NAME=C                 
+#&gt;  [9] LC_ADDRESS=C               LC_TELEPHONE=C            
+#&gt; [11] LC_MEASUREMENT=en_US.UTF-8 LC_IDENTIFICATION=C       
 #&gt; 
 #&gt; attached base packages:
 #&gt; [1] stats     graphics  grDevices datasets  utils     methods   base     
 #&gt; 
 #&gt; other attached packages:
-#&gt; [1] tarchetypes_0.2.1 targets_0.4.2     workflowr_1.6.2   here_1.0.1       
+#&gt; [1] here_1.0.1
 #&gt; 
 #&gt; loaded via a namespace (and not attached):
-#&gt;  [1] Rcpp_1.0.7        git2r_0.28.0      jquerylib_0.1.4   bslib_0.2.5.1    
-#&gt;  [5] compiler_4.1.0    pillar_1.6.1      later_1.2.0       tools_4.1.0      
-#&gt;  [9] digest_0.6.27     jsonlite_1.7.2    evaluate_0.14     lifecycle_1.0.0  
-#&gt; [13] tibble_3.1.2      pkgconfig_2.0.3   rlang_0.4.11      igraph_1.2.6     
-#&gt; [17] cli_3.0.0         yaml_2.2.1        xfun_0.24         stringr_1.4.0    
-#&gt; [21] withr_2.4.2       knitr_1.33        sass_0.4.0        fs_1.5.0         
-#&gt; [25] vctrs_0.3.8       rprojroot_2.0.2   tidyselect_1.1.1  glue_1.4.2       
-#&gt; [29] data.table_1.14.0 R6_2.5.0          processx_3.5.2    fansi_0.5.0      
-#&gt; [33] rmarkdown_2.9.3   whisker_0.4       callr_3.7.0       purrr_0.3.4      
-#&gt; [37] magrittr_2.0.1    promises_1.2.0.1  ps_1.6.0          codetools_0.2-18 
-#&gt; [41] ellipsis_0.3.2    htmltools_0.5.1.1 renv_0.13.2       httpuv_1.6.1     
-#&gt; [45] utf8_1.2.1        stringi_1.7.2     crayon_1.4.1</code></pre>
+#&gt;  [1] Rcpp_1.0.7            pillar_1.6.2          compiler_4.1.0       
+#&gt;  [4] bslib_0.2.5.1         later_1.2.0           languageserver_0.3.10
+#&gt;  [7] jquerylib_0.1.4       git2r_0.28.0.9000     workflowr_1.6.2      
+#&gt; [10] tools_4.1.0           digest_0.6.27         jsonlite_1.7.2       
+#&gt; [13] evaluate_0.14         lifecycle_1.0.0       tibble_3.1.3         
+#&gt; [16] debugme_1.1.0         pkgconfig_2.0.3       rlang_0.4.11         
+#&gt; [19] yaml_2.2.1            xfun_0.24             stringr_1.4.0        
+#&gt; [22] xml2_1.3.2            knitr_1.33            fs_1.5.0             
+#&gt; [25] vctrs_0.3.8           sass_0.4.0            rprojroot_2.0.2      
+#&gt; [28] glue_1.4.2            R6_2.5.0              fansi_0.5.0          
+#&gt; [31] rmarkdown_2.9.7       magrittr_2.0.1        whisker_0.4          
+#&gt; [34] promises_1.2.0.1      ellipsis_0.3.2        htmltools_0.5.1.1    
+#&gt; [37] renv_0.13.2           httpuv_1.6.1          utf8_1.2.2           
+#&gt; [40] stringi_1.7.3         crayon_1.4.1</code></pre>
 </div>
 </div>
 

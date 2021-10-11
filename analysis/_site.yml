@@ -5,6 +5,8 @@ navbar:
   left:
   - text: Home
     href: index.html
+  - text: Blog
+    href: blog.html
   - text: Report
     href: report.html
   - text: About
@@ -30,3 +32,4 @@ output:
     number_sections: false
     theme: lumen
     highlight: textmate
+    css: style.css

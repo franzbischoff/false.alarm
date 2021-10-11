@@ -297,36 +297,56 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// mpxis_rcpp
+List mpxis_rcpp(NumericVector data_ref, uint64_t batch_size, List object, List stats, uint64_t history, uint64_t mp_time_constraint, bool progress, float threshold);
+RcppExport SEXP _false_alarm_mpxis_rcpp(SEXP data_refSEXP, SEXP batch_sizeSEXP, SEXP objectSEXP, SEXP statsSEXP, SEXP historySEXP, SEXP mp_time_constraintSEXP, SEXP progressSEXP, SEXP thresholdSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< NumericVector >::type data_ref(data_refSEXP);
+    Rcpp::traits::input_parameter< uint64_t >::type batch_size(batch_sizeSEXP);
+    Rcpp::traits::input_parameter< List >::type object(objectSEXP);
+    Rcpp::traits::input_parameter< List >::type stats(statsSEXP);
+    Rcpp::traits::input_parameter< uint64_t >::type history(historySEXP);
+    Rcpp::traits::input_parameter< uint64_t >::type mp_time_constraint(mp_time_constraintSEXP);
+    Rcpp::traits::input_parameter< bool >::type progress(progressSEXP);
+    Rcpp::traits::input_parameter< float >::type threshold(thresholdSEXP);
+    rcpp_result_gen = Rcpp::wrap(mpxis_rcpp(data_ref, batch_size, object, stats, history, mp_time_constraint, progress, threshold));
+    return rcpp_result_gen;
+END_RCPP
+}
 // mpxi_rcpp
-List mpxi_rcpp(NumericVector new_data, List object, uint64_t keep, bool progress);
-RcppExport SEXP _false_alarm_mpxi_rcpp(SEXP new_dataSEXP, SEXP objectSEXP, SEXP keepSEXP, SEXP progressSEXP) {
+List mpxi_rcpp(NumericVector new_data, List object, uint64_t history, uint64_t mp_time_constraint, bool progress);
+RcppExport SEXP _false_alarm_mpxi_rcpp(SEXP new_dataSEXP, SEXP objectSEXP, SEXP historySEXP, SEXP mp_time_constraintSEXP, SEXP progressSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< NumericVector >::type new_data(new_dataSEXP);
     Rcpp::traits::input_parameter< List >::type object(objectSEXP);
-    Rcpp::traits::input_parameter< uint64_t >::type keep(keepSEXP);
+    Rcpp::traits::input_parameter< uint64_t >::type history(historySEXP);
+    Rcpp::traits::input_parameter< uint64_t >::type mp_time_constraint(mp_time_constraintSEXP);
     Rcpp::traits::input_parameter< bool >::type progress(progressSEXP);
-    rcpp_result_gen = Rcpp::wrap(mpxi_rcpp(new_data, object, keep, progress));
+    rcpp_result_gen = Rcpp::wrap(mpxi_rcpp(new_data, object, history, mp_time_constraint, progress));
     return rcpp_result_gen;
 END_RCPP
 }
 // mpxiright_rcpp
-List mpxiright_rcpp(NumericVector data_ref, uint64_t window_size, double ez, double s_size, bool idxs, bool euclidean, bool progress, uint64_t start, List old);
-RcppExport SEXP _false_alarm_mpxiright_rcpp(SEXP data_refSEXP, SEXP window_sizeSEXP, SEXP ezSEXP, SEXP s_sizeSEXP, SEXP idxsSEXP, SEXP euclideanSEXP, SEXP progressSEXP, SEXP startSEXP, SEXP oldSEXP) {
+List mpxiright_rcpp(NumericVector data_ref, uint64_t window_size, double ez, uint64_t mp_time_constraint, double s_size, bool idxs, bool euclidean, bool progress, uint64_t start, List old);
+RcppExport SEXP _false_alarm_mpxiright_rcpp(SEXP data_refSEXP, SEXP window_sizeSEXP, SEXP ezSEXP, SEXP mp_time_constraintSEXP, SEXP s_sizeSEXP, SEXP idxsSEXP, SEXP euclideanSEXP, SEXP progressSEXP, SEXP startSEXP, SEXP oldSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< NumericVector >::type data_ref(data_refSEXP);
     Rcpp::traits::input_parameter< uint64_t >::type window_size(window_sizeSEXP);
     Rcpp::traits::input_parameter< double >::type ez(ezSEXP);
+    Rcpp::traits::input_parameter< uint64_t >::type mp_time_constraint(mp_time_constraintSEXP);
     Rcpp::traits::input_parameter< double >::type s_size(s_sizeSEXP);
     Rcpp::traits::input_parameter< bool >::type idxs(idxsSEXP);
     Rcpp::traits::input_parameter< bool >::type euclidean(euclideanSEXP);
     Rcpp::traits::input_parameter< bool >::type progress(progressSEXP);
     Rcpp::traits::input_parameter< uint64_t >::type start(startSEXP);
     Rcpp::traits::input_parameter< List >::type old(oldSEXP);
-    rcpp_result_gen = Rcpp::wrap(mpxiright_rcpp(data_ref, window_size, ez, s_size, idxs, euclidean, progress, start, old));
+    rcpp_result_gen = Rcpp::wrap(mpxiright_rcpp(data_ref, window_size, ez, mp_time_constraint, s_size, idxs, euclidean, progress, start, old));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -350,19 +370,20 @@ BEGIN_RCPP
 END_RCPP
 }
 // mpx_rcpp
-List mpx_rcpp(NumericVector data_ref, uint64_t window_size, double ez, double s_size, bool idxs, bool euclidean, bool progress);
-RcppExport SEXP _false_alarm_mpx_rcpp(SEXP data_refSEXP, SEXP window_sizeSEXP, SEXP ezSEXP, SEXP s_sizeSEXP, SEXP idxsSEXP, SEXP euclideanSEXP, SEXP progressSEXP) {
+List mpx_rcpp(NumericVector data_ref, uint64_t window_size, double ez, uint64_t mp_time_constraint, double s_size, bool idxs, bool euclidean, bool progress);
+RcppExport SEXP _false_alarm_mpx_rcpp(SEXP data_refSEXP, SEXP window_sizeSEXP, SEXP ezSEXP, SEXP mp_time_constraintSEXP, SEXP s_sizeSEXP, SEXP idxsSEXP, SEXP euclideanSEXP, SEXP progressSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< NumericVector >::type data_ref(data_refSEXP);
     Rcpp::traits::input_parameter< uint64_t >::type window_size(window_sizeSEXP);
     Rcpp::traits::input_parameter< double >::type ez(ezSEXP);
+    Rcpp::traits::input_parameter< uint64_t >::type mp_time_constraint(mp_time_constraintSEXP);
     Rcpp::traits::input_parameter< double >::type s_size(s_sizeSEXP);
     Rcpp::traits::input_parameter< bool >::type idxs(idxsSEXP);
     Rcpp::traits::input_parameter< bool >::type euclidean(euclideanSEXP);
     Rcpp::traits::input_parameter< bool >::type progress(progressSEXP);
-    rcpp_result_gen = Rcpp::wrap(mpx_rcpp(data_ref, window_size, ez, s_size, idxs, euclidean, progress));
+    rcpp_result_gen = Rcpp::wrap(mpx_rcpp(data_ref, window_size, ez, mp_time_constraint, s_size, idxs, euclidean, progress));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -783,10 +804,11 @@ static const R_CallMethodDef CallEntries[] = {
     {"_false_alarm_inner_product", (DL_FUNC) &_false_alarm_inner_product, 2},
     {"_false_alarm_sum_of_squares", (DL_FUNC) &_false_alarm_sum_of_squares, 1},
     {"_false_alarm_fft_rcpp", (DL_FUNC) &_false_alarm_fft_rcpp, 2},
-    {"_false_alarm_mpxi_rcpp", (DL_FUNC) &_false_alarm_mpxi_rcpp, 4},
-    {"_false_alarm_mpxiright_rcpp", (DL_FUNC) &_false_alarm_mpxiright_rcpp, 9},
+    {"_false_alarm_mpxis_rcpp", (DL_FUNC) &_false_alarm_mpxis_rcpp, 8},
+    {"_false_alarm_mpxi_rcpp", (DL_FUNC) &_false_alarm_mpxi_rcpp, 5},
+    {"_false_alarm_mpxiright_rcpp", (DL_FUNC) &_false_alarm_mpxiright_rcpp, 10},
     {"_false_alarm_mpxileft_rcpp", (DL_FUNC) &_false_alarm_mpxileft_rcpp, 9},
-    {"_false_alarm_mpx_rcpp", (DL_FUNC) &_false_alarm_mpx_rcpp, 7},
+    {"_false_alarm_mpx_rcpp", (DL_FUNC) &_false_alarm_mpx_rcpp, 8},
     {"_false_alarm_mpxab_rcpp", (DL_FUNC) &_false_alarm_mpxab_rcpp, 7},
     {"_false_alarm_mpx_rcpp_parallel", (DL_FUNC) &_false_alarm_mpx_rcpp_parallel, 7},
     {"_false_alarm_mpxab_rcpp_parallel", (DL_FUNC) &_false_alarm_mpxab_rcpp_parallel, 7},

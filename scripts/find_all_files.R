@@ -4,26 +4,51 @@
 #' the signal.
 #'
 
-find_all_files <- function(path = getOption("target_dataset_path", default = "inst/extdata/physionet/"), long = FALSE) {
+find_all_files <- function(path = getOption("target_ds_path", default = "inst/extdata/physionet"),
+                           types = c("all", "asystole", "bradycardia", "tachycardia", "vfib", "vtachy"),
+                           limit_per_type = 1000,
+                           long = FALSE) {
   "!DEBUG Starting process"
 
   checkmate::assert_directory_exists(path, access = "r")
+  types <- match.arg(types, several.ok = TRUE)
 
   if (long) {
     files <- paste0(
-      path,
+      path, "/",
       list.files(here::here(path),
         pattern = "l\\.hea$"
       )
     )
   } else {
     files <- paste0(
-      path,
+      path, "/",
       list.files(here::here(path),
         pattern = "\\.hea$"
       )
     )
   }
+
+  if (!("all" %in% types)) {
+    filtered <- NULL
+
+    for (type in types) {
+      res <- switch(type,
+        asystole = grep("a\\d*.\\.hea", files, value = TRUE),
+        bradycardia = grep("b\\d*.\\.hea", files, value = TRUE),
+        tachycardia = grep("t\\d*.\\.hea", files, value = TRUE),
+        vfib = grep("f\\d*.\\.hea", files, value = TRUE),
+        vtachy = grep("c\\d*.\\.hea", files, value = TRUE)
+      )
+
+      res <- head(res, limit_per_type)
+
+      filtered <- c(filtered, res)
+    }
+    files <- filtered
+  }
+
+
 
   return(files)
 }

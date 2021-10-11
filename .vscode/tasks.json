@@ -50,7 +50,7 @@
             },
             {
               "regexp": "(.*)",
-              "message": 1,
+              "message": 1
             }
           ]
         },
@@ -65,7 +65,7 @@
             },
             {
               "regexp": "(.*)",
-              "message": 1,
+              "message": 1
             }
           ]
         }
@@ -80,7 +80,7 @@
       },
       "args": [
         "-e",
-        "if(Sys.time() - ifelse(file.exists(r'(${fileDirname}/${fileBasenameNoExtension}.pdf)'), file.mtime(r'(${fileDirname}/${fileBasenameNoExtension}.pdf)'), Sys.time() - 510) > 500) {rmarkdown::render(r'(${file})', encoding = 'UTF-8')}",
+        "if(Sys.time() - ifelse(file.exists(r'(${fileDirname}/${fileBasenameNoExtension}.pdf)'), file.mtime(r'(${fileDirname}/${fileBasenameNoExtension}.pdf)'), Sys.time() - 510) > 500) {rmarkdown::render(r'(${file})', encoding = 'UTF-8')}"
       ],
       "options": {
         "cwd": "${fileDirname}"
@@ -93,7 +93,7 @@
         "reveal": "silent"
       },
       "runOptions": {
-        "instanceLimit": 1,
+        "instanceLimit": 1
       },
       "problemMatcher": []
     },
@@ -106,7 +106,7 @@
       },
       "args": [
         "-e",
-        "styler:::style_dir(filetype = c('R', 'Rmd'), recursive = TRUE, exclude_files = 'R/RcppExports.R', exclude_dirs = c('dev', 'renv', '.history'))"
+        "styler:::style_dir(filetype = c('R', 'Rmd'), recursive = TRUE, exclude_files = 'R/RcppExports.R', exclude_dirs = c('docs', 'dev', 'renv', '.history'))"
       ],
       "options": {
         "cwd": "${workspaceFolder}"
@@ -128,7 +128,7 @@
       },
       "args": [
         "-e",
-        "for(i in c('analysis', 'R', 'review', 'index', 'output', 'src')) {print(lintr::lint_dir(i))}"
+        "library(lintr); for (i in c('analysis', 'R', 'scripts', 'review', 'thesis', 'output')) {print(lint_dir(path = i, linters = with_defaults(open_curly_linter = NULL, T_and_F_symbol_linter, assignment_linter, closed_curly_linter = NULL, commas_linter, commented_code_linter = NULL, cyclocomp_linter(50), object_name_linter(styles = 'snake_case'), object_length_linter(30), equals_na_linter, function_left_parentheses_linter, infix_spaces_linter, line_length_linter(500), no_tab_linter, object_usage_linter = NULL, paren_brace_linter, absolute_path_linter(lax = TRUE), nonportable_path_linter = NULL, pipe_continuation_linter, semicolon_terminator_linter(semicolon = 'trailing'), seq_linter, single_quotes_linter, spaces_inside_linter, spaces_left_parentheses_linter, trailing_blank_lines_linter, trailing_whitespace_linter, undesirable_function_linter, undesirable_operator_linter, unneeded_concatenation_linter), exclusions = list('R/RcppExports.R')))}"
       ],
       "options": {
         "cwd": "${workspaceFolder}"
@@ -180,6 +180,28 @@
       "args": [
         "-e",
         "covr::package_coverage()"
+      ],
+      "options": {
+        "cwd": "${workspaceFolder}"
+      },
+      "group": "test",
+      "presentation": {
+        "reveal": "always",
+        "panel": "dedicated",
+        "clear": true
+      },
+      "problemMatcher": []
+    },
+    {
+      "type": "process",
+      "label": "R: Watch",
+      "command": "C:/Program Files/R/R-4.1.0/bin/x64/Rscript.exe",
+      "linux": {
+        "command": "/usr/lib/R/bin/Rscript"
+      },
+      "args": [
+        "-e",
+        "targets::tar_watch(targets_only = TRUE, exclude = c('.Random.seed', 'var_window_size', 'var_time_constraint'),  seconds = 30, display = 'graph', browse = FALSE, outdated = FALSE, label = c('time', 'branches', 'size'), port = 55444); Sys.sleep(Inf)"
       ],
       "options": {
         "cwd": "${workspaceFolder}"
@@ -371,7 +393,7 @@
       },
       "args": [
         "-e",
-        "targets::tar_make(reporter = 'summary')"
+        "targets::tar_make_future(workers = 4L, reporter = 'summary')"
       ],
       "options": {
         "cwd": "${workspaceFolder}"

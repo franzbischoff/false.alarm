@@ -6,6 +6,7 @@
 \alias{mpx}
 \alias{mpx_stream_start}
 \alias{mpx_stream_right}
+\alias{mpx_stream_s_right}
 \title{Matrix Profile Computation}
 \usage{
 stamp(
@@ -41,9 +42,32 @@ mpx(
   progress = TRUE
 )
 
-mpx_stream_start(data, window_size, exclusion_zone = 0.5, progress = TRUE)
+mpx_stream_start(
+  data,
+  window_size,
+  exclusion_zone = 0.5,
+  mp_time_constraint = 0,
+  progress = TRUE
+)
 
-mpx_stream_right(new_data, start_obj, constraint = 0, progress = TRUE)
+mpx_stream_right(
+  new_data,
+  start_obj,
+  history = 0,
+  mp_time_constraint = 0,
+  progress = TRUE
+)
+
+mpx_stream_s_right(
+  data,
+  batch_size,
+  start_obj,
+  stats,
+  history = 0,
+  mp_time_constraint = 0,
+  progress = TRUE,
+  threshold = -1
+)
 }
 \arguments{
 \item{data}{Required. Any 1-dimension series of numbers (\code{matrix}, \code{vector}, \code{ts} etc.) (See details).}
@@ -74,8 +98,14 @@ This parameter is ignored when using multithread or AB-join.}
 
 \item{new_data}{a vector with the new data}
 
-\item{constraint}{an \code{int}. Max distance where to look for the best match in matrix profile.
+\item{start_obj}{obj from another run}
+
+\item{history}{an \code{int}. Max distance where to look for the best match in matrix profile.
 (default is NULL).}
+
+\item{batch_size}{size of the new data}
+
+\item{stats}{obj with stats for mpx}
 }
 \value{
 Returns a \code{list} with the \code{matrix_profile}, \code{profile_index} (if \code{idxs} is \code{TRUE} in \code{mpx()}), and some
@@ -128,7 +158,7 @@ on Ogita's work for better precision computing mean and standard deviation (part
 }
 }
 \section{This document}{
-Last updated on 2021-08-10 using R version 4.1.0.
+Last updated on 2021-10-03 using R version 4.1.1.
 }
 
 \examples{

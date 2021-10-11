@@ -48,10 +48,35 @@
 #' signal <- read_ecg("data/a103l")
 #' }
 #'
-read_ecg <- function(filename, plot = FALSE) {
+read_ecg <- function(filename, plot = FALSE, subset = FALSE,
+                     types = c("all", "asystole", "bradycardia", "tachycardia", "vfib", "vtachy"),
+                     alarm_type = NULL) {
   checkmate::assert_string(filename, 3)
   checkmate::qassert(plot, "B")
-  #
+  checkmate::qassert(alarm_type, c("0", "B"))
+  types <- match.arg(types, several.ok = TRUE)
+
+  if (!("all" %in% types)) {
+    filtered <- NULL
+
+    for (type in types) {
+      res <- switch(type,
+        asystole = grep("a\\d*.\\.hea", filename, value = TRUE),
+        bradycardia = grep("b\\d*.\\.hea", filename, value = TRUE),
+        tachycardia = grep("t\\d*.\\.hea", filename, value = TRUE),
+        vfib = grep("f\\d*.\\.hea", filename, value = TRUE),
+        vtachy = grep("c\\d*.\\.hea", filename, value = TRUE)
+      )
+
+      filtered <- c(filtered, res)
+    }
+
+    if (rlang::is_empty(filtered)) {
+      message("File skiped: ", filename)
+      return(NULL)
+    }
+  }
+
   # Set default parameter values
   def_gain <- 200 # Default value for missing gains
   wfdb_nan <- -32768 # This should be the case for all WFDB signal format types currently supported by RDMAT
@@ -132,11 +157,22 @@ read_ecg <- function(filename, plot = FALSE) {
     true_false <- ifelse(substr(true_false, 1, 1) == "#", substring(true_false, 2), true_false)
   }
 
+  if (!is.null(alarm_type)) {
+    if (alarm_type != as.logical(true_false)) {
+      message("File skipped: ", filename)
+      return(NULL)
+    }
+  }
+
   mat_file <- gzfile(content, "rb")
   mat_content <- R.matlab::readMat(mat_file)
   close(mat_file)
 
   signal <- list()
+  subset_minmax <- FALSE
+  if (!isFALSE(subset)) {
+    subset_minmax <- c(min(subset), max(subset))
+  }
   # Convert from digital units to physical units.
   # Mapping should be similar to that of rdsamp.c:
   # http://www.physionet.org/physiotools/wfdb/app/rdsamp.c
@@ -144,7 +180,12 @@ read_ecg <- function(filename, plot = FALSE) {
     mat_content$val[i, is.na(mat_content$val[i, ])] <- wfdb_nan
     label <- siginfo[[i]]$description
     signal[[label]] <- (mat_content$val[i, ] - siginfo[[i]]$baseline) / siginfo[[i]]$gain
-    attr(signal[[label]], "info") <- list(label = label, baseline = siginfo[[i]]$baseline, gain = siginfo[[i]]$gain, unit = siginfo[[i]]$unit)
+
+    if (!isFALSE(subset)) {
+      signal[[label]] <- signal[[label]][subset]
+    }
+
+    attr(signal[[label]], "info") <- list(label = label, baseline = siginfo[[i]]$baseline, gain = siginfo[[i]]$gain, unit = siginfo[[i]]$unit, subset = subset_minmax)
   }
 
   length_signal <- length(signal[[1]])
