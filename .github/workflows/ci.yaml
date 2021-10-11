@@ -15,6 +15,7 @@ jobs:
     name: Apply lintr in all R and Rmd files
     runs-on: ubuntu-latest
     env:
+      R_REMOTES_NO_ERRORS_FROM_WARNINGS: true
       GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
       RENV_PATHS_ROOT: ~/.local/share/renv
     steps:
@@ -22,12 +23,6 @@ jobs:
         uses: actions/checkout@v2
 
       - run: git branch
-
-      - name: Install System dependencies
-        run: |
-          sudo apt-fast update
-          sudo apt-fast install -y libgit2-dev libharfbuzz-dev libcurl4-openssl-dev \
-          libfribidi-dev libzmq3-dev
 
       - name: Setting up R installation
         uses: r-lib/actions/setup-r@v1
@@ -41,6 +36,27 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-renv-
 
+      - name: Query dependencies
+        run: |
+          install.packages('remotes')
+          saveRDS(remotes::dev_package_deps(dependencies = TRUE), ".github/depends.Rds", version = 2)
+          writeLines(sprintf("R-%i.%i", getRversion()$major, getRversion()$minor), ".github/R-version")
+        shell: Rscript {0}
+
+      - name: Install system dependencies
+        if: runner.os == 'Linux'
+        run: |
+          while read -r cmd
+          do
+            eval sudo $cmd
+          done < <(Rscript -e 'writeLines(remotes::system_requirements("ubuntu", "20.04"))')
+
+      - name: Install other dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libgit2-dev libharfbuzz-dev libcurl4-openssl-dev \
+          libfribidi-dev libzmq3-dev libmagick++-dev
+
       - name: Install dependencies
         run: |
           if (!requireNamespace("renv", quietly = TRUE)) install.packages("renv")
@@ -50,8 +66,20 @@ jobs:
 
       - name: Lint
         run: |
-          for(i in c("analysis", "R", "review", "thesis", "output")) {
-            lintr::lint_dir(i)
+          library(lintr)
+          for (i in c("analysis", "R", "scripts", "review", "thesis", "output")) {
+            print(lint_dir(i, linters = with_defaults(
+              open_curly_linter = NULL, T_and_F_symbol_linter,
+              assignment_linter, closed_curly_linter = NULL, commas_linter, commented_code_linter = NULL,
+              cyclocomp_linter(50), object_name_linter(styles = "snake_case"), object_length_linter(30),
+              equals_na_linter, function_left_parentheses_linter, infix_spaces_linter,
+              line_length_linter(500), no_tab_linter, object_usage_linter = NULL, paren_brace_linter,
+              absolute_path_linter(lax = TRUE), nonportable_path_linter = NULL, pipe_continuation_linter,
+              semicolon_terminator_linter(semicolon = "trailing"), seq_linter, single_quotes_linter,
+              spaces_inside_linter, spaces_left_parentheses_linter, trailing_blank_lines_linter,
+              trailing_whitespace_linter, undesirable_function_linter, undesirable_operator_linter,
+              unneeded_concatenation_linter
+            ), exclusions = list("R/RcppExports.R")))
           }
         shell: Rscript {0}
 
@@ -61,19 +89,14 @@ jobs:
     runs-on: ubuntu-latest
     if: "contains(github.event.head_commit.message, 'targets')"
     env:
-      GITHUB_PAT: ${{ secrets.GITHUBPAT }}
+      R_REMOTES_NO_ERRORS_FROM_WARNINGS: true
+      GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
       RENV_PATHS_ROOT: ~/.local/share/renv
     steps:
       - name: Checking out shallow repository
         uses: actions/checkout@v2
 
       - run: git branch
-
-      - name: Install System dependencies
-        run: |
-          sudo apt-fast update
-          sudo apt-fast install -y libgit2-dev libharfbuzz-dev libcurl4-openssl-dev \
-          libfribidi-dev libzmq3-dev
 
       - name: Setting up R installation
         uses: r-lib/actions/setup-r@v1
@@ -89,6 +112,27 @@ jobs:
           key: ${{ runner.os }}-renv-${{ hashFiles('**/renv.lock') }}-targets-v2
           restore-keys: |
             ${{ runner.os }}-renv-
+
+      - name: Query dependencies
+        run: |
+          install.packages('remotes')
+          saveRDS(remotes::dev_package_deps(dependencies = TRUE), ".github/depends.Rds", version = 2)
+          writeLines(sprintf("R-%i.%i", getRversion()$major, getRversion()$minor), ".github/R-version")
+        shell: Rscript {0}
+
+      - name: Install system dependencies
+        if: runner.os == 'Linux'
+        run: |
+          while read -r cmd
+          do
+            eval sudo $cmd
+          done < <(Rscript -e 'writeLines(remotes::system_requirements("ubuntu", "20.04"))')
+
+      - name: Install other dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libgit2-dev libharfbuzz-dev libcurl4-openssl-dev \
+          libfribidi-dev libzmq3-dev libmagick++-dev
 
       - name: Install dependencies
         run: |
@@ -121,7 +165,7 @@ jobs:
         shell: Rscript {0}
 
       - name: Run targets pipeline
-        run: source('run.R')
+        run: renv::run('run.R')
         shell: Rscript {0}
         continue-on-error: true # if the pipeline fails, the workspace is saved for inspection.
 
@@ -129,6 +173,7 @@ jobs:
         id: check-new-files
         run: |
           git ls-files -mo -x renv -x inst -x src > .targets-files
+          ([ -s .targets-files ] && echo "New files produced" && cat .targets-files && echo "::set-output name=newfiles::true") || (echo "Nothing to do" && echo "::set-output name=newfiles::false")
 
       - name: Update the current repository without the objects
         if: steps.check-new-files.outputs.newfiles == 'true'
@@ -158,12 +203,24 @@ jobs:
         run: |
           git config --local user.name "GitHub Actions"
           git config --local user.email "actions@github.com"
+          rm -r .github/workflows
           git add --all -- ':!renv'
           git add -f .targets-files
           git add -f _targets
           git commit -am "Run pipeline"
           git push origin targets-runs
         continue-on-error: true # if the pipeline fails, the workspace is saved for inspection.
+
+      - name: Prepare failure artifact
+        if: failure()
+        run: rm -rf .git .github .targets-files .targets-runs
+
+      - name: Post failure artifact
+        if: failure()
+        uses: actions/upload-artifact@main
+        with:
+          name: ${{ runner.os }}-r-targets-results
+          path: .
 
   workflowr:
     name: Runs Workflowr versioning
@@ -172,6 +229,7 @@ jobs:
     needs:
       - lint
     env:
+      R_REMOTES_NO_ERRORS_FROM_WARNINGS: true
       GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
       RENV_PATHS_ROOT: ~/.local/share/renv
     steps:
@@ -184,12 +242,6 @@ jobs:
       - run: git branch
 
       - run: echo ${{ github.event.head_commit.message }}
-
-      - name: Install System dependencies
-        run: |
-          sudo apt-fast update
-          sudo apt-fast install -y libgit2-dev libharfbuzz-dev libcurl4-openssl-dev \
-          libfribidi-dev libzmq3-dev
 
       - name: Setting up R installation
         uses: r-lib/actions/setup-r@v1
@@ -205,6 +257,27 @@ jobs:
           key: ${{ runner.os }}-renv-${{ hashFiles('**/renv.lock') }}-targets-v2
           restore-keys: |
             ${{ runner.os }}-renv-
+
+      - name: Query dependencies
+        run: |
+          install.packages('remotes')
+          saveRDS(remotes::dev_package_deps(dependencies = TRUE), ".github/depends.Rds", version = 2)
+          writeLines(sprintf("R-%i.%i", getRversion()$major, getRversion()$minor), ".github/R-version")
+        shell: Rscript {0}
+
+      - name: Install system dependencies
+        if: runner.os == 'Linux'
+        run: |
+          while read -r cmd
+          do
+            eval sudo $cmd
+          done < <(Rscript -e 'writeLines(remotes::system_requirements("ubuntu", "20.04"))')
+
+      - name: Install other dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libgit2-dev libharfbuzz-dev libcurl4-openssl-dev \
+          libfribidi-dev libzmq3-dev libmagick++-dev
 
       - name: Install dependencies
         run: |
