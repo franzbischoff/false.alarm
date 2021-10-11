@@ -44,7 +44,7 @@ test_that("Normal mpx + update batch right with external stats", {
   partial_stats$ddg[profile_len] <- 0
 
   initial_mp <- list(w = params$window_size, ez = params$ez, offset = 0)
-  initial_mp <- mpx_stream_s_right(data[data_vector], batch_size = params$history, initial_mp, partial_stats, history = 0, time_constraint = 0, progress = params$progress)
+  initial_mp <- mpx_stream_s_right(data[data_vector], batch_size = params$history, initial_mp, partial_stats, history = 0, mp_time_constraint = 0, progress = params$progress)
   test <- mpx_stream_start(data[data_vector], params$window_size, params$ez, 0, params$progress)
 
   expect_equal(as.numeric(initial_mp$right_matrix_profile), as.numeric(test$right_matrix_profile))
@@ -80,7 +80,7 @@ test_that("Normal mpx + update batch right with external stats2", {
   partial_stats$ddg[profile_len] <- 0
 
   initial_mp <- list(w = params$window_size, ez = params$ez, offset = 0)
-  initial_mp <- mpx_stream_s_right(data[data_vector], batch_size = params$history, initial_mp, partial_stats, history = 0, time_constraint = 0, progress = params$progress)
+  initial_mp <- mpx_stream_s_right(data[data_vector], batch_size = params$history, initial_mp, partial_stats, history = 0, mp_time_constraint = 0, progress = params$progress)
   test <- mpx_stream_start(data[data_vector], params$window_size, params$ez, 0, params$progress)
 
   expect_equal(as.numeric(test$right_matrix_profile), as.numeric(initial_mp$right_matrix_profile))
@@ -95,7 +95,7 @@ test_that("Normal mpx + update batch right with external stats2", {
   sec_stats <- purrr::map(stats, function(x) x[sec_stats_vector])
   sec_stats$ddf[sec_profile_len] <- 0
   sec_stats$ddg[sec_profile_len] <- 0
-  sec_mp <- mpx_stream_s_right(data[sec_data_vector], batch_size = params$batch, initial_mp, sec_stats, params$history, time_constraint = 0, params$progress)
+  sec_mp <- mpx_stream_s_right(data[sec_data_vector], batch_size = params$batch, initial_mp, sec_stats, params$history, mp_time_constraint = 0, params$progress)
   test_vector <- seq.int(start + params$batch, end)
   test <- mpx_stream_start(data[test_vector], params$window_size, params$ez, 0, params$progress)
 
@@ -110,7 +110,7 @@ test_that("Normal mpx + update batch right with external stats2", {
   ter_stats <- purrr::map(stats, function(x) x[ter_stats_vector])
   ter_stats$ddf[ter_profile_len] <- 0
   ter_stats$ddg[ter_profile_len] <- 0
-  ter_mp <- mpx_stream_s_right(data[ter_data_vector], batch_size = params$batch, sec_mp, ter_stats, params$history, time_constraint = 0, params$progress)
+  ter_mp <- mpx_stream_s_right(data[ter_data_vector], batch_size = params$batch, sec_mp, ter_stats, params$history, mp_time_constraint = 0, params$progress)
   test_vector <- seq.int(start + params$batch, end)
   test <- mpx_stream_start(data[test_vector], params$window_size, params$ez, 0, params$progress)
 

@@ -1,25 +1,34 @@
 compute_floss <- function(mp_data, params, infos) {
   checkmate::qassert(mp_data, "L")
   ez <- params$ez
-  time_constraint <- params$time_constraint
+  mp_time_constraint <- ifelse(is.null(params$mp_time_constraint), 0, params$mp_time_constraint)
+  floss_time_constraint <- ifelse(is.null(params$floss_time_constraint), 0, params$floss_time_constraint)
   sample_freq <- params$sample_freq
 
   checkmate::qassert(ez, c("0", "N"))
 
+  if (mp_time_constraint > 0 & floss_time_constraint > 0) {
+    stop("You cannot set `mp_time_constraint` and `floss_time_constraint` at the same time.")
+  }
+
+  constraint <- FALSE
+
+  if (mp_time_constraint > 0 || floss_time_constraint > 0) {
+    constraint <- TRUE
+  }
+
   info <- attr(mp_data, "info")
 
-  "!DEBUG Time constraint `time_constraint`."
-
-  if (time_constraint > 0) {
+  if (constraint) {
     iac <- vector("list", 500)
     pro_size <- length(mp_data[[1]]$right_profile_index)
     for (i in 1:500) {
-      iac[[i]] <- get_asym(pro_size, time_constraint)
+      iac[[i]] <- get_asym(pro_size, mp_time_constraint, floss_time_constraint)
     }
 
     aic_avg <- rowMeans(as.data.frame(iac))
-    if (time_constraint < (pro_size / 2)) {
-      aic_avg[seq.int(time_constraint, pro_size - time_constraint * 0.9)] <- time_constraint / 2
+    if (mp_time_constraint > 0 & mp_time_constraint < (pro_size / 2)) {
+      aic_avg[seq.int(mp_time_constraint, pro_size - mp_time_constraint * 0.9)] <- mp_time_constraint / 2
     }
   } else {
     aic_avg <- NULL
@@ -31,7 +40,8 @@ compute_floss <- function(mp_data, params, infos) {
       x$right_profile_index, x$w,
       curr_ez,
       aic_avg,
-      sample_freq
+      sample_freq,
+      floss_time_constraint
     )
     list(cac = cac$cac, iac = cac$iac, arcs = cac$arcs, w = x$w, ez = curr_ez, offset = x$offset)
   })
@@ -44,7 +54,7 @@ compute_floss <- function(mp_data, params, infos) {
   return(result_floss)
 }
 
-compute_arcs <- function(right_profile_index, window_size, exclusion_zone, aic_avg, sample_freq) {
+compute_arcs <- function(right_profile_index, window_size, exclusion_zone, aic_avg, sample_freq, floss_time_constraint) {
   checkmate::qassert(right_profile_index, "N")
   checkmate::qassert(exclusion_zone, "N")
   checkmate::assert_true(sample_freq > 50)
@@ -56,17 +66,16 @@ compute_arcs <- function(right_profile_index, window_size, exclusion_zone, aic_a
   cac_size <- length(right_profile_index)
   nnmark <- vector(mode = "numeric", cac_size)
 
-  # if (isTRUE(arcs_threshold)) {
-  #   profile <- head(right_profile_index, -ez - 1)
-  #   arcs_threshold <- max(abs(profile - seq_along(profile)))
-  # } else {
-  arcs_threshold <- cac_size
-  # }
+  if (floss_time_constraint > 0) {
+    constraint <- floss_time_constraint
+  } else {
+    constraint <- cac_size
+  }
 
   for (i in seq.int(1, (cac_size - ez - 1))) {
     j <- right_profile_index[i]
 
-    if (abs(j - i) <= arcs_threshold) {
+    if (abs(j - i) <= constraint) {
       if (j == i) {
         next
       }
@@ -106,24 +115,43 @@ compute_arcs <- function(right_profile_index, window_size, exclusion_zone, aic_a
 }
 
 
-get_asym <- function(pro_len = 50000, tc = 20000) {
+get_asym <- function(pro_len = 50000, mp_tc = 0, floss_tc = 0) {
   mpi <- rep(0, pro_len)
+  tc <- pro_len
 
-  for (i in (1:(pro_len - 1))) {
-    mpi[i] <- runif(1, i + 1, min(pro_len, i + tc))
+  if (mp_tc > 0) {
+    for (i in (1:(pro_len - 1))) {
+      mpi[i] <- runif(1, i + 1, min(pro_len, i + mp_tc))
+    }
+  } else {
+    # the same as for pure FLOSS without constraint. The constraint will be done later
+    for (i in (1:(pro_len - 1))) {
+      mpi[i] <- runif(1, i + 1, pro_len)
+    }
+    tc <- floss_tc
   }
 
   nnmark <- rep(0, pro_len)
 
-  for (i in (1:pro_len)) {
+  for (i in seq.int(1, pro_len - 1)) {
     j <- mpi[i]
-    nnmark[min(i, j)] <- nnmark[min(i, j)] + 1
-    nnmark[max(i, j)] <- nnmark[max(i, j)] - 1
+
+    if (abs(j - i) <= tc) {
+      if (j == i) {
+        next
+      }
+
+      if (j < 0 || j > pro_len) {
+        next
+      }
+
+      nnmark[min(i, j)] <- nnmark[min(i, j)] + 1
+      nnmark[max(i, j)] <- nnmark[max(i, j)] - 1
+    }
   }
 
   arc_counts <- cumsum(nnmark)
   arc_counts[pro_len] <- 0
-
 
   return(arc_counts)
 }

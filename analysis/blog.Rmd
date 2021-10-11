@@ -6,89 +6,357 @@ output:
   workflowr::wflow_html:
     number_sections: true
     fig_caption: yes
-    toc: yes
+    code_folding: none
+    toc: no
 bibliography: ../papers/references.bib
 link-citations: true
-# Download your specific csl file and refer to it in the line below.
 csl: ../thesis/csl/ama.csl
+editor_options:
+  chunk_output_type: inline
 ---
 
-```{=html}
-<style>
-div.polaroid {
-  width: 80%;
-  height: auto;
-  margin-left: auto;
-  margin-right: auto;
-  background-color: white;
-  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
-}
-
-svg.svglite {
-  width: 100%;
-  height: auto;
-}
-
-div.polcont {
-  text-align: center;
-  padding-top: 15px;
-  font-weight: bold;
-}
-div.polaroid {
-  width: 80%;
-  height: auto;
-  margin-left: auto;
-  margin-right: auto;
-  background-color: white;
-  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
-}
-div.figure {
-  padding: 10px;
-  margin: 20px 0px 20px 0px;
-  background-color: white;
-  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
-}
-p.caption {
-  font-size: 19px;
-}
-</style>
-```
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = FALSE, fig.align = "center")
+knitr::opts_chunk$set(
+  echo = FALSE, fig.align = "center", dev = "svg", autodep = TRUE,
+  fig.height = 5, fig.width = 10
+)
 library(here)
+library(ggplot2)
 # library(visNetwork)
-# library(tibble)
+library(tibble)
 # library(kableExtra)
 # library(targets)
 knitr::opts_knit$set(root.dir = here("docs"), base.dir = here("docs"))
+
+.rmdenvir <- environment()
+.refctr <- c(`_` = 0)
+
+ref <- function(use_name) {
+  require(stringr)
+  if (!exists(".refctr")) .refctr <- c(`_` = 0)
+  if (any(names(.refctr) == use_name)) {
+    return(.refctr[use_name])
+  }
+  type <- str_split(use_name, ":")[[1]][1]
+  n_obj <- sum(str_detect(names(.refctr), type))
+  use_num <- n_obj + 1
+  newrefctr <- c(.refctr, use_num)
+  names(newrefctr)[length(.refctr) + 1] <- use_name
+  assign(".refctr", newrefctr, envir = .rmdenvir)
+  return(use_num)
+}
 ```
 
 # Purpose
 
-This blog is a continuation of the thesis Report [link](report.html). The reader must follow this page from top to bottom.
+This blog is a continuation of the thesis Report [link](report.html). The reader must follow this
+page from top to bottom.
 
 ## 2021, August Update #1
 
-The first workflow presented in July has changed. Its purpose was to define a "big picture" of the process.
+The first workflow presented in July has changed. Its purpose was to define a "big picture" of the
+process.
 
 The main changes introduced were:
 
 ### The Data
 
-Initially, the data had been carried along the workflow, being copied at each new step. That obviously is not the way to
-handle it. Thus, the raw data is stored only on the "dataset" object and reused where needed.
+Initially, the data had been carried along the workflow, being copied at each new step. That
+obviously is not the way to handle it. Thus, the raw data is stored only on the "dataset" object and
+reused where needed.
 
-Now, any modification to the raw data will create a new object, for example, "ds_filtered" where the SQI filter is applied
-over the data.
+Now, any modification to the raw data will create a new object, for example, "ds_filtered," where
+the SQI filter is applied over the data.
 
 ### Streaming paradigm
 
-The goal of this work is to operate with streaming data. Thus, the Matrix Profile computation algorithm has been rewritten
-to handle as receiving data in chunks. The algorithm can simulate one observation at a time or a batch of observations
-(for efficiency). The result will always be as if one observation had been received individually by the model.
+The goal of this work is to operate with streaming data. Thus, the Matrix Profile computation
+algorithm has been rewritten to handle receiving data in chunks. The algorithm can simulate one
+observation at a time or a batch of observations (for efficiency). The result will always be as if
+one observation had been received individually by the model.
 
-To avoid unnecessary recomputations for this analysis phase, the companion statistics needed by the model are pre-computed
-and fed alongside the data the algorithm needs to process. The pre-computation also allows experimenting with parameters
-during this process.
+To avoid unnecessary recomputations for this analysis phase, the companion statistics needed by the
+model are pre-computed and fed alongside the data the algorithm needs to process. The
+pre-computation also allows experimenting with parameters during this process.
+
+## 2021, October Update #1
+
+### Regime Change Detection
+
+While implementing the streaming-like pipeline, some declarations must be made. In 2017, the FLUSS
+(Fast Low-cost Unipotent Semantic Segmentation) and the FLOSS (Fast Low-cost Online Semantic
+Segmentation) algorithms were introduced by Gharghabi *et al.* @gharghabi2017. In 2018, the same
+group published their findings using multi-dimensional time series @gharghabi2018 using the same
+algorithms.
+
+Claims about the algorithm:
+
+-   **Domain Agnosticism:** the algorithm makes no assumptions about the data as opposed to most
+    available algorithms to date.
+-   **Streaming:** the algorithm can provide real-time information.
+-   **Real-World Data Suitability:** the objective is not to *explain* all the data. Therefore,
+    areas marked as "don't know" areas are acceptable.
+-   **FLOSS is not:** a change point detection algorithm @aminikhanghahi2016. The interest here is
+    changes in the shapes of a sequence of measurements.
+
+Briefly describing the regime detection algorithm, which can be explored in the original paper
+@gharghabi2018, it is based on the assumption that between two regimes, the most similar shape (its
+nearest neighbor) is located on "the same side". This information is obtained from the Matrix
+Profile computation. More precisely, using only the Profile Index.
+
+Before talking about the Matrix Profile computation, some findings deserve to be mentioned:
+
+In the original paper, in chapter 3.5, the authors of FLOSS wisely introduce the **temporal
+constraint**. Nevertheless, some details are not mentioned. 1) As this algorithm only needs the
+Profile Index, should we use the already computed Indexes or recompute the Matrix Profile using this
+constraint (i.e., the constraint is on the Profile Index or in the FLOSS algorithm?). That is not an
+issue about the algorithm but a choice we need to be aware of beforehand. One option is to apply the
+constraint on the Profile Index, and we need to have this parameter set from the start. The second
+option is to have the FLOSS algorithm not accounting for the indexes beyond the constraint, keeping
+the original Profile Index. 2) The authors declare the correction curve typically used on FLUSS and
+FLOSS as "simply a uniform distribution", but this is not an accurate statement. Empirically, there
+is a helpful pattern to know about the distribution when using **temporal constraints** (at least
+from the start, in the Matrix Profile stage). At first glance, we see that the distribution
+resembles the skewed distribution used in FLOSS but is shorter, while the
+$constraint \ge MatrixProfileSize/2$. For lower constraints, the maximum value of this distribution
+is equal to $MatrixProfileSize/2$ between the indexes $constraint$ to the index
+$MatrixProfileSize - (constraint \times 0.9)$. This is shown in Fig. `r ref("fig:distributions")`.
+That is important because the output of the FLOSS algorithm should be normalized and constrained
+between 0 and 1, which allows us to compare different trials using different parameters in the
+process. Finally, the last datapoints are **not** irrelevant, opposed to what was stated by the
+authors, since an *Online* algorithm needs to return an answer as soon as the application domain
+requires. That is very much relevant to this work's field, as, for example, for asystole detection,
+we have a window of 4 seconds to fire the alarm. If the time constraint is 10 seconds, this would
+mean (by the original article) that the last 10 seconds of the incoming data would not be sufficient
+to detect the regime change.
+
+As for the first point mentioned above, it seems more appropriate to set the temporal constraint in
+the Matrix Profile algorithm, and indeed this is what the original paper did. That reduces the
+computation time of the online Matrix Profile, and any post-processing done afterward will inherit
+this constraint. The distribution for correcting the FLOSS algorithm is also simpler. On the other
+hand, it is possible to apply the time constraint in the FLOSS algorithm, leaving the online Matrix
+Profile in its original form. See Fig. `r ref("fig:floss_dist")`. The theoretical distribution
+changes significantly according to the constraint value. The upside of this approach, at least
+during the prospective phase, is to allow us to decide the time constraint value later in the
+pipeline, avoiding the recomputation of the Matrix Profile. The results on detecting regime changes
+are very similar to the first approach. See Fig. `r ref("fig:cac_regimes")`.
+
+Concerning the second point mentioned above, the solution for evaluating the effect of using time
+constraints in this work's setting was to generate the ideal distribution using the constrained
+parameters beforehand. That gives us enough data to evaluate a regime change accurately utilizing a
+minimum of $2 \times WindowSize$ datapoints. The best index is still to be determined, and current
+tests are using 3 seconds limit.
+
+```{r dist data, message=FALSE, warning=FALSE, cache=TRUE, include=FALSE}
+source(here("scripts", "compute_floss.R"))
+
+get_dist <- function(mp_const = 1250, floss_const = 0) {
+  set.seed(2021)
+  iac <- list()
+  pro_size <- 5000
+  mp_time_constraint <- mp_const
+  floss_time_constraint <- floss_const
+  for (i in 1:500) {
+    iac[[i]] <- get_asym(pro_size, mp_time_constraint, floss_time_constraint)
+  }
+
+  aic_avg <- rowMeans(as.data.frame(iac))
+
+  data.frame(index = 1:5000, counts = aic_avg)
+}
+
+data_5000 <- get_dist(5000)
+data_4250 <- get_dist(4250)
+data_2500 <- get_dist(2500)
+data_1250 <- get_dist(1250)
+
+floss_data_5000 <- get_dist(0, 5000)
+floss_data_4250 <- get_dist(0, 4250)
+floss_data_2500 <- get_dist(0, 2500)
+floss_data_1250 <- get_dist(0, 1250)
+```
+
+```{r distributions, echo=FALSE, fig.cap=paste("Figure", ref("fig:distributions"), " - 1D-IAC distributions for earlier temporal constraint (on Matrix Profile)"), message=FALSE, warning=FALSE}
+
+floss_dist <- ggplot(data_5000, aes(index, counts)) +
+  geom_line(size = 0.1) +
+  ggtitle("a) No constraint") +
+  theme_grey(base_size = 7)
+
+floss_4250 <- ggplot(data_4250, aes(index, counts)) +
+  geom_line(size = 0.1) +
+  ggtitle("b) Constraint of 4250") +
+  theme_grey(base_size = 7)
+
+floss_2500 <- ggplot(data_2500, aes(index, counts)) +
+  geom_line(size = 0.1) +
+  annotate("segment", y = 0, yend = max(data_2500$counts), x = 2500, xend = 2500, linetype = 2, size = 0.1) +
+  annotate("text", x = 2500 - 80, y = 40, label = "start", color = "black", size = 2, angle = 90, hjust = 0) +
+  annotate("segment", y = 0, yend = max(data_2500$counts), x = 5000 - 2500 * 0.9, xend = 5000 - 2500 * 0.9, linetype = 2, size = 0.1) +
+  annotate("text", x = 5000 - 2500 * 0.9 - 80, y = 40, label = "end", color = "black", size = 2, angle = 90, hjust = 0) +
+  ggtitle("c) Constraint of 2500") +
+  theme_grey(base_size = 7)
+
+floss_1250 <- ggplot(data_1250, aes(index, counts)) +
+  geom_line(size = 0.1) +
+  annotate("segment", y = 0, yend = max(data_1250$counts), x = 1250, xend = 1250, linetype = 2, size = 0.1) +
+  annotate("text", x = 1250 - 80, y = 40, label = "start", color = "black", size = 2, angle = 90, hjust = 0) +
+  annotate("segment", y = 0, yend = max(data_1250$counts), x = 5000 - 1250 * 0.9, xend = 5000 - 1250 * 0.9, linetype = 2, size = 0.1) +
+  annotate("text", x = 5000 - 1250 * 0.9 - 80, y = 40, label = "end", color = "black", size = 2, angle = 90, hjust = 0) +
+  ggtitle("d) Constraint of 1250") +
+  theme_grey(base_size = 7)
+
+gg <- gridExtra::grid.arrange(floss_dist, floss_4250, floss_2500, floss_1250,
+  nrow = 2, newpage = TRUE,
+  bottom = grid::textGrob(paste("The plot a) shows the distribution used for the arc count correction when there is no time constraint.", "\n", "b) Shows a constraint of 3/4 of the total. c) 1/2 of the total. d) 1/4 of the total; here we see clearly the flat line.", "\n", "The dashed line marks the start and the end of the uniform zone."), just = "center", gp = grid::gpar(fontsize = 7))
+)
+```
+
+```{r floss_dist, echo=FALSE, fig.cap=paste("Figure", ref("fig:floss_dist"), " - 1D-IAC distributions for later temporal constraint (on FLOSS)"), message=FALSE, warning=FALSE}
+
+floss_dist <- ggplot(floss_data_5000, aes(index, counts)) +
+  geom_line(size = 0.1) +
+  ggtitle("a) No constraint") +
+  theme_grey(base_size = 7)
+
+floss_4250 <- ggplot(floss_data_4250, aes(index, counts)) +
+  geom_line(size = 0.1) +
+  ggtitle("b) Constraint of 4250") +
+  theme_grey(base_size = 7)
+
+floss_2500 <- ggplot(floss_data_2500, aes(index, counts)) +
+  geom_line(size = 0.1) +
+  annotate("segment", y = 0, yend = max(data_2500$counts), x = 2500, xend = 2500, linetype = 3, size = 0.1) +
+  annotate("text", x = 2500 - 80, y = 40, label = "start", color = "black", size = 2, angle = 90, hjust = 0) +
+  annotate("segment", y = 0, yend = max(data_2500$counts), x = 5000 - 2500 * 0.9, xend = 5000 - 2500 * 0.9, linetype = 3, size = 0.1) +
+  annotate("text", x = 5000 - 2500 * 0.9 - 80, y = 40, label = "end", color = "black", size = 2, angle = 90, hjust = 0) +
+  ggtitle("c) Constraint of 2500") +
+  theme_grey(base_size = 7)
+
+floss_1250 <- ggplot(floss_data_1250, aes(index, counts)) +
+  geom_line(size = 0.1) +
+  annotate("segment", y = 0, yend = max(data_1250$counts), x = 1250, xend = 1250, linetype = 3, size = 0.1) +
+  annotate("text", x = 1250 - 80, y = 40, label = "start", color = "black", size = 2, angle = 90, hjust = 0) +
+  annotate("segment", y = 0, yend = max(data_1250$counts), x = 5000 - 1250 * 0.9, xend = 5000 - 1250 * 0.9, linetype = 3, size = 0.1) +
+  annotate("text", x = 5000 - 1250 * 0.9 - 80, y = 40, label = "end", color = "black", size = 2, angle = 90, hjust = 0) +
+  ggtitle("d) Constraint of 1250") +
+  theme_grey(base_size = 7)
+
+gg <- gridExtra::grid.arrange(floss_dist, floss_4250, floss_2500, floss_1250,
+  nrow = 2, newpage = TRUE,
+  bottom = grid::textGrob(paste("The plot a) shows the distribution used for the arc count correction when there is no time constraint.", "\n", "b) Shows a constraint of 3/4 of the total. c) 1/2 of the total. d) 1/4 of the total; here we see clearly the flat line.", "\n", "The dotted line marks the start and the end of the uniform zone if using the constraint in the Matrix Profile."), just = "center", gp = grid::gpar(fontsize = 7))
+)
+```
+
+```{r output_data, cache=TRUE, include=FALSE}
+output <- readRDS(here("output/work_output.rds"))
+mp_data <- output$mp_constraint[[1]]$II[[76]]
+mp_data <- tibble(time = seq_along(mp_data$cac), cac = mp_data$cac, iac = mp_data$iac, arcs = mp_data$arcs)
+floss_data <- output$floss_constraint[[1]]$II[[76]]
+floss_data <- tibble(time = seq_along(floss_data$cac), cac = floss_data$cac, iac = floss_data$iac, arcs = floss_data$arcs)
+# rm(output)
+```
+
+```{r constraints, echo=FALSE, fig.cap=paste("Figure", ref("fig:cac_regimes"), " - CAC and Regime detection using early and later IAC"), message=FALSE, warning=FALSE}
+
+landmark <- 5000 - 3 * 250
+mp_cac_landmark <- mp_data$cac[landmark]
+floss_cac_landmark <- floss_data$cac[landmark]
+
+mp_constraint <- ggplot(mp_data, aes(time, cac)) +
+  geom_line(size = 0.1) +
+  ylim(0, 1) +
+  ylab("CAC") +
+  xlab("") +
+  annotate("segment", y = 0, yend = 1, x = landmark, xend = landmark, linetype = 1, size = 0.1, color = "red") +
+  annotate("text", x = landmark, y = mp_cac_landmark, label = sprintf("%.2f", mp_cac_landmark), color = "red", size = 2, vjust = 0, hjust = -0.2) +
+  ggtitle("a) Constraint of 1250 on Matrix Profile") +
+  theme_grey(base_size = 7)
+
+floss_constraint <- ggplot(floss_data, aes(time, cac)) +
+  geom_line(size = 0.1) +
+  ylim(0, 1) +
+  ylab("") +
+  xlab("") +
+  annotate("segment", y = 0, yend = 1, x = landmark, xend = landmark, linetype = 1, size = 0.1, color = "red") +
+  annotate("text", x = landmark, y = floss_cac_landmark, label = sprintf("%.2f", floss_cac_landmark), color = "red", size = 2, vjust = 0, hjust = -0.2) +
+  ggtitle("b) Constraint of 1250 on FLOSS") +
+  theme_grey(base_size = 7)
+
+mp_arcs <- ggplot(mp_data, aes(time, arcs)) +
+  geom_line(size = 0.1) +
+  geom_line(aes(time, iac), size = 0.1, color = "red") +
+  ylab("Arcs and IAC") +
+  annotate("segment", y = 0, yend = 900, x = 1250, xend = 1250, linetype = 3, size = 0.1) +
+  annotate("segment", y = 0, yend = 900, x = 5000 - 1250 * 0.9, xend = 5000 - 1250 * 0.9, linetype = 3, size = 0.1) +
+  theme_grey(base_size = 7)
+
+floss_arcs <- ggplot(floss_data, aes(time, arcs)) +
+  geom_line(size = 0.1) +
+  geom_line(aes(time, iac), size = 0.1, color = "red") +
+  ylab("") +
+  annotate("segment", y = 0, yend = 800, x = 1250, xend = 1250, linetype = 3, size = 0.1) +
+  annotate("segment", y = 0, yend = 800, x = 5000 - 1250 * 0.9, xend = 5000 - 1250 * 0.9, linetype = 3, size = 0.1) +
+  theme_grey(base_size = 7)
 
 
+gg <- gridExtra::grid.arrange(mp_constraint, floss_constraint, mp_arcs, floss_arcs,
+  nrow = 2, newpage = TRUE,
+  bottom = grid::textGrob(paste(
+    "The plots on a) show above the Corrected Arc Count (CAC) and below the raw arc counts (black) and the ideal arc count (IAC) (red) using the temporal\n constraint earlier on the Matrix Profile.",
+    "The plots on b) show above the Corrected Arc Count (CAC) and below the raw arc counts (black) and\nthe ideal arc count (IAC) (red) using the temporal constraint later on the FLOSS algorithm.",
+    "The red vertical line marks the point\nwhere the current algorithm watches for regime changes."
+  ),
+  just = "center", gp = grid::gpar(fontsize = 7)
+  )
+)
+```
+
+### The Matrix Profile Algorithm
+
+Since the first Matrix Profile computation algorithm, the STAMP @yeh2016, several improvements on
+the algorithm were made [@zhu2016; @zhu2018]. Still, the ability to keep a growing Matrix Profile
+(i.e., *Online*) relies on the STAMP algorithm. If the problem allows collecting several data points
+(chunks), STOMP @zhu2016 can speed up the computation. Curiously, the main bottleneck of all these
+algorithms is the FFT (Fast Fourier Transform) algorithm that is the core of the MASS algorithm
+published by Mueen *et al.* @mueen2010 in 2010 and later in 2015, having its code released on
+Professor Mueen's webpage @mass2015. The FFT libraries available are highly optimized and CPU (or
+GPU) dependent what makes it at the same time fast but brittle and not suitable for MCU's
+(Microcontroller Unit), for example. More interestingly yet, is the fact that several published
+works using Matrix Profile, MPdist @gharghabi2018a, for instance, uses an unpublished algorithm
+called 'MPX' that computes the Matrix Profile using cross-correlation methods ending up faster and
+is easily portable.
+
+This work contributes to extending the MPX algorithm to allow the *Online* computation of the Matrix
+Profile. More precisely, we are interested in the Right Matrix Profile, whose updated indexes refer
+only to the last incoming datapoint, since we are looking for future changes in the regime, not
+looking backward. This one-directional algorithm is already described in the FLOSS paper
+@gharghabi2018.
+
+Another contribution of this work is an unexplored constraint that we could apply on building the
+Matrix Profile that we will call *Similarity Threshold* (ST). The original work outputs the
+similarity values in Euclidean Distance (ED) values, while MPX naturally outputs the values in
+Pearson's correlation (CC) coefficients. Both ED and CC are interchangeable using the equation
+$\eqref{edcc}$. However, we may argue that it is easier to compare values that do not depend on the
+$WindowSize$ during an exploratory phase. MPX happens to naturally return values in CC, saving a few
+more computation time.
+
+$$
+CC = 1 - \frac{ED}{(2 \times WindowSize)} \tag{1} \label{edcc}
+$$
+
+The ST is an interesting factor that we can use, especially when detecting pattern changes during
+time. The FLUSS/FLOSS algorithms rely on counting references between indexes in the time series. ST
+can help remove "noise" from these references since only similar patterns above a certain threshold
+are referenced, and changes have more impact on these counts. More information and visual content on
+ST will be provided later. The best ST threshold is still to be determined.
+
+### Further Steps
+
+-   Explanation on the evaluation method for regime change detection (as described in the FLOSS
+    paper @gharghabi2018 )
+-   Extraction of regime samples and classification of `TRUE` or `FALSE` for Asystole
+-   Cross-validation and evaluation of the algorithm
+-   Publish results
+
+### References

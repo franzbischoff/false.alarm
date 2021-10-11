@@ -2,8 +2,8 @@
 #' @export
 #' @rdname mp_algos
 
-mpx_stream_start <- function(data, window_size, exclusion_zone = 0.5, time_constraint = 0, progress = TRUE) {
-  result <- mpx_rcpp(data, window_size, exclusion_zone, time_constraint, 1.0, TRUE, FALSE, progress)
+mpx_stream_start <- function(data, window_size, exclusion_zone = 0.5, mp_time_constraint = 0, progress = TRUE) {
+  result <- mpx_rcpp(data, window_size, exclusion_zone, mp_time_constraint, 1.0, TRUE, FALSE, progress)
   # result$matrix_profile <- NULL
   # result$left_matrix_profile <- NULL
   # result$profile_index <- NULL
@@ -25,8 +25,8 @@ mpx_stream_start <- function(data, window_size, exclusion_zone = 0.5, time_const
 #' @rdname mp_algos
 
 
-mpx_stream_right <- function(new_data, start_obj, history = 0, time_constraint = 0, progress = TRUE) {
-  mpxi_rcpp(new_data, start_obj, history, time_constraint, progress)
+mpx_stream_right <- function(new_data, start_obj, history = 0, mp_time_constraint = 0, progress = TRUE) {
+  mpxi_rcpp(new_data, start_obj, history, mp_time_constraint, progress)
 }
 
 #' @param batch_size size of the new data
@@ -37,8 +37,8 @@ mpx_stream_right <- function(new_data, start_obj, history = 0, time_constraint =
 #' @export
 #' @rdname mp_algos
 
-mpx_stream_s_right <- function(data, batch_size, start_obj, stats, history = 0, time_constraint = 0, progress = TRUE, threshold = -1.0) {
-  mpxis_rcpp(data, batch_size, start_obj, stats, history, time_constraint, progress, threshold)
+mpx_stream_s_right <- function(data, batch_size, start_obj, stats, history = 0, mp_time_constraint = 0, progress = TRUE, threshold = -1.0) {
+  mpxis_rcpp(data, batch_size, start_obj, stats, history, mp_time_constraint, progress, threshold)
 }
 
 

@@ -32,3 +32,4 @@ output:
     number_sections: false
     theme: lumen
     highlight: textmate
+    css: style.css

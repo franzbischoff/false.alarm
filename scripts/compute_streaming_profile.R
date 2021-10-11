@@ -5,7 +5,7 @@ compute_streaming_profile <- function(ecg_data, params) {
 
   initial_mp <- mpx_stream_start(
     data = ecg_data[initial_data_vector], window_size = params$window_size,
-    exclusion_zone = params$ez, time_constraint = params$time_constraint, progress = params$progress
+    exclusion_zone = params$ez, mp_time_constraint = params$mp_time_constraint, progress = params$progress
   )
 
   "!DEBUG Data Size `length(ecg_data)`."
@@ -25,7 +25,7 @@ compute_streaming_profile <- function(ecg_data, params) {
 
   for (n in new_data_list) {
     "!!DEBUG Split `min(n)` to `max(n)`. History `params$history`, batch size `params$batch`"
-    initial_mp <- mpx_stream_right(ecg_data[n], initial_mp, params$history, params$time_constraint, params$progress)
+    initial_mp <- mpx_stream_right(ecg_data[n], initial_mp, params$history, params$mp_time_constraint, params$progress)
     profiles[[i]] <- initial_mp
     i <- i + 1
   }

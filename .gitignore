@@ -103,6 +103,6 @@ analysis/*_cache
 analysis/site_libs
 output/*.svg
 protocol/**/*.pdf
-docs/**/*.svg
+# docs/**/*.svg
 protocol/**/*.svg
 mpxtest.RData

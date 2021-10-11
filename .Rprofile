@@ -104,6 +104,15 @@ if (Sys.getenv("CI") == "") { # not CI
         cat("bye bye...\n") # print this so we see if any non-interactive session is lost here
       }
     }
+  } else { # is RSTUDIO
+    suppressMessages(
+      suppressWarnings({
+        require("here", quietly = TRUE)
+        require("workflowr", quietly = TRUE)
+        require("targets", quietly = TRUE)
+        require("tarchetypes", quietly = TRUE)
+      })
+    )
   }
 } else { # is CI
   suppressMessages(

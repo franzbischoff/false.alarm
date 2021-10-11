@@ -50,7 +50,7 @@
             },
             {
               "regexp": "(.*)",
-              "message": 1,
+              "message": 1
             }
           ]
         },
@@ -65,7 +65,7 @@
             },
             {
               "regexp": "(.*)",
-              "message": 1,
+              "message": 1
             }
           ]
         }
@@ -80,7 +80,7 @@
       },
       "args": [
         "-e",
-        "if(Sys.time() - ifelse(file.exists(r'(${fileDirname}/${fileBasenameNoExtension}.pdf)'), file.mtime(r'(${fileDirname}/${fileBasenameNoExtension}.pdf)'), Sys.time() - 510) > 500) {rmarkdown::render(r'(${file})', encoding = 'UTF-8')}",
+        "if(Sys.time() - ifelse(file.exists(r'(${fileDirname}/${fileBasenameNoExtension}.pdf)'), file.mtime(r'(${fileDirname}/${fileBasenameNoExtension}.pdf)'), Sys.time() - 510) > 500) {rmarkdown::render(r'(${file})', encoding = 'UTF-8')}"
       ],
       "options": {
         "cwd": "${fileDirname}"
@@ -93,7 +93,7 @@
         "reveal": "silent"
       },
       "runOptions": {
-        "instanceLimit": 1,
+        "instanceLimit": 1
       },
       "problemMatcher": []
     },
@@ -106,7 +106,7 @@
       },
       "args": [
         "-e",
-        "styler:::style_dir(filetype = c('R', 'Rmd'), recursive = TRUE, exclude_files = 'R/RcppExports.R', exclude_dirs = c('dev', 'renv', '.history'))"
+        "styler:::style_dir(filetype = c('R', 'Rmd'), recursive = TRUE, exclude_files = 'R/RcppExports.R', exclude_dirs = c('docs', 'dev', 'renv', '.history'))"
       ],
       "options": {
         "cwd": "${workspaceFolder}"

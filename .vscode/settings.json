@@ -255,5 +255,7 @@
   },
   "autoOpenPreviewPanel.languages": "markdown,md",
   "autoOpenPreviewPanel.openPreviewToSide": true,
-  "markdown.extension.preview.autoShowPreviewToSide": true
+  "markdown.extension.preview.autoShowPreviewToSide": true,
+  "r.session.levelOfObjectDetail": "Detailed",
+  "r.rmarkdown.knit.focusOutputChannel": false
 }

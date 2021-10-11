@@ -1,5 +1,6 @@
 render_floss_video <- function(video_file = here::here("dev", "floss_default.mp4"), ecg_data,
-                               arc_counts, title = "Online Semantic Segmentation", framerate = 25, filter_w_size = 0, tail_clip = 0, temp_dir = "tmp", subset = FALSE, sample = FALSE) {
+                               arc_counts, title = "Online Semantic Segmentation", framerate = 25,
+                               filter_w_size = 0, tail_clip = 0, temp_dir = "tmp", subset = FALSE, sample = FALSE) {
   done <- FALSE
   checkmate::qassert(video_file, "S")
   checkmate::qassert(ecg_data, "N+")
@@ -28,8 +29,9 @@ render_floss_video <- function(video_file = here::here("dev", "floss_default.mp4
 
   window_size <- params$window_size
   data_constraint <- params$history
-  time_constraint <- params$time_constraint
-  landmark <- data_constraint - params$floss_landmark
+  mp_time_constraint <- params$mp_time_constraint ##
+  floss_time_constraint <- params$floss_time_constraint
+  landmark <- data_constraint - params$regime_landmark
   batch_size <- arc_counts[[2]]$offset - arc_counts[[1]]$offset
 
   abs_event_line <- last_ten_secs
@@ -79,7 +81,8 @@ render_floss_video <- function(video_file = here::here("dev", "floss_default.mp4
     data_idxs_subset <- seq.int((arc_counts[[d]]$offset - abs_subset_start) - data_constraint + 1, (arc_counts[[d]]$offset - abs_subset_start))
 
     aa <- plot_ecg_streaming(ecg_data[data_idxs_subset], data_constraint, window_size,
-      time_constraint = time_constraint,
+      mp_time_constraint = mp_time_constraint,
+      floss_time_constraint = floss_time_constraint,
       offset = arc_counts[[d]]$offset,
       trigger_abs_idx = arc_counts[[d]]$trigger$trigger_abs_idx,
       ylim = c(data_min, data_max),
@@ -88,13 +91,13 @@ render_floss_video <- function(video_file = here::here("dev", "floss_default.mp4
 
     # cac_min_idx <- which.min(arc_counts[[d]]$cac[seq.int(kumarovski_idx, cac_size)]) + kumarovski_idx - 1
 
-    bb <- plot_cac_streaming(arc_counts[[d]]$cac, data_constraint, window_size, time_constraint,
+    bb <- plot_cac_streaming(arc_counts[[d]]$cac, data_constraint, window_size, mp_time_constraint, floss_time_constraint,
       arc_counts[[d]]$offset,
       tail_clip = tail_clip, batch_size = batch_size, rate = rate, curr_cac_min
     )
     curr_cac_min <- bb$curr_cac_min
 
-    cc <- plot_raw_arcs(arc_counts[[d]]$arcs, arc_counts[[d]]$iac, data_constraint, time_constraint,
+    cc <- plot_raw_arcs(arc_counts[[d]]$arcs, arc_counts[[d]]$iac, data_constraint, mp_time_constraint, floss_time_constraint,
       arc_counts[[d]]$offset, batch_size,
       rate = rate
     )
@@ -153,7 +156,7 @@ render_floss_video <- function(video_file = here::here("dev", "floss_default.mp4
   message("Done.")
 }
 
-plot_ecg_streaming <- function(ecg_data, data_constraint, window_size, time_constraint,
+plot_ecg_streaming <- function(ecg_data, data_constraint, window_size, mp_time_constraint, floss_time_constraint,
                                offset = 0, trigger_abs_idx = 0, ylim = c(min(ecg_data), max(ecg_data)),
                                batch_size = 100, rate = 250, abs_event_line = 290 * rate) {
   data_idxs <- seq.int(1, data_constraint)
@@ -184,8 +187,8 @@ plot_ecg_streaming <- function(ecg_data, data_constraint, window_size, time_cons
       ggplot2::annotate("text", x = curr_event_line - 40, y = ylim[1] + (y_amp * 0.2), label = "Event limit", color = "blue", size = 1, angle = 90)
   }
 
-  if (time_constraint > 0) {
-    curr_ts_constr <- (data_constraint - time_constraint)
+  if (mp_time_constraint > 0) {
+    curr_ts_constr <- (data_constraint - mp_time_constraint)
     aa <- aa + ggplot2::annotate("segment", y = ylim[1], yend = ylim[2], x = curr_ts_constr, xend = curr_ts_constr, color = "red", size = 0.1) +
       ggplot2::annotate("text", x = curr_ts_constr - 40, y = ylim[1] + (y_amp * 0.4), label = "Time constraint", color = "red", size = 1.5, angle = 90)
   }
@@ -203,7 +206,7 @@ plot_ecg_streaming <- function(ecg_data, data_constraint, window_size, time_cons
   return(aa)
 }
 
-plot_cac_streaming <- function(arcs, data_constraint, window_size, time_constraint, offset,
+plot_cac_streaming <- function(arcs, data_constraint, window_size, mp_time_constraint, floss_time_constraint, offset,
                                tail_clip = 0, batch_size = 100, rate = 250, curr_cac_min = NULL) {
   cac_size <- length(arcs)
   cac_idxs <- seq.int(1, cac_size)
@@ -216,8 +219,8 @@ plot_cac_streaming <- function(arcs, data_constraint, window_size, time_constrai
   mid_idx <- data_constraint / 2
   # kumarovski_idx <- round(cac_size * 0.6311142)
 
-  if (time_constraint > 0) {
-    cac_left_idx <- (data_constraint - time_constraint)
+  if (mp_time_constraint > 0) {
+    cac_left_idx <- (data_constraint - mp_time_constraint)
   } else {
     cac_left_idx <- mid_idx
   }
@@ -265,10 +268,16 @@ plot_cac_streaming <- function(arcs, data_constraint, window_size, time_constrai
   return(bb)
 }
 
-plot_raw_arcs <- function(arcs, iac, data_constraint, time_constraint, offset,
+plot_raw_arcs <- function(arcs, iac, data_constraint, mp_time_constraint, floss_time_constraint, offset,
                           batch_size = 100, rate = 250) {
   cac_size <- length(arcs)
   cac_idxs <- seq.int(1, cac_size)
+  ymax <- data_constraint * 0.6
+  if (mp_time_constraint > 0) {
+    ymax <- mp_time_constraint * 0.6
+  } else if (floss_time_constraint > 0) {
+    ymax <- max(arcs)
+  }
 
   cc <- ggplot2::ggplot(data.frame(x = cac_idxs, y = arcs, z = iac), ggplot2::aes(x, y)) +
     ggplot2::geom_line(size = 0.1) +
@@ -279,7 +288,7 @@ plot_raw_arcs <- function(arcs, iac, data_constraint, time_constraint, offset,
       axis.text.x = ggplot2::element_text(hjust = 0.5, size = 4)
     ) +
     ggplot2::xlim(0, (data_constraint + batch_size)) +
-    ggplot2::ylim(0, ifelse(time_constraint > 0, time_constraint * 0.6, data_constraint * 0.6)) +
+    ggplot2::ylim(0, ymax) +
     ggplot2::ggtitle("FLOSS - ARCS") +
     ggplot2::ylab("cac/similarity") +
     ggplot2::xlab(sprintf("time %4.1fs", offset / rate))

@@ -42,17 +42,31 @@ mpx(
   progress = TRUE
 )
 
-mpx_stream_start(data, window_size, exclusion_zone = 0.5, progress = TRUE)
+mpx_stream_start(
+  data,
+  window_size,
+  exclusion_zone = 0.5,
+  mp_time_constraint = 0,
+  progress = TRUE
+)
 
-mpx_stream_right(new_data, start_obj, constraint = 0, progress = TRUE)
+mpx_stream_right(
+  new_data,
+  start_obj,
+  history = 0,
+  mp_time_constraint = 0,
+  progress = TRUE
+)
 
 mpx_stream_s_right(
   data,
   batch_size,
   start_obj,
   stats,
-  constraint = 0,
-  progress = TRUE
+  history = 0,
+  mp_time_constraint = 0,
+  progress = TRUE,
+  threshold = -1
 )
 }
 \arguments{
@@ -86,7 +100,7 @@ This parameter is ignored when using multithread or AB-join.}
 
 \item{start_obj}{obj from another run}
 
-\item{constraint}{an \code{int}. Max distance where to look for the best match in matrix profile.
+\item{history}{an \code{int}. Max distance where to look for the best match in matrix profile.
 (default is NULL).}
 
 \item{batch_size}{size of the new data}
@@ -144,7 +158,7 @@ on Ogita's work for better precision computing mean and standard deviation (part
 }
 }
 \section{This document}{
-Last updated on 2021-08-11 using R version 4.1.0.
+Last updated on 2021-10-03 using R version 4.1.1.
 }
 
 \examples{

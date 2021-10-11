@@ -22,7 +22,7 @@ using namespace RcppParallel;
 
 // [[Rcpp::export]]
 List mpxis_rcpp(NumericVector data_ref, uint64_t batch_size, List object, List stats, uint64_t history,
-                uint64_t time_constraint, bool progress, float threshold) {
+                uint64_t mp_time_constraint, bool progress, float threshold) {
 
   try {
     double c, c_cmp, ez;
@@ -59,8 +59,8 @@ List mpxis_rcpp(NumericVector data_ref, uint64_t batch_size, List object, List s
     uint32_t diag_start = 0;
     uint32_t diag_end = n - window_size - exclusion_zone;
 
-    if (time_constraint > 0) {
-      diag_start = n - time_constraint - window_size;
+    if (mp_time_constraint > 0) {
+      diag_start = n - mp_time_constraint - window_size;
     }
 
     IntegerVector compute_order = Range(diag_start, diag_end);
@@ -186,7 +186,7 @@ List mpxis_rcpp(NumericVector data_ref, uint64_t batch_size, List object, List s
 
     return (List::create(Rcpp::Named("right_matrix_profile") = rmmp, Rcpp::Named("right_profile_index") = rmmpi,
                          Rcpp::Named("w") = window_size, Rcpp::Named("ez") = ez,
-                         Rcpp::Named("time_constraint") = time_constraint, Rcpp::Named("offset") = mp_offset,
+                         Rcpp::Named("mp_time_constraint") = mp_time_constraint, Rcpp::Named("offset") = mp_offset,
                          //  Rcpp::Named("ddf") = ddf, Rcpp::Named("ddg") = ddg, Rcpp::Named("avg") = mmu,
                          //  Rcpp::Named("sig") = ssig,
                          //  Rcpp::Named("data") = data_ref,
@@ -200,7 +200,7 @@ List mpxis_rcpp(NumericVector data_ref, uint64_t batch_size, List object, List s
 // MPX stream version for the right side, aiming to compute only the necessary. MP is in pearson values
 
 // [[Rcpp::export]]
-List mpxi_rcpp(NumericVector new_data, List object, uint64_t history, uint64_t time_constraint, bool progress) {
+List mpxi_rcpp(NumericVector new_data, List object, uint64_t history, uint64_t mp_time_constraint, bool progress) {
 
   try {
     double c, c_cmp, ez;
@@ -256,8 +256,8 @@ List mpxi_rcpp(NumericVector new_data, List object, uint64_t history, uint64_t t
     uint32_t diag_start = 0;
     uint32_t diag_end = n - window_size - exclusion_zone;
 
-    if (time_constraint > 0) {
-      diag_start = n - time_constraint - window_size;
+    if (mp_time_constraint > 0) {
+      diag_start = n - mp_time_constraint - window_size;
     }
 
     IntegerVector compute_order = Range(diag_start, diag_end);
@@ -373,7 +373,7 @@ List mpxi_rcpp(NumericVector new_data, List object, uint64_t history, uint64_t t
 
     return (List::create(Rcpp::Named("right_matrix_profile") = rmmp, Rcpp::Named("right_profile_index") = rmmpi,
                          Rcpp::Named("data") = data_ref, Rcpp::Named("w") = window_size, Rcpp::Named("ez") = ez,
-                         Rcpp::Named("time_constraint") = time_constraint, Rcpp::Named("ddf") = ddf,
+                         Rcpp::Named("mp_time_constraint") = mp_time_constraint, Rcpp::Named("ddf") = ddf,
                          Rcpp::Named("ddg") = ddg, Rcpp::Named("avg") = mmu, Rcpp::Named("offset") = mp_offset,
                          Rcpp::Named("sig") = ssig, Rcpp::Named("partial") = partial));
 
@@ -385,7 +385,7 @@ List mpxi_rcpp(NumericVector new_data, List object, uint64_t history, uint64_t t
 // MPX stream version for the right side, but recomputes all again
 
 // [[Rcpp::export]]
-List mpxiright_rcpp(NumericVector data_ref, uint64_t window_size, double ez, uint64_t time_constraint, double s_size,
+List mpxiright_rcpp(NumericVector data_ref, uint64_t window_size, double ez, uint64_t mp_time_constraint, double s_size,
                     bool idxs, bool euclidean, bool progress, uint64_t start, List old) {
 
   uint64_t exclusion_zone = round(window_size * ez + DBL_EPSILON) + 1;
@@ -408,8 +408,8 @@ List mpxiright_rcpp(NumericVector data_ref, uint64_t window_size, double ez, uin
     uint32_t diag_start = 0;
     uint32_t diag_end = n - window_size - exclusion_zone;
 
-    if (time_constraint > 0) {
-      diag_start = n - time_constraint - window_size;
+    if (mp_time_constraint > 0) {
+      diag_start = n - mp_time_constraint - window_size;
     }
 
     IntegerVector compute_order = Range(diag_start, diag_end);
@@ -516,7 +516,7 @@ List mpxiright_rcpp(NumericVector data_ref, uint64_t window_size, double ez, uin
       return (List::create(Rcpp::Named("right_matrix_profile") = rmmp, Rcpp::Named("right_profile_index") = rmmpi,
                            //  Rcpp::Named("data") = data_ref,
                            Rcpp::Named("w") = window_size, Rcpp::Named("ez") = ez,
-                           Rcpp::Named("time_constraint") = time_constraint,
+                           Rcpp::Named("mp_time_constraint") = mp_time_constraint,
                            //  Rcpp::Named("ddf") = ddf,
                            //  Rcpp::Named("ddg") = ddg, Rcpp::Named("avg") = mmu, Rcpp::Named("sig") = ssig,
                            Rcpp::Named("partial") = partial));
@@ -673,7 +673,7 @@ List mpxileft_rcpp(NumericVector data_ref, uint64_t window_size, double ez, doub
 // MPX classic version
 
 // [[Rcpp::export]]
-List mpx_rcpp(NumericVector data_ref, uint64_t window_size, double ez, uint64_t time_constraint, double s_size,
+List mpx_rcpp(NumericVector data_ref, uint64_t window_size, double ez, uint64_t mp_time_constraint, double s_size,
               bool idxs, bool euclidean, bool progress) {
 
   uint64_t exclusion_zone = round(window_size * ez + DBL_EPSILON) + 1;
@@ -696,8 +696,8 @@ List mpx_rcpp(NumericVector data_ref, uint64_t window_size, double ez, uint64_t 
     uint32_t diag_start = exclusion_zone;
     uint32_t diag_end = profile_len - 1;
 
-    if (time_constraint > 0) {
-      diag_end = time_constraint;
+    if (mp_time_constraint > 0) {
+      diag_end = mp_time_constraint;
     }
 
     IntegerVector compute_order = Range(diag_start, diag_end);
@@ -824,7 +824,7 @@ List mpx_rcpp(NumericVector data_ref, uint64_t window_size, double ez, uint64_t 
                            Rcpp::Named("right_matrix_profile") = rmmp, Rcpp::Named("right_profile_index") = rmmpi,
                            Rcpp::Named("left_matrix_profile") = lmmp, Rcpp::Named("left_profile_index") = lmmpi,
                            Rcpp::Named("data") = data_ref, Rcpp::Named("w") = window_size, Rcpp::Named("ez") = ez,
-                           Rcpp::Named("time_constraint") = time_constraint, Rcpp::Named("ddf") = ddf,
+                           Rcpp::Named("mp_time_constraint") = mp_time_constraint, Rcpp::Named("ddf") = ddf,
                            Rcpp::Named("ddg") = ddg, Rcpp::Named("avg") = mmu, Rcpp::Named("sig") = ssig,
                            Rcpp::Named("partial") = partial));
     } else {

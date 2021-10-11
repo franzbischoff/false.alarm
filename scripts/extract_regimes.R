@@ -9,18 +9,18 @@ extract_regimes <- function(floss_list, params, infos) {
   checkmate::assert_true(
     all(
       pars$window_size == params$window_size,
-      pars$time_constraint == params$time_constraint,
+      pars$mp_time_constraint == params$mp_time_constraint,
       pars$history == params$history
     )
   )
 
-  floss_threshold <- params$floss_threshold
+  regime_threshold <- params$regime_threshold
   window_size <- params$window_size
   history <- params$history
-  landmark <- history - params$floss_landmark # here is where we look for the minimum value
+  landmark <- history - params$regime_landmark # here is where we look for the minimum value
 
-  if (params$time_constraint > 0) {
-    floss_constraint <- params$time_constraint
+  if (params$mp_time_constraint > 0) {
+    floss_constraint <- params$mp_time_constraint
   } else {
     floss_constraint <- floor(history / 2)
   }
@@ -35,15 +35,15 @@ extract_regimes <- function(floss_list, params, infos) {
   # iterates over all cacs of this time series
   purrr::map(floss_list, function(x) {
     cac <- x$cac
-    # cac[cac > floss_threshold] <- 1
+    # cac[cac > regime_threshold] <- 1
     # cac[seq.int(1, history - (4 * 250))] <- 1
     cac[seq.int(1, history - floss_constraint)] <- 1
     min_trigger_idx <- which.min(cac)
-    if (min_trigger_idx > landmark) {
-      message("min_trigger at ", min_trigger_idx, " for landmark ", landmark, ".")
-    }
+    # if (min_trigger_idx > landmark) {
+    #   message("min_trigger at ", min_trigger_idx, " for landmark ", landmark, ".")
+    # }
 
-    if (cac[landmark] < floss_threshold) {
+    if (cac[landmark] < regime_threshold) {
       abs_min_idx <- x$offset - history + landmark + 1
       if ((abs_min_idx - current_abs_min_idx) > floss_constraint) {
         message("abs_min_idx at ", abs_min_idx, " value ", cac[landmark], ".")

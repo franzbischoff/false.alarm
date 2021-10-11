@@ -17,28 +17,35 @@ plot_regimes <- function(data_with_regimes, params, infos, save = FALSE) {
   checkmate::assert_true(
     all(
       pars$window_size == params$window_size,
-      pars$time_constraint == params$time_constraint,
+      pars$mp_time_constraint == params$mp_time_constraint,
       pars$history == params$history
     )
   )
 
   filename <- infos$filename
   threshold <- params$threshold
-  floss_threshold <- params$floss_threshold
+  regime_threshold <- params$regime_threshold
   window_size <- params$window_size
   history <- params$history
-  time_constraint <- ifelse(params$time_constraint == 0, history, params$time_constraint)
+  mp_time_constraint <- ifelse(params$mp_time_constraint == 0, history, params$mp_time_constraint)
+  floss_time_constraint <- ifelse(params$floss_time_constraint == 0, history, params$floss_time_constraint)
   track <- data_info$label
   alarm <- infos$alarm
   alarm_true <- infos$true
   filter_size <- "raw" # TODO
 
-  file <- sprintf("%s_%s_%d_%.1f_%d_%.1f_%s.png", filename, track, window_size, threshold, time_constraint, floss_threshold, filter_size)
-  title <- sprintf("FLOSS-Regimes - %s-%s, w: %d, t: %.1f, ct: %.1f, c: %d, %s-%s", filename, track, window_size, threshold, floss_threshold, time_constraint, alarm, alarm_true)
+  file <- sprintf(
+    "%s_%s_%d_%.1f_%d_%d_%.1f_%s.png", filename, track, window_size,
+    threshold, floss_time_constraint, mp_time_constraint, regime_threshold, filter_size
+  )
+  title <- sprintf(
+    "FLOSS-Regimes - %s-%s, w: %d, t: %.1f, ct: %.1f, c: %d, fc: %d, %s-%s", filename, track, window_size, threshold,
+    regime_threshold, mp_time_constraint, floss_time_constraint, alarm, alarm_true
+  )
 
   a <- plot_ecg_with_regimes(data, regimes, title, params, subset_start, ylim = c(min(data), max(data)))
 
-  if (save) {
+  if (save || params$save_png) {
     ggplot2::ggsave(
       plot = a, filename = here::here("tmp", file),
       device = "png", width = 5, height = 2, scale = 0.8
@@ -50,7 +57,7 @@ plot_regimes <- function(data_with_regimes, params, infos, save = FALSE) {
 
 plot_ecg_with_regimes <- function(ecg_data, regimes, title, params, subset_start, ylim) {
   window_size <- params$window_size
-  time_constraint <- params$time_constraint
+  mp_time_constraint <- params$mp_time_constraint
   data_length <- length(ecg_data)
   subset_end <- data_length + subset_start
 
@@ -82,11 +89,11 @@ plot_ecg_with_regimes <- function(ecg_data, regimes, title, params, subset_start
   aa <- aa + ggplot2::annotate("segment", y = ylim[1], yend = ylim[2], x = last_3_secs, xend = last_3_secs, color = "firebrick", size = 0.1) +
     ggplot2::annotate("text", x = last_3_secs - 30, y = ylim[1], label = "Detection limit", color = "firebrick", size = 1, angle = 90, vjust = 0, hjust = 0)
 
-  aa <- aa + ggplot2::annotate("segment", y = ylim[1], yend = ylim[2], x = last_10_secs, xend = last_10_secs, color = "blue", size = 0.1) +
-    ggplot2::annotate("text", x = last_10_secs - 30, y = ylim[1], label = "Event limit", color = "blue", size = 1, angle = 90, vjust = 0, hjust = 0)
+  aa <- aa + ggplot2::annotate("segment", y = ylim[1], yend = ylim[2], x = last_10_secs, xend = last_10_secs, color = "blue", size = 0.3) +
+    ggplot2::annotate("text", x = last_10_secs - 30, y = ylim[2], label = "Event limit", color = "blue", size = 1, angle = 90, vjust = 0, hjust = 1)
 
-  if (time_constraint > 0) {
-    curr_ts_constr <- (subset_end - time_constraint)
+  if (mp_time_constraint > 0) {
+    curr_ts_constr <- (subset_end - mp_time_constraint)
     aa <- aa + ggplot2::annotate("segment", y = ylim[1], yend = ylim[2], x = curr_ts_constr, xend = curr_ts_constr, color = "red", size = 0.1) +
       ggplot2::annotate("text", x = curr_ts_constr - 30, y = ylim[1], label = "Time constraint", color = "red", size = 1, angle = 90, vjust = 0, hjust = 0)
   }

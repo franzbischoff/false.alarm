@@ -7,7 +7,7 @@ get_minimum_cacs <- function(training_set, params) {
       progress = params$progress,
       batch = params$batch,
       history = params$history,
-      time_constraint = params$time_constraint
+      mp_time_constraint = params$mp_time_constraint
     ))
   })
 
@@ -16,15 +16,15 @@ get_minimum_cacs <- function(training_set, params) {
     compute_floss(x, list(
       window_size = params$window_size,
       ez = params$ez * params$window_size,
-      time_constraint = params$time_constraint,
+      mp_time_constraint = params$mp_time_constraint,
       history = params$history,
       sample_freq = params$sample_freq
     ))
   })
 
   "!DEBUG Retrieving minimums."
-  if (params$time_constraint > 0) {
-    cac_left_idx <- (params$history - params$time_constraint)
+  if (params$mp_time_constraint > 0) {
+    cac_left_idx <- (params$history - params$mp_time_constraint)
   } else {
     cac_left_idx <- params$history / 2
   }

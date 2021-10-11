@@ -10,15 +10,19 @@ process_ts_in_file <- function(ecg_data, id, fun, params, exclude = "time") {
   paas <- attr(ecg_data[[1]], "params")
 
   "!!DEBUG assert paas: `paas$window_size`, params: `params$window_size`."
-  "!!DEBUG assert paas: `paas$time_constraint`, params: `params$time_constraint`."
+  "!!DEBUG assert paas: `paas$mp_time_constraint`, params: `params$mp_time_constraint`."
+  "!!DEBUG assert paas: `paas$floss_time_constraint`, params: `params$floss_time_constraint`."
   "!!DEBUG assert paas: `paas$history`, params: `params$history`."
 
   if (!is.null(paas$window_size)) {
     checkmate::assert_true(identical(paas$window_size, params$window_size))
   }
-  if (!is.null(paas$time_constraint)) {
-    checkmate::assert_true(identical(paas$time_constraint, params$time_constraint))
-  }
+  # if (!is.null(paas$mp_time_constraint)) {
+  #   checkmate::assert_true(identical(paas$mp_time_constraint, params$mp_time_constraint))
+  # }
+  # if (!is.null(paas$floss_time_constraint)) {
+  #   checkmate::assert_true(identical(paas$floss_time_constraint, params$floss_time_constraint))
+  # }
   if (!is.null(paas$history)) {
     checkmate::assert_true(identical(paas$history, params$history))
   }
@@ -32,14 +36,18 @@ process_ts_in_file <- function(ecg_data, id, fun, params, exclude = "time") {
     pars <- attr(ecg_data[[2]], "params")
 
     "!!DEBUG assert pars: `pars$window_size`, params: `params$window_size`."
-    "!!DEBUG assert pars: `pars$time_constraint`, params: `params$time_constraint`."
+    "!!DEBUG assert pars: `pars$mp_time_constraint`, params: `params$mp_time_constraint`."
+    "!!DEBUG assert pars: `pars$floss_time_constraint`, params: `params$floss_time_constraint`."
     "!!DEBUG assert pars: `pars$history`, params: `params$history`."
 
     if (!is.null(pars$window_size)) {
       checkmate::assert_true(identical(pars$window_size, params$window_size))
     }
-    if (!is.null(pars$time_constraint)) {
-      checkmate::assert_true(identical(pars$time_constraint, params$time_constraint))
+    if (!is.null(pars$mp_time_constraint)) {
+      checkmate::assert_true(identical(pars$mp_time_constraint, params$mp_time_constraint))
+    }
+    if (!is.null(pars$floss_time_constraint)) {
+      checkmate::assert_true(identical(pars$floss_time_constraint, params$floss_time_constraint))
     }
     if (!is.null(pars$history)) {
       checkmate::assert_true(identical(pars$history, params$history))

@@ -29,9 +29,9 @@ create_animation <- function(ds_objects_names, floss_objects_names, include = c(
     rm(e)
   }
 
-  # ds_objects_names <- tar_manifest(contains("dataset"), "name")$name
+  # ds_objects_names <- "dataset" # tar_manifest(contains("dataset"), "name")$name
   # floss_objects_names <- tar_manifest(contains("regimes"), "name")$name
-  # floss_objects_names <- tar_manifest(contains("mps_floss" & !contains("filtered"), "name")$name
+  # floss_objects_names <- c("ds_stats_mps_floss_0_1250_0_200_c2c15f65", "ds_stats_mps_floss2_1250_0_0_200_b56396ea")
   # ds_objects_names <- tar_manifest(contains("filtered") & !contains("stats"), "name")$name
   # floss_objects_names <- tar_manifest(contains("floss") & contains("filtered"), "name")$name
 
@@ -72,7 +72,9 @@ create_animation <- function(ds_objects_names, floss_objects_names, include = c(
         params <- attr(floss_data[[s]], "params")
         threshold <- params$threshold
         window_size <- params$window_size ##
-        time_constraint <- params$time_constraint ##
+        mp_time_constraint <- params$mp_time_constraint ##
+        floss_time_constraint <- params$floss_time_constraint
+        history <- params$history
         ds_info <- attr(dataset[[s]], "info")
         info <- attr(floss_data[[s]], "info")
 
@@ -97,8 +99,17 @@ create_animation <- function(ds_objects_names, floss_objects_names, include = c(
 
           temp_dir <- sprintf("tmp_%s_%s_%s", filename, track, filter_size)
 
-          file <- sprintf("%s_%s_%d_%.1f_%d_%s.mp4", filename, track, window_size, threshold, ifelse(time_constraint == 0, 5000, time_constraint), filter_size)
-          title <- sprintf("FLOSS - %s-%s, w: %d, t: %.1f, c: %d, %s-%s", filename, track, window_size, threshold, time_constraint, alarm, alarm_true)
+          file <- sprintf(
+            "%s_%s_%d_%.1f_%d_%d_%s.mp4", filename, track, window_size, threshold,
+            ifelse(mp_time_constraint == 0, history, mp_time_constraint), ifelse(floss_time_constraint == 0,
+              history, floss_time_constraint
+            ),
+            filter_size
+          )
+          title <- sprintf(
+            "FLOSS - %s-%s, w: %d, t: %.1f, c: %d, fc: %d, %s-%s", filename, track,
+            window_size, threshold, mp_time_constraint, floss_time_constraint, alarm, alarm_true
+          )
 
           message("Rendering file: ", file)
           message("With title: ", title)

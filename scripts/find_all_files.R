@@ -4,7 +4,7 @@
 #' the signal.
 #'
 
-find_all_files <- function(path = getOption("target_ds_path", default = "inst/extdata/physionet/"),
+find_all_files <- function(path = getOption("target_ds_path", default = "inst/extdata/physionet"),
                            types = c("all", "asystole", "bradycardia", "tachycardia", "vfib", "vtachy"),
                            limit_per_type = 1000,
                            long = FALSE) {
@@ -15,14 +15,14 @@ find_all_files <- function(path = getOption("target_ds_path", default = "inst/ex
 
   if (long) {
     files <- paste0(
-      path,
+      path, "/",
       list.files(here::here(path),
         pattern = "l\\.hea$"
       )
     )
   } else {
     files <- paste0(
-      path,
+      path, "/",
       list.files(here::here(path),
         pattern = "\\.hea$"
       )
