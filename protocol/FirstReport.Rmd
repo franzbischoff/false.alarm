@@ -151,7 +151,7 @@ only the actual data and the header files in order to be read by the pipeline an
 Zenodo [@bischoff2021] under the same license as Physionet.
 
 The dataset is composed of 750 patients with at least five minutes records. All signals have been
-resampled (using anti-alias filters) to 12 bit, 250 Hz and have had FIR bandpass (0.05 to 40Hz) and
+resampled (using anti-alias filters) to 12 bit, 250 Hz and have had FIR band-pass (0.05 to 40Hz) and
 mains notch filters applied to remove noise. Pacemaker and other artifacts still present on the ECG
 [@Clifford2015]. Furthermore, this dataset contains at least two ECG derivations and one or more
 variables like arterial blood pressure, photoplethysmograph readings, and respiration movements.

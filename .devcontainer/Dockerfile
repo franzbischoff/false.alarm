@@ -131,6 +131,9 @@ RUN install.r targets tarchetypes \
 
 # Install aditional tools
 RUN apt-fast update && apt-fast install -y --no-install-recommends \
+  libxml2-dev \
+  libfontconfig1-dev \
+  libmagick++-dev \
   cargo \
   libavfilter-dev \
   && rm -rf /var/lib/apt/lists/*

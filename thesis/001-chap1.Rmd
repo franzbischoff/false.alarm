@@ -120,7 +120,7 @@ life-threatening.
 Initially we will use the CinC/Physionet Challenge 2015 dataset that is publicly available on Physionet. This dataset is
 a good start for exploring the main goal of reduce false alarms. This dataset was manually selected for this challenge
 and the events were labeled by experts, so it is not RAW data. All signals have been resampled (using anti-alias
-filters) to 12 bit, 250 Hz and have had FIR bandpass \[0.05 to 40Hz\] and mains notch filters applied to remove noise.
+filters) to 12 bit, 250 Hz and have had FIR band-pass \[0.05 to 40Hz\] and mains notch filters applied to remove noise.
 Pacemaker and other artifacts may be present on the ECG[@Clifford2015]. Furthermore, this dataset contains at least two
 ECG derivations and one or more variables like arterial blood pressure, photoplethysmograph readings, and respiration
 movements.

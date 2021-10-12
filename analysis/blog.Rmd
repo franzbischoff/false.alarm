@@ -11,6 +11,7 @@ output:
 bibliography: ../papers/references.bib
 link-citations: true
 csl: ../thesis/csl/ama.csl
+css: style.css
 editor_options:
   chunk_output_type: inline
 ---
@@ -18,7 +19,9 @@ editor_options:
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(
   echo = FALSE, fig.align = "center", dev = "svg", autodep = TRUE,
-  fig.height = 5, fig.width = 10
+  fig.height = 5, fig.width = 10,
+  tidy = "styler",
+  tidy.opts = list(strict = TRUE)
 )
 library(here)
 library(ggplot2)

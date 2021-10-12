@@ -33,3 +33,14 @@ output:
     theme: lumen
     highlight: textmate
     css: style.css
+
+  # html_notebook:
+  #   toc: true
+  #   toc_float: true
+  #   number_sections: true
+  #   theme: lumen
+  #   highlight: tango
+
+#  paper spacelab lumen yeti
+
+# textmate tango pygments kate

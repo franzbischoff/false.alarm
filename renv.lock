@@ -185,9 +185,9 @@
       "RemoteUsername": "rstudio",
       "RemoteRepo": "bookdown",
       "RemoteRef": "main",
-      "RemoteSha": "84bde8e6a40cd151ec9ceca694180738afa61b93",
+      "RemoteSha": "017228e56246efb39c76d666259814ea33b3571c",
       "RemoteHost": "api.github.com",
-      "Hash": "6b66fffbd26ba8d13f21ff6379413c54"
+      "Hash": "4d05a5d1ae0b1de9309884824d9b147f"
     },
     "brew": {
       "Package": "brew",
