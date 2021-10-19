@@ -1,0 +1,48 @@
+.reveal section img {
+  border: 0;
+  box-shadow: 0 0 0 0;
+}
+
+.header {
+  margin: 10px auto 10px auto;
+  text-align: center;
+  font-family: 'Source Sans Pro';
+  font-weight: bold;
+  position: absolute;
+  width: 100%;
+}
+
+.reveal .slides {
+  text-align: inherit;
+}
+
+.reveal .slides #refs {
+  font-size: 0.7em;
+  margin-left: 20px;
+  text-align: left;
+  column-count: 2;
+  column-gap: 3em;
+}
+
+.csl-entry {
+  display: list-item;
+  break-inside: avoid-column;
+}
+
+.reveal h1, h2, h3 {
+  text-align: center;
+}
+
+.reveal .figure {
+  background-color: white;
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+  width: fit-content;
+  max-width: 80%;
+  margin: auto;
+}
+
+.reveal .figure .caption {
+  font-size: 80%;
+  padding: 0 10px 10px 10px;
+}
+

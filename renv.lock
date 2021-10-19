@@ -179,15 +179,15 @@
     },
     "bookdown": {
       "Package": "bookdown",
-      "Version": "0.24.1",
+      "Version": "0.24.2",
       "Source": "GitHub",
       "RemoteType": "github",
       "RemoteUsername": "rstudio",
       "RemoteRepo": "bookdown",
       "RemoteRef": "main",
-      "RemoteSha": "017228e56246efb39c76d666259814ea33b3571c",
+      "RemoteSha": "ba51c2603fad4774480cb3ae082d800a244bed5e",
       "RemoteHost": "api.github.com",
-      "Hash": "4d05a5d1ae0b1de9309884824d9b147f"
+      "Hash": "2eede0a6ac2dc4064bd627a7cf53bb02"
     },
     "brew": {
       "Package": "brew",
@@ -644,10 +644,10 @@
     },
     "igraph": {
       "Package": "igraph",
-      "Version": "1.2.6",
+      "Version": "1.2.7",
       "Source": "Repository",
       "Repository": "CRAN",
-      "Hash": "7b1f856410253d56ea67ad808f7cdff6"
+      "Hash": "f1e720796423d6c08bf430fc3be0bf10"
     },
     "ini": {
       "Package": "ini",
@@ -840,10 +840,10 @@
     },
     "pillar": {
       "Package": "pillar",
-      "Version": "1.6.3",
+      "Version": "1.6.4",
       "Source": "Repository",
       "Repository": "CRAN",
-      "Hash": "3323bc1a0988d63b5c65771ba0d3935d"
+      "Hash": "60200b6aa32314ac457d3efbb5ccbd98"
     },
     "pingr": {
       "Package": "pingr",
@@ -868,10 +868,10 @@
     },
     "pkgload": {
       "Package": "pkgload",
-      "Version": "1.2.2",
+      "Version": "1.2.3",
       "Source": "Repository",
       "Repository": "CRAN",
-      "Hash": "53139eedf68b98eecd5289664969c3f2"
+      "Hash": "302276471121c41f47380243b82d5882"
     },
     "plotly": {
       "Package": "plotly",
@@ -999,6 +999,13 @@
       "Repository": "CRAN",
       "Hash": "4e614ef02b992c8f429a359dae976f93"
     },
+    "revealjs": {
+      "Package": "revealjs",
+      "Version": "0.9",
+      "Source": "Repository",
+      "Repository": "CRAN",
+      "Hash": "08e30caa337e6d335d83df1a05d5b9f3"
+    },
     "rex": {
       "Package": "rex",
       "Version": "1.2.0",
@@ -1008,10 +1015,10 @@
     },
     "rlang": {
       "Package": "rlang",
-      "Version": "0.4.11",
+      "Version": "0.4.12",
       "Source": "Repository",
       "Repository": "CRAN",
-      "Hash": "515f341d3affe0de9e4a7f762efb0456"
+      "Hash": "0879f5388fe6e4d56d7ef0b7ccb031e5"
     },
     "rmarkdown": {
       "Package": "rmarkdown",
@@ -1050,10 +1057,10 @@
     },
     "rvest": {
       "Package": "rvest",
-      "Version": "1.0.1",
+      "Version": "1.0.2",
       "Source": "Repository",
       "Repository": "CRAN",
-      "Hash": "1db38d6f40e3e09527797ca4226a1b5b"
+      "Hash": "bb099886deffecd6f9b298b7d4492943"
     },
     "sass": {
       "Package": "sass",
@@ -1147,9 +1154,9 @@
       "RemoteUsername": "r-lib",
       "RemoteRepo": "styler",
       "RemoteRef": "master",
-      "RemoteSha": "2ab0e65620476996837c853445aed6ba949c2b16",
+      "RemoteSha": "7bd7af0709ab0db765f0743dc0e9619268b431db",
       "RemoteHost": "api.github.com",
-      "Hash": "3c18ba9a0a7419f48eab18f8b54fac3c"
+      "Hash": "3b646f32471b57f8ee3fecfddf9247b7"
     },
     "svglite": {
       "Package": "svglite",
@@ -1172,10 +1179,10 @@
     },
     "systemfonts": {
       "Package": "systemfonts",
-      "Version": "1.0.2",
+      "Version": "1.0.3",
       "Source": "Repository",
       "Repository": "CRAN",
-      "Hash": "f2e17ba09737e2e7e2ec40fc1f9b6e08"
+      "Hash": "5be9fcf8ef6763e8cb13ab009e273a1d"
     },
     "tarchetypes": {
       "Package": "tarchetypes",
@@ -1259,10 +1266,10 @@
     },
     "usethis": {
       "Package": "usethis",
-      "Version": "2.0.1",
+      "Version": "2.1.0",
       "Source": "Repository",
       "Repository": "CRAN",
-      "Hash": "360e904f9e623286e1a0c6ca0a98c5f6"
+      "Hash": "90e84e0a3cd3851442c9af04a74c2d5a"
     },
     "utf8": {
       "Package": "utf8",
@@ -1343,10 +1350,10 @@
     },
     "xfun": {
       "Package": "xfun",
-      "Version": "0.26",
+      "Version": "0.27",
       "Source": "Repository",
       "Repository": "CRAN",
-      "Hash": "a270216f7ffda25e53298293046d1d05"
+      "Hash": "12b69332f085d350fc1f2ea6cca58397"
     },
     "xml2": {
       "Package": "xml2",
