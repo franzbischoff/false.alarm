@@ -707,10 +707,10 @@
     },
     "languageserver": {
       "Package": "languageserver",
-      "Version": "0.3.11",
+      "Version": "0.3.12",
       "Source": "Repository",
       "Repository": "CRAN",
-      "Hash": "867f8fd66bbd57d52daf256c390b7471"
+      "Hash": "f62ed8b09fd56cd70291bd077bc52c4b"
     },
     "later": {
       "Package": "later",
@@ -992,13 +992,6 @@
       "Repository": "CRAN",
       "Hash": "30e5eba91b67f7f4d75d31de14bbfbdc"
     },
-    "repr": {
-      "Package": "repr",
-      "Version": "1.1.3",
-      "Source": "Repository",
-      "Repository": "CRAN",
-      "Hash": "4e614ef02b992c8f429a359dae976f93"
-    },
     "revealjs": {
       "Package": "revealjs",
       "Version": "0.9",
@@ -1154,9 +1147,9 @@
       "RemoteUsername": "r-lib",
       "RemoteRepo": "styler",
       "RemoteRef": "master",
-      "RemoteSha": "7bd7af0709ab0db765f0743dc0e9619268b431db",
+      "RemoteSha": "85ef89427b027e32a3d8fdd82ea04388643a5f5e",
       "RemoteHost": "api.github.com",
-      "Hash": "3b646f32471b57f8ee3fecfddf9247b7"
+      "Hash": "7414d43b2944464badff61639a9c4e22"
     },
     "svglite": {
       "Package": "svglite",
