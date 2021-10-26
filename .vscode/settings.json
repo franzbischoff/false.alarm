@@ -1,6 +1,12 @@
 {
-  "C_Cpp.default.browse.path": ["${workspaceRoot}/src"],
-  "C_Cpp.default.defines": ["RC_INVOKED"],
+  "autoOpenPreviewPanel.languages": "markdown,md",
+  "autoOpenPreviewPanel.openPreviewToSide": true,
+  "C_Cpp.default.browse.path": [
+    "${workspaceRoot}/src"
+  ],
+  "C_Cpp.default.defines": [
+    "RC_INVOKED"
+  ],
   "C_Cpp.intelliSenseEngineFallback": "Enabled",
   "cSpell.allowCompoundWords": true,
   "cSpell.diagnosticLevel": "Information",
@@ -142,6 +148,8 @@
     "**/renv/**": true,
     "**/tmp/**": true
   },
+  "git.enableCommitSigning": true,
+  "git.terminalAuthentication": false,
   "github-actions.workflows.pinned.refresh.enabled": true,
   "github-actions.workflows.pinned.refresh.interval": 500,
   "github-actions.workflows.pinned.workflows": [
@@ -149,8 +157,12 @@
     ".github/workflows/ci.yaml",
     ".github/workflows/binder.yaml"
   ],
+  "github.gitAuthentication": true,
   "latex-workshop.bibtex-format.sort.enabled": true,
-  "latex-workshop.bibtex-format.sortby": ["key", "title"],
+  "latex-workshop.bibtex-format.sortby": [
+    "key",
+    "title"
+  ],
   "latex-workshop.chktex.args.active": [
     "-wall",
     "-n22",
@@ -187,7 +199,11 @@
     "**/out/**",
     "**/Code/User/**"
   ],
+  "markdown.extension.preview.autoShowPreviewToSide": true,
   "r.alwaysUseActiveTerminal": true,
+  "r.rmarkdown.knit.focusOutputChannel": false,
+  "r.session.levelOfObjectDetail": "Detailed",
+  "remote.WSL.useShellEnvironment": false,
   "taskExplorer.enableAnsiconForAnt": false,
   "taskExplorer.enableAnt": false,
   "taskExplorer.enableAppPublisher": false,
@@ -214,11 +230,25 @@
     "**/dev/**"
   ],
   "taskExplorer.showLastTasks": false,
-  "terminal.integrated.defaultProfile.linux": "zsh",
-  // "terminal.integrated.allowWorkspaceConfiguration": true,
+  "terminal.integrated.defaultProfile.linux": "bash",
+  "terminal.integrated.environmentChangesIndicator": "on",
   "terminal.integrated.profiles.linux": {
+    "bash": {
+      "args": [
+        "-l"
+      ],
+      "icon": "terminal-bash",
+      "path": "bash"
+    },
+    "fish": {
+      "path": "fish"
+    },
+    "tmux": {
+      "icon": "terminal-tmux",
+      "path": "tmux"
+    },
     "zsh": {
-      "path": "/bin/zsh"
+      "path": "zsh"
     }
   },
   "terminal.integrated.scrollback": 10000,
@@ -253,9 +283,5 @@
   "yaml.schemas": {
     "**/.github/workflows/*.yaml": "https://json.schemastore.org/github-workflow.json"
   },
-  "autoOpenPreviewPanel.languages": "markdown,md",
-  "autoOpenPreviewPanel.openPreviewToSide": true,
-  "markdown.extension.preview.autoShowPreviewToSide": true,
-  "r.session.levelOfObjectDetail": "Detailed",
-  "r.rmarkdown.knit.focusOutputChannel": false
+  "git.inputValidation": "always"
 }

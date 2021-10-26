@@ -2,9 +2,9 @@ library(targets)
 library(tarchetypes)
 library(purrr)
 
+#### Dev variables ----
+
 dev_mode <- FALSE # !identical(Sys.getenv("DEBUGME"), "")
-cluster <- FALSE
-backend <- "FUTURE"
 
 if (dev_mode) {
   # I know I shall not use this
@@ -29,14 +29,21 @@ if (dev_mode) {
 # Extreme Tachycardia: Heart rate higher than 140 bpm for 17 consecutive beats
 # Ventricular Tachycardia: 5 or more ventricular beats with heart rate higher than 100 bpm
 
+#### General: Config variables ----
+
+options(tidyverse.quiet = TRUE)
+options(target_ds_path = "inst/extdata/physionet")
+cluster <- FALSE
+backend <- "FUTURE"
+
+#### Targets: Load Scripts ----
 
 # Load all scripts
 script_files <- list.files(here::here("scripts"), pattern = "*.R")
 sapply(here::here("scripts", script_files), source, local = .GlobalEnv, encoding = "UTF-8")
 rm(script_files)
 
-options(tidyverse.quiet = TRUE)
-options(target_ds_path = "inst/extdata/physionet")
+#### Targets: Setup engine ----
 
 if (isFALSE(cluster)) { ## Locally
   if (backend == "FUTURE") {
@@ -77,6 +84,8 @@ if (isFALSE(cluster)) { ## Locally
   }
 }
 
+#### Targets: Define targets options ----
+
 # use renv::install(".") to update the rcpp functions
 tar_option_set(
   packages = c("dplyr", "false.alarm"),
@@ -109,7 +118,7 @@ tar_option_set(
   imports = "false.alarm" # TODO: remove when there is no change on package functions. Clears the graph.
 )
 
-#### Data variables ----
+#### Pipeline: variable definitions ----
 # signal sample frequency, this is a constant
 const_sample_freq <- 250
 # keep only the X filenames
@@ -121,8 +130,7 @@ var_limit_per_type <- 2
 # tracks to exclude from the files
 var_exclude <- c("time", "V", "ABP", "PLETH", "RESP")
 
-#### Data filter: ----
-## window size of the filters used to remove spurious data
+# window size of the filters used to remove spurious data
 var_filter_w_size <- 100 # c(100, 200)
 
 # Matrix Profile:
@@ -156,7 +164,7 @@ var_regime_threshold <- c(0.3, 0.4, 0.5) # c(0.1, 0.2, 0.3, 0.4, 0.5)
 if (dev_mode) {
   debugme::debugme()
 }
-
+#### Pipeline: Start ----
 list(
   #### Read files from directory ----
   tar_files_input(
@@ -164,6 +172,7 @@ list(
     # tail(head(find_all_files(types = "all"), var_head), 10),
     find_all_files(types = "asystole") # , "bradycardia", "tachycardia", "vfib", "vtachy"
   ),
+  #### Import Files to R ----
   tar_target(
     dataset1,
     read_ecg(file_paths,
@@ -172,6 +181,7 @@ list(
     ),
     pattern = map(file_paths)
   ),
+  #### Select Datasets ----
   tar_target(
     dataset, # TODO: this is needed to remove the empty branches. Hack needed
     {
@@ -200,7 +210,7 @@ list(
   # without filter
   tar_map(
     list(map_window_size = var_window_size),
-    #### Compute Stats ----
+    ##### NoFilters: Compute Stats ----
     tar_target(
       ds_stats,
       process_ts_in_file(dataset,
@@ -216,7 +226,7 @@ list(
     ),
     tar_map(
       list(map_mp_threshold = var_mp_threshold),
-      #### Compute the Matrix Profile With Stats ----
+      ##### NoFilters: Compute the Matrix Profile with no constraints ----
       tar_target(
         ds_stats_mps_nc,
         process_ts_in_file(c(dataset, ds_stats),
@@ -237,7 +247,7 @@ list(
       ),
       tar_map(
         list(map_mp_time_constraint = var_mp_time_constraint),
-        # ### Compute the Matrix Profile from scratch as gold standard ----
+        #### // Compute the Matrix Profile from scratch as gold standard ----
         # tar_target(
         #   ds_stats_mps_nc,
         #   process_ts_in_file(dataset,
@@ -255,7 +265,7 @@ list(
         #   ),
         #   pattern = map(dataset)
         # ),
-        ### Compute the Matrix Profile With Stats ----
+        ##### NoFilter: Compute the Matrix Profile using Stats ----
         tar_target(
           ds_stats_mps,
           process_ts_in_file(c(dataset, ds_stats),
@@ -276,7 +286,7 @@ list(
         ),
         tar_map(
           list(map_floss_time_constraint = 0),
-          ### Compute FLOSS ----
+          ##### NoFilter > MP Costraints: Compute FLOSS ----
           tar_target(
             ds_stats_mps_floss,
             process_ts_in_file(ds_stats_mps,
@@ -296,7 +306,7 @@ list(
           ),
           tar_map(
             list(map_regime_threshold = var_regime_threshold),
-            ### Extract regime changes ----
+            ##### NoFilter > MP Costraints: Extract regime changes ----
             tar_target(
               regimes,
               process_ts_in_file(ds_stats_mps_floss,
@@ -317,7 +327,7 @@ list(
               ),
               pattern = map(ds_stats_mps_floss)
             ),
-            ### Plot regime changes ----
+            ##### NoFilter > MP Costraints: Plot regime changes ----
             tar_target(
               graph_regime,
               process_ts_in_file(c(dataset, regimes),
@@ -343,7 +353,7 @@ list(
         list(map_mp_time_constraint = 0),
         tar_map(
           list(map_floss_time_constraint = var_floss_time_constraint),
-          ### Compute FLOSS ----
+          ##### NoFilter > FLOSS Costraints: Compute FLOSS ----
           tar_target(
             ds_stats_mps_nc_floss,
             process_ts_in_file(ds_stats_mps_nc,
@@ -363,7 +373,7 @@ list(
           ),
           tar_map(
             list(map_regime_threshold = var_regime_threshold),
-            ### Extract regime changes ----
+            ##### NoFilter > FLOSS Costraints: Extract regime changes ----
             tar_target(
               regimes_nc,
               process_ts_in_file(ds_stats_mps_nc_floss,
@@ -384,7 +394,7 @@ list(
               ),
               pattern = map(ds_stats_mps_nc_floss)
             ),
-            ### Plot regime changes ----
+            ##### NoFilter > FLOSS Costraints: Plot regime changes ----
             tar_target(
               graph_regime_nc,
               process_ts_in_file(c(dataset, regimes_nc),
@@ -411,7 +421,7 @@ list(
   # # with filters
   # tar_map(
   #   list(map_filter_w_size = var_filter_w_size),
-  #   # #### Compute filters for noisy data ----
+  #### Compute filters for noisy data ----
   #   tar_target(
   #     filters,
   #     process_ts_in_file(dataset,
@@ -495,6 +505,7 @@ list(
   # )
 )
 
+#### Pipeline: End ----
 
 # res <- test_set %>% keep(function(x) attr(x, "info")$true == TRUE)
 # tar_make_future(workers = 4)
