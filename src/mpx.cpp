@@ -108,6 +108,7 @@ List mpxis_rcpp(NumericVector data_ref, uint64_t batch_size, List object, List s
         }
         off_start = n - window_size;
 
+        // loop if batch_size > 1
         for (offset = off_start; offset > off_min; offset--) {
           // min is offset + diag; max is (profile_len - 1); each iteration has the size of off_max
           off_diag = offset - (n - window_size - diag);
@@ -731,10 +732,12 @@ List mpx_rcpp(NumericVector data_ref, uint64_t window_size, double ez, uint64_t 
 
     NumericVector ww = (data_ref[Range(0, window_size - 1)] - mmu[0]);
 
+
     uint64_t num_progress =
         ceil((double)compute_order.size() / 100); // added double inside sqrt to avoid ambiguity on Solaris
 
     Progress p(100, progress);
+
 
     compute_order = sample(compute_order, compute_order.size());
 

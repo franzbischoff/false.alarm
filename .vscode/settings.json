@@ -230,7 +230,7 @@
     "**/dev/**"
   ],
   "taskExplorer.showLastTasks": false,
-  "terminal.integrated.defaultProfile.linux": "bash",
+  "terminal.integrated.defaultProfile.linux": "zsh",
   "terminal.integrated.environmentChangesIndicator": "on",
   "terminal.integrated.profiles.linux": {
     "bash": {

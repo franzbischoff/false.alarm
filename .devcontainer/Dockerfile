@@ -1,8 +1,13 @@
 # See here for image contents: https://github.com/microsoft/vscode-dev-containers/tree/v0.188.0/containers/ubuntu/.devcontainer/base.Dockerfile
 
 # [Choice] Ubuntu version: bionic, focal
-ARG ORIGIN=rocker/r-ubuntu:20.04
-FROM ${ORIGIN}
+FROM rocker/r-ubuntu:20.04
+ARG BUILD_NAME="false.alarm dev"
+ARG BUILD_DESCRIPTION="ready to use environment for this PHD Thesis"
+ARG BUILD_VERSION=1
+ARG BUILD_DATE="2021-11-10"
+ARG BUILD_REPOSITORY="franzbischoff/false.alarm"
+ARG HOME="/home/docker"
 
 # FROM ubuntu-latest
 
@@ -15,11 +20,13 @@ FROM ${ORIGIN}
 ENV DEBIAN_FRONTEND noninteractive
 
 RUN apt-get update -qq \
-  && apt-get dist-upgrade -y
+  && apt-get dist-upgrade -y \
+  && rm -rf /var/lib/apt/lists/*
 
 COPY checkbashisms /usr/local/bin
 
-RUN add-apt-repository ppa:apt-fast/stable && apt-get update && apt-get install -y apt-fast
+RUN add-apt-repository ppa:apt-fast/stable && apt-get update && apt-get install -y --no-install-recommends apt-fast \
+  && rm -rf /var/lib/apt/lists/*
 
 # Install rmd tools
 RUN apt-fast update && apt-fast install -y --no-install-recommends \
@@ -44,10 +51,9 @@ RUN apt-fast update && apt-fast install -y --no-install-recommends \
   texlive-xetex \
   && rm -rf /var/lib/apt/lists/* \
   && install.r binb linl pinp tint \
-  && mkdir ~/.R \
-  && echo _R_CHECK_FORCE_SUGGESTS_=FALSE > ~/.R/check.Renviron \
-  && cd /usr/local/bin \
-  && ln -s /usr/lib/R/site-library/littler/examples/render.r .
+  && mkdir ${HOME}/.R \
+  && echo _R_CHECK_FORCE_SUGGESTS_=FALSE > ${HOME}/.R/check.Renviron \
+  && ln -s /usr/lib/R/site-library/littler/examples/render.r /usr/local/bin/render.r
 
 # Install tidy stuff
 RUN apt-fast update && apt-fast install -y --no-install-recommends \
@@ -92,6 +98,7 @@ RUN apt-fast update && apt-fast install -y --no-install-recommends \
   git \
   curl \
   libgit2-dev \
+  libgpgme-dev \
   libharfbuzz-dev \
   libcurl4-openssl-dev \
   libfribidi-dev \
@@ -99,6 +106,7 @@ RUN apt-fast update && apt-fast install -y --no-install-recommends \
   libzmq3-dev\
   gpg-agent \
   expect \
+  vim \
   zsh \
   zsh-autosuggestions \
   zsh-syntax-highlighting \
@@ -107,17 +115,19 @@ RUN apt-fast update && apt-fast install -y --no-install-recommends \
   && rm -rf /var/lib/apt/lists/*
 
 # Install go + protobuf
-RUN curl -o /home/docker/gobuf.tar.gz https://dl.google.com/go/go1.14.linux-amd64.tar.gz \
-  && tar -xf '/home/docker/gobuf.tar.gz' -C '/home/docker' \
-  && rm /home/docker/gobuf.tar.gz
+RUN curl -o ${HOME}/gobuf.tar.gz https://dl.google.com/go/go1.14.linux-amd64.tar.gz \
+  && tar -xf ${HOME}/gobuf.tar.gz -C ${HOME} \
+  && rm ${HOME}/gobuf.tar.gz
 
-RUN usermod -aG sudo docker \
+RUN userdel docker \
+  && useradd -p '' docker \
+  && usermod -aG sudo,dialout,plugdev docker \
   && usermod --shell /bin/zsh docker \
   && usermod --shell /bin/zsh root
-COPY .zshrc /home/docker/.zshrc
+COPY .zshrc ${HOME}/.zshrc
 COPY .zshrc /root/.zshrc
 RUN git clone --depth 1 git://github.com/ohmyzsh/ohmyzsh /root/.oh-my-zsh
-RUN git clone --depth 1 git://github.com/ohmyzsh/ohmyzsh /home/docker/.oh-my-zsh
+RUN git clone --depth 1 git://github.com/ohmyzsh/ohmyzsh ${HOME}/.oh-my-zsh
 
 # Install other packages
 RUN install.r targets tarchetypes \
@@ -141,11 +151,9 @@ RUN apt-fast update && apt-fast install -y --no-install-recommends \
 
 # this is the last section, avoid adding slow things below this line
 
-RUN chown -R docker:docker /home/docker
-
 # gitpod start
-RUN mkdir /home/docker/exts
-# COPY exts/*.vsix /home/docker/exts
+RUN mkdir ${HOME}/exts
+# COPY exts/*.vsix ${HOME}/exts
 
 ENV WORKSPACE_DIRECTORY "/workspace"
 ENV NOT_CRAN "true"
@@ -154,20 +162,22 @@ ENV PROFFER_GO_BIN "~/go/bin/go"
 ENV PROFFER_GRAPHVIZ_BIN "/usr/bin/dot"
 # gitpod end
 
-WORKDIR /workspace
+RUN localedef -c -i en_US -f UTF-8 en_US.UTF-8
+
+RUN chown -R docker:docker ${HOME}
+
+# cleanunp
+RUN apt-get clean autoclean && apt-get autoremove --yes \
+  && rm -rf /var/lib/apt/lists/* \
+  && rm -rf /var/lib/cache/* \
+  && rm -rf /var/lib/log/*
+
+ENV DEBIAN_FRONTEND=
 
 RUN updatedb
 
-CMD ["zsh"]
-
-ARG BUILD_NAME="false.alarm dev"
-ARG BUILD_DESCRIPTION="ready to use environment for this PHD Thesis"
-ARG BUILD_VERSION=1
-ARG BUILD_DATE
-
 # Labels
 LABEL \
-  maintainer="Francisco Bischoff <fbischoff@med.up.pt>" \
   org.opencontainers.image.title="${BUILD_NAME}" \
   org.opencontainers.image.description="${BUILD_DESCRIPTION}" \
   org.opencontainers.image.authors="Francisco Bischoff <fbischoff@med.up.pt>" \
@@ -176,3 +186,10 @@ LABEL \
   org.opencontainers.image.documentation="https://github.com/${BUILD_REPOSITORY}/blob/main/README.md" \
   org.opencontainers.image.created=${BUILD_DATE} \
   org.opencontainers.image.version=${BUILD_VERSION}
+
+USER docker
+WORKDIR /workspace
+
+CMD ["zsh"]
+
+

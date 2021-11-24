@@ -1,6 +1,5 @@
 {
   "recommendations": [
-    "streetsidesoftware.code-spell-checker",
     "gruntfuggly.todo-tree",
     "spmeesseman.vscode-taskexplorer",
     "meakbiyik.vscode-r-test-adapter",
@@ -30,6 +29,7 @@
     "esbenp.prettier-vscode",
     "alefragnani.project-manager",
     "foxundermoon.shell-format",
-    "alefragnani.bookmarks"
+    "usernamehw.errorlens",
+    "rdebugger.r-debugger"
   ]
 }

@@ -19,6 +19,10 @@ on:
   workflow_dispatch:
   repository_dispatch:
 
+concurrency:
+  group: coverage
+  cancel-in-progress: true
+
 jobs:
   test-coverage:
     runs-on: ubuntu-latest

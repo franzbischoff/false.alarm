@@ -23,6 +23,10 @@ on:
   # schedule:
   #   - cron: '44 7 * * 6'
 
+concurrency:
+  group: code-ql
+  cancel-in-progress: true
+
 name: CodeQL
 
 jobs:

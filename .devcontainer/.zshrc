@@ -1,5 +1,5 @@
 # If you come from bash you might have to change your $PATH.
-# export PATH=$HOME/bin:/usr/local/bin:$PATH
+export PATH=$HOME/.local/bin:/usr/local/bin:$PATH
 
 # Path to your oh-my-zsh installation.
 export ZSH="/home/docker/.oh-my-zsh"
@@ -71,17 +71,17 @@ COMPLETION_WAITING_DOTS="true"
 # Example format: plugins=(rails git textmate ruby lighthouse)
 # Add wisely, as too many plugins slow down shell startup.
 plugins=(
-    extract
-    git
-    nmap
-    rsync
-    gpg-agent
-    npm
-    pip
-    vscode
-    ubuntu
-    docker
-    docker-compose
+  extract
+  git
+  nmap
+  rsync
+  gpg-agent
+  npm
+  pip
+  vscode
+  ubuntu
+  docker
+  docker-compose
 )
 
 source $ZSH/oh-my-zsh.sh
@@ -113,4 +113,3 @@ export LANG=en_US.UTF-8
 # Example aliases
 # alias zshconfig="mate ~/.zshrc"
 # alias ohmyzsh="mate ~/.oh-my-zsh"
-

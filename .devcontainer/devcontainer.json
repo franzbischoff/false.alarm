@@ -1,63 +1,26 @@
 // For format details, see https://aka.ms/devcontainer.json. For config options, see the README at:
 // https://github.com/microsoft/vscode-dev-containers/tree/v0.188.0/containers/ubuntu
 {
-  "name": "false.alarm dev",
-  "dockerFile": "Dockerfile",
-  "workspaceFolder": "/workspace",
-  "workspaceMount": "source=${localWorkspaceFolder},target=/workspace,type=bind,consistency=cached",
+  "build": {
+    "args": {
+      "BUILD_DATE": "2021-11-23",
+      "BUILD_VERSION": "2.1"
+    },
+    "dockerfile": "Dockerfile"
+  },
   // "workspaceMount": "source=/home/franz/workspaces/false.alarm,target=/workspace,type=volume",
   // "image": "franzbischoff/false.alarm:latest",
   "containerEnv": {
-    "WORKSPACE_DIRECTORY": "/workspace",
-    "NOT_CRAN": "true",
     "DEBUGME": "R_GlobalEnv",
-    "PROFFER_PPROF_BIN": "/home/docker/go/pkg/tool/linux_amd64/pprof",
+    "NOT_CRAN": "true",
     "PROFFER_GO_BIN": "/home/docker/go/bin/go",
-    "PROFFER_GRAPHVIZ_BIN": "/usr/bin/dot"
-  },
-  "runArgs": [
-    "-e",
-    "GIT_EDITOR=code",
-    "-e",
-    "DOCKER_BUILDKIT=1",
-    "--privileged"
-  ],
-  // Set *default* container specific settings.json values on container create.
-  "settings": {
-    "cSpell.allowCompoundWords": true,
-    "cSpell.ignorePaths": [
-      "**/package-lock.json",
-      "**/node_modules/**",
-      "**/vscode-extension/**",
-      "**/.git/objects/**",
-      ".vscode",
-      ".vscode-insiders",
-      "**/.devcontainer/**"
-    ],
-    "terminal.integrated.defaultProfile.linux": "zsh",
-    // "terminal.integrated.allowWorkspaceConfiguration": true,
-    "terminal.integrated.profiles.linux": {
-      "zsh": {
-        "path": "/bin/zsh"
-      }
-    },
-    "terminal.integrated.scrollback": 10000,
-    "terminal.integrated.tabs.enabled": true,
-    "terminal.integrated.tabs.focusMode": "singleClick",
-    "r.alwaysUseActiveTerminal": true,
-    "r.rpath.linux": "/usr/bin/R",
-    "r.rterm.linux": "/usr/bin/R",
-    "r.sessionWatcher": true,
-    "r.debugger.trackTerminals": true,
-    "terminal.integrated.environmentChangesIndicator": "on",
-    "testExplorer.onReload": "retire",
-    "testExplorer.onStart": "retire",
-    "RTestAdapter.RscriptPath": "/usr/bin/Rscript"
+    "PROFFER_GRAPHVIZ_BIN": "/usr/bin/dot",
+    "PROFFER_PPROF_BIN": "/home/docker/go/pkg/tool/linux_amd64/pprof",
+    "WORKSPACE_DIRECTORY": "/workspace"
   },
   // Add the IDs of extensions you want installed when the container is created.
   "extensions": [
     "affenwiesel.matlab-formatter",
-    "alefragnani.bookmarks",
     "alefragnani.project-manager",
     "apommel.matlab-interactive-terminal",
     "bibhasdn.unique-lines",
@@ -93,14 +56,12 @@
     "nhoizey.gremlins",
     "pkief.material-icon-theme",
     "randomfractalsinc.vscode-data-preview",
+    "usernamehw.errorlens",
     "rdebugger.r-debugger",
     "redhat.vscode-yaml",
     "richie5um2.vscode-sort-json",
     "spmeesseman.vscode-taskexplorer",
     "spywhere.guides",
-    "streetsidesoftware.code-spell-checker",
-    "streetsidesoftware.code-spell-checker-medical-terms",
-    "streetsidesoftware.code-spell-checker-portuguese",
     "tht13.html-preview-vscode",
     "timonwong.shellcheck",
     "tyriar.sort-lines",
@@ -109,13 +70,116 @@
     "wdhongtw.gpg-indicator"
   ],
   // Use 'forwardPorts' to make a list of ports inside the container available locally.
-  "forwardPorts": [ 55444 ],
+  "forwardPorts": [
+    55444
+  ],
+  "name": "false.alarm dev",
+  "postAttachCommand": "echo postAttachCommand",
   // Use 'postCreateCommand' to run commands after the container is created.
   "postCreateCommand": "uname -a",
+  "postStartCommand": "echo postStartCommand",
   // Comment out connect as root instead. More info: https://aka.ms/vscode-remote/containers/non-root.
   "remoteUser": "docker",
+  "runArgs": [
+    "-e",
+    "GIT_EDITOR=code-insiders",
+    "-e",
+    "DOCKER_BUILDKIT=1",
+    "--privileged"
+  ],
+  // Set *default* container specific settings.json values on container create.
+  "settings": {
+    "editor.formatOnSave": true,
+    "editor.formatOnType": true,
+    "errorLens.enabledDiagnosticLevels": [
+      "error",
+      "warning"
+    ],
+    "files.insertFinalNewline": true,
+    "files.trimTrailingWhitespace": true,
+    "gremlins.showInProblemPane": true,
+    "projectManager.git.maxDepthRecursion": 1,
+    "r.alwaysUseActiveTerminal": true,
+    "r.debugger.trackTerminals": true,
+    "r.rpath.linux": "/usr/bin/R",
+    "r.rterm.linux": "/usr/bin/R",
+    "r.sessionWatcher": true,
+    "resmon.disk.format": "Remaining",
+    "resmon.show.cputemp": true,
+    "resmon.show.disk": true,
+    "RTestAdapter.RscriptPath": "/usr/bin/Rscript",
+    "sortJSON.contextMenu": {
+      "sortJSON": false,
+      "sortJSONAlphaNum": true,
+      "sortJSONAlphaNumReverse": false,
+      "sortJSONKeyLength": false,
+      "sortJSONKeyLengthReverse": false,
+      "sortJSONReverse": false,
+      "sortJSONType": true,
+      "sortJSONTypeReverse": false,
+      "sortJSONValues": true,
+      "sortJSONValuesReverse": false
+    },
+    "taskExplorer.exclude": [
+      "**/.vscode-test/**",
+      "**/bin/**",
+      "**/build/**",
+      "**/CompiledOutput/**",
+      "**/dist/**",
+      "**/doc/**",
+      "**/ext/**",
+      "**/out/**",
+      "**/output/**",
+      "**/packages/**",
+      "**/release/**",
+      "**/releases/**",
+      "**/samples/**",
+      "**/sdks/**",
+      "**/static/**",
+      "**/target/**",
+      "**/test/**",
+      "**/third_party/**",
+      "**/vendor/**",
+      "**/work/**",
+      "**/.history/**",
+      "**/.git/**",
+      "**/.venv/**",
+      "**/renv/**"
+    ],
+    "taskExplorer.numLastTasks": 3,
+    "terminal.integrated.defaultProfile.linux": "zsh",
+    "terminal.integrated.environmentChangesIndicator": "on",
+    // "terminal.integrated.allowWorkspaceConfiguration": true,
+    "terminal.integrated.profiles.linux": {
+      "zsh": {
+        "path": "/bin/zsh"
+      }
+    },
+    "terminal.integrated.scrollback": 10000,
+    "terminal.integrated.tabs.enabled": true,
+    "terminal.integrated.tabs.focusMode": "singleClick",
+    "testExplorer.onReload": "retire",
+    "testExplorer.onStart": "retire",
+    "todo-tree.general.tags": [
+      "BUG",
+      "HACK",
+      "FIXME",
+      "TODO",
+      "XXX",
+      "[ ]",
+      "[x]"
+    ],
+    "todo-tree.regex.regex": "(//|#|<!--|;|/\\*|^|^\\s*(-|\\d+.))\\s*($TAGS)",
+    "workbench.editorAssociations": {
+      "*.bin": "hexEditor.hexedit",
+      "*.elf": "hexEditor.hexedit",
+      "*.hex": "hexEditor.hexedit",
+      "*.ipynb": "jupyter-notebook",
+      "git-rebase-todo": "gitlens.rebase"
+    }
+  },
   // "containerUser": "docker",
   "shutdownAction": "stopContainer",
-  "postStartCommand": "echo postStartCommand",
-  "postAttachCommand": "echo postAttachCommand"
+  "workspaceFolder": "/workspace",
+  "workspaceMount": "source=${localWorkspaceFolder},target=/workspace,type=bind,consistency=cached"
 }
