@@ -123,10 +123,10 @@
     },
     "audio": {
       "Package": "audio",
-      "Version": "0.1-8",
+      "Version": "0.1-10",
       "Source": "Repository",
       "Repository": "CRAN",
-      "Hash": "245f9be3fe0cda954794b699d42ec299"
+      "Hash": "d0c2f6b09c666cc84cd64813f43a54fc"
     },
     "backports": {
       "Package": "backports",
@@ -644,10 +644,10 @@
     },
     "igraph": {
       "Package": "igraph",
-      "Version": "1.2.8",
+      "Version": "1.2.9",
       "Source": "Repository",
       "Repository": "CRAN",
-      "Hash": "ac8a4f2b6daaa3e46890c72a0012d34e"
+      "Hash": "66abc5ba63fe0543b3d7c5ec73b4230f"
     },
     "ini": {
       "Package": "ini",
@@ -1196,12 +1196,12 @@
       "Version": "3.1.0.9000",
       "Source": "GitHub",
       "RemoteType": "github",
-      "RemoteHost": "api.github.com",
       "RemoteUsername": "r-lib",
       "RemoteRepo": "testthat",
       "RemoteRef": "main",
-      "RemoteSha": "e27679198811ca7a57bdaefd2747867353c336af",
-      "Hash": "50b3ee7f52e9112d4a241a7b2779dd88"
+      "RemoteSha": "6e0807f03c7ac60b9945beed07a79954f0dc5a49",
+      "RemoteHost": "api.github.com",
+      "Hash": "e4cbcbc69bd12514122b23368ac7e68b"
     },
     "thesisdown": {
       "Package": "thesisdown",

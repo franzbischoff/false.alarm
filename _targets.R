@@ -175,7 +175,7 @@ list(
   #### Import Files to R ----
   tar_target(
     dataset1,
-    read_ecg(file_paths,
+    read_ecg_csv(file_paths,
       subset = var_subset,
       alarm_type = TRUE
     ),

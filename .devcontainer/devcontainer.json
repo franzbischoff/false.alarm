@@ -1,22 +1,22 @@
 // For format details, see https://aka.ms/devcontainer.json. For config options, see the README at:
 // https://github.com/microsoft/vscode-dev-containers/tree/v0.188.0/containers/ubuntu
 {
-  "build": {
-    "args": {
-      "BUILD_DATE": "2021-11-23",
-      "BUILD_VERSION": "2.1"
-    },
-    "dockerfile": "Dockerfile"
-  },
+  // "build": {
+  //   "args": {
+  //     "BUILD_DATE": "2021-11-23",
+  //     "BUILD_VERSION": "2.1"
+  //   },
+  //   "dockerfile": "Dockerfile",
+  // },
   // "workspaceMount": "source=/home/franz/workspaces/false.alarm,target=/workspace,type=volume",
-  // "image": "franzbischoff/false.alarm:latest",
+  "image": "franzbischoff/false.alarm:v2.1",
   "containerEnv": {
     "DEBUGME": "R_GlobalEnv",
     "NOT_CRAN": "true",
     "PROFFER_GO_BIN": "/home/docker/go/bin/go",
     "PROFFER_GRAPHVIZ_BIN": "/usr/bin/dot",
     "PROFFER_PPROF_BIN": "/home/docker/go/pkg/tool/linux_amd64/pprof",
-    "WORKSPACE_DIRECTORY": "/workspace"
+    "WORKSPACE_DIRECTORY": "/workspace/false.alarm"
   },
   // Add the IDs of extensions you want installed when the container is created.
   "extensions": [
@@ -67,20 +67,22 @@
     "tyriar.sort-lines",
     "visualstudioexptteam.vscodeintellicode",
     "yzhang.markdown-all-in-one",
-    "wdhongtw.gpg-indicator"
+    "mechatroner.rainbow-csv",
+    "cschlosser.doxdocgen"
   ],
   // Use 'forwardPorts' to make a list of ports inside the container available locally.
   "forwardPorts": [
     55444
   ],
   "name": "false.alarm dev",
-  "postAttachCommand": "echo postAttachCommand",
+  // "postAttachCommand": "echo postAttachCommand",
   // Use 'postCreateCommand' to run commands after the container is created.
-  "postCreateCommand": "uname -a",
-  "postStartCommand": "echo postStartCommand",
+  // "postCreateCommand": "uname -a",
+  // "postStartCommand": "echo postStartCommand",
   // Comment out connect as root instead. More info: https://aka.ms/vscode-remote/containers/non-root.
   "remoteUser": "docker",
   "runArgs": [
+    "--name=false_alarm_dev",
     "-e",
     "GIT_EDITOR=code-insiders",
     "-e",
@@ -147,10 +149,17 @@
       "**/renv/**"
     ],
     "taskExplorer.numLastTasks": 3,
-    "terminal.integrated.defaultProfile.linux": "zsh",
+    "terminal.integrated.defaultProfile.linux": "bash",
     "terminal.integrated.environmentChangesIndicator": "on",
     // "terminal.integrated.allowWorkspaceConfiguration": true,
     "terminal.integrated.profiles.linux": {
+      "bash": {
+        "args": [
+          "-l"
+        ],
+        "icon": "terminal-bash",
+        "path": "/bin/bash"
+      },
       "zsh": {
         "path": "/bin/zsh"
       }
@@ -180,6 +189,6 @@
   },
   // "containerUser": "docker",
   "shutdownAction": "stopContainer",
-  "workspaceFolder": "/workspace",
-  "workspaceMount": "source=${localWorkspaceFolder},target=/workspace,type=bind,consistency=cached"
+  "workspaceFolder": "/workspace/false.alarm",
+  "workspaceMount": "source=${localWorkspaceFolder},target=/workspace/false.alarm,type=bind,consistency=cached"
 }

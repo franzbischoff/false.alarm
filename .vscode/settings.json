@@ -19,6 +19,14 @@
     ".vscode-insiders",
     "**/.devcontainer/**"
   ],
+  "json.schemas": [
+    {
+      "fileMatch": [
+        "codemeta.json"
+      ],
+      "url": "https://raw.githubusercontent.com/codemeta/codemeta/master/codemeta.jsonld"
+    }
+  ],
   "editor.tabCompletion": "on",
   "editor.tabSize": 2,
   "editor.wordWrapColumn": 120,
@@ -149,7 +157,6 @@
     "**/tmp/**": true
   },
   "git.enableCommitSigning": true,
-  "git.terminalAuthentication": false,
   "github-actions.workflows.pinned.refresh.enabled": true,
   "github-actions.workflows.pinned.refresh.interval": 500,
   "github-actions.workflows.pinned.workflows": [
@@ -157,7 +164,6 @@
     ".github/workflows/ci.yaml",
     ".github/workflows/binder.yaml"
   ],
-  "github.gitAuthentication": true,
   "latex-workshop.bibtex-format.sort.enabled": true,
   "latex-workshop.bibtex-format.sortby": [
     "key",
@@ -203,7 +209,6 @@
   "r.alwaysUseActiveTerminal": true,
   "r.rmarkdown.knit.focusOutputChannel": false,
   "r.session.levelOfObjectDetail": "Detailed",
-  "remote.WSL.useShellEnvironment": false,
   "taskExplorer.enableAnsiconForAnt": false,
   "taskExplorer.enableAnt": false,
   "taskExplorer.enableAppPublisher": false,
@@ -230,7 +235,7 @@
     "**/dev/**"
   ],
   "taskExplorer.showLastTasks": false,
-  "terminal.integrated.defaultProfile.linux": "zsh",
+  "terminal.integrated.defaultProfile.linux": "bash",
   "terminal.integrated.environmentChangesIndicator": "on",
   "terminal.integrated.profiles.linux": {
     "bash": {
@@ -238,7 +243,7 @@
         "-l"
       ],
       "icon": "terminal-bash",
-      "path": "bash"
+      "path": "/bin/bash"
     },
     "fish": {
       "path": "fish"

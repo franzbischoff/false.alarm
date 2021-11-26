@@ -122,9 +122,11 @@ RUN curl -o ${HOME}/gobuf.tar.gz https://dl.google.com/go/go1.14.linux-amd64.tar
 RUN userdel docker \
   && useradd -p '' docker \
   && usermod -aG sudo,dialout,plugdev docker \
-  && usermod --shell /bin/zsh docker \
-  && usermod --shell /bin/zsh root
+  && usermod --shell /bin/bash docker \
+  && usermod --shell /bin/bash root
 COPY .zshrc ${HOME}/.zshrc
+COPY .bashrc ${HOME}/.bashrc
+COPY .profile ${HOME}/.profile
 COPY .zshrc /root/.zshrc
 RUN git clone --depth 1 git://github.com/ohmyzsh/ohmyzsh /root/.oh-my-zsh
 RUN git clone --depth 1 git://github.com/ohmyzsh/ohmyzsh ${HOME}/.oh-my-zsh
@@ -146,6 +148,8 @@ RUN apt-fast update && apt-fast install -y --no-install-recommends \
   libmagick++-dev \
   cargo \
   libavfilter-dev \
+  openssh-client \
+  socat \
   && rm -rf /var/lib/apt/lists/*
 
 
@@ -171,8 +175,6 @@ RUN apt-get clean autoclean && apt-get autoremove --yes \
   && rm -rf /var/lib/apt/lists/* \
   && rm -rf /var/lib/cache/* \
   && rm -rf /var/lib/log/*
-
-ENV DEBIAN_FRONTEND=
 
 RUN updatedb
 

@@ -61,3 +61,4 @@
 ^tmp$
 ^debugme\.log$
 ^\.httr-oauth$
+^codemeta\.json$
