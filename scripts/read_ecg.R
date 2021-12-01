@@ -50,10 +50,10 @@
 #'
 read_ecg <- function(filename, plot = FALSE, subset = FALSE,
                      types = c("all", "asystole", "bradycardia", "tachycardia", "vfib", "vtachy"),
-                     alarm_type = NULL) {
+                     true_alarm = NULL) {
   checkmate::assert_string(filename, 3)
   checkmate::qassert(plot, "B")
-  checkmate::qassert(alarm_type, c("0", "B"))
+  checkmate::qassert(true_alarm, c("0", "B"))
   types <- match.arg(types, several.ok = TRUE)
 
   if (!("all" %in% types)) {
@@ -72,7 +72,7 @@ read_ecg <- function(filename, plot = FALSE, subset = FALSE,
     }
 
     if (rlang::is_empty(filtered)) {
-      message("File skiped: ", filename)
+      message("File skipped: ", filename)
       return(NULL)
     }
   }
@@ -157,8 +157,8 @@ read_ecg <- function(filename, plot = FALSE, subset = FALSE,
     true_false <- ifelse(substr(true_false, 1, 1) == "#", substring(true_false, 2), true_false)
   }
 
-  if (!is.null(alarm_type)) {
-    if (alarm_type != as.logical(true_false)) {
+  if (!is.null(true_alarm)) {
+    if (true_alarm != as.logical(true_false)) {
       message("File skipped: ", filename)
       return(NULL)
     }
@@ -259,10 +259,10 @@ read_ecg <- function(filename, plot = FALSE, subset = FALSE,
 #'
 read_ecg_csv <- function(filename, plot = FALSE, subset = FALSE,
                          types = c("all", "asystole", "bradycardia", "tachycardia", "vfib", "vtachy"),
-                         alarm_type = NULL) {
+                         true_alarm = NULL) {
   checkmate::assert_string(filename, 3)
   checkmate::qassert(plot, "B")
-  checkmate::qassert(alarm_type, c("0", "B"))
+  checkmate::qassert(true_alarm, c("0", "B"))
   types <- match.arg(types, several.ok = TRUE)
 
   if (!("all" %in% types)) {
@@ -281,7 +281,7 @@ read_ecg_csv <- function(filename, plot = FALSE, subset = FALSE,
     }
 
     if (rlang::is_empty(filtered)) {
-      message("File skiped: ", filename)
+      message("File skipped (not in type): ", filename)
       return(NULL)
     }
   }
@@ -366,9 +366,9 @@ read_ecg_csv <- function(filename, plot = FALSE, subset = FALSE,
     true_false <- ifelse(substr(true_false, 1, 1) == "#", substring(true_false, 2), true_false)
   }
 
-  if (!is.null(alarm_type)) {
-    if (alarm_type != as.logical(true_false)) {
-      message("File skipped: ", filename)
+  if (!is.null(true_alarm)) {
+    if (true_alarm != as.logical(true_false)) {
+      message("File skipped (alarm is ", !true_alarm, "): ", filename)
       return(NULL)
     }
   }
@@ -416,4 +416,37 @@ read_ecg_csv <- function(filename, plot = FALSE, subset = FALSE,
   }
 
   return(output)
+}
+
+
+read_and_prepare_ecgs <- function(file_paths, subset = FALSE, true_alarm = NULL, limit_per_type = NULL) {
+  result <- list()
+  types <- list()
+
+  for (file in file_paths) {
+    filename <- tools::file_path_sans_ext(basename(file))
+
+    it <- read_ecg_csv(file,
+      subset = subset,
+      true_alarm = true_alarm
+    )
+
+    if (!is.null(it)) {
+      if (is.numeric(limit_per_type)) {
+        type <- substr(filename, 1, 1)
+        if (is.null(types[[type]])) {
+          types[[type]] <- 1
+        } else {
+          types[[type]] <- types[[type]] + 1
+        }
+        if (types[[type]] > limit_per_type) {
+          next
+        }
+      }
+
+      result[filename] <- it
+    }
+  }
+
+  return(result)
 }

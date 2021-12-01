@@ -147,7 +147,7 @@ var_window_size <- 200 # c(200, 250)
 ## Multiplier for the size of the Exclusion Zone (e.g., window_size * ez == exclusion_zone)
 var_ez <- 0.5
 ## time constraint used on MP. Don't use both mp_time_constraint and floss_time_constraint (multiply by the freq to have it in seconds)
-var_mp_time_constraint <- c(0, 5 * const_sample_freq, 10 * const_sample_freq) # , 17 * const_sample_freq)
+var_mp_time_constraint <- c(5 * const_sample_freq, 10 * const_sample_freq) # , 17 * const_sample_freq)
 
 # FLOSS:
 ## time constraint used on FLOSS. Don't use both mp_time_constraint and floss_time_constraint (multiply by the freq to have it in seconds)
@@ -202,10 +202,10 @@ l_dataset <- tar_target(
 # )
 #### Pipeline: > NoFilters Branch ----
 l_w_size_root <- tar_map(
-  ##### Pipeline: > NoFilters > WindowSize Branch ----
-  values = list(map_window_size = var_window_size),
+  ##### Pipeline: > NoFilters > WindoSize Branch ----
+  list(map_window_size = var_window_size),
   tar_target(
-    ##### Pipeline: > NoFilters > WindowSize > Compute Stats ----
+    ##### Pipeline: > NoFilters > WindoSize > Compute Stats ----
     ds_stats,
     process_ts_in_file(dataset,
       id = "comp_stats",
@@ -219,20 +219,31 @@ l_w_size_root <- tar_map(
     pattern = map(dataset)
   ),
   l_mp_thr_root <- tar_map(
-    #### Pipeline: > NoFilters > WindowSize > MP Threshold Branch ----
-    values = list(map_mp_threshold = var_mp_threshold),
+    #### Pipeline: > NoFilters > WindoSize > MP Threshold Branch ----
+    list(map_mp_threshold = var_mp_threshold),
+    tar_target(
+      ##### Pipeline: > NoFilters > WindoSize > MP Threshold > Compute the Matrix Profile with no constraints ----
+      ds_stats_mps_nc,
+      process_ts_in_file(c(dataset, ds_stats),
+        id = "mps_raw_stats_no_constraint",
+        fun = compute_s_profile_with_stats,
+        params = list(
+          window_size = map_window_size,
+          ez = var_ez,
+          progress = FALSE,
+          batch = var_mp_batch,
+          history = var_mp_history,
+          mp_time_constraint = 0,
+          threshold = map_mp_threshold
+        ),
+        exclude = var_exclude
+      ),
+      pattern = map(dataset, ds_stats)
+    ),
     l_mp_tconstr_root <- tar_map(
-      #### Pipeline: > NoFilters > WindowSize > MP Threshold > MP/FLOSS Constraints Branch ----
-      # here the expand_grid and filter do the following:
-      # -- first get all the combinations from the variables
-      # -- second, keep only the combinations where one (or both) sides are zero
-      # This will create a "common" branch where no constraint is applyed and one branch with mp constraints and other with floss constraints.
-      # Seems complicated here, but has simplified the pileline a lot.
-      values = dplyr::filter(tidyr::expand_grid(
-        map_floss_time_constraint = var_floss_time_constraint,
-        map_mp_time_constraint = var_mp_time_constraint
-      ), !(map_floss_time_constraint > 0 & map_mp_time_constraint > 0)),
-      #### Pipeline: > NoFilters > WindowSize > MP Threshold > MP/FLOSS Constraints > Compute the Matrix Profile from scratch as gold standard
+      #### Pipeline: > NoFilters > WindoSize > MP Threshold > MP Constraints Branch ----
+      list(map_mp_time_constraint = var_mp_time_constraint),
+      #### Pipeline: > NoFilters > WindoSize > MP Threshold > MP Constraints > Compute the Matrix Profile from scratch as gold standard
       # tar_target(
       #   ds_stats_mps_nc,
       #   process_ts_in_file(dataset,
@@ -251,7 +262,7 @@ l_w_size_root <- tar_map(
       #   pattern = map(dataset)
       # ),
       tar_target(
-        ##### Pipeline: > NoFilters > WindowSize > MP Threshold > MP/FLOSS Constraints > Compute the Matrix Profile using Stats ----
+        ##### Pipeline: > NoFilters > WindoSize > MP Threshold > MP Constraints > Compute the Matrix Profile using Stats ----
         ds_stats_mps,
         process_ts_in_file(c(dataset, ds_stats),
           id = "mps_raw_stats",
@@ -269,98 +280,195 @@ l_w_size_root <- tar_map(
         ),
         pattern = map(dataset, ds_stats)
       ),
-      tar_target(
-        ##### Pipeline: > NoFilters > WindowSize > MP Threshold > MP/FLOSS Constraints > Compute FLOSS ----
-        ds_stats_mps_floss,
-        process_ts_in_file(ds_stats_mps,
-          id = "floss_mps",
-          exclude = var_exclude,
-          fun = compute_floss,
-          params = list(
-            window_size = map_window_size,
-            ez = var_ez * map_window_size,
-            mp_time_constraint = map_mp_time_constraint,
-            floss_time_constraint = map_floss_time_constraint,
-            history = var_mp_history,
-            sample_freq = const_sample_freq
+      tar_map(
+        ##### Pipeline: > NoFilters > WindoSize > MP Threshold > MP Constraints + FLOSS Constraints Zero Branch ----
+        list(map_floss_time_constraint = 0),
+        tar_target(
+          ##### Pipeline: > NoFilters > WindoSize > MP Threshold > MP Constraints + FLOSS Constraints Zero > Compute FLOSS ----
+          ds_stats_mps_floss,
+          process_ts_in_file(ds_stats_mps,
+            id = "floss_mps",
+            exclude = var_exclude,
+            fun = compute_floss,
+            params = list(
+              window_size = map_window_size,
+              ez = var_ez * map_window_size,
+              mp_time_constraint = map_mp_time_constraint,
+              floss_time_constraint = map_floss_time_constraint,
+              history = var_mp_history,
+              sample_freq = const_sample_freq
+            )
+          ),
+          pattern = map(ds_stats_mps)
+        ),
+        l_regime_thr_root <- tar_map(
+          ##### Pipeline: > NoFilters > WindoSize > MP Threshold > MP Constraints + FLOSS Constraints Zero > Regime Threshold Branch ----
+          values = list(map_regime_threshold = var_regime_threshold),
+          tar_target(
+            ##### Pipeline: > NoFilters > WindoSize > MP Threshold > MP Constraints + FLOSS Constraints Zero > Regime Threshold > Extract regime changes ----
+            regimes,
+            process_ts_in_file(ds_stats_mps_floss,
+              id = "regimes",
+              fun = extract_regimes,
+              params = list(
+                window_size = map_window_size,
+                ez = var_ez,
+                regime_threshold = map_regime_threshold,
+                regime_landmark = var_regime_landmark, # 3 sec from the end
+                progress = FALSE,
+                batch = var_mp_batch,
+                history = var_mp_history,
+                mp_time_constraint = map_mp_time_constraint,
+                floss_time_constraint = map_floss_time_constraint
+              ),
+              exclude = var_exclude
+            ),
+            pattern = map(ds_stats_mps_floss)
+          ),
+          tar_target(
+            ##### Pipeline: > NoFilters > WindoSize > MP Threshold > MP Constraints + FLOSS Constraints Zero > Regime Threshold > Extract regimes samples ----
+            regimes_samples,
+            process_ts_in_file(c(dataset, regimes),
+              id = "regimes_samples",
+              fun = extract_regime_sample,
+              params = list(
+                window_size = map_window_size,
+                ez = var_ez,
+                regime_threshold = map_regime_threshold,
+                regime_landmark = var_regime_landmark, # 3 sec from the end
+                progress = FALSE,
+                batch = var_mp_batch,
+                history = var_mp_history,
+                mp_time_constraint = map_mp_time_constraint,
+                floss_time_constraint = map_floss_time_constraint
+              ),
+              exclude = var_exclude
+            ),
+            pattern = map(dataset, regimes)
           )
-        ),
-        pattern = map(ds_stats_mps)
-      ),
-      l_regime_thr_root <- tar_map(
-        ##### Pipeline: > NoFilters > WindowSize > MP Threshold > MP/FLOSS Constraints > Regime Threshold Branch ----
-        values = list(map_regime_threshold = var_regime_threshold),
-        tar_target(
-          ##### Pipeline: > NoFilters > WindowSize > MP Threshold > MP/FLOSS Constraints > Regime Threshold > Extract regime changes ----
-          regimes,
-          process_ts_in_file(ds_stats_mps_floss,
-            id = "regimes",
-            fun = extract_regimes,
-            params = list(
-              window_size = map_window_size,
-              ez = var_ez,
-              regime_threshold = map_regime_threshold,
-              regime_landmark = var_regime_landmark, # 3 sec from the end
-              progress = FALSE,
-              batch = var_mp_batch,
-              history = var_mp_history,
-              mp_time_constraint = map_mp_time_constraint,
-              floss_time_constraint = map_floss_time_constraint
-            ),
-            exclude = var_exclude
-          ),
-          pattern = map(ds_stats_mps_floss)
-        ),
-        tar_target(
-          ##### Pipeline: > NoFilters > WindowSize > MP Threshold > MP/FLOSS Constraints > Regime Threshold > Extract regimes samples ----
-          regimes_samples,
-          process_ts_in_file(c(dataset, regimes),
-            id = "regimes_samples",
-            fun = extract_regime_sample,
-            params = list(
-              window_size = map_window_size,
-              ez = var_ez,
-              regime_threshold = map_regime_threshold,
-              regime_landmark = var_regime_landmark, # 3 sec from the end
-              progress = FALSE,
-              batch = var_mp_batch,
-              history = var_mp_history,
-              mp_time_constraint = map_mp_time_constraint,
-              floss_time_constraint = map_floss_time_constraint
-            ),
-            exclude = var_exclude
-          ),
-          pattern = map(dataset, regimes)
+          # tar_target(
+          #   ##### Pipeline: > NoFilters > WindoSize > MP Threshold > MP Constraints + FLOSS Constraints Zero > Regime Threshold > Plot regime changes
+          #   graph_regime,
+          #   {
+          #     tar_cancel(skip_graphics)
+          #     process_ts_in_file(c(dataset, regimes),
+          #       id = "plot_regimes",
+          #       fun = plot_regimes,
+          #       params = list(
+          #         window_size = map_window_size,
+          #         regime_threshold = map_regime_threshold,
+          #         threshold = map_mp_threshold,
+          #         history = var_mp_history,
+          #         mp_time_constraint = map_mp_time_constraint,
+          #         floss_time_constraint = map_floss_time_constraint,
+          #         save_png = FALSE
+          #       ),
+          #       exclude = var_exclude
+          #     )
+          #   },
+          #   pattern = map(dataset, regimes)
+          # )
         )
-        # tar_target(
-        #   ##### Pipeline: > NoFilters > WindowSize > MP Threshold > MP/FLOSS Constraints > Regime Threshold > Plot regime changes
-        #   graph_regime,
-        #   {
-        #     tar_cancel(skip_graphics)
-        #     process_ts_in_file(c(dataset, regimes),
-        #       id = "plot_regimes",
-        #       fun = plot_regimes,
-        #       params = list(
-        #         window_size = map_window_size,
-        #         regime_threshold = map_regime_threshold,
-        #         threshold = map_mp_threshold,
-        #         history = var_mp_history,
-        #         mp_time_constraint = map_mp_time_constraint,
-        #         floss_time_constraint = map_floss_time_constraint,
-        #         save_png = FALSE
-        #       ),
-        #       exclude = var_exclude
-        #     )
-        #   },
-        #   pattern = map(dataset, regimes)
-        # )
+      )
+    ),
+    l_no_mp_tconstr_root <- tar_map(
+      #### Pipeline: > NoFilters > WindoSize > MP Threshold > MP Costraints Zero Branch ----
+      list(map_mp_time_constraint = 0),
+      tar_map(
+        #### Pipeline: > NoFilters > WindoSize > MP Threshold > MP Costraints Zero + FLOSS Costraints Branch ----
+        list(map_floss_time_constraint = var_floss_time_constraint),
+        tar_target(
+          ##### Pipeline: > NoFilters > WindoSize > MP Threshold > MP Costraints Zero + FLOSS Costraints > Compute FLOSS ----
+          ds_stats_mps_nc_floss,
+          process_ts_in_file(ds_stats_mps_nc,
+            id = "floss",
+            exclude = var_exclude,
+            fun = compute_floss,
+            params = list(
+              window_size = map_window_size,
+              ez = var_ez * map_window_size,
+              mp_time_constraint = map_mp_time_constraint,
+              floss_time_constraint = map_floss_time_constraint,
+              history = var_mp_history,
+              sample_freq = const_sample_freq
+            )
+          ),
+          pattern = map(ds_stats_mps_nc)
+        ),
+        l_no_regime_thr_root <- tar_map(
+          values = list(map_regime_threshold = var_regime_threshold),
+          tar_target(
+            ##### Pipeline: > NoFilters > WindoSize > MP Threshold > MP Costraints Zero + FLOSS Costraints > Regime Threshold > Extract regime changes ----
+            regimes_nc,
+            process_ts_in_file(ds_stats_mps_nc_floss,
+              id = "regimes",
+              fun = extract_regimes,
+              params = list(
+                window_size = map_window_size,
+                ez = var_ez,
+                regime_threshold = map_regime_threshold,
+                regime_landmark = var_regime_landmark, # 3 sec from the end
+                progress = FALSE,
+                batch = var_mp_batch,
+                history = var_mp_history,
+                mp_time_constraint = map_mp_time_constraint,
+                floss_time_constraint = map_floss_time_constraint
+              ),
+              exclude = var_exclude
+            ),
+            pattern = map(ds_stats_mps_nc_floss)
+          ),
+          tar_target(
+            ##### Pipeline: > NoFilters > WindoSize > MP Threshold > MP Costraints Zero + FLOSS Costraints > Regime Threshold > Extract regimes samples ----
+            regimes_samples_nc,
+            process_ts_in_file(c(dataset, regimes_nc),
+              id = "regimes_samples",
+              fun = extract_regime_sample,
+              params = list(
+                window_size = map_window_size,
+                ez = var_ez,
+                regime_threshold = map_regime_threshold,
+                regime_landmark = var_regime_landmark, # 3 sec from the end
+                progress = FALSE,
+                batch = var_mp_batch,
+                history = var_mp_history,
+                mp_time_constraint = map_mp_time_constraint,
+                floss_time_constraint = map_floss_time_constraint
+              ),
+              exclude = var_exclude
+            ),
+            pattern = map(dataset, regimes_nc)
+          )
+          # tar_target(
+          #   ##### Pipeline: > NoFilters > WindoSize > MP Threshold > MP Costraints Zero + FLOSS Costraints > Regime Threshold > Plot regime changes
+          #   graph_regime_nc,
+          #   {
+          #     tar_cancel(skip_graphics)
+          #     process_ts_in_file(c(dataset, regimes_nc),
+          #       id = "plot_regimes_nc",
+          #       fun = plot_regimes,
+          #       params = list(
+          #         window_size = map_window_size,
+          #         regime_threshold = map_regime_threshold,
+          #         threshold = map_mp_threshold,
+          #         history = var_mp_history,
+          #         mp_time_constraint = map_mp_time_constraint,
+          #         floss_time_constraint = map_floss_time_constraint,
+          #         save_png = FALSE
+          #       ),
+          #       exclude = var_exclude
+          #     )
+          #   },
+          #   pattern = map(dataset, regimes_nc)
+          # )
+        )
       )
     )
   )
 )
 # #### Pipeline: > Filters Branch ----
 # tar_map(
-#   values = list(map_filter_w_size = var_filter_w_size),
+#   list(map_filter_w_size = var_filter_w_size),
 # #### Pipeline: > Filters > Compute filters for noisy data ----
 #   tar_target(
 #     filters,
@@ -389,7 +497,7 @@ l_w_size_root <- tar_map(
 #     pattern = map(dataset, filters)
 #   ),
 #   tar_map(
-#     values = list(map_window_size = var_window_size),
+#     list(map_window_size = var_window_size),
 #     #### Pipeline: > Filters > Compute Stats on Filtered Data ----
 #     tar_target(
 #       ds_filtered_stats,
@@ -405,7 +513,7 @@ l_w_size_root <- tar_map(
 #       pattern = map(ds_filtered)
 #     ),
 #     tar_map(
-#       values = list(map_mp_time_constraint = var_mp_time_constraint),
+#       list(map_mp_time_constraint = var_mp_time_constraint),
 #       #### Pipeline: > Filters > Compute the Matrix Profile With Filtered Data with Stats ----
 #       tar_target(
 #         ds_filtered_stats_mps,

@@ -1,14 +1,14 @@
 // For format details, see https://aka.ms/devcontainer.json. For config options, see the README at:
 // https://github.com/microsoft/vscode-dev-containers/tree/v0.188.0/containers/ubuntu
+// manual command: docker build -f Dockerfile -t franzbischoff/false.alarm:stable -t franzbischoff/false.alarm:latest -t franzbischoff/false.alarm:v2.1 --build-arg BUILD_DATE=${TODAY} --build-arg BUILD_VERSION=2.1 .
 {
   // "build": {
   //   "args": {
-  //     "BUILD_DATE": "2021-11-23",
+  //     "BUILD_DATE": "${localEnv:date}",
   //     "BUILD_VERSION": "2.1"
   //   },
   //   "dockerfile": "Dockerfile",
   // },
-  // "workspaceMount": "source=/home/franz/workspaces/false.alarm,target=/workspace,type=volume",
   "image": "franzbischoff/false.alarm:v2.1",
   "containerEnv": {
     "DEBUGME": "R_GlobalEnv",
@@ -187,7 +187,7 @@
       "git-rebase-todo": "gitlens.rebase"
     }
   },
-  // "containerUser": "docker",
+  "containerUser": "docker",
   "shutdownAction": "stopContainer",
   "workspaceFolder": "/workspace/false.alarm",
   "workspaceMount": "source=${localWorkspaceFolder},target=/workspace/false.alarm,type=bind,consistency=cached"

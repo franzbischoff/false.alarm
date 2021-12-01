@@ -32,6 +32,8 @@ extract_regimes <- function(floss_list, params, infos) {
   all_regimes_idxs <- NULL
   all_regimes_values <- NULL
 
+  # TODO: Review if landmark corresponds in cac the index of data
+
   # iterates over all cacs of this time series
   purrr::map(floss_list, function(x) {
     cac <- x$cac
@@ -45,7 +47,7 @@ extract_regimes <- function(floss_list, params, infos) {
 
     if (cac[landmark] < regime_threshold) {
       abs_min_idx <- x$offset - history + landmark + 1
-      if ((abs_min_idx - current_abs_min_idx) > floss_constraint) {
+      if ((abs_min_idx - current_abs_min_idx) > floss_constraint) { # TODO: tweak floss_constraint
         message("abs_min_idx at ", abs_min_idx, " value ", cac[landmark], ".")
         current_abs_min_idx <<- abs_min_idx
         current_abs_min_value <<- cac[landmark]
@@ -53,7 +55,7 @@ extract_regimes <- function(floss_list, params, infos) {
         all_regimes_values <<- c(all_regimes_values, current_abs_min_value)
       }
       if (cac[landmark] < current_abs_min_value) {
-        if ((abs_min_idx - current_abs_min_idx) < (10 * 250)) {
+        if ((abs_min_idx - current_abs_min_idx) < floor(history / 2)) { # TODO: tweak floor(history / 2)
           message("abs_min_idx2 at ", abs_min_idx, " value ", cac[landmark], ".")
           current_abs_min_idx <<- abs_min_idx
           current_abs_min_value <<- cac[landmark]

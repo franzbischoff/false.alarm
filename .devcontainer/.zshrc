@@ -1,5 +1,9 @@
+#!/bin/zsh
 # If you come from bash you might have to change your $PATH.
 export PATH=$HOME/.local/bin:/usr/local/bin:$PATH
+export GPG_TTY=$(tty)
+export TODAY=$(date +%Y-%m-%d)
+export LANG=en_US.UTF-8
 
 # Path to your oh-my-zsh installation.
 export ZSH="/home/docker/.oh-my-zsh"
@@ -93,7 +97,6 @@ source /usr/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
 # export MANPATH="/usr/local/man:$MANPATH"
 
 # You may need to manually set your language environment
-export LANG=en_US.UTF-8
 
 # Preferred editor for local and remote sessions
 # if [[ -n $SSH_CONNECTION ]]; then

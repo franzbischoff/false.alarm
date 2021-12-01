@@ -104,6 +104,11 @@ RUN apt-fast update && apt-fast install -y --no-install-recommends \
   libfribidi-dev \
   libssl-dev \
   libzmq3-dev\
+  gnupg \
+  pinentry-tty \
+  procps \
+  htop \
+  net-tools \
   gpg-agent \
   expect \
   vim \
@@ -121,15 +126,17 @@ RUN curl -o ${HOME}/gobuf.tar.gz https://dl.google.com/go/go1.14.linux-amd64.tar
 
 RUN userdel docker \
   && useradd -p '' docker \
-  && usermod -aG sudo,dialout,plugdev docker \
+  && usermod -aG adm,dialout,cdrom,floppy,sudo,audio,dip,video,plugdev docker \
   && usermod --shell /bin/bash docker \
   && usermod --shell /bin/bash root
+COPY https://github.com/hadolint/hadolint/releases/download/v2.8.0/hadolint-Linux-x86_64 /usr/bin/hadolint
 COPY .zshrc ${HOME}/.zshrc
 COPY .bashrc ${HOME}/.bashrc
 COPY .profile ${HOME}/.profile
 COPY .zshrc /root/.zshrc
-RUN git clone --depth 1 git://github.com/ohmyzsh/ohmyzsh /root/.oh-my-zsh
-RUN git clone --depth 1 git://github.com/ohmyzsh/ohmyzsh ${HOME}/.oh-my-zsh
+RUN git clone --depth 1 git://github.com/ohmyzsh/ohmyzsh /root/.oh-my-zsh \
+  && git clone --depth 1 git://github.com/ohmyzsh/ohmyzsh ${HOME}/.oh-my-zsh \
+  && chmod 755 /usr/bin/hadolint
 
 # Install other packages
 RUN install.r targets tarchetypes \
@@ -150,6 +157,8 @@ RUN apt-fast update && apt-fast install -y --no-install-recommends \
   libavfilter-dev \
   openssh-client \
   socat \
+  bash-completion \
+  bash-builtins \
   && rm -rf /var/lib/apt/lists/*
 
 
