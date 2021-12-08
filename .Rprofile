@@ -53,7 +53,7 @@ if (Sys.getenv("CI") == "") { # not CI
       vsc.show_object_size = TRUE,
       vsc.globalenv = TRUE
     )
-    options(vsc.dev.args = list(width = 800, height = 600))
+    options(vsc.dev.args = list(width = 800, height = 800))
 
     # if httpgd is installed, let's use it
     # This breaks rendering video

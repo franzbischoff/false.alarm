@@ -43,6 +43,9 @@ compute_s_profile_with_stats <- function(data_with_stats, params, infos) {
 
   profiles <- list()
   profiles[[1]] <- current_mp
+  profiles[[1]]$motif_quality <- motif_quality(current_mp$right_matrix_profile,
+    input_format = "pearson", window_size = params$window_size
+  )
   i <- 2
 
   for (n in new_data_list) {
@@ -64,6 +67,9 @@ compute_s_profile_with_stats <- function(data_with_stats, params, infos) {
     )
 
     profiles[[i]] <- current_mp
+    profiles[[i]]$motif_quality <- motif_quality(current_mp$right_matrix_profile,
+      input_format = "pearson", window_size = params$window_size
+    )
     i <- i + 1
     "!!DEBUG batch size `batch`"
   }

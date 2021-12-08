@@ -1,15 +1,15 @@
 // For format details, see https://aka.ms/devcontainer.json. For config options, see the README at:
 // https://github.com/microsoft/vscode-dev-containers/tree/v0.188.0/containers/ubuntu
-// manual command: docker build -f Dockerfile -t franzbischoff/false.alarm:stable -t franzbischoff/false.alarm:latest -t franzbischoff/false.alarm:v2.1 --build-arg BUILD_DATE=${TODAY} --build-arg BUILD_VERSION=2.1 .
+// manual command: docker build -f Dockerfile -t franzbischoff/false.alarm:stable -t franzbischoff/false.alarm:latest -t franzbischoff/false.alarm:v2.2 --build-arg BUILD_DATE=${TODAY} --build-arg BUILD_VERSION=2.2 .
 {
   // "build": {
   //   "args": {
   //     "BUILD_DATE": "${localEnv:date}",
-  //     "BUILD_VERSION": "2.1"
+  //     "BUILD_VERSION": "2.2"
   //   },
   //   "dockerfile": "Dockerfile",
   // },
-  "image": "franzbischoff/false.alarm:v2.1",
+  "image": "franzbischoff/false.alarm:stable",
   "containerEnv": {
     "DEBUGME": "R_GlobalEnv",
     "NOT_CRAN": "true",

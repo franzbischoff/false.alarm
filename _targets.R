@@ -141,9 +141,9 @@ var_mp_batch <- 100
 ## size of the online MP buffer to keep memory footprint low (multiply by the freq to have it in seconds)
 var_mp_history <- 20 * const_sample_freq # 20 secs
 ## Threshold used on computing the MP. This concept is described elsewhere. Values above 10 use another formula
-var_mp_threshold <- 0 # c(0, 0.5, 0.6, 0.9, 50, 60, 90)
+var_mp_threshold <- c(0, 0.5) # c(0, 0.5, 0.6, 0.9, 50, 60, 90)
 ## the window size for the MP algorithm
-var_window_size <- 200 # c(200, 250)
+var_window_size <- c(200, 250)
 ## Multiplier for the size of the Exclusion Zone (e.g., window_size * ez == exclusion_zone)
 var_ez <- 0.5
 ## time constraint used on MP. Don't use both mp_time_constraint and floss_time_constraint (multiply by the freq to have it in seconds)
@@ -168,13 +168,13 @@ if (dev_mode) {
 }
 #### Pipeline: Start ----
 
-l_input <- tar_files_input(
+r_input <- tar_files_input(
   #### Pipeline: Read files from directory ----
   file_paths,
   # tail(head(find_all_files(types = "all"), var_head), 10),
   find_all_files(types = "asystole") # , "bradycardia", "tachycardia", "vfib", "vtachy"
 )
-l_dataset <- tar_target(
+r_dataset <- tar_target(
   #### Pipeline: Import Files to R and Select Datasets ----
   dataset,
   read_and_prepare_ecgs(file_paths,
@@ -201,7 +201,7 @@ l_dataset <- tar_target(
 #   pattern = map(dataset)
 # )
 #### Pipeline: > NoFilters Branch ----
-l_w_size_root <- tar_map(
+b_window_sizes <- tar_map(
   ##### Pipeline: > NoFilters > WindowSize Branch ----
   values = list(map_window_size = var_window_size),
   tar_target(
@@ -218,10 +218,10 @@ l_w_size_root <- tar_map(
     ),
     pattern = map(dataset)
   ),
-  l_mp_thr_root <- tar_map(
+  b_mp_threshold <- tar_map(
     #### Pipeline: > NoFilters > WindowSize > MP Threshold Branch ----
     values = list(map_mp_threshold = var_mp_threshold),
-    l_mp_tconstr_root <- tar_map(
+    b_mp_floss_constraints <- tar_map(
       #### Pipeline: > NoFilters > WindowSize > MP Threshold > MP/FLOSS Constraints Branch ----
       # here the expand_grid and filter do the following:
       # -- first get all the combinations from the variables
@@ -287,7 +287,7 @@ l_w_size_root <- tar_map(
         ),
         pattern = map(ds_stats_mps)
       ),
-      l_regime_thr_root <- tar_map(
+      b_regime_threshold <- tar_map(
         ##### Pipeline: > NoFilters > WindowSize > MP Threshold > MP/FLOSS Constraints > Regime Threshold Branch ----
         values = list(map_regime_threshold = var_regime_threshold),
         tar_target(
@@ -356,8 +356,10 @@ l_w_size_root <- tar_map(
         # )
       )
     )
-  )
+  ),
+  combined_var <- tar_combine(combined_samples, b_mp_threshold[grepl("regimes_samples", names(b_mp_threshold))], command = list(!!!.x))
 )
+
 # #### Pipeline: > Filters Branch ----
 # tar_map(
 #   values = list(map_filter_w_size = var_filter_w_size),
@@ -445,7 +447,7 @@ l_w_size_root <- tar_map(
 # )
 
 #### Pipeline: Join targets ----
-list(l_input, l_dataset, l_w_size_root)
+list(r_input, r_dataset, b_window_sizes)
 
 #### Pipeline: End ----
 
@@ -457,7 +459,7 @@ list(l_input, l_dataset, l_w_size_root)
 # tar_prune() # cleanup _targets folder keeping only the latest cache.
 # tar_glimpse() # shows the simple plot, faster
 # tar_visnetwork(exclude = starts_with('.')) # shows the interactive plot
-# tar_visnetwork(TRUE, label = c("time", "size", "branches"), )
+# tar_visnetwork(TRUE, label = c("time", "size", "branches"))
 # tar_visnetwork(TRUE, names = !starts_with("graph"), exclude = starts_with('.'))
 # tar_manifest() # returns a tibble with all steps
 # tar_manifest(fields = NULL) # shows way more columns

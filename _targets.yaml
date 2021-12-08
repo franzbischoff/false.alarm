@@ -1,7 +1,7 @@
 main:
-  reporter_make: timestamp
+  reporter_make: timestamp_positives
   reporter_outdated: forecast
-  script: _targets.R
-  shortcut: no
   store: _targets
-  workers: '2'
+  shortcut: no
+  script: _targets.R
+  workers: 2

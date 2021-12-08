@@ -359,6 +359,6 @@
     }
   ],
   "readme": "https://github.com/franzbischoff/false.alarm/blob/master/README.md",
-  "fileSize": "50126.833KB",
+  "fileSize": "82898.617KB",
   "contIntegration": ["https://github.com/franzbischoff/false.alarm/actions/workflows/R-CMD-check.yaml", "https://codecov.io/gh/franzbischoff/false.alarm"]
 }

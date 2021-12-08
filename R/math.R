@@ -248,3 +248,37 @@ binary_split <- function(n, rcpp = TRUE) {
   }
   return(as.integer(idxs))
 }
+
+
+#' Math Functions
+#'
+#' `motif_quality()`: Computes a coefficient of quality for the best motif in the matrix profile. Depends on
+#'  the window size used for the matrix profile computation.
+#'
+#' @param mp a `vector` of `numeric`. The computed matrix profile.
+#' @param method a `string`. What will be the comparative measurement. Currently "mean" or "median". Default is "mean".
+#' @param input_format a `string`. The values in `mp` are "euclidean" distances or "pearson" coefficients? Default is "euclidean".
+#' @param window_size an `integer` or `NULL`. If `input_format` is "pearson", this value must be given. Default is `NULL`.
+#'
+#' @return `motif_quality()`: Returns a value between 0.0 and 1.0. Large is better.
+#' @export
+#' @order 9
+#' @rdname math_tools
+#' @examples
+#' fake_data <- c(1, 1, 4, 5, 2, 3, 1, 7, 9, 4, 5, 2, 3)
+#' coef <- motif_quality(fake_data)
+motif_quality <- function(mp, method = c("mean", "median"), input_format = c("euclidean", "pearson"), window_size = NULL) {
+  method <- match.arg(method)
+  input_format <- match.arg(input_format)
+
+  if (input_format == "pearson") {
+    if (!is.numeric(window_size)) {
+      stop("For input format 'pearson', the window_size must be given.", call. = FALSE)
+    }
+    mp <- corr_ed(mp, window_size)
+  }
+
+  result <- 1 - (min(mp) / do.call(method, list(mp)))
+
+  return(result)
+}

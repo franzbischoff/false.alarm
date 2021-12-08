@@ -129,7 +129,7 @@ RUN userdel docker \
   && usermod -aG adm,dialout,cdrom,floppy,sudo,audio,dip,video,plugdev docker \
   && usermod --shell /bin/bash docker \
   && usermod --shell /bin/bash root
-COPY https://github.com/hadolint/hadolint/releases/download/v2.8.0/hadolint-Linux-x86_64 /usr/bin/hadolint
+ADD https://github.com/hadolint/hadolint/releases/download/v2.8.0/hadolint-Linux-x86_64 /usr/bin/hadolint
 COPY .zshrc ${HOME}/.zshrc
 COPY .bashrc ${HOME}/.bashrc
 COPY .profile ${HOME}/.profile
@@ -153,6 +153,7 @@ RUN apt-fast update && apt-fast install -y --no-install-recommends \
   libxml2-dev \
   libfontconfig1-dev \
   libmagick++-dev \
+  libnode-dev \
   cargo \
   libavfilter-dev \
   openssh-client \

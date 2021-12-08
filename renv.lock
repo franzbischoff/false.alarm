@@ -1186,22 +1186,22 @@
     },
     "targets": {
       "Package": "targets",
-      "Version": "0.8.1",
+      "Version": "0.9.0",
       "Source": "Repository",
       "Repository": "CRAN",
-      "Hash": "082656166cf9d1286c0cbf59b555eb1e"
+      "Hash": "e4868558d1403b84942e30c92434e128"
     },
     "testthat": {
       "Package": "testthat",
-      "Version": "3.1.0.9000",
+      "Version": "3.1.1.9000",
       "Source": "GitHub",
       "RemoteType": "github",
       "RemoteUsername": "r-lib",
       "RemoteRepo": "testthat",
       "RemoteRef": "main",
-      "RemoteSha": "160dcacb27f07fe5adacd03da7e46e201fc77d14",
+      "RemoteSha": "d1862067233a1575de654ca5a4a189daf266d659",
       "RemoteHost": "api.github.com",
-      "Hash": "12899fe3d36d808533e256b1ddf3be74"
+      "Hash": "55b4a567f4bc8ac0c4174f1ef83fe779"
     },
     "thesisdown": {
       "Package": "thesisdown",

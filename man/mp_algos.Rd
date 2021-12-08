@@ -158,7 +158,7 @@ on Ogita's work for better precision computing mean and standard deviation (part
 }
 }
 \section{This document}{
-Last updated on 2021-10-03 using R version 4.1.1.
+Last updated on 2021-12-05 using R version 4.1.2.
 }
 
 \examples{
