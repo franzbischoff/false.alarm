@@ -3,5 +3,10 @@ main:
   reporter_outdated: forecast
   store: _targets
   shortcut: no
-  script: _targets.R
+  script: scripts/_targets.R
   workers: 2
+
+classifier:
+  inherits: main
+  store: _classifier
+  script: scripts/_classifier.R
