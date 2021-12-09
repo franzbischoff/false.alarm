@@ -551,6 +551,18 @@
       "Repository": "CRAN",
       "Hash": "f3aefccc1cc50de6338146b62f115de8"
     },
+    "gittargets": {
+      "Package": "gittargets",
+      "Version": "0.0.0.9000",
+      "Source": "GitHub",
+      "RemoteType": "github",
+      "RemoteUsername": "wlandau",
+      "RemoteRepo": "gittargets",
+      "RemoteRef": "main",
+      "RemoteSha": "360e5c57c2bdf8ed8919054a2a6e423b474feab9",
+      "RemoteHost": "api.github.com",
+      "Hash": "ec1330bb1c7e4f3a056093c412464c82"
+    },
     "globals": {
       "Package": "globals",
       "Version": "0.14.0",
@@ -854,10 +866,10 @@
     },
     "pkgbuild": {
       "Package": "pkgbuild",
-      "Version": "1.2.1",
+      "Version": "1.3.0",
       "Source": "Repository",
       "Repository": "CRAN",
-      "Hash": "f3e01071cb55889818dc53c49355782a"
+      "Hash": "ecf6582da7918fd32f6e2b7d221af818"
     },
     "pkgconfig": {
       "Package": "pkgconfig",
@@ -1270,6 +1282,13 @@
       "Source": "Repository",
       "Repository": "CRAN",
       "Hash": "c9c462b759a5cc844ae25b5942654d13"
+    },
+    "uuid": {
+      "Package": "uuid",
+      "Version": "1.0-3",
+      "Source": "Repository",
+      "Repository": "CRAN",
+      "Hash": "2097822ba5e4440b81a0c7525d0315ce"
     },
     "vctrs": {
       "Package": "vctrs",
