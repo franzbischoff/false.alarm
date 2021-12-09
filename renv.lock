@@ -25,10 +25,10 @@
     },
     "Matrix": {
       "Package": "Matrix",
-      "Version": "1.3-4",
+      "Version": "1.4-0",
       "Source": "Repository",
       "Repository": "CRAN",
-      "Hash": "4ed05e9c9726267e4a5872e09c04587c"
+      "Hash": "130c0caba175739d98f2963c6a407cf6"
     },
     "R.cache": {
       "Package": "R.cache",
@@ -471,10 +471,10 @@
     },
     "fs": {
       "Package": "fs",
-      "Version": "1.5.1",
+      "Version": "1.5.2",
       "Source": "Repository",
       "Repository": "CRAN",
-      "Hash": "8142f0a2056d53ec2e15bf701185beb1"
+      "Hash": "7c89603d81793f0d5486d91ab1fc6f1d"
     },
     "future": {
       "Package": "future",
@@ -1078,10 +1078,10 @@
     },
     "sessioninfo": {
       "Package": "sessioninfo",
-      "Version": "1.2.1",
+      "Version": "1.2.2",
       "Source": "Repository",
       "Repository": "CRAN",
-      "Hash": "19ab8539771d727754c178f2ef892615"
+      "Hash": "3f9796a8d0a0e8c6eb49a4b029359d1f"
     },
     "shiny": {
       "Package": "shiny",
@@ -1147,9 +1147,9 @@
       "RemoteUsername": "r-lib",
       "RemoteRepo": "styler",
       "RemoteRef": "main",
-      "RemoteSha": "d6675bbbaf3e16fa626101df58c60728a3ab9178",
+      "RemoteSha": "5516800898656c145c41a8ff3e917ac36fdf86c6",
       "RemoteHost": "api.github.com",
-      "Hash": "c66f37c66caf129ca2de7a92c98b0462"
+      "Hash": "ba332181790ca238b9baae1f35af0648"
     },
     "svglite": {
       "Package": "svglite",

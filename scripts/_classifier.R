@@ -1,3 +1,5 @@
+# Sys.setenv(TAR_PROJECT = "classifier")
+
 source(here("scripts", "_globals.R"))
 
 #### Pipeline: Start ----

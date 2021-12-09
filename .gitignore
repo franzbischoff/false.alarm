@@ -56,11 +56,6 @@ vignettes/*.R
 # Personalized
 /tmp/
 /tmp_*/
-_targets/*
-_targets_beta
-_targets_beta.R
-.targets-files
-.targets-runs
 .future
 debugme.log
 
