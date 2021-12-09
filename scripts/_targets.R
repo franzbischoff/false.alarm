@@ -356,3 +356,10 @@ list(r_input, r_dataset, b_window_sizes)
 #   ),
 #   pattern = cross(map(cross(var_window_size, dataset), ds_filtered), var_mp_time_constraint)
 # ),
+
+
+# library(gittargets)
+# tar_git_log()
+# tar_git_status()
+# tar_git_init()
+# tar_git_snapshot()
