@@ -74,6 +74,7 @@ if (Sys.getenv("CI") == "") { # not CI
         require("here", quietly = TRUE)
         require("workflowr", quietly = TRUE)
         require("targets", quietly = TRUE)
+        require("gittargets", quietly = TRUE)
         require("tarchetypes", quietly = TRUE)
       })
     )
@@ -111,6 +112,7 @@ if (Sys.getenv("CI") == "") { # not CI
         require("workflowr", quietly = TRUE)
         require("targets", quietly = TRUE)
         require("tarchetypes", quietly = TRUE)
+        require("gittargets", quietly = TRUE)
       })
     )
   }
@@ -121,6 +123,7 @@ if (Sys.getenv("CI") == "") { # not CI
       require("workflowr", quietly = TRUE)
       require("targets", quietly = TRUE)
       require("tarchetypes", quietly = TRUE)
+      require("gittargets", quietly = TRUE)
     })
   )
 }
