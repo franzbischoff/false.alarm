@@ -450,3 +450,23 @@ read_and_prepare_ecgs <- function(file_paths, subset = FALSE, true_alarm = NULL,
 
   return(result)
 }
+
+reshape_dataset_by_truefalse <- function(dataset, include) {
+  # divide in TRUE and FALSE
+  df_true <- purrr::keep(dataset, ~ attr(.x, "info")$true)
+  df_false <- purrr::keep(dataset, ~ !attr(.x, "info")$true)
+
+  # filter by presence of include
+  df_true <- purrr::keep(df_true, ~ all(include %in% names(.x)))
+  df_false <- purrr::keep(df_false, ~ all(include %in% names(.x)))
+
+  # convert from list by file to list by time series
+  df_true <- purrr::transpose(df_true)
+  df_false <- purrr::transpose(df_false)
+
+  # keep only the series we will include:
+  df_true <- df_true[include]
+  df_false <- df_false[include]
+
+  return(list(true = df_true, false = df_false))
+}

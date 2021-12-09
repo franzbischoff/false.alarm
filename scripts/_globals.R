@@ -123,14 +123,22 @@ tar_option_set(
 #### Pipeline: variable definitions ----
 # signal sample frequency, this is a constant
 const_sample_freq <- 250
+# known series headers;
+# V: unspecified precordial lead
+# MCL: modified precordial lead (unspecified) (read abstract of https://doi.org/10.1016/0735-1097(91)90762-X)
+# ABP: arterial blood pressure (invasive, from one of the radial arteries)
+# PLETH: uncalibrated raw output of fingertip plethysmograph
+# RESP: uncalibrated respiration waveform, estimated from thoracic impedance
+const_headers <- c("time", "I", "II", "III", "aVR", "aVL", "aVF", "V", "MCL", "PLETH", "ABP", "RESP")
 # keep only the X filenames
 var_head <- 10
 # The subset that will be keep from the dataset (seq.int(240 * const_sample_freq + 1, 300 * const_sample_freq) means the last 60 seconds)
 var_subset <- seq.int(240 * const_sample_freq + 1, 300 * const_sample_freq) # last 60 secs
 # keep only the X files per type (asystole, bradycardia, etc)
 var_limit_per_type <- 2
-# tracks to exclude from the files
-var_exclude <- c("time", "V", "ABP", "PLETH", "RESP")
+var_include <- "II"
+# tracks to exclude from the files / in this case, to include only "II"
+var_exclude <- setdiff(const_headers, var_include) # c("time", "V", "ABP", "PLETH", "RESP")
 
 # window size of the filters used to remove spurious data
 var_filter_w_size <- 100 # c(100, 200)

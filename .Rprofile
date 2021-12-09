@@ -39,10 +39,10 @@ if (Sys.getenv("CI") == "") { # not CI
       warnPartialMatchDollar = FALSE,
       warnPartialMatchAttr = FALSE,
       usethis.protocol = "https",
-      vsc.rstudioapi = TRUE
       # error = recover
     )
     options(
+      vsc.rstudioapi = TRUE,
       vsc.browser = "Two",
       vsc.viewer = "Two",
       vsc.page_viewer = "Two",
@@ -51,9 +51,9 @@ if (Sys.getenv("CI") == "") { # not CI
       vsc.helpPanel = "Two",
       vsc.str.max.level = 2,
       vsc.show_object_size = TRUE,
-      vsc.globalenv = TRUE
+      vsc.globalenv = TRUE,
+      vsc.dev.args = list(width = 1200, height = 800)
     )
-    options(vsc.dev.args = list(width = 800, height = 800))
 
     # if httpgd is installed, let's use it
     # This breaks rendering video
