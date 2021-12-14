@@ -38,7 +38,7 @@ if (Sys.getenv("CI") == "") { # not CI
       warnPartialMatchArgs = FALSE,
       warnPartialMatchDollar = FALSE,
       warnPartialMatchAttr = FALSE,
-      usethis.protocol = "https",
+      usethis.protocol = "https"
       # error = recover
     )
     options(

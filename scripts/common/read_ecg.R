@@ -460,7 +460,7 @@ reshape_dataset_by_truefalse <- function(dataset, include) {
   df_true <- purrr::keep(df_true, ~ all(include %in% names(.x)))
   df_false <- purrr::keep(df_false, ~ all(include %in% names(.x)))
 
-  # convert from list by file to list by time series
+  # # convert from list by file to list by time series
   df_true <- purrr::transpose(df_true)
   df_false <- purrr::transpose(df_false)
 
@@ -468,5 +468,23 @@ reshape_dataset_by_truefalse <- function(dataset, include) {
   df_true <- df_true[include]
   df_false <- df_false[include]
 
-  return(list(true = df_true, false = df_false))
+
+  # convert trues and falses into a tibble for later use on rsample
+  df_true <- purrr::map(df_true, function(x) {
+    files <- names(x)
+    tibble::tibble(
+      file = files, val = runif(1), values = x, alarm = factor("true", c("true", "false"))
+    )
+  })
+
+  df_false <- purrr::map(df_false, function(x) {
+    files <- names(x)
+    tibble::tibble(
+      file = files, val = runif(1), values = x, alarm = factor("false", c("true", "false"))
+    )
+  })
+
+  data <- dplyr::bind_rows(df_true, df_false)
+
+  return(data)
 }

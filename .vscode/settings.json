@@ -1,6 +1,4 @@
 {
-  "autoOpenPreviewPanel.languages": "markdown,md",
-  "autoOpenPreviewPanel.openPreviewToSide": true,
   "C_Cpp.default.browse.path": [
     "${workspaceRoot}/src"
   ],
@@ -19,18 +17,9 @@
     ".vscode-insiders",
     "**/.devcontainer/**"
   ],
-  "json.schemas": [
-    {
-      "fileMatch": [
-        "codemeta.json"
-      ],
-      "url": "https://raw.githubusercontent.com/codemeta/codemeta/master/codemeta.jsonld"
-    }
-  ],
   "editor.tabCompletion": "on",
   "editor.tabSize": 2,
   "editor.wordWrapColumn": 120,
-  "explorerExclude.backup": null,
   "files.associations": {
     ".whitesource": "jsonc",
     "*.cls": "latex",
@@ -157,12 +146,21 @@
     "**/tmp/**": true
   },
   "git.enableCommitSigning": true,
+  "git.inputValidation": "always",
   "github-actions.workflows.pinned.refresh.enabled": true,
   "github-actions.workflows.pinned.refresh.interval": 500,
   "github-actions.workflows.pinned.workflows": [
     ".github/workflows/test-coverage.yaml",
     ".github/workflows/ci.yaml",
     ".github/workflows/binder.yaml"
+  ],
+  "json.schemas": [
+    {
+      "fileMatch": [
+        "codemeta.json"
+      ],
+      "url": "https://raw.githubusercontent.com/codemeta/codemeta/master/codemeta.jsonld"
+    }
   ],
   "latex-workshop.bibtex-format.sort.enabled": true,
   "latex-workshop.bibtex-format.sortby": [
@@ -196,15 +194,6 @@
   "latex-workshop.chktex.enabled": true,
   "latex-workshop.latex.autoBuild.run": "never",
   "latex-workshop.view.pdf.viewer": "tab",
-  "local-history.exclude": [
-    "**/*.md",
-    "**/.history/**",
-    "**/.vscode/**",
-    "**/node_modules/**",
-    "**/typings/**",
-    "**/out/**",
-    "**/Code/User/**"
-  ],
   "markdown.extension.preview.autoShowPreviewToSide": true,
   "r.alwaysUseActiveTerminal": true,
   "r.rmarkdown.knit.focusOutputChannel": false,
@@ -259,10 +248,10 @@
   "terminal.integrated.scrollback": 10000,
   "terminal.integrated.tabs.enabled": true,
   "terminal.integrated.tabs.focusMode": "singleClick",
-  "testing.enableProblemDiagnostics": true,
   "todo-tree.filtering.includeGlobs": [
     "**/src/**",
     "**/R/**",
+    "**/scripts/**",
     "**/index/**",
     "**/analysis/**",
     "**/data/**",
@@ -279,14 +268,7 @@
   "todo-tree.tree.disableCompactFolders": true,
   "todo-tree.tree.expanded": true,
   "todo-tree.tree.scanMode": "workspace",
-  "todo-tree.tree.showScanModeButton": true,
-  "xml.format.enforceQuoteStyle": "preferred",
-  "xml.format.joinCDATALines": true,
-  "xml.format.joinCommentLines": true,
-  "xml.format.joinContentLines": true,
-  "xml.validation.resolveExternalEntities": true,
   "yaml.schemas": {
     "**/.github/workflows/*.yaml": "https://json.schemastore.org/github-workflow.json"
-  },
-  "git.inputValidation": "always"
+  }
 }
