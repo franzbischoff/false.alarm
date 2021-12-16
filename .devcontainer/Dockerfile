@@ -11,11 +11,6 @@ ARG HOME="/home/docker"
 
 # FROM ubuntu-latest
 
-# [Optional] Uncomment this section to install additional OS packages.
-# RUN apt-get update && export DEBIAN_FRONTEND=noninteractive \
-#     && apt-get -y install --no-install-recommends <your-package-list-here>
-
-## Remain current
 ## This was not needed before but we need it now
 ENV DEBIAN_FRONTEND noninteractive
 
@@ -25,11 +20,8 @@ RUN apt-get update -qq \
 
 COPY checkbashisms /usr/local/bin
 
-RUN add-apt-repository ppa:apt-fast/stable && apt-get update && apt-get install -y --no-install-recommends apt-fast \
-  && rm -rf /var/lib/apt/lists/*
-
 # Install rmd tools
-RUN apt-fast update && apt-fast install -y --no-install-recommends \
+RUN apt-get update && apt-get install -y --no-install-recommends \
   ghostscript \
   lmodern \
   pandoc-citeproc \
@@ -56,7 +48,7 @@ RUN apt-fast update && apt-fast install -y --no-install-recommends \
   && ln -s /usr/lib/R/site-library/littler/examples/render.r /usr/local/bin/render.r
 
 # Install tidy stuff
-RUN apt-fast update && apt-fast install -y --no-install-recommends \
+RUN apt-get update && apt-get install -y --no-install-recommends \
   r-cran-tidyverse \
   r-cran-bitops \
   r-cran-sourcetools \
@@ -82,7 +74,7 @@ RUN apt-fast update && apt-fast install -y --no-install-recommends \
   && rm -rf /var/lib/apt/lists/*
 
 # Install some dev stuffs
-RUN apt-fast update && apt-fast install -y --no-install-recommends \
+RUN apt-get update && apt-get install -y --no-install-recommends \
   build-essential \
   r-base-dev \
   r-recommended \
@@ -94,7 +86,7 @@ RUN apt-fast update && apt-fast install -y --no-install-recommends \
   && rm -rf /var/lib/apt/lists/*
 
 # Install aditional tools
-RUN apt-fast update && apt-fast install -y --no-install-recommends \
+RUN apt-get update && apt-get install -y --no-install-recommends \
   git \
   curl \
   libgit2-dev \
@@ -149,7 +141,7 @@ RUN install.r targets tarchetypes \
 # fill next stuff here, avoid adding slow things above this line
 
 # Install aditional tools
-RUN apt-fast update && apt-fast install -y --no-install-recommends \
+RUN apt-get update && apt-get install -y --no-install-recommends \
   libxml2-dev \
   libfontconfig1-dev \
   libmagick++-dev \
@@ -157,6 +149,7 @@ RUN apt-fast update && apt-fast install -y --no-install-recommends \
   cargo \
   libavfilter-dev \
   openssh-client \
+  dbus-x11 \
   socat \
   bash-completion \
   bash-builtins \
@@ -202,6 +195,6 @@ LABEL \
 USER docker
 WORKDIR /workspace
 
-CMD ["zsh"]
+CMD ["bash"]
 
 

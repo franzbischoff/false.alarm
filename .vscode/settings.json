@@ -6,17 +6,6 @@
     "RC_INVOKED"
   ],
   "C_Cpp.intelliSenseEngineFallback": "Enabled",
-  "cSpell.allowCompoundWords": true,
-  "cSpell.diagnosticLevel": "Information",
-  "cSpell.ignorePaths": [
-    "**/package-lock.json",
-    "**/node_modules/**",
-    "**/vscode-extension/**",
-    "**/.git/objects/**",
-    ".vscode",
-    ".vscode-insiders",
-    "**/.devcontainer/**"
-  ],
   "editor.tabCompletion": "on",
   "editor.tabSize": 2,
   "editor.wordWrapColumn": 120,

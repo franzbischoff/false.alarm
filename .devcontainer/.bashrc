@@ -8,6 +8,7 @@ export GPG_TTY
 TODAY=$(date +%Y-%m-%d)
 export TODAY
 export LANG=en_US.UTF-8
+export "$(dbus-launch)"
 
 # If not running interactively, don't do anything
 case $- in

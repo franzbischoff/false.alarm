@@ -733,10 +733,10 @@
     },
     "igraph": {
       "Package": "igraph",
-      "Version": "1.2.9",
+      "Version": "1.2.10",
       "Source": "Repository",
       "Repository": "CRAN",
-      "Hash": "66abc5ba63fe0543b3d7c5ec73b4230f"
+      "Hash": "755b0a569115bb54c91997136ece64a8"
     },
     "infer": {
       "Package": "infer",
