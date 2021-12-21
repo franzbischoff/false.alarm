@@ -732,12 +732,10 @@ List mpx_rcpp(NumericVector data_ref, uint64_t window_size, double ez, uint64_t 
 
     NumericVector ww = (data_ref[Range(0, window_size - 1)] - mmu[0]);
 
-
     uint64_t num_progress =
         ceil((double)compute_order.size() / 100); // added double inside sqrt to avoid ambiguity on Solaris
 
     Progress p(100, progress);
-
 
     compute_order = sample(compute_order, compute_order.size());
 
@@ -815,11 +813,14 @@ List mpx_rcpp(NumericVector data_ref, uint64_t window_size, double ez, uint64_t 
 
     if (euclidean) { // correlation to ed
       mmp = sqrt(2 * window_size * (1 - mmp));
-      mmp[mmpi < 0] = R_PosInf;
       rmmp = sqrt(2 * window_size * (1 - rmmp));
-      rmmp[rmmpi < 0] = R_PosInf;
       lmmp = sqrt(2 * window_size * (1 - lmmp));
-      lmmp[lmmpi < 0] = R_PosInf;
+
+      if (idxs) {
+        mmp[mmpi < 0] = R_PosInf;
+        rmmp[rmmpi < 0] = R_PosInf;
+        lmmp[lmmpi < 0] = R_PosInf;
+      }
     }
 
     if (idxs) {

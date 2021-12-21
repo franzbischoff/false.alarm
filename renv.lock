@@ -603,9 +603,9 @@
       "RemoteUsername": "ropensci",
       "RemoteRepo": "git2r",
       "RemoteRef": "HEAD",
-      "RemoteSha": "e561cc18cd5c47d56fd8a0975923cde494c58e64",
+      "RemoteSha": "0af32b553f7f95196c39b1203f29e9f66061e4d7",
       "RemoteHost": "api.github.com",
-      "Hash": "ee23215701b8b5976171ae52a2444152"
+      "Hash": "748438f19675c875ccf20fedf3098562"
     },
     "gitcreds": {
       "Package": "gitcreds",
@@ -622,9 +622,9 @@
       "RemoteUsername": "wlandau",
       "RemoteRepo": "gittargets",
       "RemoteRef": "main",
-      "RemoteSha": "5a3a63539d3f25808b78b88fd79569359d53905b",
+      "RemoteSha": "62034613c5c5a370d3e8db759dd01a6b4cdff681",
       "RemoteHost": "api.github.com",
-      "Hash": "f50f3c516aa6f87107e512a2138b9308"
+      "Hash": "a79f9bb936a6fd1eb99577431117fe8f"
     },
     "globals": {
       "Package": "globals",
@@ -635,10 +635,10 @@
     },
     "glue": {
       "Package": "glue",
-      "Version": "1.5.1",
+      "Version": "1.6.0",
       "Source": "Repository",
       "Repository": "CRAN",
-      "Hash": "e01bc1fe0c20954ec97eac86640abc70"
+      "Hash": "b8bb7aaf248e45bac08ebed86f3a0aa4"
     },
     "gower": {
       "Package": "gower",
@@ -796,10 +796,10 @@
     },
     "knitr": {
       "Package": "knitr",
-      "Version": "1.36",
+      "Version": "1.37",
       "Source": "Repository",
       "Repository": "CRAN",
-      "Hash": "46344b93f8854714cdf476433a59ed10"
+      "Hash": "a4ec675eb332a33fe7b7fe26f70e1f98"
     },
     "labeling": {
       "Package": "labeling",
@@ -964,10 +964,10 @@
     },
     "openssl": {
       "Package": "openssl",
-      "Version": "1.4.5",
+      "Version": "1.4.6",
       "Source": "Repository",
       "Repository": "CRAN",
-      "Hash": "5406fd37ef0bf9b88c8a4f264d6ec220"
+      "Hash": "69fdf291af288f32fd4cd93315084ea8"
     },
     "pROC": {
       "Package": "pROC",
@@ -978,10 +978,10 @@
     },
     "parallelly": {
       "Package": "parallelly",
-      "Version": "1.29.0",
+      "Version": "1.30.0",
       "Source": "Repository",
       "Repository": "CRAN",
-      "Hash": "b5f399c9ce96977e22ef32c20b6cfe87"
+      "Hash": "67db13907a9cea89c118cf82d448799f"
     },
     "parsnip": {
       "Package": "parsnip",
@@ -1013,10 +1013,10 @@
     },
     "pkgbuild": {
       "Package": "pkgbuild",
-      "Version": "1.3.0",
+      "Version": "1.3.1",
       "Source": "Repository",
       "Repository": "CRAN",
-      "Hash": "ecf6582da7918fd32f6e2b7d221af818"
+      "Hash": "66d2adfed274daf81ccfe77d974c3b9b"
     },
     "pkgconfig": {
       "Package": "pkgconfig",
@@ -1090,10 +1090,10 @@
     },
     "progressr": {
       "Package": "progressr",
-      "Version": "0.9.0",
+      "Version": "0.10.0",
       "Source": "Repository",
       "Repository": "CRAN",
-      "Hash": "ca0d80ecc29903f7579edbabd91f4199"
+      "Hash": "7df448f5ae46ab0a1af0fb619349d3fd"
     },
     "promises": {
       "Package": "promises",
@@ -1355,9 +1355,9 @@
       "RemoteUsername": "r-lib",
       "RemoteRepo": "styler",
       "RemoteRef": "main",
-      "RemoteSha": "60232840b626548dbe117ef47113ccb4bfa212df",
+      "RemoteSha": "e4866e575b4923c42f6e7c6caead4ca978cb44df",
       "RemoteHost": "api.github.com",
-      "Hash": "2812db30f7ef22cce4471d144b81a4f9"
+      "Hash": "8c64318b4c3d1400918f17c6e3fbec8b"
     },
     "survival": {
       "Package": "survival",
@@ -1467,10 +1467,10 @@
     },
     "tinytex": {
       "Package": "tinytex",
-      "Version": "0.35",
+      "Version": "0.36",
       "Source": "Repository",
       "Repository": "CRAN",
-      "Hash": "1d7220fe46159fb9f5c99a44354a2bff"
+      "Hash": "130fe4c61e55b271a2655b3a284a205f"
     },
     "tsmp": {
       "Package": "tsmp",

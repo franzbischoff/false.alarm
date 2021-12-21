@@ -259,5 +259,6 @@
   "todo-tree.tree.scanMode": "workspace",
   "yaml.schemas": {
     "**/.github/workflows/*.yaml": "https://json.schemastore.org/github-workflow.json"
-  }
+  },
+  "editor.formatOnSave": true
 }

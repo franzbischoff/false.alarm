@@ -1,5 +1,16 @@
 # Sys.setenv(TAR_PROJECT = "classifier")
 
+# Candidates:
+# Contrast Profile Matrix Profile XXIII: Contrast Profile
+# >> negative sample vs at least 2 positives
+# >> can be used online
+# >> faster than shapelets discovery?
+
+# LAMP 10.1109/ICDM.2019.00104
+# >> is a learning model; uses a deep neural network
+# >> mix of motif catalog and index plus dnn to encode
+
+
 # Load global config
 source(here("scripts", "_globals.R"))
 # Load all scripts
@@ -26,7 +37,7 @@ r_input <- tar_files_input(
   #### Pipeline: Read files from directory ----
   file_paths,
   {
-    find_all_files(types = "asystole") # types = "asystole", "bradycardia", "tachycardia", "vfib", "vtachy"
+    find_all_files(types = "vfib") # types = "asystole", "bradycardia", "tachycardia", "vfib", "vtachy"
   }
 )
 
