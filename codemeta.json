@@ -359,6 +359,7 @@
     }
   ],
   "readme": "https://github.com/franzbischoff/false.alarm/blob/master/README.md",
-  "fileSize": "139650.364KB",
-  "contIntegration": ["https://github.com/franzbischoff/false.alarm/actions/workflows/R-CMD-check.yaml", "https://codecov.io/gh/franzbischoff/false.alarm"]
+  "fileSize": "139680.52KB",
+  "contIntegration": ["https://github.com/franzbischoff/false.alarm/actions/workflows/R-CMD-check.yaml", "https://codecov.io/gh/franzbischoff/false.alarm"],
+  "developmentStatus": "https://www.repostatus.org/#wip"
 }

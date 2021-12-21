@@ -1,7 +1,7 @@
 # pull data from the internet
 if (!dir.exists(here::here("inst/extdata/physionet"))) {
   dir.create(here::here("inst/extdata"), recursive = TRUE, showWarnings = FALSE)
-  download.file("https://zenodo.org/record/4634014/files/physionet.zip?download=1", method = "libcurl", destfile = here::here("inst/extdata/data.zip"))
+  download.file("https://zenodo.org/record/5794658/files/physionet.zip?download=1", method = "libcurl", destfile = here::here("inst/extdata/data.zip"))
   unzip(here::here("inst/extdata/data.zip"), exdir = here::here("inst/extdata"), setTimes = TRUE, overwrite = FALSE)
   file.remove(here::here("inst/extdata/data.zip"))
 }

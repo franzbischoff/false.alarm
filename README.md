@@ -2,7 +2,7 @@ Detecting life-threatening patterns in Point-of-care ECG using efficient
 memory and processor power.
 ================
 Francisco Bischoff
-on August 16, 2021
+on December 21, 2021
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
@@ -15,6 +15,8 @@ binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/franzbi
 [![Read
 Thesis](https://img.shields.io/badge/read-thesis__down-brightgreen)](https://franzbischoff.github.io/false.alarm/)
 [![](https://zenodo.org/badge/261530912.svg)](https://zenodo.org/badge/latestdoi/261530912)
+[![Project Status:
+WIP](https://www.repostatus.org/badges/latest/wip.svg)](https://www.repostatus.org/#wip)
 
 [![R-CMD-check](https://github.com/franzbischoff/false.alarm/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/franzbischoff/false.alarm/actions/workflows/R-CMD-check.yaml)
 [![codecov](https://codecov.io/gh/franzbischoff/false.alarm/branch/develop/graph/badge.svg?token=w7AmbwhNvn)](https://codecov.io/gh/franzbischoff/false.alarm)

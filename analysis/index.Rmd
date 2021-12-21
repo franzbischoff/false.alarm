@@ -24,7 +24,7 @@ knitr::opts_knit$set(root.dir = here("docs"), base.dir = here("docs"))
 
 Dataset hosted by:
 
-[![](https://zenodo.org/badge/DOI/10.5281/zenodo.4634014.svg)](https://doi.org/10.5281/zenodo.4634014)
+[![](https://zenodo.org/badge/DOI/10.5281/zenodo.5794658.svg)](https://doi.org/10.5281/zenodo.5794658)
 
 <!-- badges end -->
 
