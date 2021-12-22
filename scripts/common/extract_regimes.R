@@ -47,7 +47,7 @@ extract_regimes <- function(floss_list, params, infos) {
 
     if (cac[landmark] < regime_threshold) {
       abs_min_idx <- x$offset - history + landmark + 1
-      if ((abs_min_idx - current_abs_min_idx) > floss_constraint) { # TODO: tweak floss_constraint
+      if ((abs_min_idx - current_abs_min_idx) > floss_constraint) { # IMPROVE: tweak floss_constraint
         message("abs_min_idx at ", abs_min_idx, " value ", cac[landmark], ".")
         current_abs_min_idx <<- abs_min_idx
         current_abs_min_value <<- cac[landmark]
@@ -55,7 +55,7 @@ extract_regimes <- function(floss_list, params, infos) {
         all_regimes_values <<- c(all_regimes_values, current_abs_min_value)
       }
       if (cac[landmark] < current_abs_min_value) {
-        if ((abs_min_idx - current_abs_min_idx) < floor(history / 2)) { # TODO: tweak floor(history / 2)
+        if ((abs_min_idx - current_abs_min_idx) < floor(history / 2)) { # IMPROVE: tweak floor(history / 2)
           message("abs_min_idx2 at ", abs_min_idx, " value ", cac[landmark], ".")
           current_abs_min_idx <<- abs_min_idx
           current_abs_min_value <<- cac[landmark]

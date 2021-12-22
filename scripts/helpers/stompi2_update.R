@@ -112,10 +112,5 @@ stompi2_update <- function(.mp, new_data, history_size = FALSE) {
   .mp$data[[1]] <- data_upd
   attr(.mp, "new_data") <- new_data_size
 
-  # TODO: with tail or not (tail will recompute some things)
-  #  if (history_size && (data_upd_size > history_size)) {
-  #    return(utils::tail(.mp, history_size))
-  #  } else {
   return(.mp)
-  #  }
 }

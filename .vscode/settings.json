@@ -260,5 +260,15 @@
   "yaml.schemas": {
     "**/.github/workflows/*.yaml": "https://json.schemastore.org/github-workflow.json"
   },
-  "editor.formatOnSave": true
+  "editor.formatOnSave": true,
+  "todo-tree.general.tags": [
+    "BUG",
+    "HACK",
+    "FIXME",
+    "TODO",
+    "IMPROVE",
+    "XXX",
+    "[ ]",
+    "[x]"
+  ]
 }

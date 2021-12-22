@@ -17,7 +17,7 @@ compute_streaming_profile <- function(ecg_data, params) {
 
   "!DEBUG History `params$history`, batch size `params$batch`"
 
-  initial_mp$offset <- params$history ## TODO: DEBUG
+  initial_mp$offset <- params$history
 
   profiles <- list()
   profiles[[1]] <- initial_mp

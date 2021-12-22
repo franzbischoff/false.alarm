@@ -37,7 +37,7 @@ r_input <- tar_files_input(
   #### Pipeline: Read files from directory ----
   file_paths,
   {
-    find_all_files(types = "vfib") # types = "asystole", "bradycardia", "tachycardia", "vfib", "vtachy"
+    find_all_files(types = "vtachy") # types = "asystole", "bradycardia", "tachycardia", "vfib", "vtachy"
   }
 )
 

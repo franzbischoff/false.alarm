@@ -125,6 +125,7 @@ read_ecg <- function(filename, plot = FALSE, subset = FALSE,
   siginfo <- list()
 
   for (i in (seq_len(n_signals) + 1)) {
+    format <- hea_content[[i]][2]
     gain <- hea_content[[i]][3]
     # Get Signal Units if present
     gain <- unlist(strsplit(gain, "/"))
@@ -144,9 +145,14 @@ read_ecg <- function(filename, plot = FALSE, subset = FALSE,
 
     siginfo[[i - 1]] <- list()
 
+    siginfo[[i - 1]]["format"] <- format # (-32767 +32767) 16+24 == 16 sixteen-bit amplitudes + 24 byte offset
     siginfo[[i - 1]]["gain"] <- gain
     siginfo[[i - 1]]["unit"] <- unit
+    siginfo[[i - 1]]["resolution"] <- as.numeric(hea_content[[i]][4]) # bits resolution of the analog-to-digital converter used to digitize the signal
     siginfo[[i - 1]]["baseline"] <- as.numeric(hea_content[[i]][5])
+    siginfo[[i - 1]]["first"] <- as.numeric(hea_content[[i]][6])
+    siginfo[[i - 1]]["chksum"] <- as.numeric(hea_content[[i]][7])
+    siginfo[[i - 1]]["blocksize"] <- as.numeric(hea_content[[i]][8])
     siginfo[[i - 1]]["description"] <- hea_content[[i]][9]
   }
 
@@ -177,6 +183,13 @@ read_ecg <- function(filename, plot = FALSE, subset = FALSE,
   # Mapping should be similar to that of rdsamp.c:
   # http://www.physionet.org/physiotools/wfdb/app/rdsamp.c
   for (i in seq_len(n_signals)) {
+    checkmate::assert_true(csv_content[[i]][1] == siginfo[[i]]$first)
+    chksum <- (sum(csv_content[[i]]) %% 2^16)
+    if (chksum >= 2^15) {
+      chksum <- chksum - 2^16
+    }
+    checkmate::assert_true(chksum == siginfo[[i]]$chksum)
+
     mat_content$val[i, is.na(mat_content$val[i, ])] <- wfdb_nan
     label <- siginfo[[i]]$description
     signal[[label]] <- (mat_content$val[i, ] - siginfo[[i]]$baseline) / siginfo[[i]]$gain
@@ -259,7 +272,7 @@ read_ecg <- function(filename, plot = FALSE, subset = FALSE,
 #'
 read_ecg_csv <- function(filename, plot = FALSE, subset = FALSE,
                          types = c("all", "asystole", "bradycardia", "tachycardia", "vfib", "vtachy"),
-                         true_alarm = NULL) {
+                         true_alarm = NULL, normalize = TRUE) {
   checkmate::assert_string(filename, 3)
   checkmate::qassert(plot, "B")
   checkmate::qassert(true_alarm, c("0", "B"))
@@ -334,6 +347,7 @@ read_ecg_csv <- function(filename, plot = FALSE, subset = FALSE,
   siginfo <- list()
 
   for (i in (seq_len(n_signals) + 1)) {
+    format <- hea_content[[i]][2]
     gain <- hea_content[[i]][3]
     # Get Signal Units if present
     gain <- unlist(strsplit(gain, "/"))
@@ -353,9 +367,14 @@ read_ecg_csv <- function(filename, plot = FALSE, subset = FALSE,
 
     siginfo[[i - 1]] <- list()
 
+    siginfo[[i - 1]]["format"] <- format # (-32767 +32767) 16+24 == 16 sixteen-bit amplitudes + 24 byte offset
     siginfo[[i - 1]]["gain"] <- gain
     siginfo[[i - 1]]["unit"] <- unit
+    siginfo[[i - 1]]["resolution"] <- as.numeric(hea_content[[i]][4]) # bits resolution of the analog-to-digital converter used to digitize the signal
     siginfo[[i - 1]]["baseline"] <- as.numeric(hea_content[[i]][5])
+    siginfo[[i - 1]]["first"] <- as.numeric(hea_content[[i]][6])
+    siginfo[[i - 1]]["chksum"] <- as.numeric(hea_content[[i]][7])
+    siginfo[[i - 1]]["blocksize"] <- as.numeric(hea_content[[i]][8])
     siginfo[[i - 1]]["description"] <- hea_content[[i]][9]
   }
 
@@ -388,9 +407,21 @@ read_ecg_csv <- function(filename, plot = FALSE, subset = FALSE,
   # Mapping should be similar to that of rdsamp.c:
   # http://www.physionet.org/physiotools/wfdb/app/rdsamp.c
   for (i in seq_len(n_signals)) {
+    checkmate::assert_true(csv_content[[i]][1] == siginfo[[i]]$first)
+    chksum <- (sum(csv_content[[i]]) %% 2^16)
+    if (chksum >= 2^15) {
+      chksum <- chksum - 2^16
+    }
+    checkmate::assert_true(chksum == siginfo[[i]]$chksum)
+
     csv_content[is.na(csv_content[[i]]), i] <- wfdb_nan
     label <- siginfo[[i]]$description
-    signal[[label]] <- (csv_content[[i]] - siginfo[[i]]$baseline) / siginfo[[i]]$gain
+
+    if (normalize) {
+      signal[[label]] <- (csv_content[[i]] - siginfo[[i]]$baseline) / siginfo[[i]]$gain
+    } else {
+      signal[[label]] <- csv_content[[i]]
+    }
 
     if (!isFALSE(subset)) {
       signal[[label]] <- signal[[label]][subset]
@@ -449,6 +480,43 @@ read_and_prepare_ecgs <- function(file_paths, subset = FALSE, true_alarm = NULL,
   }
 
   return(result)
+}
+
+validate_data <- function(data, window_size) {
+  is_finite <- is.finite(data)
+  valid_windows <- (movsum_ogita_rcpp(is_finite, window_size) == window_size)
+
+  data[!is_finite] <- 0
+
+  const <- 1 / 64
+
+  valid_std <- (movstd_rcpp(data, window_size) >= const)
+
+  total <- sum(!valid_std)
+
+  scale <- purrr::map_dbl(abs(data[!valid_std]), function(x) {
+    if (x == 0) {
+      s <- 1
+    } else if (x < 1) {
+      # natural log is negative
+      p <- 1 + log(x)
+
+      if (p == 0) {
+        s <- .Machine$double.eps^0.5
+      } else {
+        s <- 1 / abs(p)
+      }
+    } else {
+      s <- 1 + log(x)
+    }
+
+    s
+  })
+
+  data[!valid_std] <- data[!valid_std] + const * scale * rnorm(total)
+
+  # data[i:j + subseqlen - 1] <- data[i:j + subseqlen - 1] + c * scale * rnorm(j + window_size - i)
+  data
 }
 
 reshape_dataset_by_truefalse <- function(dataset, include) {

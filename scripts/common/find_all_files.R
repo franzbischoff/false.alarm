@@ -38,7 +38,7 @@ find_all_files <- function(path = getOption("target_ds_path", default = "inst/ex
         bradycardia = grep("b\\d*.\\.hea", files, value = TRUE),
         tachycardia = grep("t\\d*.\\.hea", files, value = TRUE),
         vfib = grep("f\\d*.\\.hea", files, value = TRUE),
-        vtachy = grep("c\\d*.\\.hea", files, value = TRUE)
+        vtachy = grep("v\\d*.\\.hea", files, value = TRUE)
       )
 
       res <- head(res, limit_per_type)

@@ -32,7 +32,7 @@ plot_regimes <- function(data_with_regimes, params, infos, save = FALSE) {
   track <- data_info$label
   alarm <- infos$alarm
   alarm_true <- infos$true
-  filter_size <- "raw" # TODO
+  filter_size <- "raw" # HACK
 
   file <- sprintf(
     "%s_%s_%d_%.1f_%d_%d_%.1f_%s.png", filename, track, window_size,

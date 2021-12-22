@@ -673,6 +673,9 @@ List mpxileft_rcpp(NumericVector data_ref, uint64_t window_size, double ez, doub
 
 // MPX classic version
 
+// IMPROVE: check data for infinity
+// IMPROVE: Zero invalid data, since we are aiming on streaming
+
 // [[Rcpp::export]]
 List mpx_rcpp(NumericVector data_ref, uint64_t window_size, double ez, uint64_t mp_time_constraint, double s_size,
               bool idxs, bool euclidean, bool progress) {
@@ -761,6 +764,11 @@ List mpx_rcpp(NumericVector data_ref, uint64_t window_size, double ez, uint64_t 
         for (offset = 0; offset < off_max; offset++) {
           off_diag = offset + diag;
           c = c + df[offset] * dg[off_diag] + df[off_diag] * dg[offset];
+
+          if ((sig[offset] > 60) || (sig[off_diag] > 60)) { // wild sig, misleading
+            continue;
+          }
+
           c_cmp = c * sig[offset] * sig[off_diag];
 
           // RMP
@@ -923,7 +931,13 @@ List mpxab_rcpp(NumericVector data_ref, NumericVector query_ref, uint64_t window
         for (offset = 0; offset < off_max; offset++) {
           off_diag = offset + diag;
           c = c + df_a[off_diag] * dg_b[offset] + dg_a[off_diag] * df_b[offset];
+
+          if ((sig_b[offset] > 60) || (sig_a[off_diag] > 60)) { // wild sig, misleading
+            continue;
+          }
+
           c_cmp = c * sig_b[offset] * sig_a[off_diag];
+
           if (c_cmp > mp_b[offset]) { // mpb
             mp_b[offset] = c_cmp;
             if (idxs) {
@@ -956,7 +970,13 @@ List mpxab_rcpp(NumericVector data_ref, NumericVector query_ref, uint64_t window
         for (offset = 0; offset < off_max; offset++) {
           off_diag = offset + diag;
           c = c + df_b[off_diag] * dg_a[offset] + dg_b[off_diag] * df_a[offset];
+
+          if ((sig_a[offset] > 60) || (sig_b[off_diag] > 60)) { // wild sig, misleading
+            continue;
+          }
+
           c_cmp = c * sig_a[offset] * sig_b[off_diag];
+
           if (c_cmp > mp_a[offset]) {
             mp_a[offset] = c_cmp;
             if (idxs) {

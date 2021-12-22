@@ -37,7 +37,7 @@ extract_regime_sample <- function(data_with_regimes, params, infos) {
     idx <- regimes$idxs[i]
     value <- regimes$values[i]
     start <- idx - subset_start
-    end <- start + landmark # TODO: May be another value
+    end <- start + landmark # IMPROVE: May be another value
     samples[[as.character(idx)]] <- data[seq.int(start, end)]
     attr(samples[[as.character(idx)]], "info") <- list(idx = idx, value = value)
   }

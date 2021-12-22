@@ -9,6 +9,13 @@
     ]
   },
   "Packages": {
+    "BH": {
+      "Package": "BH",
+      "Version": "1.78.0-0",
+      "Source": "Repository",
+      "Repository": "CRAN",
+      "Hash": "4e348572ffcaa2fb1e610e7a941f6f3a"
+    },
     "DT": {
       "Package": "DT",
       "Version": "0.20",
@@ -709,6 +716,13 @@
       "Source": "Repository",
       "Repository": "CRAN",
       "Hash": "76147821cd3fcd8c4b04e1ef0498e7fb"
+    },
+    "httpgd": {
+      "Package": "httpgd",
+      "Version": "1.2.1",
+      "Source": "Repository",
+      "Repository": "CRAN",
+      "Hash": "5879dba359512d89b0154648f32f0bbe"
     },
     "httpuv": {
       "Package": "httpuv",
