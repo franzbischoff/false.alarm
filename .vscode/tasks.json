@@ -74,7 +74,7 @@
     {
       "type": "process",
       "label": "R: knit and view",
-      "command": "C:/Program Files/R/R-4.1.0/bin/x64/Rscript.exe",
+      "command": "C:/Program Files/R/R-4.1.1/bin/x64/Rscript.exe",
       "linux": {
         "command": "/usr/lib/R/bin/Rscript"
       },
@@ -100,7 +100,7 @@
     {
       "type": "process",
       "label": "R: style project",
-      "command": "C:/Program Files/R/R-4.1.0/bin/x64/Rscript.exe",
+      "command": "C:/Program Files/R/R-4.1.1/bin/x64/Rscript.exe",
       "linux": {
         "command": "/usr/lib/R/bin/Rscript"
       },
@@ -121,8 +121,29 @@
     },
     {
       "type": "process",
+      "label": "R: gittargets",
+      "command": "C:/Program Files/R/R-4.1.1/bin/x64/Rscript.exe",
+      "linux": {
+        "command": "/usr/lib/R/bin/Rscript"
+      },
+      "args": [
+        "dev/gittargets.R"
+      ],
+      "options": {
+        "cwd": "${workspaceFolder}"
+      },
+      "presentation": {
+        "clear": true,
+        "reveal": "always",
+        "group": "R",
+        "panel": "shared"
+      },
+      "problemMatcher": []
+    },
+    {
+      "type": "process",
       "label": "R: update codemeta",
-      "command": "C:/Program Files/R/R-4.1.0/bin/x64/Rscript.exe",
+      "command": "C:/Program Files/R/R-4.1.1/bin/x64/Rscript.exe",
       "linux": {
         "command": "/usr/lib/R/bin/Rscript"
       },
@@ -140,14 +161,12 @@
         "reveal": "always",
         "panel": "shared"
       },
-      "problemMatcher": [
-        "$gcc"
-      ]
+      "problemMatcher": []
     },
     {
       "type": "process",
       "label": "R: lint project",
-      "command": "C:/Program Files/R/R-4.1.0/bin/x64/Rscript.exe",
+      "command": "C:/Program Files/R/R-4.1.1/bin/x64/Rscript.exe",
       "linux": {
         "command": "/usr/lib/R/bin/Rscript"
       },
@@ -172,7 +191,7 @@
     {
       "type": "process",
       "label": "R: test units",
-      "command": "C:/Program Files/R/R-4.1.0/bin/x64/Rscript.exe",
+      "command": "C:/Program Files/R/R-4.1.1/bin/x64/Rscript.exe",
       "linux": {
         "command": "/usr/lib/R/bin/Rscript"
       },
@@ -198,7 +217,7 @@
       "type": "process",
       "label": "R: test coverage",
       "dependsOn": "R: test units",
-      "command": "C:/Program Files/R/R-4.1.0/bin/x64/Rscript.exe",
+      "command": "C:/Program Files/R/R-4.1.1/bin/x64/Rscript.exe",
       "linux": {
         "command": "/usr/lib/R/bin/Rscript"
       },
@@ -220,7 +239,7 @@
     {
       "type": "process",
       "label": "R: Watch",
-      "command": "C:/Program Files/R/R-4.1.0/bin/x64/Rscript.exe",
+      "command": "C:/Program Files/R/R-4.1.1/bin/x64/Rscript.exe",
       "linux": {
         "command": "/usr/lib/R/bin/Rscript"
       },
@@ -242,7 +261,7 @@
     {
       "type": "process",
       "label": "zR: DESTROY targets",
-      "command": "C:/Program Files/R/R-4.1.0/bin/x64/Rscript.exe",
+      "command": "C:/Program Files/R/R-4.1.1/bin/x64/Rscript.exe",
       "linux": {
         "command": "/usr/lib/R/bin/Rscript"
       },
@@ -267,7 +286,7 @@
     {
       "type": "process",
       "label": "zR: PRUNE targets",
-      "command": "C:/Program Files/R/R-4.1.0/bin/x64/Rscript.exe",
+      "command": "C:/Program Files/R/R-4.1.1/bin/x64/Rscript.exe",
       "linux": {
         "command": "/usr/lib/R/bin/Rscript"
       },
@@ -292,7 +311,7 @@
     {
       "type": "process",
       "label": "R: profile targets",
-      "command": "C:/Program Files/R/R-4.1.0/bin/x64/Rscript.exe",
+      "command": "C:/Program Files/R/R-4.1.1/bin/x64/Rscript.exe",
       "linux": {
         "command": "/usr/lib/R/bin/Rscript"
       },
@@ -365,7 +384,7 @@
       // config file is stored on ./index/_bookdown.yml
       "type": "process",
       "label": "R: thesis down",
-      "command": "C:/Program Files/R/R-4.1.0/bin/x64/Rscript.exe",
+      "command": "C:/Program Files/R/R-4.1.1/bin/x64/Rscript.exe",
       "linux": {
         "command": "/usr/lib/R/bin/Rscript"
       },
@@ -391,7 +410,7 @@
       // config file is stored on ./analysis/_site.yml
       "type": "process",
       "label": "R: workflowr build",
-      "command": "C:/Program Files/R/R-4.1.0/bin/x64/Rscript.exe",
+      "command": "C:/Program Files/R/R-4.1.1/bin/x64/Rscript.exe",
       "linux": {
         "command": "/usr/lib/R/bin/Rscript"
       },
@@ -412,7 +431,7 @@
     {
       "type": "process",
       "label": "R: targets",
-      "command": "C:/Program Files/R/R-4.1.0/bin/x64/Rscript.exe",
+      "command": "C:/Program Files/R/R-4.1.1/bin/x64/Rscript.exe",
       "linux": {
         "command": "/usr/lib/R/bin/Rscript"
       },
