@@ -4,12 +4,12 @@ library(purrr)
 
 #### Dev variables ----
 
-dev_mode <- FALSE # !identical(Sys.getenv("DEBUGME"), "")
+dev_mode <- TRUE # !identical(Sys.getenv("DEBUGME"), "")
 skip_graphics <- TRUE
 
 if (dev_mode) {
   # I know I shall not use this
-  # devtools::load_all(".")
+  devtools::load_all(".")
   # Sys.setenv(DEBUGME_OUTPUT_FILE = "debugme.log")
 }
 
@@ -129,16 +129,20 @@ const_sample_freq <- 250
 # ABP: arterial blood pressure (invasive, from one of the radial arteries)
 # PLETH: uncalibrated raw output of fingertip plethysmograph
 # RESP: uncalibrated respiration waveform, estimated from thoracic impedance
-const_headers <- c("time", "I", "II", "III", "aVR", "aVL", "aVF", "V", "MCL", "PLETH", "ABP", "RESP")
+const_signals <- c("time", "I", "II", "III", "aVR", "aVL", "aVF", "V", "MCL", "PLETH", "ABP", "RESP")
+const_classes <- c("asystole", "bradycardia", "tachycardia", "fibv", "vtachy")
 # keep only the X filenames
 var_head <- 10
 # The subset that will be keep from the dataset (seq.int(240 * const_sample_freq + 1, 300 * const_sample_freq) means the last 60 seconds)
 var_subset <- seq.int(240 * const_sample_freq + 1, 300 * const_sample_freq) # last 60 secs
-# keep only the X files per type (asystole, bradycardia, etc)
-var_limit_per_type <- 2
-var_include <- "II"
-# tracks to exclude from the files / in this case, to include only "II"
-var_exclude <- setdiff(const_headers, var_include) # c("time", "V", "ABP", "PLETH", "RESP")
+# keep only the X files per class (asystole, bradycardia, etc)
+var_limit_per_class <- 2
+
+var_classes_include <- "asystole"
+var_classes_exclude <- setdiff(const_classes, var_classes_include)
+
+var_signals_include <- "II"
+var_signals_exclude <- setdiff(const_signals, var_signals_include) # c("time", "V", "ABP", "PLETH", "RESP")
 
 # window size of the filters used to remove spurious data
 var_filter_w_size <- 100 # c(100, 200)

@@ -5,13 +5,13 @@
 #'
 
 find_all_files <- function(path = getOption("target_ds_path", default = "inst/extdata/physionet"),
-                           types = c("all", "asystole", "bradycardia", "tachycardia", "vfib", "vtachy"),
-                           limit_per_type = 1000,
+                           classes = c("all", "asystole", "bradycardia", "tachycardia", "fibv", "vtachy"),
+                           limit_per_class = 1000,
                            long = FALSE) {
   "!DEBUG Starting process"
 
   checkmate::assert_directory_exists(path, access = "r")
-  types <- match.arg(types, several.ok = TRUE)
+  classes <- match.arg(classes, several.ok = TRUE)
 
   if (long) {
     files <- paste0(
@@ -29,19 +29,19 @@ find_all_files <- function(path = getOption("target_ds_path", default = "inst/ex
     )
   }
 
-  if (!("all" %in% types)) {
+  if (!("all" %in% classes)) {
     filtered <- NULL
 
-    for (type in types) {
-      res <- switch(type,
+    for (class in classes) {
+      res <- switch(class,
         asystole = grep("a\\d*.\\.hea", files, value = TRUE),
         bradycardia = grep("b\\d*.\\.hea", files, value = TRUE),
         tachycardia = grep("t\\d*.\\.hea", files, value = TRUE),
-        vfib = grep("f\\d*.\\.hea", files, value = TRUE),
+        fibv = grep("f\\d*.\\.hea", files, value = TRUE),
         vtachy = grep("v\\d*.\\.hea", files, value = TRUE)
       )
 
-      res <- head(res, limit_per_type)
+      res <- head(res, limit_per_class)
 
       filtered <- c(filtered, res)
     }

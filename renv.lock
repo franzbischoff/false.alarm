@@ -629,9 +629,9 @@
       "RemoteUsername": "wlandau",
       "RemoteRepo": "gittargets",
       "RemoteRef": "main",
-      "RemoteSha": "62034613c5c5a370d3e8db759dd01a6b4cdff681",
+      "RemoteSha": "6b3dadac97eb67799ee7cf7453f87f7f3bee50c3",
       "RemoteHost": "api.github.com",
-      "Hash": "a79f9bb936a6fd1eb99577431117fe8f"
+      "Hash": "83745a3b597dfa2f75981e448769c01b"
     },
     "globals": {
       "Package": "globals",
@@ -1369,9 +1369,9 @@
       "RemoteUsername": "r-lib",
       "RemoteRepo": "styler",
       "RemoteRef": "main",
-      "RemoteSha": "e4866e575b4923c42f6e7c6caead4ca978cb44df",
+      "RemoteSha": "1c55a52d506e81054bf33deb5c7915c4fd9db43a",
       "RemoteHost": "api.github.com",
-      "Hash": "8c64318b4c3d1400918f17c6e3fbec8b"
+      "Hash": "6fdddf63e39a09f8aa803ca180993406"
     },
     "survival": {
       "Package": "survival",
@@ -1600,10 +1600,10 @@
     },
     "workflowr": {
       "Package": "workflowr",
-      "Version": "1.6.2",
+      "Version": "1.7.0",
       "Source": "Repository",
       "Repository": "CRAN",
-      "Hash": "8d14d7ca1a1ac543614002af0b95c49e"
+      "Hash": "4055c2dd2c5bc0a3bb5a668c03a1cc98"
     },
     "workflows": {
       "Package": "workflows",

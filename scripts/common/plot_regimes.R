@@ -29,17 +29,17 @@ plot_regimes <- function(data_with_regimes, params, infos, save = FALSE) {
   history <- params$history
   mp_time_constraint <- ifelse(params$mp_time_constraint == 0, history, params$mp_time_constraint)
   floss_time_constraint <- ifelse(params$floss_time_constraint == 0, history, params$floss_time_constraint)
-  track <- data_info$label
+  signal <- data_info$signal
   alarm <- infos$alarm
   alarm_true <- infos$true
   filter_size <- "raw" # HACK
 
   file <- sprintf(
-    "%s_%s_%d_%.1f_%d_%d_%.1f_%s.png", filename, track, window_size,
+    "%s_%s_%d_%.1f_%d_%d_%.1f_%s.png", filename, signal, window_size,
     threshold, floss_time_constraint, mp_time_constraint, regime_threshold, filter_size
   )
   title <- sprintf(
-    "FLOSS-Regimes - %s-%s, w: %d, t: %.1f, ct: %.1f, c: %d, fc: %d, %s-%s", filename, track, window_size, threshold,
+    "FLOSS-Regimes - %s-%s, w: %d, t: %.1f, ct: %.1f, c: %d, fc: %d, %s-%s", filename, signal, window_size, threshold,
     regime_threshold, mp_time_constraint, floss_time_constraint, alarm, alarm_true
   )
 
@@ -66,8 +66,8 @@ plot_ecg_with_regimes <- function(ecg_data, regimes, title, params, subset_start
 
   data_idxs <- seq.int(subset_start + 1, subset_end)
   y_amp <- (ylim[2] - ylim[1])
-  last_3_secs <- subset_end - (3 * 250) # this is the max detection delay needed for Asystole and Vfib
-  last_10_secs <- subset_end - (10 * 250) # this is the max detection delay needed for Asystole and Vfib
+  last_3_secs <- subset_end - (3 * 250) # this is the max detection delay needed for Asystole and Fibv
+  last_10_secs <- subset_end - (10 * 250) # this is the max detection delay needed for Asystole and Fibv
 
   aa <- ggplot2::ggplot(data.frame(x = data_idxs, y = ecg_data), ggplot2::aes(x, y)) +
     ggplot2::geom_line(size = 0.1)

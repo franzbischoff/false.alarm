@@ -38,7 +38,7 @@
 #'     - grain: numeric value
 #'     - unit: char
 #' - dataset attributes "info":
-#'   - alarm: type of alarm, for ex: "Asystole".
+#'   - alarm: class of alarm, for ex: "Asystole".
 #'   - true: if the alarm is true or not, for ex: "False".
 #'   - filename: the name of the original file, without the extension.
 #'   - frequency: the frequency of the observations, in Hz.
@@ -49,23 +49,23 @@
 #' }
 #'
 read_ecg <- function(filename, plot = FALSE, subset = FALSE,
-                     types = c("all", "asystole", "bradycardia", "tachycardia", "vfib", "vtachy"),
+                     classes = c("all", "asystole", "bradycardia", "tachycardia", "fibv", "vtachy"),
                      true_alarm = NULL) {
   checkmate::assert_string(filename, 3)
   checkmate::qassert(plot, "B")
   checkmate::qassert(true_alarm, c("0", "B"))
-  types <- match.arg(types, several.ok = TRUE)
+  classes <- match.arg(classes, several.ok = TRUE)
 
-  if (!("all" %in% types)) {
+  if (!("all" %in% classes)) {
     filtered <- NULL
 
-    for (type in types) {
-      res <- switch(type,
+    for (class in classes) {
+      res <- switch(class,
         asystole = grep("a\\d*.\\.hea", filename, value = TRUE),
         bradycardia = grep("b\\d*.\\.hea", filename, value = TRUE),
         tachycardia = grep("t\\d*.\\.hea", filename, value = TRUE),
-        vfib = grep("f\\d*.\\.hea", filename, value = TRUE),
-        vtachy = grep("c\\d*.\\.hea", filename, value = TRUE)
+        fibv = grep("f\\d*.\\.hea", filename, value = TRUE),
+        vtachy = grep("v\\d*.\\.hea", filename, value = TRUE)
       )
 
       filtered <- c(filtered, res)
@@ -174,7 +174,7 @@ read_ecg <- function(filename, plot = FALSE, subset = FALSE,
   mat_content <- R.matlab::readMat(mat_file)
   close(mat_file)
 
-  signal <- list()
+  signals <- list()
   subset_minmax <- FALSE
   if (!isFALSE(subset)) {
     subset_minmax <- c(min(subset), max(subset))
@@ -191,22 +191,22 @@ read_ecg <- function(filename, plot = FALSE, subset = FALSE,
     checkmate::assert_true(chksum == siginfo[[i]]$chksum)
 
     mat_content$val[i, is.na(mat_content$val[i, ])] <- wfdb_nan
-    label <- siginfo[[i]]$description
-    signal[[label]] <- (mat_content$val[i, ] - siginfo[[i]]$baseline) / siginfo[[i]]$gain
+    signal <- siginfo[[i]]$description
+    signals[[signal]] <- (mat_content$val[i, ] - siginfo[[i]]$baseline) / siginfo[[i]]$gain
 
     if (!isFALSE(subset)) {
-      signal[[label]] <- signal[[label]][subset]
+      signals[[signal]] <- signals[[signal]][subset]
     }
 
-    attr(signal[[label]], "info") <- list(label = label, baseline = siginfo[[i]]$baseline, gain = siginfo[[i]]$gain, unit = siginfo[[i]]$unit, subset = subset_minmax)
+    attr(signals[[signal]], "info") <- list(signal = signal, baseline = siginfo[[i]]$baseline, gain = siginfo[[i]]$gain, unit = siginfo[[i]]$unit, subset = subset_minmax)
   }
 
-  length_signal <- length(signal[[1]])
+  length_signal <- length(signals[[1]])
   # Generate time vector
   tm <- seq(0, (length_signal - 1) / freq_signal, length.out = length_signal)
 
   output <- list()
-  output[[basename]] <- c(list(time = tm), signal)
+  output[[basename]] <- c(list(time = tm), signals)
 
   attr(output[[basename]], "info") <- list(alarm = alarm, true = as.logical(true_false), filename = basename, frequency = freq_signal, id = "base", ids = "base")
 
@@ -260,7 +260,7 @@ read_ecg <- function(filename, plot = FALSE, subset = FALSE,
 #'     - grain: numeric value
 #'     - unit: char
 #' - dataset attributes "info":
-#'   - alarm: type of alarm, for ex: "Asystole".
+#'   - alarm: class of alarm, for ex: "Asystole".
 #'   - true: if the alarm is true or not, for ex: "False".
 #'   - filename: the name of the original file, without the extension.
 #'   - frequency: the frequency of the observations, in Hz.
@@ -271,30 +271,30 @@ read_ecg <- function(filename, plot = FALSE, subset = FALSE,
 #' }
 #'
 read_ecg_csv <- function(filename, plot = FALSE, subset = FALSE,
-                         types = c("all", "asystole", "bradycardia", "tachycardia", "vfib", "vtachy"),
+                         classes = c("all", "asystole", "bradycardia", "tachycardia", "fibv", "vtachy"),
                          true_alarm = NULL, normalize = TRUE) {
   checkmate::assert_string(filename, 3)
   checkmate::qassert(plot, "B")
   checkmate::qassert(true_alarm, c("0", "B"))
-  types <- match.arg(types, several.ok = TRUE)
+  classes <- match.arg(classes, several.ok = TRUE)
 
-  if (!("all" %in% types)) {
+  if (!("all" %in% classes)) {
     filtered <- NULL
 
-    for (type in types) {
-      res <- switch(type,
+    for (class in classes) {
+      res <- switch(class,
         asystole = grep("a\\d*.\\.hea", filename, value = TRUE),
         bradycardia = grep("b\\d*.\\.hea", filename, value = TRUE),
         tachycardia = grep("t\\d*.\\.hea", filename, value = TRUE),
-        vfib = grep("f\\d*.\\.hea", filename, value = TRUE),
-        vtachy = grep("c\\d*.\\.hea", filename, value = TRUE)
+        fibv = grep("f\\d*.\\.hea", filename, value = TRUE),
+        vtachy = grep("v\\d*.\\.hea", filename, value = TRUE)
       )
 
       filtered <- c(filtered, res)
     }
 
     if (rlang::is_empty(filtered)) {
-      message("File skipped (not in type): ", filename)
+      message("File skipped (not in class): ", filename)
       return(NULL)
     }
   }
@@ -398,7 +398,7 @@ read_ecg_csv <- function(filename, plot = FALSE, subset = FALSE,
   # mat_content <- R.matlab::readMat(mat_file)
   # close(mat_file)
 
-  signal <- list()
+  signals <- list()
   subset_minmax <- FALSE
   if (!isFALSE(subset)) {
     subset_minmax <- c(min(subset), max(subset))
@@ -415,27 +415,27 @@ read_ecg_csv <- function(filename, plot = FALSE, subset = FALSE,
     checkmate::assert_true(chksum == siginfo[[i]]$chksum)
 
     csv_content[is.na(csv_content[[i]]), i] <- wfdb_nan
-    label <- siginfo[[i]]$description
+    signal <- siginfo[[i]]$description
 
     if (normalize) {
-      signal[[label]] <- (csv_content[[i]] - siginfo[[i]]$baseline) / siginfo[[i]]$gain
+      signals[[signal]] <- (csv_content[[i]] - siginfo[[i]]$baseline) / siginfo[[i]]$gain
     } else {
-      signal[[label]] <- csv_content[[i]]
+      signals[[signal]] <- csv_content[[i]]
     }
 
     if (!isFALSE(subset)) {
-      signal[[label]] <- signal[[label]][subset]
+      signals[[signal]] <- signals[[signal]][subset]
     }
 
-    attr(signal[[label]], "info") <- list(label = label, baseline = siginfo[[i]]$baseline, gain = siginfo[[i]]$gain, unit = siginfo[[i]]$unit, subset = subset_minmax)
+    attr(signals[[signal]], "info") <- list(signal = signal, baseline = siginfo[[i]]$baseline, gain = siginfo[[i]]$gain, unit = siginfo[[i]]$unit, subset = subset_minmax)
   }
 
-  length_signal <- length(signal[[1]])
+  length_signal <- length(signals[[1]])
   # Generate time vector
   tm <- seq(0, (length_signal - 1) / freq_signal, length.out = length_signal)
 
   output <- list()
-  output[[basename]] <- c(list(time = tm), signal)
+  output[[basename]] <- c(list(time = tm), signals)
 
   attr(output[[basename]], "info") <- list(alarm = alarm, true = as.logical(true_false), filename = basename, frequency = freq_signal, id = "base", ids = "base")
 
@@ -450,9 +450,9 @@ read_ecg_csv <- function(filename, plot = FALSE, subset = FALSE,
 }
 
 
-read_and_prepare_ecgs <- function(file_paths, subset = FALSE, true_alarm = NULL, limit_per_type = NULL) {
+read_and_prepare_ecgs <- function(file_paths, subset = FALSE, true_alarm = NULL, limit_per_class = NULL) {
   result <- list()
-  types <- list()
+  classes <- list()
 
   for (file in file_paths) {
     filename <- tools::file_path_sans_ext(basename(file))
@@ -463,14 +463,14 @@ read_and_prepare_ecgs <- function(file_paths, subset = FALSE, true_alarm = NULL,
     )
 
     if (!is.null(it)) {
-      if (is.numeric(limit_per_type)) {
-        type <- substr(filename, 1, 1)
-        if (is.null(types[[type]])) {
-          types[[type]] <- 1
+      if (is.numeric(limit_per_class)) {
+        class <- substr(filename, 1, 1)
+        if (is.null(classes[[class]])) {
+          classes[[class]] <- 1
         } else {
-          types[[type]] <- types[[type]] + 1
+          classes[[class]] <- classes[[class]] + 1
         }
-        if (types[[type]] > limit_per_type) {
+        if (classes[[class]] > limit_per_class) {
           next
         }
       }
@@ -482,22 +482,30 @@ read_and_prepare_ecgs <- function(file_paths, subset = FALSE, true_alarm = NULL,
   return(result)
 }
 
+
+# This pre-processing is done for this pipeline, but can be done in on-line settings
 validate_data <- function(data, window_size) {
   is_finite <- is.finite(data)
-  valid_windows <- (movsum_ogita_rcpp(is_finite, window_size) == window_size)
 
+  # TODO: This may be used for skipping invalid windows
+  # valid_windows <- (movsum_ogita_rcpp(is_finite, window_size) == window_size)
+
+  # For streaming purposes it is valid to use zeros for NA/NaN/Inf
   data[!is_finite] <- 0
 
+  # This is approximately 0.015. For ECG's, a std smaller than this is probably a
+  # disconnected lead or boundary hit, so we add noise to avoid spurious correlations.
   const <- 1 / 64
 
-  valid_std <- (movstd_rcpp(data, window_size) >= const)
+  valid_std <- (mov_std(data, window_size) >= const)
 
   total <- sum(!valid_std)
 
+  # scale is based on data value: x == 0; abs(x) < 1 or abs(x) >= 1
   scale <- purrr::map_dbl(abs(data[!valid_std]), function(x) {
-    if (x == 0) {
+    if (x == 0) { # first case
       s <- 1
-    } else if (x < 1) {
+    } else if (x < 1) { # second case
       # natural log is negative
       p <- 1 + log(x)
 
@@ -506,50 +514,52 @@ validate_data <- function(data, window_size) {
       } else {
         s <- 1 / abs(p)
       }
-    } else {
+    } else { # third case
       s <- 1 + log(x)
     }
-
     s
   })
 
   data[!valid_std] <- data[!valid_std] + const * scale * rnorm(total)
 
-  # data[i:j + subseqlen - 1] <- data[i:j + subseqlen - 1] + c * scale * rnorm(j + window_size - i)
-  data
+  return(data)
 }
 
-reshape_dataset_by_truefalse <- function(dataset, include) {
+reshape_ds_by_truefalse <- function(dataset, signals) {
   # divide in TRUE and FALSE
   df_true <- purrr::keep(dataset, ~ attr(.x, "info")$true)
   df_false <- purrr::keep(dataset, ~ !attr(.x, "info")$true)
 
-  # filter by presence of include
-  df_true <- purrr::keep(df_true, ~ all(include %in% names(.x)))
-  df_false <- purrr::keep(df_false, ~ all(include %in% names(.x)))
+  # filter by presence of signals
+  df_true <- purrr::keep(df_true, ~ all(signals %in% names(.x)))
+  df_false <- purrr::keep(df_false, ~ all(signals %in% names(.x)))
 
   # # convert from list by file to list by time series
   df_true <- purrr::transpose(df_true)
   df_false <- purrr::transpose(df_false)
 
-  # keep only the series we will include:
-  df_true <- df_true[include]
-  df_false <- df_false[include]
+  # keep only the signals we want:
+  df_true <- df_true[signals]
+  df_false <- df_false[signals]
 
 
   # convert trues and falses into a tibble for later use on rsample
   df_true <- purrr::map(df_true, function(x) {
     files <- names(x)
-    tibble::tibble(
-      file = files, val = runif(1), values = x, alarm = factor("true", c("true", "false"))
+    classes <- factor(substr(files, 1, 1), c("a", "b", "t", "f", "v"))
+    result <- tibble::tibble(
+      file = files, class = classes, values = x, alarm = factor("true", c("true", "false"))
     )
+    result %>% dplyr::mutate(class_alarm = paste0(class, "_", alarm))
   })
 
   df_false <- purrr::map(df_false, function(x) {
     files <- names(x)
-    tibble::tibble(
-      file = files, val = runif(1), values = x, alarm = factor("false", c("true", "false"))
+    classes <- factor(substr(files, 1, 1), c("a", "b", "t", "f", "v"))
+    result <- tibble::tibble(
+      file = files, class = classes, values = x, alarm = factor("false", c("true", "false"))
     )
+    result %>% dplyr::mutate(class_alarm = paste0(class, "_", alarm))
   })
 
   data <- dplyr::bind_rows(df_true, df_false)

@@ -675,6 +675,8 @@ List mpxileft_rcpp(NumericVector data_ref, uint64_t window_size, double ez, doub
 
 // IMPROVE: check data for infinity
 // IMPROVE: Zero invalid data, since we are aiming on streaming
+// [ ]: correction for noise: d_corrected = sqrt(dˆ2 - (2 + 2m) * std_nˆ2 / max(std_X, std_Y)ˆ2)
+// (10.5220/0007314100830093)
 
 // [[Rcpp::export]]
 List mpx_rcpp(NumericVector data_ref, uint64_t window_size, double ez, uint64_t mp_time_constraint, double s_size,
@@ -779,6 +781,30 @@ List mpx_rcpp(NumericVector data_ref, uint64_t window_size, double ez, uint64_t 
             }
           }
 
+          // FRANZ TEST START
+
+          // MP
+          // if (c_cmp > mp[offset]) {
+          //   if (mp[offset] > -1)
+          //     mp[offset] = (mp[offset] + c_cmp) / 2;
+          //   else
+          //     mp[offset] = c_cmp;
+
+          //   if (idxs) {
+          //     mpi[offset] = off_diag + 1;
+          //   }
+          // }
+          // if (c_cmp > mp[off_diag]) {
+          //   if (mp[off_diag] > -1)
+          //     mp[off_diag] = (mp[off_diag] + c_cmp) / 2;
+          //   else
+          //     mp[off_diag] = c_cmp;
+
+          //   if (idxs) {
+          //     mpi[off_diag] = offset + 1;
+          //   }
+          // }
+
           // MP
           if (c_cmp > mp[offset]) {
             mp[offset] = c_cmp;
@@ -792,6 +818,8 @@ List mpx_rcpp(NumericVector data_ref, uint64_t window_size, double ez, uint64_t 
               mpi[off_diag] = offset + 1;
             }
           }
+
+          // FRANZ TEST END
 
           // LMP
           if (c_cmp > lmp[off_diag]) {

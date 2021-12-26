@@ -88,7 +88,7 @@ create_animation <- function(ds_objects_names, floss_objects_names, include = c(
           td_info <- attr(dataset[[s]][[k]], "info")
           t_info <- attr(floss_data[[s]][[k]], "info")
 
-          track <- t_info$label
+          signal <- t_info$signal
 
           if (!is.null(filter_w_size) && filter_w_size != 0) {
             filter_size <- sprintf("filter_%d", filter_w_size)
@@ -97,17 +97,17 @@ create_animation <- function(ds_objects_names, floss_objects_names, include = c(
             filter_size <- "raw"
           }
 
-          temp_dir <- sprintf("tmp_%s_%s_%s", filename, track, filter_size)
+          temp_dir <- sprintf("tmp_%s_%s_%s", filename, signal, filter_size)
 
           file <- sprintf(
-            "%s_%s_%d_%.1f_%d_%d_%s.mp4", filename, track, window_size, threshold,
+            "%s_%s_%d_%.1f_%d_%d_%s.mp4", filename, signal, window_size, threshold,
             ifelse(mp_time_constraint == 0, history, mp_time_constraint), ifelse(floss_time_constraint == 0,
               history, floss_time_constraint
             ),
             filter_size
           )
           title <- sprintf(
-            "FLOSS - %s-%s, w: %d, t: %.1f, c: %d, fc: %d, %s-%s", filename, track,
+            "FLOSS - %s-%s, w: %d, t: %.1f, c: %d, fc: %d, %s-%s", filename, signal,
             window_size, threshold, mp_time_constraint, floss_time_constraint, alarm, alarm_true
           )
 
@@ -118,7 +118,7 @@ create_animation <- function(ds_objects_names, floss_objects_names, include = c(
             message("Video file already exists: ", file)
           } else {
             a <- render_floss_video(here::here("dev", "videos", file),
-              ecg_data = dataset[[s]][[track]], arc_counts = floss_data[[s]][[k]],
+              ecg_data = dataset[[s]][[signal]], arc_counts = floss_data[[s]][[k]],
               title = title, temp_dir = temp_dir, filter_w_size = filter_w_size,
               framerate = framerate,
               subset = subset,

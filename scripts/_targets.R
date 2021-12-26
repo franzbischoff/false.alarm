@@ -7,8 +7,8 @@ source(here("scripts", "_globals.R"))
 r_input <- tar_files_input(
   #### Pipeline: Read files from directory ----
   file_paths,
-  # tail(head(find_all_files(types = "all"), var_head), 10),
-  find_all_files(types = "asystole") # , "bradycardia", "tachycardia", "vfib", "vtachy"
+  # tail(head(find_all_files(classes = "all"), var_head), 10),
+  find_all_files(classes = var_classes_include)
 )
 r_dataset <- tar_target(
   #### Pipeline: Import Files to R and Select Datasets ----
@@ -16,7 +16,7 @@ r_dataset <- tar_target(
   read_and_prepare_ecgs(file_paths,
     subset = var_subset,
     true_alarm = TRUE,
-    limit_per_type = var_limit_per_type
+    limit_per_class = var_limit_per_class
   )
 )
 # tar_target(
@@ -32,7 +32,7 @@ r_dataset <- tar_target(
 #       window_size = map_window_size,
 #       n_workers = 1
 #     ),
-#     exclude = var_exclude
+#     exclude = var_signals_exclude
 #   ),
 #   pattern = map(dataset)
 # )
@@ -50,7 +50,7 @@ b_window_sizes <- tar_map(
         window_size = map_window_size,
         n_workers = 1
       ),
-      exclude = var_exclude
+      exclude = var_signals_exclude
     ),
     pattern = map(dataset)
   ),
@@ -82,7 +82,7 @@ b_window_sizes <- tar_map(
       #       history = var_mp_history,
       #       mp_time_constraint = map_mp_time_constraint
       #     ),
-      #     exclude = var_exclude
+      #     exclude = var_signals_exclude
       #   ),
       #   pattern = map(dataset)
       # ),
@@ -101,7 +101,7 @@ b_window_sizes <- tar_map(
             mp_time_constraint = map_mp_time_constraint,
             threshold = map_mp_threshold
           ),
-          exclude = var_exclude
+          exclude = var_signals_exclude
         ),
         pattern = map(dataset, ds_stats)
       ),
@@ -110,7 +110,7 @@ b_window_sizes <- tar_map(
         ds_stats_mps_floss,
         process_ts_in_file(ds_stats_mps,
           id = "floss_mps",
-          exclude = var_exclude,
+          exclude = var_signals_exclude,
           fun = compute_floss,
           params = list(
             window_size = map_window_size,
@@ -143,7 +143,7 @@ b_window_sizes <- tar_map(
               mp_time_constraint = map_mp_time_constraint,
               floss_time_constraint = map_floss_time_constraint
             ),
-            exclude = var_exclude
+            exclude = var_signals_exclude
           ),
           pattern = map(ds_stats_mps_floss)
         ),
@@ -164,7 +164,7 @@ b_window_sizes <- tar_map(
               mp_time_constraint = map_mp_time_constraint,
               floss_time_constraint = map_floss_time_constraint
             ),
-            exclude = var_exclude
+            exclude = var_signals_exclude
           ),
           pattern = map(dataset, regimes)
         )
@@ -185,7 +185,7 @@ b_window_sizes <- tar_map(
         #         floss_time_constraint = map_floss_time_constraint,
         #         save_png = FALSE
         #       ),
-        #       exclude = var_exclude
+        #       exclude = var_signals_exclude
         #     )
         #   },
         #   pattern = map(dataset, regimes)
@@ -209,7 +209,7 @@ b_window_sizes <- tar_map(
 #         filter_w_size = map_filter_w_size,
 #         cplx_lim = 8
 #       ),
-#       exclude = var_exclude
+#       exclude = var_signals_exclude
 #     ),
 #     pattern = map(dataset)
 #   ),
@@ -222,7 +222,7 @@ b_window_sizes <- tar_map(
 #       params = list(
 #         filter = "complex_lim"
 #       ),
-#       exclude = var_exclude
+#       exclude = var_signals_exclude
 #     ),
 #     pattern = map(dataset, filters)
 #   ),
@@ -238,7 +238,7 @@ b_window_sizes <- tar_map(
 #           window_size = map_window_size,
 #           n_workers = 1
 #         ),
-#         exclude = var_exclude
+#         exclude = var_signals_exclude
 #       ),
 #       pattern = map(ds_filtered)
 #     ),
@@ -258,7 +258,7 @@ b_window_sizes <- tar_map(
 #             history = var_mp_history,
 #             mp_time_constraint = map_mp_time_constraint
 #           ),
-#           exclude = var_exclude
+#           exclude = var_signals_exclude
 #         ),
 #         pattern = map(ds_filtered, ds_filtered_stats)
 #       ),
@@ -267,7 +267,7 @@ b_window_sizes <- tar_map(
 #         ds_filtered_stats_mps_floss,
 #         process_ts_in_file(ds_filtered_stats_mps,
 #           id = "floss",
-#           exclude = var_exclude,
+#           exclude = var_signals_exclude,
 #           fun = compute_floss,
 #           params = list(
 #             window_size = map_window_size,
@@ -317,7 +317,7 @@ list(r_input, r_dataset, b_window_sizes)
 #       history = var_mp_history,
 #       mp_time_constraint = var_mp_time_constraint
 #     ),
-#     exclude = var_exclude
+#     exclude = var_signals_exclude
 #   ),
 #   pattern = cross(dataset, var_mp_time_constraint, var_window_size)
 # ),
@@ -326,7 +326,7 @@ list(r_input, r_dataset, b_window_sizes)
 #   ds_mps_floss,
 #   process_ts_in_file(ds_mps,
 #     id = "floss",
-#     exclude = var_exclude,
+#     exclude = var_signals_exclude,
 #     fun = compute_floss,
 #     params = list(
 #       window_size = var_window_size,
@@ -352,7 +352,7 @@ list(r_input, r_dataset, b_window_sizes)
 #       history = var_mp_history,
 #       mp_time_constraint = var_mp_time_constraint
 #     ),
-#     exclude = var_exclude
+#     exclude = var_signals_exclude
 #   ),
 #   pattern = cross(map(cross(var_window_size, dataset), ds_filtered), var_mp_time_constraint)
 # ),

@@ -161,7 +161,7 @@ plot_ecg_streaming <- function(ecg_data, data_constraint, window_size, mp_time_c
                                batch_size = 100, rate = 250, abs_event_line = 290 * rate) {
   data_idxs <- seq.int(1, data_constraint)
   y_amp <- (ylim[2] - ylim[1])
-  last_3_secs <- length(ecg_data) - (3 * rate) # this is the max detection delay needed for Asystole and Vfib
+  last_3_secs <- length(ecg_data) - (3 * rate) # this is the max detection delay needed for Asystole and Fibv
 
   aa <- ggplot2::ggplot(data.frame(x = data_idxs, y = ecg_data), ggplot2::aes(x, y)) +
     ggplot2::geom_line(size = 0.1)

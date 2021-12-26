@@ -1,6 +1,6 @@
 <mxfile host="65bd71144e" pages="3" scale="1" border="0">
     <diagram name="False Alarm" id="c7558073-3199-34d8-9f00-42111426c3f3">
-        <mxGraphModel dx="1206" dy="1164" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" background="none" math="0" shadow="0">
+        <mxGraphModel dx="2088" dy="743" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" background="none" math="0" shadow="0">
             <root>
                 <mxCell id="0"/>
                 <mxCell id="1" parent="0"/>
@@ -283,7 +283,7 @@
         </mxGraphModel>
     </diagram>
     <diagram name="Segment Classification" id="IEgmvSwKznlvn5AdeZBD">
-        <mxGraphModel dx="1206" dy="1164" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="826" pageHeight="1169" background="none" math="0" shadow="0">
+        <mxGraphModel dx="1027" dy="743" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="826" pageHeight="1169" background="none" math="0" shadow="0">
             <root>
                 <mxCell id="qkUld1DPVJAOQBkqQ7DZ-0"/>
                 <mxCell id="qkUld1DPVJAOQBkqQ7DZ-1" parent="qkUld1DPVJAOQBkqQ7DZ-0"/>
@@ -387,14 +387,14 @@
                 <mxCell id="qkUld1DPVJAOQBkqQ7DZ-34" value="&lt;b&gt;Learning&lt;/b&gt;" style="outlineConnect=0;fontColor=#232F3E;gradientColor=none;strokeColor=none;dashed=0;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;fontSize=12;fontStyle=0;aspect=fixed;pointerEvents=1;shape=mxgraph.aws4.sagemaker_model;rounded=1;fillColor=#000000;" parent="qkUld1DPVJAOQBkqQ7DZ-1" vertex="1">
                     <mxGeometry x="240" y="540" width="78" height="78" as="geometry"/>
                 </mxCell>
-                <mxCell id="KZz4rQ0iM8QPzWlyluvO-1" value="&lt;p style=&quot;margin: 4px 0px 0px&quot;&gt;Process 3&lt;/p&gt;&lt;hr&gt;consensus motif?&lt;br&gt;snippets?&lt;br&gt;MP_cluster?&lt;br&gt;Time2Cluster?&lt;br&gt;ContrastProfile?&lt;br&gt;Contextual MP?&lt;br&gt;Series Distance Profile?&lt;br&gt;Neighbor Profile?&lt;br&gt;Streamer (Snippers)?&lt;br&gt;Cyclical Error Denial?&lt;br&gt;MERLIN?&lt;br&gt;Localized Matrix Profile?&lt;br&gt;&lt;p&gt;&lt;/p&gt;" style="verticalAlign=middle;align=center;overflow=fill;fontSize=12;fontFamily=Helvetica;html=1;rounded=1;fontStyle=1;strokeWidth=3;fillColor=#E6FFCC;spacing=2;spacingTop=0;spacingLeft=0;spacingRight=0;whiteSpace=wrap;" parent="qkUld1DPVJAOQBkqQ7DZ-1" vertex="1">
-                    <mxGeometry x="530" y="60" width="150" height="290" as="geometry"/>
+                <mxCell id="KZz4rQ0iM8QPzWlyluvO-1" value="&lt;p style=&quot;margin: 4px 0px 0px&quot;&gt;Process 3&lt;/p&gt;&lt;hr&gt;ContrastProfile?&lt;br&gt;Neighbor Profile?&lt;br&gt;Cyclical Error Denial?&lt;br&gt;MERLIN?&lt;br&gt;Localized Matrix Profile?&lt;br&gt;&lt;p&gt;&lt;/p&gt;" style="verticalAlign=middle;align=center;overflow=fill;fontSize=12;fontFamily=Helvetica;html=1;rounded=1;fontStyle=1;strokeWidth=3;fillColor=#E6FFCC;spacing=2;spacingTop=0;spacingLeft=0;spacingRight=0;whiteSpace=wrap;" parent="qkUld1DPVJAOQBkqQ7DZ-1" vertex="1">
+                    <mxGeometry x="530" y="60" width="150" height="130" as="geometry"/>
                 </mxCell>
             </root>
         </mxGraphModel>
     </diagram>
     <diagram id="3hAHEL5LTYAW7nbtggHc" name="Alarm Structures">
-        <mxGraphModel dx="1067" dy="893" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
+        <mxGraphModel dx="2088" dy="743" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
             <root>
                 <mxCell id="zob9W6eGUI5sLTG9C2fc-0"/>
                 <mxCell id="zob9W6eGUI5sLTG9C2fc-1" parent="zob9W6eGUI5sLTG9C2fc-0"/>
