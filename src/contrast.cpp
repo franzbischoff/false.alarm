@@ -18,14 +18,30 @@
 
 // [[Rcpp::export]]
 List contrast_profile_rcpp(NumericVector negative_data, NumericVector positive_data, uint64_t window_size,
-                           uint64_t mp_time_constraint, double ez, double s_size, bool idxs, bool euclidean,
-                           bool progress) {
+                           List positive_matrix, uint64_t mp_time_constraint, double ez, double s_size,
+                           uint8_t n_workers, bool idxs, bool euclidean, bool progress) {
 
   // CP = (MP+- - MP++) / sqrt(2*window_size)
 
-  List positive_mp =
-      mpx_rcpp(positive_data, window_size, ez, mp_time_constraint, s_size, idxs = true, euclidean, progress);
-  List ab_mp = mpxab_rcpp(positive_data, negative_data, window_size, s_size, idxs, euclidean, progress);
+  List positive_mp;
+  List ab_mp;
+
+  if (n_workers > 1) {
+    ab_mp = mpxab_rcpp_parallel(positive_data, negative_data, window_size, s_size, idxs, euclidean, progress);
+  } else {
+    ab_mp = mpxab_rcpp(positive_data, negative_data, window_size, s_size, idxs, euclidean, progress);
+  }
+
+  if (positive_matrix.length() > 0) {
+    if (n_workers > 1) {
+      positive_mp = mpx_rcpp_parallel(positive_data, window_size, ez, s_size, idxs = true, euclidean, progress);
+    } else {
+      positive_mp =
+          mpx_rcpp(positive_data, window_size, ez, mp_time_constraint, s_size, idxs = true, euclidean, progress);
+    }
+  } else {
+    positive_mp = positive_matrix;
+  }
 
   NumericVector contrast;
 

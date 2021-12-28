@@ -1369,9 +1369,9 @@
       "RemoteUsername": "r-lib",
       "RemoteRepo": "styler",
       "RemoteRef": "main",
-      "RemoteSha": "1c55a52d506e81054bf33deb5c7915c4fd9db43a",
+      "RemoteSha": "f60a8a67df9aefabd2436336f95974d3871e0766",
       "RemoteHost": "api.github.com",
-      "Hash": "6fdddf63e39a09f8aa803ca180993406"
+      "Hash": "4d86cb9a4541e91ea75c4ef9861e7166"
     },
     "survival": {
       "Package": "survival",
@@ -1440,9 +1440,9 @@
       "RemoteUsername": "ismayc",
       "RemoteRepo": "thesisdown",
       "RemoteRef": "master",
-      "RemoteSha": "933565c4b2096444174231fa1fb26d1b3ae37f25",
+      "RemoteSha": "443921644c74860350e73453d067138002520e4b",
       "RemoteHost": "api.github.com",
-      "Hash": "85c607f4a0121111ff70707080964a36"
+      "Hash": "44e3a3333ad137fa49591f11ae629e86"
     },
     "tibble": {
       "Package": "tibble",

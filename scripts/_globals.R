@@ -4,7 +4,7 @@ library(purrr)
 
 #### Dev variables ----
 
-dev_mode <- TRUE # !identical(Sys.getenv("DEBUGME"), "")
+dev_mode <- FALSE # !identical(Sys.getenv("DEBUGME"), "")
 skip_graphics <- TRUE
 
 if (dev_mode) {
@@ -92,16 +92,16 @@ if (isFALSE(cluster)) { ## Locally
 tar_option_set(
   packages = c("dplyr", "false.alarm"),
   format = "rds",
-  # resources = tar_resources(
-  #   #   #   #   # *** If using clustermq for multithreading / clustering ***
-  #   clustermq = tar_resources_clustermq(
-  #     template = list(num_cores = 4)
-  #   ), # or n_jobs??
-  #   #   #   #   # *** If using future for multithreading / clustering ***
-  #   future = tar_resources_future(
-  #     resources = list(num_cores = 4)
-  #   )
-  # ),
+  resources = tar_resources(
+    #   #   #   # *** If using clustermq for multithreading / clustering ***
+    # clustermq = tar_resources_clustermq(
+    #   template = list(num_cores = 4)
+    # ), # or n_jobs??
+    #   #   #   # *** If using future for multithreading / clustering ***
+    future = tar_resources_future(
+      resources = list(n_cores = 4)
+    )
+  ),
   garbage_collection = TRUE,
   # workspace_on_error = TRUE,
   memory = "transient",

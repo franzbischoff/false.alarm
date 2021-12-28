@@ -22,8 +22,8 @@ var_subset <- seq.int(290 * const_sample_freq + 1, 300 * const_sample_freq) # la
 var_signals_include <- "II"
 # "time", "I", "II", "III", "V", "aVR", "aVL", "aVF", "PLETH", "ABP", "RESP", "MCL"
 var_signals_exclude <- setdiff(const_signals, var_signals_include)
-
 var_classes_include <- c("asystole", "bradycardia", "tachycardia", "fibv", "vtachy")
+var_class_windows <- 250
 
 #### Pipeline: Start ----
 
@@ -61,61 +61,20 @@ b_initial_split <- tar_target(
 )
 
 # First draft, not following parsnip rules: https://tidymodels.github.io/model-implementation-principles/function-interfaces.html
-b_fit_models <- tar_target(
+b_data_pos_neg <- tar_target(
   # values = list(serie = var_signals_include),
   # tar_target(
   #### Pipeline: Extract snippets for each class
-  class_snippets,
-  {
-    # This first version will use only the TRUE and FALSE from the same class
-    analysis_set <- rsample::analysis(initial_split[["II"]])
-    windows_set <- seq(60, 500, by = 10) # size of the snippets, can be tuned for each class
+  data_pos_neg,
+  build_pos_neg(initial_split, signals = var_signals_include, var_class_windows, FALSE, n_workers = 4)
+)
 
-    # which classes are present in the dataset?
-    classes <- unique(analysis_set$class)
-
-    snippets <- list()
-
-    # do the thing for each class
-    for (cl in classes) {
-      cat("Starting Class ", cl, "\n")
-      data_n <- analysis_set %>% dplyr::filter(alarm == "false")
-      data_p <- analysis_set %>% dplyr::filter(class == cl, alarm == "true")
-
-      neg_stream <- NULL
-
-      for (i in seq_len(nrow(data_n))) {
-        neg_stream <- c(neg_stream, (data_n$values[[i]]))
-      }
-
-      neg_stream_val <- neg_stream # validate_data(neg_stream, w)
-
-      # cat("neg_stream validated, ", length(neg_stream_val), " length", "\n")
-
-      pos_stream <- NULL
-
-      for (i in seq_len(nrow(data_p))) {
-        pos_stream <- c(pos_stream, (data_p$values[[i]]))
-      }
-
-      pos_stream_val <- pos_stream # validate_data(pos_stream, w)
-
-      # cat("pos_stream validated, ", length(pos_stream_val), " length", "\n")
-
-      pan_cp <- matrix(0, nrow = length(windows_set), ncol = length(pos_stream_val))
-
-      for (w in seq_len(length(windows_set))) {
-        cat("Starting contrast for window ", windows_set[w], "\n")
-        con <- contrast(neg_stream_val, pos_stream_val, windows_set[w], progress = FALSE)$contrast_profile
-        cat("Finished contrast for window ", windows_set[w], "\n")
-        pan_cp[w, seq_along(con)] <- con
-      }
-
-      snippets[[cl]] <- pan_cp
-    }
-
-    snippets
-  }
+b_find_snippets <- tar_target(
+  # values = list(serie = var_signals_include),
+  # tar_target(
+  #### Pipeline: Extract snippets for each class
+  find_snippets,
+  find_snippets(data_pos_neg, signals = var_signals_include, n_workers = 4)
 )
 
 b_fit_models2 <- tar_target(
@@ -241,6 +200,6 @@ b_fit_models_old <- tar_map(
 # rolling_origin {rsample}
 
 #### Pipeline: Join targets ----
-list(r_input, r_dataset, b_initial_split, b_fit_models)
+list(r_input, r_dataset, b_initial_split, b_data_pos_neg, b_find_snippets)
 
 #### Pipeline: End ----
