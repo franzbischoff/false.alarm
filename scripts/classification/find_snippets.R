@@ -95,3 +95,33 @@ find_snippets <- function(data_pos_neg, signals = "II", n_workers = 1) {
 
   return(sig_snip)
 }
+
+find_neg_snippets <- function(data_pos_neg, signals = "II", n_workers = 1) {
+  checkmate::qassert(data_pos_neg, "L+")
+  checkmate::qassert(signals, "s+")
+
+  sig_snip <- list()
+
+  for (sig in signals) {
+    cli::cli_h1("Processing signal {sig}")
+
+    # which classes are present in the dataset?
+    classes <- unique(names(data_pos_neg[[sig]]))
+
+    class_result <- list()
+
+    # do the thing for each class
+    for (cl in classes) {
+      cli::cli_h2("Starting class {cl}")
+      con <- contrast(data_pos_neg[[sig]][[cl]]$pos_stream, data_pos_neg[[sig]][[cl]]$neg_stream,
+        data_pos_neg[[sig]][[cl]]$window_size, data_pos_neg[[sig]][[cl]]$pos_mp,
+        exclusion_zone = 0.5, distance = "euclidean",
+        n_workers = n_workers, progress = FALSE
+      )
+      class_result[[cl]] <- con
+    }
+    sig_snip[[sig]] <- class_result
+  }
+
+  return(sig_snip)
+}

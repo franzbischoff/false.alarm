@@ -757,7 +757,8 @@ file_paths|pattern|61dadb714f8b0476|6366b1271c1226a2||1115504559||||0|file|vecto
 dataset|stem|2f53eb2790032871|4292a46027f9436e|bb2373fa4a1331d0|914614260||t18989.0968162209s|ef2c6dc0066957e1|6459095|rds|vector|||91.757||
 initial_split|stem|5512daac1018617b|38c0177ea6a72fc5|c5a9b9100fcba40d|-1396285838||t18989.0968255959s|5d8951b1b96993ac|6460752|rds|vector|||0.018||
 class_snippets|stem|3d14838fd165cce1|92af328a0f530fb5|5d021524647bdbd4|-2073783555||t18989.1681591607s|f2a35e6ba92e040c|2847308|rds|vector|||1905.22|longer object length is not a multiple of shorter object length|
-data_pos_neg|stem|d3d915625da4e457|fd8990ce9fa1bd17|0ea2126660435e94|-1480682722||t18989.1737396005s|c1701fe03a37e2d9|28582993|rds|vector|||75.578||
+find_snippets|stem|6dc60dffaaaed608|8f2c31111ba335ee|cce9d0ea7b675bb8|1238305279||t18989.1899961978s|17ecbe21a9fac869|19618|rds|vector|||1375.049||
+find_neg_snippets|stem|6eff74c2669f4dfe|e4d7d2b93de90b5f|cce9d0ea7b675bb8|-1522799966||t18991.4358985687s|d3d98d001d45dea0|45080825|rds|vector|||10345.465||
 _false_alarm_movvar_rcpp|object|68ee5366f3d1a624||||||||||||||
 process_ts_in_file|function|bd0542035fbdde55||||||||||||||
 var_mp_batch|object|887021b347b02e8f||||||||||||||
@@ -865,7 +866,7 @@ _false_alarm_normalize_rcpp|object|2d6982e0ab7620e7||||||||||||||
 var_floss_time_constraint|object|3767b7a207648d79||||||||||||||
 var_mp_threshold|object|37c1877282978f85||||||||||||||
 backend|object|e44aba709b9d5aeb||||||||||||||
-.Random.seed|object|d685dd4d7c6cd69c||||||||||||||
+.Random.seed|object|f1ceed4ef0b3c2d5||||||||||||||
 extract_regime_sample|function|0b10c88f152ef35d||||||||||||||
 create_output|function|2c75792cb769a271||||||||||||||
 movvar_rcpp|function|bdf821fb9eb1d451||||||||||||||
@@ -962,4 +963,4 @@ compute_streaming_profile|function|976f5d34472138cc||||||||||||||
 validate_data|function|9f1e17642e095f51||||||||||||||
 compute_s_profile_with_stats|function|491ddd006fc7a1e0||||||||||||||
 build_pos_neg|function|b6bba728515ae45f||||||||||||||
-find_snippets|stem|6dc60dffaaaed608|8f2c31111ba335ee|cce9d0ea7b675bb8|1238305279||t18989.1899961978s|17ecbe21a9fac869|19618|rds|vector|||1375.049||
+data_pos_neg|stem|d3d915625da4e457|fd8990ce9fa1bd17|0ea2126660435e94|-1480682722||t18992.2022744115s|c1701fe03a37e2d9|28582993|rds|vector|||103.434||

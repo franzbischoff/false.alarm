@@ -1369,9 +1369,9 @@
       "RemoteUsername": "r-lib",
       "RemoteRepo": "styler",
       "RemoteRef": "main",
-      "RemoteSha": "f60a8a67df9aefabd2436336f95974d3871e0766",
+      "RemoteSha": "014d73d56f71660ae0f381a8765fb5d43bdaf48a",
       "RemoteHost": "api.github.com",
-      "Hash": "4d86cb9a4541e91ea75c4ef9861e7166"
+      "Hash": "8f55f8e1b86986af128e11e762e67a92"
     },
     "survival": {
       "Package": "survival",
@@ -1425,11 +1425,11 @@
       "Version": "3.1.1.9000",
       "Source": "GitHub",
       "RemoteType": "github",
+      "RemoteHost": "api.github.com",
       "RemoteUsername": "r-lib",
       "RemoteRepo": "testthat",
       "RemoteRef": "main",
       "RemoteSha": "fb28a970dbd0c9e00010d61dd378b016a72fda44",
-      "RemoteHost": "api.github.com",
       "Hash": "819ac6045a445a7a75f56cd63d1eb699"
     },
     "thesisdown": {

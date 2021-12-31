@@ -77,6 +77,14 @@ b_find_snippets <- tar_target(
   find_snippets(data_pos_neg, signals = var_signals_include, n_workers = 4)
 )
 
+b_find_neg_snippets <- tar_target(
+  # values = list(serie = var_signals_include),
+  # tar_target(
+  #### Pipeline: Extract snippets for each class
+  find_neg_snippets,
+  find_neg_snippets(data_pos_neg, signals = var_signals_include, n_workers = 4)
+)
+
 b_fit_models2 <- tar_target(
   try_classify,
   {
@@ -200,6 +208,6 @@ b_fit_models_old <- tar_map(
 # rolling_origin {rsample}
 
 #### Pipeline: Join targets ----
-list(r_input, r_dataset, b_initial_split, b_data_pos_neg, b_find_snippets)
+list(r_input, r_dataset, b_initial_split, b_data_pos_neg, b_find_snippets, b_find_neg_snippets)
 
 #### Pipeline: End ----

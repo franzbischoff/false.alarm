@@ -13,7 +13,7 @@
  * @param idxs return the indexes?
  * @param euclidean use euclidean or pearson?
  * @param progress show progress?
- * @return List
+ * @return Listrenv
  */
 
 // [[Rcpp::export]]
