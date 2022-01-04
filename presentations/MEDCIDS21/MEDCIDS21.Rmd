@@ -200,7 +200,7 @@ knitr::include_graphics("figures/false_alarm.svg")
 ::: notes
 - That is only a draft of the final workflow.
 - The algorithm for the classification of the regime changes is still to be defined.
-- However, the main innovation resides in the correct regime detection. 
+- However, the main innovation resides in the correct regime detection.
 - Also, to achieve the goal of low CPU and memory usage, the strategy will be to combine fading factors[@Gama2013; @Rodrigues2010] to reduce computation in online settings like in this research.
 :::
 
@@ -320,7 +320,7 @@ Nevertheless,
     but this is not an accurate statement.
 -   The original paper discards the datapoints within $(ProfileSize - constraint) \cdots ProfileSize$.
 
-The solution for evaluating the effect of using time constraints in this work's setting was to generate 
+The solution for evaluating the effect of using time constraints in this work's setting was to generate
 the ideal distribution using the constrained parameters beforehand. That gives us enough data to evaluate
 a regime change accurately utilizing a minimum of $2 \times WindowSize$ datapoints. The best index is
 still to be determined, and current tests are using 3 seconds limit.
@@ -339,11 +339,11 @@ not be sufficient to detect the regime change.
 
 By experimenting, we see that the original paper set the temporal constraint in the Matrix Profile
 algorithm (as it seems more appropriate too). That reduces the computation time of the online Matrix
-Profile, and any post-processing done afterward will inherit this constraint. 
+Profile, and any post-processing done afterward will inherit this constraint.
 The distribution for correcting the FLOSS algorithm is also simpler. Fig. `r ref("fig:distributions")`.
 
 ```{r dist data, cache=TRUE, include=FALSE}
-source(here("scripts", "compute_floss.R"))
+source(here("scripts", "common", "compute_floss.R"))
 
 get_dist <- function(mp_const = 1250, floss_const = 0, sample_size = 5) {
   set.seed(2021)
@@ -413,7 +413,7 @@ gg <- gridExtra::grid.arrange(floss_dist, floss_4250, floss_2500, floss_1250,
 
 On the other hand, it is possible to apply the time constraint in the FLOSS algorithm, leaving the online Matrix Profile
 in its original form. See Fig. `r ref("fig:floss_dist")`. The theoretical distribution changes significantly according to
-the constraint value. 
+the constraint value.
 
 ```{r floss_dist, echo=FALSE, fig.cap=paste0("Fig. ", ref("fig:floss_dist"), ":  1D-IAC distributions for later temporal constraint (on FLOSS)")}
 

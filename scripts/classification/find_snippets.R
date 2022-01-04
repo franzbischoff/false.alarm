@@ -1,5 +1,5 @@
 
-find_snippets <- function(data_pos_neg, signal = "II", reverse = FALSE, n_workers = 1) {
+find_snippets <- function(data_pos_neg, signal = "II", reverse = FALSE) {
   checkmate::qassert(data_pos_neg, "L1")
   checkmate::qassert(signal, "S1")
   checkmate::qassert(n_workers, "N[1,6]")
@@ -27,7 +27,7 @@ find_snippets <- function(data_pos_neg, signal = "II", reverse = FALSE, n_worker
       window_size = data_pos_neg[[signal]][[cl]]$snippet_size,
       positive_matrix = data_pos_neg[[signal]][[cl]]$pos_mp,
       exclusion_zone = 0.5, distance = "euclidean",
-      n_workers = n_workers, progress = FALSE
+      n_workers = 1, progress = FALSE
     )
     class_result[[cl]] <- con
   }

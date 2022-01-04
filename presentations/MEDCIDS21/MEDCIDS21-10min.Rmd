@@ -369,7 +369,7 @@ done afterward will inherit this constraint. The distribution for correcting the
 `r ref("fig:distributions")`.
 
 ```{r dist data, cache=TRUE, include=FALSE}
-source(here("scripts", "compute_floss.R"))
+source(here("scripts", "common", "compute_floss.R"))
 
 get_dist <- function(mp_const = 1250, floss_const = 0, sample_size = 1000) {
   set.seed(2021)
@@ -560,7 +560,7 @@ gg <- gridExtra::grid.arrange(mp_constraint, floss_constraint, mp_arcs, floss_ar
 
 # One more contribution
 
-The *Similarity Threshold* (ST). 
+The *Similarity Threshold* (ST).
 
 The ST is an interesting factor that we can use, especially when detecting pattern changes during time. The FLUSS/FLOSS
 algorithms rely on counting references between indexes in the time series. ST can help remove "noise" from these

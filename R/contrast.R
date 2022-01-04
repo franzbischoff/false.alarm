@@ -16,13 +16,7 @@
 #'
 #' @export
 
-contrast <- function(negative, positive, window_size, positive_matrix = NULL, exclusion_zone = 0.5, distance = "euclidean", n_workers = 1, progress = FALSE) {
-  if (n_workers > 1) {
-    p <- RcppParallel::defaultNumThreads()
-    n_workers <- min(n_workers, p)
-    RcppParallel::setThreadOptions(numThreads = n_workers)
-  }
-
+contrast <- function(negative, positive, window_size, positive_matrix = NULL, exclusion_zone = 0.5, distance = "euclidean", progress = FALSE) {
   result <- contrast_profile_rcpp(
     negative,
     positive,
@@ -31,15 +25,11 @@ contrast <- function(negative, positive, window_size, positive_matrix = NULL, ex
     mp_time_constraint = 0,
     exclusion_zone,
     s_size = 1,
-    n_workers = n_workers,
+    n_workers = 1,
     as.logical(FALSE),
     as.logical(distance == "euclidean"),
     as.logical(progress)
   )
-
-  if (n_workers > 1) {
-    RcppParallel::setThreadOptions(numThreads = p)
-  }
 
   return(result)
 }

@@ -151,7 +151,7 @@ minimum of $2 \times WindowSize$ datapoints. The best index is still to be deter
 tests are using 3 seconds limit.
 
 ```{r dist data, message=FALSE, warning=FALSE, cache=TRUE, include=FALSE}
-source(here("scripts", "compute_floss.R"))
+source(here("scripts", "common", "compute_floss.R"))
 
 get_dist <- function(mp_const = 1250, floss_const = 0) {
   set.seed(2021)
@@ -354,7 +354,48 @@ can help remove "noise" from these references since only similar patterns above 
 are referenced, and changes have more impact on these counts. More information and visual content on
 ST will be provided later. The best ST threshold is still to be determined.
 
-### Further Steps
+## 2022, January Update #1
+
+These last months were dedicated on several important things:
+
+1. Restructuring the roadmap
+2. Refining the main pipeline
+3. Preparing for modeling and parameter tuning
+4. Feasibility trial
+5. And others
+
+### Refining the main pipeline
+
+This can also be thought as "rethinking" the pipeline.
+
+It is important, not only to write the pipeline that can "autoplot" itself for fine-grain inspection,
+but also to design a high-level graph that can explain it "in a glance". This exercise is helpful both
+ways: being able to tell the story in a short version also reveal missing things and misleading paths
+that is not so obvious when thinking "low-level".
+
+### Preparing for modeling and parameter tuning
+
+Here is one missing part that should have been addresses (formally) ealier. Although this work have its
+purpose on being finally deployed on a small hardware, this prospective phase will need several hours
+of computing, tuning, evaluation and validation of all findings.
+
+Thus it was necessary a revisiting on the frameworks we are used to work on R: `caret` and the newest `tidymodels`
+collection. For sure there are other frameworks, and oppinions[https://staffblogs.le.ac.uk/teachingr/2020/10/05/on-not-using-tidymodels/].
+Notwithstanding, this project will follow the `tidymodels` road. Two major arguments 1) constantly improving, and
+constantly being re-checked for bugs; 2) allows to plug-in a custom modelling algorithm that in this case will
+be the one needed for developing this work.
+
+### Feasibility trial
+
+A side-project called "false.alarm.io" has been derived from this work (an unfortunate mix of "false.alarm" and
+"PlatformIO", the IDE chosen to interface the panoply of embedded systems we can experiment). The current results of
+this side-project are very enlightening, and shows that final algorithm can indeed be used in a small hardware.
+
+### And others
+
+After this "step back" to look forward, it was time to
+
+## Further Steps {-}
 
 -   Explanation on the evaluation method for regime change detection (as described in the FLOSS
     paper @gharghabi2018 )
@@ -362,4 +403,4 @@ ST will be provided later. The best ST threshold is still to be determined.
 -   Cross-validation and evaluation of the algorithm
 -   Publish results
 
-### References
+## References {-}

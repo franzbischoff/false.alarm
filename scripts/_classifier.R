@@ -28,7 +28,7 @@ var_bool_include_all <- TRUE
 var_signals_exclude <- setdiff(const_signals, var_signals_include)
 var_classes_include <- c("asystole", "bradycardia", "tachycardia", "fibv", "vtachy")
 var_snippet_size <- c(150, 300)
-var_n_workers <- 4
+var_n_workers <- 1
 # var_limit_per_class <- 15
 
 #### Pipeline: Start ----
@@ -75,8 +75,7 @@ list(
           signal = map_signals_include,
           snippet_size = map_snippet_size,
           validate = FALSE,
-          same_class = TRUE,
-          n_workers = var_n_workers
+          same_class = TRUE
         )
       ),
       b_data_val_pos_neg <- tar_target(
@@ -86,8 +85,7 @@ list(
           signal = map_signals_include,
           snippet_size = map_snippet_size,
           validate = TRUE,
-          same_class = TRUE,
-          n_workers = var_n_workers
+          same_class = TRUE
         )
       ),
       b_find_snippets <- tar_target(
@@ -95,8 +93,7 @@ list(
         pos_snippets,
         find_snippets(data_pos_neg,
           signal = map_signals_include,
-          reverse = FALSE,
-          n_workers = var_n_workers
+          reverse = FALSE
         )
       ),
       b_find_val_snippets <- tar_target(
@@ -104,28 +101,25 @@ list(
         pos_val_snippets,
         find_snippets(data_val_pos_neg,
           signal = map_signals_include,
-          reverse = FALSE,
-          n_workers = var_n_workers
-        )
-      ),
-      b_find_neg_snippets <- tar_target(
-        #### Pipeline: Computes the AA - BA difference.
-        neg_snippets,
-        find_snippets(data_pos_neg,
-          signal = map_signals_include,
-          reverse = TRUE,
-          n_workers = var_n_workers
-        )
-      ),
-      b_find_neg_val_snippets <- tar_target(
-        #### Pipeline: Computes the AA - BA difference.
-        neg_val_snippets,
-        find_snippets(data_val_pos_neg,
-          signal = map_signals_include,
-          reverse = TRUE,
-          n_workers = var_n_workers
+          reverse = FALSE
         )
       )
+      # b_find_neg_snippets <- tar_target(
+      #   #### Pipeline: Computes the AA - BA difference.
+      #   neg_snippets,
+      #   find_snippets(data_pos_neg,
+      #     signal = map_signals_include,
+      #     reverse = TRUE
+      #   )
+      # ),
+      # b_find_neg_val_snippets <- tar_target(
+      #   #### Pipeline: Computes the AA - BA difference.
+      #   neg_val_snippets,
+      #   find_snippets(data_val_pos_neg,
+      #     signal = map_signals_include,
+      #     reverse = TRUE
+      #   )
+      # )
     )
   )
 )

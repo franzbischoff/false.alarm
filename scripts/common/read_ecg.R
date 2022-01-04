@@ -525,12 +525,18 @@ validate_data <- function(data, window_size) {
   # disconnected lead or boundary hit, so we add noise to avoid spurious correlations.
   const <- 1 / 64
 
-  valid_std <- (data_std >= const)
+  invalid_std <- (data_std < const)
 
-  total <- sum(!valid_std)
+  diff_size <- length(data) - length(data_std)
+  if (isTRUE(tail(invalid_std, 1))) {
+    invalid_std <- c(invalid_std, rep(TRUE, diff_size))
+  } else {
+    invalid_std <- c(invalid_std, rep(FALSE, diff_size))
+  }
 
+  total <- sum(invalid_std)
   # scale is based on data value: x == 0; abs(x) < 1 or abs(x) >= 1
-  scale <- purrr::map_dbl(abs(data[!valid_std]), function(x) {
+  scale <- purrr::map_dbl(abs(data[invalid_std]), function(x) {
     if (x == 0) { # first case
       s <- 1
     } else if (x < 1) { # second case
@@ -547,8 +553,7 @@ validate_data <- function(data, window_size) {
     }
     s
   })
-
-  data[!valid_std] <- data[!valid_std] + const * scale * rnorm(total)
+  data[invalid_std] <- data[invalid_std] + const * scale * rnorm(total)
 
   return(data)
 }

@@ -3,44 +3,42 @@ output_dir: ../docs
 navbar:
   title: "false.alarm"
   left:
-  - text: Home
-    href: index.html
-  - text: Blog
-    href: blog.html
-  - text: Report
-    href: report.html
-  - text: About
-    href: about.html
-  - text: License
-    href: license.html
-  - text: Thesis
-    href: thesis/index.html
-  - icon: fa fa-github
-    text: Source
-    href: https://github.com/franzbischoff/false.alarm
+    - text: Home
+      href: index.html
+    - text: Blog
+      href: blog.html
+    - text: Report
+      href: report.html
+    - text: About
+      href: about.html
+    - text: License
+      href: license.html
+    - text: Thesis
+      href: thesis/index.html
+    - icon: fa fa-github
+      text: Source
+      href: https://github.com/franzbischoff/false.alarm
   right:
-  - icon: fab fa-twitter
-    href: https://twitter.com/intent/tweet?text=Detecting%20life-threatening%20patterns%20in%20Point-of-care%20ECG%20using%20efficient%20memory%20and%20processor%20power&url=https%3A%2F%2Ffranzbischoff.github.io%2Ffalse.alarm%2F&hashtags=rmarkdown,bookdown
-  - icon: fa fa-facebook
-    href: https://www.facebook.com/sharer/sharer.php?u=https%3A%2F%2Ffranzbischoff.github.io%2Ffalse.alarm%2F
-  - icon: fa fa-share-alt
-    href: https://www.facebook.com/sharer/sharer.php?u=https%3A%2F%2Ffranzbischoff.github.io%2Ffalse.alarm%2F
+    - icon: fab fa-twitter
+      href: https://twitter.com/intent/tweet?text=Detecting%20life-threatening%20patterns%20in%20Point-of-care%20ECG%20using%20efficient%20memory%20and%20processor%20power&url=https%3A%2F%2Ffranzbischoff.github.io%2Ffalse.alarm%2F&hashtags=rmarkdown,bookdown
+    - icon: fa fa-facebook
+      href: https://www.facebook.com/sharer/sharer.php?u=https%3A%2F%2Ffranzbischoff.github.io%2Ffalse.alarm%2F
+    - icon: fa fa-share-alt
+      href: https://www.facebook.com/sharer/sharer.php?u=https%3A%2F%2Ffranzbischoff.github.io%2Ffalse.alarm%2F
 output:
-  workflowr::wflow_html:
+  html_notebook:
     toc: true
     toc_float: true
-    number_sections: false
+    number_sections: true
     theme: lumen
-    highlight: textmate
-    css: style.css
-
-  # html_notebook:
+    highlight: tango
+  # workflowr::wflow_html:
   #   toc: true
   #   toc_float: true
-  #   number_sections: true
+  #   number_sections: false
   #   theme: lumen
-  #   highlight: tango
-
+  #   highlight: textmate
+  #   css: style.css
 #  paper spacelab lumen yeti
 
 # textmate tango pygments kate

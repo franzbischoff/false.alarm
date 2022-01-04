@@ -1,11 +1,10 @@
 build_pos_neg <- function(initial_split, signal = "II", snippet_size = 250,
-                          validate = FALSE, same_class = TRUE, n_workers = 1) {
+                          validate = FALSE, same_class = TRUE) {
   checkmate::qassert(initial_split, "L+")
   checkmate::qassert(signal, "S1")
   checkmate::qassert(snippet_size, "N1")
   checkmate::qassert(validate, "B1")
   checkmate::qassert(same_class, "B1")
-  checkmate::qassert(n_workers, "N[1,6]")
 
   cli::cli_h1("Processing signal {signal}, snippet size {snippet_size}")
   analysis_set <- rsample::analysis(initial_split[[signal]])
@@ -54,7 +53,6 @@ build_pos_neg <- function(initial_split, signal = "II", snippet_size = 250,
       snippet_size,
       exclusion_zone = 0.5,
       distance = "euclidean",
-      n_workers = n_workers,
       progress = FALSE
     )
 
