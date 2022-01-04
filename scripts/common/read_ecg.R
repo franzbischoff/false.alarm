@@ -48,7 +48,7 @@
 #' signal <- read_ecg("data/a103l")
 #' }
 #'
-read_ecg <- function(filename, plot = FALSE, subset = FALSE,
+read_ecg <- function(filename, plot = FALSE, subset = NULL,
                      classes = c("all", "asystole", "bradycardia", "tachycardia", "fibv", "vtachy"),
                      true_alarm = NULL) {
   checkmate::assert_string(filename, 3)
@@ -176,7 +176,7 @@ read_ecg <- function(filename, plot = FALSE, subset = FALSE,
 
   signals <- list()
   subset_minmax <- FALSE
-  if (!isFALSE(subset)) {
+  if (!is.null(subset)) {
     subset_minmax <- c(min(subset), max(subset))
   }
   # Convert from digital units to physical units.
@@ -194,7 +194,7 @@ read_ecg <- function(filename, plot = FALSE, subset = FALSE,
     signal <- siginfo[[i]]$description
     signals[[signal]] <- (mat_content$val[i, ] - siginfo[[i]]$baseline) / siginfo[[i]]$gain
 
-    if (!isFALSE(subset)) {
+    if (!is.null(subset)) {
       signals[[signal]] <- signals[[signal]][subset]
     }
 
@@ -270,7 +270,7 @@ read_ecg <- function(filename, plot = FALSE, subset = FALSE,
 #' signal <- read_ecg("data/a103l")
 #' }
 #'
-read_ecg_csv <- function(filename, plot = FALSE, subset = FALSE,
+read_ecg_csv <- function(filename, plot = FALSE, subset = NULL,
                          classes = c("all", "asystole", "bradycardia", "tachycardia", "fibv", "vtachy"),
                          true_alarm = NULL, normalize = TRUE) {
   checkmate::assert_string(filename, 3)
@@ -400,7 +400,7 @@ read_ecg_csv <- function(filename, plot = FALSE, subset = FALSE,
 
   signals <- list()
   subset_minmax <- FALSE
-  if (!isFALSE(subset)) {
+  if (!is.null(subset)) {
     subset_minmax <- c(min(subset), max(subset))
   }
   # Convert from digital units to physical units.
@@ -423,7 +423,7 @@ read_ecg_csv <- function(filename, plot = FALSE, subset = FALSE,
       signals[[signal]] <- csv_content[[i]]
     }
 
-    if (!isFALSE(subset)) {
+    if (!is.null(subset)) {
       signals[[signal]] <- signals[[signal]][subset]
     }
 
@@ -449,7 +449,32 @@ read_ecg_csv <- function(filename, plot = FALSE, subset = FALSE,
   return(output)
 }
 
-
+#' Read the ECG files and build a dataset.
+#'
+#' This function reads the tuple data.mat and data.hea that contains the signal and the header with information about
+#' the signal.
+#'
+#' @param file_paths character vector. Paths to the file data. Without the extension
+#' @param subset integer sequence. Select only this subset for the dataset. Default is NULL
+#' @param true_alarm logical value or NULL. Select only the TRUE or FALSE alarms. Default is NULL, means all alarms.
+#' @param limit_per_class integer. Limit the size of the dataset by number of the same class. Used to speed up the pipeline before the final trial.
+#'
+#' @return
+#' Returns a `list` with the signals and the attributes of the file:
+#'
+#' - time: timestamp of each observation, in seconds
+#' - "signal": the value of the signal on each timestamp. The name of this object is the name of the signal, for
+#' example 'II', 'PLETH'.
+#'   - signal attributes "info":
+#'     - baseline: numeric value
+#'     - grain: numeric value
+#'     - unit: char
+#' - dataset attributes "info":
+#'   - alarm: class of alarm, for ex: "Asystole".
+#'   - true: if the alarm is true or not, for ex: "False".
+#'   - filename: the name of the original file, without the extension.
+#'   - frequency: the frequency of the observations, in Hz.
+#'
 read_and_prepare_ecgs <- function(file_paths, subset = FALSE, true_alarm = NULL, limit_per_class = NULL) {
   result <- list()
   classes <- list()
@@ -489,15 +514,18 @@ validate_data <- function(data, window_size) {
 
   # TODO: This may be used for skipping invalid windows
   # valid_windows <- (movsum_ogita_rcpp(is_finite, window_size) == window_size)
-
   # For streaming purposes it is valid to use zeros for NA/NaN/Inf
   data[!is_finite] <- 0
+  data_std <- mov_std(data, window_size)
+
+  is_finite <- is.finite(data_std)
+  data_std[!is_finite] <- 0
 
   # This is approximately 0.015. For ECG's, a std smaller than this is probably a
   # disconnected lead or boundary hit, so we add noise to avoid spurious correlations.
   const <- 1 / 64
 
-  valid_std <- (mov_std(data, window_size) >= const)
+  valid_std <- (data_std >= const)
 
   total <- sum(!valid_std)
 
@@ -525,16 +553,26 @@ validate_data <- function(data, window_size) {
   return(data)
 }
 
-reshape_ds_by_truefalse <- function(dataset, signals) {
+#' Reshape dataset by true and false alarms
+#'
+#' The resulting dataset can be filtered so every file as all the given signals, or
+#' at least one of the signals.
+#'
+reshape_ds_by_truefalse <- function(dataset, signals, all_signals = TRUE) {
   # divide in TRUE and FALSE
   df_true <- purrr::keep(dataset, ~ attr(.x, "info")$true)
   df_false <- purrr::keep(dataset, ~ !attr(.x, "info")$true)
 
   # filter by presence of signals
-  df_true <- purrr::keep(df_true, ~ all(signals %in% names(.x)))
-  df_false <- purrr::keep(df_false, ~ all(signals %in% names(.x)))
+  if (all_signals) {
+    df_true <- purrr::keep(df_true, ~ all(signals %in% names(.x)))
+    df_false <- purrr::keep(df_false, ~ all(signals %in% names(.x)))
+  } else {
+    df_true <- purrr::keep(df_true, ~ any(signals %in% names(.x)))
+    df_false <- purrr::keep(df_false, ~ any(signals %in% names(.x)))
+  }
 
-  # # convert from list by file to list by time series
+  # # convert from list by file to list by signal
   df_true <- purrr::transpose(df_true)
   df_false <- purrr::transpose(df_false)
 
@@ -542,27 +580,30 @@ reshape_ds_by_truefalse <- function(dataset, signals) {
   df_true <- df_true[signals]
   df_false <- df_false[signals]
 
-
-  # convert trues and falses into a tibble for later use on rsample
+  # convert trues and falses into a tibble for later use on `rsample`
+  # NOTE: here we create a dummy variable "class_alarm" to stratify the sampling
+  # because the `rsample` package does not accept more than one variable for stratification.
   df_true <- purrr::map(df_true, function(x) {
-    files <- names(x)
+    y <- purrr::compact(x) # remove files that don't have the signal
+    files <- names(y)
     classes <- factor(substr(files, 1, 1), c("a", "b", "t", "f", "v"))
     result <- tibble::tibble(
-      file = files, class = classes, values = x, alarm = factor("true", c("true", "false"))
+      file = files, class = classes, values = y, alarm = factor("true", c("true", "false"))
     )
-    result %>% dplyr::mutate(class_alarm = paste0(class, "_", alarm))
+    result %>% dplyr::mutate(class_alarm = paste0(class, "_", alarm)) # create the dummy variable
   })
 
   df_false <- purrr::map(df_false, function(x) {
-    files <- names(x)
+    y <- purrr::compact(x) # remove files that don't have the signal
+    files <- names(y)
     classes <- factor(substr(files, 1, 1), c("a", "b", "t", "f", "v"))
     result <- tibble::tibble(
-      file = files, class = classes, values = x, alarm = factor("false", c("true", "false"))
+      file = files, class = classes, values = y, alarm = factor("false", c("true", "false"))
     )
-    result %>% dplyr::mutate(class_alarm = paste0(class, "_", alarm))
+    result %>% dplyr::mutate(class_alarm = paste0(class, "_", alarm)) # create the dummy variable
   })
 
-  data <- dplyr::bind_rows(df_true, df_false)
+  data <- purrr::map2(df_true, df_false, dplyr::bind_rows)
 
   return(data)
 }

@@ -4,7 +4,7 @@
 # The stratification is done to keep classes, TRUEs and FALSEs proportional to the original dataset
 
 build_initial_split <- function(ecg_data, prop = 0.75, strata = "class_alarm", signals = NULL) {
-  checkmate::qassert(ecg_data, "D+")
+  checkmate::qassert(ecg_data, "L+")
   checkmate::qassert(prop, "N(0,1)")
   checkmate::qassert(strata, "S1")
   checkmate::qassert(signals, "s+")

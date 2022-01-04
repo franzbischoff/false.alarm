@@ -33,14 +33,14 @@ List contrast_profile_rcpp(NumericVector negative_data, NumericVector positive_d
   }
 
   if (positive_matrix.length() > 0) {
+    positive_mp = positive_matrix;
+  } else {
     if (n_workers > 1) {
       positive_mp = mpx_rcpp_parallel(positive_data, window_size, ez, s_size, idxs = true, euclidean, progress);
     } else {
       positive_mp =
           mpx_rcpp(positive_data, window_size, ez, mp_time_constraint, s_size, idxs = true, euclidean, progress);
     }
-  } else {
-    positive_mp = positive_matrix;
   }
 
   NumericVector contrast;

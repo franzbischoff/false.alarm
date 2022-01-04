@@ -43,12 +43,12 @@ if (Sys.getenv("CI") == "") { # not CI
     )
     options(
       vsc.rstudioapi = TRUE,
-      # vsc.browser = "Two",
-      # vsc.viewer = "Two",
-      # vsc.page_viewer = "Two",
-      # vsc.view = "Two",
-      # vsc.plot = "Two",
-      # vsc.helpPanel = "Two",
+      vsc.browser = "Two",
+      vsc.viewer = "Two",
+      vsc.page_viewer = "Two",
+      vsc.view = "Two",
+      vsc.plot = "Two",
+      vsc.helpPanel = "Two",
       vsc.str.max.level = 2,
       vsc.show_object_size = TRUE,
       vsc.globalenv = TRUE,
@@ -57,13 +57,13 @@ if (Sys.getenv("CI") == "") { # not CI
 
     # if httpgd is installed, let's use it
     # This breaks rendering video
-    if ("httpgd" %in% .packages(all.available = TRUE)) {
-      options(vsc.plot = FALSE)
-      options(device = function(...) {
-        httpgd::hgd(silent = TRUE)
-        .vsc.browser(httpgd::hgd_url(history = FALSE), viewer = "Beside")
-      })
-    }
+    # if ("httpgd" %in% .packages(all.available = TRUE)) {
+    #   options(vsc.plot = FALSE)
+    #   options(device = function(...) {
+    #     httpgd::hgd(silent = TRUE)
+    #     .vsc.browser(httpgd::hgd_url(history = FALSE), viewer = "Beside")
+    #   })
+    # }
 
     suppressMessages(
       suppressWarnings({

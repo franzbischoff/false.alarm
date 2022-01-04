@@ -149,7 +149,7 @@
       },
       "args": [
         "-e",
-        "codemetar::write_codemeta(write_minimeta = TRUE); codemetar::give_opinions()"
+        "codemetar::write_codemeta(); codemetar::give_opinions()"
       ],
       "options": {
         "cwd": "${workspaceFolder}"

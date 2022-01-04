@@ -217,9 +217,6 @@
   "terminal.integrated.environmentChangesIndicator": "on",
   "terminal.integrated.profiles.linux": {
     "bash": {
-      "args": [
-        "-l"
-      ],
       "icon": "terminal-bash",
       "path": "/bin/bash"
     },
@@ -271,5 +268,7 @@
     "[ ]",
     "[x]"
   ],
-  "python.pythonPath": "/usr/bin/python3"
+  "search.exclude": {
+    "**/_*/": true
+  }
 }
