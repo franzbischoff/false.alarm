@@ -88,22 +88,22 @@ pre-computation also allows experimenting with parameters during this process.
 
 While implementing the streaming-like pipeline, some declarations must be made. In 2017, the FLUSS
 (Fast Low-cost Unipotent Semantic Segmentation) and the FLOSS (Fast Low-cost Online Semantic
-Segmentation) algorithms were introduced by Gharghabi *et al.* @gharghabi2017. In 2018, the same
-group published their findings using multi-dimensional time series @gharghabi2018 using the same
+Segmentation) algorithms were introduced by Gharghabi _et al._ [@gharghabi2017]. In 2018, the same
+group published their findings using multi-dimensional time series [@gharghabi2018 ]using the same
 algorithms.
 
 Claims about the algorithm:
 
--   **Domain Agnosticism:** the algorithm makes no assumptions about the data as opposed to most
-    available algorithms to date.
--   **Streaming:** the algorithm can provide real-time information.
--   **Real-World Data Suitability:** the objective is not to *explain* all the data. Therefore,
-    areas marked as "don't know" areas are acceptable.
--   **FLOSS is not:** a change point detection algorithm @aminikhanghahi2016. The interest here is
-    changes in the shapes of a sequence of measurements.
+- **Domain Agnosticism:** the algorithm makes no assumptions about the data as opposed to most
+  available algorithms to date.
+- **Streaming:** the algorithm can provide real-time information.
+- **Real-World Data Suitability:** the objective is not to _explain_ all the data. Therefore, areas
+  marked as "don't know" areas are acceptable.
+- **FLOSS is not:** a change point detection algorithm [@aminikhanghahi2016]. The interest here is
+  changes in the shapes of a sequence of measurements.
 
 Briefly describing the regime detection algorithm, which can be explored in the original paper
-@gharghabi2018, it is based on the assumption that between two regimes, the most similar shape (its
+[@gharghabi2018], it is based on the assumption that between two regimes, the most similar shape (its
 nearest neighbor) is located on "the same side". This information is obtained from the Matrix
 Profile computation. More precisely, using only the Profile Index.
 
@@ -120,18 +120,17 @@ the original Profile Index. 2) The authors declare the correction curve typicall
 FLOSS as "simply a uniform distribution", but this is not an accurate statement. Empirically, there
 is a helpful pattern to know about the distribution when using **temporal constraints** (at least
 from the start, in the Matrix Profile stage). At first glance, we see that the distribution
-resembles the skewed distribution used in FLOSS but is shorter, while the
-$constraint \ge MatrixProfileSize/2$. For lower constraints, the maximum value of this distribution
-is equal to $MatrixProfileSize/2$ between the indexes $constraint$ to the index
-$MatrixProfileSize - (constraint \times 0.9)$. This is shown in Fig. `r ref("fig:distributions")`.
-That is important because the output of the FLOSS algorithm should be normalized and constrained
-between 0 and 1, which allows us to compare different trials using different parameters in the
-process. Finally, the last datapoints are **not** irrelevant, opposed to what was stated by the
-authors, since an *Online* algorithm needs to return an answer as soon as the application domain
-requires. That is very much relevant to this work's field, as, for example, for asystole detection,
-we have a window of 4 seconds to fire the alarm. If the time constraint is 10 seconds, this would
-mean (by the original article) that the last 10 seconds of the incoming data would not be sufficient
-to detect the regime change.
+resembles the skewed distribution used in FLOSS but is shorter, while the $constraint \ge
+MatrixProfileSize/2$. For lower constraints, the maximum value of this distribution is equal to
+$MatrixProfileSize/2$ between the indexes $constraint$ to the index $MatrixProfileSize - (constraint
+\times 0.9)$. This is shown in Fig. `r ref("fig:distributions")`. That is important because the
+output of the FLOSS algorithm should be normalized and constrained between 0 and 1, which allows us
+to compare different trials using different parameters in the process. Finally, the last datapoints
+are **not** irrelevant, opposed to what was stated by the authors, since an _Online_ algorithm needs
+to return an answer as soon as the application domain requires. That is very much relevant to this
+work's field, as, for example, for asystole detection, we have a window of 4 seconds to fire the
+alarm. If the time constraint is 10 seconds, this would mean (by the original article) that the last
+10 seconds of the incoming data would not be sufficient to detect the regime change.
 
 As for the first point mentioned above, it seems more appropriate to set the temporal constraint in
 the Matrix Profile algorithm, and indeed this is what the original paper did. That reduces the
@@ -317,27 +316,27 @@ gg <- gridExtra::grid.arrange(mp_constraint, floss_constraint, mp_arcs, floss_ar
 
 ### The Matrix Profile Algorithm
 
-Since the first Matrix Profile computation algorithm, the STAMP @yeh2016, several improvements on
+Since the first Matrix Profile computation algorithm, the STAMP [@yeh2016], several improvements on
 the algorithm were made [@zhu2016; @zhu2018]. Still, the ability to keep a growing Matrix Profile
-(i.e., *Online*) relies on the STAMP algorithm. If the problem allows collecting several data points
-(chunks), STOMP @zhu2016 can speed up the computation. Curiously, the main bottleneck of all these
+(i.e., _Online_) relies on the STAMP algorithm. If the problem allows collecting several data points
+(chunks), STOMP [@zhu2016] can speed up the computation. Curiously, the main bottleneck of all these
 algorithms is the FFT (Fast Fourier Transform) algorithm that is the core of the MASS algorithm
-published by Mueen *et al.* @mueen2010 in 2010 and later in 2015, having its code released on
-Professor Mueen's webpage @mass2015. The FFT libraries available are highly optimized and CPU (or
+published by Mueen _et al._ [@mueen2010] in 2010 and later in 2015, having its code released on
+Professor Mueen's webpage [@mass2015]. The FFT libraries available are highly optimized and CPU (or
 GPU) dependent what makes it at the same time fast but brittle and not suitable for MCU's
 (Microcontroller Unit), for example. More interestingly yet, is the fact that several published
-works using Matrix Profile, MPdist @gharghabi2018a, for instance, uses an unpublished algorithm
+works using Matrix Profile, MPdist [@gharghabi2018a], for instance, uses an unpublished algorithm
 called 'MPX' that computes the Matrix Profile using cross-correlation methods ending up faster and
 is easily portable.
 
-This work contributes to extending the MPX algorithm to allow the *Online* computation of the Matrix
+This work contributes to extending the MPX algorithm to allow the _Online_ computation of the Matrix
 Profile. More precisely, we are interested in the Right Matrix Profile, whose updated indexes refer
 only to the last incoming datapoint, since we are looking for future changes in the regime, not
 looking backward. This one-directional algorithm is already described in the FLOSS paper
-@gharghabi2018.
+[@gharghabi2018].
 
 Another contribution of this work is an unexplored constraint that we could apply on building the
-Matrix Profile that we will call *Similarity Threshold* (ST). The original work outputs the
+Matrix Profile that we will call _Similarity Threshold_ (ST). The original work outputs the
 similarity values in Euclidean Distance (ED) values, while MPX naturally outputs the values in
 Pearson's correlation (CC) coefficients. Both ED and CC are interchangeable using the equation
 $\eqref{edcc}$. However, we may argue that it is easier to compare values that do not depend on the
@@ -356,7 +355,7 @@ ST will be provided later. The best ST threshold is still to be determined.
 
 ## 2022, January Update #1
 
-These last months were dedicated on several important things:
+These last months were dedicated to several important things:
 
 1. Restructuring the roadmap
 2. Refining the main pipeline
@@ -366,41 +365,56 @@ These last months were dedicated on several important things:
 
 ### Refining the main pipeline
 
-This can also be thought as "rethinking" the pipeline.
+That can also be thought of as "rethinking" the pipeline. What also lead to the roadmap
+restructuration.
 
-It is important, not only to write the pipeline that can "autoplot" itself for fine-grain inspection,
-but also to design a high-level graph that can explain it "in a glance". This exercise is helpful both
-ways: being able to tell the story in a short version also reveal missing things and misleading paths
-that is not so obvious when thinking "low-level".
+It is essential not only to write the pipeline that can "autoplot" itself for fine-grain inspection
+but also to design a high-level graph that can explain it "in a glance". This exercise is helpful
+both ways: telling the story in a short version also reveals missing things and misleading paths
+that are not so obvious when thinking "low-level".
 
 ### Preparing for modeling and parameter tuning
 
-Here is one missing part that should have been addresses (formally) ealier. Although this work have its
-purpose on being finally deployed on a small hardware, this prospective phase will need several hours
-of computing, tuning, evaluation and validation of all findings.
+Here is one missing part that should have been addressed (formally) earlier. Although this work has
+its purpose of being finally deployed on small hardware, this prospective phase will need several
+hours of computing, tuning, evaluation, and validation of all findings.
 
-Thus it was necessary a revisiting on the frameworks we are used to work on R: `caret` and the newest `tidymodels`
-collection. For sure there are other frameworks, and oppinions[https://staffblogs.le.ac.uk/teachingr/2020/10/05/on-not-using-tidymodels/].
-Notwithstanding, this project will follow the `tidymodels` road. Two major arguments 1) constantly improving, and
-constantly being re-checked for bugs; 2) allows to plug-in a custom modelling algorithm that in this case will
-be the one needed for developing this work.
+Thus it was necessary to revisit the frameworks we are used to working on R: `caret` and the newest
+`tidymodels` collection. For sure, there are other frameworks and opinions [@Thompson2020].
+Notwithstanding, this project will follow the `tidymodels` road. Two significant arguments 1)
+constantly improving and constantly being re-checked for bugs; 2) allows to plug in a custom
+modeling algorithm that, in this case, will be the one needed for developing this work.
 
 ### Feasibility trial
 
-A side-project called "false.alarm.io" has been derived from this work (an unfortunate mix of "false.alarm" and
-"PlatformIO", the IDE chosen to interface the panoply of embedded systems we can experiment). The current results of
-this side-project are very enlightening, and shows that final algorithm can indeed be used in a small hardware.
+A side-project called "false.alarm.io" has been derived from this work (an unfortunate mix of
+"false.alarm" and "PlatformIO" [@PlatformIO], the IDE chosen to interface the panoply of embedded
+systems we can experiment). The current results of this side-project are very enlightening and show
+that the final algorithm can indeed be used in small hardware. Further data will be available in
+the future.
 
 ### And others
 
-After this "step back" to look forward, it was time to
+After this "step back" to look forward, it was time to define how the regime change algorithm would
+integrate with the actual decision of triggering or not the alarm. Some hypotheses were thought out:
+(1) clustering similar patterns, (2) anomaly detection, (3) classification, and (4) forecasting.
+Among these methods, it was thought, in order to avoid exceeding processor capacity, an initial set
+of shapelets [@Rakthanmanon2013] can be sufficient to rule in or out the `TRUE`/`FALSE` challenge.
+Depending on the accuracy of this approach and the resources available, another method can be
+introduced for both (1) improving the "negative"[^1] samples and (2) learning more shapelets to
+improve the `TRUE`/`FALSE` alarm discrimination.
+
+> Minor update, but also important concerning the _FAIR_ principle "Interoperability": the dataset
+ stored publicly on Zenodo [@bischoff2021] was converted from `.mat` to `.csv`.
+
+[^1]: The term "negative" does not imply that the patient has a "normal" ECG. It means that the
+"negative" section is not a life-threatening condition that needs to trigger an alarm.
 
 ## Further Steps {-}
 
--   Explanation on the evaluation method for regime change detection (as described in the FLOSS
-    paper @gharghabi2018 )
--   Extraction of regime samples and classification of `TRUE` or `FALSE` for Asystole
--   Cross-validation and evaluation of the algorithm
--   Publish results
+- Explanation on the evaluation method for regime change detection (as described in the FLOSS paper
+  [@gharghabi2018] )
+- Explain the Cross-validation and evaluation of the algorithm
+- Publish results
 
 ## References {-}
