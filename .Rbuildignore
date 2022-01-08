@@ -40,6 +40,7 @@
 ^\.vscode$
 ^Makefile$
 ^docs/_pkgdown\.yml$
+^_classifier$
 ^_targets$
 ^_targets\.R$
 ^_targets_beta$

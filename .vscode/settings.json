@@ -5,6 +5,40 @@
   "C_Cpp.default.defines": [
     "RC_INVOKED"
   ],
+  "markdown.extension.italic.indicator": "_",
+  "markdownlint.config": {
+    "default": true,
+    "MD003": {
+      "style": "atx"
+    },
+    "MD007": {
+      "indent": 2
+    },
+    "MD013": false,
+    "MD025": false,
+    "MD030": {
+      "ol_multi": 2,
+      "ol_single": 2,
+      "ul_multi": 2,
+      "ul_single": 2
+    },
+    "MD031": false,
+    "MD033": {
+      "allowed_elements": [
+        "center",
+        "img"
+      ]
+    },
+    "MD045": false
+  },
+  "markdownlint.lintWorkspaceGlobs": [
+    "**/*.{md,mkd,mdwn,mdown,markdown,markdn,mdtxt,mdtext,workbook}",
+    "!**/node_modules",
+    "!**/bower_components",
+    "!**/.git",
+    "**/*.rmd"
+  ],
+  "markdownlint.run": "onSave",
   "C_Cpp.intelliSenseEngineFallback": "Enabled",
   "editor.tabCompletion": "on",
   "editor.tabSize": 2,
@@ -270,5 +304,6 @@
   ],
   "search.exclude": {
     "**/_*/": true
-  }
+  },
+  "editor.fontFamily": "'Fira Code Retina', Consolas, 'Courier New', monospace"
 }

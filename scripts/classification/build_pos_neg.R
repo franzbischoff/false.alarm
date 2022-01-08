@@ -1,12 +1,13 @@
-build_pos_neg <- function(initial_split, signal = "II", snippet_size = 250,
+build_pos_neg <- function(initial_split, signal = "II", shapelet_size, positive = TRUE,
                           validate = FALSE, same_class = TRUE) {
   checkmate::qassert(initial_split, "L+")
   checkmate::qassert(signal, "S1")
-  checkmate::qassert(snippet_size, "N1")
+  checkmate::qassert(shapelet_size, "N1")
+  checkmate::qassert(positive, "B1")
   checkmate::qassert(validate, "B1")
   checkmate::qassert(same_class, "B1")
 
-  cli::cli_h1("Processing signal {signal}, snippet size {snippet_size}")
+  cli::cli_h1("Processing signal {signal}, shapelet size {shapelet_size}")
   analysis_set <- rsample::analysis(initial_split[[signal]])
 
   # which classes are present in the dataset?
@@ -18,12 +19,21 @@ build_pos_neg <- function(initial_split, signal = "II", snippet_size = 250,
   for (cl in classes) {
     cli::cli_h2("Starting class {cl}")
 
-    if (same_class) {
-      data_n <- analysis_set %>% dplyr::filter(class == cl, alarm == "false")
-    } else {
-      data_n <- analysis_set %>% dplyr::filter(!(class == cl & alarm == "true")) # including other classes "positives"
+    if (positive) { # Here, positive are the true alarms
+      if (same_class) {
+        data_n <- analysis_set %>% dplyr::filter(class == cl, alarm == "false")
+      } else {
+        data_n <- analysis_set %>% dplyr::filter(!(class == cl & alarm == "true")) # including other classes "positives"
+      }
+      data_p <- analysis_set %>% dplyr::filter(class == cl, alarm == "true")
+    } else { # Here positive are the false alarms (so we try to get shapelets for the False alarm)
+      if (same_class) {
+        data_n <- analysis_set %>% dplyr::filter(class == cl, alarm == "true")
+      } else {
+        data_n <- analysis_set %>% dplyr::filter(!(class == cl & alarm == "false")) # including other classes "negatives"
+      }
+      data_p <- analysis_set %>% dplyr::filter(class == cl, alarm == "false")
     }
-    data_p <- analysis_set %>% dplyr::filter(class == cl, alarm == "true")
 
     neg_stream <- NULL
 
@@ -32,7 +42,7 @@ build_pos_neg <- function(initial_split, signal = "II", snippet_size = 250,
     }
 
     if (validate) {
-      neg_stream_val <- validate_data(neg_stream, snippet_size)
+      neg_stream_val <- validate_data(neg_stream, shapelet_size)
     } else {
       neg_stream_val <- neg_stream
     }
@@ -44,21 +54,13 @@ build_pos_neg <- function(initial_split, signal = "II", snippet_size = 250,
     }
 
     if (validate) {
-      pos_stream_val <- validate_data(pos_stream, snippet_size)
+      pos_stream_val <- validate_data(pos_stream, shapelet_size)
     } else {
       pos_stream_val <- pos_stream
     }
 
-    pos_mp <- mpx(pos_stream_val,
-      snippet_size,
-      exclusion_zone = 0.5,
-      distance = "euclidean",
-      progress = FALSE
-    )
-
     class_result[[cl]] <- list(
-      neg_stream = neg_stream_val, pos_stream = pos_stream_val,
-      pos_mp = pos_mp, snippet_size = snippet_size
+      neg_stream = neg_stream_val, pos_stream = pos_stream_val, shapelet_size = shapelet_size
     )
   }
 

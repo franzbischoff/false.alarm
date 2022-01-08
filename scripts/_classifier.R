@@ -1,7 +1,7 @@
 # Sys.setenv(TAR_PROJECT = "classifier")
 
-# Erros: data_val_pos_neg_150_II
-# data_val_pos_neg_150_PLETH, data_val_pos_neg_300_II, data_val_pos_neg_300_PLETH
+# Erros: data_pos_neg_150_II
+# data_pos_neg_150_PLETH, data_pos_neg_300_II, data_pos_neg_300_PLETH
 # longer object length is not a multiple of shorter object length
 
 # TODO: change pipeline to nested resamplng
@@ -22,25 +22,29 @@ tar_option_set(
 
 # The subset that will be keep from the dataset (seq.int(290 * const_sample_freq + 1, 300 * const_sample_freq) means the last 10 seconds)
 var_subset <- seq.int(290 * const_sample_freq + 1, 300 * const_sample_freq) # last 10 secs
-var_signals_include <- c("II", "PLETH")
-var_bool_include_all <- TRUE
+var_signals_include <- c("II", "V")
 # "time", "I", "II", "III", "V", "aVR", "aVL", "aVF", "PLETH", "ABP", "RESP", "MCL"
 var_signals_exclude <- setdiff(const_signals, var_signals_include)
 var_classes_include <- c("asystole", "bradycardia", "tachycardia", "fibv", "vtachy")
-var_snippet_size <- c(150, 300)
-var_n_workers <- 1
+var_shapelet_size <- c(30, 60, 120, 180, 300) # c(150, 300)
+var_positive <- TRUE # c(TRUE, FALSE)
+var_num_shapelets <- 20
+var_num_neighbors <- 20
+var_min_corr_neighbors <- 0.9
+# var_n_workers <- 1 # This was used for a short time, but lucky seen that the currently code can't
+#  cope with NA/NaN/Inf using parallel tasks. So, let's just use the parallel pipeline feature.
 # var_limit_per_class <- 15
 
 #### Pipeline: Start ----
 list(
-  r_input <- tar_files_input(
+  tar_files_input(
     #### Pipeline: Read files from directory ----
     file_paths,
     {
       find_all_files(classes = var_classes_include)
     }
   ),
-  r_dataset <- tar_target(
+  tar_target(
     #### Pipeline: Import the last 10 seconds of all TRUE and FALSE alarms ----
     dataset,
     {
@@ -49,10 +53,10 @@ list(
         # true_alarm = TRUE,  # here we want all alarms
         # limit_per_class = var_limit_per_class
       )
-      reshape_ds_by_truefalse(temp, var_signals_include)
+      reshape_ds_by_truefalse(temp, var_signals_include, all_signals = FALSE)
     }
   ),
-  b_initial_split <- tar_target(
+  tar_target(
     #### Pipeline: Make the initial training/test split ----
     ds_initial_split,
     {
@@ -60,66 +64,79 @@ list(
       # We could just apply initial_split over the `dataset`, but the `strata` argument
       # does not accept more than one variable, so we need a dummy called "class_alarm" to stratify the sampling.
       # The stratification is done to keep classes, TRUEs and FALSEs proportional to the original dataset
-      build_initial_split(dataset, prop = 0.95, strata = "class_alarm", signals = var_signals_include)
+      build_initial_split(dataset, prop = 0.75, strata = "class_alarm", signals = var_signals_include)
     }
   ),
   tar_map(
     values = list(map_signals_include = var_signals_include),
     tar_map(
-      values = list(map_snippet_size = var_snippet_size),
-      # First draft, not following parsnip rules: https://tidymodels.github.io/model-implementation-principles/function-interfaces.html
-      b_data_pos_neg <- tar_target(
-        #### Pipeline: Build the positive and negative streams, without signal validation, compute the positive MP
-        data_pos_neg,
-        build_pos_neg(ds_initial_split,
-          signal = map_signals_include,
-          snippet_size = map_snippet_size,
-          validate = FALSE,
-          same_class = TRUE
-        )
-      ),
-      b_data_val_pos_neg <- tar_target(
-        #### Pipeline: Build the positive and negative streams, with signal validation, compute the positive MP
-        data_val_pos_neg,
-        build_pos_neg(ds_initial_split,
-          signal = map_signals_include,
-          snippet_size = map_snippet_size,
-          validate = TRUE,
-          same_class = TRUE
-        )
-      ),
-      b_find_snippets <- tar_target(
-        #### Pipeline: Computes the AA - AB difference.
-        pos_snippets,
-        find_snippets(data_pos_neg,
-          signal = map_signals_include,
-          reverse = FALSE
-        )
-      ),
-      b_find_val_snippets <- tar_target(
-        #### Pipeline: Computes the AA - AB difference.
-        pos_val_snippets,
-        find_snippets(data_val_pos_neg,
-          signal = map_signals_include,
-          reverse = FALSE
+      values = list(map_shapelet_size = var_shapelet_size),
+      tar_map(
+        values = list(map_positive = var_positive),
+        # First draft, not following parsnip rules: https://tidymodels.github.io/model-implementation-principles/function-interfaces.html
+        tar_target(
+          #### Pipeline: Build the positive and negative streams, with signal validation
+          data_pos_neg,
+          build_pos_neg(ds_initial_split,
+            signal = map_signals_include,
+            shapelet_size = map_shapelet_size,
+            positive = map_positive,
+            validate = TRUE,
+            same_class = TRUE
+          )
+        ),
+        tar_target(
+          #### Pipeline: Build the positive and negative streams using all classes, with signal validation
+          data_all_pos_neg,
+          build_pos_neg(ds_initial_split,
+            signal = map_signals_include,
+            shapelet_size = map_shapelet_size,
+            positive = map_positive,
+            validate = TRUE,
+            same_class = FALSE
+          )
+        ),
+        tar_target(
+          #### Pipeline: Computes the AA - AB difference.
+          data_shapelets,
+          find_k_shapelets(data_pos_neg,
+            signal = map_signals_include,
+            shapelet_size = map_shapelet_size,
+            num_shapelets = var_num_shapelets
+          )
+        ),
+        tar_target(
+          #### Pipeline: Computes the AA - AB difference.
+          data_all_shapelets,
+          find_k_shapelets(data_all_pos_neg,
+            signal = map_signals_include,
+            shapelet_size = map_shapelet_size,
+            num_shapelets = var_num_shapelets
+          )
+        ),
+        tar_target(
+          #### Pipeline: Computes the AA - AB difference.
+          data_neighbors,
+          find_k_neighbors(data_pos_neg,
+            data_shapelets,
+            signal = map_signals_include,
+            n_neighbors = var_num_neighbors,
+            corr_min = var_min_corr_neighbors,
+            exclusion_zone = 0.5
+          )
+        ),
+        tar_target(
+          #### Pipeline: Computes the AA - AB difference.
+          data_all_neighbors,
+          find_k_neighbors(data_all_pos_neg,
+            data_all_shapelets,
+            signal = map_signals_include,
+            n_neighbors = var_num_neighbors,
+            corr_min = var_min_corr_neighbors,
+            exclusion_zone = 0.5
+          )
         )
       )
-      # b_find_neg_snippets <- tar_target(
-      #   #### Pipeline: Computes the AA - BA difference.
-      #   neg_snippets,
-      #   find_snippets(data_pos_neg,
-      #     signal = map_signals_include,
-      #     reverse = TRUE
-      #   )
-      # ),
-      # b_find_neg_val_snippets <- tar_target(
-      #   #### Pipeline: Computes the AA - BA difference.
-      #   neg_val_snippets,
-      #   find_snippets(data_val_pos_neg,
-      #     signal = map_signals_include,
-      #     reverse = TRUE
-      #   )
-      # )
     )
   )
 )
@@ -128,7 +145,7 @@ list(
 #   try_classify,
 #   {
 #     analysis_set <- rsample::analysis(initial_split[["II"]])
-#     w <- seq(60, 500, by = 10) # size of the snippets, can be tuned for each class
+#     w <- seq(60, 500, by = 10) # size of the shapelets, can be tuned for each class
 
 #     # which classes are present in the dataset?
 #     classes <- unique(analysis_set$class)
@@ -142,7 +159,7 @@ list(
 #         bsf_class <- NULL
 
 #         for (snip in classes) {
-#           query <- class_snippets[[snip]]$plato
+#           query <- class_shapelets[[snip]]$plato
 #           pre <- false.alarm::mass_pre(data_class$values[[i]], w, query)
 #           dp <- false.alarm::mass(pre, data_class$values[[i]], query)
 #           curr_min <- min(dp$distance_profile)
@@ -155,9 +172,9 @@ list(
 
 #         cat("Class: ", cl, " Answer: ", bsf_class, "min: ", bsf_min, "\n")
 
-#         # # profile <- mpx(data_class$values[[i]], w, joint_snippets)
-#         # profile <- mpx(joint_snippets, w, data_class$values[[i]])
-#         # cat("MP: ", length(profile$matrix_profile), " Snip: ", length(joint_snippets), " Data: ", length(data_class$values[[i]]), "\n")
+#         # # profile <- mpx(data_class$values[[i]], w, joint_shapelets)
+#         # profile <- mpx(joint_shapelets, w, data_class$values[[i]])
+#         # cat("MP: ", length(profile$matrix_profile), " Snip: ", length(joint_shapelets), " Data: ", length(data_class$values[[i]]), "\n")
 #         # # cat("class ", cl, ": ", floor(profile$profile_index[which.min(profile$matrix_profile)] / w) + 1, "\n")
 #         # cat("class ", cl, ": ", floor(which.min(profile$matrix_profile) / w) + 1, "\n")
 #       }
@@ -247,6 +264,6 @@ list(
 # rolling_origin {rsample}
 
 #### Pipeline: Join targets ----
-# list(r_input, r_dataset, b_initial_split, b_data_pos_neg, b_find_snippets, b_find_neg_snippets, b_data_val_pos_neg, b_find_val_snippets, b_find_neg_val_snippets)
+# list(r_input, r_dataset, b_initial_split, b_data_pos_neg, b_find_shapelets, b_find_neg_shapelets, b_data_pos_neg, b_find_val_shapelets, b_find_neg_val_shapelets)
 
 #### Pipeline: End ----

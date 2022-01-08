@@ -144,7 +144,7 @@ knitr::include_graphics("figure/roadmap_updated.png")
 
 ### Preliminary Experimentations
 
-**RAW Data**
+### RAW Data
 
 While programming the pipeline for the current dataset, it has been acquired a Single Lead Heart
 Rate Monitor breakout from Sparkfun^TM^ [@sparkfun2021] using the AD8232 [@AnalogDevices2020]
@@ -176,7 +176,7 @@ knitr::include_graphics("figure/filtered_ecg.png")
 So in this way, we allow us to import RAW data from other devices and build our own test dataset in
 the future.
 
-**Detecting Regime Changes**
+#### Detecting Regime Changes
 
 The regime change approach will be using the *Arc Counts*, as explained elsewhere [@gharghabi2018].
 The current implementation of the Matrix Profile in R, maintained by the first author of this
