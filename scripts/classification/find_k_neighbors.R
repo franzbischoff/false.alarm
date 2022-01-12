@@ -19,17 +19,31 @@ find_k_neighbors <- function(data_pos_neg, data_shapelets, signal = "II", n_neig
 
     data <- data_pos_neg[[signal]][[cl]]$pos_stream
     data_len <- length(data)
-
     num_shapelets <- length(data_shapelets[[signal]][[cl]])
 
     shape <- list()
     for (k in seq_len(num_shapelets)) {
       cli::cli_inform("Starting shaplet {k}.")
+      nn <- n_neighbors
       query <- data_shapelets[[signal]][[cl]][[k]]$plato
       query_len <- length(query)
       profile_len <- data_len - query_len + 1
       ez <- round(query_len * exclusion_zone + .Machine$double.eps^0.5)
+
+      if (profile_len < (query_len + 2 * ez)) {
+        cli::cli_warn("Data is too short for looking for neighbors. Stopped on shapelet {k} for class {cl}.")
+        break
+      }
+
+      if (profile_len < nn * (query_len + 2 * ez)) {
+        old_value <- nn
+        nn <- floor(profile_len / (query_len + 2 * ez))
+        cli::cli_inform("Too many neighbors asked for this query. Changing from {old_value} to {nn}.")
+      }
+
       pre <- false.alarm::mass_pre(data, query_len, query)
+      pre$data_sd[pre$data_sd <= 0] <- .Machine$double.eps^0.5 # HACK: need to fix mass3_rcpp()
+      pre$query_sd[pre$query_sd <= 0] <- .Machine$double.eps^0.5 # HACK: need to fix mass3_rcpp()
       dist_profile <- false.alarm::mass(pre, data, query)$distance_profile
       dist_profile[dist_profile < 0] <- 0
       dist_profile <- sqrt(dist_profile)
@@ -48,16 +62,11 @@ find_k_neighbors <- function(data_pos_neg, data_shapelets, signal = "II", n_neig
       dist_sorted <- dist_sorted[valid]
       dist_sorted_idx <- dist_sorted_idx[valid]
 
-      if (length(dist_sorted) < (n_neighbors * (query_len + 2 * ez))) {
-        cli::cli_warn("Too many neighbors asked for this query. Try a lower value.")
-        return(NULL)
-      }
-
       dist_max <- false.alarm::corr_ed(corr_min, query_len)
 
       neighbors <- list()
 
-      for (i in seq_len(n_neighbors)) {
+      for (i in seq_len(nn)) {
         idx <- dist_sorted_idx[1]
         dist <- dist_sorted[1]
 

@@ -81,7 +81,7 @@ list(
             signal = map_signals_include,
             shapelet_size = map_shapelet_size,
             positive = map_positive,
-            validate = TRUE,
+            validate = FALSE,
             same_class = TRUE
           )
         ),
@@ -140,6 +140,11 @@ list(
     )
   )
 )
+
+# error on data_neighbors
+# <simpleError in mass3_rcpp(query_window, data, as.integer(pre_obj$data_size),
+#     as.integer(pre_obj$window_size), pre_obj$data_mean, pre_obj$data_sd,
+#     pre_obj$query_mean[index], pre_obj$query_sd[index], k = 4096): c++ exception (unknown reason)>
 
 # b_fit_models2 <- tar_target(
 #   try_classify,

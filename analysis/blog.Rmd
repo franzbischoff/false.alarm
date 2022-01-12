@@ -89,7 +89,7 @@ pre-computation also allows experimenting with parameters during this process.
 While implementing the streaming-like pipeline, some declarations must be made. In 2017, the FLUSS
 (Fast Low-cost Unipotent Semantic Segmentation) and the FLOSS (Fast Low-cost Online Semantic
 Segmentation) algorithms were introduced by Gharghabi _et al._ [@gharghabi2017]. In 2018, the same
-group published their findings using multi-dimensional time series [@gharghabi2018 ]using the same
+group published their findings using multi-dimensional time series [@gharghabi2018] using the same
 algorithms.
 
 Claims about the algorithm:
@@ -368,8 +368,8 @@ These last months were dedicated to several important things:
 That can also be thought of as "rethinking" the pipeline. What also lead to the roadmap
 restructuration.
 
-It is essential not only to write the pipeline that can "autoplot" itself for fine-grain inspection
-but also to design a high-level graph that can explain it "in a glance". This exercise is helpful
+It is essential not only to write a pipeline that can "autoplot" itself for fine-grain inspection
+but also to design a high-level graph that can explain it "in a glance". This exercise was helpful
 both ways: telling the story in a short version also reveals missing things and misleading paths
 that are not so obvious when thinking "low-level".
 
