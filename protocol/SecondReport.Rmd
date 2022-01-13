@@ -36,6 +36,7 @@ div.figure {
   box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
 }
 p.caption {
+  padding: 20px 0px 0px 0px;
   font-size: 19px;
 }
 </style>
@@ -266,13 +267,12 @@ phase, that includes about 74 articles from the full-text screening.
 knitr::include_graphics("figure/roadmap_original.png")
 ```
 
-```{r zenhub2, echo=FALSE, out.width="100%", fig.cap="Roadmap updated"}
+```{r zenhub2, echo=FALSE, out.width="100%", fig.cap="Roadmap updated on August 2021"}
 knitr::include_graphics("figure/roadmap_updated.png")
 ```
 
-```{r zenhub3, echo=FALSE, out.width="100%", fig.cap="Roadmap updated"}
-knitr::include_graphics("figure/roadmap_updated.png")
-# knitr::include_graphics("figure/roadmap_jan2022.png")
+```{r zenhub3, echo=FALSE, out.width="100%", fig.cap="Roadmap updated on January 2022"}
+knitr::include_graphics("figure/roadmap_jan2022.png")
 ```
 
 ### Preliminary Experimentations
@@ -419,18 +419,26 @@ By January 2022, the following tasks were performed:
 #### Refining the main pipeline
 
 That can also be thought of as "rethinking" the pipeline. What also lead to the roadmap
-restructuration. The new roadmap was already shown above at Fig. \@ref(fig:zenhub3).
+restructuration. The new roadmap was already shown above on Fig. \@ref(fig:zenhub3).
 
 It is essential not only to write a pipeline that can "autoplot" itself for fine-grain inspection
 but also to design a high-level graph that can explain it "in a glance". This exercise was helpful
 both ways: telling the story in a short version also reveals missing things and misleading paths
 that are not so obvious when thinking "low-level".
 
-Fig. \@ref(fig:flowchart) shows the overview of the process.
+Figs. \@ref(fig:regimedetection), \@ref(fig:shapelets) and \@ref(fig:fullmodel) show the overview
+of the processes involved.
 
-```{r flowchart, echo=FALSE, out.width="100%", fig.cap="Regime changes with good but wandering data - true alarm"}
-cat("@Bischoff2021a")
-# knitr::include_graphics("figure/flowchart.png")
+```{r regimedetection, echo=FALSE, out.width="100%", fig.cap="Pipeline for regime change detection"}
+knitr::include_graphics("figure/regime-detection.svg")
+```
+
+```{r shapelets, echo=FALSE, out.width="60%", fig.cap="Pipeline for TRUE and FALSE alarm classification"}
+knitr::include_graphics("figure/shapelets.svg")
+```
+
+```{r fullmodel, echo=FALSE, out.width="60%", fig.cap="Pipeline of the final process"}
+knitr::include_graphics("figure/fullmodel.svg")
 ```
 
 #### Preparing for modeling and parameter tuning

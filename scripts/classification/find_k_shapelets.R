@@ -43,7 +43,7 @@ find_k_shapelets <- function(data_pos_neg, signal = "II", shapelet_size, reverse
     join_mp_history <- rep(sqrt(2 * shapelet_size), length(self_mp))
     con <- list()
     for (k in seq_len(num_shapelets)) {
-      cli::cli_inform("Starting shaplet {k}.")
+      cli::cli_inform("Starting shapelet {k}.")
 
       join_mp <- mpx(
         data = anomalous,
@@ -71,6 +71,12 @@ find_k_shapelets <- function(data_pos_neg, signal = "II", shapelet_size, reverse
 
       plato_idx <- which.max(contrast)
       plato_val <- contrast[plato_idx]
+
+      if (plato_val == 0) { # there is no more plato's
+        cli::cli_inform("There is no more shapelets here. Stopping on {k}.")
+        break
+      }
+
       plato <- anomalous[plato_idx:(plato_idx + shapelet_size - 1)]
 
       con[[k]] <- list(contrast = contrast, plato = plato, plato_idx = plato_idx, plato_val = plato_val)

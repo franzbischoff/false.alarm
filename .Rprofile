@@ -53,7 +53,7 @@ if (Sys.getenv("CI") == "") { # not CI
       vsc.str.max.level = 2,
       vsc.show_object_size = TRUE,
       vsc.globalenv = TRUE,
-      vsc.dev.args = list(width = 800, height = 400)
+      vsc.dev.args = list(width = 1000, height = 600)
     )
 
     # if httpgd is installed, let's use it

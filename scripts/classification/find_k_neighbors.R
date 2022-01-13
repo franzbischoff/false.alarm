@@ -23,7 +23,7 @@ find_k_neighbors <- function(data_pos_neg, data_shapelets, signal = "II", n_neig
 
     shape <- list()
     for (k in seq_len(num_shapelets)) {
-      cli::cli_inform("Starting shaplet {k}.")
+      cli::cli_inform("Starting shapelet {k}.")
       nn <- n_neighbors
       query <- data_shapelets[[signal]][[cl]][[k]]$plato
       query_len <- length(query)

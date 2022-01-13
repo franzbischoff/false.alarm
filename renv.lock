@@ -18,6 +18,7 @@
       "Requirements": [
         "crosstalk",
         "htmltools",
+        "htmlwidgets",
         "jquerylib",
         "jsonlite",
         "magrittr",
@@ -53,10 +54,10 @@
     },
     "MASS": {
       "Package": "MASS",
-      "Version": "7.3-54",
+      "Version": "7.3-55",
       "Source": "Repository",
       "Repository": "CRAN",
-      "Hash": "0e59129db205112e3963904db67fd0dc",
+      "Hash": "c5232ffb549f6d7a04a152c34ca1353d",
       "Requirements": []
     },
     "Matrix": {
@@ -80,6 +81,18 @@
         "R.oo",
         "R.utils",
         "digest"
+      ]
+    },
+    "R.matlab": {
+      "Package": "R.matlab",
+      "Version": "3.6.2",
+      "Source": "Repository",
+      "Repository": "CRAN",
+      "Hash": "efd13af6d239b35898cbdc7401342b42",
+      "Requirements": [
+        "R.methodsS3",
+        "R.oo",
+        "R.utils"
       ]
     },
     "R.methodsS3": {
@@ -151,6 +164,22 @@
       "Hash": "f3e94e34ff656a7c8336ce01207bc2b8",
       "Requirements": []
     },
+    "RcppProgress": {
+      "Package": "RcppProgress",
+      "Version": "0.4.2",
+      "Source": "Repository",
+      "Repository": "CRAN",
+      "Hash": "1c0aa18b97e6aaa17f93b8b866c0ace5",
+      "Requirements": []
+    },
+    "RcppThread": {
+      "Package": "RcppThread",
+      "Version": "1.0.0",
+      "Source": "Repository",
+      "Repository": "CRAN",
+      "Hash": "f3d0d01b4333ad47c68136fa13c2f848",
+      "Requirements": []
+    },
     "SQUAREM": {
       "Package": "SQUAREM",
       "Version": "2021.1",
@@ -218,6 +247,7 @@
         "data.table",
         "digest",
         "fs",
+        "progress",
         "rappdirs",
         "stringi",
         "withr"
@@ -372,10 +402,10 @@
     },
     "class": {
       "Package": "class",
-      "Version": "7.3-19",
+      "Version": "7.3-20",
       "Source": "Repository",
       "Repository": "CRAN",
-      "Hash": "1593b7beb067c8381c0d24e38bd778e0",
+      "Hash": "da09d82223e669d270e47ed24ac8686e",
       "Requirements": [
         "MASS"
       ]
@@ -397,6 +427,20 @@
       "Repository": "CRAN",
       "Hash": "ebaa97ac99cc2daf04e77eecc7b781d7",
       "Requirements": []
+    },
+    "clustermq": {
+      "Package": "clustermq",
+      "Version": "0.8.95.2",
+      "Source": "Repository",
+      "Repository": "CRAN",
+      "Hash": "cfc7c04384e7340ff65b450d097da566",
+      "Requirements": [
+        "R6",
+        "Rcpp",
+        "narray",
+        "progress",
+        "purrr"
+      ]
     },
     "codetools": {
       "Package": "codetools",
@@ -845,6 +889,16 @@
         "zip"
       ]
     },
+    "getPass": {
+      "Package": "getPass",
+      "Version": "0.2-2",
+      "Source": "Repository",
+      "Repository": "CRAN",
+      "Hash": "07a91f99e56951818ab911366db77700",
+      "Requirements": [
+        "rstudioapi"
+      ]
+    },
     "ggplot2": {
       "Package": "ggplot2",
       "Version": "3.3.5",
@@ -877,6 +931,19 @@
         "ini",
         "jsonlite"
       ]
+    },
+    "git2r": {
+      "Package": "git2r",
+      "Version": "0.29.0",
+      "Source": "GitHub",
+      "RemoteType": "github",
+      "RemoteUsername": "ropensci",
+      "RemoteRepo": "git2r",
+      "RemoteRef": "HEAD",
+      "RemoteSha": "0af32b553f7f95196c39b1203f29e9f66061e4d7",
+      "RemoteHost": "api.github.com",
+      "Hash": "748438f19675c875ccf20fedf3098562",
+      "Requirements": []
     },
     "gitcreds": {
       "Package": "gitcreds",
@@ -1009,6 +1076,20 @@
         "xfun"
       ]
     },
+    "hms": {
+      "Package": "hms",
+      "Version": "1.1.1",
+      "Source": "Repository",
+      "Repository": "CRAN",
+      "Hash": "5b8a2dd0fdbe2ab4f6081e6c7be6dfca",
+      "Requirements": [
+        "ellipsis",
+        "lifecycle",
+        "pkgconfig",
+        "rlang",
+        "vctrs"
+      ]
+    },
     "htmltools": {
       "Package": "htmltools",
       "Version": "0.5.2",
@@ -1020,6 +1101,18 @@
         "digest",
         "fastmap",
         "rlang"
+      ]
+    },
+    "htmlwidgets": {
+      "Package": "htmlwidgets",
+      "Version": "1.5.4",
+      "Source": "Repository",
+      "Repository": "CRAN",
+      "Hash": "76147821cd3fcd8c4b04e1ef0498e7fb",
+      "Requirements": [
+        "htmltools",
+        "jsonlite",
+        "yaml"
       ]
     },
     "httpuv": {
@@ -1395,22 +1488,33 @@
         "colorspace"
       ]
     },
-    "nlme": {
-      "Package": "nlme",
-      "Version": "3.1-153",
+    "narray": {
+      "Package": "narray",
+      "Version": "0.4.1.1",
       "Source": "Repository",
       "Repository": "CRAN",
-      "Hash": "2d632e0d963a653a0329756ce701ecdd",
+      "Hash": "c64865aba235f36a49d798613cbfccf7",
+      "Requirements": [
+        "progress",
+        "stringr"
+      ]
+    },
+    "nlme": {
+      "Package": "nlme",
+      "Version": "3.1-155",
+      "Source": "Repository",
+      "Repository": "CRAN",
+      "Hash": "74ad940dccc9e977189a5afe5fcdb7ba",
       "Requirements": [
         "lattice"
       ]
     },
     "nnet": {
       "Package": "nnet",
-      "Version": "7.3-16",
+      "Version": "7.3-17",
       "Source": "Repository",
       "Repository": "CRAN",
-      "Hash": "3a3dc184000bc9e6c145c4dbde4dd702",
+      "Hash": "cb1d8d9f300a7e536b89c8a88c53f610",
       "Requirements": []
     },
     "numDeriv": {
@@ -1464,6 +1568,7 @@
         "hardhat",
         "lifecycle",
         "magrittr",
+        "prettyunits",
         "purrr",
         "rlang",
         "tibble",
@@ -1499,6 +1604,16 @@
         "vctrs"
       ]
     },
+    "pingr": {
+      "Package": "pingr",
+      "Version": "2.0.1",
+      "Source": "Repository",
+      "Repository": "CRAN",
+      "Hash": "e293e79be42ffd336d938937fd3017fb",
+      "Requirements": [
+        "processx"
+      ]
+    },
     "pkgbuild": {
       "Package": "pkgbuild",
       "Version": "1.3.1",
@@ -1511,6 +1626,7 @@
         "cli",
         "crayon",
         "desc",
+        "prettyunits",
         "rprojroot",
         "withr"
       ]
@@ -1554,6 +1670,7 @@
         "dplyr",
         "ggplot2",
         "htmltools",
+        "htmlwidgets",
         "httr",
         "jsonlite",
         "lazyeval",
@@ -1596,6 +1713,14 @@
         "crayon"
       ]
     },
+    "prettyunits": {
+      "Package": "prettyunits",
+      "Version": "1.1.1",
+      "Source": "Repository",
+      "Repository": "CRAN",
+      "Hash": "95ef9167b75dde9d2ccc3c7528393e7e",
+      "Requirements": []
+    },
     "processx": {
       "Package": "processx",
       "Version": "3.5.2",
@@ -1618,6 +1743,19 @@
         "Rcpp",
         "lava",
         "survival"
+      ]
+    },
+    "progress": {
+      "Package": "progress",
+      "Version": "1.2.2",
+      "Source": "Repository",
+      "Repository": "CRAN",
+      "Hash": "14dc9f7a3c91ebb14ec5bb9208a07061",
+      "Requirements": [
+        "R6",
+        "crayon",
+        "hms",
+        "prettyunits"
       ]
     },
     "progressr": {
@@ -1703,6 +1841,7 @@
         "desc",
         "digest",
         "pkgbuild",
+        "prettyunits",
         "rprojroot",
         "sessioninfo",
         "withr",
@@ -1721,6 +1860,7 @@
         "clipr",
         "cpp11",
         "crayon",
+        "hms",
         "lifecycle",
         "rlang",
         "tibble",
@@ -1809,9 +1949,9 @@
       "RemoteUsername": "r-lib",
       "RemoteRepo": "rlang",
       "RemoteRef": "main",
-      "RemoteSha": "266f80977d3a4d9b0f294935609890e0b7f62c58",
+      "RemoteSha": "181e0b6e71016802d417fd277e7b9f9ecf1f7299",
       "RemoteHost": "api.github.com",
-      "Hash": "0ac7cb645e5185e1002a3d2e76514846",
+      "Hash": "c0fc019418148d8f6df2a03319de7886",
       "Requirements": []
     },
     "rmarkdown": {
@@ -2028,6 +2168,7 @@
       "Hash": "c38fc071d4def5e642c8dc34c3a082e4",
       "Requirements": [
         "htmltools",
+        "htmlwidgets",
         "jsonlite",
         "shiny"
       ]
@@ -2213,9 +2354,9 @@
       "RemoteUsername": "r-lib",
       "RemoteRepo": "testthat",
       "RemoteRef": "main",
-      "RemoteSha": "aab0464b555c27dcb2381af5f71c395a084a8643",
+      "RemoteSha": "f09df60dd881530332b252474e9f35c97f8640be",
       "RemoteHost": "api.github.com",
-      "Hash": "d29a9d4be85e618f185ca8250e5a87df",
+      "Hash": "36cba71fe5d0db02fc33240bae8f239e",
       "Requirements": [
         "R6",
         "brio",
@@ -2371,7 +2512,8 @@
         "checkmate",
         "doSNOW",
         "foreach",
-        "magrittr"
+        "magrittr",
+        "progress"
       ]
     },
     "tune": {
@@ -2437,6 +2579,7 @@
         "rlang",
         "rprojroot",
         "rstudioapi",
+        "whisker",
         "withr",
         "yaml"
       ]
@@ -2477,6 +2620,19 @@
       "Hash": "55e157e2aa88161bdb0754218470d204",
       "Requirements": []
     },
+    "visNetwork": {
+      "Package": "visNetwork",
+      "Version": "2.1.0",
+      "Source": "Repository",
+      "Repository": "CRAN",
+      "Hash": "99b515a03efb8dcc4e4be337f37bf087",
+      "Requirements": [
+        "htmltools",
+        "htmlwidgets",
+        "jsonlite",
+        "magrittr"
+      ]
+    },
     "vroom": {
       "Package": "vroom",
       "Version": "1.5.7",
@@ -2489,7 +2645,9 @@
         "cpp11",
         "crayon",
         "glue",
+        "hms",
         "lifecycle",
+        "progress",
         "rlang",
         "tibble",
         "tidyselect",
@@ -2546,6 +2704,14 @@
         "magrittr"
       ]
     },
+    "whisker": {
+      "Package": "whisker",
+      "Version": "0.4",
+      "Source": "Repository",
+      "Repository": "CRAN",
+      "Hash": "ca970b96d894e90397ed20637a0c1bbe",
+      "Requirements": []
+    },
     "withr": {
       "Package": "withr",
       "Version": "2.4.3",
@@ -2553,6 +2719,30 @@
       "Repository": "CRAN",
       "Hash": "a376b424c4817cda4920bbbeb3364e85",
       "Requirements": []
+    },
+    "workflowr": {
+      "Package": "workflowr",
+      "Version": "1.7.0",
+      "Source": "Repository",
+      "Repository": "CRAN",
+      "Hash": "4055c2dd2c5bc0a3bb5a668c03a1cc98",
+      "Requirements": [
+        "callr",
+        "fs",
+        "getPass",
+        "git2r",
+        "glue",
+        "httpuv",
+        "httr",
+        "knitr",
+        "rmarkdown",
+        "rprojroot",
+        "rstudioapi",
+        "stringr",
+        "whisker",
+        "xfun",
+        "yaml"
+      ]
     },
     "workflows": {
       "Package": "workflows",
@@ -2586,6 +2776,7 @@
         "ggplot2",
         "hardhat",
         "lifecycle",
+        "prettyunits",
         "purrr",
         "rlang",
         "rsample",
