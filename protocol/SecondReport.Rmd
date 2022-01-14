@@ -9,9 +9,9 @@ indent: true
 output:
   # bookdown::html_document2:
   bookdown::pdf_document2:
-    extra_dependencies: ["flafter"]
+    extra_dependencies: ["svg", "flafter"]
     toc: yes
-    # toc_depth: 2
+    toc_depth: 3
     fig_caption: yes
     number_sections: yes
   # html_notebook:
@@ -43,12 +43,26 @@ p.caption {
 ```
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = FALSE, fig.align = "center")
+knitr::opts_chunk$set(
+  echo = FALSE, fig.align = "center", autodep = TRUE,
+  fig.height = 5, fig.width = 10,
+  tidy = "styler",
+  tidy.opts = list(strict = TRUE)
+)
+if (knitr::is_latex_output()) {
+  knitr::opts_chunk$set(dev = "pdf")
+} else {
+  knitr::opts_chunk$set(dev = "svg")
+}
+
 library(here)
 library(visNetwork)
 library(tibble)
 library(kableExtra)
+library(gridExtra)
 library(targets)
+library(ggplot2)
+knitr::opts_knit$set(root.dir = here("protocol"), base.dir = here("protocol"), verbose = TRUE)
 ```
 
 Last Updated: `r lubridate::now("UTC")` UTC
@@ -330,12 +344,13 @@ applied to the time aligned ECG segments in the window). By experimentation (yet
 simple formula gives us the "complexity" of the signal and correlates well with the noisy data is
 shown in Equation \@ref(eq:complex).
 
+\
+\
 ```{=tex}
 \begin{equation}
 \sqrt{\sum_{i=1}^w((x_{i+1}-x_i)^2)}, \quad \text{where}\; w \; \text{is the window size} (\#eq:complex)
 \end{equation}
 ```
-
 \
 \
 The Fig. \@ref(fig:sqi) shows some SQIs.
@@ -430,15 +445,27 @@ Figs. \@ref(fig:regimedetection), \@ref(fig:shapelets) and \@ref(fig:fullmodel) 
 of the processes involved.
 
 ```{r regimedetection, echo=FALSE, out.width="100%", fig.cap="Pipeline for regime change detection"}
-knitr::include_graphics("figure/regime-detection.svg")
+if (knitr::is_latex_output()) {
+  knitr::include_graphics("figure/regime_detection.pdf")
+} else {
+  knitr::include_graphics("figure/regime_detection.svg")
+}
 ```
 
 ```{r shapelets, echo=FALSE, out.width="60%", fig.cap="Pipeline for TRUE and FALSE alarm classification"}
-knitr::include_graphics("figure/shapelets.svg")
+if (knitr::is_latex_output()) {
+  knitr::include_graphics("figure/shapelets.pdf")
+} else {
+  knitr::include_graphics("figure/shapelets.svg")
+}
 ```
 
 ```{r fullmodel, echo=FALSE, out.width="60%", fig.cap="Pipeline of the final process"}
-knitr::include_graphics("figure/fullmodel.svg")
+if (knitr::is_latex_output()) {
+  knitr::include_graphics("figure/fullmodel.pdf")
+} else {
+  knitr::include_graphics("figure/fullmodel.svg")
+}
 ```
 
 #### Preparing for modeling and parameter tuning
@@ -483,7 +510,7 @@ improve the `TRUE`/`FALSE` alarm discrimination.
    comming from older data), and the _Arc Counts_ of newly incoming data are truncated by the same
    amount of temporal constraint. This prevents completely the detection of a regime change in the
    last 10 seconds as required. This issue is overcomed using the theoretical distributions as shown
-   in Fig. \@ref(fig:distributions)
+   in Fig. \@ref(fig:distributions).
 
 2. **On the Matrix Profile:** since the first paper presenting this new concept [@Yeh2017a], lots of
    investigation were made to speed up its computation. It is notable how all computations are not
@@ -502,7 +529,7 @@ improve the `TRUE`/`FALSE` alarm discrimination.
       a quick search over the internet gives us a hint that computing FFT on a 4096 data in an ESP32
       takes about 21ms (~47 computations in 1 second). This means ~79 seconds for computing all
       FFT's (~3797) required for STAMP using a window of 300. Currently we can compute 50k full
-      matrices in less time using no FFT in an ESP32 MCU.
+      matrices in less time using no FFT in an ESP32 MCU (Fig. \@ref(fig:esp32)).
 
     2. Recent works using _exact_ algorithms are using an unpublished algorithm called **MPX**, which
        computes the Matrix Profile using cross-correlation methods ending up faster and is easily
@@ -515,7 +542,7 @@ improve the `TRUE`/`FALSE` alarm discrimination.
    Matrix Profile we are calling _Similarity Threshold_ (ST). The original work outputs the
    similarity values in Euclidean Distance (ED) values, while MPX naturally outputs the values in
    Pearson's correlation coefficients (CC). Both ED and CC are interchangeable using the equation
-   $\eqref{edcc}$. However, we may argue that it is easier to compare values that do not depend on
+   \@ref(eq:edcc). However, we may argue that it is easier to compare values that do not depend on
    the window size during an exploratory phase. MPX happens to naturally return values in CC, saving
    a few more computation time. The ST is an interesting factor that we can use, especially when
    detecting pattern changes during time. The FLOSS algorithm rely on counting references between
@@ -523,9 +550,89 @@ improve the `TRUE`/`FALSE` alarm discrimination.
    patterns above a certain threshold are referenced, and changes have more impact on these counts.
    The best ST threshold is still to be determined.
 
-$$
-CC = 1 - \frac{ED}{(2 \times WindowSize)} \tag{1} \label{edcc}
-$$
+\
+
+```{=tex}
+\begin{equation}
+CC = 1 - \frac{ED}{(2 \times WindowSize)} (\#eq:edcc)
+\end{equation}
+```
+\
+
+```{r dist data, message=FALSE, warning=FALSE, cache=TRUE, include=FALSE}
+source(here("scripts", "common", "compute_floss.R"))
+
+get_dist <- function(mp_const = 1250, floss_const = 0) {
+  set.seed(2021)
+  iac <- list()
+  pro_size <- 5000
+  mp_time_constraint <- mp_const
+  floss_time_constraint <- floss_const
+  for (i in 1:500) {
+    iac[[i]] <- get_asym(pro_size, mp_time_constraint, floss_time_constraint)
+  }
+
+  aic_avg <- rowMeans(as.data.frame(iac))
+
+  data.frame(index = 1:5000, counts = aic_avg)
+}
+
+data_5000 <- get_dist(5000)
+data_4250 <- get_dist(4250)
+data_2500 <- get_dist(2500)
+data_1250 <- get_dist(1250)
+
+floss_data_5000 <- get_dist(0, 5000)
+floss_data_4250 <- get_dist(0, 4250)
+floss_data_2500 <- get_dist(0, 2500)
+floss_data_1250 <- get_dist(0, 1250)
+```
+
+```{r distributions, echo=FALSE, fig.cap="1D-IAC distributions for earlier temporal constraint (on Matrix Profile)", message=FALSE, warning=FALSE}
+
+floss_dist <- ggplot(data_5000, aes(index, counts)) +
+  geom_line(size = 0.1) +
+  ggtitle("a) No constraint") +
+  theme_grey(base_size = 7)
+
+floss_4250 <- ggplot(data_4250, aes(index, counts)) +
+  geom_line(size = 0.1) +
+  ggtitle("b) Constraint of 4250") +
+  theme_grey(base_size = 7)
+
+floss_2500 <- ggplot(data_2500, aes(index, counts)) +
+  geom_line(size = 0.1) +
+  annotate("segment", y = 0, yend = max(data_2500$counts), x = 2500, xend = 2500, linetype = 2, size = 0.1) +
+  annotate("text", x = 2500 - 80, y = 40, label = "start", color = "black", size = 2, angle = 90, hjust = 0) +
+  annotate("segment", y = 0, yend = max(data_2500$counts), x = 5000 - 2500 * 0.9, xend = 5000 - 2500 * 0.9, linetype = 2, size = 0.1) +
+  annotate("text", x = 5000 - 2500 * 0.9 - 80, y = 40, label = "end", color = "black", size = 2, angle = 90, hjust = 0) +
+  ggtitle("c) Constraint of 2500") +
+  theme_grey(base_size = 7)
+
+floss_1250 <- ggplot(data_1250, aes(index, counts)) +
+  geom_line(size = 0.1) +
+  annotate("segment", y = 0, yend = max(data_1250$counts), x = 1250, xend = 1250, linetype = 2, size = 0.1) +
+  annotate("text", x = 1250 - 80, y = 40, label = "start", color = "black", size = 2, angle = 90, hjust = 0) +
+  annotate("segment", y = 0, yend = max(data_1250$counts), x = 5000 - 1250 * 0.9, xend = 5000 - 1250 * 0.9, linetype = 2, size = 0.1) +
+  annotate("text", x = 5000 - 1250 * 0.9 - 80, y = 40, label = "end", color = "black", size = 2, angle = 90, hjust = 0) +
+  ggtitle("d) Constraint of 1250") +
+  theme_grey(base_size = 7)
+
+gg <- gridExtra::arrangeGrob(floss_dist, floss_4250, floss_2500, floss_1250,
+  nrow = 2,
+  bottom = grid::textGrob(paste("The plot a) shows the distribution used for the arc count correction when there is no time constraint.", "\n", "b) Shows a constraint of 3/4 of the total. c) 1/2 of the total. d) 1/4 of the total; here we see clearly the flat line.", "\n", "The dashed line marks the start and the end of the uniform zone."), just = "center", gp = grid::gpar(fontsize = 7))
+)
+
+grid::grid.draw(gg)
+```
+
+\
+
+```{r esp32, echo=FALSE, out.width="40%", fig.cap="ESP32 MCU"}
+knitr::include_graphics("figure/esp32.jpg")
+```
+
+\
 
 ## Scientific outcomes
 

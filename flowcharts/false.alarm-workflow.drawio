@@ -1,6 +1,6 @@
-<mxfile host="65bd71144e" pages="3" scale="1" border="0">
+<mxfile host="65bd71144e" pages="3" scale="3" border="0">
     <diagram name="False Alarm" id="c7558073-3199-34d8-9f00-42111426c3f3">
-        <mxGraphModel dx="1657" dy="1142" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" background="none" math="0" shadow="0">
+        <mxGraphModel dx="1596" dy="658" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1169" pageHeight="827" background="none" math="0" shadow="0">
             <root>
                 <mxCell id="0"/>
                 <mxCell id="1" parent="0"/>
@@ -87,7 +87,7 @@
         </mxGraphModel>
     </diagram>
     <diagram name="Regime Detection Score" id="P1AiTdo8ONyjfAbGtpXO">
-        <mxGraphModel dx="831" dy="1142" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="826" pageHeight="1169" background="none" math="0" shadow="0">
+        <mxGraphModel dx="770" dy="658" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="826" pageHeight="1169" background="none" math="0" shadow="0">
             <root>
                 <mxCell id="QQbZB3bsJbmEzjK7Avpa-0"/>
                 <mxCell id="QQbZB3bsJbmEzjK7Avpa-1" parent="QQbZB3bsJbmEzjK7Avpa-0"/>
@@ -208,7 +208,7 @@
         </mxGraphModel>
     </diagram>
     <diagram name="Training Shapelets" id="IEgmvSwKznlvn5AdeZBD">
-        <mxGraphModel dx="1657" dy="1142" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="826" pageHeight="1169" background="none" math="0" shadow="0">
+        <mxGraphModel dx="1596" dy="658" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="826" pageHeight="1169" background="none" math="0" shadow="0">
             <root>
                 <mxCell id="qkUld1DPVJAOQBkqQ7DZ-0"/>
                 <mxCell id="qkUld1DPVJAOQBkqQ7DZ-1" parent="qkUld1DPVJAOQBkqQ7DZ-0"/>

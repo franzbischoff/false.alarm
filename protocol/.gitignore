@@ -5,4 +5,8 @@
 *.aux
 *.ris
 *.nbib
+*.tex
+*.toc
+*_cache
+*_files
 !figure/*
