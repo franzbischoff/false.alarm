@@ -150,7 +150,7 @@ positive or negative for life-threatening.
 # Work Structure
 
 The changes, additions and deletions from the First Report to this Second Report can be visualized
-FIXME: [here]()
+[here](https://github.com/franzbischoff/false.alarm/commit/a9a9bc481ea90508450965596b811cb1a499a814#diff-f34a6bd3da5c4faa6a8103611963f84ee3070b59f1f517ea418e9774b4d718da).
 
 ## Principles
 
