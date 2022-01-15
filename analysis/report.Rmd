@@ -1,7 +1,7 @@
 ---
 title: "Report"
 author: "Francisco Bischoff"
-date: "on July 15, 2021"
+date: "on Jan 15, 2022"
 output:
   workflowr::wflow_html:
     number_sections: true
@@ -14,13 +14,45 @@ csl: ../thesis/csl/ama.csl
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = FALSE, fig.align = "center", dev = "svg")
+# knitr::opts_chunk$set(echo = FALSE, fig.align = "center", dev = "svg")
+knitr::opts_chunk$set(
+  echo = FALSE, fig.align = "center", autodep = TRUE,
+  fig.height = 5, fig.width = 10,
+  tidy = "styler",
+  tidy.opts = list(strict = TRUE)
+)
+if (knitr::is_latex_output()) {
+  knitr::opts_chunk$set(dev = "pdf")
+} else {
+  knitr::opts_chunk$set(dev = "svg")
+}
 library(here)
 library(visNetwork)
 library(tibble)
 library(kableExtra)
+library(gridExtra)
 library(targets)
+library(ggplot2)
+
 knitr::opts_knit$set(root.dir = here("docs"), base.dir = here("docs"))
+
+.rmdenvir <- environment()
+.refctr <- c(`_` = 0)
+
+ref <- function(use_name) {
+  require(stringr)
+  if (!exists(".refctr")) .refctr <- c(`_` = 0)
+  if (any(names(.refctr) == use_name)) {
+    return(.refctr[use_name])
+  }
+  type <- str_split(use_name, ":")[[1]][1]
+  n_obj <- sum(str_detect(names(.refctr), type))
+  use_num <- n_obj + 1
+  newrefctr <- c(.refctr, use_num)
+  names(newrefctr)[length(.refctr) + 1] <- use_name
+  assign(".refctr", newrefctr, envir = .rmdenvir)
+  return(use_num)
+}
 ```
 
 # Current Work Status
@@ -33,8 +65,10 @@ This research is being conducted using the Research Compendium principles [@comp
 2.  Keep data, methods, and output separated;
 3.  Specify your computational environment as clearly as you can.
 
-Data management is following the FAIR principle (findable, accessible, interoperable, reusable)
-[@wilkinson2016].
+Data management follows the FAIR principle (findable, accessible, interoperable, reusable)
+[@wilkinson2016]. Concerning these principles, the dataset was converted from Matlab's format to
+CSV format, allowing more interoperability. Additionally, all the project, including the dataset, is
+in conformity with the Codemeta Project [@CodeMeta2017].
 
 ## The data
 
@@ -44,12 +78,12 @@ Zenodo [@bischoff2021] under the same license as Physionet.
 
 The dataset is composed of 750 patients with at least five minutes records. All signals have been
 resampled (using anti-alias filters) to 12 bit, 250 Hz and have had FIR band-pass (0.05 to 40Hz) and
-mains notch filters applied to remove noise. Pacemaker and other artifacts still present on the ECG
+mains notch filters applied to remove noise. Pacemaker and other artifacts are still present on the ECG
 [@Clifford2015]. Furthermore, this dataset contains at least two ECG derivations and one or more
 variables like arterial blood pressure, photoplethysmograph readings, and respiration movements.
 
-The *event* we seek to improve is the detection of a life-threatening arrhythmia as defined by
-Physionet in Table \ref{tab:alarms}.
+The _event_ we seek to improve is the detection of a life-threatening arrhythmia as defined by
+Physionet in Table `r ref("tab:alarms")`.
 
 ```{r alarms, echo=FALSE}
 alarms <- tribble(
@@ -61,7 +95,7 @@ alarms <- tribble(
   "Ventricular Flutter/Fibrillation", "Fibrillatory, flutter, or oscillatory waveform for at least 4 seconds"
 )
 
-kbl(alarms, booktabs = TRUE, caption = "Definition of the five alarm types used in CinC/Physionet Challenge 2015 challenge.", align = "ll") %>%
+kbl(alarms, booktabs = TRUE, caption = paste("Table", ref("tab:alarms"), "- Definition of the five alarm types used in CinC/Physionet Challenge 2015 challenge."), align = "ll") %>%
   kable_styling(full_width = TRUE) %>%
   # column_spec(c(1,2), width = "50px") %>%
   row_spec(0, bold = TRUE)
@@ -75,17 +109,17 @@ no other arrhythmias before, but those were not labeled.
 ## Workflow
 
 All steps of the process are being managed using the R package `targets` [@landau2021] from data
-extraction to the final report, as shown in Fig. \ref{fig:targets}.
+extraction to the final report, as shown in Fig. `r ref("fig:targets")`.
 
-```{r targets, echo=FALSE, out.width="100%", fig.cap="Reproducible research workflow using `targets`."}
+```{r targets, echo=FALSE, out.width="100%", fig.cap=paste("Figure", ref("fig:targets"), "- Reproducible research workflow using `targets`.")}
 knitr::include_graphics("figure/targets.png")
 ```
 
 The report is available on the main webpage [@franz_website], allowing inspection of previous
 versions managed by the R package `workflowr`[@workflowr2021], as shown in Fig.
-\ref{fig:workflowr}.
+`r ref("fig:workflowr")`.
 
-```{r workflowr, echo=FALSE, out.width="100%", fig.cap="Reproducible reports using `workflowr`."}
+```{r workflowr, echo=FALSE, out.width="100%", fig.cap=paste("Figure", ref("fig:workflowr"), "- Reproducible reports using `workflowr`.")}
 knitr::include_graphics("figure/workflowr_print.png")
 ```
 
@@ -100,7 +134,7 @@ Google Scholar with the following query (the syntax was adapted for each databas
 
 \
 
-The inclusion and exclusion criteria were defined as in Table \ref{tab:criteria}.
+The inclusion and exclusion criteria were defined as in Table `r ref("tab:criteria")`.
 
 ```{r criteria, echo=FALSE}
 criteria <- tribble(
@@ -112,34 +146,42 @@ criteria <- tribble(
   "Specific diagnosis (like a flutter, hyperkalemia, etc.)", ""
 )
 
-kbl(criteria, booktabs = TRUE, caption = "Literature review criteria.", align = "ll") %>%
+kbl(criteria, booktabs = TRUE, caption = paste("Table", ref("tab:criteria"), "- Literature review criteria."), align = "ll") %>%
   kable_styling(full_width = TRUE) %>%
   column_spec(1, width = "10cm") %>%
   row_spec(0, bold = TRUE)
 ```
 
 The current stage of the review is on Data Extraction, from the resulting screening shown in Fig.
-\ref{fig:prisma}.
+`r ref("fig:prisma")`.
 
-```{r prisma, echo=FALSE, out.width="80%", fig.cap="Prisma results"}
+```{r prisma, echo=FALSE, out.width="80%", fig.cap=paste("Figure", ref("fig:prisma"), "- Prisma results")}
 knitr::include_graphics("figure/PRISMA.png")
 ```
 
 Meanwhile, the project pipeline has been set up on GitHub, Inc. [@bischoffrepo2021] leveraging on
-Github A ions [@gitactions2021] for the Continuous Integration lifecycle, the repository is
+Github Actions [@gitactions2021] for the Continuous Integration lifecycle. The repository is
 available at [@bischoffrepo2021], and the resulting report is available at [@franz_website] for
 transparency while the roadmap and tasks are managed using the integrated Zenhub [@zenhub2021].
 
-As it is known worldwide, 2020 was hard on every project, which required changes on the timeline. In
-Fig. \ref{fig:zenhub1} it is shown the initial roadmap (as of May 2020) and Fig. \ref{fig:zenhub2}
-the modified roadmap (as of July 2021).
+As it is known worldwide, since 2020, the measures taken to control the SARS-Cov2 pandemic
+have had a great impact on any development lifecycle.
 
-```{r zenhub1, echo=FALSE, out.width="100%", fig.cap="Roadmap original"}
+At this moment, this project went through two timeline changes. In Fig. `r ref("fig:zenhub1")` it is
+shown the initial roadmap (as of May 2020), Fig. `r ref("fig:zenhub2")` the modified roadmap (as of July
+2021), and Fig. `r ref("fig:zenhub3")` (as of Jan 2022). The literature survey is currently in the extraction
+phase, which includes about 74 articles from the full-text screening.
+
+```{r zenhub1, echo=FALSE, out.width="100%", fig.cap=paste("Figure", ref("fig:zenhub1"), "- Roadmap original")}
 knitr::include_graphics("figure/roadmap_original.png")
 ```
 
-```{r zenhub2, echo=FALSE, out.width="100%", fig.cap="Roadmap updated"}
+```{r zenhub2, echo=FALSE, out.width="100%", fig.cap=paste("Figure", ref("fig:zenhub2"), "- Roadmap updated on August 2021")}
 knitr::include_graphics("figure/roadmap_updated.png")
+```
+
+```{r zenhub3, echo=FALSE, out.width="100%", fig.cap=paste("Figure", ref("fig:zenhub3"), "- Roadmap updated on January 2022")}
+knitr::include_graphics("figure/roadmap_jan2022.png")
 ```
 
 ### Preliminary Experimentations
@@ -149,27 +191,27 @@ knitr::include_graphics("figure/roadmap_updated.png")
 While programming the pipeline for the current dataset, it has been acquired a Single Lead Heart
 Rate Monitor breakout from Sparkfun^TM^ [@sparkfun2021] using the AD8232 [@AnalogDevices2020]
 microchip from Analog Devices Inc., compatible with Arduino^(R)^ [@arduino2021], for an in-house
-experiment (Figs. \ref{fig:ad8232} and \ref{fig:fullsetup}).
+experiment (Figs. `r ref("fig:ad8232")` and `r ref("fig:fullsetup")`).
 
-```{r ad8232, echo=FALSE, out.width="50%", fig.cap="Single Lead Heart Rate Monitor"}
+```{r ad8232, echo=FALSE, out.width="50%", fig.cap=paste("Figure", ref("fig:ad8232"), "- Single Lead Heart Rate Monitor")}
 knitr::include_graphics("figure/sparkfun.jpg")
 ```
 
-```{r fullsetup, echo=FALSE, out.width="50%", fig.cap="Single Lead Heart Rate Monitor"}
+```{r fullsetup, echo=FALSE, out.width="50%", fig.cap=paste("Figure", ref("fig:fullsetup"), "- Single Lead Heart Rate Monitor")}
 knitr::include_graphics("figure/FullSetup.jpg")
 ```
 
-The output gives us a RAW signal as shown in Fig. \ref{fig:rawsignal}.
+The output gives us a RAW signal as shown in Fig. `r ref("fig:rawsignal")`.
 
-```{r rawsignal, echo=FALSE, out.width="50%", fig.cap="RAW output from Arduino at ~300hz"}
+```{r rawsignal, echo=FALSE, out.width="50%", fig.cap=paste("Figure", ref("fig:rawsignal"), "- RAW output from Arduino at ~300hz")}
 knitr::include_graphics("figure/arduino_plot.jpg")
 ```
 
 After applying the same settings as the Physionet database (collecting the data at 500hz, resample
 to 250hz, pass-filter, and notch filter), the signal is much better as shown in Fig.
-\ref{fig:filtersignal}. Note: the leads were not placed on the correct location.
+`r ref("fig:filtersignal")`. Note: the leads were not placed on the correct location.
 
-```{r filtersignal, echo=FALSE, out.width="100%", fig.cap="Gray is RAW, Red is filtered"}
+```{r filtersignal, echo=FALSE, out.width="100%", fig.cap=paste("Figure", ref("fig:filtersignal"), "- Gray is RAW, Red is filtered")}
 knitr::include_graphics("figure/filtered_ecg.png")
 ```
 
@@ -195,78 +237,290 @@ more complex as pcaSQI (the ratio of the sum of the five largest eigenvalues ass
 principal components over the sum of all eigenvalues obtained by principal component analysis
 applied to the time aligned ECG segments in the window). By experimentation (yet to be validated), a
 simple formula gives us the "complexity" of the signal and correlates well with the noisy data is
-shown in Equation (1).
+shown in Equation $\eqref{noise}$.
 
 $$
-\sqrt{\sum_{i=1}^w((x_{i+1}-x_i)^2)}, \quad \text{where}\; w \; \text{is the window size} \tag{1}
+\sqrt{\sum_{i=1}^w((x_{i+1}-x_i)^2)}, \quad \text{where}\; w \; \text{is the window size} \tag{1} \label{noise}
 $$
 
 \
 \
-The Fig. \ref{fig:sqi} shows some SQIs.
+The Fig. `r ref("fig:sqi")` shows some SQIs.
 
-```{r sqi, echo=FALSE, out.width="100%", fig.cap="Green line is the \"complexity\" of the signal"}
+```{r sqi, echo=FALSE, out.width="100%", fig.cap=paste("Figure", ref("fig:sqi"), "- Green line is the \"complexity\" of the signal")}
 knitr::include_graphics("figure/noise.png")
 ```
 
-Finally, a sample of the regime change detection is shown in Figs. \ref{fig:regimefilter} to
-\ref{fig:regimetrue}.
+Finally, a sample of the regime change detection is shown in Figs. `r ref("fig:regimefilter")` to
+`r ref("fig:regimetrue")`.
 
-Fig. \ref{fig:regimefilter} shows that noisy data (probably patient muscle movements) are marked
+Fig. `r ref("fig:regimefilter")` shows that noisy data (probably patient muscle movements) are marked
 with a blue point and thus are ignored by the algorithm. Also, valid for the following plots, the
 green and red lines on the data mark the 10 seconds window where the "event" that triggers the alarm
 is supposed to happen.
 
-```{r regimefilter, echo=FALSE, out.width="100%", fig.cap="Regime changes with noisy data - false alarm"}
+```{r regimefilter, echo=FALSE, out.width="100%", fig.cap=paste("Figure", ref("fig:regimefilter"), "- Regime changes with noisy data - false alarm")}
 knitr::include_graphics("figure/regime_filter.png")
 ```
 
-In Fig. \ref{fig:regimefalse}, the data is clean; thus, nothing is excluded. Interestingly one of
+In Fig. `r ref("fig:regimefalse")`, the data is clean; thus, nothing is excluded. Interestingly one of
 the detected regime changes is inside the "green-red" window. But it is a false alarm.
 
-```{r regimefalse, echo=FALSE, out.width="100%", fig.cap="Regime changes with good data - false alarm"}
+```{r regimefalse, echo=FALSE, out.width="100%", fig.cap=paste("Figure", ref("fig:regimefalse"), "- Regime changes with good data - false alarm")}
 knitr::include_graphics("figure/regime_false.png")
 ```
 
-The last plot (Fig. \ref{fig:regimetrue}) shows the algorithm's robustness, not excluding good data
+The last plot (Fig. `r ref("fig:regimetrue")`) shows the algorithm's robustness, not excluding good data
 with a wandering baseline, and the last regime change is correctly detected inside the "green-red"
 window.
 
-```{r regimetrue, echo=FALSE, out.width="100%", fig.cap="Regime changes with good but wandering data - true alarm"}
+```{r regimetrue, echo=FALSE, out.width="100%", fig.cap=paste("Figure", ref("fig:regimetrue"), "- Regime changes with good but wandering data - true alarm")}
 knitr::include_graphics("figure/regime_true.png")
 ```
 
 
-```{r load_target, results='asis'}
+### First General Assessment
 
-# fluss_plots <- tar_read("fluss_plots")
-#
-# files <- names(fluss_plots)
-# checkmate::qassert(files, "S")
-#
-# for (f in files) {
-#   alarm <- attr(fluss_plots[[f]], "info")$alarm
-#   true <- attr(fluss_plots[[f]], "info")$true
-#
-#   series <- names(fluss_plots[[f]])
-#   series <- setdiff(series, c("time", "ABP", "PLETH", "RESP"))
-#
-#
-#   for (s in series) {
-#
-#     svg <- attr(fluss_plots[[f]][[s]], "plot")
-#
-#     cat("<div class=\"polaroid\">\n")
-#     cat("<div class=\"polcont\">\n")
-#     cat(sprintf("File: %s - \n", f))
-#     cat(sprintf("Alarm: %s - \n", alarm))
-#     cat(sprintf("True alarm: %s - \n", true))
-#     cat(sprintf("Data stream: %s\n", s))
-#     cat("</div>\n")
-#     cat(svg)
-#     cat("</div><br/>\n")
-#   }
-#
-#   cat("<br/>\n")
-# }
+By August 2021, it was clear that the chosen regime detection algorithm would be the (Fast Low-cost
+Online Semantic Segmentation) FLOSS [@gharghabi2017]. Thus, the pipeline had to be adapted in order
+to allow the careful replication of the streaming process, even though several computations are made
+beforehand to keep the pipeline (i.e., the simulation) fast on exploring several parameters.
+
+The choice of FLOSS is founded on the following arguments:
+
+-  **Domain Agnosticism:** the algorithm makes no assumptions about the data as opposed to most
+   available algorithms to date.
+-  **Streaming:** the algorithm can provide real-time information.
+-  **Real-World Data Suitability:** the objective is not to _explain_ all the data. Therefore, areas
+   marked as "don't know" areas are acceptable.
+-  **FLOSS is not:** a change point detection algorithm [@aminikhanghahi2016]. The interest here is
+   changes in the shapes of a sequence of measurements.
+
+Other algorithms we can cite are based on Hidden Markov Models (HMM) that require at least two
+parameters set by domain experts: cardinality and dimensionality reduction. The most attractive alternative
+could be the Autoplait [@Matsubara2014], which is also domain agnostic and parameter-free. It segments
+the time series using Minimum Description Length (MDL) and recursively tests if the region is best modeled
+by one or two HMM. However, Autoplait is designed for batch operation, not streaming, and also requires
+discrete data. FLOSS was demonstrated to be superior in several datasets in its original paper. In addition,
+FLOSS is robust to several changes in data like downsampling, bit depth reduction, baseline wandering,
+noise, smoothing, and even deleting 3% of the data and filling with simple interpolation. Finally,
+the algorithm is light and suitable for low-power devices.
+
+It is worth also mentioning the Time Series Snippets [@Imani2018], based on MPdist [@gharghabi2018b].
+The latter measures the distance between two sequences considering how many similar sub-sequences they
+share, no matter the order of matching. It proved to be a useful measure (not a metric) for meaningfully
+clustering similar sequences. Time Series Snippets exploits MPdist properties to summarize a dataset that
+contains representative sequences. This seems to be an alternative for detecting regime changes, but
+it is not. The purpose of this algorithm is to find which pattern(s) explains most of the dataset.
+Lastly, MPdist is quite expensive compared to the trivial Euclidean distance.
+
+### Second General Assessment
+
+By January 2022, the following tasks were performed:
+
+1. Restructuring the roadmap (again)
+2. Refining the main pipeline (again)
+3. Preparing for modeling and parameter tuning
+4. Feasibility trial
+5. And others
+
+#### Refining the main pipeline
+
+That can also be thought of as "rethinking" the pipeline. Which also leads to the roadmap
+restructuration. The new roadmap was already shown above in Fig. `r ref("fig:zenhub3")`.
+
+It is essential not only to write a pipeline that can "autoplot" itself for fine-grain inspection
+but also to design a high-level graph that can explain it "in a glance". This exercise was helpful
+both ways: telling the story in a short version also reveals missing things and misleading paths
+that are not so obvious when thinking "low-level".
+
+Figs. `r ref("fig:regimedetection")`, `r ref("fig:shapelets")` and `r ref("fig:fullmodel")` show the overview
+of the processes involved.
+
+```{r regimedetection, echo=FALSE, out.width="100%", fig.cap=paste("Figure", ref("fig:regimedetection"), "- Pipeline for regime change detection")}
+if (knitr::is_latex_output()) {
+  knitr::include_graphics("figure/regime_detection.pdf")
+} else {
+  knitr::include_graphics("figure/regime_detection.svg")
+}
 ```
+
+```{r shapelets, echo=FALSE, out.width="60%", fig.cap=paste("Figure", ref("fig:shapelets"), "- Pipeline for TRUE and FALSE alarm classification")}
+if (knitr::is_latex_output()) {
+  knitr::include_graphics("figure/shapelets.pdf")
+} else {
+  knitr::include_graphics("figure/shapelets.svg")
+}
+```
+
+```{r fullmodel, echo=FALSE, out.width="60%", fig.cap=paste("Figure", ref("fig:fullmodel"), "- Pipeline of the final process")}
+if (knitr::is_latex_output()) {
+  knitr::include_graphics("figure/fullmodel.pdf")
+} else {
+  knitr::include_graphics("figure/fullmodel.svg")
+}
+```
+
+#### Preparing for modeling and parameter tuning
+
+Here is one missing part that should have been addressed (formally) earlier. Although this work has
+its purpose of being finally deployed on small hardware, this prospective phase will need several
+hours of computing, tuning, evaluation, and validation of all findings.
+
+Thus it was necessary to revisit the frameworks we are used to working on R: `caret` [@JSSv028i05]
+and the newest `tidymodels` [@tidymodels2020] collection. For sure, there are other frameworks and
+opinions [@Thompson2020]. Notwithstanding, this project will follow the `tidymodels` road. Two
+significant arguments 1) constantly improving and constantly being re-checked for bugs; large
+community contribution; 2) allows to plug in a custom modeling algorithm that, in this case, will be
+the one needed for developing this work.
+
+#### Feasibility trial
+
+A side-project called "false.alarm.io" has been derived from this work (an unfortunate mix of
+"false.alarm" and "PlatformIO" [@PlatformIO], the IDE chosen to interface the panoply of embedded
+systems we can experiment with). The current results of this side-project are very enlightening and show
+that the final algorithm can indeed be used in small hardware. Further data will be available in
+the future.
+
+#### And others
+
+After this "step back" to look forward, it was time to define how the regime change algorithm would
+integrate with the actual decision of triggering or not the alarm. Some hypotheses were thought out:
+(1) clustering similar patterns, (2) anomaly detection, (3) classification, and (4) forecasting.
+Among these methods, it was thought, in order to avoid exceeding processor capacity, an initial set
+of shapelets [@Rakthanmanon2013] can be sufficient to rule in or out the `TRUE`/`FALSE` challenge.
+Depending on the accuracy of this approach and the resources available, another method can be
+introduced for both (1) improving the "negative"[^1] samples and (2) learning more shapelets to
+improve the `TRUE`/`FALSE` alarm discrimination.
+
+[^1]: The term "negative" does not imply that the patient has a "normal" ECG. It means that the
+"negative" section is not a life-threatening condition that needs to trigger an alarm.
+
+### Scientific Contributions
+
+1. **On regime change detection:** in the original paper, the FLOSS algorithm assumes the _Arc
+   Counts_ follow a "uniform distribution" when we add a temporal constraint (not considering arcs
+   coming from older data), and the _Arc Counts_ of newly incoming data are truncated by the same
+   amount of temporal constraint. This prevents completely the detection of a regime change in the
+   last 10 seconds as required. This issue is overcome using the theoretical distributions as shown
+   in Fig. `r ref("fig:distributions")`.
+
+2. **On the Matrix Profile:** since the first paper presenting this new concept [@Yeh2017a], lots of
+   investigations were made to speed up its computation. It is notable how all computations are not
+   dependent on the _rolling window size_ as previous works not using Matrix Profile. Aside from this, we
+   can see that the first STAMP [@Yeh2017a] algorithm has the time complexity of $O(n^2log{n})$
+   while STOMP [@zhu2016] $O(n^2)$ (a significant improvement), but STOMP lacks the "any-time"
+   property. Later SCRIMP [@zhu2018] solves this problem keeping the same time complexity of
+   $O(n^2)$. Here we are in the "exact" algorithms domain and will not extend the scope for
+   conciseness.
+
+   1. The main issue with the algorithms above is the dependency on a fast Fourier transform (FFT)
+      library. FFT has been extensively optimized and architecture/CPU bounded to exploit the most
+      of speed. Also, padding data to some power of 2 happens to increase the efficiency of the
+      algorithm. We can argue that time complexity doesn't mean "faster" when we can exploit
+      low-level instructions. In our case, using FFT in a low-power device is overkilling. For
+      example, a quick search over the internet gives us a hint that computing FFT on a 4096 data in
+      an ESP32 takes about 21ms (~47 computations in 1 second). This means ~79 seconds for computing
+      all FFT's (~3797) required for STAMP using a window of 300. Currently, we can compute 50k full
+      matrices in less time using no FFT in an ESP32 MCU (Fig. `r ref("fig:esp32")`).
+
+    2. Recent works using _exact_ algorithms are using an unpublished algorithm called **MPX**, which
+       computes the Matrix Profile using cross-correlation methods ending up faster and is easily
+       portable.
+
+    3. **The main contribution** of this work on this area is adding the **online** capability to
+       MPX, which means we can update the Matrix Profile as new data comes in.
+
+3. **On extending the Matrix Profile:** an unexplored constraint that we could apply on building the
+   Matrix Profile we are calling _Similarity Threshold_ (ST). The original work outputs the
+   similarity values in Euclidean Distance (ED) values, while MPX naturally outputs the values in
+   Pearson's correlation coefficients (CC). Both ED and CC are interchangeable using the equation
+   $\eqref{edcc}$. However, we may argue that it is easier to compare values that do not depend on
+   the window size during an exploratory phase. MPX happens to naturally return values in CC, saving
+   a few more computation time. The ST is an interesting factor that we can use, especially when
+   detecting pattern changes during time. The FLOSS algorithm relies on counting references between
+   indexes in the time series. ST can help remove "noise" from these references since only similar
+   patterns above a certain threshold are referenced, and changes have more impact on these counts.
+   The best ST threshold is still to be determined.
+
+\
+
+$$
+CC = 1 - \frac{ED}{(2 \times WindowSize)} \tag{2} \label{edcc}
+$$
+
+\
+
+```{r dist data, message=FALSE, warning=FALSE, cache=TRUE, include=FALSE}
+source(here("scripts", "common", "compute_floss.R"))
+
+get_dist <- function(mp_const = 1250, floss_const = 0) {
+  set.seed(2021)
+  iac <- list()
+  pro_size <- 5000
+  mp_time_constraint <- mp_const
+  floss_time_constraint <- floss_const
+  for (i in 1:500) {
+    iac[[i]] <- get_asym(pro_size, mp_time_constraint, floss_time_constraint)
+  }
+
+  aic_avg <- rowMeans(as.data.frame(iac))
+
+  data.frame(index = 1:5000, counts = aic_avg)
+}
+
+data_5000 <- get_dist(5000)
+data_4250 <- get_dist(4250)
+data_2500 <- get_dist(2500)
+data_1250 <- get_dist(1250)
+
+floss_data_5000 <- get_dist(0, 5000)
+floss_data_4250 <- get_dist(0, 4250)
+floss_data_2500 <- get_dist(0, 2500)
+floss_data_1250 <- get_dist(0, 1250)
+```
+
+```{r distributions, echo=FALSE, fig.cap=paste("Figure", ref("fig:distributions"), "- 1D-IAC distributions for earlier temporal constraint (on Matrix Profile)"), message=FALSE, warning=FALSE}
+
+floss_dist <- ggplot(data_5000, aes(index, counts)) +
+  geom_line(size = 0.1) +
+  ggtitle("a) No constraint") +
+  theme_grey(base_size = 7)
+
+floss_4250 <- ggplot(data_4250, aes(index, counts)) +
+  geom_line(size = 0.1) +
+  ggtitle("b) Constraint of 4250") +
+  theme_grey(base_size = 7)
+
+floss_2500 <- ggplot(data_2500, aes(index, counts)) +
+  geom_line(size = 0.1) +
+  annotate("segment", y = 0, yend = max(data_2500$counts), x = 2500, xend = 2500, linetype = 2, size = 0.1) +
+  annotate("text", x = 2500 - 80, y = 40, label = "start", color = "black", size = 2, angle = 90, hjust = 0) +
+  annotate("segment", y = 0, yend = max(data_2500$counts), x = 5000 - 2500 * 0.9, xend = 5000 - 2500 * 0.9, linetype = 2, size = 0.1) +
+  annotate("text", x = 5000 - 2500 * 0.9 - 80, y = 40, label = "end", color = "black", size = 2, angle = 90, hjust = 0) +
+  ggtitle("c) Constraint of 2500") +
+  theme_grey(base_size = 7)
+
+floss_1250 <- ggplot(data_1250, aes(index, counts)) +
+  geom_line(size = 0.1) +
+  annotate("segment", y = 0, yend = max(data_1250$counts), x = 1250, xend = 1250, linetype = 2, size = 0.1) +
+  annotate("text", x = 1250 - 80, y = 40, label = "start", color = "black", size = 2, angle = 90, hjust = 0) +
+  annotate("segment", y = 0, yend = max(data_1250$counts), x = 5000 - 1250 * 0.9, xend = 5000 - 1250 * 0.9, linetype = 2, size = 0.1) +
+  annotate("text", x = 5000 - 1250 * 0.9 - 80, y = 40, label = "end", color = "black", size = 2, angle = 90, hjust = 0) +
+  ggtitle("d) Constraint of 1250") +
+  theme_grey(base_size = 7)
+
+gg <- gridExtra::arrangeGrob(floss_dist, floss_4250, floss_2500, floss_1250,
+  nrow = 2,
+  bottom = grid::textGrob(paste("The plot a) shows the distribution used for the arc count correction when there is no time constraint.", "\n", "b) Shows a constraint of 3/4 of the total. c) 1/2 of the total. d) 1/4 of the total; here we see clearly the flat line.", "\n", "The dashed line marks the start and the end of the uniform zone."), just = "center", gp = grid::gpar(fontsize = 7))
+)
+
+grid::grid.draw(gg)
+```
+
+\
+
+```{r esp32, echo=FALSE, out.width="40%", fig.cap=paste("Figure", ref("fig:esp32"), "- ESP32 MCU")}
+knitr::include_graphics("figure/esp32.jpg")
+```
+

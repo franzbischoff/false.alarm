@@ -739,10 +739,10 @@
     },
     "fansi": {
       "Package": "fansi",
-      "Version": "1.0.0",
+      "Version": "1.0.2",
       "Source": "Repository",
       "Repository": "CRAN",
-      "Hash": "ae34c3d1fdfac1566ca17c1b5d8f2613",
+      "Hash": "f28149c2d7a1342a834b314e95e67260",
       "Requirements": []
     },
     "farver": {
@@ -1949,9 +1949,9 @@
       "RemoteUsername": "r-lib",
       "RemoteRepo": "rlang",
       "RemoteRef": "main",
-      "RemoteSha": "181e0b6e71016802d417fd277e7b9f9ecf1f7299",
+      "RemoteSha": "2c9d321cc7481a1282eac9a98ce5f6ac50b16c4e",
       "RemoteHost": "api.github.com",
-      "Hash": "c0fc019418148d8f6df2a03319de7886",
+      "Hash": "f80921cfb2d16b8b6538b5776de15ea5",
       "Requirements": []
     },
     "rmarkdown": {

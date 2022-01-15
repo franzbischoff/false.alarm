@@ -118,8 +118,8 @@ inappropriate responses to alarms [@sendelbach2013].
 
 In April of 2013, The Joint Commission [@the_jc] issued the Sentinel Event Alert
 [@JointCommission2013], establishing alarm system safety as a top hospital priority in the National
-Patient Safety Goal. Nowadays (2021), the subject stil on their list, in fourth place of importance
-[@the_jc2021].
+Patient Safety Goal. Nowadays (2021), the subject is still on their list, in fourth place of
+importance [@the_jc2021].
 
 In February of 2015, the CinC/Physionet Challenge 2015 was about "Reducing False Arrhythmia Alarms
 in the ICU [@Clifford2015]. The introduction article stated that it had been reported that up to 86%
@@ -149,8 +149,8 @@ positive or negative for life-threatening.
 
 # Work Structure
 
-The changes, additions and deletions from the First Report to this Second Report can be visualized
-[here](https://github.com/franzbischoff/false.alarm/commit/a9a9bc481ea90508450965596b811cb1a499a814#diff-f34a6bd3da5c4faa6a8103611963f84ee3070b59f1f517ea418e9774b4d718da).
+The changes, additions, and deletions from the First Report to this Second Report can be visualized
+[here](https://github.com/franzbischoff/false.alarm/compare/dc34ece..a9a9bc4#diff-f34a6bd3da5c4faa6a8103611963f84ee3070b59f1f517ea418e9774b4d718da).
 
 ## Principles
 
@@ -160,9 +160,9 @@ This research is being conducted using the Research Compendium principles [@comp
 2.  Keep data, methods, and output separated;
 3.  Specify your computational environment as clearly as you can.
 
-Data management is following the FAIR principle (findable, accessible, interoperable, reusable)
+Data management follows the FAIR principle (findable, accessible, interoperable, reusable)
 [@wilkinson2016]. Concerning these principles, the dataset was converted from Matlab's format to
-CSV format, allows more interoperability. Additionally, all the project, including the dataset is
+CSV format, allowing more interoperability. Additionally, all the project, including the dataset, is
 in conformity with the Codemeta Project [@CodeMeta2017].
 
 ## The data
@@ -173,7 +173,7 @@ Zenodo [@bischoff2021] under the same license as Physionet.
 
 The dataset is composed of 750 patients with at least five minutes records. All signals have been
 resampled (using anti-alias filters) to 12 bit, 250 Hz and have had FIR band-pass (0.05 to 40Hz) and
-mains notch filters applied to remove noise. Pacemaker and other artifacts still present on the ECG
+mains notch filters applied to remove noise. Pacemaker and other artifacts are still present on the ECG
 [@Clifford2015]. Furthermore, this dataset contains at least two ECG derivations and one or more
 variables like arterial blood pressure, photoplethysmograph readings, and respiration movements.
 
@@ -269,13 +269,13 @@ Github Actions [@gitactions2021] for the Continuous Integration lifecycle. The r
 available at [@bischoffrepo2021], and the resulting report is available at [@franz_website] for
 transparency while the roadmap and tasks are managed using the integrated Zenhub [@zenhub2021].
 
-As it is known worldwide, since 2020 the measures taken to control the SARS-Cov2 pandemic
-has had great impact in any development lifecycle.
+As it is known worldwide, since 2020, the measures taken to control the SARS-Cov2 pandemic
+have had a great impact on any development lifecycle.
 
 At this moment, this project went through two timeline changes. In Fig. \@ref(fig:zenhub1) it is
 shown the initial roadmap (as of May 2020), Fig. \@ref(fig:zenhub2) the modified roadmap (as of July
-2021) and Fig. \@ref(fig:zenhub3) (as of Jan 2022). The literature survey is currently on the extraction
-phase, that includes about 74 articles from the full-text screening.
+2021), and Fig. \@ref(fig:zenhub3) (as of Jan 2022). The literature survey is currently in the extraction
+phase, which includes about 74 articles from the full-text screening.
 
 ```{r zenhub1, echo=FALSE, out.width="100%", fig.cap="Roadmap original"}
 knitr::include_graphics("figure/roadmap_original.png")
@@ -306,15 +306,15 @@ knitr::include_graphics("figure/sparkfun.jpg")
 knitr::include_graphics("figure/FullSetup.jpg")
 ```
 
-The output gives us a RAW signal as shown in Fig. \@ref(fig:rawsignal).
+The output gives us a RAW signal, as shown in Fig. \@ref(fig:rawsignal).
 
 ```{r rawsignal, echo=FALSE, out.width="50%", fig.cap="RAW output from Arduino at ~300hz"}
 knitr::include_graphics("figure/arduino_plot.jpg")
 ```
 
 After applying the same settings as the Physionet database (collecting the data at 500hz, resample
-to 250hz, pass-filter, and notch filter), the signal is much better as shown in Fig.
-\@ref(fig:filtersignal). Note: the leads were not placed on the correct location.
+to 250hz, pass-filter, and notch filter), the signal is much better, as shown in Fig.
+\@ref(fig:filtersignal). Note: the leads were not placed in the correct location.
 
 ```{r filtersignal, echo=FALSE, out.width="100%", fig.cap="Gray is RAW, Red is filtered"}
 knitr::include_graphics("figure/filtered_ecg.png")
@@ -336,7 +336,7 @@ within a time constraint. Thus, both the Matrix Profile computation and the _Arc
 be adapted for this task.
 
 At the same time, the ECG data needs to be "cleaned" for proper evaluation. That is different from
-the initial filtering process. Several SQIs (Signal Quality Indexes) are used on literature
+the initial filtering process. Several SQIs (Signal Quality Indexes) are used in the literature
 [@eerikainen2015], some trivial measures as _kurtosis_, _skewness_, median local noise level, other
 more complex as pcaSQI (the ratio of the sum of the five largest eigenvalues associated with the
 principal components over the sum of all eigenvalues obtained by principal component analysis
@@ -388,10 +388,10 @@ knitr::include_graphics("figure/regime_true.png")
 
 ### First General Assessment
 
-By August 2021, it was clear that the chosen regime detection algorithm will be the (Fast Low-cost
+By August 2021, it was clear that the chosen regime detection algorithm would be the (Fast Low-cost
 Online Semantic Segmentation) FLOSS [@gharghabi2017]. Thus, the pipeline had to be adapted in order
 to allow the careful replication of the streaming process, even though several computations are made
-beforehand to keep the pipeline (i.e.: the simulation) fast on exploring several parameters.
+beforehand to keep the pipeline (i.e., the simulation) fast on exploring several parameters.
 
 The choice of FLOSS is founded on the following arguments:
 
@@ -403,20 +403,20 @@ The choice of FLOSS is founded on the following arguments:
 -  **FLOSS is not:** a change point detection algorithm [@aminikhanghahi2016]. The interest here is
    changes in the shapes of a sequence of measurements.
 
-Other algorithms we can cite are based on Hidden Markov Models (HMM) that requires at least two
+Other algorithms we can cite are based on Hidden Markov Models (HMM) that require at least two
 parameters set by domain experts: cardinality and dimensionality reduction. The most attractive alternative
-could be the Autoplait [@Matsubara2014] which is also domain agnostic and parameter-free. It segments
+could be the Autoplait [@Matsubara2014], which is also domain agnostic and parameter-free. It segments
 the time series using Minimum Description Length (MDL) and recursively tests if the region is best modeled
-by one or two HMM. However Autoplait is designed for batch operation, not streaming, and also requires
-discrete data. FLOSS demonstrated to be superior in several datasets in its original paper. In addition,
+by one or two HMM. However, Autoplait is designed for batch operation, not streaming, and also requires
+discrete data. FLOSS was demonstrated to be superior in several datasets in its original paper. In addition,
 FLOSS is robust to several changes in data like downsampling, bit depth reduction, baseline wandering,
 noise, smoothing, and even deleting 3% of the data and filling with simple interpolation. Finally,
-the algorithm is light and suitable for low power devices.
+the algorithm is light and suitable for low-power devices.
 
 It is worth also mentioning the Time Series Snippets [@Imani2018], based on MPdist [@gharghabi2018b].
 The latter measures the distance between two sequences considering how many similar sub-sequences they
 share, no matter the order of matching. It proved to be a useful measure (not a metric) for meaningfully
-cluster similar sequences. Time Series Snippets exploits MPdist properties to summarize a dataset that
+clustering similar sequences. Time Series Snippets exploits MPdist properties to summarize a dataset that
 contains representative sequences. This seems to be an alternative for detecting regime changes, but
 it is not. The purpose of this algorithm is to find which pattern(s) explains most of the dataset.
 Lastly, MPdist is quite expensive compared to the trivial Euclidean distance.
@@ -433,8 +433,8 @@ By January 2022, the following tasks were performed:
 
 #### Refining the main pipeline
 
-That can also be thought of as "rethinking" the pipeline. What also lead to the roadmap
-restructuration. The new roadmap was already shown above on Fig. \@ref(fig:zenhub3).
+That can also be thought of as "rethinking" the pipeline. Which also leads to the roadmap
+restructuration. The new roadmap was already shown above in Fig. \@ref(fig:zenhub3).
 
 It is essential not only to write a pipeline that can "autoplot" itself for fine-grain inspection
 but also to design a high-level graph that can explain it "in a glance". This exercise was helpful
@@ -485,7 +485,7 @@ the one needed for developing this work.
 
 A side-project called "false.alarm.io" has been derived from this work (an unfortunate mix of
 "false.alarm" and "PlatformIO" [@PlatformIO], the IDE chosen to interface the panoply of embedded
-systems we can experiment). The current results of this side-project are very enlightening and show
+systems we can experiment with). The current results of this side-project are very enlightening and show
 that the final algorithm can indeed be used in small hardware. Further data will be available in
 the future.
 
@@ -507,28 +507,28 @@ improve the `TRUE`/`FALSE` alarm discrimination.
 
 1. **On regime change detection:** in the original paper, the FLOSS algorithm assumes the _Arc
    Counts_ follow a "uniform distribution" when we add a temporal constraint (not considering arcs
-   comming from older data), and the _Arc Counts_ of newly incoming data are truncated by the same
+   coming from older data), and the _Arc Counts_ of newly incoming data are truncated by the same
    amount of temporal constraint. This prevents completely the detection of a regime change in the
-   last 10 seconds as required. This issue is overcomed using the theoretical distributions as shown
+   last 10 seconds as required. This issue is overcome using the theoretical distributions as shown
    in Fig. \@ref(fig:distributions).
 
 2. **On the Matrix Profile:** since the first paper presenting this new concept [@Yeh2017a], lots of
-   investigation were made to speed up its computation. It is notable how all computations are not
-   dependent on the _rolling window size_ as previous works not using Matrix Profile. Aside this, we
+   investigations were made to speed up its computation. It is notable how all computations are not
+   dependent on the _rolling window size_ as previous works not using Matrix Profile. Aside from this, we
    can see that the first STAMP [@Yeh2017a] algorithm has the time complexity of $O(n^2log{n})$
    while STOMP [@zhu2016] $O(n^2)$ (a significant improvement), but STOMP lacks the "any-time"
    property. Later SCRIMP [@zhu2018] solves this problem keeping the same time complexity of
    $O(n^2)$. Here we are in the "exact" algorithms domain and will not extend the scope for
    conciseness.
 
-   1. The main issue on the algorithms above is the dependency on a fast Fourier transform (FFT)
+   1. The main issue with the algorithms above is the dependency on a fast Fourier transform (FFT)
       library. FFT has been extensively optimized and architecture/CPU bounded to exploit the most
-      of speed. Also padding data to some power of 2 happens to increase the efficiency of the
-      algorithm. We can argue that time complexity doens't mean "faster" when we can exploit low
-      level instructions. In our case, using FFT in a low power device is overkilling. For example,
-      a quick search over the internet gives us a hint that computing FFT on a 4096 data in an ESP32
-      takes about 21ms (~47 computations in 1 second). This means ~79 seconds for computing all
-      FFT's (~3797) required for STAMP using a window of 300. Currently we can compute 50k full
+      of speed. Also, padding data to some power of 2 happens to increase the efficiency of the
+      algorithm. We can argue that time complexity doesn't mean "faster" when we can exploit
+      low-level instructions. In our case, using FFT in a low-power device is overkilling. For
+      example, a quick search over the internet gives us a hint that computing FFT on a 4096 data in
+      an ESP32 takes about 21ms (~47 computations in 1 second). This means ~79 seconds for computing
+      all FFT's (~3797) required for STAMP using a window of 300. Currently, we can compute 50k full
       matrices in less time using no FFT in an ESP32 MCU (Fig. \@ref(fig:esp32)).
 
     2. Recent works using _exact_ algorithms are using an unpublished algorithm called **MPX**, which
@@ -545,7 +545,7 @@ improve the `TRUE`/`FALSE` alarm discrimination.
    \@ref(eq:edcc). However, we may argue that it is easier to compare values that do not depend on
    the window size during an exploratory phase. MPX happens to naturally return values in CC, saving
    a few more computation time. The ST is an interesting factor that we can use, especially when
-   detecting pattern changes during time. The FLOSS algorithm rely on counting references between
+   detecting pattern changes during time. The FLOSS algorithm relies on counting references between
    indexes in the time series. ST can help remove "noise" from these references since only similar
    patterns above a certain threshold are referenced, and changes have more impact on these counts.
    The best ST threshold is still to be determined.
@@ -644,7 +644,7 @@ called `matrixprofiler` and improves the first one, using low-level language to 
 computational speed. The author has also joined the Matrix Profile Foundation as co-founder together
 with contributors from Python and Go languages [@mpf2020].
 
-The benchmarks of this implementation is available online [@Bischoff2021a].
+The benchmarks of this implementation are available online [@Bischoff2021a].
 
 # Research Team
 
