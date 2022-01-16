@@ -1,0 +1,4 @@
+objects filter=lfs diff=lfs merge=lfs -text
+objects/* filter=lfs diff=lfs merge=lfs -text
+objects/** filter=lfs diff=lfs merge=lfs -text
+objects/**/* filter=lfs diff=lfs merge=lfs -text
