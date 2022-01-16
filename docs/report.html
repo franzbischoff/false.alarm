@@ -4,295 +4,230 @@
 
 <head>
 
-  <meta charset="utf-8" />
-  <meta name="generator" content="pandoc" />
-  <meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
 
 
-  <meta name="author" content="Francisco Bischoff" />
+<meta name="author" content="Francisco Bischoff" />
 
 
-  <title>Report</title>
+<title>Report</title>
 
-  <script src="site_libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <link href="site_libs/bootstrap-3.3.5/css/lumen.min.css" rel="stylesheet" />
-  <script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
-  <script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
-  <script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
-  <style>
-    h1 {
-      font-size: 34px;
-    }
+<script src="site_libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="site_libs/bootstrap-3.3.5/css/lumen.min.css" rel="stylesheet" />
+<script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<style>h1 {font-size: 34px;}
+       h1.title {font-size: 38px;}
+       h2 {font-size: 30px;}
+       h3 {font-size: 24px;}
+       h4 {font-size: 18px;}
+       h5 {font-size: 16px;}
+       h6 {font-size: 12px;}
+       code {color: inherit; background-color: rgba(0, 0, 0, 0.04);}
+       pre:not([class]) { background-color: white }</style>
+<script src="site_libs/navigation-1.1/tabsets.js"></script>
+<link href="site_libs/highlightjs-9.12.0/textmate.css" rel="stylesheet" />
+<script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
+<script src="site_libs/kePrint-0.0.1/kePrint.js"></script>
+<link href="site_libs/lightable-0.0.1/lightable.css" rel="stylesheet" />
+<link href="site_libs/font-awesome-5.1.0/css/all.css" rel="stylesheet" />
+<link href="site_libs/font-awesome-5.1.0/css/v4-shims.css" rel="stylesheet" />
 
-    h1.title {
-      font-size: 38px;
-    }
+<link rel="icon" href="https://github.com/workflowr/workflowr-assets/raw/main/img/reproducible.png">
+<!-- Add a small amount of space between sections. -->
+<style type="text/css">
+div.section {
+  padding-top: 12px;
+}
+</style>
 
-    h2 {
-      font-size: 30px;
-    }
+<style type="text/css">
+  code{white-space: pre-wrap;}
+  span.smallcaps{font-variant: small-caps;}
+  span.underline{text-decoration: underline;}
+  div.column{display: inline-block; vertical-align: top; width: 50%;}
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+  ul.task-list{list-style: none;}
+    </style>
 
-    h3 {
-      font-size: 24px;
-    }
-
-    h4 {
-      font-size: 18px;
-    }
-
-    h5 {
-      font-size: 16px;
-    }
-
-    h6 {
-      font-size: 12px;
-    }
-
-    code {
-      color: inherit;
-      background-color: rgba(0, 0, 0, 0.04);
-    }
-
-    pre:not([class]) {
-      background-color: white
-    }
-  </style>
-  <script src="site_libs/navigation-1.1/tabsets.js"></script>
-  <link href="site_libs/highlightjs-9.12.0/textmate.css" rel="stylesheet" />
-  <script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
-  <script src="site_libs/kePrint-0.0.1/kePrint.js"></script>
-  <link href="site_libs/lightable-0.0.1/lightable.css" rel="stylesheet" />
-  <link href="site_libs/font-awesome-5.1.0/css/all.css" rel="stylesheet" />
-  <link href="site_libs/font-awesome-5.1.0/css/v4-shims.css" rel="stylesheet" />
-
-  <link rel="icon" href="https://github.com/workflowr/workflowr-assets/raw/master/img/reproducible.png">
-  <!-- Add a small amount of space between sections. -->
-  <style type="text/css">
-    div.section {
-      padding-top: 12px;
-    }
-  </style>
-
-  <style type="text/css">
-    code {
-      white-space: pre-wrap;
-    }
-
-    span.smallcaps {
-      font-variant: small-caps;
-    }
-
-    span.underline {
-      text-decoration: underline;
-    }
-
-    div.column {
-      display: inline-block;
-      vertical-align: top;
-      width: 50%;
-    }
-
-    div.hanging-indent {
-      margin-left: 1.5em;
-      text-indent: -1.5em;
-    }
-
-    ul.task-list {
-      list-style: none;
-    }
-  </style>
-
-  <style type="text/css">
-    code {
-      white-space: pre;
-    }
-  </style>
-  <script type="text/javascript">
-    if (window.hljs) {
-      hljs.configure({ languages: [] });
-      hljs.initHighlightingOnLoad();
-      if (document.readyState && document.readyState === "complete") {
-        window.setTimeout(function () { hljs.initHighlighting(); }, 0);
-      }
-    }
-  </script>
+<style type="text/css">code{white-space: pre;}</style>
+<script type="text/javascript">
+if (window.hljs) {
+  hljs.configure({languages: []});
+  hljs.initHighlightingOnLoad();
+  if (document.readyState && document.readyState === "complete") {
+    window.setTimeout(function() { hljs.initHighlighting(); }, 0);
+  }
+}
+</script>
 
 
 
 
 
-  <link rel="stylesheet" href="style.css" type="text/css" />
+<link rel="stylesheet" href="style.css" type="text/css" />
 
 
 
-  <style type="text/css">
-    .main-container {
-      max-width: 940px;
-      margin-left: auto;
-      margin-right: auto;
-    }
-
-    img {
-      max-width: 100%;
-    }
-
-    .tabbed-pane {
-      padding-top: 12px;
-    }
-
-    .html-widget {
-      margin-bottom: 20px;
-    }
-
-    button.code-folding-btn:focus {
-      outline: none;
-    }
-
-    summary {
-      display: list-item;
-    }
-
-    pre code {
-      padding: 0;
-    }
-  </style>
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+img {
+  max-width:100%;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+.html-widget {
+  margin-bottom: 20px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+summary {
+  display: list-item;
+}
+pre code {
+  padding: 0;
+}
+</style>
 
 
-  <style type="text/css">
-    .dropdown-submenu {
-      position: relative;
-    }
+<style type="text/css">
+.dropdown-submenu {
+  position: relative;
+}
+.dropdown-submenu>.dropdown-menu {
+  top: 0;
+  left: 100%;
+  margin-top: -6px;
+  margin-left: -1px;
+  border-radius: 0 6px 6px 6px;
+}
+.dropdown-submenu:hover>.dropdown-menu {
+  display: block;
+}
+.dropdown-submenu>a:after {
+  display: block;
+  content: " ";
+  float: right;
+  width: 0;
+  height: 0;
+  border-color: transparent;
+  border-style: solid;
+  border-width: 5px 0 5px 5px;
+  border-left-color: #cccccc;
+  margin-top: 5px;
+  margin-right: -10px;
+}
+.dropdown-submenu:hover>a:after {
+  border-left-color: #adb5bd;
+}
+.dropdown-submenu.pull-left {
+  float: none;
+}
+.dropdown-submenu.pull-left>.dropdown-menu {
+  left: -100%;
+  margin-left: 10px;
+  border-radius: 6px 0 6px 6px;
+}
+</style>
 
-    .dropdown-submenu>.dropdown-menu {
-      top: 0;
-      left: 100%;
-      margin-top: -6px;
-      margin-left: -1px;
-      border-radius: 0 6px 6px 6px;
-    }
+<script type="text/javascript">
+// manage active state of menu based on current page
+$(document).ready(function () {
+  // active menu anchor
+  href = window.location.pathname
+  href = href.substr(href.lastIndexOf('/') + 1)
+  if (href === "")
+    href = "index.html";
+  var menuAnchor = $('a[href="' + href + '"]');
 
-    .dropdown-submenu:hover>.dropdown-menu {
-      display: block;
-    }
+  // mark it active
+  menuAnchor.tab('show');
 
-    .dropdown-submenu>a:after {
-      display: block;
-      content: " ";
-      float: right;
-      width: 0;
-      height: 0;
-      border-color: transparent;
-      border-style: solid;
-      border-width: 5px 0 5px 5px;
-      border-left-color: #cccccc;
-      margin-top: 5px;
-      margin-right: -10px;
-    }
+  // if it's got a parent navbar menu mark it active as well
+  menuAnchor.closest('li.dropdown').addClass('active');
 
-    .dropdown-submenu:hover>a:after {
-      border-left-color: #adb5bd;
-    }
+  // Navbar adjustments
+  var navHeight = $(".navbar").first().height() + 15;
+  var style = document.createElement('style');
+  var pt = "padding-top: " + navHeight + "px; ";
+  var mt = "margin-top: -" + navHeight + "px; ";
+  var css = "";
+  // offset scroll position for anchor links (for fixed navbar)
+  for (var i = 1; i <= 6; i++) {
+    css += ".section h" + i + "{ " + pt + mt + "}\n";
+  }
+  style.innerHTML = "body {" + pt + "padding-bottom: 40px; }\n" + css;
+  document.head.appendChild(style);
+});
+</script>
 
-    .dropdown-submenu.pull-left {
-      float: none;
-    }
+<!-- tabsets -->
 
-    .dropdown-submenu.pull-left>.dropdown-menu {
-      left: -100%;
-      margin-left: 10px;
-      border-radius: 6px 0 6px 6px;
-    }
-  </style>
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
 
-  <script type="text/javascript">
-    // manage active state of menu based on current page
-    $(document).ready(function () {
-      // active menu anchor
-      href = window.location.pathname
-      href = href.substr(href.lastIndexOf('/') + 1)
-      if (href === "")
-        href = "index.html";
-      var menuAnchor = $('a[href="' + href + '"]');
+.tabset-dropdown > .nav-tabs > li.active:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
 
-      // mark it active
-      menuAnchor.tab('show');
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "&#xe258;";
+  border: none;
+}
 
-      // if it's got a parent navbar menu mark it active as well
-      menuAnchor.closest('li.dropdown').addClass('active');
+.tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
 
-      // Navbar adjustments
-      var navHeight = $(".navbar").first().height() + 15;
-      var style = document.createElement('style');
-      var pt = "padding-top: " + navHeight + "px; ";
-      var mt = "margin-top: -" + navHeight + "px; ";
-      var css = "";
-      // offset scroll position for anchor links (for fixed navbar)
-      for (var i = 1; i <= 6; i++) {
-        css += ".section h" + i + "{ " + pt + mt + "}\n";
-      }
-      style.innerHTML = "body {" + pt + "padding-bottom: 40px; }\n" + css;
-      document.head.appendChild(style);
-    });
-  </script>
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
 
-  <!-- tabsets -->
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+  background-color: transparent;
+}
 
-  <style type="text/css">
-    .tabset-dropdown>.nav-tabs {
-      display: inline-table;
-      max-height: 500px;
-      min-height: 44px;
-      overflow-y: auto;
-      border: 1px solid #ddd;
-      border-radius: 4px;
-    }
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
 
-    .tabset-dropdown>.nav-tabs>li.active:before {
-      content: "";
-      font-family: 'Glyphicons Halflings';
-      display: inline-block;
-      padding: 10px;
-      border-right: 1px solid #ddd;
-    }
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
 
-    .tabset-dropdown>.nav-tabs.nav-tabs-open>li.active:before {
-      content: "&#xe258;";
-      border: none;
-    }
-
-    .tabset-dropdown>.nav-tabs.nav-tabs-open:before {
-      content: "";
-      font-family: 'Glyphicons Halflings';
-      display: inline-block;
-      padding: 10px;
-      border-right: 1px solid #ddd;
-    }
-
-    .tabset-dropdown>.nav-tabs>li.active {
-      display: block;
-    }
-
-    .tabset-dropdown>.nav-tabs>li>a,
-    .tabset-dropdown>.nav-tabs>li>a:focus,
-    .tabset-dropdown>.nav-tabs>li>a:hover {
-      border: none;
-      display: inline-block;
-      border-radius: 4px;
-      background-color: transparent;
-    }
-
-    .tabset-dropdown>.nav-tabs.nav-tabs-open>li {
-      display: block;
-      float: none;
-    }
-
-    .tabset-dropdown>.nav-tabs>li {
-      display: none;
-    }
-  </style>
-
-  <!-- code folding -->
+<!-- code folding -->
 
 
 
@@ -302,1477 +237,1800 @@
 <body>
 
 
-  <div class="container-fluid main-container">
+<div class="container-fluid main-container">
 
 
 
 
-    <div class="navbar navbar-default  navbar-fixed-top" role="navigation">
-      <div class="container">
-        <div class="navbar-header">
-          <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar">
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-          </button>
-          <a class="navbar-brand" href="index.html">false.alarm</a>
-        </div>
-        <div id="navbar" class="navbar-collapse collapse">
-          <ul class="nav navbar-nav">
-            <li>
-              <a href="index.html">Home</a>
-            </li>
-            <li>
-              <a href="blog.html">Blog</a>
-            </li>
-            <li>
-              <a href="report.html">Report</a>
-            </li>
-            <li>
-              <a href="about.html">About</a>
-            </li>
-            <li>
-              <a href="license.html">License</a>
-            </li>
-            <li>
-              <a href="thesis/index.html">Thesis</a>
-            </li>
-            <li>
-              <a href="https://github.com/franzbischoff/false.alarm">
-                <span class="fa fa-github"></span>
-
-                Source
-              </a>
-            </li>
-          </ul>
-          <ul class="nav navbar-nav navbar-right">
-            <li>
-              <a
-                href="https://twitter.com/intent/tweet?text=Detecting%20life-threatening%20patterns%20in%20Point-of-care%20ECG%20using%20efficient%20memory%20and%20processor%20power&amp;url=https%3A%2F%2Ffranzbischoff.github.io%2Ffalse.alarm%2F&amp;hashtags=rmarkdown,bookdown">
-                <span class="fab fa-twitter"></span>
-
-              </a>
-            </li>
-            <li>
-              <a
-                href="https://www.facebook.com/sharer/sharer.php?u=https%3A%2F%2Ffranzbischoff.github.io%2Ffalse.alarm%2F">
-                <span class="fa fa-facebook"></span>
-
-              </a>
-            </li>
-            <li>
-              <a
-                href="https://www.facebook.com/sharer/sharer.php?u=https%3A%2F%2Ffranzbischoff.github.io%2Ffalse.alarm%2F">
-                <span class="fa fa-share-alt"></span>
-
-              </a>
-            </li>
-          </ul>
-        </div>
-        <!--/.nav-collapse -->
-      </div>
-      <!--/.container -->
-    </div>
-    <!--/.navbar -->
-
-    <div id="header">
-
-
-
-      <h1 class="title toc-ignore">Report</h1>
-      <h4 class="author">Francisco Bischoff</h4>
-      <h4 class="date">on July 15, 2021</h4>
-
-    </div>
-
-
-    <p>
-      <button type="button" class="btn btn-default btn-workflowr btn-workflowr-report" data-toggle="collapse"
-        data-target="#workflowr-report">
-        <span class="glyphicon glyphicon-list" aria-hidden="true"></span> workflowr <span
-          class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span>
+<div class="navbar navbar-default  navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
       </button>
-    </p>
-    <div id="workflowr-report" class="collapse">
-      <ul class="nav nav-tabs">
-        <li class="active">
-          <a data-toggle="tab" href="#summary">Summary</a>
-        </li>
+      <a class="navbar-brand" href="index.html">false.alarm</a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
         <li>
-          <a data-toggle="tab" href="#checks"> Checks <span class="glyphicon glyphicon-ok text-success"
-              aria-hidden="true"></span> </a>
-        </li>
-        <li>
-          <a data-toggle="tab" href="#versions">Past versions</a>
-        </li>
+  <a href="index.html">Home</a>
+</li>
+<li>
+  <a href="blog.html">Blog</a>
+</li>
+<li>
+  <a href="report.html">Report</a>
+</li>
+<li>
+  <a href="about.html">About</a>
+</li>
+<li>
+  <a href="license.html">License</a>
+</li>
+<li>
+  <a href="thesis/index.html">Thesis</a>
+</li>
+<li>
+  <a href="https://github.com/franzbischoff/false.alarm">
+    <span class="fa fa-github"></span>
+     
+    Source
+  </a>
+</li>
       </ul>
-      <div class="tab-content">
-        <div id="summary" class="tab-pane fade in active">
-          <p>
-            <strong>Last updated:</strong> 2021-10-11
-          </p>
-          <p>
-            <strong>Checks:</strong> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> 7
-            <span class="glyphicon glyphicon-exclamation-sign text-danger" aria-hidden="true"></span> 0
-          </p>
-          <p>
-            <strong>Knit directory:</strong> <code>false.alarm/</code> <span class="glyphicon glyphicon-question-sign"
-              aria-hidden="true" title="This is the local directory in which the code in this file was executed.">
-            </span>
-          </p>
-          <p>
-            This reproducible <a href="http://rmarkdown.rstudio.com">R Markdown</a> analysis was created with <a
-              href="https://github.com/jdblischak/workflowr">workflowr</a> (version 1.6.2). The <em>Checks</em> tab
-            describes the reproducibility checks that were applied when the results were created. The <em>Past
-              versions</em> tab lists the development history.
-          </p>
-          <hr>
-        </div>
-        <div id="checks" class="tab-pane fade">
-          <div id="workflowr-checks" class="panel-group">
-            <div class="panel panel-default">
-              <div class="panel-heading">
-                <p class="panel-title">
-                  <a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRMarkdownfilestronguptodate">
-                    <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>R Markdown
-                      file:</strong> up-to-date </a>
-                </p>
-              </div>
-              <div id="strongRMarkdownfilestronguptodate" class="panel-collapse collapse">
-                <div class="panel-body">
-                  <p>Great! Since the R Markdown file has been committed to the Git repository, you know the exact
-                    version of the code that produced these results.</p>
-                </div>
-              </div>
-            </div>
-            <div class="panel panel-default">
-              <div class="panel-heading">
-                <p class="panel-title">
-                  <a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongEnvironmentstrongempty"> <span
-                      class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span>
-                    <strong>Environment:</strong> empty </a>
-                </p>
-              </div>
-              <div id="strongEnvironmentstrongempty" class="panel-collapse collapse">
-                <div class="panel-body">
-                  <p>Great job! The global environment was empty. Objects defined in the global environment can affect
-                    the analysis in your R Markdown file in unknown ways. For reproduciblity it’s best to always run the
-                    code in an empty environment.</p>
-                </div>
-              </div>
-            </div>
-            <div class="panel panel-default">
-              <div class="panel-heading">
-                <p class="panel-title">
-                  <a data-toggle="collapse" data-parent="#workflowr-checks"
-                    href="#strongSeedstrongcodesetseed20201020code"> <span class="glyphicon glyphicon-ok text-success"
-                      aria-hidden="true"></span> <strong>Seed:</strong> <code>set.seed(20201020)</code> </a>
-                </p>
-              </div>
-              <div id="strongSeedstrongcodesetseed20201020code" class="panel-collapse collapse">
-                <div class="panel-body">
-                  <p>The command <code>set.seed(20201020)</code> was run prior to running the code in the R Markdown
-                    file. Setting a seed ensures that any results that rely on randomness, e.g. subsampling or
-                    permutations, are reproducible.</p>
-                </div>
-              </div>
-            </div>
-            <div class="panel panel-default">
-              <div class="panel-heading">
-                <p class="panel-title">
-                  <a data-toggle="collapse" data-parent="#workflowr-checks"
-                    href="#strongSessioninformationstrongrecorded"> <span class="glyphicon glyphicon-ok text-success"
-                      aria-hidden="true"></span> <strong>Session information:</strong> recorded </a>
-                </p>
-              </div>
-              <div id="strongSessioninformationstrongrecorded" class="panel-collapse collapse">
-                <div class="panel-body">
-                  <p>Great job! Recording the operating system, R version, and package versions is critical for
-                    reproducibility.</p>
-                </div>
-              </div>
-            </div>
-            <div class="panel panel-default">
-              <div class="panel-heading">
-                <p class="panel-title">
-                  <a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongCachestrongnone"> <span
-                      class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Cache:</strong>
-                    none </a>
-                </p>
-              </div>
-              <div id="strongCachestrongnone" class="panel-collapse collapse">
-                <div class="panel-body">
-                  <p>Nice! There were no cached chunks for this analysis, so you can be confident that you successfully
-                    produced the results during this run.</p>
-                </div>
-              </div>
-            </div>
-            <div class="panel panel-default">
-              <div class="panel-heading">
-                <p class="panel-title">
-                  <a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongFilepathsstrongrelative"> <span
-                      class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>File
-                      paths:</strong> relative </a>
-                </p>
-              </div>
-              <div id="strongFilepathsstrongrelative" class="panel-collapse collapse">
-                <div class="panel-body">
-                  <p>Great job! Using relative paths to the files within your workflowr project makes it easier to run
-                    your code on other machines.</p>
-                </div>
-              </div>
-            </div>
-            <div class="panel panel-default">
-              <div class="panel-heading">
-                <p class="panel-title">
-                  <a data-toggle="collapse" data-parent="#workflowr-checks"
-                    href="#strongRepositoryversionstrongahrefhttpsgithubcomfranzbischofffalsealarmtreed63ddde1889701603905a8c27876b19550e56f81targetblankd63dddea">
-                    <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Repository
-                      version:</strong> <a
-                      href="https://github.com/franzbischoff/false.alarm/tree/d63ddde1889701603905a8c27876b19550e56f81"
-                      target="_blank">d63ddde</a> </a>
-                </p>
-              </div>
-              <div
-                id="strongRepositoryversionstrongahrefhttpsgithubcomfranzbischofffalsealarmtreed63ddde1889701603905a8c27876b19550e56f81targetblankd63dddea"
-                class="panel-collapse collapse">
-                <div class="panel-body">
-                  <p>
-                    Great! You are using Git for version control. Tracking code development and connecting the code
-                    version to the results is critical for reproducibility.
-                  </p>
-                  <p>
-                    The results in this page were generated with repository version <a
-                      href="https://github.com/franzbischoff/false.alarm/tree/d63ddde1889701603905a8c27876b19550e56f81"
-                      target="_blank">d63ddde</a>. See the <em>Past versions</em> tab to see a history of the changes
-                    made to the R Markdown and HTML files.
-                  </p>
-                  <p>
-                    Note that you need to be careful to ensure that all relevant files for the analysis have been
-                    committed to Git prior to generating the results (you can use <code>wflow_publish</code> or
-                    <code>wflow_git_commit</code>). workflowr only checks the R Markdown file, but you know if there are
-                    other scripts or data files that it depends on. Below is the status of the Git repository when the
-                    results were generated:
-                  </p>
-                  <pre><code>
-Ignored files:
-    Ignored:    analysis/blog_cache/
-    Ignored:    renv/library/
-    Ignored:    renv/staging/
+      <ul class="nav navbar-nav navbar-right">
+        <li>
+  <a href="https://twitter.com/intent/tweet?text=Detecting%20life-threatening%20patterns%20in%20Point-of-care%20ECG%20using%20efficient%20memory%20and%20processor%20power&amp;url=https%3A%2F%2Ffranzbischoff.github.io%2Ffalse.alarm%2F&amp;hashtags=rmarkdown,bookdown">
+    <span class="fab fa-twitter"></span>
+     
+  </a>
+</li>
+<li>
+  <a href="https://www.facebook.com/sharer/sharer.php?u=https%3A%2F%2Ffranzbischoff.github.io%2Ffalse.alarm%2F">
+    <span class="fa fa-facebook"></span>
+     
+  </a>
+</li>
+<li>
+  <a href="https://www.facebook.com/sharer/sharer.php?u=https%3A%2F%2Ffranzbischoff.github.io%2Ffalse.alarm%2F">
+    <span class="fa fa-share-alt"></span>
+     
+  </a>
+</li>
+      </ul>
+    </div><!--/.nav-collapse -->
+  </div><!--/.container -->
+</div><!--/.navbar -->
 
-Staged changes:
-    New:        .github/R-version
-    New:        .github/depends.Rds
+<div id="header">
+
+
+
+<h1 class="title toc-ignore">Report</h1>
+<h4 class="author">Francisco Bischoff</h4>
+<h4 class="date">on Jan 15, 2022</h4>
+
+</div>
+
+
+<p>
+<button type="button" class="btn btn-default btn-workflowr btn-workflowr-report" data-toggle="collapse" data-target="#workflowr-report">
+<span class="glyphicon glyphicon-list" aria-hidden="true"></span> workflowr <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span>
+</button>
+</p>
+<div id="workflowr-report" class="collapse">
+<ul class="nav nav-tabs">
+<li class="active">
+<a data-toggle="tab" href="#summary">Summary</a>
+</li>
+<li>
+<a data-toggle="tab" href="#checks"> Checks <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> </a>
+</li>
+<li>
+<a data-toggle="tab" href="#versions">Past versions</a>
+</li>
+</ul>
+<div class="tab-content">
+<div id="summary" class="tab-pane fade in active">
+<p>
+<strong>Last updated:</strong> 2022-01-16
+</p>
+<p>
+<strong>Checks:</strong> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> 7 <span class="glyphicon glyphicon-exclamation-sign text-danger" aria-hidden="true"></span> 0
+</p>
+<p>
+<strong>Knit directory:</strong> <code>false.alarm/</code> <span class="glyphicon glyphicon-question-sign" aria-hidden="true" title="This is the local directory in which the code in this file was executed."> </span>
+</p>
+<p>
+This reproducible <a href="https://rmarkdown.rstudio.com">R Markdown</a> analysis was created with <a
+  href="https://github.com/workflowr/workflowr">workflowr</a> (version 1.7.0). The <em>Checks</em> tab describes the reproducibility checks that were applied when the results were created. The <em>Past versions</em> tab lists the development history.
+</p>
+<hr>
+</div>
+<div id="checks" class="tab-pane fade">
+<div id="workflowr-checks" class="panel-group">
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRMarkdownfilestronguptodate"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>R Markdown file:</strong> up-to-date </a>
+</p>
+</div>
+<div id="strongRMarkdownfilestronguptodate" class="panel-collapse collapse">
+<div class="panel-body">
+<p>Great! Since the R Markdown file has been committed to the Git repository, you know the exact version of the code that produced these results.</p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongEnvironmentstrongempty"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Environment:</strong> empty </a>
+</p>
+</div>
+<div id="strongEnvironmentstrongempty" class="panel-collapse collapse">
+<div class="panel-body">
+<p>Great job! The global environment was empty. Objects defined in the global environment can affect the analysis in your R Markdown file in unknown ways. For reproduciblity it’s best to always run the code in an empty environment.</p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongSeedstrongcodesetseed20201020code"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Seed:</strong> <code>set.seed(20201020)</code> </a>
+</p>
+</div>
+<div id="strongSeedstrongcodesetseed20201020code" class="panel-collapse collapse">
+<div class="panel-body">
+<p>The command <code>set.seed(20201020)</code> was run prior to running the code in the R Markdown file. Setting a seed ensures that any results that rely on randomness, e.g. subsampling or permutations, are reproducible.</p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongSessioninformationstrongrecorded"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Session information:</strong> recorded </a>
+</p>
+</div>
+<div id="strongSessioninformationstrongrecorded" class="panel-collapse collapse">
+<div class="panel-body">
+<p>Great job! Recording the operating system, R version, and package versions is critical for reproducibility.</p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongCachestrongnone"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Cache:</strong> none </a>
+</p>
+</div>
+<div id="strongCachestrongnone" class="panel-collapse collapse">
+<div class="panel-body">
+<p>Nice! There were no cached chunks for this analysis, so you can be confident that you successfully produced the results during this run.</p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongFilepathsstrongrelative"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>File paths:</strong> relative </a>
+</p>
+</div>
+<div id="strongFilepathsstrongrelative" class="panel-collapse collapse">
+<div class="panel-body">
+<p>Great job! Using relative paths to the files within your workflowr project makes it easier to run your code on other machines.</p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomfranzbischofffalsealarmtreeafebf46a99a2ce072ce523b14fb1a60e416dd972targetblankafebf46a"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Repository version:</strong> <a href="https://github.com/franzbischoff/false.alarm/tree/afebf46a99a2ce072ce523b14fb1a60e416dd972" target="_blank">afebf46</a> </a>
+</p>
+</div>
+<div id="strongRepositoryversionstrongahrefhttpsgithubcomfranzbischofffalsealarmtreeafebf46a99a2ce072ce523b14fb1a60e416dd972targetblankafebf46a" class="panel-collapse collapse">
+<div class="panel-body">
+<p>
+Great! You are using Git for version control. Tracking code development and connecting the code version to the results is critical for reproducibility.
+</p>
+<p>
+The results in this page were generated with repository version <a href="https://github.com/franzbischoff/false.alarm/tree/afebf46a99a2ce072ce523b14fb1a60e416dd972" target="_blank">afebf46</a>. See the <em>Past versions</em> tab to see a history of the changes made to the R Markdown and HTML files.
+</p>
+<p>
+Note that you need to be careful to ensure that all relevant files for the analysis have been committed to Git prior to generating the results (you can use <code>wflow_publish</code> or <code>wflow_git_commit</code>). workflowr only checks the R Markdown file, but you know if there are other scripts or data files that it depends on. Below is the status of the Git repository when the results were generated:
+</p>
+<pre><code>
+Ignored files:
+    Ignored:    .Renviron
+    Ignored:    .Rhistory
+    Ignored:    .Rproj.user/
+    Ignored:    .devcontainer/exts/
+    Ignored:    .history
+    Ignored:    .httr-oauth
+    Ignored:    R/RcppExports.R
+    Ignored:    _classifier/.gittargets
+    Ignored:    _classifier/meta/process
+    Ignored:    _classifier/meta/progress
+    Ignored:    _classifier/objects/
+    Ignored:    _classifier/user/
+    Ignored:    _targets/.gitattributes
+    Ignored:    _targets/.gittargets
+    Ignored:    _targets/meta/process
+    Ignored:    _targets/meta/progress
+    Ignored:    _targets/objects/
+    Ignored:    _targets/user/
+    Ignored:    analysis/blog_cache/
+    Ignored:    dev/
+    Ignored:    inst/extdata/
+    Ignored:    output/images/
+    Ignored:    papers/aime2021/aime2021.md
+    Ignored:    protocol/SecondReport.pdf
+    Ignored:    protocol/SecondReport_cache/
+    Ignored:    protocol/SecondReport_files/
+    Ignored:    renv/library/
+    Ignored:    renv/python/
+    Ignored:    renv/staging/
+    Ignored:    src/RcppExports.cpp
+    Ignored:    src/RcppExports.o
+    Ignored:    src/contrast.o
+    Ignored:    src/false.alarm.so
+    Ignored:    src/fft.o
+    Ignored:    src/mass.o
+    Ignored:    src/math.o
+    Ignored:    src/mpx.o
+    Ignored:    src/scrimp.o
+    Ignored:    src/stamp.o
+    Ignored:    src/stomp.o
+    Ignored:    src/windowfunc.o
+    Ignored:    tests/testthat/_snaps/
+    Ignored:    tmp/
 
 </code></pre>
-                  <p>
-                    Note that any generated files, e.g. HTML, png, CSS, etc., are not included in this status report
-                    because it is ok for generated content to have uncommitted changes.
-                  </p>
-                </div>
-              </div>
-            </div>
-          </div>
-          <hr>
-        </div>
-        <div id="versions" class="tab-pane fade">
+<p>
+Note that any generated files, e.g. HTML, png, CSS, etc., are not included in this status report because it is ok for generated content to have uncommitted changes.
+</p>
+</div>
+</div>
+</div>
+</div>
+<hr>
+</div>
+<div id="versions" class="tab-pane fade">
 
-          <p>
-            These are the previous versions of the repository in which changes were made to the R Markdown
-            (<code>analysis/report.Rmd</code>) and HTML (<code>docs/report.html</code>) files. If you’ve configured a
-            remote Git repository (see <code>?wflow_git_remote</code>), click on the hyperlinks in the table below to
-            view the files as they were in that past version.
-          </p>
-          <div class="table-responsive">
-            <table class="table table-condensed table-hover">
-              <thead>
-                <tr>
-                  <th>
-                    File
-                  </th>
-                  <th>
-                    Version
-                  </th>
-                  <th>
-                    Author
-                  </th>
-                  <th>
-                    Date
-                  </th>
-                  <th>
-                    Message
-                  </th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr>
-                  <td>
-                    Rmd
-                  </td>
-                  <td>
-                    <a href="https://github.com/franzbischoff/false.alarm/blob/6b03f431bca6d1df980893c70577fba8ec23554d/analysis/report.Rmd"
-                      target="_blank">6b03f43</a>
-                  </td>
-                  <td>
-                    Francisco Bischoff
-                  </td>
-                  <td>
-                    2021-10-11
-                  </td>
-                  <td>
-                    Squashed commit of the following:
-                  </td>
-                </tr>
-                <tr>
-                  <td>
-                    html
-                  </td>
-                  <td>
-                    <a href="https://rawcdn.githack.com/franzbischoff/false.alarm/c19ec017e1a0cdd909f673a745546e5f34813afa/docs/report.html"
-                      target="_blank">c19ec01</a>
-                  </td>
-                  <td>
-                    Francisco Bischoff
-                  </td>
-                  <td>
-                    2021-08-17
-                  </td>
-                  <td>
-                    Build site.
-                  </td>
-                </tr>
-                <tr>
-                  <td>
-                    html
-                  </td>
-                  <td>
-                    <a href="https://rawcdn.githack.com/franzbischoff/false.alarm/a5ec160176f456ba8e8f7f2e8650cbf5c68b1e97/docs/report.html"
-                      target="_blank">a5ec160</a>
-                  </td>
-                  <td>
-                    Francisco Bischoff
-                  </td>
-                  <td>
-                    2021-08-17
-                  </td>
-                  <td>
-                    Build site.
-                  </td>
-                </tr>
-                <tr>
-                  <td>
-                    html
-                  </td>
-                  <td>
-                    <a href="https://rawcdn.githack.com/franzbischoff/false.alarm/b51dba2e732b40a1a47c9250b0c70a1889043265/docs/report.html"
-                      target="_blank">b51dba2</a>
-                  </td>
-                  <td>
-                    GitHub Actions
-                  </td>
-                  <td>
-                    2021-08-17
-                  </td>
-                  <td>
-                    Build site.
-                  </td>
-                </tr>
-                <tr>
-                  <td>
-                    Rmd
-                  </td>
-                  <td>
-                    <a href="https://github.com/franzbischoff/false.alarm/blob/c88cbd51e2bfa43b620477512ce369cb1cf43cd3/analysis/report.Rmd"
-                      target="_blank">c88cbd5</a>
-                  </td>
-                  <td>
-                    Francisco Bischoff
-                  </td>
-                  <td>
-                    2021-08-17
-                  </td>
-                  <td>
-                    targets workflowr
-                  </td>
-                </tr>
-                <tr>
-                  <td>
-                    html
-                  </td>
-                  <td>
-                    <a href="https://rawcdn.githack.com/franzbischoff/false.alarm/c88cbd51e2bfa43b620477512ce369cb1cf43cd3/docs/report.html"
-                      target="_blank">c88cbd5</a>
-                  </td>
-                  <td>
-                    Francisco Bischoff
-                  </td>
-                  <td>
-                    2021-08-17
-                  </td>
-                  <td>
-                    targets workflowr
-                  </td>
-                </tr>
-                <tr>
-                  <td>
-                    html
-                  </td>
-                  <td>
-                    <a href="https://rawcdn.githack.com/franzbischoff/false.alarm/e7e5d4861f1f3b21e25787e0ed6b6066b57ff857/docs/report.html"
-                      target="_blank">e7e5d48</a>
-                  </td>
-                  <td>
-                    GitHub Actions
-                  </td>
-                  <td>
-                    2021-07-15
-                  </td>
-                  <td>
-                    Build site.
-                  </td>
-                </tr>
-                <tr>
-                  <td>
-                    Rmd
-                  </td>
-                  <td>
-                    <a href="https://github.com/franzbischoff/false.alarm/blob/1473a05723e9d94f18e9fd5f77a616bc669ed973/analysis/report.Rmd"
-                      target="_blank">1473a05</a>
-                  </td>
-                  <td>
-                    Francisco Bischoff
-                  </td>
-                  <td>
-                    2021-07-15
-                  </td>
-                  <td>
-                    report
-                  </td>
-                </tr>
-                <tr>
-                  <td>
-                    html
-                  </td>
-                  <td>
-                    <a href="https://rawcdn.githack.com/franzbischoff/false.alarm/1473a05723e9d94f18e9fd5f77a616bc669ed973/docs/report.html"
-                      target="_blank">1473a05</a>
-                  </td>
-                  <td>
-                    Francisco Bischoff
-                  </td>
-                  <td>
-                    2021-07-15
-                  </td>
-                  <td>
-                    report
-                  </td>
-                </tr>
-                <tr>
-                  <td>
-                    Rmd
-                  </td>
-                  <td>
-                    <a href="https://github.com/franzbischoff/false.alarm/blob/7436fbed2102d4431983265e8d8773fae5991150/analysis/report.Rmd"
-                      target="_blank">7436fbe</a>
-                  </td>
-                  <td>
-                    Francisco Bischoff
-                  </td>
-                  <td>
-                    2021-07-11
-                  </td>
-                  <td>
-                    stage cpp code
-                  </td>
-                </tr>
-                <tr>
-                  <td>
-                    html
-                  </td>
-                  <td>
-                    <a href="https://rawcdn.githack.com/franzbischoff/false.alarm/7436fbed2102d4431983265e8d8773fae5991150/docs/report.html"
-                      target="_blank">7436fbe</a>
-                  </td>
-                  <td>
-                    Francisco Bischoff
-                  </td>
-                  <td>
-                    2021-07-11
-                  </td>
-                  <td>
-                    stage cpp code
-                  </td>
-                </tr>
-                <tr>
-                  <td>
-                    html
-                  </td>
-                  <td>
-                    <a href="https://rawcdn.githack.com/franzbischoff/false.alarm/52e7f0b7b022544dd3dafc2a8f8cdf5951fb0f54/docs/report.html"
-                      target="_blank">52e7f0b</a>
-                  </td>
-                  <td>
-                    GitHub Actions
-                  </td>
-                  <td>
-                    2021-03-24
-                  </td>
-                  <td>
-                    Build site.
-                  </td>
-                </tr>
-                <tr>
-                  <td>
-                    Rmd
-                  </td>
-                  <td>
-                    <a href="https://github.com/franzbischoff/false.alarm/blob/7c3cc31c693d4bf3a26b42bd43703efde4b2a528/analysis/report.Rmd"
-                      target="_blank">7c3cc31</a>
-                  </td>
-                  <td>
-                    Francisco Bischoff
-                  </td>
-                  <td>
-                    2021-03-23
-                  </td>
-                  <td>
-                    Targets
-                  </td>
-                </tr>
-                <tr>
-                  <td>
-                    html
-                  </td>
-                  <td>
-                    <a href="https://rawcdn.githack.com/franzbischoff/false.alarm/7c3cc31c693d4bf3a26b42bd43703efde4b2a528/docs/report.html"
-                      target="_blank">7c3cc31</a>
-                  </td>
-                  <td>
-                    Francisco Bischoff
-                  </td>
-                  <td>
-                    2021-03-23
-                  </td>
-                  <td>
-                    Targets
-                  </td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-          <hr>
-        </div>
-      </div>
-    </div>
-    <div id="current-work-status" class="section level1">
-      <h1><span class="header-section-number">1</span> Current Work Status</h1>
-      <div id="principles" class="section level2">
-        <h2><span class="header-section-number">1.1</span> Principles</h2>
-        <p>This research is being conducted using the Research Compendium principles:<span class="citation"><sup><a
-                href="#ref-compendium2019" role="doc-biblioref">1</a></sup></span></p>
-        <ol style="list-style-type: decimal">
-          <li>Stick with the convention of your peers;</li>
-          <li>Keep data, methods, and output separated;</li>
-          <li>Specify your computational environment as clearly as you can.</li>
-        </ol>
-        <p>Data management is following the FAIR principle (findable, accessible, interoperable, reusable).<span
-            class="citation"><sup><a href="#ref-wilkinson2016" role="doc-biblioref">2</a></sup></span></p>
-      </div>
-      <div id="the-data" class="section level2">
-        <h2><span class="header-section-number">1.2</span> The data</h2>
-        <p>The current dataset used is the CinC/Physionet Challenge 2015 public dataset, modified to include only the
-          actual data and the header files in order to be read by the pipeline and is hosted by Zenodo<span
-            class="citation"><sup><a href="#ref-bischoff2021" role="doc-biblioref">3</a></sup></span> under the same
-          license as Physionet.</p>
-        <p>The dataset is composed of 750 patients with at least five minutes records. All signals have been resampled
-          (using anti-alias filters) to 12 bit, 250 Hz and have had FIR bandpass (0.05 to 40Hz) and mains notch filters
-          applied to remove noise. Pacemaker and other artifacts still present on the ECG.<span class="citation"><sup><a
-                href="#ref-Clifford2015" role="doc-biblioref">4</a></sup></span> Furthermore, this dataset contains at
-          least two ECG derivations and one or more variables like arterial blood pressure, photoplethysmograph
-          readings, and respiration movements.</p>
-        <p>The <em>event</em> we seek to improve is the detection of a life-threatening arrhythmia as defined by
-          Physionet in Table .</p>
-        <table class="table" style="margin-left: auto; margin-right: auto;">
-          <caption>
-            Definition of the five alarm types used in CinC/Physionet Challenge 2015 challenge.
-          </caption>
-          <thead>
-            <tr>
-              <th style="text-align:left;font-weight: bold;">
-                Alarm
-              </th>
-              <th style="text-align:left;font-weight: bold;">
-                Definition
-              </th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td style="text-align:left;">
-                Asystole
-              </td>
-              <td style="text-align:left;">
-                No QRS for at least 4 seconds
-              </td>
-            </tr>
-            <tr>
-              <td style="text-align:left;">
-                Extreme Bradycardia
-              </td>
-              <td style="text-align:left;">
-                Heart rate lower than 40 bpm for 5 consecutive beats
-              </td>
-            </tr>
-            <tr>
-              <td style="text-align:left;">
-                Extreme Tachycardia
-              </td>
-              <td style="text-align:left;">
-                Heart rate higher than 140 bpm for 17 consecutive beats
-              </td>
-            </tr>
-            <tr>
-              <td style="text-align:left;">
-                Ventricular Tachycardia
-              </td>
-              <td style="text-align:left;">
-                5 or more ventricular beats with heart rate higher than 100 bpm
-              </td>
-            </tr>
-            <tr>
-              <td style="text-align:left;">
-                Ventricular Flutter/Fibrillation
-              </td>
-              <td style="text-align:left;">
-                Fibrillatory, flutter, or oscillatory waveform for at least 4 seconds
-              </td>
-            </tr>
-          </tbody>
-        </table>
-        <p>The fifth minute is precisely where the alarm has been triggered on the original recording set. To meet the
-          ANSI/AAMI EC13 Cardiac Monitor Standards,<span class="citation"><sup><a href="#ref-AAMI2002"
-                role="doc-biblioref">5</a></sup></span> the onset of the event is within 10 seconds of the alarm (i.e.,
-          between 4:50 and 5:00 of the record). That doesn’t mean that there are no other arrhythmias before, but those
-          were not labeled.</p>
-      </div>
-      <div id="workflow" class="section level2">
-        <h2><span class="header-section-number">1.3</span> Workflow</h2>
-        <p>All steps of the process are being managed using the R package <code>targets</code><span
-            class="citation"><sup><a href="#ref-landau2021" role="doc-biblioref">6</a></sup></span> from data extraction
-          to the final report, as shown in Fig. .</p>
-        <div class="figure" style="text-align: center">
-          <img src="figure/targets.png" alt="Reproducible research workflow using `targets`." width="100%" />
-          <p class="caption">
-            Reproducible research workflow using <code>targets</code>.
-          </p>
-        </div>
-        <p>
-          <button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse"
-            data-target="#fig-targets">
-            Past versions of targets.png
-          </button>
-        </p>
-        <div id="fig-targets" class="collapse">
-          <div class="table-responsive">
-            <table class="table table-condensed table-hover">
-              <thead>
-                <tr>
-                  <th>
-                    Version
-                  </th>
-                  <th>
-                    Author
-                  </th>
-                  <th>
-                    Date
-                  </th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr>
-                  <td>
-                    <a href="https://github.com/franzbischoff/false.alarm/blob/1473a05723e9d94f18e9fd5f77a616bc669ed973/docs/figure/targets.png"
-                      target="_blank">1473a05</a>
-                  </td>
-                  <td>
-                    Francisco Bischoff
-                  </td>
-                  <td>
-                    2021-07-15
-                  </td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-        </div>
-        <p>The report is available on the main webpage,<span class="citation"><sup><a href="#ref-franz_website"
-                role="doc-biblioref">7</a></sup></span> allowing inspection of previous versions managed by the R
-          package <code>workflowr</code><span class="citation"><sup><a href="#ref-workflowr2021"
-                role="doc-biblioref">8</a></sup></span>, as shown in Fig. .</p>
-        <div class="figure" style="text-align: center">
-          <img src="figure/workflowr_print.png" alt="Reproducible reports using `workflowr`." width="100%" />
-          <p class="caption">
-            Reproducible reports using <code>workflowr</code>.
-          </p>
-        </div>
-        <p>
-          <button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse"
-            data-target="#fig-workflowr_print">
-            Past versions of workflowr_print.png
-          </button>
-        </p>
-        <div id="fig-workflowr_print" class="collapse">
-          <div class="table-responsive">
-            <table class="table table-condensed table-hover">
-              <thead>
-                <tr>
-                  <th>
-                    Version
-                  </th>
-                  <th>
-                    Author
-                  </th>
-                  <th>
-                    Date
-                  </th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr>
-                  <td>
-                    <a href="https://github.com/franzbischoff/false.alarm/blob/1473a05723e9d94f18e9fd5f77a616bc669ed973/docs/figure/workflowr_print.png"
-                      target="_blank">1473a05</a>
-                  </td>
-                  <td>
-                    Francisco Bischoff
-                  </td>
-                  <td>
-                    2021-07-15
-                  </td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-        </div>
-      </div>
-      <div id="work-in-progress" class="section level2">
-        <h2><span class="header-section-number">1.4</span> Work in Progress</h2>
-        <div id="project-start" class="section level3">
-          <h3><span class="header-section-number">1.4.1</span> Project start</h3>
-          <p>The project started with a literature survey on the databases Scopus, Pubmed, Web of Science, and Google
-            Scholar with the following query (the syntax was adapted for each database):</p>
-          <p>TITLE-ABS-KEY ( algorithm OR ‘point of care’ OR ‘signal processing’ OR ‘computer assisted’ OR ‘support
-            vector machine’ OR ‘decision support system<em>’ OR ’neural network</em>’ OR ‘automatic interpretation’ OR
-            ‘machine learning’) AND TITLE-ABS-KEY ( electrocardiography OR cardiography OR ‘electrocardiographic
-            tracing’ OR ecg OR electrocardiogram OR cardiogram ) AND TITLE-ABS-KEY ( ‘Intensive care unit’ OR
-            ‘cardiologic care unit’ OR ‘intensive care center’ OR ‘cardiologic care center’ )</p>
-          <p><br />
-          </p>
-          <p>The inclusion and exclusion criteria were defined as in Table .</p>
-          <table class="table" style="margin-left: auto; margin-right: auto;">
-            <caption>
-              Literature review criteria.
-            </caption>
-            <thead>
-              <tr>
-                <th style="text-align:left;font-weight: bold;">
-                  Inclusion criteria
-                </th>
-                <th style="text-align:left;font-weight: bold;">
-                  Exclusion criteria
-                </th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td style="text-align:left;width: 10cm; ">
-                  ECG automatic interpretation
-                </td>
-                <td style="text-align:left;">
-                  Manual interpretation
-                </td>
-              </tr>
-              <tr>
-                <td style="text-align:left;width: 10cm; ">
-                  ECG anomaly detection
-                </td>
-                <td style="text-align:left;">
-                  Publication older than ten years
-                </td>
-              </tr>
-              <tr>
-                <td style="text-align:left;width: 10cm; ">
-                  ECG context change detection
-                </td>
-                <td style="text-align:left;">
-                  Do not attempt to identify life-threatening arrhythmias, namely asystole, extreme bradycardia, extreme
-                  tachycardia, ventricular tachycardia, and ventricular flutter/fibrillation
-                </td>
-              </tr>
-              <tr>
-                <td style="text-align:left;width: 10cm; ">
-                  Online Stream ECG analysis
-                </td>
-                <td style="text-align:left;">
-                  No performance measurements reported
-                </td>
-              </tr>
-              <tr>
-                <td style="text-align:left;width: 10cm; ">
-                  Specific diagnosis (like a flutter, hyperkalemia, etc.)
-                </td>
-                <td style="text-align:left;">
-                </td>
-              </tr>
-            </tbody>
-          </table>
-          <p>The current stage of the review is on Data Extraction, from the resulting screening shown in Fig. .</p>
-          <div class="figure" style="text-align: center">
-            <img src="figure/PRISMA.png" alt="Prisma results" width="80%" />
-            <p class="caption">
-              Prisma results
-            </p>
-          </div>
-          <p>
-            <button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse"
-              data-target="#fig-PRISMA">
-              Past versions of PRISMA.png
-            </button>
-          </p>
-          <div id="fig-PRISMA" class="collapse">
-            <div class="table-responsive">
-              <table class="table table-condensed table-hover">
-                <thead>
-                  <tr>
-                    <th>
-                      Version
-                    </th>
-                    <th>
-                      Author
-                    </th>
-                    <th>
-                      Date
-                    </th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr>
-                    <td>
-                      <a href="https://github.com/franzbischoff/false.alarm/blob/1473a05723e9d94f18e9fd5f77a616bc669ed973/docs/figure/PRISMA.png"
-                        target="_blank">1473a05</a>
-                    </td>
-                    <td>
-                      Francisco Bischoff
-                    </td>
-                    <td>
-                      2021-07-15
-                    </td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
-          </div>
-          <p>Meanwhile, the project pipeline has been set up on GitHub, Inc. <span class="citation"><sup><a
-                  href="#ref-bischoffrepo2021" role="doc-biblioref">9</a></sup></span> leveraging on Github A ions<span
-              class="citation"><sup><a href="#ref-gitactions2021" role="doc-biblioref">10</a></sup></span> for the
-            Continuous Integration lifecycle, the repository is available at,<span class="citation"><sup><a
-                  href="#ref-bischoffrepo2021" role="doc-biblioref">9</a></sup></span> and the resulting report is
-            available at<span class="citation"><sup><a href="#ref-franz_website" role="doc-biblioref">7</a></sup></span>
-            for transparency while the roadmap and tasks are managed using the integrated Zenhub.<span
-              class="citation"><sup><a href="#ref-zenhub2021" role="doc-biblioref">11</a></sup></span></p>
-          <p>As it is known worldwide, 2020 was hard on every project, which required changes on the timeline. In Fig.
-            it is shown the initial roadmap (as of May 2020) and Fig. the modified roadmap (as of July 2021).</p>
-          <div class="figure" style="text-align: center">
-            <img src="figure/roadmap_original.png" alt="Roadmap original" width="100%" />
-            <p class="caption">
-              Roadmap original
-            </p>
-          </div>
-          <p>
-            <button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse"
-              data-target="#fig-roadmap_original">
-              Past versions of roadmap_original.png
-            </button>
-          </p>
-          <div id="fig-roadmap_original" class="collapse">
-            <div class="table-responsive">
-              <table class="table table-condensed table-hover">
-                <thead>
-                  <tr>
-                    <th>
-                      Version
-                    </th>
-                    <th>
-                      Author
-                    </th>
-                    <th>
-                      Date
-                    </th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr>
-                    <td>
-                      <a href="https://github.com/franzbischoff/false.alarm/blob/1473a05723e9d94f18e9fd5f77a616bc669ed973/docs/figure/roadmap_original.png"
-                        target="_blank">1473a05</a>
-                    </td>
-                    <td>
-                      Francisco Bischoff
-                    </td>
-                    <td>
-                      2021-07-15
-                    </td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
-          </div>
-          <div class="figure" style="text-align: center">
-            <img src="figure/roadmap_updated.png" alt="Roadmap updated" width="100%" />
-            <p class="caption">
-              Roadmap updated
-            </p>
-          </div>
-          <p>
-            <button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse"
-              data-target="#fig-roadmap_updated">
-              Past versions of roadmap_updated.png
-            </button>
-          </p>
-          <div id="fig-roadmap_updated" class="collapse">
-            <div class="table-responsive">
-              <table class="table table-condensed table-hover">
-                <thead>
-                  <tr>
-                    <th>
-                      Version
-                    </th>
-                    <th>
-                      Author
-                    </th>
-                    <th>
-                      Date
-                    </th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr>
-                    <td>
-                      <a href="https://github.com/franzbischoff/false.alarm/blob/1473a05723e9d94f18e9fd5f77a616bc669ed973/docs/figure/roadmap_updated.png"
-                        target="_blank">1473a05</a>
-                    </td>
-                    <td>
-                      Francisco Bischoff
-                    </td>
-                    <td>
-                      2021-07-15
-                    </td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
-          </div>
-        </div>
-        <div id="preliminary-experimentations" class="section level3">
-          <h3><span class="header-section-number">1.4.2</span> Preliminary Experimentations</h3>
-          <p><strong>RAW Data</strong></p>
-          <p>While programming the pipeline for the current dataset, it has been acquired a Single Lead Heart Rate
-            Monitor breakout from Sparkfun<sup>TM</sup><span class="citation"><sup><a href="#ref-sparkfun2021"
-                  role="doc-biblioref">12</a></sup></span> using the AD8232<span class="citation"><sup><a
-                  href="#ref-AnalogDevices2020" role="doc-biblioref">13</a></sup></span> microchip from Analog Devices
-            Inc., compatible with Arduino<sup>(R)</sup>,<span class="citation"><sup><a href="#ref-arduino2021"
-                  role="doc-biblioref">14</a></sup></span> for an in-house experiment (Figs. and ).</p>
-          <div class="figure" style="text-align: center">
-            <img src="figure/sparkfun.jpg" alt="Single Lead Heart Rate Monitor" width="50%" />
-            <p class="caption">
-              Single Lead Heart Rate Monitor
-            </p>
-          </div>
-          <p>
-            <button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse"
-              data-target="#fig-sparkfun">
-              Past versions of sparkfun.jpg
-            </button>
-          </p>
-          <div id="fig-sparkfun" class="collapse">
-            <div class="table-responsive">
-              <table class="table table-condensed table-hover">
-                <thead>
-                  <tr>
-                    <th>
-                      Version
-                    </th>
-                    <th>
-                      Author
-                    </th>
-                    <th>
-                      Date
-                    </th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr>
-                    <td>
-                      <a href="https://github.com/franzbischoff/false.alarm/blob/1473a05723e9d94f18e9fd5f77a616bc669ed973/docs/figure/sparkfun.jpg"
-                        target="_blank">1473a05</a>
-                    </td>
-                    <td>
-                      Francisco Bischoff
-                    </td>
-                    <td>
-                      2021-07-15
-                    </td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
-          </div>
-          <div class="figure" style="text-align: center">
-            <img src="figure/FullSetup.jpg" alt="Single Lead Heart Rate Monitor" width="50%" />
-            <p class="caption">
-              Single Lead Heart Rate Monitor
-            </p>
-          </div>
-          <p>
-            <button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse"
-              data-target="#fig-FullSetup">
-              Past versions of FullSetup.jpg
-            </button>
-          </p>
-          <div id="fig-FullSetup" class="collapse">
-            <div class="table-responsive">
-              <table class="table table-condensed table-hover">
-                <thead>
-                  <tr>
-                    <th>
-                      Version
-                    </th>
-                    <th>
-                      Author
-                    </th>
-                    <th>
-                      Date
-                    </th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr>
-                    <td>
-                      <a href="https://github.com/franzbischoff/false.alarm/blob/1473a05723e9d94f18e9fd5f77a616bc669ed973/docs/figure/FullSetup.jpg"
-                        target="_blank">1473a05</a>
-                    </td>
-                    <td>
-                      Francisco Bischoff
-                    </td>
-                    <td>
-                      2021-07-15
-                    </td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
-          </div>
-          <p>The output gives us a RAW signal as shown in Fig. .</p>
-          <div class="figure" style="text-align: center">
-            <img src="figure/arduino_plot.jpg" alt="RAW output from Arduino at ~300hz" width="50%" />
-            <p class="caption">
-              RAW output from Arduino at ~300hz
-            </p>
-          </div>
-          <p>
-            <button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse"
-              data-target="#fig-arduino_plot">
-              Past versions of arduino_plot.jpg
-            </button>
-          </p>
-          <div id="fig-arduino_plot" class="collapse">
-            <div class="table-responsive">
-              <table class="table table-condensed table-hover">
-                <thead>
-                  <tr>
-                    <th>
-                      Version
-                    </th>
-                    <th>
-                      Author
-                    </th>
-                    <th>
-                      Date
-                    </th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr>
-                    <td>
-                      <a href="https://github.com/franzbischoff/false.alarm/blob/1473a05723e9d94f18e9fd5f77a616bc669ed973/docs/figure/arduino_plot.jpg"
-                        target="_blank">1473a05</a>
-                    </td>
-                    <td>
-                      Francisco Bischoff
-                    </td>
-                    <td>
-                      2021-07-15
-                    </td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
-          </div>
-          <p>After applying the same settings as the Physionet database (collecting the data at 500hz, resample to
-            250hz, pass-filter, and notch filter), the signal is much better as shown in Fig. . Note: the leads were not
-            placed on the correct location.</p>
-          <div class="figure" style="text-align: center">
-            <img src="figure/filtered_ecg.png" alt="Gray is RAW, Red is filtered" width="100%" />
-            <p class="caption">
-              Gray is RAW, Red is filtered
-            </p>
-          </div>
-          <p>
-            <button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse"
-              data-target="#fig-filtered_ecg">
-              Past versions of filtered_ecg.png
-            </button>
-          </p>
-          <div id="fig-filtered_ecg" class="collapse">
-            <div class="table-responsive">
-              <table class="table table-condensed table-hover">
-                <thead>
-                  <tr>
-                    <th>
-                      Version
-                    </th>
-                    <th>
-                      Author
-                    </th>
-                    <th>
-                      Date
-                    </th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr>
-                    <td>
-                      <a href="https://github.com/franzbischoff/false.alarm/blob/1473a05723e9d94f18e9fd5f77a616bc669ed973/docs/figure/filtered_ecg.png"
-                        target="_blank">1473a05</a>
-                    </td>
-                    <td>
-                      Francisco Bischoff
-                    </td>
-                    <td>
-                      2021-07-15
-                    </td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
-          </div>
-          <p>So in this way, we allow us to import RAW data from other devices and build our own test dataset in the
-            future.</p>
-          <p><strong>Detecting Regime Changes</strong></p>
-          <p>The regime change approach will be using the <em>Arc Counts</em>, as explained elsewhere.<span
-              class="citation"><sup><a href="#ref-gharghabi2018" role="doc-biblioref">15</a></sup></span> The current
-            implementation of the Matrix Profile in R, maintained by the first author of this thesis, is being used to
-            accomplish the computations. This package was published in R Journal.<span class="citation"><sup><a
-                  href="#ref-RJ-2020-021" role="doc-biblioref">16</a></sup></span></p>
-          <p>A new concept was needed to be implemented on the algorithm in order to emulate (in this first iteration)
-            the behavior of the real-time sensor: the search must only look for previous information within a time
-            constraint. Thus, both the Matrix Profile computation and the <em>Arc Counts</em> needed to be adapted for
-            this task.</p>
-          <p>At the same time, the ECG data needs to be “cleaned” for proper evaluation. That is different from the
-            initial filtering process. Several SQIs (Signal Quality Indexes) are used on literature,<span
-              class="citation"><sup><a href="#ref-eerikainen2015" role="doc-biblioref">17</a></sup></span> some trivial
-            measures as <em>kurtosis</em>, <em>skewness</em>, median local noise level, other more complex as pcaSQI
-            (the ratio of the sum of the five largest eigenvalues associated with the principal components over the sum
-            of all eigenvalues obtained by principal component analysis applied to the time aligned ECG segments in the
-            window). By experimentation (yet to be validated), a simple formula gives us the “complexity” of the signal
-            and correlates well with the noisy data is shown in Equation (1).</p>
-          <p><span class="math display">\[
-              \sqrt{\sum_{i=1}^w((x_{i+1}-x_i)^2)}, \quad \text{where}\; w \; \text{is the window size} \tag{1}
-              \]</span></p>
-          <p><br />
-            <br />
-            The Fig. shows some SQIs.
-          </p>
-          <div class="figure" style="text-align: center">
-            <img src="figure/noise.png" alt="Green line is the &quot;complexity&quot; of the signal" width="100%" />
-            <p class="caption">
-              Green line is the “complexity” of the signal
-            </p>
-          </div>
-          <p>
-            <button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse"
-              data-target="#fig-noise">
-              Past versions of noise.png
-            </button>
-          </p>
-          <div id="fig-noise" class="collapse">
-            <div class="table-responsive">
-              <table class="table table-condensed table-hover">
-                <thead>
-                  <tr>
-                    <th>
-                      Version
-                    </th>
-                    <th>
-                      Author
-                    </th>
-                    <th>
-                      Date
-                    </th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr>
-                    <td>
-                      <a href="https://github.com/franzbischoff/false.alarm/blob/1473a05723e9d94f18e9fd5f77a616bc669ed973/docs/figure/noise.png"
-                        target="_blank">1473a05</a>
-                    </td>
-                    <td>
-                      Francisco Bischoff
-                    </td>
-                    <td>
-                      2021-07-15
-                    </td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
-          </div>
-          <p>Finally, a sample of the regime change detection is shown in Figs. to .</p>
-          <p>Fig. shows that noisy data (probably patient muscle movements) are marked with a blue point and thus are
-            ignored by the algorithm. Also, valid for the following plots, the green and red lines on the data mark the
-            10 seconds window where the “event” that triggers the alarm is supposed to happen.</p>
-          <div class="figure" style="text-align: center">
-            <img src="figure/regime_filter.png" alt="Regime changes with noisy data - false alarm" width="100%" />
-            <p class="caption">
-              Regime changes with noisy data - false alarm
-            </p>
-          </div>
-          <p>
-            <button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse"
-              data-target="#fig-regime_filter">
-              Past versions of regime_filter.png
-            </button>
-          </p>
-          <div id="fig-regime_filter" class="collapse">
-            <div class="table-responsive">
-              <table class="table table-condensed table-hover">
-                <thead>
-                  <tr>
-                    <th>
-                      Version
-                    </th>
-                    <th>
-                      Author
-                    </th>
-                    <th>
-                      Date
-                    </th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr>
-                    <td>
-                      <a href="https://github.com/franzbischoff/false.alarm/blob/1473a05723e9d94f18e9fd5f77a616bc669ed973/docs/figure/regime_filter.png"
-                        target="_blank">1473a05</a>
-                    </td>
-                    <td>
-                      Francisco Bischoff
-                    </td>
-                    <td>
-                      2021-07-15
-                    </td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
-          </div>
-          <p>In Fig. , the data is clean; thus, nothing is excluded. Interestingly one of the detected regime changes is
-            inside the “green-red” window. But it is a false alarm.</p>
-          <div class="figure" style="text-align: center">
-            <img src="figure/regime_false.png" alt="Regime changes with good data - false alarm" width="100%" />
-            <p class="caption">
-              Regime changes with good data - false alarm
-            </p>
-          </div>
-          <p>
-            <button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse"
-              data-target="#fig-regime_false">
-              Past versions of regime_false.png
-            </button>
-          </p>
-          <div id="fig-regime_false" class="collapse">
-            <div class="table-responsive">
-              <table class="table table-condensed table-hover">
-                <thead>
-                  <tr>
-                    <th>
-                      Version
-                    </th>
-                    <th>
-                      Author
-                    </th>
-                    <th>
-                      Date
-                    </th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr>
-                    <td>
-                      <a href="https://github.com/franzbischoff/false.alarm/blob/1473a05723e9d94f18e9fd5f77a616bc669ed973/docs/figure/regime_false.png"
-                        target="_blank">1473a05</a>
-                    </td>
-                    <td>
-                      Francisco Bischoff
-                    </td>
-                    <td>
-                      2021-07-15
-                    </td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
-          </div>
-          <p>The last plot (Fig. ) shows the algorithm’s robustness, not excluding good data with a wandering baseline,
-            and the last regime change is correctly detected inside the “green-red” window.</p>
-          <div class="figure" style="text-align: center">
-            <img src="figure/regime_true.png" alt="Regime changes with good but wandering data - true alarm"
-              width="100%" />
-            <p class="caption">
-              Regime changes with good but wandering data - true alarm
-            </p>
-          </div>
-          <p>
-            <button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse"
-              data-target="#fig-regime_true">
-              Past versions of regime_true.png
-            </button>
-          </p>
-          <div id="fig-regime_true" class="collapse">
-            <div class="table-responsive">
-              <table class="table table-condensed table-hover">
-                <thead>
-                  <tr>
-                    <th>
-                      Version
-                    </th>
-                    <th>
-                      Author
-                    </th>
-                    <th>
-                      Date
-                    </th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr>
-                    <td>
-                      <a href="https://github.com/franzbischoff/false.alarm/blob/1473a05723e9d94f18e9fd5f77a616bc669ed973/docs/figure/regime_true.png"
-                        target="_blank">1473a05</a>
-                    </td>
-                    <td>
-                      Francisco Bischoff
-                    </td>
-                    <td>
-                      2021-07-15
-                    </td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
-          </div>
-          <div id="refs">
-            <div id="ref-compendium2019">
-              <p>1. Research compendium. Published 2019. Accessed April 8, 2021. <a
-                  href="https://research-compendium.science">https://research-compendium.science</a></p>
-            </div>
-            <div id="ref-wilkinson2016">
-              <p>2. Wilkinson M, Dumontier M, Aalbersberg I, et al. The fair guiding principles for scientific data
-                management and stewardship. <em>Scientific Data</em>. 2016;3(1). doi:<a
-                  href="https://doi.org/10.1038/sdata.2016.18">10.1038/sdata.2016.18</a></p>
-            </div>
-            <div id="ref-bischoff2021">
-              <p>3. Reducing false arrhythmia alarms in the icu - the physionet computing in cardiology challenge 2015.
-                Published online March 24, 2021. doi:<a
-                  href="https://doi.org/10.5281/zenodo.4634013">10.5281/zenodo.4634013</a></p>
-            </div>
-            <div id="ref-Clifford2015">
-              <p>4. Clifford GD, Silva I, Moody B, et al. The physionet/computing in cardiology challenge 2015: Reducing
-                false arrhythmia alarms in the icu. In: <em>Computing in Cardiology</em>.; 2015. doi:<a
-                  href="https://doi.org/10.1109/cic.2015.7408639">10.1109/cic.2015.7408639</a></p>
-            </div>
-            <div id="ref-AAMI2002">
-              <p>5. Association for the Advancement of Medical Instrumentation. <em>Cardiac monitors, heart rate meters,
-                  and alarms</em>. Association for the Advancement of Medical Instrumentation; 2002.</p>
-            </div>
-            <div id="ref-landau2021">
-              <p>6. Landau W, Landau W, Warkentin M, et al. <em>Ropensci/Targets, Dynamic Function-Oriented ’Make’-Like
-                  Declarative Workflows</em>. Zenodo; 2021. doi:<a
-                  href="https://doi.org/10.5281/ZENODO.4062936">10.5281/ZENODO.4062936</a></p>
-            </div>
-            <div id="ref-franz_website">
-              <p>7. Franzbischoff/false.alarm: Reproducible reports. Published 2021. Accessed April 8, 2021. <a
-                  href="https://franzbischoff.github.io/false.alarm">https://franzbischoff.github.io/false.alarm</a></p>
-            </div>
-            <div id="ref-workflowr2021">
-              <p>8. Blischak JD, Carbonetto P, Stephens M. Creating and sharing reproducible research code the workflowr
-                way [version 1; peer review: 3 approved]. <em>F1000Research</em>. 2019;8(1749). doi:<a
-                  href="https://doi.org/10.12688/f1000research.20843.1">10.12688/f1000research.20843.1</a></p>
-            </div>
-            <div id="ref-bischoffrepo2021">
-              <p>9. Bischoff F. GitHub false.alarm repository. Accessed July 14, 2021. <a
-                  href="https://github.com/franzbischoff/false.alarm">https://github.com/franzbischoff/false.alarm</a>
-              </p>
-            </div>
-            <div id="ref-gitactions2021">
-              <p>10. GitHub Actions. Accessed July 14, 2021. <a
-                  href="https://github.com/features/actions">https://github.com/features/actions</a></p>
-            </div>
-            <div id="ref-zenhub2021">
-              <p>11. Zenhub workspace. Accessed July 14, 2021. <a
-                  href="https://app.zenhub.com/workspaces/phd-thesis-5eb2ce34f5f30b3aed0a35af/board">https://app.zenhub.com/workspaces/phd-thesis-5eb2ce34f5f30b3aed0a35af/board</a>
-              </p>
-            </div>
-            <div id="ref-sparkfun2021">
-              <p>12. SparkFun Single Lead Heart Rate Monitor - AD8232 - SEN-12650 - SparkFun Electronics. Accessed July
-                14, 2021. <a href="https://www.sparkfun.com/products/12650">https://www.sparkfun.com/products/12650</a>
-              </p>
-            </div>
-            <div id="ref-AnalogDevices2020">
-              <p>13. Analog Devices. AD8232 Single-Lead, Heart Rate Monitor Front End. Published online 2020. Accessed
-                July 14, 2021. <a
-                  href="https://www.analog.com/media/en/technical-documentation/data-sheets/ad8232.pdf">https://www.analog.com/media/en/technical-documentation/data-sheets/ad8232.pdf</a>
-              </p>
-            </div>
-            <div id="ref-arduino2021">
-              <p>14. Arduino. Accessed July 14, 2021. <a href="https://www.arduino.cc/">https://www.arduino.cc/</a></p>
-            </div>
-            <div id="ref-gharghabi2018">
-              <p>15. Gharghabi S, Yeh C, Ding Y, et al. Domain agnostic online semantic segmentation for
-                multi-dimensional time series. <em>Data Mining and Knowledge Discovery</em>. 2018;33(1):96-130. doi:<a
-                  href="https://doi.org/10.1007/s10618-018-0589-3">10.1007/s10618-018-0589-3</a></p>
-            </div>
-            <div id="ref-RJ-2020-021">
-              <p>16. Bischoff F, Rodrigues PP. tsmp: An R Package for Time Series with Matrix Profile. <em>The R
-                  Journal</em>. 2020;12(1):76-86. doi:<a
-                  href="https://doi.org/10.32614/RJ-2020-021">10.32614/RJ-2020-021</a></p>
-            </div>
-            <div id="ref-eerikainen2015">
-              <p>17. Eerikainen L, Vanschoren J, Rooijakkers M, Vullings R, Aarts R. 2015 computing in cardiology
-                conference (cinc). In: IEEE; 2015. doi:<a
-                  href="https://doi.org/10.1109/cic.2015.7408644">10.1109/cic.2015.7408644</a></p>
-            </div>
-          </div>
-          <br>
-          <p>
-            <button type="button" class="btn btn-default btn-workflowr btn-workflowr-sessioninfo" data-toggle="collapse"
-              data-target="#workflowr-sessioninfo" style="display: block;">
-              <span class="glyphicon glyphicon-wrench" aria-hidden="true"></span> Session information
-            </button>
-          </p>
-          <div id="workflowr-sessioninfo" class="collapse">
-            <pre><code>R version 4.1.1 (2021-08-10)
+<p>
+These are the previous versions of the repository in which changes were made to the R Markdown (<code>analysis/report.Rmd</code>) and HTML (<code>docs/report.html</code>) files. If you’ve configured a remote Git repository (see <code>?wflow_git_remote</code>), click on the hyperlinks in the table below to view the files as they were in that past version.
+</p>
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+File
+</th>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+<th>
+Message
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+Rmd
+</td>
+<td>
+<a href="https://github.com/franzbischoff/false.alarm/blob/571ac342ed78d2be78faba65fbbae38b50f42692/analysis/report.Rmd" target="_blank">571ac34</a>
+</td>
+<td>
+Francisco Bischoff
+</td>
+<td>
+2022-01-15
+</td>
+<td>
+premerge
+</td>
+</tr>
+<tr>
+<td>
+Rmd
+</td>
+<td>
+<a href="https://github.com/franzbischoff/false.alarm/blob/dc34ece30d0d617f2c7aa82cd77d8aba4efa3d3e/analysis/report.Rmd" target="_blank">dc34ece</a>
+</td>
+<td>
+Francisco Bischoff
+</td>
+<td>
+2022-01-10
+</td>
+<td>
+k_shapelets
+</td>
+</tr>
+<tr>
+<td>
+html
+</td>
+<td>
+<a href="https://rawcdn.githack.com/franzbischoff/false.alarm/95ae431bf67c2ba8f58e135de6e1bd06941efd2c/docs/report.html" target="_blank">95ae431</a>
+</td>
+<td>
+Francisco Bischoff
+</td>
+<td>
+2022-01-05
+</td>
+<td>
+blogdog
+</td>
+</tr>
+<tr>
+<td>
+html
+</td>
+<td>
+<a href="https://rawcdn.githack.com/franzbischoff/false.alarm/7278108a889a0bce34c68dfa4f545aa9616a376b/docs/report.html" target="_blank">7278108</a>
+</td>
+<td>
+Francisco Bischoff
+</td>
+<td>
+2021-12-21
+</td>
+<td>
+update dataset on zenodo
+</td>
+</tr>
+<tr>
+<td>
+Rmd
+</td>
+<td>
+<a href="https://github.com/franzbischoff/false.alarm/blob/1ef8e756d468d2efc0fa7618bec14fcc44248ad3/analysis/report.Rmd" target="_blank">1ef8e75</a>
+</td>
+<td>
+Francisco Bischoff
+</td>
+<td>
+2021-10-14
+</td>
+<td>
+freeze for presentation
+</td>
+</tr>
+<tr>
+<td>
+html
+</td>
+<td>
+<a href="https://rawcdn.githack.com/franzbischoff/false.alarm/ca1941e6f9416ba7648c9175367a39e9382044d8/docs/report.html" target="_blank">ca1941e</a>
+</td>
+<td>
+GitHub Actions
+</td>
+<td>
+2021-10-12
+</td>
+<td>
+Build site.
+</td>
+</tr>
+<tr>
+<td>
+Rmd
+</td>
+<td>
+<a href="https://github.com/franzbischoff/false.alarm/blob/6b03f431bca6d1df980893c70577fba8ec23554d/analysis/report.Rmd" target="_blank">6b03f43</a>
+</td>
+<td>
+Francisco Bischoff
+</td>
+<td>
+2021-10-11
+</td>
+<td>
+Squashed commit of the following:
+</td>
+</tr>
+<tr>
+<td>
+html
+</td>
+<td>
+<a href="https://rawcdn.githack.com/franzbischoff/false.alarm/c19ec017e1a0cdd909f673a745546e5f34813afa/docs/report.html" target="_blank">c19ec01</a>
+</td>
+<td>
+Francisco Bischoff
+</td>
+<td>
+2021-08-17
+</td>
+<td>
+Build site.
+</td>
+</tr>
+<tr>
+<td>
+html
+</td>
+<td>
+<a href="https://rawcdn.githack.com/franzbischoff/false.alarm/a5ec160176f456ba8e8f7f2e8650cbf5c68b1e97/docs/report.html" target="_blank">a5ec160</a>
+</td>
+<td>
+Francisco Bischoff
+</td>
+<td>
+2021-08-17
+</td>
+<td>
+Build site.
+</td>
+</tr>
+<tr>
+<td>
+html
+</td>
+<td>
+<a href="https://rawcdn.githack.com/franzbischoff/false.alarm/b51dba2e732b40a1a47c9250b0c70a1889043265/docs/report.html" target="_blank">b51dba2</a>
+</td>
+<td>
+GitHub Actions
+</td>
+<td>
+2021-08-17
+</td>
+<td>
+Build site.
+</td>
+</tr>
+<tr>
+<td>
+Rmd
+</td>
+<td>
+<a href="https://github.com/franzbischoff/false.alarm/blob/c88cbd51e2bfa43b620477512ce369cb1cf43cd3/analysis/report.Rmd" target="_blank">c88cbd5</a>
+</td>
+<td>
+Francisco Bischoff
+</td>
+<td>
+2021-08-17
+</td>
+<td>
+targets workflowr
+</td>
+</tr>
+<tr>
+<td>
+html
+</td>
+<td>
+<a href="https://rawcdn.githack.com/franzbischoff/false.alarm/c88cbd51e2bfa43b620477512ce369cb1cf43cd3/docs/report.html" target="_blank">c88cbd5</a>
+</td>
+<td>
+Francisco Bischoff
+</td>
+<td>
+2021-08-17
+</td>
+<td>
+targets workflowr
+</td>
+</tr>
+<tr>
+<td>
+html
+</td>
+<td>
+<a href="https://rawcdn.githack.com/franzbischoff/false.alarm/e7e5d4861f1f3b21e25787e0ed6b6066b57ff857/docs/report.html" target="_blank">e7e5d48</a>
+</td>
+<td>
+GitHub Actions
+</td>
+<td>
+2021-07-15
+</td>
+<td>
+Build site.
+</td>
+</tr>
+<tr>
+<td>
+Rmd
+</td>
+<td>
+<a href="https://github.com/franzbischoff/false.alarm/blob/1473a05723e9d94f18e9fd5f77a616bc669ed973/analysis/report.Rmd" target="_blank">1473a05</a>
+</td>
+<td>
+Francisco Bischoff
+</td>
+<td>
+2021-07-15
+</td>
+<td>
+report
+</td>
+</tr>
+<tr>
+<td>
+html
+</td>
+<td>
+<a href="https://rawcdn.githack.com/franzbischoff/false.alarm/1473a05723e9d94f18e9fd5f77a616bc669ed973/docs/report.html" target="_blank">1473a05</a>
+</td>
+<td>
+Francisco Bischoff
+</td>
+<td>
+2021-07-15
+</td>
+<td>
+report
+</td>
+</tr>
+<tr>
+<td>
+Rmd
+</td>
+<td>
+<a href="https://github.com/franzbischoff/false.alarm/blob/7436fbed2102d4431983265e8d8773fae5991150/analysis/report.Rmd" target="_blank">7436fbe</a>
+</td>
+<td>
+Francisco Bischoff
+</td>
+<td>
+2021-07-11
+</td>
+<td>
+stage cpp code
+</td>
+</tr>
+<tr>
+<td>
+html
+</td>
+<td>
+<a href="https://rawcdn.githack.com/franzbischoff/false.alarm/7436fbed2102d4431983265e8d8773fae5991150/docs/report.html" target="_blank">7436fbe</a>
+</td>
+<td>
+Francisco Bischoff
+</td>
+<td>
+2021-07-11
+</td>
+<td>
+stage cpp code
+</td>
+</tr>
+<tr>
+<td>
+html
+</td>
+<td>
+<a href="https://rawcdn.githack.com/franzbischoff/false.alarm/52e7f0b7b022544dd3dafc2a8f8cdf5951fb0f54/docs/report.html" target="_blank">52e7f0b</a>
+</td>
+<td>
+GitHub Actions
+</td>
+<td>
+2021-03-24
+</td>
+<td>
+Build site.
+</td>
+</tr>
+<tr>
+<td>
+Rmd
+</td>
+<td>
+<a href="https://github.com/franzbischoff/false.alarm/blob/7c3cc31c693d4bf3a26b42bd43703efde4b2a528/analysis/report.Rmd" target="_blank">7c3cc31</a>
+</td>
+<td>
+Francisco Bischoff
+</td>
+<td>
+2021-03-23
+</td>
+<td>
+Targets
+</td>
+</tr>
+<tr>
+<td>
+html
+</td>
+<td>
+<a href="https://rawcdn.githack.com/franzbischoff/false.alarm/7c3cc31c693d4bf3a26b42bd43703efde4b2a528/docs/report.html" target="_blank">7c3cc31</a>
+</td>
+<td>
+Francisco Bischoff
+</td>
+<td>
+2021-03-23
+</td>
+<td>
+Targets
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<hr>
+</div>
+</div>
+</div>
+<div id="current-work-status" class="section level1">
+<h1><span class="header-section-number">1</span> Current Work Status</h1>
+<div id="principles" class="section level2">
+<h2><span class="header-section-number">1.1</span> Principles</h2>
+<p>This research is being conducted using the Research Compendium principles<span class="citation"><sup><a href="#ref-compendium2019">1</a></sup></span>:</p>
+<ol style="list-style-type: decimal">
+<li>Stick with the convention of your peers;</li>
+<li>Keep data, methods, and output separated;</li>
+<li>Specify your computational environment as clearly as you can.</li>
+</ol>
+<p>Data management follows the FAIR principle (findable, accessible, interoperable, reusable)<span class="citation"><sup><a href="#ref-wilkinson2016">2</a></sup></span>. Concerning these principles, the dataset was converted from Matlab’s format to CSV format, allowing more interoperability. Additionally, all the project, including the dataset, is in conformity with the Codemeta Project<span class="citation"><sup><a href="#ref-CodeMeta2017">3</a></sup></span>.</p>
+</div>
+<div id="the-data" class="section level2">
+<h2><span class="header-section-number">1.2</span> The data</h2>
+<p>The current dataset used is the CinC/Physionet Challenge 2015 public dataset, modified to include only the actual data and the header files in order to be read by the pipeline and is hosted by Zenodo<span class="citation"><sup><a href="#ref-bischoff2021">4</a></sup></span> under the same license as Physionet.</p>
+<p>The dataset is composed of 750 patients with at least five minutes records. All signals have been resampled (using anti-alias filters) to 12 bit, 250 Hz and have had FIR band-pass (0.05 to 40Hz) and mains notch filters applied to remove noise. Pacemaker and other artifacts are still present on the ECG<span class="citation"><sup><a href="#ref-Clifford2015">5</a></sup></span>. Furthermore, this dataset contains at least two ECG derivations and one or more variables like arterial blood pressure, photoplethysmograph readings, and respiration movements.</p>
+<p>The <em>event</em> we seek to improve is the detection of a life-threatening arrhythmia as defined by Physionet in Table 1.</p>
+<table class="table" style="margin-left: auto; margin-right: auto;">
+<caption>
+Table 1 - Definition of the five alarm types used in CinC/Physionet Challenge 2015 challenge.
+</caption>
+<thead>
+<tr>
+<th style="text-align:left;font-weight: bold;">
+Alarm
+</th>
+<th style="text-align:left;font-weight: bold;">
+Definition
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+Asystole
+</td>
+<td style="text-align:left;">
+No QRS for at least 4 seconds
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Extreme Bradycardia
+</td>
+<td style="text-align:left;">
+Heart rate lower than 40 bpm for 5 consecutive beats
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Extreme Tachycardia
+</td>
+<td style="text-align:left;">
+Heart rate higher than 140 bpm for 17 consecutive beats
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Ventricular Tachycardia
+</td>
+<td style="text-align:left;">
+5 or more ventricular beats with heart rate higher than 100 bpm
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Ventricular Flutter/Fibrillation
+</td>
+<td style="text-align:left;">
+Fibrillatory, flutter, or oscillatory waveform for at least 4 seconds
+</td>
+</tr>
+</tbody>
+</table>
+<p>The fifth minute is precisely where the alarm has been triggered on the original recording set. To meet the ANSI/AAMI EC13 Cardiac Monitor Standards<span class="citation"><sup><a href="#ref-AAMI2002">6</a></sup></span>, the onset of the event is within 10 seconds of the alarm (i.e., between 4:50 and 5:00 of the record). That doesn’t mean that there are no other arrhythmias before, but those were not labeled.</p>
+</div>
+<div id="workflow" class="section level2">
+<h2><span class="header-section-number">1.3</span> Workflow</h2>
+<p>All steps of the process are being managed using the R package <code>targets</code><span class="citation"><sup><a href="#ref-landau2021">7</a></sup></span> from data extraction to the final report, as shown in Fig. 1.</p>
+<div class="figure" style="text-align: center">
+<img src="figure/targets.png" alt="Figure 1 - Reproducible research workflow using `targets`." width="100%" />
+<p class="caption">
+Figure 1 - Reproducible research workflow using <code>targets</code>.
+</p>
+</div>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-targets">
+Past versions of targets.png
+</button>
+</p>
+<div id="fig-targets" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/franzbischoff/false.alarm/blob/1473a05723e9d94f18e9fd5f77a616bc669ed973/docs/figure/targets.png" target="_blank">1473a05</a>
+</td>
+<td>
+Francisco Bischoff
+</td>
+<td>
+2021-07-15
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p>The report is available on the main webpage<span class="citation"><sup><a href="#ref-franz_website">8</a></sup></span>, allowing inspection of previous versions managed by the R package <code>workflowr</code><span class="citation"><sup><a href="#ref-workflowr2021">9</a></sup></span>, as shown in Fig. 2.</p>
+<div class="figure" style="text-align: center">
+<img src="figure/workflowr_print.png" alt="Figure 2 - Reproducible reports using `workflowr`." width="100%" />
+<p class="caption">
+Figure 2 - Reproducible reports using <code>workflowr</code>.
+</p>
+</div>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-workflowr_print">
+Past versions of workflowr_print.png
+</button>
+</p>
+<div id="fig-workflowr_print" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/franzbischoff/false.alarm/blob/1473a05723e9d94f18e9fd5f77a616bc669ed973/docs/figure/workflowr_print.png" target="_blank">1473a05</a>
+</td>
+<td>
+Francisco Bischoff
+</td>
+<td>
+2021-07-15
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+<div id="work-in-progress" class="section level2">
+<h2><span class="header-section-number">1.4</span> Work in Progress</h2>
+<div id="project-start" class="section level3">
+<h3><span class="header-section-number">1.4.1</span> Project start</h3>
+<p>The project started with a literature survey on the databases Scopus, Pubmed, Web of Science, and Google Scholar with the following query (the syntax was adapted for each database):</p>
+<p>TITLE-ABS-KEY ( algorithm OR ‘point of care’ OR ‘signal processing’ OR ‘computer assisted’ OR ‘support vector machine’ OR ‘decision support system<em>’ OR ’neural network</em>’ OR ‘automatic interpretation’ OR ‘machine learning’) AND TITLE-ABS-KEY ( electrocardiography OR cardiography OR ‘electrocardiographic tracing’ OR ecg OR electrocardiogram OR cardiogram ) AND TITLE-ABS-KEY ( ‘Intensive care unit’ OR ‘cardiologic care unit’ OR ‘intensive care center’ OR ‘cardiologic care center’ )</p>
+<p><br />
+</p>
+<p>The inclusion and exclusion criteria were defined as in Table 2.</p>
+<table class="table" style="margin-left: auto; margin-right: auto;">
+<caption>
+Table 2 - Literature review criteria.
+</caption>
+<thead>
+<tr>
+<th style="text-align:left;font-weight: bold;">
+Inclusion criteria
+</th>
+<th style="text-align:left;font-weight: bold;">
+Exclusion criteria
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;width: 10cm; ">
+ECG automatic interpretation
+</td>
+<td style="text-align:left;">
+Manual interpretation
+</td>
+</tr>
+<tr>
+<td style="text-align:left;width: 10cm; ">
+ECG anomaly detection
+</td>
+<td style="text-align:left;">
+Publication older than ten years
+</td>
+</tr>
+<tr>
+<td style="text-align:left;width: 10cm; ">
+ECG context change detection
+</td>
+<td style="text-align:left;">
+Do not attempt to identify life-threatening arrhythmias, namely asystole, extreme bradycardia, extreme tachycardia, ventricular tachycardia, and ventricular flutter/fibrillation
+</td>
+</tr>
+<tr>
+<td style="text-align:left;width: 10cm; ">
+Online Stream ECG analysis
+</td>
+<td style="text-align:left;">
+No performance measurements reported
+</td>
+</tr>
+<tr>
+<td style="text-align:left;width: 10cm; ">
+Specific diagnosis (like a flutter, hyperkalemia, etc.)
+</td>
+<td style="text-align:left;">
+</td>
+</tr>
+</tbody>
+</table>
+<p>The current stage of the review is on Data Extraction, from the resulting screening shown in Fig. 3.</p>
+<div class="figure" style="text-align: center">
+<img src="figure/PRISMA.png" alt="Figure 3 - Prisma results" width="80%" />
+<p class="caption">
+Figure 3 - Prisma results
+</p>
+</div>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-PRISMA">
+Past versions of PRISMA.png
+</button>
+</p>
+<div id="fig-PRISMA" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/franzbischoff/false.alarm/blob/1473a05723e9d94f18e9fd5f77a616bc669ed973/docs/figure/PRISMA.png" target="_blank">1473a05</a>
+</td>
+<td>
+Francisco Bischoff
+</td>
+<td>
+2021-07-15
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p>Meanwhile, the project pipeline has been set up on GitHub, Inc. <span class="citation"><sup><a href="#ref-bischoffrepo2021">10</a></sup></span> leveraging on Github Actions<span class="citation"><sup><a href="#ref-gitactions2021">11</a></sup></span> for the Continuous Integration lifecycle. The repository is available at<span class="citation"><sup><a href="#ref-bischoffrepo2021">10</a></sup></span>, and the resulting report is available at<span class="citation"><sup><a href="#ref-franz_website">8</a></sup></span> for transparency while the roadmap and tasks are managed using the integrated Zenhub<span class="citation"><sup><a href="#ref-zenhub2021">12</a></sup></span>.</p>
+<p>As it is known worldwide, since 2020, the measures taken to control the SARS-Cov2 pandemic have had a great impact on any development lifecycle.</p>
+<p>At this moment, this project went through two timeline changes. In Fig. 4 it is shown the initial roadmap (as of May 2020), Fig. 5 the modified roadmap (as of July 2021), and Fig. 6 (as of Jan 2022). The literature survey is currently in the extraction phase, which includes about 74 articles from the full-text screening.</p>
+<div class="figure" style="text-align: center">
+<img src="figure/roadmap_original.png" alt="Figure 4 - Roadmap original" width="100%" />
+<p class="caption">
+Figure 4 - Roadmap original
+</p>
+</div>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-roadmap_original">
+Past versions of roadmap_original.png
+</button>
+</p>
+<div id="fig-roadmap_original" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/franzbischoff/false.alarm/blob/1473a05723e9d94f18e9fd5f77a616bc669ed973/docs/figure/roadmap_original.png" target="_blank">1473a05</a>
+</td>
+<td>
+Francisco Bischoff
+</td>
+<td>
+2021-07-15
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="figure" style="text-align: center">
+<img src="figure/roadmap_updated.png" alt="Figure 5 - Roadmap updated on August 2021" width="100%" />
+<p class="caption">
+Figure 5 - Roadmap updated on August 2021
+</p>
+</div>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-roadmap_updated">
+Past versions of roadmap_updated.png
+</button>
+</p>
+<div id="fig-roadmap_updated" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/franzbischoff/false.alarm/blob/1473a05723e9d94f18e9fd5f77a616bc669ed973/docs/figure/roadmap_updated.png" target="_blank">1473a05</a>
+</td>
+<td>
+Francisco Bischoff
+</td>
+<td>
+2021-07-15
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="figure" style="text-align: center">
+<img src="figure/roadmap_jan2022.png" alt="Figure 6 - Roadmap updated on January 2022" width="100%" />
+<p class="caption">
+Figure 6 - Roadmap updated on January 2022
+</p>
+</div>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-roadmap_jan2022">
+Past versions of roadmap_jan2022.png
+</button>
+</p>
+<div id="fig-roadmap_jan2022" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/franzbischoff/false.alarm/blob/571ac342ed78d2be78faba65fbbae38b50f42692/docs/figure/roadmap_jan2022.png" target="_blank">571ac34</a>
+</td>
+<td>
+Francisco Bischoff
+</td>
+<td>
+2022-01-15
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+<div id="preliminary-experimentations" class="section level3">
+<h3><span class="header-section-number">1.4.2</span> Preliminary Experimentations</h3>
+</div>
+<div id="raw-data" class="section level3">
+<h3><span class="header-section-number">1.4.3</span> RAW Data</h3>
+<p>While programming the pipeline for the current dataset, it has been acquired a Single Lead Heart Rate Monitor breakout from Sparkfun<sup>TM</sup><span class="citation"><sup><a href="#ref-sparkfun2021">13</a></sup></span> using the AD8232<span class="citation"><sup><a href="#ref-AnalogDevices2020">14</a></sup></span> microchip from Analog Devices Inc., compatible with Arduino<sup>(R)</sup><span class="citation"><sup><a href="#ref-arduino2021">15</a></sup></span>, for an in-house experiment (Figs. 7 and 8).</p>
+<div class="figure" style="text-align: center">
+<img src="figure/sparkfun.jpg" alt="Figure 7 - Single Lead Heart Rate Monitor" width="50%" />
+<p class="caption">
+Figure 7 - Single Lead Heart Rate Monitor
+</p>
+</div>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-sparkfun">
+Past versions of sparkfun.jpg
+</button>
+</p>
+<div id="fig-sparkfun" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/franzbischoff/false.alarm/blob/1473a05723e9d94f18e9fd5f77a616bc669ed973/docs/figure/sparkfun.jpg" target="_blank">1473a05</a>
+</td>
+<td>
+Francisco Bischoff
+</td>
+<td>
+2021-07-15
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="figure" style="text-align: center">
+<img src="figure/FullSetup.jpg" alt="Figure 8 - Single Lead Heart Rate Monitor" width="50%" />
+<p class="caption">
+Figure 8 - Single Lead Heart Rate Monitor
+</p>
+</div>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-FullSetup">
+Past versions of FullSetup.jpg
+</button>
+</p>
+<div id="fig-FullSetup" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/franzbischoff/false.alarm/blob/1473a05723e9d94f18e9fd5f77a616bc669ed973/docs/figure/FullSetup.jpg" target="_blank">1473a05</a>
+</td>
+<td>
+Francisco Bischoff
+</td>
+<td>
+2021-07-15
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p>The output gives us a RAW signal as shown in Fig. 9.</p>
+<div class="figure" style="text-align: center">
+<img src="figure/arduino_plot.jpg" alt="Figure 9 - RAW output from Arduino at ~300hz" width="50%" />
+<p class="caption">
+Figure 9 - RAW output from Arduino at ~300hz
+</p>
+</div>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-arduino_plot">
+Past versions of arduino_plot.jpg
+</button>
+</p>
+<div id="fig-arduino_plot" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/franzbischoff/false.alarm/blob/1473a05723e9d94f18e9fd5f77a616bc669ed973/docs/figure/arduino_plot.jpg" target="_blank">1473a05</a>
+</td>
+<td>
+Francisco Bischoff
+</td>
+<td>
+2021-07-15
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p>After applying the same settings as the Physionet database (collecting the data at 500hz, resample to 250hz, pass-filter, and notch filter), the signal is much better as shown in Fig. 10. Note: the leads were not placed on the correct location.</p>
+<div class="figure" style="text-align: center">
+<img src="figure/filtered_ecg.png" alt="Figure 10 - Gray is RAW, Red is filtered" width="100%" />
+<p class="caption">
+Figure 10 - Gray is RAW, Red is filtered
+</p>
+</div>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-filtered_ecg">
+Past versions of filtered_ecg.png
+</button>
+</p>
+<div id="fig-filtered_ecg" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/franzbischoff/false.alarm/blob/1473a05723e9d94f18e9fd5f77a616bc669ed973/docs/figure/filtered_ecg.png" target="_blank">1473a05</a>
+</td>
+<td>
+Francisco Bischoff
+</td>
+<td>
+2021-07-15
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p>So in this way, we allow us to import RAW data from other devices and build our own test dataset in the future.</p>
+<div id="detecting-regime-changes" class="section level4">
+<h4><span class="header-section-number">1.4.3.1</span> Detecting Regime Changes</h4>
+<p>The regime change approach will be using the <em>Arc Counts</em>, as explained elsewhere<span class="citation"><sup><a href="#ref-gharghabi2018">16</a></sup></span>. The current implementation of the Matrix Profile in R, maintained by the first author of this thesis, is being used to accomplish the computations. This package was published in R Journal<span class="citation"><sup><a href="#ref-RJ-2020-021">17</a></sup></span>.</p>
+<p>A new concept was needed to be implemented on the algorithm in order to emulate (in this first iteration) the behavior of the real-time sensor: the search must only look for previous information within a time constraint. Thus, both the Matrix Profile computation and the <em>Arc Counts</em> needed to be adapted for this task.</p>
+<p>At the same time, the ECG data needs to be “cleaned” for proper evaluation. That is different from the initial filtering process. Several SQIs (Signal Quality Indexes) are used on literature<span class="citation"><sup><a href="#ref-eerikainen2015">18</a></sup></span>, some trivial measures as <em>kurtosis</em>, <em>skewness</em>, median local noise level, other more complex as pcaSQI (the ratio of the sum of the five largest eigenvalues associated with the principal components over the sum of all eigenvalues obtained by principal component analysis applied to the time aligned ECG segments in the window). By experimentation (yet to be validated), a simple formula gives us the “complexity” of the signal and correlates well with the noisy data is shown in Equation <span class="math inline">\(\eqref{noise}\)</span>.</p>
+<p><span class="math display">\[
+\sqrt{\sum_{i=1}^w((x_{i+1}-x_i)^2)}, \quad \text{where}\; w \; \text{is the window size} \tag{1} \label{noise}
+\]</span></p>
+<p><br />
+<br />
+The Fig. 11 shows some SQIs.</p>
+<div class="figure" style="text-align: center">
+<img src="figure/noise.png" alt="Figure 11 - Green line is the &quot;complexity&quot; of the signal" width="100%" />
+<p class="caption">
+Figure 11 - Green line is the “complexity” of the signal
+</p>
+</div>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-noise">
+Past versions of noise.png
+</button>
+</p>
+<div id="fig-noise" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/franzbischoff/false.alarm/blob/1473a05723e9d94f18e9fd5f77a616bc669ed973/docs/figure/noise.png" target="_blank">1473a05</a>
+</td>
+<td>
+Francisco Bischoff
+</td>
+<td>
+2021-07-15
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p>Finally, a sample of the regime change detection is shown in Figs. 12 to 13.</p>
+<p>Fig. 12 shows that noisy data (probably patient muscle movements) are marked with a blue point and thus are ignored by the algorithm. Also, valid for the following plots, the green and red lines on the data mark the 10 seconds window where the “event” that triggers the alarm is supposed to happen.</p>
+<div class="figure" style="text-align: center">
+<img src="figure/regime_filter.png" alt="Figure 12 - Regime changes with noisy data - false alarm" width="100%" />
+<p class="caption">
+Figure 12 - Regime changes with noisy data - false alarm
+</p>
+</div>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-regime_filter">
+Past versions of regime_filter.png
+</button>
+</p>
+<div id="fig-regime_filter" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/franzbischoff/false.alarm/blob/1473a05723e9d94f18e9fd5f77a616bc669ed973/docs/figure/regime_filter.png" target="_blank">1473a05</a>
+</td>
+<td>
+Francisco Bischoff
+</td>
+<td>
+2021-07-15
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p>In Fig. 14, the data is clean; thus, nothing is excluded. Interestingly one of the detected regime changes is inside the “green-red” window. But it is a false alarm.</p>
+<div class="figure" style="text-align: center">
+<img src="figure/regime_false.png" alt="Figure 14 - Regime changes with good data - false alarm" width="100%" />
+<p class="caption">
+Figure 14 - Regime changes with good data - false alarm
+</p>
+</div>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-regime_false">
+Past versions of regime_false.png
+</button>
+</p>
+<div id="fig-regime_false" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/franzbischoff/false.alarm/blob/1473a05723e9d94f18e9fd5f77a616bc669ed973/docs/figure/regime_false.png" target="_blank">1473a05</a>
+</td>
+<td>
+Francisco Bischoff
+</td>
+<td>
+2021-07-15
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p>The last plot (Fig. 13) shows the algorithm’s robustness, not excluding good data with a wandering baseline, and the last regime change is correctly detected inside the “green-red” window.</p>
+<div class="figure" style="text-align: center">
+<img src="figure/regime_true.png" alt="Figure 13 - Regime changes with good but wandering data - true alarm" width="100%" />
+<p class="caption">
+Figure 13 - Regime changes with good but wandering data - true alarm
+</p>
+</div>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-regime_true">
+Past versions of regime_true.png
+</button>
+</p>
+<div id="fig-regime_true" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/franzbischoff/false.alarm/blob/1473a05723e9d94f18e9fd5f77a616bc669ed973/docs/figure/regime_true.png" target="_blank">1473a05</a>
+</td>
+<td>
+Francisco Bischoff
+</td>
+<td>
+2021-07-15
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+</div>
+<div id="first-general-assessment" class="section level3">
+<h3><span class="header-section-number">1.4.4</span> First General Assessment</h3>
+<p>By August 2021, it was clear that the chosen regime detection algorithm would be the (Fast Low-cost Online Semantic Segmentation) FLOSS<span class="citation"><sup><a href="#ref-gharghabi2017">19</a></sup></span>. Thus, the pipeline had to be adapted in order to allow the careful replication of the streaming process, even though several computations are made beforehand to keep the pipeline (i.e., the simulation) fast on exploring several parameters.</p>
+<p>The choice of FLOSS is founded on the following arguments:</p>
+<ul>
+<li><strong>Domain Agnosticism:</strong> the algorithm makes no assumptions about the data as opposed to most available algorithms to date.</li>
+<li><strong>Streaming:</strong> the algorithm can provide real-time information.</li>
+<li><strong>Real-World Data Suitability:</strong> the objective is not to <em>explain</em> all the data. Therefore, areas marked as “don’t know” areas are acceptable.</li>
+<li><strong>FLOSS is not:</strong> a change point detection algorithm<span class="citation"><sup><a href="#ref-aminikhanghahi2016">20</a></sup></span>. The interest here is changes in the shapes of a sequence of measurements.</li>
+</ul>
+<p>Other algorithms we can cite are based on Hidden Markov Models (HMM) that require at least two parameters set by domain experts: cardinality and dimensionality reduction. The most attractive alternative could be the Autoplait<span class="citation"><sup><a href="#ref-Matsubara2014">21</a></sup></span>, which is also domain agnostic and parameter-free. It segments the time series using Minimum Description Length (MDL) and recursively tests if the region is best modeled by one or two HMM. However, Autoplait is designed for batch operation, not streaming, and also requires discrete data. FLOSS was demonstrated to be superior in several datasets in its original paper. In addition, FLOSS is robust to several changes in data like downsampling, bit depth reduction, baseline wandering, noise, smoothing, and even deleting 3% of the data and filling with simple interpolation. Finally, the algorithm is light and suitable for low-power devices.</p>
+<p>It is worth also mentioning the Time Series Snippets<span class="citation"><sup><a href="#ref-Imani2018">22</a></sup></span>, based on MPdist<span class="citation"><sup><a href="#ref-gharghabi2018b">23</a></sup></span>. The latter measures the distance between two sequences considering how many similar sub-sequences they share, no matter the order of matching. It proved to be a useful measure (not a metric) for meaningfully clustering similar sequences. Time Series Snippets exploits MPdist properties to summarize a dataset that contains representative sequences. This seems to be an alternative for detecting regime changes, but it is not. The purpose of this algorithm is to find which pattern(s) explains most of the dataset. Lastly, MPdist is quite expensive compared to the trivial Euclidean distance.</p>
+</div>
+<div id="second-general-assessment" class="section level3">
+<h3><span class="header-section-number">1.4.5</span> Second General Assessment</h3>
+<p>By January 2022, the following tasks were performed:</p>
+<ol style="list-style-type: decimal">
+<li>Restructuring the roadmap (again)</li>
+<li>Refining the main pipeline (again)</li>
+<li>Preparing for modeling and parameter tuning</li>
+<li>Feasibility trial</li>
+<li>And others</li>
+</ol>
+<div id="refining-the-main-pipeline" class="section level4">
+<h4><span class="header-section-number">1.4.5.1</span> Refining the main pipeline</h4>
+<p>That can also be thought of as “rethinking” the pipeline. Which also leads to the roadmap restructuration. The new roadmap was already shown above in Fig. 6.</p>
+<p>It is essential not only to write a pipeline that can “autoplot” itself for fine-grain inspection but also to design a high-level graph that can explain it “in a glance”. This exercise was helpful both ways: telling the story in a short version also reveals missing things and misleading paths that are not so obvious when thinking “low-level”.</p>
+<p>Figs. 15, 16 and 17 show the overview of the processes involved.</p>
+<div class="figure" style="text-align: center">
+<img src="figure/regime_detection.svg" alt="Figure 15 - Pipeline for regime change detection" width="100%" />
+<p class="caption">
+Figure 15 - Pipeline for regime change detection
+</p>
+</div>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-regime_detection">
+Past versions of regime_detection.svg
+</button>
+</p>
+<div id="fig-regime_detection" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/franzbischoff/false.alarm/blob/571ac342ed78d2be78faba65fbbae38b50f42692/docs/figure/regime_detection.svg" target="_blank">571ac34</a>
+</td>
+<td>
+Francisco Bischoff
+</td>
+<td>
+2022-01-15
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="figure" style="text-align: center">
+<img src="figure/shapelets.svg" alt="Figure 16 - Pipeline for TRUE and FALSE alarm classification" width="60%" />
+<p class="caption">
+Figure 16 - Pipeline for TRUE and FALSE alarm classification
+</p>
+</div>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-shapelets">
+Past versions of shapelets.svg
+</button>
+</p>
+<div id="fig-shapelets" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/franzbischoff/false.alarm/blob/571ac342ed78d2be78faba65fbbae38b50f42692/docs/figure/shapelets.svg" target="_blank">571ac34</a>
+</td>
+<td>
+Francisco Bischoff
+</td>
+<td>
+2022-01-15
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="figure" style="text-align: center">
+<img src="figure/fullmodel.svg" alt="Figure 17 - Pipeline of the final process" width="60%" />
+<p class="caption">
+Figure 17 - Pipeline of the final process
+</p>
+</div>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-fullmodel">
+Past versions of fullmodel.svg
+</button>
+</p>
+<div id="fig-fullmodel" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/franzbischoff/false.alarm/blob/571ac342ed78d2be78faba65fbbae38b50f42692/docs/figure/fullmodel.svg" target="_blank">571ac34</a>
+</td>
+<td>
+Francisco Bischoff
+</td>
+<td>
+2022-01-15
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+<div id="preparing-for-modeling-and-parameter-tuning" class="section level4">
+<h4><span class="header-section-number">1.4.5.2</span> Preparing for modeling and parameter tuning</h4>
+<p>Here is one missing part that should have been addressed (formally) earlier. Although this work has its purpose of being finally deployed on small hardware, this prospective phase will need several hours of computing, tuning, evaluation, and validation of all findings.</p>
+<p>Thus it was necessary to revisit the frameworks we are used to working on R: <code>caret</code><span class="citation"><sup><a href="#ref-JSSv028i05">24</a></sup></span> and the newest <code>tidymodels</code><span class="citation"><sup><a href="#ref-tidymodels2020">25</a></sup></span> collection. For sure, there are other frameworks and opinions<span class="citation"><sup><a href="#ref-Thompson2020">26</a></sup></span>. Notwithstanding, this project will follow the <code>tidymodels</code> road. Two significant arguments 1) constantly improving and constantly being re-checked for bugs; large community contribution; 2) allows to plug in a custom modeling algorithm that, in this case, will be the one needed for developing this work.</p>
+</div>
+<div id="feasibility-trial" class="section level4">
+<h4><span class="header-section-number">1.4.5.3</span> Feasibility trial</h4>
+<p>A side-project called “false.alarm.io” has been derived from this work (an unfortunate mix of “false.alarm” and “PlatformIO”<span class="citation"><sup><a href="#ref-PlatformIO">27</a></sup></span>, the IDE chosen to interface the panoply of embedded systems we can experiment with). The current results of this side-project are very enlightening and show that the final algorithm can indeed be used in small hardware. Further data will be available in the future.</p>
+</div>
+<div id="and-others" class="section level4">
+<h4><span class="header-section-number">1.4.5.4</span> And others</h4>
+<p>After this “step back” to look forward, it was time to define how the regime change algorithm would integrate with the actual decision of triggering or not the alarm. Some hypotheses were thought out: (1) clustering similar patterns, (2) anomaly detection, (3) classification, and (4) forecasting. Among these methods, it was thought, in order to avoid exceeding processor capacity, an initial set of shapelets<span class="citation"><sup><a href="#ref-Rakthanmanon2013">28</a></sup></span> can be sufficient to rule in or out the <code>TRUE</code>/<code>FALSE</code> challenge. Depending on the accuracy of this approach and the resources available, another method can be introduced for both (1) improving the “negative”<a href="#fn1" class="footnote-ref" id="fnref1"><sup>1</sup></a> samples and (2) learning more shapelets to improve the <code>TRUE</code>/<code>FALSE</code> alarm discrimination.</p>
+</div>
+</div>
+<div id="scientific-contributions" class="section level3">
+<h3><span class="header-section-number">1.4.6</span> Scientific Contributions</h3>
+<ol style="list-style-type: decimal">
+<li><p><strong>On regime change detection:</strong> in the original paper, the FLOSS algorithm assumes the <em>Arc Counts</em> follow a “uniform distribution” when we add a temporal constraint (not considering arcs coming from older data), and the <em>Arc Counts</em> of newly incoming data are truncated by the same amount of temporal constraint. This prevents completely the detection of a regime change in the last 10 seconds as required. This issue is overcome using the theoretical distributions as shown in Fig. 18.</p></li>
+<li><p><strong>On the Matrix Profile:</strong> since the first paper presenting this new concept<span class="citation"><sup><a href="#ref-Yeh2017a">29</a></sup></span>, lots of investigations were made to speed up its computation. It is notable how all computations are not dependent on the <em>rolling window size</em> as previous works not using Matrix Profile. Aside from this, we can see that the first STAMP<span class="citation"><sup><a href="#ref-Yeh2017a">29</a></sup></span> algorithm has the time complexity of <span class="math inline">\(O(n^2log{n})\)</span> while STOMP<span class="citation"><sup><a href="#ref-zhu2016">30</a></sup></span> <span class="math inline">\(O(n^2)\)</span> (a significant improvement), but STOMP lacks the “any-time” property. Later SCRIMP<span class="citation"><sup><a href="#ref-zhu2018">31</a></sup></span> solves this problem keeping the same time complexity of <span class="math inline">\(O(n^2)\)</span>. Here we are in the “exact” algorithms domain and will not extend the scope for conciseness.</p>
+<ol style="list-style-type: decimal">
+<li><p>The main issue with the algorithms above is the dependency on a fast Fourier transform (FFT) library. FFT has been extensively optimized and architecture/CPU bounded to exploit the most of speed. Also, padding data to some power of 2 happens to increase the efficiency of the algorithm. We can argue that time complexity doesn’t mean “faster” when we can exploit low-level instructions. In our case, using FFT in a low-power device is overkilling. For example, a quick search over the internet gives us a hint that computing FFT on a 4096 data in an ESP32 takes about 21ms (~47 computations in 1 second). This means ~79 seconds for computing all FFT’s (~3797) required for STAMP using a window of 300. Currently, we can compute 50k full matrices in less time using no FFT in an ESP32 MCU (Fig. 19).</p></li>
+<li><p>Recent works using <em>exact</em> algorithms are using an unpublished algorithm called <strong>MPX</strong>, which computes the Matrix Profile using cross-correlation methods ending up faster and is easily portable.</p></li>
+<li><p><strong>The main contribution</strong> of this work on this area is adding the <strong>online</strong> capability to MPX, which means we can update the Matrix Profile as new data comes in.</p></li>
+</ol></li>
+<li><p><strong>On extending the Matrix Profile:</strong> an unexplored constraint that we could apply on building the Matrix Profile we are calling <em>Similarity Threshold</em> (ST). The original work outputs the similarity values in Euclidean Distance (ED) values, while MPX naturally outputs the values in Pearson’s correlation coefficients (CC). Both ED and CC are interchangeable using the equation <span class="math inline">\(\eqref{edcc}\)</span>. However, we may argue that it is easier to compare values that do not depend on the window size during an exploratory phase. MPX happens to naturally return values in CC, saving a few more computation time. The ST is an interesting factor that we can use, especially when detecting pattern changes during time. The FLOSS algorithm relies on counting references between indexes in the time series. ST can help remove “noise” from these references since only similar patterns above a certain threshold are referenced, and changes have more impact on these counts. The best ST threshold is still to be determined.</p></li>
+</ol>
+<p><br />
+</p>
+<p><span class="math display">\[
+CC = 1 - \frac{ED}{(2 \times WindowSize)} \tag{2} \label{edcc}
+\]</span></p>
+<p><br />
+</p>
+<div class="figure" style="text-align: center">
+<img src="figure/report.Rmd/distributions-1.svg" alt="Figure 18 - 1D-IAC distributions for earlier temporal constraint (on Matrix Profile)" width="960" />
+<p class="caption">
+Figure 18 - 1D-IAC distributions for earlier temporal constraint (on Matrix Profile)
+</p>
+</div>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-distributions-1">
+Past versions of distributions-1.svg
+</button>
+</p>
+<div id="fig-distributions-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/franzbischoff/false.alarm/blob/571ac342ed78d2be78faba65fbbae38b50f42692/docs/figure/report.Rmd/distributions-1.svg" target="_blank">571ac34</a>
+</td>
+<td>
+Francisco Bischoff
+</td>
+<td>
+2022-01-15
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p><br />
+</p>
+<div class="figure" style="text-align: center">
+<img src="figure/esp32.jpg" alt="Figure 19 - ESP32 MCU" width="40%" />
+<p class="caption">
+Figure 19 - ESP32 MCU
+</p>
+</div>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-esp32">
+Past versions of esp32.jpg
+</button>
+</p>
+<div id="fig-esp32" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/franzbischoff/false.alarm/blob/571ac342ed78d2be78faba65fbbae38b50f42692/docs/figure/esp32.jpg" target="_blank">571ac34</a>
+</td>
+<td>
+Francisco Bischoff
+</td>
+<td>
+2022-01-15
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div id="refs">
+<div id="ref-compendium2019">
+<p>1. Research compendium. Published 2019. Accessed April 8, 2021. <a href="https://research-compendium.science">https://research-compendium.science</a></p>
+</div>
+<div id="ref-wilkinson2016">
+<p>2. Wilkinson M, Dumontier M, Aalbersberg I, et al. The fair guiding principles for scientific data management and stewardship. <em>Scientific Data</em>. 2016;3(1). doi:<a href="https://doi.org/10.1038/sdata.2016.18">10.1038/sdata.2016.18</a></p>
+</div>
+<div id="ref-CodeMeta2017">
+<p>3. The codemeta project. Published 2017. Accessed January 10, 2022. <a href="https://codemeta.github.io/">https://codemeta.github.io/</a></p>
+</div>
+<div id="ref-bischoff2021">
+<p>4. Reducing false arrhythmia alarms in the icu - the physionet computing in cardiology challenge 2015. Published online March 24, 2021. doi:<a href="https://doi.org/10.5281/zenodo.4634013">10.5281/zenodo.4634013</a></p>
+</div>
+<div id="ref-Clifford2015">
+<p>5. Clifford GD, Silva I, Moody B, et al. The physionet/computing in cardiology challenge 2015: Reducing false arrhythmia alarms in the icu. In: <em>Computing in Cardiology</em>.; 2015. doi:<a href="https://doi.org/10.1109/cic.2015.7408639">10.1109/cic.2015.7408639</a></p>
+</div>
+<div id="ref-AAMI2002">
+<p>6. Association for the Advancement of Medical Instrumentation. <em>Cardiac monitors, heart rate meters, and alarms</em>. Association for the Advancement of Medical Instrumentation; 2002.</p>
+</div>
+<div id="ref-landau2021">
+<p>7. Landau W, Landau W, Warkentin M, et al. <em>Ropensci/Targets, Dynamic Function-Oriented ’Make’-Like Declarative Workflows</em>. Zenodo; 2021. doi:<a href="https://doi.org/10.5281/ZENODO.4062936">10.5281/ZENODO.4062936</a></p>
+</div>
+<div id="ref-franz_website">
+<p>8. Franzbischoff/false.alarm: Reproducible reports. Published 2021. Accessed April 8, 2021. <a href="https://franzbischoff.github.io/false.alarm">https://franzbischoff.github.io/false.alarm</a></p>
+</div>
+<div id="ref-workflowr2021">
+<p>9. Blischak JD, Carbonetto P, Stephens M. Creating and sharing reproducible research code the workflowr way [version 1; peer review: 3 approved]. <em>F1000Research</em>. 2019;8(1749). doi:<a href="https://doi.org/10.12688/f1000research.20843.1">10.12688/f1000research.20843.1</a></p>
+</div>
+<div id="ref-bischoffrepo2021">
+<p>10. Bischoff F. GitHub false.alarm repository. Accessed July 14, 2021. <a href="https://github.com/franzbischoff/false.alarm">https://github.com/franzbischoff/false.alarm</a></p>
+</div>
+<div id="ref-gitactions2021">
+<p>11. GitHub Actions. Accessed July 14, 2021. <a href="https://github.com/features/actions">https://github.com/features/actions</a></p>
+</div>
+<div id="ref-zenhub2021">
+<p>12. Zenhub workspace. Accessed July 14, 2021. <a href="https://app.zenhub.com/workspaces/phd-thesis-5eb2ce34f5f30b3aed0a35af/board">https://app.zenhub.com/workspaces/phd-thesis-5eb2ce34f5f30b3aed0a35af/board</a></p>
+</div>
+<div id="ref-sparkfun2021">
+<p>13. SparkFun Single Lead Heart Rate Monitor - AD8232 - SEN-12650 - SparkFun Electronics. Accessed July 14, 2021. <a href="https://www.sparkfun.com/products/12650">https://www.sparkfun.com/products/12650</a></p>
+</div>
+<div id="ref-AnalogDevices2020">
+<p>14. Analog Devices. AD8232 Single-Lead, Heart Rate Monitor Front End. Published online 2020. Accessed July 14, 2021. <a href="https://www.analog.com/media/en/technical-documentation/data-sheets/ad8232.pdf">https://www.analog.com/media/en/technical-documentation/data-sheets/ad8232.pdf</a></p>
+</div>
+<div id="ref-arduino2021">
+<p>15. Arduino. Accessed July 14, 2021. <a href="https://www.arduino.cc/">https://www.arduino.cc/</a></p>
+</div>
+<div id="ref-gharghabi2018">
+<p>16. Gharghabi S, Yeh C, Ding Y, et al. Domain agnostic online semantic segmentation for multi-dimensional time series. <em>Data Mining and Knowledge Discovery</em>. 2018;33(1):96-130. doi:<a href="https://doi.org/10.1007/s10618-018-0589-3">10.1007/s10618-018-0589-3</a></p>
+</div>
+<div id="ref-RJ-2020-021">
+<p>17. Bischoff F, Rodrigues PP. tsmp: An R Package for Time Series with Matrix Profile. <em>The R Journal</em>. 2020;12(1):76-86. doi:<a href="https://doi.org/10.32614/RJ-2020-021">10.32614/RJ-2020-021</a></p>
+</div>
+<div id="ref-eerikainen2015">
+<p>18. Eerikainen L, Vanschoren J, Rooijakkers M, Vullings R, Aarts R. 2015 computing in cardiology conference (cinc). In: IEEE; 2015. doi:<a href="https://doi.org/10.1109/cic.2015.7408644">10.1109/cic.2015.7408644</a></p>
+</div>
+<div id="ref-gharghabi2017">
+<p>19. Gharghabi S, Ding Y, Yeh C-CM, Kamgar K, Ulanova L, Keogh E. 2017 ieee international conference on data mining (icdm). In: IEEE; 2017. doi:<a href="https://doi.org/10.1109/icdm.2017.21">10.1109/icdm.2017.21</a></p>
+</div>
+<div id="ref-aminikhanghahi2016">
+<p>20. Aminikhanghahi S, Cook DJ. A survey of methods for time series change point detection. <em>Knowledge and Information Systems</em>. 2016;51(2):339-367. doi:<a href="https://doi.org/10.1007/s10115-016-0987-z">10.1007/s10115-016-0987-z</a></p>
+</div>
+<div id="ref-Matsubara2014">
+<p>21. Matsubara Y, Sakurai Y, Faloutsos C. AutoPlait: Automatic mining of co-evolving time sequences. <em>Proceedings of the ACM SIGMOD International Conference on Management of Data</em>. Published online 2014:193-204. doi:<a href="https://doi.org/10.1145/2588555.2588556">10.1145/2588555.2588556</a></p>
+</div>
+<div id="ref-Imani2018">
+<p>22. Imani S, Madrid F, Ding W, Crouter S, Keogh E. Matrix profile xiii : Time series snippets : A new primitive for time series data mining. In: <em>2018 Ieee International Conference on Data Mining (Icdm)</em>.; 2018.</p>
+</div>
+<div id="ref-gharghabi2018b">
+<p>23. Gharghabi S, Imani S, Bagnall A, Darvishzadeh A, Keogh E. Matrix profile xii: MPdist: A novel time series distance measure to allow data mining in more challenging scenarios. In: IEEE; 2018:965-970. doi:<a href="https://doi.org/10.1109/ICDM.2018.00119">10.1109/ICDM.2018.00119</a></p>
+</div>
+<div id="ref-JSSv028i05">
+<p>24. Kuhn M. Building predictive models in r using the caret package. <em>Journal of Statistical Software, Articles</em>. 2008;28(5):1-26. doi:<a href="https://doi.org/10.18637/jss.v028.i05">10.18637/jss.v028.i05</a></p>
+</div>
+<div id="ref-tidymodels2020">
+<p>25. Kuhn M, Wickham H. <em>Tidymodels: A Collection of Packages for Modeling and Machine Learning Using Tidyverse Principles.</em>; 2020. <a href="https://www.tidymodels.org">https://www.tidymodels.org</a></p>
+</div>
+<div id="ref-Thompson2020">
+<p>26. Thompson J. On not using tidymodels. Published October 2020. Accessed January 5, 2022. <a href="https://staffblogs.le.ac.uk/teachingr/2020/10/05/on-not-using-tidymodels/">https://staffblogs.le.ac.uk/teachingr/2020/10/05/on-not-using-tidymodels/</a></p>
+</div>
+<div id="ref-PlatformIO">
+<p>27. PlatformIO, a professional collaborative platform for embedded development. Accessed January 5, 2022. <a href="https://platformio.org/">https://platformio.org/</a></p>
+</div>
+<div id="ref-Rakthanmanon2013">
+<p>28. Rakthanmanon T, Keogh E. Fast shapelets: A scalable algorithm for discovering time series shapelets. In: <em>Proceedings of the 2013 Siam International Conference on Data Mining</em>. Society for Industrial; Applied Mathematics; 2013:668-676. doi:<a href="https://doi.org/10.1137/1.9781611972832.74">10.1137/1.9781611972832.74</a></p>
+</div>
+<div id="ref-Yeh2017a">
+<p>29. Yeh C-CM, Zhu Y, Ulanova L, et al. Matrix profile i: All pairs similarity joins for time series: A unifying view that includes motifs, discords and shapelets. In: <em>2016 Ieee 16th International Conference on Data Mining (Icdm)</em>. IEEE; 2016:1317-1322. doi:<a href="https://doi.org/10.1109/ICDM.2016.0179">10.1109/ICDM.2016.0179</a></p>
+</div>
+<div id="ref-zhu2016">
+<p>30. Zhu Y, Zimmerman Z, Senobari NS, et al. 2016 ieee 16th international conference on data mining (icdm). In: IEEE; 2016. doi:<a href="https://doi.org/10.1109/icdm.2016.0085">10.1109/icdm.2016.0085</a></p>
+</div>
+<div id="ref-zhu2018">
+<p>31. Zhu Y, Yeh C-CM, Zimmerman Z, Kamgar K, Keogh E. 2018 ieee international conference on data mining (icdm). In: IEEE; 2018. doi:<a href="https://doi.org/10.1109/icdm.2018.00099">10.1109/icdm.2018.00099</a></p>
+</div>
+</div>
+<br>
+<p>
+<button type="button" class="btn btn-default btn-workflowr btn-workflowr-sessioninfo" data-toggle="collapse" data-target="#workflowr-sessioninfo" style="display: block;">
+<span class="glyphicon glyphicon-wrench" aria-hidden="true"></span> Session information
+</button>
+</p>
+<div id="workflowr-sessioninfo" class="collapse">
+<pre><code>R version 4.1.2 (2021-11-01)
 Platform: x86_64-pc-linux-gnu (64-bit)
 Running under: Ubuntu 20.04.3 LTS
 
@@ -1781,47 +2039,65 @@ BLAS:   /usr/lib/x86_64-linux-gnu/blas/libblas.so.3.9.0
 LAPACK: /usr/lib/x86_64-linux-gnu/lapack/liblapack.so.3.9.0
 
 locale:
- [1] LC_CTYPE=C.UTF-8       LC_NUMERIC=C           LC_TIME=C.UTF-8
- [4] LC_COLLATE=C.UTF-8     LC_MONETARY=C.UTF-8    LC_MESSAGES=C.UTF-8
- [7] LC_PAPER=C.UTF-8       LC_NAME=C              LC_ADDRESS=C
-[10] LC_TELEPHONE=C         LC_MEASUREMENT=C.UTF-8 LC_IDENTIFICATION=C
+ [1] LC_CTYPE=C.UTF-8       LC_NUMERIC=C           LC_TIME=C.UTF-8       
+ [4] LC_COLLATE=C.UTF-8     LC_MONETARY=C.UTF-8    LC_MESSAGES=C.UTF-8   
+ [7] LC_PAPER=C.UTF-8       LC_NAME=C              LC_ADDRESS=C          
+[10] LC_TELEPHONE=C         LC_MEASUREMENT=C.UTF-8 LC_IDENTIFICATION=C   
 
 attached base packages:
-[1] stats     graphics  grDevices datasets  utils     methods   base
+[1] stats     graphics  grDevices datasets  utils     methods   base     
 
 other attached packages:
-[1] kableExtra_1.3.4  tibble_3.1.5      visNetwork_2.1.0  tarchetypes_0.3.1
-[5] targets_0.8.0     workflowr_1.6.2   here_1.0.1
+ [1] stringr_1.4.0     ggplot2_3.3.5     gridExtra_2.3     kableExtra_1.3.4 
+ [5] tibble_3.1.6      visNetwork_2.1.0  gittargets_0.0.1  tarchetypes_0.4.1
+ [9] targets_0.10.0    workflowr_1.7.0   here_1.0.1       
 
 loaded via a namespace (and not attached):
- [1] tidyselect_1.1.1   xfun_0.26          bslib_0.3.1        purrr_0.3.4
- [5] colorspace_2.0-2   vctrs_0.3.8        viridisLite_0.4.0  htmltools_0.5.2
- [9] yaml_2.2.1         utf8_1.2.2         rlang_0.4.11       later_1.3.0
-[13] pillar_1.6.3       jquerylib_0.1.4    glue_1.4.2         withr_2.4.2
-[17] lifecycle_1.0.1    stringr_1.4.0      munsell_0.5.0      rvest_1.0.1
-[21] htmlwidgets_1.5.4  codetools_0.2-18   evaluate_0.14      knitr_1.36
-[25] callr_3.7.0        fastmap_1.1.0      httpuv_1.6.3       ps_1.6.0
-[29] fansi_0.5.0        highr_0.9          Rcpp_1.0.7         scales_1.1.1
-[33] renv_0.14.0        promises_1.2.0.1   webshot_0.5.2      jsonlite_1.7.2
-[37] systemfonts_1.0.2  fs_1.5.0           digest_0.6.28      stringi_1.7.5
-[41] processx_3.5.2     rprojroot_2.0.2    cli_3.0.1          tools_4.1.1
-[45] magrittr_2.0.1     sass_0.4.0         crayon_1.4.1       whisker_0.4
-[49] pkgconfig_2.0.3    ellipsis_0.3.2     xml2_1.3.2         data.table_1.14.2
-[53] svglite_2.0.0.9000 rmarkdown_2.11     httr_1.4.2         rstudioapi_0.13
-[57] R6_2.5.1           igraph_1.2.6       compiler_4.1.1     git2r_0.28.0.9000 </code></pre>
-          </div>
-        </div>
-      </div>
-    </div>
+ [1] Rcpp_1.0.8            gert_1.5.0            svglite_2.0.0.9000   
+ [4] languageserver_0.3.12 getPass_0.2-2         ps_1.6.0             
+ [7] rprojroot_2.0.2       digest_0.6.29         utf8_1.2.2           
+[10] R6_2.5.1              backports_1.4.1       sys_3.4              
+[13] evaluate_0.14         highr_0.9             httr_1.4.2           
+[16] pillar_1.6.4          rlang_0.99.0.9003     uuid_1.0-3           
+[19] rstudioapi_0.13       data.table_1.14.2     whisker_0.4          
+[22] callr_3.7.0           jquerylib_0.1.4       rmarkdown_2.11       
+[25] labeling_0.4.2        webshot_0.5.2         htmlwidgets_1.5.4    
+[28] igraph_1.2.11         munsell_0.5.0         compiler_4.1.2       
+[31] httpuv_1.6.5          xfun_0.29             systemfonts_1.0.3    
+[34] pkgconfig_2.0.3       askpass_1.1           htmltools_0.5.2      
+[37] openssl_1.4.6         tidyselect_1.1.1      codetools_0.2-18     
+[40] viridisLite_0.4.0     fansi_1.0.2           crayon_1.4.2         
+[43] dplyr_1.0.7           withr_2.4.3           later_1.3.0          
+[46] grid_4.1.2            gtable_0.3.0          jsonlite_1.7.2       
+[49] lifecycle_1.0.1       git2r_0.29.0          magrittr_2.0.1       
+[52] credentials_1.3.2     scales_1.1.1          cli_3.1.0            
+[55] stringi_1.7.6         debugme_1.1.0         farver_2.1.0         
+[58] renv_0.15.1           fs_1.5.2              promises_1.2.0.1     
+[61] xml2_1.3.3            bslib_0.3.1           ellipsis_0.3.2       
+[64] generics_0.1.1        vctrs_0.3.8           tools_4.1.2          
+[67] glue_1.6.0            purrr_0.3.4           processx_3.5.2       
+[70] fastmap_1.1.0         yaml_2.2.1            colorspace_2.0-2     
+[73] base64url_1.4         rvest_1.0.2           knitr_1.37           
+[76] sass_0.4.0           </code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="footnotes">
+<hr />
+<ol>
+<li id="fn1"><p>The term “negative” does not imply that the patient has a “normal” ECG. It means that the “negative” section is not a life-threatening condition that needs to trigger an alarm.<a href="#fnref1" class="footnote-back">↩</a></p></li>
+</ol>
+</div>
 
 
-    <!-- Adjust MathJax settings so that all math formulae are shown using
+<!-- Adjust MathJax settings so that all math formulae are shown using
 TeX fonts only; see
-http://docs.mathjax.org/en/latest/configuration.html.  This will make
+https://docs.mathjax.org/en/latest/web/configuration.html. This will make
 the presentation more consistent at the cost of the webpage sometimes
 taking slightly longer to load. Note that this only works because the
 footer is added to webpages before the MathJax javascript. -->
-    <script type="text/x-mathjax-config">
+<script type="text/x-mathjax-config">
   MathJax.Hub.Config({
     "HTML-CSS": { availableFonts: ["TeX"] }
   });
@@ -1829,48 +2105,47 @@ footer is added to webpages before the MathJax javascript. -->
 
 
 
-  </div>
+</div>
 
-  <script>
+<script>
 
-    // add bootstrap table styles to pandoc tables
-    function bootstrapStylePandocTables() {
-      $('tr.odd').parent('tbody').parent('table').addClass('table table-condensed');
-    }
-    $(document).ready(function () {
-      bootstrapStylePandocTables();
-    });
-
-
-  </script>
-
-  <!-- tabsets -->
-
-  <script>
-    $(document).ready(function () {
-      window.buildTabsets("TOC");
-    });
-
-    $(document).ready(function () {
-      $('.tabset-dropdown > .nav-tabs > li').click(function () {
-        $(this).parent().toggleClass('nav-tabs-open');
-      });
-    });
-  </script>
-
-  <!-- code folding -->
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.odd').parent('tbody').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
 
 
-  <!-- dynamically load mathjax for compatibility with self-contained -->
-  <script>
-    (function () {
-      var script = document.createElement("script");
-      script.type = "text/javascript";
-      script.src = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
-      document.getElementsByTagName("head")[0].appendChild(script);
-    })();
-  </script>
+</script>
+
+<!-- tabsets -->
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open');
+  });
+});
+</script>
+
+<!-- code folding -->
+
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
 
 </body>
-
 </html>

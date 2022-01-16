@@ -531,7 +531,6 @@ gg <- gridExtra::grid.arrange(mp_constraint, floss_constraint, mp_arcs, floss_ar
   just = "center", gp = grid::gpar(fontsize = 15)
   )
 )
-
 ```
 
 # One more contributiono
