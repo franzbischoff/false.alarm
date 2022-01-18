@@ -222,7 +222,7 @@ knitr::include_graphics("figure/workflowr_print.png")
 
 ### Project start
 
-The project started with a literature survey on the databases Scopus, Pubmed, Web of Science, and
+The project started with a literature survey on the databases Scopus, PubMed, Web of Science, and
 Google Scholar with the following query (the syntax was adapted for each database):
 
 ```{=tex}
@@ -528,8 +528,9 @@ improve the `TRUE`/`FALSE` alarm discrimination.
       low-level instructions. In our case, using FFT in a low-power device is overkilling. For
       example, a quick search over the internet gives us a hint that computing FFT on a 4096 data in
       an ESP32 takes about 21ms (~47 computations in 1 second). This means ~79 seconds for computing
-      all FFT's (~3797) required for STAMP using a window of 300. Currently, we can compute 50k full
-      matrices in less time using no FFT in an ESP32 MCU (Fig. \@ref(fig:esp32)).
+      all FFT's (~3797) required for STAMP using a window of 300. Currently, we can compute a full
+      matrix of 5k data in about 9 seconds in an ESP32 MCU (Fig. \@ref(fig:esp32)), and keep updating
+      it as fast as 1 min of data (at 250hz) in just 6 seconds.
 
     2. Recent works using _exact_ algorithms are using an unpublished algorithm called **MPX**, which
        computes the Matrix Profile using cross-correlation methods ending up faster and is easily

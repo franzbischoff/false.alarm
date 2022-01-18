@@ -9,10 +9,7 @@
     "givenName": "Francisco"
   },
   "codeRepository": "https://github.com/franzbischoff/false.alarm",
-  "contributor": {},
-  "copyrightHolder": {},
   "description": "PhD work about detecting life-threatening patterns in Point-of-care ECG using efficient memory and processor power.",
-  "funder": {},
   "license": "https://spdx.org/licenses/CC-BY-NC-SA-4.0",
   "name": "false.alarm: Detecting life-threatening patterns in Point-of-care ECG using efficient memory and processor power",
   "programmingLanguage": {
@@ -21,5 +18,5 @@
     "url": "https://r-project.org"
   },
   "runtimePlatform": "R version 4.1.2 (2021-11-01)",
-  "version": "0.0.0.9103"
+  "version": "0.0.0.9105"
 }

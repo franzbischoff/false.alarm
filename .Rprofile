@@ -44,16 +44,16 @@ if (Sys.getenv("CI") == "") { # not CI
     )
     options(
       vsc.rstudioapi = TRUE,
-      vsc.browser = "Two",
-      vsc.viewer = "Two",
-      vsc.page_viewer = "Two",
-      vsc.view = "Two",
-      vsc.plot = "Two",
-      vsc.helpPanel = "Two",
+      # vsc.browser = "Two",
+      # vsc.viewer = "Two",
+      # vsc.page_viewer = "Two",
+      # vsc.view = "Two",
+      # vsc.plot = "Two",
+      # vsc.helpPanel = "Two",
       vsc.str.max.level = 2,
       vsc.show_object_size = TRUE,
       vsc.globalenv = TRUE,
-      vsc.dev.args = list(width = 1000, height = 600)
+      vsc.dev.args = list(width = 1000, height = 1000)
     )
 
     # if httpgd is installed, let's use it

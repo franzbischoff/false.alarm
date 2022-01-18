@@ -22,15 +22,15 @@ tar_option_set(
 
 # The subset that will be keep from the dataset (seq.int(290 * const_sample_freq + 1, 300 * const_sample_freq) means the last 10 seconds)
 var_subset <- seq.int(290 * const_sample_freq + 1, 300 * const_sample_freq) # last 10 secs
-var_signals_include <- c("II", "V")
+var_signals_include <- "II" # c("II", "V")
 # "time", "I", "II", "III", "V", "aVR", "aVL", "aVF", "PLETH", "ABP", "RESP", "MCL"
 var_signals_exclude <- setdiff(const_signals, var_signals_include)
 var_classes_include <- c("asystole", "bradycardia", "tachycardia", "fibv", "vtachy")
-var_shapelet_size <- c(30, 60, 120, 180, 300) # c(150, 300)
+var_shapelet_size <- c(120, 300, 1000) # c(30, 60, 120, 180, 300) # c(150, 300)
 var_positive <- TRUE # c(TRUE, FALSE)
-var_num_shapelets <- 20
-var_num_neighbors <- 20
-var_min_corr_neighbors <- 0.9
+var_num_shapelets <- 10
+var_num_neighbors <- 10
+var_min_corr_neighbors <- 0.85
 # var_n_workers <- 1 # This was used for a short time, but lucky seen that the currently code can't
 #  cope with NA/NaN/Inf using parallel tasks. So, let's just use the parallel pipeline feature.
 # var_limit_per_class <- 15
@@ -96,44 +96,49 @@ list(
             same_class = FALSE
           )
         ),
-        tar_target(
-          #### Pipeline: Computes the AA - AB difference.
-          data_shapelets,
-          find_k_shapelets(data_pos_neg,
-            signal = map_signals_include,
-            shapelet_size = map_shapelet_size,
-            num_shapelets = var_num_shapelets
-          )
-        ),
-        tar_target(
-          #### Pipeline: Computes the AA - AB difference.
-          data_all_shapelets,
-          find_k_shapelets(data_all_pos_neg,
-            signal = map_signals_include,
-            shapelet_size = map_shapelet_size,
-            num_shapelets = var_num_shapelets
-          )
-        ),
-        tar_target(
-          #### Pipeline: Computes the AA - AB difference.
-          data_neighbors,
-          find_k_neighbors(data_pos_neg,
+        tar_map(
+          values = list(map_reverse = c(TRUE, FALSE)),
+          tar_target(
+            #### Pipeline: Computes the AA - AB difference.
             data_shapelets,
-            signal = map_signals_include,
-            n_neighbors = var_num_neighbors,
-            corr_min = var_min_corr_neighbors,
-            exclusion_zone = 0.5
-          )
-        ),
-        tar_target(
-          #### Pipeline: Computes the AA - AB difference.
-          data_all_neighbors,
-          find_k_neighbors(data_all_pos_neg,
+            find_k_shapelets(data_pos_neg,
+              signal = map_signals_include,
+              shapelet_size = map_shapelet_size,
+              reverse = map_reverse,
+              num_shapelets = var_num_shapelets
+            )
+          ),
+          tar_target(
+            #### Pipeline: Computes the AA - AB difference.
             data_all_shapelets,
-            signal = map_signals_include,
-            n_neighbors = var_num_neighbors,
-            corr_min = var_min_corr_neighbors,
-            exclusion_zone = 0.5
+            find_k_shapelets(data_all_pos_neg,
+              signal = map_signals_include,
+              shapelet_size = map_shapelet_size,
+              reverse = map_reverse,
+              num_shapelets = var_num_shapelets
+            )
+          ),
+          tar_target(
+            #### Pipeline: Computes the AA - AB difference.
+            data_neighbors,
+            find_k_neighbors(data_pos_neg,
+              data_shapelets,
+              signal = map_signals_include,
+              n_neighbors = var_num_neighbors,
+              corr_min = var_min_corr_neighbors,
+              exclusion_zone = 0.5
+            )
+          ),
+          tar_target(
+            #### Pipeline: Computes the AA - AB difference.
+            data_all_neighbors,
+            find_k_neighbors(data_all_pos_neg,
+              data_all_shapelets,
+              signal = map_signals_include,
+              n_neighbors = var_num_neighbors,
+              corr_min = var_min_corr_neighbors,
+              exclusion_zone = 0.5
+            )
           )
         )
       )

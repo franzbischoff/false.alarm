@@ -47,6 +47,19 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
   && echo _R_CHECK_FORCE_SUGGESTS_=FALSE > ${HOME}/.R/check.Renviron \
   && ln -s /usr/lib/R/site-library/littler/examples/render.r /usr/local/bin/render.r
 
+RUN curl -sSL -o pandoc.deb https://github.com/jgm/pandoc/releases/download/2.17.0.1/pandoc-2.17.0.1-1-amd64.deb \
+  && dpkg -i pandoc.deb \
+  rm pandoc.deb
+
+RUN curl -sSL -o ${HOME}/mathjax.tar.gz https://github.com/mathjax/MathJax/archive/refs/tags/2.7.9.tar.gz \
+  && tar -zxf ${HOME}/mathjax.tar.gz -C ${HOME} \
+  && mkdir -p /usr/lib/mathjax/fonts/HTML-CSS/TeX \
+  && cp -R ${HOME}/MathJax-2.7.9/unpacked/* /usr/lib/mathjax/ \
+  && cp -R ${HOME}/MathJax-2.7.9/fonts/HTML-CSS/TeX/* /usr/lib/mathjax/fonts/HTML-CSS/TeX/ \
+  && rm -rf ${HOME}/MathJax-2.7.9 \
+  && rm -f ${HOME}/mathjax.tar.gz
+
+
 # Install tidy stuff
 RUN apt-get update && apt-get install -y --no-install-recommends \
   r-cran-tidyverse \
@@ -112,7 +125,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
   && rm -rf /var/lib/apt/lists/*
 
 # Install go + protobuf
-RUN curl -o ${HOME}/gobuf.tar.gz https://dl.google.com/go/go1.14.linux-amd64.tar.gz \
+RUN curl -sSL -o ${HOME}/gobuf.tar.gz https://dl.google.com/go/go1.14.linux-amd64.tar.gz \
   && tar -xf ${HOME}/gobuf.tar.gz -C ${HOME} \
   && rm ${HOME}/gobuf.tar.gz
 

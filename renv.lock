@@ -1236,10 +1236,10 @@
     },
     "jsonlite": {
       "Package": "jsonlite",
-      "Version": "1.7.2",
+      "Version": "1.7.3",
       "Source": "Repository",
       "Repository": "CRAN",
-      "Hash": "98138e0994d41508c7a6b84a0600cfcb",
+      "Hash": "68c37fd8f863c6273dcd24928c17d6e1",
       "Requirements": []
     },
     "kableExtra": {
@@ -1949,9 +1949,9 @@
       "RemoteUsername": "r-lib",
       "RemoteRepo": "rlang",
       "RemoteRef": "main",
-      "RemoteSha": "2c9d321cc7481a1282eac9a98ce5f6ac50b16c4e",
+      "RemoteSha": "d79ab3a1ab1ce8ca5bb0ebc6ab0454cb10fa4dd1",
       "RemoteHost": "api.github.com",
-      "Hash": "f80921cfb2d16b8b6538b5776de15ea5",
+      "Hash": "bd4196457b3504165f84fc7aa761ed16",
       "Requirements": []
     },
     "rmarkdown": {

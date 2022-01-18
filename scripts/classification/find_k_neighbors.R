@@ -65,6 +65,7 @@ find_k_neighbors <- function(data_pos_neg, data_shapelets, signal = "II", n_neig
       dist_max <- false.alarm::corr_ed(corr_min, query_len)
 
       neighbors <- list()
+      last_dist <- 0
 
       for (i in seq_len(nn)) {
         idx <- dist_sorted_idx[1]
@@ -73,6 +74,8 @@ find_k_neighbors <- function(data_pos_neg, data_shapelets, signal = "II", n_neig
         if (dist > dist_max) {
           break
         }
+
+        last_dist <- dist
 
         neighbors[[i]] <- list(
           data = data[idx:(idx + query_len - 1)],
@@ -85,7 +88,7 @@ find_k_neighbors <- function(data_pos_neg, data_shapelets, signal = "II", n_neig
         dist_sorted <- dist_sorted[keep]
         dist_sorted_idx <- dist_sorted_idx[keep]
       }
-      shape[[k]] <- neighbors
+      shape[[k]] <- list(plato = query, neighbors = neighbors, max_dist = last_dist)
     }
     class_result[[cl]] <- shape
   }

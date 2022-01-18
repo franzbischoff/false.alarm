@@ -42,7 +42,7 @@ build_pos_neg <- function(initial_split, signal = "II", shapelet_size, positive 
     }
 
     if (validate) {
-      neg_stream_val <- validate_data(neg_stream, shapelet_size)
+      neg_stream_val <- validate_data(neg_stream, floor(shapelet_size / 2))
     } else {
       neg_stream_val <- neg_stream
     }
@@ -54,7 +54,7 @@ build_pos_neg <- function(initial_split, signal = "II", shapelet_size, positive 
     }
 
     if (validate) {
-      pos_stream_val <- validate_data(pos_stream, shapelet_size)
+      pos_stream_val <- validate_data(pos_stream, floor(shapelet_size / 2))
     } else {
       pos_stream_val <- pos_stream
     }
