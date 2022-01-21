@@ -2,24 +2,22 @@
 // https://github.com/microsoft/vscode-dev-containers/tree/v0.188.0/containers/ubuntu
 // manual command: docker build -f Dockerfile -t franzbischoff/false.alarm:stable -t franzbischoff/false.alarm:latest -t franzbischoff/false.alarm:v2.2 --build-arg BUILD_DATE=${TODAY} --build-arg BUILD_VERSION=2.2 .
 {
-  // "build": {
-  //   "args": {
-  //     "BUILD_DATE": "${localEnv:date}",
-  //     "BUILD_VERSION": "2.3"
-  //   },
-  //   "dockerfile": "Dockerfile",
-  // },
-  "image": "franzbischoff/false.alarm:stable",
+  "build": {
+    "args": {
+      "BUILD_DATE": "${localEnv:date}",
+      "BUILD_VERSION": "3"
+    },
+    "dockerfile": "Dockerfile",
+  },
+  // "image": "franzbischoff/false.alarm:stable",
   "name": "false.alarm dev",
   "containerEnv": {
     "DEBUGME": "R_GlobalEnv",
-    "NOT_CRAN": "true",
-    "PROFFER_GO_BIN": "/home/docker/go/bin/go",
-    "PROFFER_GRAPHVIZ_BIN": "/usr/bin/dot",
-    "PROFFER_PPROF_BIN": "/home/docker/go/pkg/tool/linux_amd64/pprof",
-    "WORKSPACE_DIRECTORY": "/workspace/false.alarm"
+    "PUID": "1000",
+    "PGID": "1000",
+    "TZ": "Europe/Lisbon"
   },
-  "containerUser": "root",
+  "containerUser": "coder",
   // Add the IDs of extensions you want installed when the container is created.
   "extensions": [
     "affenwiesel.matlab-formatter",
@@ -81,7 +79,7 @@
   // "postCreateCommand": "uname -a",
   // "postStartCommand": "echo postStartCommand",
   // Comment out connect as root instead. More info: https://aka.ms/vscode-remote/containers/non-root.
-  "remoteUser": "root",
+  "remoteUser": "coder",
   "runArgs": [
     "--name=false_alarm_dev",
     "-e",
@@ -189,6 +187,9 @@
     }
   },
   "shutdownAction": "stopContainer",
-  "workspaceFolder": "/workspace/false.alarm",
-  "workspaceMount": "source=${localWorkspaceFolder},target=/workspace/false.alarm,type=bind,consistency=cached"
+  "workspaceFolder": "/home/workspace/false.alarm",
+  "workspaceMount": "source=${localWorkspaceFolder},target=/home/workspace/false.alarm,type=bind,consistency=consistent",
+  "mounts": [
+    "source=/home/franz/.gnupg,target=/home/workspace/.gnupg,type=bind,consistency=cached"
+  ]
 }

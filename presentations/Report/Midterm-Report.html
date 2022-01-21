@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="generator" content="pandoc">
   <meta name="author" content="Francisco Bischoff" />
-  <meta name="dcterms.date" content="2022-01-18" />
+  <meta name="dcterms.date" content="2022-01-19" />
   <title>False Alarm</title>
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -457,7 +457,7 @@ document.getElementsByTagName('head')[0].appendChild(style);
 <section>
     <h1 class="title">False Alarm</h1>
     <h2 class="author">Francisco Bischoff</h2>
-    <h3 class="date">2022-01-18</h3>
+    <h3 class="date">2022-01-19</h3>
 </section>
 
 <section>
@@ -1114,42 +1114,63 @@ width="197" /></p>
 Figure 11 - Pipeline for TRUE and FALSE alarm classification
 </p>
 </div>
+</section>
+<section id="das-model-1" class="slide level2">
+<h2>Das Model</h2>
+<p>Some hypotheses were thought out:</p>
+<ol type="1">
+<li>clustering similar patterns</li>
+<li>anomaly detection</li>
+<li>forecasting</li>
+<li><strong>classification</strong></li>
+</ol>
+<p>An initial set of shapelets <span class="citation"
+data-cites="Rakthanmanon2013">(<em>Rakthanmanon, 2013</em>)</span> may
+be sufficient to rule in or out the <code>TRUE</code>/<code>FALSE</code>
+challenge. Depending on the accuracy of this approach and the resources
+available, another method can be introduced for both (1) improving the
+“negative” samples and (2) learning more shapelets to improve the
+<code>TRUE</code>/<code>FALSE</code> alarm discrimination.</p>
+</section>
+<section class="slide level2">
+
+<p>Following the Matrix Profile framework, the Contrast Profile <span
+class="citation" data-cites="Mercer2021">(<em>Mercer, 2021</em>)</span>
+seems the most appropriated for this task (Fig. 28):</p>
+<div class="figure" style="text-align: center">
+<img src="figures/contrast.svg" alt="Figure 28 - Contrast Profile of ECG record with Premature Ventricular Contractions. (original from Mercer et al.)" width="100%" />
+<p class="caption">
+Figure 28 - Contrast Profile of ECG record with Premature Ventricular
+Contractions. (original from Mercer et al.)
+</p>
+</div>
+</section>
+<section class="slide level2">
+
+<p>A “work in progress” example on Physionet’s dataset for ventricular
+tachycardia <code>TRUE</code> alarms (Fig. 29):</p>
+<div class="figure" style="text-align: center">
+<img src="Midterm-Report_files/figure-revealjs/vtachy-1.svg" alt="Fig. 29: Shapelet candidates for Ventricular Tachycardia."  />
+<p class="caption">
+Fig. 29: Shapelet candidates for Ventricular Tachycardia.
+</p>
+</div>
 </section></section>
 <section id="feasibility-trial" class="title-slide slide level1">
 <h1>Feasibility trial</h1>
-<p>A side-project called “false.alarm.io” has been derived from this
-work (an unfortunate mix of “false.alarm” and “PlatformIO” <span
-class="citation" data-cites="PlatformIO">(<em><span>“PlatformIO, a
-professional collaborative platform for embedded development,”</span>
-n.d.</em>)</span>, the IDE chosen to interface the panoply of embedded
-systems we can experiment with). The current results of this
-side-project are very enlightening and show that the final algorithm can
-indeed be used in small hardware. Further data will be available in the
-future.</p>
-</section>
-
-<section id="and-others" class="title-slide slide level1">
-<h1>And others</h1>
-<p>After this “step back” to look forward, it was time to define how the
-regime change algorithm would integrate with the actual decision of
-triggering or not the alarm. Some hypotheses were thought out: (1)
-clustering similar patterns, (2) anomaly detection, (3) classification,
-and (4) forecasting. Among these methods, it was thought, in order to
-avoid exceeding processor capacity, an initial set of shapelets <span
-class="citation" data-cites="Rakthanmanon2013">(<em>Rakthanmanon,
-2013</em>)</span> can be sufficient to rule in or out the
-<code>TRUE</code>/<code>FALSE</code> challenge. Depending on the
-accuracy of this approach and the resources available, another method
-can be introduced for both (1) improving the “negative”<a href="#/fn1"
-class="footnote-ref" id="fnref1" role="doc-noteref"><sup>1</sup></a>
-samples and (2) learning more shapelets to improve the
-<code>TRUE</code>/<code>FALSE</code> alarm discrimination.</p>
+<p>A brief mentioning, linking back to the objectives of this work, an
+initial trial was done using an ESP32 MCU (Fig. 30) in order to be sure
+if such small device can handle the task.</p>
 <div class="figure" style="text-align: center">
-<img src="figures/esp32.jpg" alt="Figure 28 - ESP32 MCU" width="40%" />
+<img src="figures/esp32.jpg" alt="Figure 30 - ESP32 MCU" width="40%" />
 <p class="caption">
-Figure 28 - ESP32 MCU
+Figure 30 - ESP32 MCU
 </p>
 </div>
+<p>Current results show that such device has enough computation power to
+handle the task in real-time using just one of its two microprocessors.
+The main limitation seen in advance is the on-chip SRAM that must be
+well managed.</p>
 </section>
 
 <section id="scientific-contributions" class="title-slide slide level1">
@@ -1172,7 +1193,7 @@ mean “faster” when we can exploit low-level instructions. FFT is
 overkilling for a low-power device. So we are using an algorithm that
 does not requires FFT, and is much faster in our setting: MPX.
 Performance: 4KB on FFT ~47Hz, MPX ~422Hz (~2.5kHz) on an ESP32 MCU
-(Fig. 28). <span class="slide destaque">Here, the contribution of this
+(Fig. 30). <span class="slide destaque">Here, the contribution of this
 work is adding the <em>online</em> capability to MPX</span>.</p></li>
 <li><p><strong>On extending the Matrix Profile:</strong> <span
 class="slide destaque">an unexplored constraint that we could apply on
@@ -1189,20 +1210,11 @@ counts.</p></li>
 <section id="further-steps" class="title-slide slide level1">
 <h1>Further Steps</h1>
 <ul>
-<li>Extraction of regime samples and classification of <code>TRUE</code>
-or <code>FALSE</code> for Asystole</li>
 <li>Cross-validation and evaluation of the algorithm</li>
 <li>Publish results</li>
-</ul>
-<p>Later:</p>
-<ul>
-<li>Extend the classification algorithm to the five life-threatening
-patterns</li>
 <li>Combine fading factors<span class="citation"
 data-cites="Gama2013 Rodrigues2010">(<em>Gama, 2013</em>; <em>Rodrigues,
 2010</em>)</span> to reduce computation requirements</li>
-<li>Implement the final model on a low-power CPU, e.g.: Raspberry Pi
-(ARM), Arduino (atmega) or NodeMCU (ESP32)</li>
 </ul>
 </section>
 
@@ -1268,10 +1280,11 @@ Kendon Bell, … Hyde, R. (2021). Ropensci/targets, dynamic
 function-oriented ’make’-like declarative workflows. Zenodo. <a
 href="https://doi.org/10.5281/ZENODO.4062936">https://doi.org/10.5281/ZENODO.4062936</a>
 </div>
-<div id="ref-PlatformIO" class="csl-entry" role="doc-biblioentry">
-<span>“PlatformIO, a professional collaborative platform for embedded
-development.”</span> (n.d.). Retrieved January 5, 2022, from <a
-href="https://platformio.org/">https://platformio.org/</a>
+<div id="ref-Mercer2021" class="csl-entry" role="doc-biblioentry">
+Mercer, R., Alaee, S., Abdoli, A., Singh, S., Murillo, A., &amp; Keogh,
+E. (2021). <span>“Matrix profile XXIII: Contrast profile: A novel time
+series primitive that allows real world classification.”</span> In ICDM
+2021 (p. 10). Auckland: IEEE.
 </div>
 <div id="ref-Rakthanmanon2013" class="csl-entry" role="doc-biblioentry">
 Rakthanmanon, T., &amp; Keogh, E. (2013). <span>“Fast shapelets: A
@@ -1315,18 +1328,6 @@ Scientific Data, 3(1). <a
 href="https://doi.org/10.1038/sdata.2016.18">https://doi.org/10.1038/sdata.2016.18</a>
 </div>
 </div>
-</section>
-
-<section class="footnotes footnotes-end-of-document"
-role="doc-endnotes">
-<hr />
-<ol>
-<li id="fn1" role="doc-endnote"><p>The term “negative” does not imply
-that the patient has a “normal” ECG. It means that the “negative”
-section is not a life-threatening condition that needs to trigger an
-alarm.<a href="#/fnref1" class="footnote-back"
-role="doc-backlink">↩︎</a></p></li>
-</ol>
 </section>
     </div>
   </div>

@@ -96,49 +96,44 @@ list(
             same_class = FALSE
           )
         ),
-        tar_map(
-          values = list(map_reverse = c(TRUE, FALSE)),
-          tar_target(
-            #### Pipeline: Computes the AA - AB difference.
+        tar_target(
+          #### Pipeline: Computes the AA - AB difference.
+          data_shapelets,
+          find_k_shapelets(data_pos_neg,
+            signal = map_signals_include,
+            shapelet_size = map_shapelet_size,
+            num_shapelets = var_num_shapelets
+          )
+        ),
+        tar_target(
+          #### Pipeline: Computes the AA - AB difference.
+          data_all_shapelets,
+          find_k_shapelets(data_all_pos_neg,
+            signal = map_signals_include,
+            shapelet_size = map_shapelet_size,
+            num_shapelets = var_num_shapelets
+          )
+        ),
+        tar_target(
+          #### Pipeline: Computes the AA - AB difference.
+          data_neighbors,
+          find_k_neighbors(data_pos_neg,
             data_shapelets,
-            find_k_shapelets(data_pos_neg,
-              signal = map_signals_include,
-              shapelet_size = map_shapelet_size,
-              reverse = map_reverse,
-              num_shapelets = var_num_shapelets
-            )
-          ),
-          tar_target(
-            #### Pipeline: Computes the AA - AB difference.
+            signal = map_signals_include,
+            n_neighbors = var_num_neighbors,
+            corr_min = var_min_corr_neighbors,
+            exclusion_zone = 0.5
+          )
+        ),
+        tar_target(
+          #### Pipeline: Computes the AA - AB difference.
+          data_all_neighbors,
+          find_k_neighbors(data_all_pos_neg,
             data_all_shapelets,
-            find_k_shapelets(data_all_pos_neg,
-              signal = map_signals_include,
-              shapelet_size = map_shapelet_size,
-              reverse = map_reverse,
-              num_shapelets = var_num_shapelets
-            )
-          ),
-          tar_target(
-            #### Pipeline: Computes the AA - AB difference.
-            data_neighbors,
-            find_k_neighbors(data_pos_neg,
-              data_shapelets,
-              signal = map_signals_include,
-              n_neighbors = var_num_neighbors,
-              corr_min = var_min_corr_neighbors,
-              exclusion_zone = 0.5
-            )
-          ),
-          tar_target(
-            #### Pipeline: Computes the AA - AB difference.
-            data_all_neighbors,
-            find_k_neighbors(data_all_pos_neg,
-              data_all_shapelets,
-              signal = map_signals_include,
-              n_neighbors = var_num_neighbors,
-              corr_min = var_min_corr_neighbors,
-              exclusion_zone = 0.5
-            )
+            signal = map_signals_include,
+            n_neighbors = var_num_neighbors,
+            corr_min = var_min_corr_neighbors,
+            exclusion_zone = 0.5
           )
         )
       )

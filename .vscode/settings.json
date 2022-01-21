@@ -35,8 +35,7 @@
     "**/*.{md,mkd,mdwn,mdown,markdown,markdn,mdtxt,mdtext,workbook}",
     "!**/node_modules",
     "!**/bower_components",
-    "!**/.git",
-    "**/*.rmd"
+    "!**/.git"
   ],
   "markdownlint.run": "onSave",
   "C_Cpp.intelliSenseEngineFallback": "Enabled",
@@ -50,7 +49,6 @@
     "*.json": "jsonc",
     "*.lock": "json",
     "*.py": "python",
-    "*.rmd": "markdown",
     "*.sty": "latex",
     "*.tcc": "cpp",
     "*.toml": "toml",
@@ -298,6 +296,7 @@
     "FIXME",
     "TODO",
     "IMPROVE",
+    "CONCEPT",
     "XXX",
     "[ ]",
     "[x]"

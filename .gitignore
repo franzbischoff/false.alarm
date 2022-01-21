@@ -107,3 +107,5 @@ protocol/**/*.pdf
 # docs/**/*.svg
 protocol/**/*.svg
 mpxtest.RData
+.devcontainer/git-hours.tgz
+.devcontainer/mathjax.tgz

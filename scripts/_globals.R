@@ -16,10 +16,10 @@ if (dev_mode) {
 # examples: a109l_aVF_300_0_raw
 #           a161l (asystole) 300_1250, false neg
 
-# [ ]: Concept: in Euclidean space, values above sqrt(2*w) are negativelly correlated on Pearson's
+# CONCEPT: Concept: in Euclidean space, values above sqrt(2*w) are negativelly correlated on Pearson's
 # Contrast Profile: CPm = ( MPm(+−) − MPm(++))/ sqrt(2 * m)
-# [ ]: how near to consider to update the MP
-# [ ]: density of similarity changes a little bit from the size of constraint, but a lot due to the window size. but, the sum of the density from 50-100 doesnt change in any case
+# CONCEPT: how near to consider to update the MP
+# CONCEPT: density of similarity changes a little bit from the size of constraint, but a lot due to the window size. but, the sum of the density from 50-100 doesnt change in any case
 
 
 #### Physionet's dataset definitions ----

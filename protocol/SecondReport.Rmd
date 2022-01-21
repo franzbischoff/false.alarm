@@ -27,6 +27,102 @@ output:
   #   toc_depth: 2
 ---
 
+<!--
+Sugestões:
+jgama:
+[ ]jgama: The document is not self-content
+[ ]jgama: - Refer to lots of things that not describe
+[ ]jgama: *** The FLOSS algorithm
+[ ]jgama: *** Explain how we obtain the arcs how to interpret them
+[ ]jgama: *** RQ is reduce the ICU false alarm?
+[ ]jgama: *** As it is written, reduce the FA is like do not report any alarm
+[ ]jgama: *** Be very precise about the goal
+[ ]jgama: - The competition, the formula is not on the report
+[ ]jgama: *** they penalize the FN, why?
+
+[ ]jgama: - Be VERY clear about the experimental setup evaluation criteria
+[ ]jgama: *** What you want to minimize
+[ ]jgama: *** What is your target
+
+[ ]jgama: - Cross validation: explain, it for TS
+[ ]jgama: *** Explain the Full dataset: are patients, not one TS. A set of patients
+[ ]jgama: *** You never talked about patients
+[ ]jgama: *** BE MORE PRECISE on the report
+[ ]jgama: - Green red lines??
+
+[ ]jgama: - Research question - Must be proven
+[ ]jgama: - Evaluation criteria - Must be proven
+[ ]jgama: - Experimental setup - Must be proven
+
+[ ]jgama: - The description of the method must be self-content
+
+Tiago:
+[ ]Tiago: - Purpose and steps to take: beat SOTA or cheap hardware?
+[ ]Tiago: - TSMP- base publication
+[ ]Tiago: - Better motivate devices
+
+Eamonn:
+[ ]Eamonn: - How "local" is the information in medical telemetry? For example, it is helpful to have the data for the last 20min, or we need only "local" data of the last ten seconds? (speculate)
+[ ]Eamonn: - In more general case, do alarms have to be binary? For ex, could you generalize to "no alarm" "minor alarm" "strong alarm". Could we exploit this fact to - reduce cost of error; use less CPU or memory; or something.
+[ ]Eamonn: - The algorithm, if tuned for some individual, will it work well in another? There are some input variables that can change the results?
+
+
+But the train-test prediction task is not representative of everything we might wish to do with
+models. For example, some statisticians prefer to evaluate predictions using a prequential frame-
+work, in which models are judged on their accumulated learning error over the training sample.101
+And once you start using multilevel models, "prediction" is no longer uniquely defined, because the
+test sample can differ from the training sample in ways that forbid use of some the parameter esti-
+mates. We'll worry about that issue in Chapter 12.
+
+If adding more information you consistently get worse results, that would suggest that the new data
+is wrongly labelled, noisy or that it contradicts the previously seen one for some reason (e.g.,
+some information might have changed over time).
+
+- https://www.cs.waikato.ac.nz/~eibe/pubs/Twitter-crc.pdf
+A common problem is that for unbalanced data streams with, for example, 90% of the instances in one
+class, the simplest classifiers will have high accuracies of at least 90%. To deal with this type of
+data stream, we propose to use the Kappa statistic, based on a sliding window, as a measure for
+classifier performance in unbalanced class streams.
+
+https://moa.cms.waikato.ac.nz/prequential-cross-validation-evaluation/
+
+
+1. Dawid, A.P.: Present Position and Potential Developments: Some Personal Views: Statistical
+   Theory: The Prequential Approach. Journal of the Royal Statistical Society. Series A (General).
+   147, 2, 278 (1984). https://doi.org/10.2307/2981683.
+
+- Prequential forecasting: Probability forecasting + sequential predictions
+- Means: Predict tomorrow. Tomorrow we confirm and learn about the outcome.
+- Any statistical model can be converted to prequential: replace the unknown parameter in the
+  predictive distribution of the next observation by an estimate based on the data collected so far.
+- A PFS (prequential forecasting system) has, on the known values, a model that may be an assumed
+  time-series structure, or, a Bayesian uncertainty. This model will condition the Probability of
+  the forecasted value.
+- The Prequential Principle: to assess the overall adequacy of the model, such assessment should
+  depend only on the model through the *sequence* of forecasts that it in fact made. Analogously to
+  the Likelihood Principle, hypothetical predictions that the model could have made under
+  circumstances that did not happen are irrelevant.
+- Calibration and Jeffreys' Law: For a binary outcome, there is a criterion of *complete
+  calibration* for comparing the prequential probabilities of the model with the outcomes. It
+  requires that the average of the prequential probabilities of the model, for a suitable subset,
+  should agree asymptotically with the corresponding average of the outcomes. Furthermore, if two
+  models satisfy this criterion for many subsets (thus P(model1) - P(model2) -> 0 as n -> Inf), then
+  all non-rejected PFSs end up making the same forecasts. "When a law has been applied to a large
+  body of data without any systematic discrepancy being detected, it leads to the result that the
+  probability of a further inference from the law approaches certainty whether the law is true or
+  not." Sir H. Jeffreys, 1938
+- For continuous outcomes, we can reduce the "average of the prequential probabilities of the model" to
+  whether a sequence of forecasts "looks like" a random sample of the model.
+
+1. Gama, J. et al.: A survey on concept drift adaptation. ACM Computing Surveys. 46, 4, 1-37 (2014).
+   https://doi.org/10.1145/2523813.
+
+The real concept drift refers to changes in the conditional distribution of the output (i.e.,
+target variable) given the input (input features), while the distribution of the input may stay
+unchanged.
+
+-->
+
 ```{=html}
 <style>
 div.figure {

@@ -675,7 +675,7 @@ List mpxileft_rcpp(NumericVector data_ref, uint64_t window_size, double ez, doub
 
 // IMPROVE: check data for infinity
 // IMPROVE: Zero invalid data, since we are aiming on streaming
-// [ ]: correction for noise: d_corrected = sqrt(dˆ2 - (2 + 2m) * std_nˆ2 / max(std_X, std_Y)ˆ2)
+// CONCEPT: correction for noise: d_corrected = sqrt(dˆ2 - (2 + 2m) * std_nˆ2 / max(std_X, std_Y)ˆ2)
 // (10.5220/0007314100830093)
 
 // [[Rcpp::export]]

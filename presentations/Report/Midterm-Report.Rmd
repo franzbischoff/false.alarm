@@ -537,26 +537,60 @@ width="197"}
 knitr::include_graphics("figures/shapelets.svg")
 ```
 
+## Das Model
+
+Some hypotheses were thought out:
+
+1.  clustering similar patterns
+2.  anomaly detection
+3.  forecasting
+4.  **classification**
+
+An initial set of shapelets [@Rakthanmanon2013] may be sufficient to rule in or out the `TRUE`/`FALSE` challenge.
+Depending on the accuracy of this approach and the resources available, another method can be introduced for both (1)
+improving the "negative" samples and (2) learning more shapelets to improve the `TRUE`/`FALSE` alarm discrimination.
+
+------------------------------------------------------------------------------------------------------------------------
+
+Following the Matrix Profile framework, the Contrast Profile [@Mercer2021] seems the most appropriated for this task
+(Fig. `r ref("fig:contrast")`):
+
+```{r contrast, echo=FALSE, out.width="100%", fig.cap=paste("Figure", ref("fig:contrast"), "- Contrast Profile of ECG record with Premature Ventricular Contractions. (original from Mercer et al.)")}
+knitr::include_graphics("figures/contrast.svg")
+```
+
+------------------------------------------------------------------------------------------------------------------------
+
+A "work in progress" example on Physionet's dataset for ventricular tachycardia `TRUE` alarms (Fig.
+`r ref("fig:vtachy")`):
+
+```{r vtachy, echo=FALSE, fig.cap=paste0("Fig. ", ref("fig:vtachy"), ": Shapelet candidates for Ventricular Tachycardia."), fig.height=9, fig.width=14}
+def_par <- graphics::par(no.readonly = TRUE)
+graphics::layout(matrix(1:6, ncol = 2, byrow = TRUE))
+graphics::par(mai = c(0.8, 0.5, 0.6, 0.5), cex = 1)
+
+data <- readRDS(here("presentations/Report/contrast.rds"))
+
+for (i in (1:6)) {
+  plot(tsmp:::znorm(data[[i]]$plato), type = "l", ylab = "", xlab = "samples (250hz)")
+  for (j in seq_along(data[[i]]$neighbors)) {
+    lines(tsmp:::znorm(data[[i]]$neighbors[[j]]$data), col = j + 1)
+  }
+}
+graphics::par(def_par)
+```
+
 # Feasibility trial
 
-A side-project called "false.alarm.io" has been derived from this work (an unfortunate mix of "false.alarm" and
-"PlatformIO" [@PlatformIO], the IDE chosen to interface the panoply of embedded systems we can experiment with). The
-current results of this side-project are very enlightening and show that the final algorithm can indeed be used in small
-hardware. Further data will be available in the future.
-
-# And others
-
-After this "step back" to look forward, it was time to define how the regime change algorithm would integrate with the
-actual decision of triggering or not the alarm. Some hypotheses were thought out: (1) clustering similar patterns, (2)
-anomaly detection, (3) classification, and (4) forecasting. Among these methods, it was thought, in order to avoid
-exceeding processor capacity, an initial set of shapelets [@Rakthanmanon2013] can be sufficient to rule in or out the
-`TRUE`/`FALSE` challenge. Depending on the accuracy of this approach and the resources available, another method can be
-introduced for both (1) improving the "negative"[^1] samples and (2) learning more shapelets to improve the
-`TRUE`/`FALSE` alarm discrimination.
+A brief mentioning, linking back to the objectives of this work, an initial trial was done using an ESP32 MCU (Fig.
+`r ref("fig:esp32")`) in order to be sure if such small device can handle the task.
 
 ```{r esp32, echo=FALSE, out.width="40%", fig.cap=paste("Figure", ref("fig:esp32"), "- ESP32 MCU")}
 knitr::include_graphics("figures/esp32.jpg")
 ```
+
+Current results show that such device has enough computation power to handle the task in real-time using just one of its
+two microprocessors. The main limitation seen in advance is the on-chip SRAM that must be well managed.
 
 # Scientific Contributions
 
@@ -581,20 +615,11 @@ knitr::include_graphics("figures/esp32.jpg")
 
 # Further Steps
 
--   Extraction of regime samples and classification of `TRUE` or `FALSE` for Asystole
 -   Cross-validation and evaluation of the algorithm
 -   Publish results
-
-Later:
-
--   Extend the classification algorithm to the five life-threatening patterns
 -   Combine fading factors[@Gama2013; @Rodrigues2010] to reduce computation requirements
--   Implement the final model on a low-power CPU, e.g.: Raspberry Pi (ARM), Arduino (atmega) or NodeMCU (ESP32)
 
 # References
 
 ::: {#refs}
 :::
-
-[^1]: The term "negative" does not imply that the patient has a "normal" ECG. It means that the "negative" section is
-    not a life-threatening condition that needs to trigger an alarm.

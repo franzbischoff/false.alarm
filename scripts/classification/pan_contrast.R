@@ -1,8 +1,8 @@
-find_k_shapelets <- function(data_pos_neg, signal = "II", shapelet_size, num_shapelets = 1) {
+
+find_k_shapelets <- function(data_pos_neg, signal = "II", shapelet_sizes) {
   checkmate::qassert(data_pos_neg, "L1")
   checkmate::qassert(signal, "S1")
-  checkmate::qassert(shapelet_size, "N1")
-  checkmate::qassert(num_shapelets, "N[1,20]")
+  checkmate::qassert(shapelet_sizes, "N+")
 
   cli::cli_h1("Processing signal {signal}")
 
