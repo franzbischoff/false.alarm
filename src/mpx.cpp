@@ -955,6 +955,13 @@ List mpxab_rcpp(NumericVector data_ref, NumericVector query_ref, uint64_t window
         }
 
         off_max = MIN(a_len - window_size - diag + 1, b_len - window_size + 1);
+
+        // 1. Towsley, A. et al.: Correlation Angles and Inner Products: Application to a Problem from Physics. ISRN
+        // Applied Mathematics. 2011, 1-12 (2011). https://doi.org/10.5402/2011/323864.
+        // c is the Covar(X,Y); Additionally it follows from the Cauchy-Schwartz inequality[1] that
+        // |Covar(X,Y)| <= SD(X) SD(Y). Here the Covar(X,Y) is obtained using the inner_product(X,Y)
+        // [1] K. Hoffman and R. Kunze, Linear Algebra, Prentice Hall, Englewood Cliffs, NJ, USA, 2nd edition, 1971.
+
         c = inner_product((data_ref[Range(diag, (diag + window_size - 1))] - mu_a[diag]), ww);
         for (offset = 0; offset < off_max; offset++) {
           off_diag = offset + diag;
@@ -964,6 +971,8 @@ List mpxab_rcpp(NumericVector data_ref, NumericVector query_ref, uint64_t window
             continue;
           }
 
+          // or c / (sd_b * sd_a), but fractions are expensive
+          // also, c_cmp is cos(Γ(X,Y))
           c_cmp = c * sig_b[offset] * sig_a[off_diag];
 
           if (c_cmp > mp_b[offset]) { // mpb

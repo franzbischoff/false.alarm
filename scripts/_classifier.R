@@ -31,6 +31,7 @@ var_positive <- TRUE # c(TRUE, FALSE)
 var_num_shapelets <- 10
 var_num_neighbors <- 10
 var_min_corr_neighbors <- 0.85
+var_pan_contrast <- seq(10, 1000, by = 50)
 # var_n_workers <- 1 # This was used for a short time, but lucky seen that the currently code can't
 #  cope with NA/NaN/Inf using parallel tasks. So, let's just use the parallel pipeline feature.
 # var_limit_per_class <- 15
@@ -70,9 +71,53 @@ list(
   tar_map(
     values = list(map_signals_include = var_signals_include),
     tar_map(
-      values = list(map_shapelet_size = var_shapelet_size),
+      values = list(map_positive = var_positive),
+      tar_target(
+        pan_contrast_seq,
+        seq(20, 1000, by = 50)
+      ),
+      tar_target(
+        #### Pipeline: Build the positive and negative streams using all classes, with signal validation
+        data_pos_neg,
+        build_pos_neg(ds_initial_split,
+          signal = map_signals_include,
+          shapelet_size = pan_contrast_seq,
+          positive = map_positive,
+          validate = TRUE,
+          same_class = FALSE
+        ),
+        pattern = map(pan_contrast_seq)
+      ),
+      tar_target(
+        pancontrast,
+        pan_contrast(data_pos_neg,
+          signal = map_signals_include,
+          shapelet_sizes = pan_contrast_seq
+        ),
+        pattern = map(data_pos_neg, pan_contrast_seq)
+      ),
+      tar_target(
+        #### Pipeline: Build the positive and negative streams using all classes, with signal validation
+        data_all_pos_neg,
+        build_pos_neg(ds_initial_split,
+          signal = map_signals_include,
+          shapelet_size = pan_contrast_seq,
+          positive = map_positive,
+          validate = TRUE,
+          same_class = FALSE
+        ),
+        pattern = map(pan_contrast_seq)
+      ),
+      tar_target(
+        pan_allcontrast,
+        pan_contrast(data_all_pos_neg,
+          signal = map_signals_include,
+          shapelet_sizes = pan_contrast_seq
+        ),
+        pattern = map(data_all_pos_neg, pan_contrast_seq)
+      ),
       tar_map(
-        values = list(map_positive = var_positive),
+        values = list(map_shapelet_size = var_shapelet_size),
         # First draft, not following parsnip rules: https://tidymodels.github.io/model-implementation-principles/function-interfaces.html
         tar_target(
           #### Pipeline: Build the positive and negative streams, with signal validation
@@ -81,7 +126,7 @@ list(
             signal = map_signals_include,
             shapelet_size = map_shapelet_size,
             positive = map_positive,
-            validate = FALSE,
+            validate = TRUE,
             same_class = TRUE
           )
         ),

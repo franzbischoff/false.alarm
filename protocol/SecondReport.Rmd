@@ -7,13 +7,18 @@ csl: ../thesis/csl/ama.csl
 linestretch: 1.5
 indent: true
 output:
-  # bookdown::html_document2:
-  bookdown::pdf_document2:
-    extra_dependencies: ["svg", "flafter"]
-    toc: yes
-    toc_depth: 3
-    fig_caption: yes
-    number_sections: yes
+  bookdown::html_document2:
+    # toc: true
+    # toc_float: true
+    number_sections: true
+    # theme: darkly
+    highlight: tango
+  # bookdown::pdf_document2:
+  #   extra_dependencies: ["svg", "flafter"]
+  #   toc: yes
+  #   toc_depth: 3
+  #   fig_caption: yes
+  #   number_sections: yes
   # html_notebook:
   #   toc: yes
   #   toc_depth: 2
@@ -30,7 +35,46 @@ output:
 <!--
 Sugestões:
 jgama:
-[ ]jgama: The document is not self-content
+
+The research topic is quite relevant, with potential social impact. The author claim that the
+principles that guide this investigation are: FAIR principle (findable, accessible, interpretable,
+reusable). However, this document is far from achieving these goals.
+
+A scientific document must be rigorous, substantiated, and supported by facts. The document
+presented lacks rigor in the definition of the research questions, the description of the methods
+and algorithms used, the definition of the design of experiments, and the definition of evaluation
+metrics.
+
+1) The author should present the research question rigorously. As it is stated, "(1) Can we
+reduce the number of false alarms in the ICU setting?" has a trivial solution for which it does not
+qualify for the title of Ph.D.
+
+2) The literature survey seems to be in a preliminary phase. The author selected the papers to read,
+and it is not clear if the author read the papers! There is no related work section. Moreover, I
+could not understand the relevance of the roadmap Figures 4, 5, 6.
+
+3) The document should be self-contained. The main algorithms used or planned to use should be
+described or explained -- for example,the FLOSS algorithm, the Matrix Profile algorithm, etc. These
+algorithms should be described in a related work section.
+
+Conclusions
+Overall, the work has the potential for excellent work. From the current document, it is
+not easy to have a clear idea of the scientific merits of the work developed so far.
+
+- The document presented lacks rigor in the definition of the research questions
+[ ]Tiago: - Deve ser claramente determinado o objeto de investigação sobre o qual o candidato se pretende debruçar
+[ ]jgama: - Research question - Must be proven
+[ ]jgama: "(1) Can we reduce the number of false alarms in the ICU setting?" NOK, trivial
+[ ]jgama: Rigor: the description of the methods
+[ ]jgama: Rigor: and algorithms used
+[ ]jgama: Rigor: the definition of the design of experiments
+[ ]jgama: Rigor: and the definition of evaluation metrics.
+
+[ ]jgama: The literature survey seems to be in a preliminary phase. The author selected the papers to read (mostrar o peer-review)
+[ ]jgama: There is no related work section, could not understand the relevance of the roadmap Figures 4, 5, 6.
+[ ]jgama: The main algorithms used or planned to use should be described or explained for example,the FLOSS algorithm, the Matrix Profile algorithm, etc. These algorithms should be described in a related work section.
+
+[ ]jgama: The document is not self-contained
 [ ]jgama: - Refer to lots of things that not describe
 [ ]jgama: *** The FLOSS algorithm
 [ ]jgama: *** Explain how we obtain the arcs how to interpret them
@@ -50,13 +94,35 @@ jgama:
 [ ]jgama: *** BE MORE PRECISE on the report
 [ ]jgama: - Green red lines??
 
-[ ]jgama: - Research question - Must be proven
 [ ]jgama: - Evaluation criteria - Must be proven
 [ ]jgama: - Experimental setup - Must be proven
 
-[ ]jgama: - The description of the method must be self-content
+[ ]jgama: - The description of the method must be self-contained
 
 Tiago:
+
+O candidato propõe desenvolver o seu trabalho sobre um tema atual e pertinente. Demonstra
+competência técnica para manipular, tratar e interpretar dados de saúde e séries temporais.
+
+Não obstante, do ponto de vista científico, o trabalho apresentado precisa de ser integralmente
+revisto. Em primeiro lugar, deve ser claramente determinado o objeto de investigação sobre o qual o
+candidato se pretende debruçar. Em segundo lugar, deve ser claramente estabelecido o plano de
+trabalho, especificadas as tarefas, e indicados os resultados esperados de cada uma. Deve ainda ser
+apresentado uma proposta de publicações por forma a garantir os requisitos estipulados pelo ciclo de
+estudos. Finalmente, atendendo à complexidade da temática em causa, o candidato deverá estabelecer
+um conjunto de tarefas cujo expectativa de sucesso de execução seja elevado, para conseguir cumprir
+os requisitos mínimos do programa.
+
+O documento apresentado não permite claramente avaliar nenhum dos pontos previamente mencionados,
+pelo que não é possível determinar com clareza, atendendo ao documento escrito e à entrevista, qual
+o grau de progresso e o trabalho remanescente para cumprir os objetivos do programa doutoral. Por
+esse motivo recomendo que o candidato reformule integralmente o documento apresentado à prova
+entrevista à luz dos pontos indicados.
+
+
+[ ]Tiago: - Deve ser claramente estabelecido o plano de trabalho, especificadas as tarefas, e indicados os resultados esperados de cada uma.
+[ ]Tiago: - Deve ainda ser apresentado uma proposta de publicações por forma a garantir os requisitos estipulados pelo ciclo de estudos.
+[ ]Tiago: - atendendo à complexidade da temática em causa, o candidato deverá estabelecer um conjunto de tarefas cujo expectativa de sucesso de execução seja elevado, para conseguir cumprir os requisitos mínimos do programa.
 [ ]Tiago: - Purpose and steps to take: beat SOTA or cheap hardware?
 [ ]Tiago: - TSMP- base publication
 [ ]Tiago: - Better motivate devices
@@ -65,7 +131,6 @@ Eamonn:
 [ ]Eamonn: - How "local" is the information in medical telemetry? For example, it is helpful to have the data for the last 20min, or we need only "local" data of the last ten seconds? (speculate)
 [ ]Eamonn: - In more general case, do alarms have to be binary? For ex, could you generalize to "no alarm" "minor alarm" "strong alarm". Could we exploit this fact to - reduce cost of error; use less CPU or memory; or something.
 [ ]Eamonn: - The algorithm, if tuned for some individual, will it work well in another? There are some input variables that can change the results?
-
 
 But the train-test prediction task is not representative of everything we might wish to do with
 models. For example, some statisticians prefer to evaluate predictions using a prequential frame-
@@ -85,7 +150,6 @@ data stream, we propose to use the Kappa statistic, based on a sliding window, a
 classifier performance in unbalanced class streams.
 
 https://moa.cms.waikato.ac.nz/prequential-cross-validation-evaluation/
-
 
 1. Dawid, A.P.: Present Position and Potential Developments: Some Personal Views: Statistical
    Theory: The Prequential Approach. Journal of the Royal Statistical Society. Series A (General).
@@ -132,8 +196,10 @@ div.figure {
   box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
 }
 p.caption {
-  padding: 20px 0px 0px 0px;
+  padding: 20px 0 0 0;
   font-size: 19px;
+  color: black;
+}
 }
 </style>
 ```
@@ -228,6 +294,18 @@ a reliable signal for Intensive Care Units to respond quickly to those situation
 
 # Objectives and the research question
 
+While this research was inspired on the CinC/Physionet Challenge 2015, its purpose is not to beat
+the state of the art on that challenge, but to identify, on streaming data, abnormal hearth electric
+patterns, specifically those which are life-threatening, using low CPU and low memory requirements
+in order to be able to generalize the use of such information on lower-end devices, outside the ICU,
+as ward devices, home devices and, in the future, wearable devices.
+
+The main questions are: (1) Can we accomplish this objective using a minimalist approach (low CPU,
+low memory) while maintaining robustness?
+
+> (2)
+
+<!--
 This research aims to identify, on streaming data, abnormal hearth electric patterns, specifically
 those which are life-threatening, to be a reliable signal for Intensive Care Units to respond
 quickly to those situations. It also may be able to continuously analyze new data and correct itself
@@ -237,6 +315,7 @@ As it is known, this goal is not a new problem, so the main questions to solve a
 reduce the number of false alarms in the ICU setting? (2) Can we accomplish this objective using a
 minimalist approach (low CPU, low memory) while maintaining robustness? (3) Can this approach be
 used in other health domains other than ICU or ECG?
+-->
 
 # Type of study
 
@@ -244,9 +323,6 @@ This thesis will be a diagnostic study as the algorithm must classify the change
 positive or negative for life-threatening.
 
 # Work Structure
-
-The changes, additions, and deletions from the First Report to this Second Report can be visualized
-[here](https://github.com/franzbischoff/false.alarm/compare/dc34ece..a9a9bc4#diff-f34a6bd3da5c4faa6a8103611963f84ee3070b59f1f517ea418e9774b4d718da).
 
 ## Principles
 
@@ -321,19 +397,13 @@ knitr::include_graphics("figure/workflowr_print.png")
 The project started with a literature survey on the databases Scopus, PubMed, Web of Science, and
 Google Scholar with the following query (the syntax was adapted for each database):
 
-```{=tex}
-\setstretch{1}
-\begin{verbatim}
-TITLE-ABS-KEY ( algorithm  OR  'point of care'  OR  'signal processing'  OR  'computer
-assisted'  OR  'support vector machine'  OR  'decision support system*'  OR  'neural
-network*'  OR  'automatic interpretation' OR 'machine learning')  AND  TITLE-ABS-KEY
-( electrocardiography  OR  cardiography  OR  'electrocardiographic tracing'  OR  ecg
-OR  electrocardiogram  OR  cardiogram )  AND  TITLE-ABS-KEY ( 'Intensive care unit' OR
-'cardiologic care unit'  OR  'intensive care center'  OR  'cardiologic care center' )
-\end{verbatim}
-\setstretch{1.5}
+> TITLE-ABS-KEY ( algorithm  OR  'point of care'  OR  'signal processing'  OR  'computer
+> assisted'  OR  'support vector machine'  OR  'decision support system*'  OR  'neural
+> network*'  OR  'automatic interpretation' OR 'machine learning')  AND  TITLE-ABS-KEY
+> ( electrocardiography  OR  cardiography  OR  'electrocardiographic tracing'  OR  ecg
+> OR  electrocardiogram  OR  cardiogram )  AND  TITLE-ABS-KEY ( 'Intensive care unit' OR
+> 'cardiologic care unit'  OR  'intensive care center'  OR  'cardiologic care center' )
 
-```
 
 The inclusion and exclusion criteria were defined as in Table \@ref(tab:criteria).
 
@@ -353,12 +423,62 @@ kbl(criteria, booktabs = TRUE, caption = "Literature review criteria.", align = 
   row_spec(0, bold = TRUE)
 ```
 
-The current stage of the review is on Data Extraction, from the resulting screening shown in Fig.
-\@ref(fig:prisma).
+The survey is being conducted with peer review, all articles on full-text phase were obtained and assessed for
+the extraction phase, with exception of 5 articles that were not available. The survey is currently staled on
+the Data Extraction phase due to external factors.
 
-```{r prisma, echo=FALSE, out.width="80%", fig.cap="Prisma results"}
+Fig. \@ref(fig:prisma) shows the flow diagram of the resulting screening using PRISMA format.
+
+```{r prisma, echo=FALSE, out.width="50%", fig.cap="Flowchart of the literature survey."}
 knitr::include_graphics("figure/PRISMA.png")
 ```
+
+The peer review is being conducted by the author of this thesis together with another coleague,
+Dr. Andrew Van Benschoten from Matrix Profile Foundation.
+
+Table. \@ref(tab:kappa) shows the Inter-rater Reliability (IRR) using Cohen's kappa statistic.
+
+```{r kappa, echo=FALSE, out.width="50%"}
+knitr::include_graphics("figure/kappa.png")
+```
+
+The purpose of using Cohen's kappa in such review is to allow us to gauge the agreement of both
+reviewers on the task of selecting the articles according to the goal of the survey. The most naive
+way to verify this would be simply to measure the overall agreement (the number of articles included
+and excluded by both, divided by the total number of articles). Nevertheless, this would not take
+into account the agreement we could expect purely by chance.
+
+However, the kappa statistic must be assessed carefully. This topic is beyond the scope of this work
+therefore it will be explained briefly.
+
+While it is widely used, the kappa statistic is also well criticized. The direct interpretation of
+its value depends on several assumptions that are often violated. (1) It is assumed that both
+reviewers have the same level of experience; (2) The "codes" (include, exclude) are identified with
+same accuracy; (3) The "codes" prevalence are the same; (4) There is no reviewer bias towards one of
+the choices [@Sim2005, @Bakeman1997].
+
+In addition, the number of "codes" affects the relation between the value of kappa and the actual
+agreement between the reviewers. For example, given equiprobable "codes" and reviewers who are 85%
+accurate, the value of kappa are 0.49, 0.60, 0.66, and 0.69 when number of codes is 2, 3, 5, and 10,
+respectively [@Bakeman1997, @Morgan2019].
+
+In order to take these limitations in account, the agreement between reviewers was calculated using
+the KappaAcc [@Bakeman2011] from Professor Emeritus Roger Bakeman, Georgia State University, which
+computes the estimated accuracy of simulated reviewers.
+
+\
+\
+\
+\
+\
+
+MPX results are in correlation. All correlation coefficients are the same:
+
+$$
+  r = \frac{\sum{Z_{x_i} Z_{y_i}}}{N} = \frac{COV_{xy}}{\sqrt{VAR_x VAR_y}}
+$$
+
+-------------
 
 Meanwhile, the project pipeline has been set up on GitHub, Inc. [@bischoffrepo2021] leveraging on
 Github Actions [@gitactions2021] for the Continuous Integration lifecycle. The repository is
@@ -421,7 +541,9 @@ the future.
 
 #### Detecting Regime Changes
 
-The regime change approach will be using the _Arc Counts_, as explained elsewhere [@gharghabi2018].
+The regime change approach will be using the _Arc Counts_.
+
+, as explained  [@gharghabi2018].
 The current implementation of the Matrix Profile in R, maintained by the first author of this
 thesis, is being used to accomplish the computations. This package was published in R Journal
 [@RJ-2020-021].
@@ -521,11 +643,11 @@ Lastly, MPdist is quite expensive compared to the trivial Euclidean distance.
 
 By January 2022, the following tasks were performed:
 
-1. Restructuring the roadmap (again)
-2. Refining the main pipeline (again)
-3. Preparing for modeling and parameter tuning
-4. Feasibility trial
-5. And others
+1.  Restructuring the roadmap (again)
+2.  Refining the main pipeline (again)
+3.  Preparing for modeling and parameter tuning
+4.  Feasibility trial
+5.  And others
 
 #### Refining the main pipeline
 
@@ -601,14 +723,14 @@ improve the `TRUE`/`FALSE` alarm discrimination.
 
 ### Scientific Contributions
 
-1. **On regime change detection:** in the original paper, the FLOSS algorithm assumes the _Arc
+1.  **On regime change detection:** in the original paper, the FLOSS algorithm assumes the _Arc
    Counts_ follow a "uniform distribution" when we add a temporal constraint (not considering arcs
    coming from older data), and the _Arc Counts_ of newly incoming data are truncated by the same
    amount of temporal constraint. This prevents completely the detection of a regime change in the
    last 10 seconds as required. This issue is overcome using the theoretical distributions as shown
    in Fig. \@ref(fig:distributions).
 
-2. **On the Matrix Profile:** since the first paper presenting this new concept [@Yeh2017a], lots of
+2.  **On the Matrix Profile:** since the first paper presenting this new concept [@Yeh2017a], lots of
    investigations were made to speed up its computation. It is notable how all computations are not
    dependent on the _rolling window size_ as previous works not using Matrix Profile. Aside from this, we
    can see that the first STAMP [@Yeh2017a] algorithm has the time complexity of $O(n^2log{n})$
@@ -617,7 +739,7 @@ improve the `TRUE`/`FALSE` alarm discrimination.
    $O(n^2)$. Here we are in the "exact" algorithms domain and will not extend the scope for
    conciseness.
 
-   1. The main issue with the algorithms above is the dependency on a fast Fourier transform (FFT)
+    1.  The main issue with the algorithms above is the dependency on a fast Fourier transform (FFT)
       library. FFT has been extensively optimized and architecture/CPU bounded to exploit the most
       of speed. Also, padding data to some power of 2 happens to increase the efficiency of the
       algorithm. We can argue that time complexity doesn't mean "faster" when we can exploit
@@ -628,14 +750,14 @@ improve the `TRUE`/`FALSE` alarm discrimination.
       matrix of 5k data in about 9 seconds in an ESP32 MCU (Fig. \@ref(fig:esp32)), and keep updating
       it as fast as 1 min of data (at 250hz) in just 6 seconds.
 
-    2. Recent works using _exact_ algorithms are using an unpublished algorithm called **MPX**, which
+    2.  Recent works using _exact_ algorithms are using an unpublished algorithm called **MPX**, which
        computes the Matrix Profile using cross-correlation methods ending up faster and is easily
        portable.
 
-    3. **The main contribution** of this work on this area is adding the **online** capability to
+    3.  **The main contribution** of this work on this area is adding the **online** capability to
        MPX, which means we can update the Matrix Profile as new data comes in.
 
-3. **On extending the Matrix Profile:** an unexplored constraint that we could apply on building the
+3.  **On extending the Matrix Profile:** an unexplored constraint that we could apply on building the
    Matrix Profile we are calling _Similarity Threshold_ (ST). The original work outputs the
    similarity values in Euclidean Distance (ED) values, while MPX naturally outputs the values in
    Pearson's correlation coefficients (CC). Both ED and CC are interchangeable using the equation
@@ -665,7 +787,7 @@ get_dist <- function(mp_const = 1250, floss_const = 0) {
   pro_size <- 5000
   mp_time_constraint <- mp_const
   floss_time_constraint <- floss_const
-  for (i in 1:500) {
+  for (i in 1:10) { # FIXME
     iac[[i]] <- get_asym(pro_size, mp_time_constraint, floss_time_constraint)
   }
 
@@ -745,9 +867,9 @@ The benchmarks of this implementation are available online [@Bischoff2021a].
 
 # Research Team
 
-- Thesis Author: Francisco Bischoff
-- Supervisor: Professor Pedro Pereira Rodrigues
-- Co-supervisor: Professor Eamonn Keogh (UCR, Riverside)
+-  Thesis Author: Francisco Bischoff
+-  Supervisor: Professor Pedro Pereira Rodrigues
+-  Co-supervisor: Professor Eamonn Keogh (UCR, Riverside)
 
 # Expected results and outcomes
 

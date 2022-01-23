@@ -412,10 +412,10 @@
     },
     "cli": {
       "Package": "cli",
-      "Version": "3.1.0",
+      "Version": "3.1.1",
       "Source": "Repository",
       "Repository": "CRAN",
-      "Hash": "66a3834e54593c89d8beefb312347e58",
+      "Hash": "da5160e769a652e3ec7111d63883f9bc",
       "Requirements": [
         "glue"
       ]
@@ -955,15 +955,15 @@
     },
     "gittargets": {
       "Package": "gittargets",
-      "Version": "0.0.1",
+      "Version": "0.0.1.9000",
       "Source": "GitHub",
       "RemoteType": "github",
       "RemoteUsername": "wlandau",
       "RemoteRepo": "gittargets",
       "RemoteRef": "main",
-      "RemoteSha": "ef4ce4d730dc199447f74aac636e41a44deb605c",
+      "RemoteSha": "9512553306a5085845085bbcc055a6e56685e0da",
       "RemoteHost": "api.github.com",
-      "Hash": "776bef0707c61bb71df1d75a39899cb7",
+      "Hash": "699585a17d6d0b87b6b8cbe1785bb81b",
       "Requirements": [
         "cli",
         "data.table",
@@ -986,10 +986,10 @@
     },
     "glue": {
       "Package": "glue",
-      "Version": "1.6.0",
+      "Version": "1.6.1",
       "Source": "Repository",
       "Repository": "CRAN",
-      "Hash": "b8bb7aaf248e45bac08ebed86f3a0aa4",
+      "Hash": "de07842fc27ebf60e1102091c0c85e47",
       "Requirements": []
     },
     "gower": {
@@ -1943,15 +1943,15 @@
     },
     "rlang": {
       "Package": "rlang",
-      "Version": "0.99.0.9003",
+      "Version": "1.0.0",
       "Source": "GitHub",
       "RemoteType": "github",
       "RemoteUsername": "r-lib",
       "RemoteRepo": "rlang",
       "RemoteRef": "main",
-      "RemoteSha": "d79ab3a1ab1ce8ca5bb0ebc6ab0454cb10fa4dd1",
+      "RemoteSha": "f2fbaad5005f77b99237c9b0ce5e01a44f9cb4f9",
       "RemoteHost": "api.github.com",
-      "Hash": "bd4196457b3504165f84fc7aa761ed16",
+      "Hash": "baba2f96b99685d64460f10bc298eac0",
       "Requirements": []
     },
     "rmarkdown": {
@@ -2348,15 +2348,15 @@
     },
     "testthat": {
       "Package": "testthat",
-      "Version": "3.1.1.9000",
+      "Version": "3.1.2.9000",
       "Source": "GitHub",
       "RemoteType": "github",
       "RemoteUsername": "r-lib",
       "RemoteRepo": "testthat",
       "RemoteRef": "main",
-      "RemoteSha": "f09df60dd881530332b252474e9f35c97f8640be",
+      "RemoteSha": "54b9db202cb0d10edddb0a37fd469333945d5d05",
       "RemoteHost": "api.github.com",
-      "Hash": "36cba71fe5d0db02fc33240bae8f239e",
+      "Hash": "4d372a5253071c913d93943daddd8720",
       "Requirements": [
         "R6",
         "brio",
