@@ -14,6 +14,7 @@
 
 <title>Home</title>
 
+<script src="site_libs/header-attrs-2.11.15/header-attrs.js"></script>
 <script src="site_libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <link href="site_libs/bootstrap-3.3.5/css/lumen.min.css" rel="stylesheet" />
@@ -47,6 +48,8 @@ div.section {
 }
 </style>
 
+
+
 <style type="text/css">
   code{white-space: pre-wrap;}
   span.smallcaps{font-variant: small-caps;}
@@ -66,6 +69,7 @@ if (window.hljs) {
   }
 }
 </script>
+
 
 
 
@@ -312,14 +316,16 @@ $(document).ready(function () {
 
 <h1 class="title toc-ignore">Home</h1>
 <h4 class="author">Francisco Bischoff</h4>
-<h4 class="date">on January 16, 2022</h4>
+<h4 class="date">on February 02, 2022</h4>
 
 </div>
 
 
 <p>
 <button type="button" class="btn btn-default btn-workflowr btn-workflowr-report" data-toggle="collapse" data-target="#workflowr-report">
-<span class="glyphicon glyphicon-list" aria-hidden="true"></span> workflowr <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span>
+<span class="glyphicon glyphicon-list" aria-hidden="true"></span>
+workflowr <span class="glyphicon glyphicon-ok text-success"
+aria-hidden="true"></span>
 </button>
 </p>
 <div id="workflowr-report" class="collapse">
@@ -328,7 +334,9 @@ $(document).ready(function () {
 <a data-toggle="tab" href="#summary">Summary</a>
 </li>
 <li>
-<a data-toggle="tab" href="#checks"> Checks <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> </a>
+<a data-toggle="tab" href="#checks"> Checks <span
+class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span>
+</a>
 </li>
 <li>
 <a data-toggle="tab" href="#versions">Past versions</a>
@@ -337,17 +345,27 @@ $(document).ready(function () {
 <div class="tab-content">
 <div id="summary" class="tab-pane fade in active">
 <p>
-<strong>Last updated:</strong> 2022-01-16
+<strong>Last updated:</strong> 2022-02-02
 </p>
 <p>
-<strong>Checks:</strong> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> 7 <span class="glyphicon glyphicon-exclamation-sign text-danger" aria-hidden="true"></span> 0
+<strong>Checks:</strong> <span
+class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> 7
+<span class="glyphicon glyphicon-exclamation-sign text-danger"
+aria-hidden="true"></span> 0
 </p>
 <p>
-<strong>Knit directory:</strong> <code>false.alarm/</code> <span class="glyphicon glyphicon-question-sign" aria-hidden="true" title="This is the local directory in which the code in this file was executed."> </span>
+<strong>Knit directory:</strong> <code>false.alarm/</code> <span
+class="glyphicon glyphicon-question-sign" aria-hidden="true"
+title="This is the local directory in which the code in this file was executed.">
+</span>
 </p>
 <p>
-This reproducible <a href="https://rmarkdown.rstudio.com">R Markdown</a> analysis was created with <a
-  href="https://github.com/workflowr/workflowr">workflowr</a> (version 1.7.0). The <em>Checks</em> tab describes the reproducibility checks that were applied when the results were created. The <em>Past versions</em> tab lists the development history.
+This reproducible <a href="https://rmarkdown.rstudio.com">R Markdown</a>
+analysis was created with <a
+  href="https://github.com/workflowr/workflowr">workflowr</a> (version
+1.7.0). The <em>Checks</em> tab describes the reproducibility checks
+that were applied when the results were created. The <em>Past
+versions</em> tab lists the development history.
 </p>
 <hr>
 </div>
@@ -356,91 +374,138 @@ This reproducible <a href="https://rmarkdown.rstudio.com">R Markdown</a> analysi
 <div class="panel panel-default">
 <div class="panel-heading">
 <p class="panel-title">
-<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRMarkdownfilestronguptodate"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>R Markdown file:</strong> up-to-date </a>
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRMarkdownfilestronguptodate">
+<span class="glyphicon glyphicon-ok text-success"
+aria-hidden="true"></span> <strong>R Markdown file:</strong> up-to-date
+</a>
 </p>
 </div>
-<div id="strongRMarkdownfilestronguptodate" class="panel-collapse collapse">
+<div id="strongRMarkdownfilestronguptodate"
+class="panel-collapse collapse">
 <div class="panel-body">
-<p>Great! Since the R Markdown file has been committed to the Git repository, you know the exact version of the code that produced these results.</p>
+<p>Great! Since the R Markdown file has been committed to the Git
+repository, you know the exact version of the code that produced these
+results.</p>
 </div>
 </div>
 </div>
 <div class="panel panel-default">
 <div class="panel-heading">
 <p class="panel-title">
-<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongEnvironmentstrongempty"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Environment:</strong> empty </a>
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongEnvironmentstrongempty">
+<span class="glyphicon glyphicon-ok text-success"
+aria-hidden="true"></span> <strong>Environment:</strong> empty </a>
 </p>
 </div>
 <div id="strongEnvironmentstrongempty" class="panel-collapse collapse">
 <div class="panel-body">
-<p>Great job! The global environment was empty. Objects defined in the global environment can affect the analysis in your R Markdown file in unknown ways. For reproduciblity it’s best to always run the code in an empty environment.</p>
+<p>Great job! The global environment was empty. Objects defined in the
+global environment can affect the analysis in your R Markdown file in
+unknown ways. For reproduciblity it’s best to always run the code in an
+empty environment.</p>
 </div>
 </div>
 </div>
 <div class="panel panel-default">
 <div class="panel-heading">
 <p class="panel-title">
-<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongSeedstrongcodesetseed20201020code"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Seed:</strong> <code>set.seed(20201020)</code> </a>
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongSeedstrongcodesetseed20201020code">
+<span class="glyphicon glyphicon-ok text-success"
+aria-hidden="true"></span> <strong>Seed:</strong>
+<code>set.seed(20201020)</code> </a>
 </p>
 </div>
-<div id="strongSeedstrongcodesetseed20201020code" class="panel-collapse collapse">
+<div id="strongSeedstrongcodesetseed20201020code"
+class="panel-collapse collapse">
 <div class="panel-body">
-<p>The command <code>set.seed(20201020)</code> was run prior to running the code in the R Markdown file. Setting a seed ensures that any results that rely on randomness, e.g. subsampling or permutations, are reproducible.</p>
+<p>The command <code>set.seed(20201020)</code> was run prior to running
+the code in the R Markdown file. Setting a seed ensures that any results
+that rely on randomness, e.g. subsampling or permutations, are
+reproducible.</p>
 </div>
 </div>
 </div>
 <div class="panel panel-default">
 <div class="panel-heading">
 <p class="panel-title">
-<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongSessioninformationstrongrecorded"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Session information:</strong> recorded </a>
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongSessioninformationstrongrecorded">
+<span class="glyphicon glyphicon-ok text-success"
+aria-hidden="true"></span> <strong>Session information:</strong>
+recorded </a>
 </p>
 </div>
-<div id="strongSessioninformationstrongrecorded" class="panel-collapse collapse">
+<div id="strongSessioninformationstrongrecorded"
+class="panel-collapse collapse">
 <div class="panel-body">
-<p>Great job! Recording the operating system, R version, and package versions is critical for reproducibility.</p>
+<p>Great job! Recording the operating system, R version, and package
+versions is critical for reproducibility.</p>
 </div>
 </div>
 </div>
 <div class="panel panel-default">
 <div class="panel-heading">
 <p class="panel-title">
-<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongCachestrongnone"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Cache:</strong> none </a>
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongCachestrongnone">
+<span class="glyphicon glyphicon-ok text-success"
+aria-hidden="true"></span> <strong>Cache:</strong> none </a>
 </p>
 </div>
 <div id="strongCachestrongnone" class="panel-collapse collapse">
 <div class="panel-body">
-<p>Nice! There were no cached chunks for this analysis, so you can be confident that you successfully produced the results during this run.</p>
+<p>Nice! There were no cached chunks for this analysis, so you can be
+confident that you successfully produced the results during this
+run.</p>
 </div>
 </div>
 </div>
 <div class="panel panel-default">
 <div class="panel-heading">
 <p class="panel-title">
-<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongFilepathsstrongrelative"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>File paths:</strong> relative </a>
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongFilepathsstrongrelative">
+<span class="glyphicon glyphicon-ok text-success"
+aria-hidden="true"></span> <strong>File paths:</strong> relative </a>
 </p>
 </div>
 <div id="strongFilepathsstrongrelative" class="panel-collapse collapse">
 <div class="panel-body">
-<p>Great job! Using relative paths to the files within your workflowr project makes it easier to run your code on other machines.</p>
+<p>Great job! Using relative paths to the files within your workflowr
+project makes it easier to run your code on other machines.</p>
 </div>
 </div>
 </div>
 <div class="panel panel-default">
 <div class="panel-heading">
 <p class="panel-title">
-<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomfranzbischofffalsealarmtreeafebf46a99a2ce072ce523b14fb1a60e416dd972targetblankafebf46a"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Repository version:</strong> <a href="https://github.com/franzbischoff/false.alarm/tree/afebf46a99a2ce072ce523b14fb1a60e416dd972" target="_blank">afebf46</a> </a>
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomfranzbischofffalsealarmtree74c8faed13dd31145d8d6b9e78ad8536375f90eftargetblank74c8faea">
+<span class="glyphicon glyphicon-ok text-success"
+aria-hidden="true"></span> <strong>Repository version:</strong>
+<a href="https://github.com/franzbischoff/false.alarm/tree/74c8faed13dd31145d8d6b9e78ad8536375f90ef" target="_blank">74c8fae</a>
+</a>
 </p>
 </div>
-<div id="strongRepositoryversionstrongahrefhttpsgithubcomfranzbischofffalsealarmtreeafebf46a99a2ce072ce523b14fb1a60e416dd972targetblankafebf46a" class="panel-collapse collapse">
+<div
+id="strongRepositoryversionstrongahrefhttpsgithubcomfranzbischofffalsealarmtree74c8faed13dd31145d8d6b9e78ad8536375f90eftargetblank74c8faea"
+class="panel-collapse collapse">
 <div class="panel-body">
 <p>
-Great! You are using Git for version control. Tracking code development and connecting the code version to the results is critical for reproducibility.
+Great! You are using Git for version control. Tracking code development
+and connecting the code version to the results is critical for
+reproducibility.
 </p>
 <p>
-The results in this page were generated with repository version <a href="https://github.com/franzbischoff/false.alarm/tree/afebf46a99a2ce072ce523b14fb1a60e416dd972" target="_blank">afebf46</a>. See the <em>Past versions</em> tab to see a history of the changes made to the R Markdown and HTML files.
+The results in this page were generated with repository version
+<a href="https://github.com/franzbischoff/false.alarm/tree/74c8faed13dd31145d8d6b9e78ad8536375f90ef" target="_blank">74c8fae</a>.
+See the <em>Past versions</em> tab to see a history of the changes made
+to the R Markdown and HTML files.
 </p>
 <p>
-Note that you need to be careful to ensure that all relevant files for the analysis have been committed to Git prior to generating the results (you can use <code>wflow_publish</code> or <code>wflow_git_commit</code>). workflowr only checks the R Markdown file, but you know if there are other scripts or data files that it depends on. Below is the status of the Git repository when the results were generated:
+Note that you need to be careful to ensure that all relevant files for
+the analysis have been committed to Git prior to generating the results
+(you can use <code>wflow_publish</code> or
+<code>wflow_git_commit</code>). workflowr only checks the R Markdown
+file, but you know if there are other scripts or data files that it
+depends on. Below is the status of the Git repository when the results
+were generated:
 </p>
 <pre><code>
 Ignored files:
@@ -448,6 +513,8 @@ Ignored files:
     Ignored:    .Rhistory
     Ignored:    .Rproj.user/
     Ignored:    .devcontainer/exts/
+    Ignored:    .devcontainer/git-hours.tgz
+    Ignored:    .devcontainer/mathjax.tgz
     Ignored:    .history
     Ignored:    .httr-oauth
     Ignored:    R/RcppExports.R
@@ -456,18 +523,20 @@ Ignored files:
     Ignored:    _classifier/meta/progress
     Ignored:    _classifier/objects/
     Ignored:    _classifier/user/
-    Ignored:    _targets/.gitattributes
-    Ignored:    _targets/.gittargets
     Ignored:    _targets/meta/process
     Ignored:    _targets/meta/progress
     Ignored:    _targets/objects/
     Ignored:    _targets/user/
-    Ignored:    analysis/blog_cache/
+    Ignored:    analysis/report_cache/
     Ignored:    dev/
     Ignored:    inst/extdata/
     Ignored:    output/images/
     Ignored:    papers/aime2021/aime2021.md
-    Ignored:    protocol/SecondReport.pdf
+    Ignored:    presentations/MEDCIDS21/MEDCIDS21-10min_files/
+    Ignored:    presentations/MEDCIDS21/MEDCIDS21_files/
+    Ignored:    presentations/Report/Midterm-Report.md
+    Ignored:    presentations/Report/Midterm-Report_cache/
+    Ignored:    presentations/Report/Midterm-Report_files/
     Ignored:    protocol/SecondReport_cache/
     Ignored:    protocol/SecondReport_files/
     Ignored:    renv/library/
@@ -485,12 +554,13 @@ Ignored files:
     Ignored:    src/stamp.o
     Ignored:    src/stomp.o
     Ignored:    src/windowfunc.o
-    Ignored:    tests/testthat/_snaps/
     Ignored:    tmp/
 
 </code></pre>
 <p>
-Note that any generated files, e.g. HTML, png, CSS, etc., are not included in this status report because it is ok for generated content to have uncommitted changes.
+Note that any generated files, e.g. HTML, png, CSS, etc., are not
+included in this status report because it is ok for generated content to
+have uncommitted changes.
 </p>
 </div>
 </div>
@@ -501,7 +571,11 @@ Note that any generated files, e.g. HTML, png, CSS, etc., are not included in t
 <div id="versions" class="tab-pane fade">
 
 <p>
-These are the previous versions of the repository in which changes were made to the R Markdown (<code>analysis/index.Rmd</code>) and HTML (<code>docs/index.html</code>) files. If you’ve configured a remote Git repository (see <code>?wflow_git_remote</code>), click on the hyperlinks in the table below to view the files as they were in that past version.
+These are the previous versions of the repository in which changes were
+made to the R Markdown (<code>analysis/index.Rmd</code>) and HTML
+(<code>docs/index.html</code>) files. If you’ve configured a remote Git
+repository (see <code>?wflow_git_remote</code>), click on the hyperlinks
+in the table below to view the files as they were in that past version.
 </p>
 <div class="table-responsive">
 <table class="table table-condensed table-hover">
@@ -525,6 +599,40 @@ Message
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+Rmd
+</td>
+<td>
+<a href="https://github.com/franzbischoff/false.alarm/blob/74c8faed13dd31145d8d6b9e78ad8536375f90ef/analysis/index.Rmd" target="_blank">74c8fae</a>
+</td>
+<td>
+Francisco Bischoff
+</td>
+<td>
+2022-02-02
+</td>
+<td>
+work
+</td>
+</tr>
+<tr>
+<td>
+html
+</td>
+<td>
+<a href="https://rawcdn.githack.com/franzbischoff/false.alarm/867bcf23d22203e3d807fda8a15d9ed6f74b9793/docs/index.html" target="_blank">867bcf2</a>
+</td>
+<td>
+Francisco Bischoff
+</td>
+<td>
+2022-01-16
+</td>
+<td>
+workflowr
+</td>
+</tr>
 <tr>
 <td>
 Rmd
@@ -856,19 +964,43 @@ gh-pages placeholder
 </div>
 </div>
 <!-- badges init -->
-<p><a href="https://cran.r-project.org/"><img src="https://img.shields.io/badge/R%3E=-3.6.2-brightgreen.svg" alt="minimal R version" /></a> <a href="http://creativecommons.org/licenses/by-nc-sa/4.0/"><img src="https://mirrors.creativecommons.org/presskit/buttons/80x15/svg/by-nc-sa.svg" alt="Licence" /></a></p>
+<p><a href="https://cran.r-project.org/"><img
+src="https://img.shields.io/badge/R%3E=-4.0.0-brightgreen.svg"
+alt="minimal R version" /></a> <a
+href="http://creativecommons.org/licenses/by-nc-sa/4.0/"><img
+src="https://mirrors.creativecommons.org/presskit/buttons/80x15/svg/by-nc-sa.svg"
+alt="Licence" /></a></p>
 <p>Dataset hosted by:</p>
-<p><a href="https://doi.org/10.5281/zenodo.4634013"><img src="https://zenodo.org/badge/DOI/10.5281/zenodo.4634013.svg" /></a></p>
+<p><a href="https://doi.org/10.5281/zenodo.4634013"><img
+src="https://zenodo.org/badge/DOI/10.5281/zenodo.4634013.svg" /></a></p>
 <!-- badges end -->
 <div id="tldr" class="section level2">
 <h2>TLDR;</h2>
-<p>This website contains all the necessary for reproducibility of this PhD. It is build joining three frameworks:</p>
+<p>This website contains all the necessary for reproducibility of this
+PhD. It is build joining three frameworks:</p>
 <ul>
-<li><a href="https://jdblischak.github.io/workflowr/">workflowr</a>, the main infrastructure that organizes every analysis step as of Github versions. But instead of showing all commits, it just keep the important ones.</li>
-<li><a href="https://docs.ropensci.org/targets/">targets</a>, a <a href="https://www.gnu.org/software/make/">Make</a>-like pipeline toolkit for Statistics and data science in R. It supersedes <a href="https://books.ropensci.org/drake/">drake</a> package. This allows to keep track of every step of the data science workflow and helps to understand what needs to be rebuild and what has not changed since last iteration. Every complete analysis shall be registered by one entry in the previous package (<a href="https://jdblischak.github.io/workflowr/">workflowr</a>)</li>
-<li><a href="https://ismayc.github.io/thesisdown_book/">thesisdown</a>, inspired by the package <a href="https://github.com/rstudio/bookdown">bookdown</a>, and helps to write the thesis in rmarkdown that is easily compiled in PDF, Doc, EPUB, and allows to change the theme/format for several universities/journals.</li>
+<li><a href="https://jdblischak.github.io/workflowr/">workflowr</a>, the
+main infrastructure that organizes every analysis step as of Github
+versions. But instead of showing all commits, it just keep the important
+ones.</li>
+<li><a href="https://docs.ropensci.org/targets/">targets</a>, a <a
+href="https://www.gnu.org/software/make/">Make</a>-like pipeline toolkit
+for Statistics and data science in R. It supersedes <a
+href="https://books.ropensci.org/drake/">drake</a> package. This allows
+to keep track of every step of the data science workflow and helps to
+understand what needs to be rebuild and what has not changed since last
+iteration. Every complete analysis shall be registered by one entry in
+the previous package (<a
+href="https://jdblischak.github.io/workflowr/">workflowr</a>)</li>
+<li><a href="https://ismayc.github.io/thesisdown_book/">thesisdown</a>,
+inspired by the package <a
+href="https://github.com/rstudio/bookdown">bookdown</a>, and helps to
+write the thesis in rmarkdown that is easily compiled in PDF, Doc, EPUB,
+and allows to change the theme/format for several
+universities/journals.</li>
 </ul>
-<p>Use the big button above <img src="figure/workflowr.png" /> to navigate thorough the older commits.</p>
+<p>Use the big button above <img src="figure/workflowr.png" /> to
+navigate thorough the older commits.</p>
 <p>Use the top menu for further information and the thesis itself.</p>
 <p>Last Targets Run network:</p>
 <div id="htmlwidget-24512ae3b9d6a760b942" style="width:960px;height:480px;" class="visNetwork html-widget"></div>
@@ -876,7 +1008,8 @@ gh-pages placeholder
 <br>
 <p>
 <button type="button" class="btn btn-default btn-workflowr btn-workflowr-sessioninfo" data-toggle="collapse" data-target="#workflowr-sessioninfo" style="display: block;">
-<span class="glyphicon glyphicon-wrench" aria-hidden="true"></span> Session information
+<span class="glyphicon glyphicon-wrench" aria-hidden="true"></span>
+Session information
 </button>
 </p>
 <div id="workflowr-sessioninfo" class="collapse">
@@ -898,30 +1031,30 @@ attached base packages:
 [1] stats     graphics  grDevices datasets  utils     methods   base     
 
 other attached packages:
-[1] visNetwork_2.1.0  gittargets_0.0.1  tarchetypes_0.4.1 targets_0.10.0   
-[5] workflowr_1.7.0   here_1.0.1       
+[1] visNetwork_2.1.0      gittargets_0.0.1.9000 tarchetypes_0.4.1    
+[4] targets_0.10.0        workflowr_1.7.0       here_1.0.1           
 
 loaded via a namespace (and not attached):
  [1] bslib_0.3.1           tidyselect_1.1.1      xfun_0.29            
- [4] purrr_0.3.4           vctrs_0.3.8           generics_0.1.1       
- [7] htmltools_0.5.2       yaml_2.2.1            utf8_1.2.2           
-[10] rlang_0.99.0.9003     jquerylib_0.1.4       gert_1.5.0           
-[13] later_1.3.0           pillar_1.6.4          glue_1.6.0           
+ [4] purrr_0.3.4           vctrs_0.3.8           generics_0.1.2       
+ [7] htmltools_0.5.2       yaml_2.2.2            utf8_1.2.2           
+[10] rlang_1.0.0.9000      jquerylib_0.1.4       gert_1.5.0           
+[13] later_1.3.0           pillar_1.7.0          glue_1.6.1           
 [16] withr_2.4.3           uuid_1.0-3            lifecycle_1.0.1      
 [19] stringr_1.4.0         htmlwidgets_1.5.4     codetools_0.2-18     
 [22] evaluate_0.14         languageserver_0.3.12 knitr_1.37           
 [25] callr_3.7.0           fastmap_1.1.0         httpuv_1.6.5         
 [28] ps_1.6.0              sys_3.4               fansi_1.0.2          
-[31] Rcpp_1.0.8            openssl_1.4.6         renv_0.15.1          
-[34] promises_1.2.0.1      backports_1.4.1       jsonlite_1.7.2       
+[31] Rcpp_1.0.8            openssl_1.4.6         renv_0.15.2          
+[34] promises_1.2.0.1      backports_1.4.1       jsonlite_1.7.3       
 [37] debugme_1.1.0         fs_1.5.2              credentials_1.3.2    
 [40] askpass_1.1           digest_0.6.29         stringi_1.7.6        
 [43] processx_3.5.2        dplyr_1.0.7           getPass_0.2-2        
-[46] rprojroot_2.0.2       cli_3.1.0             tools_4.1.2          
-[49] sass_0.4.0            magrittr_2.0.1        base64url_1.4        
+[46] rprojroot_2.0.2       cli_3.1.1             tools_4.1.2          
+[49] sass_0.4.0            magrittr_2.0.2        base64url_1.4        
 [52] tibble_3.1.6          crayon_1.4.2          whisker_0.4          
 [55] pkgconfig_2.0.3       ellipsis_0.3.2        data.table_1.14.2    
-[58] xml2_1.3.3            rmarkdown_2.11        httr_1.4.2           
+[58] xml2_1.3.3            rmarkdown_2.11.15     httr_1.4.2           
 [61] rstudioapi_0.13       R6_2.5.1              compiler_4.1.2       
 [64] igraph_1.2.11         git2r_0.29.0         </code></pre>
 </div>
@@ -939,6 +1072,8 @@ footer is added to webpages before the MathJax javascript. -->
     "HTML-CSS": { availableFonts: ["TeX"] }
   });
 </script>
+
+
 
 
 

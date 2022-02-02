@@ -14,7 +14,8 @@
 
 <title>About</title>
 
-<script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
+<script src="site_libs/header-attrs-2.11.15/header-attrs.js"></script>
+<script src="site_libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <link href="site_libs/bootstrap-3.3.5/css/lumen.min.css" rel="stylesheet" />
 <script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
@@ -35,13 +36,15 @@
 <link href="site_libs/font-awesome-5.1.0/css/all.css" rel="stylesheet" />
 <link href="site_libs/font-awesome-5.1.0/css/v4-shims.css" rel="stylesheet" />
 
-<link rel="icon" href="https://github.com/workflowr/workflowr-assets/raw/master/img/reproducible.png">
+<link rel="icon" href="https://github.com/workflowr/workflowr-assets/raw/main/img/reproducible.png">
 <!-- Add a small amount of space between sections. -->
 <style type="text/css">
 div.section {
   padding-top: 12px;
 }
 </style>
+
+
 
 <style type="text/css">
   code{white-space: pre-wrap;}
@@ -67,6 +70,30 @@ if (window.hljs) {
 
 
 
+<style type="text/css">
+/* for pandoc --citeproc since 2.11 */
+div.csl-bib-body { }
+div.csl-entry {
+  clear: both;
+}
+.hanging div.csl-entry {
+  margin-left:2em;
+  text-indent:-2em;
+}
+div.csl-left-margin {
+  min-width:2em;
+  float:left;
+}
+div.csl-right-inline {
+  margin-left:2em;
+  padding-left:1em;
+}
+div.csl-indent {
+  margin-left: 2em;
+}
+</style>
+
+<link rel="stylesheet" href="style.css" type="text/css" />
 
 
 
@@ -314,7 +341,9 @@ $(document).ready(function () {
 
 <p>
 <button type="button" class="btn btn-default btn-workflowr btn-workflowr-report" data-toggle="collapse" data-target="#workflowr-report">
-<span class="glyphicon glyphicon-list" aria-hidden="true"></span> workflowr <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span>
+<span class="glyphicon glyphicon-list" aria-hidden="true"></span>
+workflowr <span class="glyphicon glyphicon-ok text-success"
+aria-hidden="true"></span>
 </button>
 </p>
 <div id="workflowr-report" class="collapse">
@@ -323,7 +352,9 @@ $(document).ready(function () {
 <a data-toggle="tab" href="#summary">Summary</a>
 </li>
 <li>
-<a data-toggle="tab" href="#checks"> Checks <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> </a>
+<a data-toggle="tab" href="#checks"> Checks <span
+class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span>
+</a>
 </li>
 <li>
 <a data-toggle="tab" href="#versions">Past versions</a>
@@ -332,17 +363,27 @@ $(document).ready(function () {
 <div class="tab-content">
 <div id="summary" class="tab-pane fade in active">
 <p>
-<strong>Last updated:</strong> 2021-08-17
+<strong>Last updated:</strong> 2022-02-02
 </p>
 <p>
-<strong>Checks:</strong> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> 7 <span class="glyphicon glyphicon-exclamation-sign text-danger" aria-hidden="true"></span> 0
+<strong>Checks:</strong> <span
+class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> 7
+<span class="glyphicon glyphicon-exclamation-sign text-danger"
+aria-hidden="true"></span> 0
 </p>
 <p>
-<strong>Knit directory:</strong> <code>workspace/</code> <span class="glyphicon glyphicon-question-sign" aria-hidden="true" title="This is the local directory in which the code in this file was executed."> </span>
+<strong>Knit directory:</strong> <code>false.alarm/</code> <span
+class="glyphicon glyphicon-question-sign" aria-hidden="true"
+title="This is the local directory in which the code in this file was executed.">
+</span>
 </p>
 <p>
-This reproducible <a href="http://rmarkdown.rstudio.com">R Markdown</a> analysis was created with <a
-  href="https://github.com/jdblischak/workflowr">workflowr</a> (version 1.6.2). The <em>Checks</em> tab describes the reproducibility checks that were applied when the results were created. The <em>Past versions</em> tab lists the development history.
+This reproducible <a href="https://rmarkdown.rstudio.com">R Markdown</a>
+analysis was created with <a
+  href="https://github.com/workflowr/workflowr">workflowr</a> (version
+1.7.0). The <em>Checks</em> tab describes the reproducibility checks
+that were applied when the results were created. The <em>Past
+versions</em> tab lists the development history.
 </p>
 <hr>
 </div>
@@ -351,105 +392,177 @@ This reproducible <a href="http://rmarkdown.rstudio.com">R Markdown</a> analysis
 <div class="panel panel-default">
 <div class="panel-heading">
 <p class="panel-title">
-<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRMarkdownfilestronguptodate"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>R Markdown file:</strong> up-to-date </a>
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRMarkdownfilestronguptodate">
+<span class="glyphicon glyphicon-ok text-success"
+aria-hidden="true"></span> <strong>R Markdown file:</strong> up-to-date
+</a>
 </p>
 </div>
-<div id="strongRMarkdownfilestronguptodate" class="panel-collapse collapse">
+<div id="strongRMarkdownfilestronguptodate"
+class="panel-collapse collapse">
 <div class="panel-body">
-<p>Great! Since the R Markdown file has been committed to the Git repository, you know the exact version of the code that produced these results.</p>
+<p>Great! Since the R Markdown file has been committed to the Git
+repository, you know the exact version of the code that produced these
+results.</p>
 </div>
 </div>
 </div>
 <div class="panel panel-default">
 <div class="panel-heading">
 <p class="panel-title">
-<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongEnvironmentstrongempty"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Environment:</strong> empty </a>
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongEnvironmentstrongempty">
+<span class="glyphicon glyphicon-ok text-success"
+aria-hidden="true"></span> <strong>Environment:</strong> empty </a>
 </p>
 </div>
 <div id="strongEnvironmentstrongempty" class="panel-collapse collapse">
 <div class="panel-body">
-<p>Great job! The global environment was empty. Objects defined in the global environment can affect the analysis in your R Markdown file in unknown ways. For reproduciblity it’s best to always run the code in an empty environment.</p>
+<p>Great job! The global environment was empty. Objects defined in the
+global environment can affect the analysis in your R Markdown file in
+unknown ways. For reproduciblity it’s best to always run the code in an
+empty environment.</p>
 </div>
 </div>
 </div>
 <div class="panel panel-default">
 <div class="panel-heading">
 <p class="panel-title">
-<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongSeedstrongcodesetseed20201020code"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Seed:</strong> <code>set.seed(20201020)</code> </a>
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongSeedstrongcodesetseed20201020code">
+<span class="glyphicon glyphicon-ok text-success"
+aria-hidden="true"></span> <strong>Seed:</strong>
+<code>set.seed(20201020)</code> </a>
 </p>
 </div>
-<div id="strongSeedstrongcodesetseed20201020code" class="panel-collapse collapse">
+<div id="strongSeedstrongcodesetseed20201020code"
+class="panel-collapse collapse">
 <div class="panel-body">
-<p>The command <code>set.seed(20201020)</code> was run prior to running the code in the R Markdown file. Setting a seed ensures that any results that rely on randomness, e.g. subsampling or permutations, are reproducible.</p>
+<p>The command <code>set.seed(20201020)</code> was run prior to running
+the code in the R Markdown file. Setting a seed ensures that any results
+that rely on randomness, e.g. subsampling or permutations, are
+reproducible.</p>
 </div>
 </div>
 </div>
 <div class="panel panel-default">
 <div class="panel-heading">
 <p class="panel-title">
-<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongSessioninformationstrongrecorded"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Session information:</strong> recorded </a>
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongSessioninformationstrongrecorded">
+<span class="glyphicon glyphicon-ok text-success"
+aria-hidden="true"></span> <strong>Session information:</strong>
+recorded </a>
 </p>
 </div>
-<div id="strongSessioninformationstrongrecorded" class="panel-collapse collapse">
+<div id="strongSessioninformationstrongrecorded"
+class="panel-collapse collapse">
 <div class="panel-body">
-<p>Great job! Recording the operating system, R version, and package versions is critical for reproducibility.</p>
+<p>Great job! Recording the operating system, R version, and package
+versions is critical for reproducibility.</p>
 </div>
 </div>
 </div>
 <div class="panel panel-default">
 <div class="panel-heading">
 <p class="panel-title">
-<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongCachestrongnone"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Cache:</strong> none </a>
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongCachestrongnone">
+<span class="glyphicon glyphicon-ok text-success"
+aria-hidden="true"></span> <strong>Cache:</strong> none </a>
 </p>
 </div>
 <div id="strongCachestrongnone" class="panel-collapse collapse">
 <div class="panel-body">
-<p>Nice! There were no cached chunks for this analysis, so you can be confident that you successfully produced the results during this run.</p>
+<p>Nice! There were no cached chunks for this analysis, so you can be
+confident that you successfully produced the results during this
+run.</p>
 </div>
 </div>
 </div>
 <div class="panel panel-default">
 <div class="panel-heading">
 <p class="panel-title">
-<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongFilepathsstrongrelative"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>File paths:</strong> relative </a>
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongFilepathsstrongrelative">
+<span class="glyphicon glyphicon-ok text-success"
+aria-hidden="true"></span> <strong>File paths:</strong> relative </a>
 </p>
 </div>
 <div id="strongFilepathsstrongrelative" class="panel-collapse collapse">
 <div class="panel-body">
-<p>Great job! Using relative paths to the files within your workflowr project makes it easier to run your code on other machines.</p>
+<p>Great job! Using relative paths to the files within your workflowr
+project makes it easier to run your code on other machines.</p>
 </div>
 </div>
 </div>
 <div class="panel panel-default">
 <div class="panel-heading">
 <p class="panel-title">
-<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomfranzbischofffalsealarmtreea5ec160176f456ba8e8f7f2e8650cbf5c68b1e97targetblanka5ec160a"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Repository version:</strong> <a href="https://github.com/franzbischoff/false.alarm/tree/a5ec160176f456ba8e8f7f2e8650cbf5c68b1e97" target="_blank">a5ec160</a> </a>
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomfranzbischofffalsealarmtree74c8faed13dd31145d8d6b9e78ad8536375f90eftargetblank74c8faea">
+<span class="glyphicon glyphicon-ok text-success"
+aria-hidden="true"></span> <strong>Repository version:</strong>
+<a href="https://github.com/franzbischoff/false.alarm/tree/74c8faed13dd31145d8d6b9e78ad8536375f90ef" target="_blank">74c8fae</a>
+</a>
 </p>
 </div>
-<div id="strongRepositoryversionstrongahrefhttpsgithubcomfranzbischofffalsealarmtreea5ec160176f456ba8e8f7f2e8650cbf5c68b1e97targetblanka5ec160a" class="panel-collapse collapse">
+<div
+id="strongRepositoryversionstrongahrefhttpsgithubcomfranzbischofffalsealarmtree74c8faed13dd31145d8d6b9e78ad8536375f90eftargetblank74c8faea"
+class="panel-collapse collapse">
 <div class="panel-body">
 <p>
-Great! You are using Git for version control. Tracking code development and connecting the code version to the results is critical for reproducibility.
+Great! You are using Git for version control. Tracking code development
+and connecting the code version to the results is critical for
+reproducibility.
 </p>
 <p>
-The results in this page were generated with repository version <a href="https://github.com/franzbischoff/false.alarm/tree/a5ec160176f456ba8e8f7f2e8650cbf5c68b1e97" target="_blank">a5ec160</a>. See the <em>Past versions</em> tab to see a history of the changes made to the R Markdown and HTML files.
+The results in this page were generated with repository version
+<a href="https://github.com/franzbischoff/false.alarm/tree/74c8faed13dd31145d8d6b9e78ad8536375f90ef" target="_blank">74c8fae</a>.
+See the <em>Past versions</em> tab to see a history of the changes made
+to the R Markdown and HTML files.
 </p>
 <p>
-Note that you need to be careful to ensure that all relevant files for the analysis have been committed to Git prior to generating the results (you can use <code>wflow_publish</code> or <code>wflow_git_commit</code>). workflowr only checks the R Markdown file, but you know if there are other scripts or data files that it depends on. Below is the status of the Git repository when the results were generated:
+Note that you need to be careful to ensure that all relevant files for
+the analysis have been committed to Git prior to generating the results
+(you can use <code>wflow_publish</code> or
+<code>wflow_git_commit</code>). workflowr only checks the R Markdown
+file, but you know if there are other scripts or data files that it
+depends on. Below is the status of the Git repository when the results
+were generated:
 </p>
 <pre><code>
 Ignored files:
     Ignored:    .Renviron
+    Ignored:    .Rhistory
+    Ignored:    .Rproj.user/
     Ignored:    .devcontainer/exts/
+    Ignored:    .devcontainer/git-hours.tgz
+    Ignored:    .devcontainer/mathjax.tgz
+    Ignored:    .history
     Ignored:    .httr-oauth
     Ignored:    R/RcppExports.R
-    Ignored:    _targets/
+    Ignored:    _classifier/.gittargets
+    Ignored:    _classifier/meta/process
+    Ignored:    _classifier/meta/progress
+    Ignored:    _classifier/objects/
+    Ignored:    _classifier/user/
+    Ignored:    _targets/meta/process
+    Ignored:    _targets/meta/progress
+    Ignored:    _targets/objects/
+    Ignored:    _targets/user/
+    Ignored:    analysis/report_cache/
     Ignored:    dev/
     Ignored:    inst/extdata/
+    Ignored:    output/images/
+    Ignored:    papers/aime2021/aime2021.md
+    Ignored:    presentations/MEDCIDS21/MEDCIDS21-10min_files/
+    Ignored:    presentations/MEDCIDS21/MEDCIDS21_files/
+    Ignored:    presentations/Report/Midterm-Report.md
+    Ignored:    presentations/Report/Midterm-Report_cache/
+    Ignored:    presentations/Report/Midterm-Report_files/
+    Ignored:    protocol/SecondReport_cache/
+    Ignored:    protocol/SecondReport_files/
     Ignored:    renv/library/
+    Ignored:    renv/python/
     Ignored:    renv/staging/
     Ignored:    src/RcppExports.cpp
     Ignored:    src/RcppExports.o
+    Ignored:    src/contrast.o
     Ignored:    src/false.alarm.so
     Ignored:    src/fft.o
     Ignored:    src/mass.o
@@ -459,11 +572,13 @@ Ignored files:
     Ignored:    src/stamp.o
     Ignored:    src/stomp.o
     Ignored:    src/windowfunc.o
-    Ignored:    workspace.RData
+    Ignored:    tmp/
 
 </code></pre>
 <p>
-Note that any generated files, e.g. HTML, png, CSS, etc., are not included in this status report because it is ok for generated content to have uncommitted changes.
+Note that any generated files, e.g. HTML, png, CSS, etc., are not
+included in this status report because it is ok for generated content to
+have uncommitted changes.
 </p>
 </div>
 </div>
@@ -474,7 +589,11 @@ Note that any generated files, e.g. HTML, png, CSS, etc., are not included in t
 <div id="versions" class="tab-pane fade">
 
 <p>
-These are the previous versions of the repository in which changes were made to the R Markdown (<code>analysis/about.Rmd</code>) and HTML (<code>docs/about.html</code>) files. If you’ve configured a remote Git repository (see <code>?wflow_git_remote</code>), click on the hyperlinks in the table below to view the files as they were in that past version.
+These are the previous versions of the repository in which changes were
+made to the R Markdown (<code>analysis/about.Rmd</code>) and HTML
+(<code>docs/about.html</code>) files. If you’ve configured a remote Git
+repository (see <code>?wflow_git_remote</code>), click on the hyperlinks
+in the table below to view the files as they were in that past version.
 </p>
 <div class="table-responsive">
 <table class="table table-condensed table-hover">
@@ -498,6 +617,23 @@ Message
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+html
+</td>
+<td>
+<a href="https://rawcdn.githack.com/franzbischoff/false.alarm/c19ec017e1a0cdd909f673a745546e5f34813afa/docs/about.html" target="_blank">c19ec01</a>
+</td>
+<td>
+Francisco Bischoff
+</td>
+<td>
+2021-08-17
+</td>
+<td>
+Build site.
+</td>
+</tr>
 <tr>
 <td>
 html
@@ -693,35 +829,96 @@ Targets
 </div>
 </div>
 <!-- badges: start -->
-<p><a href="https://gitpod.io/#https://github.com/franzbischoff/false.alarm/tree/develop"><img src="https://img.shields.io/badge/Gitpod-Ready--to--Code-blue?logo=gitpod" alt="Gitpod Ready-to-Code" /></a> <a href="https://mybinder.org/v2/gh/franzbischoff/false.alarm/master?urlpath=rstudio"><img src="https://mybinder.org/badge_logo.svg" alt="Launch binder" /></a> <a href="https://franzbischoff.github.io/false.alarm/"><img src="https://img.shields.io/badge/read-thesis__down-brightgreen" alt="Read Thesis" /></a> <a href="https://zenodo.org/badge/latestdoi/261530912"><img src="https://zenodo.org/badge/261530912.svg" /></a></p>
-<p><a href="https://github.com/franzbischoff/false.alarm/actions/workflows/R-CMD-check.yaml"><img src="https://github.com/franzbischoff/false.alarm/actions/workflows/R-CMD-check.yaml/badge.svg" alt="R-CMD-check" /></a> <a href="https://codecov.io/gh/franzbischoff/false.alarm"><img src="https://codecov.io/gh/franzbischoff/false.alarm/branch/develop/graph/badge.svg?token=w7AmbwhNvn" alt="codecov" /></a> <a href="https://github.com/github/codeql-action/"><img src="https://github.com/franzbischoff/false.alarm/actions/workflows/codeql-analysis.yaml/badge.svg?branch=master" alt="CodeQL" /></a> <a href="https://lgtm.com/projects/g/franzbischoff/false.alarm/context:cpp"><img src="https://img.shields.io/lgtm/grade/cpp/g/franzbischoff/false.alarm.svg?logo=lgtm&amp;logoWidth=18" alt="Language grade: C/C++" /></a></p>
+<p><a
+href="https://gitpod.io/#https://github.com/franzbischoff/false.alarm/tree/develop"><img
+src="https://img.shields.io/badge/Gitpod-Ready--to--Code-blue?logo=gitpod"
+alt="Gitpod Ready-to-Code" /></a> <a
+href="https://mybinder.org/v2/gh/franzbischoff/false.alarm/master?urlpath=rstudio"><img
+src="https://mybinder.org/badge_logo.svg" alt="Launch binder" /></a> <a
+href="https://franzbischoff.github.io/false.alarm/"><img
+src="https://img.shields.io/badge/read-thesis__down-brightgreen"
+alt="Read Thesis" /></a> <a
+href="https://zenodo.org/badge/latestdoi/261530912"><img
+src="https://zenodo.org/badge/261530912.svg" /></a></p>
+<p><a
+href="https://github.com/franzbischoff/false.alarm/actions/workflows/R-CMD-check.yaml"><img
+src="https://github.com/franzbischoff/false.alarm/actions/workflows/R-CMD-check.yaml/badge.svg"
+alt="R-CMD-check" /></a> <a
+href="https://codecov.io/gh/franzbischoff/false.alarm"><img
+src="https://codecov.io/gh/franzbischoff/false.alarm/branch/develop/graph/badge.svg?token=w7AmbwhNvn"
+alt="codecov" /></a> <a
+href="https://github.com/github/codeql-action/"><img
+src="https://github.com/franzbischoff/false.alarm/actions/workflows/codeql-analysis.yaml/badge.svg?branch=master"
+alt="CodeQL" /></a> <a
+href="https://lgtm.com/projects/g/franzbischoff/false.alarm/context:cpp"><img
+src="https://img.shields.io/lgtm/grade/cpp/g/franzbischoff/false.alarm.svg?logo=lgtm&amp;logoWidth=18"
+alt="Language grade: C/C++" /></a></p>
 <!-- badges: end -->
 <div id="abstract" class="section level1">
 <h1>Abstract</h1>
-<p>Currently, Point-of-Care (POC) ECG monitoring works either as plot devices or alarms for abnormal cardiac rhythms using predefined normal trigger ranges. On the other hand, full 12-derivation ECG machines are complex to use as simple monitors and are used with strict techniques for formal diagnostics of hearth electric conduction pathologies, and the automatic diagnostics are derived from a full analysis of the 12-dimension data after it is fully collected. Both systems do not handle disconnected leads and patient’s motions, being strictly necessary to have a good and stable signal to allow proper diagnosis.</p>
-<p>This research aims to identify abnormal hearth electric patterns using streaming data, specifically those who are life-threatening, being a reliable signal for Intensive Care Units to respond quickly to those situations.</p>
-<p>The study design is comparable to a Diagnostic study, where high accuracy is essential. It will use the Physionet datasets<span class="citation"><sup><a href="#ref-Clifford2015">1</a></sup></span>, and the algorithm will try to minimize the false negatives and false positives.</p>
-<p>The expected result is the concretization of a new method that, besides being accurate, accomplishes this task using state of the art technology for time series analysis that allows minimum space and processor power to solve this problem. Also, we expect that fading factors can contribute to the state of the art of this technology.</p>
-<p>The research team is well experienced in time-series and has studied the Matrix Profile since its beginning, being founders of the Matrix Profile Foundation whose goal is to have a concise and stable cross-language API for developing with the Matrix Profile technology.<span class="citation"><sup><a href="#ref-RJ-2020-021">2</a>,<a href="#ref-VanBenschoten2020">3</a></sup></span></p>
+<p>Currently, Point-of-Care (POC) ECG monitoring works either as plot
+devices or alarms for abnormal cardiac rhythms using predefined normal
+trigger ranges. On the other hand, full 12-derivation ECG machines are
+complex to use as simple monitors and are used with strict techniques
+for formal diagnostics of hearth electric conduction pathologies, and
+the automatic diagnostics are derived from a full analysis of the
+12-dimension data after it is fully collected. Both systems do not
+handle disconnected leads and patient’s motions, being strictly
+necessary to have a good and stable signal to allow proper
+diagnosis.</p>
+<p>This research aims to identify abnormal hearth electric patterns
+using streaming data, specifically those who are life-threatening, being
+a reliable signal for Intensive Care Units to respond quickly to those
+situations.</p>
+<p>The study design is comparable to a Diagnostic study, where high
+accuracy is essential. It will use the Physionet datasets<span
+class="citation"><sup><a href="#ref-Clifford2015"
+role="doc-biblioref">1</a></sup></span>, and the algorithm will try to
+minimize the false negatives and false positives.</p>
+<p>The expected result is the concretization of a new method that,
+besides being accurate, accomplishes this task using state of the art
+technology for time series analysis that allows minimum space and
+processor power to solve this problem. Also, we expect that fading
+factors can contribute to the state of the art of this technology.</p>
+<p>The research team is well experienced in time-series and has studied
+the Matrix Profile since its beginning, being founders of the Matrix
+Profile Foundation whose goal is to have a concise and stable
+cross-language API for developing with the Matrix Profile
+technology.<span class="citation"><sup><a href="#ref-RJ-2020-021"
+role="doc-biblioref">2</a>,<a href="#ref-VanBenschoten2020"
+role="doc-biblioref">3</a></sup></span></p>
 </div>
 <div id="about-the-ongoing-project." class="section level1">
 <h1>About the ongoing project.</h1>
-<p>The document submitted for approval is <a href="https://github.com/franzbischoff/false.alarm/blob/master/protocol/Protocol.pdf">here</a>.</p>
-<p>To follow the thesis timeline you can access the full Gantt chart at Zenhub. Click <a href="https://app.zenhub.com/workspaces/phd-thesis-5eb2ce34f5f30b3aed0a35af/roadmap">here</a> (you need a github account, but that’s it).</p>
+<p>The document submitted for approval is <a
+href="https://github.com/franzbischoff/false.alarm/blob/master/protocol/Protocol.pdf">here</a>.</p>
+<p>To follow the thesis timeline you can access the full Gantt chart at
+Zenhub. Click <a
+href="https://app.zenhub.com/workspaces/phd-thesis-5eb2ce34f5f30b3aed0a35af/roadmap">here</a>
+(you need a github account, but that’s it).</p>
 </div>
 <div id="reproducible-researchkrystalli_2019" class="section level1">
-<h1>Reproducible Research<span class="citation"><sup><a href="#ref-krystalli_2019">4</a></sup></span></h1>
+<h1>Reproducible Research<span class="citation"><sup><a
+href="#ref-krystalli_2019" role="doc-biblioref">4</a></sup></span></h1>
 <p>This thesis will follow the compendium principles:</p>
-<p><img src="https://annakrystalli.me/rrresearch/assets/reproducible-data-analysis-04.png" /></p>
-<p><img src="https://annakrystalli.me/rrresearch/assets/reproducible-data-analysis-06.png" /></p>
+<p><img
+src="https://annakrystalli.me/rrresearch/assets/reproducible-data-analysis-04.png" /></p>
+<p><img
+src="https://annakrystalli.me/rrresearch/assets/reproducible-data-analysis-06.png" /></p>
 <div id="following-standards" class="section level2">
 <h2>Following Standards</h2>
-<p>Aiming to create secure materials that are <a href="https://www.nature.com/articles/sdata201618">FAIR</a> <em>findable, accessible, interoperable, reusable</em></p>
+<p>Aiming to create secure materials that are <a
+href="https://www.nature.com/articles/sdata201618">FAIR</a>
+<em>findable, accessible, interoperable, reusable</em></p>
 <div id="research-data-management" class="section level3">
 <h3>Research Data Management</h3>
 <ul>
-<li><a href="http://www.dcc.ac.uk/sites/default/files/documents/resource/DMP/DMP_Checklist_2013.pdf"><strong>RDM checklist</strong></a><span class="citation"><sup><a href="#ref-dcc_2013">5</a></sup></span></li>
-<li>Anticipate <strong>data products</strong> as part of your thesis <strong>outputs</strong></li>
+<li><a
+href="http://www.dcc.ac.uk/sites/default/files/documents/resource/DMP/DMP_Checklist_2013.pdf"><strong>RDM
+checklist</strong></a><span class="citation"><sup><a
+href="#ref-dcc_2013" role="doc-biblioref">5</a></sup></span></li>
+<li>Anticipate <strong>data products</strong> as part of your thesis
+<strong>outputs</strong></li>
 <li>Think about what technologies to use</li>
 </ul>
 </div>
@@ -729,15 +926,18 @@ Targets
 <h3>Missing values are a fact of life</h3>
 <ul>
 <li>Usually, best solution is to <strong>leave blank</strong></li>
-<li><strong><code>NA</code></strong> or <strong><code>NULL</code></strong> are also good options</li>
-<li><strong>NEVER use <code>0</code></strong>. Avoid numbers like <strong><code>-999</code></strong></li>
+<li><strong><code>NA</code></strong> or
+<strong><code>NULL</code></strong> are also good options</li>
+<li><strong>NEVER use <code>0</code></strong>. Avoid numbers like
+<strong><code>-999</code></strong></li>
 <li>Don’t make up your own code for missing values</li>
 </ul>
 </div>
 <div id="raw-data-are-sacrosanct" class="section level3">
 <h3>Raw data are sacrosanct</h3>
 <ul>
-<li>Don’t, not even with a barge pole, not for one second, touch or otherwise edit the raw data files. Do an manipulations in script</li>
+<li>Don’t, not even with a barge pole, not for one second, touch or
+otherwise edit the raw data files. Do an manipulations in script</li>
 </ul>
 </div>
 <div id="three-principles-for-good-file-names" class="section level3">
@@ -747,15 +947,19 @@ Targets
 <ul>
 <li><p>Regular expression and globbing friendly</p>
 <ul>
-<li>Avoid spaces, punctuation, accented characters, case sensitivity</li>
+<li>Avoid spaces, punctuation, accented characters, case
+sensitivity</li>
 </ul></li>
 <li><p>Easy to compute on</p>
 <ul>
 <li><p>Deliberate use of delimiters</p></li>
-<li><p>Deliberate use of <code>"-"</code> and <code>"_"</code> allows recovery of metadata from the filenames:</p>
+<li><p>Deliberate use of <code>"-"</code> and <code>"_"</code> allows
+recovery of metadata from the filenames:</p>
 <ul>
-<li><p><code>"_"</code> underscore used to delimit units of metadata I want to access later</p></li>
-<li><p><code>"-"</code> hyphen used to delimit words so our eyes don’t bleed</p></li>
+<li><p><code>"_"</code> underscore used to delimit units of metadata I
+want to access later</p></li>
+<li><p><code>"-"</code> hyphen used to delimit words so our eyes don’t
+bleed</p></li>
 </ul></li>
 </ul></li>
 </ul>
@@ -763,7 +967,9 @@ Targets
 <div id="human-readable" class="section level4">
 <h4>Human readable</h4>
 <ul>
-<li>Borrowing the concept from <a href="https://en.wikipedia.org/wiki/Clean_URL#Slug">slugs</a> from semantic URLs</li>
+<li>Borrowing the concept from <a
+href="https://en.wikipedia.org/wiki/Clean_URL#Slug">slugs</a> from
+semantic URLs</li>
 </ul>
 </div>
 <div id="play-well-with-default-ordering" class="section level4">
@@ -780,81 +986,114 @@ Targets
 <div id="license" class="section level1">
 <h1>License</h1>
 <center>
-<p><a href="https://creativecommons.org/licenses/by-nc-sa/4.0/"><img src="https://i.creativecommons.org/l/by-nc-sa/4.0/88x31.png" alt="Creative Commons License" /></a></p>
+<p><a href="https://creativecommons.org/licenses/by-nc-sa/4.0/"><img
+src="https://i.creativecommons.org/l/by-nc-sa/4.0/88x31.png"
+alt="Creative Commons License" /></a></p>
 </center>
-<p>This work is licensed under a <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/">Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International License</a>.</p>
+<p>This work is licensed under a <a
+href="https://creativecommons.org/licenses/by-nc-sa/4.0/">Creative
+Commons Attribution-NonCommercial-ShareAlike 4.0 International
+License</a>.</p>
 </div>
 <div id="references" class="section level1">
 <h1>References</h1>
-<div id="refs">
-<div id="ref-Clifford2015">
-<p>1. Clifford GD, Silva I, Moody B, et al. The physionet/computing in cardiology challenge 2015: Reducing false arrhythmia alarms in the icu. In: <em>Computing in Cardiology</em>.; 2015. doi:<a href="https://doi.org/10.1109/cic.2015.7408639">10.1109/cic.2015.7408639</a></p>
+<div id="refs" class="references csl-bib-body">
+<div id="ref-Clifford2015" class="csl-entry">
+<div class="csl-left-margin">1. </div><div
+class="csl-right-inline">Clifford GD, Silva I, Moody B, et al. The
+PhysioNet/computing in cardiology challenge 2015: Reducing false
+arrhythmia alarms in the ICU. In: <em>Computing in Cardiology</em>.;
+2015. doi:<a
+href="https://doi.org/10.1109/cic.2015.7408639">10.1109/cic.2015.7408639</a></div>
 </div>
-<div id="ref-RJ-2020-021">
-<p>2. Bischoff F, Rodrigues PP. tsmp: An R Package for Time Series with Matrix Profile. <em>The R Journal</em>. 2020;12(1):76-86. doi:<a href="https://doi.org/10.32614/RJ-2020-021">10.32614/RJ-2020-021</a></p>
+<div id="ref-RJ-2020-021" class="csl-entry">
+<div class="csl-left-margin">2. </div><div
+class="csl-right-inline">Bischoff F, Rodrigues PP. <span
+class="nocase">tsmp: An R Package for Time Series with Matrix
+Profile</span>. <em><span>The R Journal</span></em>. 2020;12(1):76-86.
+doi:<a
+href="https://doi.org/10.32614/RJ-2020-021">10.32614/RJ-2020-021</a></div>
 </div>
-<div id="ref-VanBenschoten2020">
-<p>3. Van Benschoten A, Ouyang A, Bischoff F, Marrs T. MPA: A novel cross-language api for time series analysis. <em>Journal of Open Source Software</em>. 2020;5(49):2179. doi:<a href="https://doi.org/10.21105/joss.02179">10.21105/joss.02179</a></p>
+<div id="ref-VanBenschoten2020" class="csl-entry">
+<div class="csl-left-margin">3. </div><div class="csl-right-inline">Van
+Benschoten A, Ouyang A, Bischoff F, Marrs T. MPA: A novel cross-language
+API for time series analysis. <em>Journal of Open Source Software</em>.
+2020;5(49):2179. doi:<a
+href="https://doi.org/10.21105/joss.02179">10.21105/joss.02179</a></div>
 </div>
-<div id="ref-krystalli_2019">
-<p>4. Krystalli A. <em>R for Reproducible Research</em>. Published online 2019. <a href="https://annakrystalli.me/rrresearch/">https://annakrystalli.me/rrresearch/</a></p>
+<div id="ref-krystalli_2019" class="csl-entry">
+<div class="csl-left-margin">4. </div><div
+class="csl-right-inline">Krystalli A. <em>R for Reproducible
+Research</em>. Published online 2019. <a
+href="https://annakrystalli.me/rrresearch/">https://annakrystalli.me/rrresearch/</a></div>
 </div>
-<div id="ref-dcc_2013">
-<p>5. Centre EDC. Checklist for a data management plan. V.4.0. Published 2013. Accessed April 8, 2021. <a href="http://www.dcc.ac.uk/resources/data-management-plans">http://www.dcc.ac.uk/resources/data-management-plans</a></p>
+<div id="ref-dcc_2013" class="csl-entry">
+<div class="csl-left-margin">5. </div><div
+class="csl-right-inline">Centre EDC. Checklist for a data management
+plan. v.4.0. Published 2013. Accessed April 8, 2021. <a
+href="http://www.dcc.ac.uk/resources/data-management-plans">http://www.dcc.ac.uk/resources/data-management-plans</a></div>
 </div>
 </div>
 <br>
 <p>
 <button type="button" class="btn btn-default btn-workflowr btn-workflowr-sessioninfo" data-toggle="collapse" data-target="#workflowr-sessioninfo" style="display: block;">
-<span class="glyphicon glyphicon-wrench" aria-hidden="true"></span> Session information
+<span class="glyphicon glyphicon-wrench" aria-hidden="true"></span>
+Session information
 </button>
 </p>
 <div id="workflowr-sessioninfo" class="collapse">
 <pre class="r"><code>sessionInfo()
-#&gt; R version 4.1.0 (2021-05-18)
+#&gt; R version 4.1.2 (2021-11-01)
 #&gt; Platform: x86_64-pc-linux-gnu (64-bit)
-#&gt; Running under: Ubuntu 20.04.2 LTS
+#&gt; Running under: Ubuntu 20.04.3 LTS
 #&gt; 
 #&gt; Matrix products: default
 #&gt; BLAS:   /usr/lib/x86_64-linux-gnu/blas/libblas.so.3.9.0
 #&gt; LAPACK: /usr/lib/x86_64-linux-gnu/lapack/liblapack.so.3.9.0
 #&gt; 
 #&gt; locale:
-#&gt;  [1] LC_CTYPE=en_US.UTF-8       LC_NUMERIC=C              
-#&gt;  [3] LC_TIME=en_US.UTF-8        LC_COLLATE=en_US.UTF-8    
-#&gt;  [5] LC_MONETARY=en_US.UTF-8    LC_MESSAGES=en_US.UTF-8   
-#&gt;  [7] LC_PAPER=en_US.UTF-8       LC_NAME=C                 
-#&gt;  [9] LC_ADDRESS=C               LC_TELEPHONE=C            
-#&gt; [11] LC_MEASUREMENT=en_US.UTF-8 LC_IDENTIFICATION=C       
+#&gt;  [1] LC_CTYPE=C.UTF-8       LC_NUMERIC=C           LC_TIME=C.UTF-8       
+#&gt;  [4] LC_COLLATE=C.UTF-8     LC_MONETARY=C.UTF-8    LC_MESSAGES=C.UTF-8   
+#&gt;  [7] LC_PAPER=C.UTF-8       LC_NAME=C              LC_ADDRESS=C          
+#&gt; [10] LC_TELEPHONE=C         LC_MEASUREMENT=C.UTF-8 LC_IDENTIFICATION=C   
 #&gt; 
 #&gt; attached base packages:
 #&gt; [1] stats     graphics  grDevices datasets  utils     methods   base     
 #&gt; 
 #&gt; other attached packages:
-#&gt; [1] here_1.0.1
+#&gt; [1] gittargets_0.0.1.9000 tarchetypes_0.4.1     targets_0.10.0       
+#&gt; [4] workflowr_1.7.0       here_1.0.1           
 #&gt; 
 #&gt; loaded via a namespace (and not attached):
-#&gt;  [1] Rcpp_1.0.7            pillar_1.6.2          compiler_4.1.0       
-#&gt;  [4] bslib_0.2.5.1         later_1.2.0           languageserver_0.3.10
-#&gt;  [7] jquerylib_0.1.4       git2r_0.28.0.9000     workflowr_1.6.2      
-#&gt; [10] tools_4.1.0           digest_0.6.27         jsonlite_1.7.2       
-#&gt; [13] evaluate_0.14         lifecycle_1.0.0       tibble_3.1.3         
-#&gt; [16] debugme_1.1.0         pkgconfig_2.0.3       rlang_0.4.11         
-#&gt; [19] yaml_2.2.1            xfun_0.24             stringr_1.4.0        
-#&gt; [22] xml2_1.3.2            knitr_1.33            fs_1.5.0             
-#&gt; [25] vctrs_0.3.8           sass_0.4.0            rprojroot_2.0.2      
-#&gt; [28] glue_1.4.2            R6_2.5.0              fansi_0.5.0          
-#&gt; [31] rmarkdown_2.9.7       magrittr_2.0.1        whisker_0.4          
-#&gt; [34] promises_1.2.0.1      ellipsis_0.3.2        htmltools_0.5.1.1    
-#&gt; [37] renv_0.13.2           httpuv_1.6.1          utf8_1.2.2           
-#&gt; [40] stringi_1.7.3         crayon_1.4.1</code></pre>
+#&gt;  [1] bslib_0.3.1           tidyselect_1.1.1      xfun_0.29            
+#&gt;  [4] purrr_0.3.4           vctrs_0.3.8           generics_0.1.2       
+#&gt;  [7] htmltools_0.5.2       yaml_2.2.2            utf8_1.2.2           
+#&gt; [10] rlang_1.0.0.9000      jquerylib_0.1.4       gert_1.5.0           
+#&gt; [13] later_1.3.0           pillar_1.7.0          glue_1.6.1           
+#&gt; [16] withr_2.4.3           uuid_1.0-3            lifecycle_1.0.1      
+#&gt; [19] stringr_1.4.0         codetools_0.2-18      evaluate_0.14        
+#&gt; [22] languageserver_0.3.12 knitr_1.37            callr_3.7.0          
+#&gt; [25] fastmap_1.1.0         httpuv_1.6.5          ps_1.6.0             
+#&gt; [28] sys_3.4               fansi_1.0.2           Rcpp_1.0.8           
+#&gt; [31] openssl_1.4.6         renv_0.15.2           promises_1.2.0.1     
+#&gt; [34] backports_1.4.1       jsonlite_1.7.3        debugme_1.1.0        
+#&gt; [37] fs_1.5.2              credentials_1.3.2     askpass_1.1          
+#&gt; [40] digest_0.6.29         stringi_1.7.6         processx_3.5.2       
+#&gt; [43] dplyr_1.0.7           getPass_0.2-2         rprojroot_2.0.2      
+#&gt; [46] cli_3.1.1             tools_4.1.2           sass_0.4.0           
+#&gt; [49] magrittr_2.0.2        base64url_1.4         tibble_3.1.6         
+#&gt; [52] crayon_1.4.2          whisker_0.4           pkgconfig_2.0.3      
+#&gt; [55] ellipsis_0.3.2        data.table_1.14.2     xml2_1.3.3           
+#&gt; [58] rmarkdown_2.11.15     httr_1.4.2            rstudioapi_0.13      
+#&gt; [61] R6_2.5.1              compiler_4.1.2        igraph_1.2.11        
+#&gt; [64] git2r_0.29.0</code></pre>
 </div>
 </div>
 
 
 <!-- Adjust MathJax settings so that all math formulae are shown using
 TeX fonts only; see
-http://docs.mathjax.org/en/latest/configuration.html.  This will make
+https://docs.mathjax.org/en/latest/web/configuration.html. This will make
 the presentation more consistent at the cost of the webpage sometimes
 taking slightly longer to load. Note that this only works because the
 footer is added to webpages before the MathJax javascript. -->
@@ -863,6 +1102,8 @@ footer is added to webpages before the MathJax javascript. -->
     "HTML-CSS": { availableFonts: ["TeX"] }
   });
 </script>
+
+
 
 
 
