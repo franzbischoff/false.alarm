@@ -1,4 +1,4 @@
-filter_data <- function(data_filter, params) {
+filter_data <- function(data_filter, params, infos) {
   checkmate::qassert(data_filter, "L2")
   checkmate::assert_true(identical(
     attr(data_filter[[1]], "info"),

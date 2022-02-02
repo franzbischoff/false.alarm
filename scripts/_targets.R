@@ -15,7 +15,7 @@ r_dataset <- tar_target(
   dataset,
   read_and_prepare_ecgs(file_paths,
     subset = var_subset,
-    true_alarm = TRUE,
+    # true_alarm = TRUE,
     limit_per_class = var_limit_per_class
   )
 )

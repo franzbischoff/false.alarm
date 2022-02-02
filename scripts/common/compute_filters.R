@@ -1,6 +1,6 @@
 
 
-compute_filters <- function(ecg_data, params) {
+compute_filters <- function(ecg_data, params, info) {
   checkmate::qassert(ecg_data, "N+")
 
   norm_data <- false.alarm::znorm(ecg_data)

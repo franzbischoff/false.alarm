@@ -6,14 +6,23 @@ bibliography: ../papers/references.bib
 csl: ../thesis/csl/ama.csl
 linestretch: 1.5
 indent: true
+header-includes:
+    - \usepackage{caption}
+    - \captionsetup{font=footnotesize}
 output:
-  # bookdown::html_document2:
-  bookdown::pdf_document2:
-    extra_dependencies: ["flafter"]
-    toc: yes
-    # toc_depth: 2
-    fig_caption: yes
-    number_sections: yes
+  bookdown::html_document2:
+    toc: true
+    toc_float: false
+    number_sections: true
+    css: style.css
+    theme: default
+    highlight: tango
+  # bookdown::pdf_document2:
+  #   extra_dependencies: ["flafter"]
+  #   toc: yes
+  #   # toc_depth: 2
+  #   fig_caption: yes
+  #   number_sections: yes
   # html_notebook:
   #   toc: yes
   #   toc_depth: 2
@@ -27,19 +36,6 @@ output:
   #   toc_depth: 2
 ---
 
-```{=html}
-<style>
-div.figure {
-  padding: 10px;
-  margin: 20px 0px 20px 0px;
-  background-color: white;
-  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
-}
-p.caption {
-  font-size: 19px;
-}
-</style>
-```
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = FALSE, fig.align = "center")
 library(here)
@@ -49,7 +45,7 @@ library(kableExtra)
 library(targets)
 ```
 
-Last Updated: `r lubridate::now("UTC")` UTC
+Last Updated: 2021-08-12 1:35:04 UTC
 
 # Research Title
 
@@ -102,7 +98,7 @@ inappropriate responses to alarms [@sendelbach2013].
 
 In April of 2013, The Joint Commission [@the_jc] issued the Sentinel Event Alert
 [@JointCommission2013], establishing alarm system safety as a top hospital priority in the National
-Patient Safety Goal. Nowadays (2021), the subject stil on their list, in fourth place of importance
+Patient Safety Goal. Nowadays (2021), the subject still on their list, in fourth place of importance
 [@the_jc2021].
 
 In February of 2015, the CinC/Physionet Challenge 2015 was about "Reducing False Arrhythmia Alarms
@@ -186,7 +182,7 @@ All steps of the process are being managed using the R package `targets` [@landa
 extraction to the final report, as shown in Fig. \@ref(fig:targets).
 
 ```{r targets, echo=FALSE, out.width="100%", fig.cap="Reproducible research workflow using `targets`."}
-knitr::include_graphics("figure/targets.png")
+knitr::include_graphics("figure/targets.svg")
 ```
 
 The report is available on the main webpage [@franz_website], allowing inspection of previous
@@ -204,18 +200,15 @@ knitr::include_graphics("figure/workflowr_print.png")
 The project started with a literature survey on the databases Scopus, Pubmed, Web of Science, and
 Google Scholar with the following query (the syntax was adapted for each database):
 
-```{=tex}
-\setstretch{1}
-\begin{verbatim}
-TITLE-ABS-KEY ( algorithm  OR  'point of care'  OR  'signal processing'  OR  'computer
-assisted'  OR  'support vector machine'  OR  'decision support system*'  OR  'neural
-network*'  OR  'automatic interpretation' OR 'machine learning')  AND  TITLE-ABS-KEY
-( electrocardiography  OR  cardiography  OR  'electrocardiographic tracing'  OR  ecg
-OR  electrocardiogram  OR  cardiogram )  AND  TITLE-ABS-KEY ( 'Intensive care unit' OR
-'cardiologic care unit'  OR  'intensive care center'  OR  'cardiologic care center' )
-\end{verbatim}
-\setstretch{1.5}
-```
+\
+    TITLE-ABS-KEY ( algorithm  OR  'point of care'  OR  'signal processing'  OR  'computer
+    assisted'  OR  'support vector machine'  OR  'decision support system*'  OR  'neural
+    network*'  OR  'automatic interpretation' OR 'machine learning')  AND  TITLE-ABS-KEY
+    ( electrocardiography  OR  cardiography  OR  'electrocardiographic tracing'  OR  ecg
+    OR  electrocardiogram  OR  cardiogram )  AND  TITLE-ABS-KEY ( 'Intensive care unit' OR
+    'cardiologic care unit'  OR  'intensive care center'  OR  'cardiologic care center' )
+\
+
 The inclusion and exclusion criteria were defined as in Table \@ref(tab:criteria).
 
 ```{r criteria, echo=FALSE}
@@ -313,11 +306,9 @@ applied to the time aligned ECG segments in the window). By experimentation (yet
 simple formula gives us the "complexity" of the signal and correlates well with the noisy data is
 shown in Equation \@ref(eq:complex).
 
-```{=tex}
 \begin{equation}
 \sqrt{\sum_{i=1}^w((x_{i+1}-x_i)^2)}, \quad \text{where}\; w \; \text{is the window size} (\#eq:complex)
 \end{equation}
-```
 \
 \
 The Fig. \@ref(fig:sqi) shows some SQIs.
@@ -355,7 +346,13 @@ knitr::include_graphics("figure/regime_true.png")
 
 ## Scientific outcomes
 
-This research has already yielded two R packages concerning the Matrix Profile algorithms from UCR [@mpucr]. The first package is called `tsmp`, and a paper has also been published in the R Journal [@RJ-2020-021]. The journal is indexed in the Science Citation Index Expanded, and according to the Journal Citation Reports, the journal has a 2020 impact factor of 3.984. The second package is called `matrixprofiler` and improves the first one, using low-level language to improve computational speed. The author has also joined the Matrix Profile Foundation as co-founder together with contributors from Python and Go languages  [@mpf2020].
+This research has already yielded two R packages concerning the Matrix Profile algorithms from UCR
+[@mpucr]. The first package is called `tsmp`, and a paper has also been published in the R Journal
+[@RJ-2020-021]. The journal is indexed in the Science Citation Index Expanded, and according to the
+Journal Citation Reports, the journal has a 2020 impact factor of 3.984. The second package is
+called `matrixprofiler` and improves the first one, using low-level language to improve
+computational speed. The author has also joined the Matrix Profile Foundation as co-founder together
+with contributors from Python and Go languages [@mpf2020].
 
 
 # Research Team

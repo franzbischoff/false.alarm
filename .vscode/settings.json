@@ -285,7 +285,7 @@
   "todo-tree.tree.buttons.export": true,
   "todo-tree.tree.disableCompactFolders": true,
   "todo-tree.tree.expanded": true,
-  "todo-tree.tree.scanMode": "workspace",
+  "todo-tree.tree.scanMode": "current file",
   "yaml.schemas": {
     "**/.github/workflows/*.yaml": "https://json.schemastore.org/github-workflow.json"
   },
@@ -304,5 +304,7 @@
   "search.exclude": {
     "**/_*/": true
   },
-  "editor.fontFamily": "'Fira Code Retina', Consolas, 'Courier New', monospace"
+  "editor.fontFamily": "'Fira Code Retina', Consolas, 'Courier New', monospace",
+  "todo-tree.tree.showBadges": true,
+  "todo-tree.tree.showCountsInTree": true
 }

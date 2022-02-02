@@ -1,0 +1,52 @@
+div.figure {
+  padding: 10px;
+  margin: 20px 0px 20px 0px;
+  background-color: white;
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+}
+p.caption {
+  padding: 20px 0 0 0;
+  font-size: 13px;
+  color: black;
+}
+
+table {
+  border-width: 3px 0 3px 0;
+  border-style: solid;
+  border-color: black;
+}
+
+table th {
+  border-width: 0px;
+  border-style: solid;
+  border-color: white;
+  font-weight: bold;
+  font-size: 1.1em;
+}
+
+table td {
+  border-width: 1px;
+  border-style: solid;
+  border-color: white;
+}
+
+.csl-entry {
+  break-inside: avoid-column;
+}
+
+/*
+
+
+ */
+/*
+.header {
+  margin: 10px auto 10px auto;
+  text-align: center;
+  font-family: "Source Sans Pro";
+  font-weight: bold;
+  position: absolute;
+  width: 100%;
+  color: rgb(184, 184, 184);
+}
+
+*/

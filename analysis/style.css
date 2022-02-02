@@ -1,12 +1,3 @@
-div.polaroid {
-  width: 80%;
-  height: auto;
-  margin-left: auto;
-  margin-right: auto;
-  background-color: white;
-  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
-}
-
 svg.svglite {
   width: 100%;
   height: auto;
@@ -27,11 +18,83 @@ div.polaroid {
 }
 div.figure {
   padding: 10px;
-  margin: 20px 0 20px 0;
+  margin: 20px 0px 20px 0px;
   background-color: white;
   box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
 }
 p.caption {
   padding: 20px 0 0 0;
-  font-size: 19px;
+  font-size: 13px;
+  color: black;
+}
+
+.tg {
+  border-collapse: collapse;
+  vertical-align: middle;
+  border-spacing: 0;
+  margin: 0px auto;
+}
+
+.tg td {
+  border-color: black;
+  border-style: solid;
+  border-width: 0;
+  font-family: Arial, sans-serif;
+  padding: 2px 5px;
+  word-break: normal;
+}
+
+.tg .tg-top {
+  border-color: black;
+  border-style: solid;
+  font-size: 16px;
+  border-width: 2px 0 0 0;
+  font-weight: bold;
+  text-align: center;
+}
+
+.tg .tg-cross {
+  text-align: center;
+  border-color: black;
+  border-width: 1px 0 0px 0;
+}
+
+.tg .tg-crosslow {
+  text-align: center;
+  border-color: black;
+  border-width: 0px 0 1px 0;
+}
+
+.tg .tg-3z1b {
+  text-align: right;
+}
+
+.tg .tg-wp8o {
+  border-color: black;
+  border-width: 1px 0 1px 0;
+  text-align: center;
+}
+
+.tg .tg-body {
+  border-color: black;
+  border-width: 0;
+  text-align: center;
+}
+
+.tg .tg-73oq {
+  text-align: left;
+}
+
+.tg .tg-mqa1 {
+  border-color: black;
+  border-width: 1px 0 2px 0;
+  font-weight: bold;
+  text-align: center;
+}
+
+.tg .tg-mcqj {
+  border-color: black;
+  border-width: 1px 0 2px 0;
+  font-weight: bold;
+  text-align: left;
 }

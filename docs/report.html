@@ -14,6 +14,7 @@
 
 <title>Report</title>
 
+<script src="site_libs/header-attrs-2.11.15/header-attrs.js"></script>
 <script src="site_libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <link href="site_libs/bootstrap-3.3.5/css/lumen.min.css" rel="stylesheet" />
@@ -29,6 +30,9 @@
        h6 {font-size: 12px;}
        code {color: inherit; background-color: rgba(0, 0, 0, 0.04);}
        pre:not([class]) { background-color: white }</style>
+<script src="site_libs/jqueryui-1.11.4/jquery-ui.min.js"></script>
+<link href="site_libs/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
+<script src="site_libs/tocify-1.9.1/jquery.tocify.js"></script>
 <script src="site_libs/navigation-1.1/tabsets.js"></script>
 <link href="site_libs/highlightjs-9.12.0/textmate.css" rel="stylesheet" />
 <script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
@@ -44,6 +48,8 @@ div.section {
   padding-top: 12px;
 }
 </style>
+
+
 
 <style type="text/css">
   code{white-space: pre-wrap;}
@@ -68,6 +74,29 @@ if (window.hljs) {
 
 
 
+
+<style type="text/css">
+/* for pandoc --citeproc since 2.11 */
+div.csl-bib-body { }
+div.csl-entry {
+  clear: both;
+}
+.hanging div.csl-entry {
+  margin-left:2em;
+  text-indent:-2em;
+}
+div.csl-left-margin {
+  min-width:2em;
+  float:left;
+}
+div.csl-right-inline {
+  margin-left:2em;
+  padding-left:1em;
+}
+div.csl-indent {
+  margin-left: 2em;
+}
+</style>
 
 <link rel="stylesheet" href="style.css" type="text/css" />
 
@@ -231,6 +260,69 @@ $(document).ready(function () {
 
 
 
+<style type="text/css">
+
+#TOC {
+  margin: 25px 0px 20px 0px;
+}
+@media (max-width: 768px) {
+#TOC {
+  position: relative;
+  width: 100%;
+}
+}
+
+@media print {
+.toc-content {
+  /* see https://github.com/w3c/csswg-drafts/issues/4434 */
+  float: right;
+}
+}
+
+.toc-content {
+  padding-left: 30px;
+  padding-right: 40px;
+}
+
+div.main-container {
+  max-width: 1200px;
+}
+
+div.tocify {
+  width: 20%;
+  max-width: 260px;
+  max-height: 85%;
+}
+
+@media (min-width: 768px) and (max-width: 991px) {
+  div.tocify {
+    width: 25%;
+  }
+}
+
+@media (max-width: 767px) {
+  div.tocify {
+    width: 100%;
+    max-width: none;
+  }
+}
+
+.tocify ul, .tocify li {
+  line-height: 20px;
+}
+
+.tocify-subheader .tocify-item {
+  font-size: 0.90em;
+}
+
+.tocify .list-group-item {
+  border-radius: 0px;
+}
+
+
+</style>
+
+
 
 </head>
 
@@ -238,6 +330,16 @@ $(document).ready(function () {
 
 
 <div class="container-fluid main-container">
+
+
+<!-- setup 3col/9col grid for toc_float and main content  -->
+<div class="row">
+<div class="col-xs-12 col-sm-4 col-md-3">
+<div id="TOC" class="tocify">
+</div>
+</div>
+
+<div class="toc-content col-xs-12 col-sm-8 col-md-9">
 
 
 
@@ -310,14 +412,16 @@ $(document).ready(function () {
 
 <h1 class="title toc-ignore">Report</h1>
 <h4 class="author">Francisco Bischoff</h4>
-<h4 class="date">on Jan 15, 2022</h4>
+<h4 class="date">on Jan 31, 2022</h4>
 
 </div>
 
 
 <p>
 <button type="button" class="btn btn-default btn-workflowr btn-workflowr-report" data-toggle="collapse" data-target="#workflowr-report">
-<span class="glyphicon glyphicon-list" aria-hidden="true"></span> workflowr <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span>
+<span class="glyphicon glyphicon-list" aria-hidden="true"></span>
+workflowr <span class="glyphicon glyphicon-exclamation-sign text-danger"
+aria-hidden="true"></span>
 </button>
 </p>
 <div id="workflowr-report" class="collapse">
@@ -326,7 +430,9 @@ $(document).ready(function () {
 <a data-toggle="tab" href="#summary">Summary</a>
 </li>
 <li>
-<a data-toggle="tab" href="#checks"> Checks <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> </a>
+<a data-toggle="tab" href="#checks"> Checks <span
+class="glyphicon glyphicon-exclamation-sign text-danger"
+aria-hidden="true"></span> </a>
 </li>
 <li>
 <a data-toggle="tab" href="#versions">Past versions</a>
@@ -335,17 +441,27 @@ $(document).ready(function () {
 <div class="tab-content">
 <div id="summary" class="tab-pane fade in active">
 <p>
-<strong>Last updated:</strong> 2022-01-16
+<strong>Last updated:</strong> 2022-02-02
 </p>
 <p>
-<strong>Checks:</strong> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> 7 <span class="glyphicon glyphicon-exclamation-sign text-danger" aria-hidden="true"></span> 0
+<strong>Checks:</strong> <span
+class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> 6
+<span class="glyphicon glyphicon-exclamation-sign text-danger"
+aria-hidden="true"></span> 1
 </p>
 <p>
-<strong>Knit directory:</strong> <code>false.alarm/</code> <span class="glyphicon glyphicon-question-sign" aria-hidden="true" title="This is the local directory in which the code in this file was executed."> </span>
+<strong>Knit directory:</strong> <code>false.alarm/</code> <span
+class="glyphicon glyphicon-question-sign" aria-hidden="true"
+title="This is the local directory in which the code in this file was executed.">
+</span>
 </p>
 <p>
-This reproducible <a href="https://rmarkdown.rstudio.com">R Markdown</a> analysis was created with <a
-  href="https://github.com/workflowr/workflowr">workflowr</a> (version 1.7.0). The <em>Checks</em> tab describes the reproducibility checks that were applied when the results were created. The <em>Past versions</em> tab lists the development history.
+This reproducible <a href="https://rmarkdown.rstudio.com">R Markdown</a>
+analysis was created with <a
+  href="https://github.com/workflowr/workflowr">workflowr</a> (version
+1.7.0). The <em>Checks</em> tab describes the reproducibility checks
+that were applied when the results were created. The <em>Past
+versions</em> tab lists the development history.
 </p>
 <hr>
 </div>
@@ -354,91 +470,141 @@ This reproducible <a href="https://rmarkdown.rstudio.com">R Markdown</a> analysi
 <div class="panel panel-default">
 <div class="panel-heading">
 <p class="panel-title">
-<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRMarkdownfilestronguptodate"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>R Markdown file:</strong> up-to-date </a>
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRMarkdownfilestronguncommittedchanges">
+<span class="glyphicon glyphicon-exclamation-sign text-danger"
+aria-hidden="true"></span> <strong>R Markdown file:</strong> uncommitted
+changes </a>
 </p>
 </div>
-<div id="strongRMarkdownfilestronguptodate" class="panel-collapse collapse">
+<div id="strongRMarkdownfilestronguncommittedchanges"
+class="panel-collapse collapse">
 <div class="panel-body">
-<p>Great! Since the R Markdown file has been committed to the Git repository, you know the exact version of the code that produced these results.</p>
+<p>The R Markdown file has unstaged changes. To know which version of
+the R Markdown file created these results, you’ll want to first commit
+it to the Git repo. If you’re still working on the analysis, you can
+ignore this warning. When you’re finished, you can run
+<code>wflow_publish</code> to commit the R Markdown file and build the
+HTML.</p>
 </div>
 </div>
 </div>
 <div class="panel panel-default">
 <div class="panel-heading">
 <p class="panel-title">
-<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongEnvironmentstrongempty"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Environment:</strong> empty </a>
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongEnvironmentstrongempty">
+<span class="glyphicon glyphicon-ok text-success"
+aria-hidden="true"></span> <strong>Environment:</strong> empty </a>
 </p>
 </div>
 <div id="strongEnvironmentstrongempty" class="panel-collapse collapse">
 <div class="panel-body">
-<p>Great job! The global environment was empty. Objects defined in the global environment can affect the analysis in your R Markdown file in unknown ways. For reproduciblity it’s best to always run the code in an empty environment.</p>
+<p>Great job! The global environment was empty. Objects defined in the
+global environment can affect the analysis in your R Markdown file in
+unknown ways. For reproduciblity it’s best to always run the code in an
+empty environment.</p>
 </div>
 </div>
 </div>
 <div class="panel panel-default">
 <div class="panel-heading">
 <p class="panel-title">
-<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongSeedstrongcodesetseed20201020code"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Seed:</strong> <code>set.seed(20201020)</code> </a>
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongSeedstrongcodesetseed20201020code">
+<span class="glyphicon glyphicon-ok text-success"
+aria-hidden="true"></span> <strong>Seed:</strong>
+<code>set.seed(20201020)</code> </a>
 </p>
 </div>
-<div id="strongSeedstrongcodesetseed20201020code" class="panel-collapse collapse">
+<div id="strongSeedstrongcodesetseed20201020code"
+class="panel-collapse collapse">
 <div class="panel-body">
-<p>The command <code>set.seed(20201020)</code> was run prior to running the code in the R Markdown file. Setting a seed ensures that any results that rely on randomness, e.g. subsampling or permutations, are reproducible.</p>
+<p>The command <code>set.seed(20201020)</code> was run prior to running
+the code in the R Markdown file. Setting a seed ensures that any results
+that rely on randomness, e.g. subsampling or permutations, are
+reproducible.</p>
 </div>
 </div>
 </div>
 <div class="panel panel-default">
 <div class="panel-heading">
 <p class="panel-title">
-<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongSessioninformationstrongrecorded"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Session information:</strong> recorded </a>
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongSessioninformationstrongrecorded">
+<span class="glyphicon glyphicon-ok text-success"
+aria-hidden="true"></span> <strong>Session information:</strong>
+recorded </a>
 </p>
 </div>
-<div id="strongSessioninformationstrongrecorded" class="panel-collapse collapse">
+<div id="strongSessioninformationstrongrecorded"
+class="panel-collapse collapse">
 <div class="panel-body">
-<p>Great job! Recording the operating system, R version, and package versions is critical for reproducibility.</p>
+<p>Great job! Recording the operating system, R version, and package
+versions is critical for reproducibility.</p>
 </div>
 </div>
 </div>
 <div class="panel panel-default">
 <div class="panel-heading">
 <p class="panel-title">
-<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongCachestrongnone"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Cache:</strong> none </a>
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongCachestrongnone">
+<span class="glyphicon glyphicon-ok text-success"
+aria-hidden="true"></span> <strong>Cache:</strong> none </a>
 </p>
 </div>
 <div id="strongCachestrongnone" class="panel-collapse collapse">
 <div class="panel-body">
-<p>Nice! There were no cached chunks for this analysis, so you can be confident that you successfully produced the results during this run.</p>
+<p>Nice! There were no cached chunks for this analysis, so you can be
+confident that you successfully produced the results during this
+run.</p>
 </div>
 </div>
 </div>
 <div class="panel panel-default">
 <div class="panel-heading">
 <p class="panel-title">
-<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongFilepathsstrongrelative"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>File paths:</strong> relative </a>
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongFilepathsstrongrelative">
+<span class="glyphicon glyphicon-ok text-success"
+aria-hidden="true"></span> <strong>File paths:</strong> relative </a>
 </p>
 </div>
 <div id="strongFilepathsstrongrelative" class="panel-collapse collapse">
 <div class="panel-body">
-<p>Great job! Using relative paths to the files within your workflowr project makes it easier to run your code on other machines.</p>
+<p>Great job! Using relative paths to the files within your workflowr
+project makes it easier to run your code on other machines.</p>
 </div>
 </div>
 </div>
 <div class="panel panel-default">
 <div class="panel-heading">
 <p class="panel-title">
-<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomfranzbischofffalsealarmtreeafebf46a99a2ce072ce523b14fb1a60e416dd972targetblankafebf46a"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Repository version:</strong> <a href="https://github.com/franzbischoff/false.alarm/tree/afebf46a99a2ce072ce523b14fb1a60e416dd972" target="_blank">afebf46</a> </a>
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomfranzbischofffalsealarmtree8d2fda343799eb940036a42538d7b9158c516452targetblank8d2fda3a">
+<span class="glyphicon glyphicon-ok text-success"
+aria-hidden="true"></span> <strong>Repository version:</strong>
+<a href="https://github.com/franzbischoff/false.alarm/tree/8d2fda343799eb940036a42538d7b9158c516452" target="_blank">8d2fda3</a>
+</a>
 </p>
 </div>
-<div id="strongRepositoryversionstrongahrefhttpsgithubcomfranzbischofffalsealarmtreeafebf46a99a2ce072ce523b14fb1a60e416dd972targetblankafebf46a" class="panel-collapse collapse">
+<div
+id="strongRepositoryversionstrongahrefhttpsgithubcomfranzbischofffalsealarmtree8d2fda343799eb940036a42538d7b9158c516452targetblank8d2fda3a"
+class="panel-collapse collapse">
 <div class="panel-body">
 <p>
-Great! You are using Git for version control. Tracking code development and connecting the code version to the results is critical for reproducibility.
+Great! You are using Git for version control. Tracking code development
+and connecting the code version to the results is critical for
+reproducibility.
 </p>
 <p>
-The results in this page were generated with repository version <a href="https://github.com/franzbischoff/false.alarm/tree/afebf46a99a2ce072ce523b14fb1a60e416dd972" target="_blank">afebf46</a>. See the <em>Past versions</em> tab to see a history of the changes made to the R Markdown and HTML files.
+The results in this page were generated with repository version
+<a href="https://github.com/franzbischoff/false.alarm/tree/8d2fda343799eb940036a42538d7b9158c516452" target="_blank">8d2fda3</a>.
+See the <em>Past versions</em> tab to see a history of the changes made
+to the R Markdown and HTML files.
 </p>
 <p>
-Note that you need to be careful to ensure that all relevant files for the analysis have been committed to Git prior to generating the results (you can use <code>wflow_publish</code> or <code>wflow_git_commit</code>). workflowr only checks the R Markdown file, but you know if there are other scripts or data files that it depends on. Below is the status of the Git repository when the results were generated:
+Note that you need to be careful to ensure that all relevant files for
+the analysis have been committed to Git prior to generating the results
+(you can use <code>wflow_publish</code> or
+<code>wflow_git_commit</code>). workflowr only checks the R Markdown
+file, but you know if there are other scripts or data files that it
+depends on. Below is the status of the Git repository when the results
+were generated:
 </p>
 <pre><code>
 Ignored files:
@@ -446,6 +612,8 @@ Ignored files:
     Ignored:    .Rhistory
     Ignored:    .Rproj.user/
     Ignored:    .devcontainer/exts/
+    Ignored:    .devcontainer/git-hours.tgz
+    Ignored:    .devcontainer/mathjax.tgz
     Ignored:    .history
     Ignored:    .httr-oauth
     Ignored:    R/RcppExports.R
@@ -454,18 +622,19 @@ Ignored files:
     Ignored:    _classifier/meta/progress
     Ignored:    _classifier/objects/
     Ignored:    _classifier/user/
-    Ignored:    _targets/.gitattributes
-    Ignored:    _targets/.gittargets
     Ignored:    _targets/meta/process
     Ignored:    _targets/meta/progress
     Ignored:    _targets/objects/
     Ignored:    _targets/user/
-    Ignored:    analysis/blog_cache/
     Ignored:    dev/
     Ignored:    inst/extdata/
     Ignored:    output/images/
     Ignored:    papers/aime2021/aime2021.md
-    Ignored:    protocol/SecondReport.pdf
+    Ignored:    presentations/MEDCIDS21/MEDCIDS21-10min_files/
+    Ignored:    presentations/MEDCIDS21/MEDCIDS21_files/
+    Ignored:    presentations/Report/Midterm-Report.md
+    Ignored:    presentations/Report/Midterm-Report_cache/
+    Ignored:    presentations/Report/Midterm-Report_files/
     Ignored:    protocol/SecondReport_cache/
     Ignored:    protocol/SecondReport_files/
     Ignored:    renv/library/
@@ -483,12 +652,33 @@ Ignored files:
     Ignored:    src/stamp.o
     Ignored:    src/stomp.o
     Ignored:    src/windowfunc.o
-    Ignored:    tests/testthat/_snaps/
     Ignored:    tmp/
+
+Untracked files:
+    Untracked:  protocol/figure/floss_eval.pdf
+    Untracked:  protocol/figure/floss_eval.svg
+    Untracked:  protocol/figure/kappa.svg
+
+Unstaged changes:
+    Modified:   analysis/report.Rmd
+    Modified:   analysis/style.css
+    Modified:   codemeta.json
+    Modified:   protocol/SecondReport.Rmd
+    Modified:   protocol/figure/regime_filter.pdf
+    Modified:   renv.lock
+
+Staged changes:
+    Modified:   protocol/FirstReport.Rmd
+    Modified:   protocol/Protocol.Rmd
+    Deleted:    protocol/figure/floss_eval1.png
+    Deleted:    protocol/figure/kappa.png
+    Deleted:    protocol/figure/targets.png
 
 </code></pre>
 <p>
-Note that any generated files, e.g. HTML, png, CSS, etc., are not included in this status report because it is ok for generated content to have uncommitted changes.
+Note that any generated files, e.g. HTML, png, CSS, etc., are not
+included in this status report because it is ok for generated content to
+have uncommitted changes.
 </p>
 </div>
 </div>
@@ -499,7 +689,11 @@ Note that any generated files, e.g. HTML, png, CSS, etc., are not included in t
 <div id="versions" class="tab-pane fade">
 
 <p>
-These are the previous versions of the repository in which changes were made to the R Markdown (<code>analysis/report.Rmd</code>) and HTML (<code>docs/report.html</code>) files. If you’ve configured a remote Git repository (see <code>?wflow_git_remote</code>), click on the hyperlinks in the table below to view the files as they were in that past version.
+These are the previous versions of the repository in which changes were
+made to the R Markdown (<code>analysis/report.Rmd</code>) and HTML
+(<code>docs/report.html</code>) files. If you’ve configured a remote Git
+repository (see <code>?wflow_git_remote</code>), click on the hyperlinks
+in the table below to view the files as they were in that past version.
 </p>
 <div class="table-responsive">
 <table class="table table-condensed table-hover">
@@ -523,6 +717,40 @@ Message
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+Rmd
+</td>
+<td>
+<a href="https://github.com/franzbischoff/false.alarm/blob/c0d48a72d662352d16a37f7e61a472124fffe987/analysis/report.Rmd" target="_blank">c0d48a7</a>
+</td>
+<td>
+Francisco Bischoff
+</td>
+<td>
+2022-01-18
+</td>
+<td>
+remote some temps
+</td>
+</tr>
+<tr>
+<td>
+html
+</td>
+<td>
+<a href="https://rawcdn.githack.com/franzbischoff/false.alarm/867bcf23d22203e3d807fda8a15d9ed6f74b9793/docs/report.html" target="_blank">867bcf2</a>
+</td>
+<td>
+Francisco Bischoff
+</td>
+<td>
+2022-01-16
+</td>
+<td>
+workflowr
+</td>
+</tr>
 <tr>
 <td>
 Rmd
@@ -870,26 +1098,239 @@ Targets
 </div>
 </div>
 </div>
-<div id="current-work-status" class="section level1">
-<h1><span class="header-section-number">1</span> Current Work Status</h1>
-<div id="principles" class="section level2">
-<h2><span class="header-section-number">1.1</span> Principles</h2>
-<p>This research is being conducted using the Research Compendium principles<span class="citation"><sup><a href="#ref-compendium2019">1</a></sup></span>:</p>
+<div id="objectives-and-the-research-question" class="section level1">
+<h1>Objectives and the research question</h1>
+<p>While this research was inspired on the CinC/Physionet Challenge
+2015, its purpose is not to beat the state of the art on that challenge,
+but to identify, on streaming data, abnormal hearth electric patterns,
+specifically those which are life-threatening, using low CPU and low
+memory requirements in order to be able to generalize the use of such
+information on lower-end devices, outside the ICU, as ward devices, home
+devices, and wearable devices.</p>
+<p>The main questions is: can we accomplish this objective using a
+minimalist approach (low CPU, low memory) while maintaining
+robustness?</p>
+</div>
+<div id="principles" class="section level1">
+<h1>Principles</h1>
+<p>This research is being conducted using the Research Compendium
+principles<span class="citation"><sup><a href="#ref-compendium2019"
+role="doc-biblioref">1</a></sup></span>:</p>
 <ol style="list-style-type: decimal">
 <li>Stick with the convention of your peers;</li>
 <li>Keep data, methods, and output separated;</li>
 <li>Specify your computational environment as clearly as you can.</li>
 </ol>
-<p>Data management follows the FAIR principle (findable, accessible, interoperable, reusable)<span class="citation"><sup><a href="#ref-wilkinson2016">2</a></sup></span>. Concerning these principles, the dataset was converted from Matlab’s format to CSV format, allowing more interoperability. Additionally, all the project, including the dataset, is in conformity with the Codemeta Project<span class="citation"><sup><a href="#ref-CodeMeta2017">3</a></sup></span>.</p>
+<p>Data management follows the FAIR principle (findable, accessible,
+interoperable, reusable)<span class="citation"><sup><a
+href="#ref-wilkinson2016" role="doc-biblioref">2</a></sup></span>.
+Concerning these principles, the dataset was converted from Matlab’s
+format to CSV format, allowing more interoperability. Additionally, all
+the project, including the dataset, is in conformity with the Codemeta
+Project<span class="citation"><sup><a href="#ref-CodeMeta2017"
+role="doc-biblioref">3</a></sup></span>.</p>
+</div>
+<div id="materials-and-methods" class="section level1">
+<h1>Materials and methods</h1>
+<div id="softwares" class="section level2">
+<h2>Softwares</h2>
+<div id="pipeline-management" class="section level3">
+<h3>Pipeline management</h3>
+<p>All steps of the process are being managed using the R package
+<code>targets</code><span class="citation"><sup><a
+href="#ref-landau2021" role="doc-biblioref">4</a></sup></span> from data
+extraction to the final report. An example of a pipeline visualization
+created with <code>targets</code> is shown in Fig. 1. This package helps
+to keep record of the random seeds (allowing reproducibility), changes
+in some part of the code (or dependencies) and then running only the
+branches that need to be updated, and several other features to keep a
+reproducible workflow avoiding unnecessary repetitions.</p>
+<div class="figure" style="text-align: center">
+<img src="figure/targets.svg" alt="Figure 1 - Example of pipeline visualization using `targets`. From left to right we see 'Stems' (steps that do not create branches) and 'Patterns' (that contains two or more branches) and the flow of the information. The green color means that the step is up to date to the current code and dependencies." width="100%" />
+<p class="caption">
+Figure 1 - Example of pipeline visualization using <code>targets</code>.
+From left to right we see ‘Stems’ (steps that do not create branches)
+and ‘Patterns’ (that contains two or more branches) and the flow of the
+information. The green color means that the step is up to date to the
+current code and dependencies.
+</p>
+</div>
+</div>
+<div id="reports-management" class="section level3">
+<h3>Reports management</h3>
+<p>The report is available on the main webpage<span
+class="citation"><sup><a href="#ref-franz_website"
+role="doc-biblioref">5</a></sup></span>, allowing inspection of previous
+versions managed by the R package <code>workflowr</code><span
+class="citation"><sup><a href="#ref-workflowr2021"
+role="doc-biblioref">6</a></sup></span>. This package complements the
+<code>targets</code> package by taking care of the versioning of every
+report. It is like a Log Book that keeps track of every important
+milestone of the project, while summarize the computational environment
+where it was run. Fig. 2 shows only a fraction of the generated website,
+where we can see that this version passed the required checks (system is
+up-to-date, no caches, session information was recorded, and others) and
+we see a table of previous versions.</p>
+<div class="figure" style="text-align: center">
+<img src="figure/workflowr_print.png" alt="Figure 2 - Fraction of the website generated by `workflowr`. On top we see that this version passed all checks, and in the middle we see a table referring to the previous versions of the report." width="100%" />
+<p class="caption">
+Figure 2 - Fraction of the website generated by <code>workflowr</code>.
+On top we see that this version passed all checks, and in the middle we
+see a table referring to the previous versions of the report.
+</p>
+</div>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-workflowr_print">
+Past versions of workflowr_print.png
+</button>
+</p>
+<div id="fig-workflowr_print" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/franzbischoff/false.alarm/blob/1473a05723e9d94f18e9fd5f77a616bc669ed973/docs/figure/workflowr_print.png" target="_blank">1473a05</a>
+</td>
+<td>
+Francisco Bischoff
+</td>
+<td>
+2021-07-15
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+<div id="modeling-and-parameter-tuning" class="section level3">
+<h3>Modeling and parameter tuning</h3>
+<p>The well known package used for data science in R is the
+<code>caret</code> (short for <strong>C</strong>lassification
+<strong>A</strong>nd <strong>RE</strong>gression
+<strong>T</strong>raining)<span class="citation"><sup><a
+href="#ref-JSSv028i05" role="doc-biblioref">7</a></sup></span>.
+Nevertheless, the author of <code>caret</code> recognizes several
+limitations of his (great) package, and is now in charge of the
+development of the <code>tidymodels</code><span class="citation"><sup><a
+href="#ref-tidymodels2020" role="doc-biblioref">8</a></sup></span>
+collection. For sure, there are other available frameworks and
+opinions<span class="citation"><sup><a href="#ref-Thompson2020"
+role="doc-biblioref">9</a></sup></span>. Notwithstanding, this project
+will follow the <code>tidymodels</code> road. Three significant
+arguments 1) constantly improving and constantly being re-checked for
+bugs; large community contribution; 2) allows to plug in a custom
+modeling algorithm that, in this case, will be the one needed for
+developing this work; 3) <code>caret</code> is not in active
+development.</p>
+</div>
+<div id="continuous-integration" class="section level3">
+<h3>Continuous integration</h3>
+<p>Meanwhile, the project pipeline has been set up on GitHub, Inc.<span
+class="citation"><sup><a href="#ref-bischoffrepo2021"
+role="doc-biblioref">10</a></sup></span> leveraging on Github
+Actions<span class="citation"><sup><a href="#ref-gitactions2021"
+role="doc-biblioref">11</a></sup></span> for the Continuous Integration
+lifecycle. The repository is available at<span class="citation"><sup><a
+href="#ref-bischoffrepo2021" role="doc-biblioref">10</a></sup></span>,
+and the resulting report is available at<span class="citation"><sup><a
+href="#ref-franz_website" role="doc-biblioref">5</a></sup></span>. It is
+also public available the roadmap and tasks status of this thesis on
+Zenhub<span class="citation"><sup><a href="#ref-zenhub2021"
+role="doc-biblioref">12</a></sup></span>.</p>
+</div>
+</div>
+<div id="developed-software" class="section level2">
+<h2>Developed software</h2>
+<div id="matrixprofile" class="section level3">
+<h3>Matrix Profile</h3>
+<p>Matrix Profile (MP)<span class="citation"><sup><a
+href="#ref-Yeh2017a" role="doc-biblioref">13</a></sup></span>, is a
+state-of-the-art<span class="citation"><sup><a href="#ref-DePaepe2020"
+role="doc-biblioref">14</a>,<a href="#ref-Feremans2020"
+role="doc-biblioref">15</a></sup></span> time series analysis technique
+that once computed, allows us to derive frameworks to all sorts of
+tasks, as motif discovery, anomaly detection, regime change detection
+and others<span class="citation"><sup><a href="#ref-Yeh2017a"
+role="doc-biblioref">13</a></sup></span>.</p>
+<p>Before MP, time series analysis relied on what is called <em>distance
+matrix</em> (DM), a matrix that stores all the distances between two
+time series (or itself, in case of a Self-Join). This was very power
+consuming, and several methods of pruning and dimensionality reduction
+were researched<span class="citation"><sup><a href="#ref-Lin2007"
+role="doc-biblioref">16</a></sup></span>.</p>
+<p>For brevity, let’s just understand that the MP and the companion
+Profile Index (PI) are two vectors that hold one floating point value
+and one integer value, respectively, regarding the original time series:
+(1) the similarity distance between that point on time (let’s call these
+points “indexes”) and its first nearest-neighbor (1-NN), (2) The index
+where this this 1-NN is located. The original paper has more detailed
+information<span class="citation"><sup><a href="#ref-Yeh2017a"
+role="doc-biblioref">13</a></sup></span>. It is computed using a rolling
+window but instead of creating a whole DM, only the minimum values and
+the index of these minimum are stored (in the MP and PI respectively).
+We can have an idea of the relationship of both on Fig. 3.</p>
+<div class="figure" style="text-align: center">
+<img src="figure/mp_1.png" alt="Figure 3 - A distance matrix (top), and a matrix profile (bottom). The matrix profile stores only the minimum values of the distance matrix."  />
+<p class="caption">
+Figure 3 - A distance matrix (top), and a matrix profile (bottom). The
+matrix profile stores only the minimum values of the distance matrix.
+</p>
+</div>
+<p>This research has already yielded two R packages concerning the MP
+algorithms from UCR<span class="citation"><sup><a href="#ref-mpucr"
+role="doc-biblioref">17</a></sup></span>. The first package is called
+<code>tsmp</code>, and a paper has also been published in the R
+Journal<span class="citation"><sup><a href="#ref-RJ-2020-021"
+role="doc-biblioref">18</a></sup></span> (Journal Impact Factor™, 2020
+of 3.984). The second package is called <code>matrixprofiler</code> and
+enhances the first one, using low-level language to improve
+computational speed. The author has also joined the Matrix Profile
+Foundation as co-founder together with contributors from Python and Go
+languages<span class="citation"><sup><a href="#ref-mpf2020"
+role="doc-biblioref">19</a>,<a href="#ref-VanBenschoten2020"
+role="doc-biblioref">20</a></sup></span>.</p>
+<p>This implementation in R is being used for computing the MP and
+MP-based algorithms of this thesis.</p>
+</div>
 </div>
 <div id="the-data" class="section level2">
-<h2><span class="header-section-number">1.2</span> The data</h2>
-<p>The current dataset used is the CinC/Physionet Challenge 2015 public dataset, modified to include only the actual data and the header files in order to be read by the pipeline and is hosted by Zenodo<span class="citation"><sup><a href="#ref-bischoff2021">4</a></sup></span> under the same license as Physionet.</p>
-<p>The dataset is composed of 750 patients with at least five minutes records. All signals have been resampled (using anti-alias filters) to 12 bit, 250 Hz and have had FIR band-pass (0.05 to 40Hz) and mains notch filters applied to remove noise. Pacemaker and other artifacts are still present on the ECG<span class="citation"><sup><a href="#ref-Clifford2015">5</a></sup></span>. Furthermore, this dataset contains at least two ECG derivations and one or more variables like arterial blood pressure, photoplethysmograph readings, and respiration movements.</p>
-<p>The <em>event</em> we seek to improve is the detection of a life-threatening arrhythmia as defined by Physionet in Table 1.</p>
+<h2>The data</h2>
+<p>The current dataset used is the CinC/Physionet Challenge 2015 public
+dataset, modified to include only the actual data and the header files
+in order to be read by the pipeline and is hosted by Zenodo<span
+class="citation"><sup><a href="#ref-bischoff2021"
+role="doc-biblioref">21</a></sup></span> under the same license as
+Physionet.</p>
+<p>The dataset is composed of 750 patients with at least five minutes
+records. All signals have been resampled (using anti-alias filters) to
+12 bit, 250 Hz and have had FIR band-pass (0.05 to 40Hz) and mains notch
+filters applied to remove noise. Pacemaker and other artifacts are still
+present on the ECG<span class="citation"><sup><a
+href="#ref-Clifford2015" role="doc-biblioref">22</a></sup></span>.
+Furthermore, this dataset contains at least two ECG derivations and one
+or more variables like arterial blood pressure, photoplethysmograph
+readings, and respiration movements.</p>
+<p>The <em>events</em> we seek to identify are the life-threatening
+arrhythmias as defined by Physionet in Table 1.</p>
 <table class="table" style="margin-left: auto; margin-right: auto;">
 <caption>
-Table 1 - Definition of the five alarm types used in CinC/Physionet Challenge 2015 challenge.
+Table 1 - Definition of the five alarm types used in CinC/Physionet
+Challenge 2015.
 </caption>
 <thead>
 <tr>
@@ -944,111 +1385,133 @@ Fibrillatory, flutter, or oscillatory waveform for at least 4 seconds
 </tr>
 </tbody>
 </table>
-<p>The fifth minute is precisely where the alarm has been triggered on the original recording set. To meet the ANSI/AAMI EC13 Cardiac Monitor Standards<span class="citation"><sup><a href="#ref-AAMI2002">6</a></sup></span>, the onset of the event is within 10 seconds of the alarm (i.e., between 4:50 and 5:00 of the record). That doesn’t mean that there are no other arrhythmias before, but those were not labeled.</p>
-</div>
-<div id="workflow" class="section level2">
-<h2><span class="header-section-number">1.3</span> Workflow</h2>
-<p>All steps of the process are being managed using the R package <code>targets</code><span class="citation"><sup><a href="#ref-landau2021">7</a></sup></span> from data extraction to the final report, as shown in Fig. 1.</p>
-<div class="figure" style="text-align: center">
-<img src="figure/targets.png" alt="Figure 1 - Reproducible research workflow using `targets`." width="100%" />
-<p class="caption">
-Figure 1 - Reproducible research workflow using <code>targets</code>.
-</p>
-</div>
-<p>
-<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-targets">
-Past versions of targets.png
-</button>
-</p>
-<div id="fig-targets" class="collapse">
-<div class="table-responsive">
-<table class="table table-condensed table-hover">
-<thead>
-<tr>
-<th>
-Version
-</th>
-<th>
-Author
-</th>
-<th>
-Date
-</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>
-<a href="https://github.com/franzbischoff/false.alarm/blob/1473a05723e9d94f18e9fd5f77a616bc669ed973/docs/figure/targets.png" target="_blank">1473a05</a>
-</td>
-<td>
-Francisco Bischoff
-</td>
-<td>
-2021-07-15
-</td>
-</tr>
-</tbody>
-</table>
-</div>
-</div>
-<p>The report is available on the main webpage<span class="citation"><sup><a href="#ref-franz_website">8</a></sup></span>, allowing inspection of previous versions managed by the R package <code>workflowr</code><span class="citation"><sup><a href="#ref-workflowr2021">9</a></sup></span>, as shown in Fig. 2.</p>
-<div class="figure" style="text-align: center">
-<img src="figure/workflowr_print.png" alt="Figure 2 - Reproducible reports using `workflowr`." width="100%" />
-<p class="caption">
-Figure 2 - Reproducible reports using <code>workflowr</code>.
-</p>
-</div>
-<p>
-<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-workflowr_print">
-Past versions of workflowr_print.png
-</button>
-</p>
-<div id="fig-workflowr_print" class="collapse">
-<div class="table-responsive">
-<table class="table table-condensed table-hover">
-<thead>
-<tr>
-<th>
-Version
-</th>
-<th>
-Author
-</th>
-<th>
-Date
-</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>
-<a href="https://github.com/franzbischoff/false.alarm/blob/1473a05723e9d94f18e9fd5f77a616bc669ed973/docs/figure/workflowr_print.png" target="_blank">1473a05</a>
-</td>
-<td>
-Francisco Bischoff
-</td>
-<td>
-2021-07-15
-</td>
-</tr>
-</tbody>
-</table>
-</div>
-</div>
-</div>
-<div id="work-in-progress" class="section level2">
-<h2><span class="header-section-number">1.4</span> Work in Progress</h2>
-<div id="project-start" class="section level3">
-<h3><span class="header-section-number">1.4.1</span> Project start</h3>
-<p>The project started with a literature survey on the databases Scopus, Pubmed, Web of Science, and Google Scholar with the following query (the syntax was adapted for each database):</p>
-<p>TITLE-ABS-KEY ( algorithm OR ‘point of care’ OR ‘signal processing’ OR ‘computer assisted’ OR ‘support vector machine’ OR ‘decision support system<em>’ OR ’neural network</em>’ OR ‘automatic interpretation’ OR ‘machine learning’) AND TITLE-ABS-KEY ( electrocardiography OR cardiography OR ‘electrocardiographic tracing’ OR ecg OR electrocardiogram OR cardiogram ) AND TITLE-ABS-KEY ( ‘Intensive care unit’ OR ‘cardiologic care unit’ OR ‘intensive care center’ OR ‘cardiologic care center’ )</p>
-<p><br />
-</p>
-<p>The inclusion and exclusion criteria were defined as in Table 2.</p>
+<p>The fifth minute is precisely where the alarm has been triggered on
+the original recording set. To meet the ANSI/AAMI EC13 Cardiac Monitor
+Standards<span class="citation"><sup><a href="#ref-AAMI2002"
+role="doc-biblioref">23</a></sup></span>, the onset of the event is
+within 10 seconds of the alarm (i.e., between 4:50 and 5:00 of the
+record). That doesn’t mean that there are no other arrhythmias
+before.</p>
+<p>For comparison, on Table 2 we collected the score of the five best
+participants of the challenge<span class="citation"><sup><a
+href="#ref-plesinger2015" role="doc-biblioref">24</a>–<a
+href="#ref-hoogantink2015" role="doc-biblioref">28</a></sup></span>.</p>
 <table class="table" style="margin-left: auto; margin-right: auto;">
 <caption>
-Table 2 - Literature review criteria.
+Table 2 - Challenge Results on real-time data. The scores were
+multiplied by 100.
+</caption>
+<thead>
+<tr>
+<th style="text-align:center;font-weight: bold;">
+Score
+</th>
+<th style="text-align:left;font-weight: bold;">
+Authors
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center;">
+81.39
+</td>
+<td style="text-align:left;">
+Filip Plesinger, Petr Klimes, Josef Halamek, Pavel Jurak
+</td>
+</tr>
+<tr>
+<td style="text-align:center;">
+79.44
+</td>
+<td style="text-align:left;">
+Vignesh Kalidas
+</td>
+</tr>
+<tr>
+<td style="text-align:center;">
+79.02
+</td>
+<td style="text-align:left;">
+Paula Couto, Ruben Ramalho, Rui Rodrigues
+</td>
+</tr>
+<tr>
+<td style="text-align:center;">
+76.11
+</td>
+<td style="text-align:left;">
+Sibylle Fallet, Sasan Yazdani, Jean-Marc Vesin
+</td>
+</tr>
+<tr>
+<td style="text-align:center;">
+75.55
+</td>
+<td style="text-align:left;">
+Christoph Hoog Antink, Steffen Leonhardt
+</td>
+</tr>
+</tbody>
+</table>
+<p>The equation used on this challenge to compute the score of the
+algorithms is in the Equation <span
+class="math inline">\(\eqref{score}\)</span>. This equation is the
+accuracy formula, with penalization of the false negatives. The
+reasoning pointed out by the authors<span class="citation"><sup><a
+href="#ref-Clifford2015" role="doc-biblioref">22</a></sup></span> is the
+clinical impact of existing a genuine life-threatening event that was
+considered unimportant. Accuracy is known to be misleading when there is
+a high class imbalance<span class="citation"><sup><a
+href="#ref-Akosa2017" role="doc-biblioref">29</a></sup></span>.</p>
+<p><br />
+<span class="math display">\[
+Score = \frac{TP+TN}{TP+TN+FP+5*FN} \tag{1} \label{score}
+\]</span><br />
+</p>
+<p>Assuming that this is a finite dataset, the pathologic cases (1)
+<span class="math inline">\(\lim_{TP \to \infty}\)</span> (whenever
+there is an event, it is positive) or (2) <span
+class="math inline">\(\lim_{TN \to \infty}\)</span> (whenever there is
+an event, it is false), cannot happen. This dataset has 292 True alarms
+and 458 False alarms. Experimentally, this equation yields:</p>
+<ul>
+<li>0.24 if all guesses are on False class</li>
+<li>0.28 if random guesses</li>
+<li>0.39 if all guesses are on True class</li>
+<li>0.45 if no false positives plus random on True class</li>
+<li>0.69 if no false negatives plus random on False class</li>
+</ul>
+<p>This small experiment (knowing the data in advance) shows that “a
+single line of code and a few minutes of effort”<span
+class="citation"><sup><a href="#ref-Wu2020"
+role="doc-biblioref">30</a></sup></span> algorithm could achieve at most
+a score of 0.39 in this challenge (the last two lines, the algorithm
+must to be very good on one class).</p>
+<p>Nevertheless, this equation will only be useful to allow us to
+compare the results of this thesis with other algorithms.</p>
+</div>
+<div id="work-structure" class="section level2">
+<h2>Work structure</h2>
+<div id="project-start" class="section level3">
+<h3>Project start</h3>
+<p>The project started with a literature survey on the databases Scopus,
+PubMed, Web of Science, and Google Scholar with the following query (the
+syntax was adapted for each database):</p>
+<p><br />
+TITLE-ABS-KEY ( algorithm OR ‘point of care’ OR ‘signal processing’ OR
+‘computer assisted’ OR ‘support vector machine’ OR ‘decision support
+system<em>’ OR ’neural network</em>’ OR ‘automatic interpretation’ OR
+‘machine learning’) AND TITLE-ABS-KEY ( electrocardiography OR
+cardiography OR ‘electrocardiographic tracing’ OR ecg OR
+electrocardiogram OR cardiogram ) AND TITLE-ABS-KEY ( ‘Intensive care
+unit’ OR ‘cardiologic care unit’ OR ‘intensive care center’ OR
+‘cardiologic care center’ )<br />
+</p>
+<p>The inclusion and exclusion criteria were defined as in Table 3.</p>
+<table class="table" style="margin-left: auto; margin-right: auto;">
+<caption>
+Table 3 - Literature review criteria.
 </caption>
 <thead>
 <tr>
@@ -1062,7 +1525,7 @@ Exclusion criteria
 </thead>
 <tbody>
 <tr>
-<td style="text-align:left;width: 10cm; ">
+<td style="text-align:left;">
 ECG automatic interpretation
 </td>
 <td style="text-align:left;">
@@ -1070,7 +1533,7 @@ Manual interpretation
 </td>
 </tr>
 <tr>
-<td style="text-align:left;width: 10cm; ">
+<td style="text-align:left;">
 ECG anomaly detection
 </td>
 <td style="text-align:left;">
@@ -1078,15 +1541,17 @@ Publication older than ten years
 </td>
 </tr>
 <tr>
-<td style="text-align:left;width: 10cm; ">
+<td style="text-align:left;">
 ECG context change detection
 </td>
 <td style="text-align:left;">
-Do not attempt to identify life-threatening arrhythmias, namely asystole, extreme bradycardia, extreme tachycardia, ventricular tachycardia, and ventricular flutter/fibrillation
+Do not attempt to identify life-threatening arrhythmias, namely
+asystole, extreme bradycardia, extreme tachycardia, ventricular
+tachycardia, and ventricular flutter/fibrillation
 </td>
 </tr>
 <tr>
-<td style="text-align:left;width: 10cm; ">
+<td style="text-align:left;">
 Online Stream ECG analysis
 </td>
 <td style="text-align:left;">
@@ -1094,7 +1559,7 @@ No performance measurements reported
 </td>
 </tr>
 <tr>
-<td style="text-align:left;width: 10cm; ">
+<td style="text-align:left;">
 Specific diagnosis (like a flutter, hyperkalemia, etc.)
 </td>
 <td style="text-align:left;">
@@ -1102,11 +1567,17 @@ Specific diagnosis (like a flutter, hyperkalemia, etc.)
 </tr>
 </tbody>
 </table>
-<p>The current stage of the review is on Data Extraction, from the resulting screening shown in Fig. 3.</p>
+<p>The survey is being conducted with peer review, all articles on
+full-text phase were obtained and assessed for the extraction phase,
+with exception of 5 articles that were not available. The survey is
+currently staled on the Data Extraction phase due to external
+factors.</p>
+<p>Fig. 4 shows the flow diagram of the resulting screening using PRISMA
+format.</p>
 <div class="figure" style="text-align: center">
-<img src="figure/PRISMA.png" alt="Figure 3 - Prisma results" width="80%" />
+<img src="figure/PRISMA.png" alt="Figure 2 - Flowchart of the literature survey." width="70%" />
 <p class="caption">
-Figure 3 - Prisma results
+Figure 2 - Flowchart of the literature survey.
 </p>
 </div>
 <p>
@@ -1146,151 +1617,241 @@ Francisco Bischoff
 </table>
 </div>
 </div>
-<p>Meanwhile, the project pipeline has been set up on GitHub, Inc. <span class="citation"><sup><a href="#ref-bischoffrepo2021">10</a></sup></span> leveraging on Github Actions<span class="citation"><sup><a href="#ref-gitactions2021">11</a></sup></span> for the Continuous Integration lifecycle. The repository is available at<span class="citation"><sup><a href="#ref-bischoffrepo2021">10</a></sup></span>, and the resulting report is available at<span class="citation"><sup><a href="#ref-franz_website">8</a></sup></span> for transparency while the roadmap and tasks are managed using the integrated Zenhub<span class="citation"><sup><a href="#ref-zenhub2021">12</a></sup></span>.</p>
-<p>As it is known worldwide, since 2020, the measures taken to control the SARS-Cov2 pandemic have had a great impact on any development lifecycle.</p>
-<p>At this moment, this project went through two timeline changes. In Fig. 4 it is shown the initial roadmap (as of May 2020), Fig. 5 the modified roadmap (as of July 2021), and Fig. 6 (as of Jan 2022). The literature survey is currently in the extraction phase, which includes about 74 articles from the full-text screening.</p>
-<div class="figure" style="text-align: center">
-<img src="figure/roadmap_original.png" alt="Figure 4 - Roadmap original" width="100%" />
-<p class="caption">
-Figure 4 - Roadmap original
-</p>
-</div>
-<p>
-<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-roadmap_original">
-Past versions of roadmap_original.png
-</button>
-</p>
-<div id="fig-roadmap_original" class="collapse">
-<div class="table-responsive">
-<table class="table table-condensed table-hover">
+<p>The peer review is being conducted by the author of this thesis
+together with another coleague, Dr. Andrew Van Benschoten from the
+Matrix Profile Foundation<span class="citation"><sup><a
+href="#ref-mpf2020" role="doc-biblioref">19</a></sup></span>.</p>
+<p>Table. 4 shows the Inter-rater Reliability (IRR) of the screening
+phases, using Cohen’s <span class="math inline">\(\kappa\)</span>
+statistic. The bottom line shows the estimated accuracy after corrected
+for possible confounders<span class="citation"><sup><a
+href="#ref-Bakeman2011" role="doc-biblioref">31</a></sup></span>.</p>
+<br>
+<table class="tg">
+<caption>
+Table 4 - Inter-rater Reliability on the literature survey process.
+</caption>
 <thead>
 <tr>
-<th>
-Version
+<th class="tg-top" colspan="2">
 </th>
-<th>
-Author
+<th class="tg-top" colspan="2">
+Title-Abstract<br>(2388 articles)
 </th>
-<th>
-Date
+<th class="tg-top">
+</th>
+<th class="tg-top" colspan="2">
+Full-Review<br>(303 articles)
 </th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td>
-<a href="https://github.com/franzbischoff/false.alarm/blob/1473a05723e9d94f18e9fd5f77a616bc669ed973/docs/figure/roadmap_original.png" target="_blank">1473a05</a>
+<td class="tg-73oq" colspan="2">
 </td>
-<td>
-Francisco Bischoff
+<td class="tg-wp8o" colspan="2">
+Reviewer #2
 </td>
-<td>
-2021-07-15
+<td class="tg-73oq">
+</td>
+<td class="tg-wp8o" colspan="2">
+Reviewer #2
+</td>
+</tr>
+<tr>
+<td class="tg-73oq" colspan="2">
+</td>
+<td class="tg-73oq">
+Include
+</td>
+<td class="tg-73oq">
+Exclude
+</td>
+<td class="tg-73oq">
+</td>
+<td class="tg-73oq">
+Include
+</td>
+<td class="tg-73oq">
+Exclude
+</td>
+</tr>
+<tr>
+<td class="tg-wp8o" rowspan="2">
+Reviewer #1
+</td>
+<td class="tg-3z1b">
+Include
+</td>
+<td class="tg-cross">
+185
+</td>
+<td class="tg-cross">
+381
+</td>
+<td class="tg-cross">
+</td>
+<td class="tg-cross">
+63
+</td>
+<td class="tg-cross">
+58
+</td>
+</tr>
+<tr>
+<td class="tg-3z1b">
+Exclude
+</td>
+<td class="tg-crosslow">
+129
+</td>
+<td class="tg-crosslow">
+1693
+</td>
+<td class="tg-crosslow">
+</td>
+<td class="tg-crosslow">
+13
+</td>
+<td class="tg-crosslow">
+169
+</td>
+</tr>
+<tr>
+<td class="tg-73oq" colspan="2">
+Cohen’s omnibus <span class="math inline"><span
+class="math inline">\(\kappa\)</span></span>
+</td>
+<td class="tg-body" colspan="2">
+0.30
+</td>
+<td class="tg-body">
+</td>
+<td class="tg-body" colspan="2">
+0.48
+</td>
+</tr>
+<tr>
+<td class="tg-73oq" colspan="2">
+Maximum possible <span class="math inline"><span
+class="math inline">\(\kappa\)</span></span>
+</td>
+<td class="tg-body" colspan="2">
+0.66
+</td>
+<td class="tg-body">
+</td>
+<td class="tg-body" colspan="2">
+0.67
+</td>
+</tr>
+<tr>
+<td class="tg-73oq" colspan="2">
+Std Err for <span class="math inline"><span
+class="math inline">\(\kappa\)</span></span>
+</td>
+<td class="tg-body" colspan="2">
+0.02
+</td>
+<td class="tg-body">
+</td>
+<td class="tg-body" colspan="2">
+0.05
+</td>
+</tr>
+<tr>
+<td class="tg-73oq" colspan="2">
+Observed Agreement
+</td>
+<td class="tg-body" colspan="2">
+79%
+</td>
+<td class="tg-body">
+</td>
+<td class="tg-body" colspan="2">
+77%
+</td>
+</tr>
+<tr>
+<td class="tg-73oq" colspan="2">
+Random Agreement
+</td>
+<td class="tg-body" colspan="2">
+69%
+</td>
+<td class="tg-body">
+</td>
+<td class="tg-body" colspan="2">
+55%
+</td>
+</tr>
+<tr>
+<td class="tg-mcqj" colspan="2">
+Agreement corrected with KappaAcc
+</td>
+<td class="tg-mqa1" colspan="2">
+82%
+</td>
+<td class="tg-mcqj">
+</td>
+<td class="tg-mqa1" colspan="2">
+85%
 </td>
 </tr>
 </tbody>
 </table>
-</div>
-</div>
-<div class="figure" style="text-align: center">
-<img src="figure/roadmap_updated.png" alt="Figure 5 - Roadmap updated on August 2021" width="100%" />
-<p class="caption">
-Figure 5 - Roadmap updated on August 2021
+<p><br />
 </p>
-</div>
-<p>
-<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-roadmap_updated">
-Past versions of roadmap_updated.png
-</button>
-</p>
-<div id="fig-roadmap_updated" class="collapse">
-<div class="table-responsive">
-<table class="table table-condensed table-hover">
-<thead>
-<tr>
-<th>
-Version
-</th>
-<th>
-Author
-</th>
-<th>
-Date
-</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>
-<a href="https://github.com/franzbischoff/false.alarm/blob/1473a05723e9d94f18e9fd5f77a616bc669ed973/docs/figure/roadmap_updated.png" target="_blank">1473a05</a>
-</td>
-<td>
-Francisco Bischoff
-</td>
-<td>
-2021-07-15
-</td>
-</tr>
-</tbody>
-</table>
-</div>
-</div>
-<div class="figure" style="text-align: center">
-<img src="figure/roadmap_jan2022.png" alt="Figure 6 - Roadmap updated on January 2022" width="100%" />
-<p class="caption">
-Figure 6 - Roadmap updated on January 2022
-</p>
-</div>
-<p>
-<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-roadmap_jan2022">
-Past versions of roadmap_jan2022.png
-</button>
-</p>
-<div id="fig-roadmap_jan2022" class="collapse">
-<div class="table-responsive">
-<table class="table table-condensed table-hover">
-<thead>
-<tr>
-<th>
-Version
-</th>
-<th>
-Author
-</th>
-<th>
-Date
-</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>
-<a href="https://github.com/franzbischoff/false.alarm/blob/571ac342ed78d2be78faba65fbbae38b50f42692/docs/figure/roadmap_jan2022.png" target="_blank">571ac34</a>
-</td>
-<td>
-Francisco Bischoff
-</td>
-<td>
-2022-01-15
-</td>
-</tr>
-</tbody>
-</table>
-</div>
-</div>
-</div>
-<div id="preliminary-experimentations" class="section level3">
-<h3><span class="header-section-number">1.4.2</span> Preliminary Experimentations</h3>
+<p>The purpose of using Cohen’s <span
+class="math inline">\(\kappa\)</span> in such review is to allow us to
+gauge the agreement of both reviewers on the task of selecting the
+articles according to the goal of the survey. The most naive way to
+verify this would be simply to measure the overall agreement (the number
+of articles included and excluded by both, divided by the total number
+of articles). Nevertheless, this would not take into account the
+agreement we could expect purely by chance.</p>
+<p>However, the <span class="math inline">\(\kappa\)</span> statistic
+must be assessed carefully. This topic is beyond the scope of this work
+therefore it will be explained briefly.</p>
+<p>While it is widely used, the <span
+class="math inline">\(\kappa\)</span> statistic is also well criticized.
+The direct interpretation of its value depends on several assumptions
+that are often violated. (1) It is assumed that both reviewers have the
+same level of experience; (2) The “codes” (include, exclude) are
+identified with same accuracy; (3) The “codes” prevalence are the same;
+(4) There is no reviewer bias towards one of the choices<span
+class="citation"><sup><a href="#ref-Sim2005"
+role="doc-biblioref">32</a>,<a href="#ref-Bakeman1997"
+role="doc-biblioref">33</a></sup></span>.</p>
+<p>In addition, the number of “codes” affects the relation between the
+value of <span class="math inline">\(\kappa\)</span> and the actual
+agreement between the reviewers. For example, given equiprobable “codes”
+and reviewers who are 85% accurate, the value of <span
+class="math inline">\(\kappa\)</span> are 0.49, 0.60, 0.66, and 0.69
+when number of codes is 2, 3, 5, and 10, respectively<span
+class="citation"><sup><a href="#ref-Bakeman1997"
+role="doc-biblioref">33</a>,<a href="#ref-Morgan2019"
+role="doc-biblioref">34</a></sup></span>.</p>
+<p>In order to take these limitations in account, the agreement between
+reviewers was calculated using the KappaAcc<span
+class="citation"><sup><a href="#ref-Bakeman2011"
+role="doc-biblioref">31</a></sup></span> from Professor Emeritus Roger
+Bakeman, Georgia State University, which computes the estimated accuracy
+of simulated reviewers.</p>
 </div>
 <div id="raw-data" class="section level3">
-<h3><span class="header-section-number">1.4.3</span> RAW Data</h3>
-<p>While programming the pipeline for the current dataset, it has been acquired a Single Lead Heart Rate Monitor breakout from Sparkfun<sup>TM</sup><span class="citation"><sup><a href="#ref-sparkfun2021">13</a></sup></span> using the AD8232<span class="citation"><sup><a href="#ref-AnalogDevices2020">14</a></sup></span> microchip from Analog Devices Inc., compatible with Arduino<sup>(R)</sup><span class="citation"><sup><a href="#ref-arduino2021">15</a></sup></span>, for an in-house experiment (Figs. 7 and 8).</p>
+<h3>RAW data</h3>
+<p>In order to better understand the data acquisition, it has been
+acquired a Single Lead Heart Rate Monitor breakout from Sparkfun™<span
+class="citation"><sup><a href="#ref-sparkfun2021"
+role="doc-biblioref">35</a></sup></span> using the AD8232<span
+class="citation"><sup><a href="#ref-AnalogDevices2020"
+role="doc-biblioref">36</a></sup></span> microchip from Analog Devices
+Inc., compatible with Arduino<sup>®</sup><span class="citation"><sup><a
+href="#ref-arduino2021" role="doc-biblioref">37</a></sup></span>, for an
+in-house experiment (Fig. 5).</p>
 <div class="figure" style="text-align: center">
-<img src="figure/sparkfun.jpg" alt="Figure 7 - Single Lead Heart Rate Monitor" width="50%" />
-<p class="caption">
-Figure 7 - Single Lead Heart Rate Monitor
-</p>
-</div>
+<p><img src="figure/sparkfun.jpg" alt="Figure 5 - Single Lead Heart Rate Monitor" width="40%" /></p>
 <p>
 <button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-sparkfun">
 Past versions of sparkfun.jpg
@@ -1328,10 +1889,9 @@ Francisco Bischoff
 </table>
 </div>
 </div>
-<div class="figure" style="text-align: center">
-<img src="figure/FullSetup.jpg" alt="Figure 8 - Single Lead Heart Rate Monitor" width="50%" />
+<img src="figure/FullSetup.jpg" alt="Figure 5 - Single Lead Heart Rate Monitor" width="40%" />
 <p class="caption">
-Figure 8 - Single Lead Heart Rate Monitor
+Figure 5 - Single Lead Heart Rate Monitor
 </p>
 </div>
 <p>
@@ -1371,11 +1931,11 @@ Francisco Bischoff
 </table>
 </div>
 </div>
-<p>The output gives us a RAW signal as shown in Fig. 9.</p>
+<p>The output gives us a RAW signal, as shown in Fig. 6.</p>
 <div class="figure" style="text-align: center">
-<img src="figure/arduino_plot.jpg" alt="Figure 9 - RAW output from Arduino at ~300hz" width="50%" />
+<img src="figure/arduino_plot.jpg" alt="Figure 6 - RAW output from Arduino at ~300hz" width="50%" />
 <p class="caption">
-Figure 9 - RAW output from Arduino at ~300hz
+Figure 6 - RAW output from Arduino at ~300hz
 </p>
 </div>
 <p>
@@ -1415,11 +1975,13 @@ Francisco Bischoff
 </table>
 </div>
 </div>
-<p>After applying the same settings as the Physionet database (collecting the data at 500hz, resample to 250hz, pass-filter, and notch filter), the signal is much better as shown in Fig. 10. Note: the leads were not placed on the correct location.</p>
+<p>After applying the same settings as the Physionet database
+(collecting the data at 500hz, resample to 250hz, pass-filter, and notch
+filter), the signal is much better, as shown in Fig. 7.</p>
 <div class="figure" style="text-align: center">
-<img src="figure/filtered_ecg.png" alt="Figure 10 - Gray is RAW, Red is filtered" width="100%" />
+<img src="figure/filtered_ecg.png" alt="Figure 7 - Gray is RAW, Red is filtered" width="90%" />
 <p class="caption">
-Figure 10 - Gray is RAW, Red is filtered
+Figure 7 - Gray is RAW, Red is filtered
 </p>
 </div>
 <p>
@@ -1459,22 +2021,35 @@ Francisco Bischoff
 </table>
 </div>
 </div>
-<p>So in this way, we allow us to import RAW data from other devices and build our own test dataset in the future.</p>
-<div id="detecting-regime-changes" class="section level4">
-<h4><span class="header-section-number">1.4.3.1</span> Detecting Regime Changes</h4>
-<p>The regime change approach will be using the <em>Arc Counts</em>, as explained elsewhere<span class="citation"><sup><a href="#ref-gharghabi2018">16</a></sup></span>. The current implementation of the Matrix Profile in R, maintained by the first author of this thesis, is being used to accomplish the computations. This package was published in R Journal<span class="citation"><sup><a href="#ref-RJ-2020-021">17</a></sup></span>.</p>
-<p>A new concept was needed to be implemented on the algorithm in order to emulate (in this first iteration) the behavior of the real-time sensor: the search must only look for previous information within a time constraint. Thus, both the Matrix Profile computation and the <em>Arc Counts</em> needed to be adapted for this task.</p>
-<p>At the same time, the ECG data needs to be “cleaned” for proper evaluation. That is different from the initial filtering process. Several SQIs (Signal Quality Indexes) are used on literature<span class="citation"><sup><a href="#ref-eerikainen2015">18</a></sup></span>, some trivial measures as <em>kurtosis</em>, <em>skewness</em>, median local noise level, other more complex as pcaSQI (the ratio of the sum of the five largest eigenvalues associated with the principal components over the sum of all eigenvalues obtained by principal component analysis applied to the time aligned ECG segments in the window). By experimentation (yet to be validated), a simple formula gives us the “complexity” of the signal and correlates well with the noisy data is shown in Equation <span class="math inline">\(\eqref{noise}\)</span>.</p>
-<p><span class="math display">\[
-\sqrt{\sum_{i=1}^w((x_{i+1}-x_i)^2)}, \quad \text{where}\; w \; \text{is the window size} \tag{1} \label{noise}
-\]</span></p>
+</div>
+<div id="preparing-the-data" class="section level3">
+<h3>Preparing the data</h3>
+<p>Usually, data obtained by sensors needs to be “cleaned” for proper
+evaluation. That is different from the initial filtering process where
+the purpose is to enhance the signal. Here we are dealing with
+artifacts, disconnected cables, wandering baselines and others.</p>
+<p>Several SQIs (Signal Quality Indexes) are used in the literature<span
+class="citation"><sup><a href="#ref-eerikainen2015"
+role="doc-biblioref">38</a></sup></span>, some trivial measures as
+<em>kurtosis</em>, <em>skewness</em>, median local noise level, other
+more complex as pcaSQI (the ratio of the sum of the five largest
+eigenvalues associated with the principal components over the sum of all
+eigenvalues obtained by principal component analysis applied to the time
+aligned ECG segments in the window). By experimentation (yet to be
+validated), a simple formula gives us the “complexity” of the signal and
+correlates well with the noisy data is shown in Equation <span
+class="math inline">\(\eqref{complex}\)</span>.</p>
 <p><br />
-<br />
-The Fig. 11 shows some SQIs.</p>
+<span class="math display">\[
+\sqrt{\sum_{i=1}^w((x_{i+1}-x_i)^2)}, \quad \text{where}\; w \; \text{is
+the window size} \tag{2} \label{complex}
+\]</span><br />
+</p>
+<p>The Fig. 8 shows some SQIs and their relation with the data.</p>
 <div class="figure" style="text-align: center">
-<img src="figure/noise.png" alt="Figure 11 - Green line is the &quot;complexity&quot; of the signal" width="100%" />
+<img src="figure/noise.png" alt="Figure 8 - Green line is the &quot;complexity&quot; of the signal" width="100%" />
 <p class="caption">
-Figure 11 - Green line is the “complexity” of the signal
+Figure 8 - Green line is the “complexity” of the signal
 </p>
 </div>
 <p>
@@ -1514,17 +2089,17 @@ Francisco Bischoff
 </table>
 </div>
 </div>
-<p>Finally, a sample of the regime change detection is shown in Figs. 12 to 13.</p>
-<p>Fig. 12 shows that noisy data (probably patient muscle movements) are marked with a blue point and thus are ignored by the algorithm. Also, valid for the following plots, the green and red lines on the data mark the 10 seconds window where the “event” that triggers the alarm is supposed to happen.</p>
+<p>Fig. 9 shows that noisy data (probably patient muscle movements) are
+marked with a blue point and thus are ignored by the algorithm.</p>
 <div class="figure" style="text-align: center">
-<img src="figure/regime_filter.png" alt="Figure 12 - Regime changes with noisy data - false alarm" width="100%" />
+<img src="figure/regime_filter.svg" alt="Figure 9 - Noisy data marked by the &quot;complexity&quot; filter" width="100%" />
 <p class="caption">
-Figure 12 - Regime changes with noisy data - false alarm
+Figure 9 - Noisy data marked by the “complexity” filter
 </p>
 </div>
 <p>
 <button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-regime_filter">
-Past versions of regime_filter.png
+Past versions of regime_filter.svg
 </button>
 </p>
 <div id="fig-regime_filter" class="collapse">
@@ -1546,7 +2121,18 @@ Date
 <tbody>
 <tr>
 <td>
-<a href="https://github.com/franzbischoff/false.alarm/blob/1473a05723e9d94f18e9fd5f77a616bc669ed973/docs/figure/regime_filter.png" target="_blank">1473a05</a>
+<a href="https://github.com/franzbischoff/false.alarm/blob/e543d075e7fe449a3633dea186cc321509da9783/docs/figure/regime_filter.svg" target="_blank">e543d07</a>
+</td>
+<td>
+Francisco Bischoff
+</td>
+<td>
+2021-07-15
+</td>
+</tr>
+<tr>
+<td>
+<a href="https://github.com/franzbischoff/false.alarm/blob/1473a05723e9d94f18e9fd5f77a616bc669ed973/docs/figure/regime_filter.svg" target="_blank">1473a05</a>
 </td>
 <td>
 Francisco Bischoff
@@ -1559,334 +2145,529 @@ Francisco Bischoff
 </table>
 </div>
 </div>
-<p>In Fig. 14, the data is clean; thus, nothing is excluded. Interestingly one of the detected regime changes is inside the “green-red” window. But it is a false alarm.</p>
+<p>Although this step of “cleaning” the data is often used, this step
+will also be tested if it is really necessary and the performance with
+and without “cleaning” will be reported.</p>
+</div>
+<div id="detecting-regime-changes" class="section level3">
+<h3>Detecting regime changes</h3>
+<p>The regime change approach will be using the <em>Arc Counts</em>
+concept, used on the FLUSS (Fast Low-cost Unipotent Semantic
+Segmentation) algorithm, as explained by Gharghabi, <em>et
+al.</em>,<span class="citation"><sup><a href="#ref-gharghabi2018"
+role="doc-biblioref">39</a></sup></span>.</p>
+<p>The FLUSS (and FLOSS, the on-line version) algorithm is built on top
+of the Matrix Profile (MP)<span class="citation"><sup><a
+href="#ref-Yeh2017a" role="doc-biblioref">13</a></sup></span>, described
+on section 1. Recalling that the MP and the companion Profile Index (PI)
+are two vectors holding information about the 1-NN. One can imagine
+several “arcs” starting from one “index” to another. This algorithm is
+based on the assumption that between two regimes, the most similar shape
+(its nearest neighbor) is located on “the same side”, so the number of
+“arcs” decreases when there is a change on the regime, and increases
+again. As show on Fig. 10. This drop on the <em>Arc Counts</em> is a
+signal that a change on the shape of the signal has happened.</p>
 <div class="figure" style="text-align: center">
-<img src="figure/regime_false.png" alt="Figure 14 - Regime changes with good data - false alarm" width="100%" />
+<img src="figure/fluss_arcs.svg" alt="Figure 10 - FLUSS algorithm, using arc counts." width="100%" />
 <p class="caption">
-Figure 14 - Regime changes with good data - false alarm
+Figure 10 - FLUSS algorithm, using arc counts.
 </p>
 </div>
-<p>
-<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-regime_false">
-Past versions of regime_false.png
-</button>
-</p>
-<div id="fig-regime_false" class="collapse">
-<div class="table-responsive">
-<table class="table table-condensed table-hover">
-<thead>
-<tr>
-<th>
-Version
-</th>
-<th>
-Author
-</th>
-<th>
-Date
-</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>
-<a href="https://github.com/franzbischoff/false.alarm/blob/1473a05723e9d94f18e9fd5f77a616bc669ed973/docs/figure/regime_false.png" target="_blank">1473a05</a>
-</td>
-<td>
-Francisco Bischoff
-</td>
-<td>
-2021-07-15
-</td>
-</tr>
-</tbody>
-</table>
-</div>
-</div>
-<p>The last plot (Fig. 13) shows the algorithm’s robustness, not excluding good data with a wandering baseline, and the last regime change is correctly detected inside the “green-red” window.</p>
-<div class="figure" style="text-align: center">
-<img src="figure/regime_true.png" alt="Figure 13 - Regime changes with good but wandering data - true alarm" width="100%" />
-<p class="caption">
-Figure 13 - Regime changes with good but wandering data - true alarm
-</p>
-</div>
-<p>
-<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-regime_true">
-Past versions of regime_true.png
-</button>
-</p>
-<div id="fig-regime_true" class="collapse">
-<div class="table-responsive">
-<table class="table table-condensed table-hover">
-<thead>
-<tr>
-<th>
-Version
-</th>
-<th>
-Author
-</th>
-<th>
-Date
-</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>
-<a href="https://github.com/franzbischoff/false.alarm/blob/1473a05723e9d94f18e9fd5f77a616bc669ed973/docs/figure/regime_true.png" target="_blank">1473a05</a>
-</td>
-<td>
-Francisco Bischoff
-</td>
-<td>
-2021-07-15
-</td>
-</tr>
-</tbody>
-</table>
-</div>
-</div>
-</div>
-</div>
-<div id="first-general-assessment" class="section level3">
-<h3><span class="header-section-number">1.4.4</span> First General Assessment</h3>
-<p>By August 2021, it was clear that the chosen regime detection algorithm would be the (Fast Low-cost Online Semantic Segmentation) FLOSS<span class="citation"><sup><a href="#ref-gharghabi2017">19</a></sup></span>. Thus, the pipeline had to be adapted in order to allow the careful replication of the streaming process, even though several computations are made beforehand to keep the pipeline (i.e., the simulation) fast on exploring several parameters.</p>
-<p>The choice of FLOSS is founded on the following arguments:</p>
+<p>The choice of the FLOSS algorithm (on-line version of FLUSS) is
+founded on the following arguments:</p>
 <ul>
-<li><strong>Domain Agnosticism:</strong> the algorithm makes no assumptions about the data as opposed to most available algorithms to date.</li>
-<li><strong>Streaming:</strong> the algorithm can provide real-time information.</li>
-<li><strong>Real-World Data Suitability:</strong> the objective is not to <em>explain</em> all the data. Therefore, areas marked as “don’t know” areas are acceptable.</li>
-<li><strong>FLOSS is not:</strong> a change point detection algorithm<span class="citation"><sup><a href="#ref-aminikhanghahi2016">20</a></sup></span>. The interest here is changes in the shapes of a sequence of measurements.</li>
+<li><strong>Domain Agnosticism:</strong> the algorithm makes no
+assumptions about the data as opposed to most available algorithms to
+date.</li>
+<li><strong>Streaming:</strong> the algorithm can provide real-time
+information.</li>
+<li><strong>Real-World Data Suitability:</strong> the objective is not
+to <em>explain</em> all the data. Therefore, areas marked as “don’t
+know” areas are acceptable.</li>
+<li><strong>FLOSS is not:</strong> a change point detection
+algorithm<span class="citation"><sup><a href="#ref-aminikhanghahi2016"
+role="doc-biblioref">40</a></sup></span>. The interest here is changes
+in the shapes of a sequence of measurements.</li>
 </ul>
-<p>Other algorithms we can cite are based on Hidden Markov Models (HMM) that require at least two parameters set by domain experts: cardinality and dimensionality reduction. The most attractive alternative could be the Autoplait<span class="citation"><sup><a href="#ref-Matsubara2014">21</a></sup></span>, which is also domain agnostic and parameter-free. It segments the time series using Minimum Description Length (MDL) and recursively tests if the region is best modeled by one or two HMM. However, Autoplait is designed for batch operation, not streaming, and also requires discrete data. FLOSS was demonstrated to be superior in several datasets in its original paper. In addition, FLOSS is robust to several changes in data like downsampling, bit depth reduction, baseline wandering, noise, smoothing, and even deleting 3% of the data and filling with simple interpolation. Finally, the algorithm is light and suitable for low-power devices.</p>
-<p>It is worth also mentioning the Time Series Snippets<span class="citation"><sup><a href="#ref-Imani2018">22</a></sup></span>, based on MPdist<span class="citation"><sup><a href="#ref-gharghabi2018b">23</a></sup></span>. The latter measures the distance between two sequences considering how many similar sub-sequences they share, no matter the order of matching. It proved to be a useful measure (not a metric) for meaningfully clustering similar sequences. Time Series Snippets exploits MPdist properties to summarize a dataset that contains representative sequences. This seems to be an alternative for detecting regime changes, but it is not. The purpose of this algorithm is to find which pattern(s) explains most of the dataset. Lastly, MPdist is quite expensive compared to the trivial Euclidean distance.</p>
+<p>Other algorithms we can cite are based on Hidden Markov Models (HMM)
+that require at least two parameters to be set by domain experts:
+cardinality and dimensionality reduction. The most attractive
+alternative could be the Autoplait<span class="citation"><sup><a
+href="#ref-Matsubara2014" role="doc-biblioref">41</a></sup></span>,
+which is also domain agnostic and parameter-free. It segments the time
+series using Minimum Description Length (MDL) and recursively tests if
+the region is best modeled by one or two HMM. However, Autoplait is
+designed for batch operation, not streaming, and also requires discrete
+data. FLOSS was demonstrated to be superior in several datasets in its
+original paper. In addition, FLOSS is robust to several changes in data
+like downsampling, bit depth reduction, baseline wandering, noise,
+smoothing, and even deleting 3% of the data and filling with simple
+interpolation. Finally, the most important, the algorithm is light and
+suitable for low-power devices.</p>
+<p>In the MP domain, it is worth also mentioning other possible
+algorithm: the Time Series Snippets<span class="citation"><sup><a
+href="#ref-Imani2018" role="doc-biblioref">42</a></sup></span>, based on
+MPdist<span class="citation"><sup><a href="#ref-gharghabi2018b"
+role="doc-biblioref">43</a></sup></span>. The latter measures the
+distance between two sequences considering how many similar
+sub-sequences they share, no matter the order of matching. It proved to
+be a useful measure (not a metric) for meaningfully clustering similar
+sequences. Time Series Snippets exploits MPdist properties to summarize
+a dataset extracting the <span class="math inline">\(k\)</span>
+sequences that represent most of the data. The final result seems to be
+an alternative for detecting regime changes, but it is not. The purpose
+of this algorithm is to find which pattern(s) explains most of the
+dataset. Also, it is not suitable for streaming data. Lastly, MPdist is
+quite expensive compared to the trivial Euclidean distance.</p>
+<p>The regime change detection will be evaluated following the criterias
+explained on section 1.</p>
 </div>
-<div id="second-general-assessment" class="section level3">
-<h3><span class="header-section-number">1.4.5</span> Second General Assessment</h3>
-<p>By January 2022, the following tasks were performed:</p>
-<ol style="list-style-type: decimal">
-<li>Restructuring the roadmap (again)</li>
-<li>Refining the main pipeline (again)</li>
-<li>Preparing for modeling and parameter tuning</li>
-<li>Feasibility trial</li>
-<li>And others</li>
-</ol>
-<div id="refining-the-main-pipeline" class="section level4">
-<h4><span class="header-section-number">1.4.5.1</span> Refining the main pipeline</h4>
-<p>That can also be thought of as “rethinking” the pipeline. Which also leads to the roadmap restructuration. The new roadmap was already shown above in Fig. 6.</p>
-<p>It is essential not only to write a pipeline that can “autoplot” itself for fine-grain inspection but also to design a high-level graph that can explain it “in a glance”. This exercise was helpful both ways: telling the story in a short version also reveals missing things and misleading paths that are not so obvious when thinking “low-level”.</p>
-<p>Figs. 15, 16 and 17 show the overview of the processes involved.</p>
+<div id="classregime" class="section level3">
+<h3>Classification of the new regime</h3>
+<p>The next step towards the objective of this work is to verify if the
+new regime detected by the previous step is indeed a life-threatening
+pattern that we should trigger the alarm.</p>
+<p>First let’s dismiss some apparent solutions: (1) Clustering. It is
+well understood that we cannot cluster time series subsequences
+meaningfully with any distance measure, or with any algorithm<span
+class="citation"><sup><a href="#ref-Keogh2005"
+role="doc-biblioref">44</a></sup></span>. The main argument is that in a
+meaningfull algorithm, the output depends on the input, and this has
+been proven to not happen in time series subsequence clustering<span
+class="citation"><sup><a href="#ref-Keogh2005"
+role="doc-biblioref">44</a></sup></span>. (2) Anomaly detection. In this
+work we are not looking for surprises, but for patterns that are known
+to be life-threatening. (3) Forecasting. We may be tempted to make
+predictions, but clearly this is not the idea here.</p>
+<p>The method of choice is classification. The simplest algorithm could
+be a <code>TRUE</code>/<code>FALSE</code> binary classification.
+Nevertheless, the five life-threatening patterns have well defined
+characteristics that may seem more plausible to classify the new regime
+using some kind of ensamble of binary classifiers or a “six-class”
+classifier (being the sixth class the <code>FALSE</code> class).</p>
+<p>Since the model doesn’t know which life-threatening pattern will be
+present in the regime (or if it will be a <code>FALSE</code> case), the
+model will need to check for all five <code>TRUE</code> cases and if
+none of these cases are identified, it will classify the regime as
+<code>FALSE</code>.</p>
+<p>In order to avoid exceeding processor capacity, an initial set of
+shapelets<span class="citation"><sup><a href="#ref-Rakthanmanon2013"
+role="doc-biblioref">45</a></sup></span> can be sufficient to build the
+<code>TRUE</code>/<code>FALSE</code> classifier. And to build such set
+of shapelets, leveraging on the MP, we will use the Contrast
+Profile<span class="citation"><sup><a href="#ref-Mercer2021"
+role="doc-biblioref">46</a></sup></span>.</p>
+<p>The Contrast Profile (CP) looks for patterns that are at the same
+time very <em>similar</em> to its neighbors in class <em>A</em> while is
+very <em>different</em> from the nearest neighbor from class <em>B</em>.
+In other words, this means that such pattern represents well class
+<em>A</em> and may be taken as a “signature” of that class.</p>
+<p>In this case we need to compute two MP, one self-join MP using the
+<em>positive</em> class <span class="math inline">\(MP^{(++)}\)</span>
+(the class that has the signature we want to find) and one AB-join MP
+using the <em>positive</em> and <em>negative</em> classes <span
+class="math inline">\(MP^{(+-)}\)</span>. Then we subtract the first
+<span class="math inline">\(MP^{(++)}\)</span> from the last <span
+class="math inline">\(MP^{(+-)}\)</span>, resulting in the <span
+class="math inline">\(CP\)</span>. The high values on <span
+class="math inline">\(CP\)</span> are the locations for the signature
+candidates we look for (the author of CP calls these segments
+<em>Plato’s</em>).</p>
+<p>Due to the nature of this approach, the MP’s (containing values in
+Euclidean Distance) are truncated for values above <span
+class="math inline">\(\sqrt{2w}\)</span>, where <span
+class="math inline">\(w\)</span> is the window size. This because values
+above this threshold are negatively correlated in the Pearson
+Correlation space. Finally, we normalize the values by <span
+class="math inline">\(\sqrt{2w}\)</span>. The formula <span
+class="math inline">\(\eqref{contrast}\)</span> synthesizes this
+computation.</p>
+<p><br />
+<span class="math display">\[
+CP_w = \frac{MP_{w}^{(+-)} - MP_{w}^{(++)}}{\sqrt{2w}} \quad
+\text{where}\; w \; \text{is the window size} \tag{3} \label{contrast}
+\]</span><br />
+</p>
+<p>For a more complete understanding of the process, Fig. 11 shows a
+practical example from the original article<span
+class="citation"><sup><a href="#ref-Mercer2021"
+role="doc-biblioref">46</a></sup></span>.</p>
+<br />
 <div class="figure" style="text-align: center">
-<img src="figure/regime_detection.svg" alt="Figure 15 - Pipeline for regime change detection" width="100%" />
+<img src="figure/contrast.svg" alt="Figure 11 - Top to bottom: two weakly-labeled snippets of a larger time series. T(-) contains only normal beats. T(+) also contains PVC (premature ventricular contractions). Next, two Matrix Profiles with window size 91; AB-join is in red and self-join in blue. Bottom, the Contrast Profile showing the highest location." width="100%" />
 <p class="caption">
-Figure 15 - Pipeline for regime change detection
+Figure 11 - Top to bottom: two weakly-labeled snippets of a larger time
+series. T(-) contains only normal beats. T(+) also contains PVC
+(premature ventricular contractions). Next, two Matrix Profiles with
+window size 91; AB-join is in red and self-join in blue. Bottom, the
+Contrast Profile showing the highest location.
 </p>
 </div>
-<p>
-<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-regime_detection">
-Past versions of regime_detection.svg
-</button>
-</p>
-<div id="fig-regime_detection" class="collapse">
-<div class="table-responsive">
-<table class="table table-condensed table-hover">
-<thead>
-<tr>
-<th>
-Version
-</th>
-<th>
-Author
-</th>
-<th>
-Date
-</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>
-<a href="https://github.com/franzbischoff/false.alarm/blob/571ac342ed78d2be78faba65fbbae38b50f42692/docs/figure/regime_detection.svg" target="_blank">571ac34</a>
-</td>
-<td>
-Francisco Bischoff
-</td>
-<td>
-2022-01-15
-</td>
-</tr>
-</tbody>
-</table>
+<p>After extracting candidates for each class signature, a
+classification algorithm will be fitted and evaluated using the
+criterias explained on section 1.</p>
 </div>
-</div>
+<div id="summary-of-the-methodology" class="section level3">
+<h3>Summary of the methodology</h3>
+<p>In order to summarize the steps taken on this thesis to accomplish
+the main objective, Figs. 12, 13 and 14 show the overview of the
+processes involved.</p>
+<p>First let us introduce the concept of Nested Resampling<span
+class="citation"><sup><a href="#ref-Bischl2012"
+role="doc-biblioref">47</a></sup></span>. It is known that when
+increasing model complexity, overfitting on the training set becomes
+more likely to happen<span class="citation"><sup><a
+href="#ref-Hastie2009" role="doc-biblioref">48</a></sup></span>. This is
+an issue that this work has to countermeasure as there are many steps
+that requires parameter tuning, even for algorithms that are almost
+parameter-free like the MP.</p>
+<p>The rule that must be followed is simple: <em>do not</em> evaluate a
+model on the same resampling split used to perform its own parameter
+tuning. Using simple cross-validation, the information about the test
+set “leaks” into the evaluation, which leads to overfitting/overtuning,
+and gives us an optimistic biased estimative of the performance. Bernd
+Bischl, 2012<span class="citation"><sup><a href="#ref-Bischl2012"
+role="doc-biblioref">47</a></sup></span> describes more deeply these
+factors, and also gives us a countermeasure for that: (1) from
+preprocessing the data to model selection use the training set; (2) the
+test set should be touched once, on the evaluation step; (3) repeat.
+This guarantees that a “new” separated data is only used <em>after</em>
+the model is trained/tuned.</p>
+<p>Fig. 15 shows us this principle. The steps (1) and (2) described
+above are part of the <strong>Outer resampling</strong>, which in each
+loop splits the data in two sets: the training set and the test set. The
+training set is then used in the <strong>Inner resampling</strong>
+where, for example, the usual cross-validation may be used (creating an
+<em>Analysis set</em> and an <em>Assessment set</em>, to avoid conflict
+of terminology), and the best model/parameters is selected. Then, this
+best model is evaluated against the unseen test set that was created for
+this resampling.</p>
+<p>The resulting (aggregated) performance of all outer samples gives us
+a more honest estimative of the expected performance on new data.</p>
 <div class="figure" style="text-align: center">
-<img src="figure/shapelets.svg" alt="Figure 16 - Pipeline for TRUE and FALSE alarm classification" width="60%" />
+<img src="figure/draw-nested-resampling.svg" alt="Figure 15 - Nested resampling. The full dataset is resampled several times (outer resampling), so each branch has its own Test set (yellow). On each branch, the Training set is used as if it were a full dataset, being resampled again (inner resampling); here the Assessment set (blue) is used to test the learning model and tune parameters. The best model then, is finally evaluated on its own Test set." width="70%" />
 <p class="caption">
-Figure 16 - Pipeline for TRUE and FALSE alarm classification
+Figure 15 - Nested resampling. The full dataset is resampled several
+times (outer resampling), so each branch has its own Test set (yellow).
+On each branch, the Training set is used as if it were a full dataset,
+being resampled again (inner resampling); here the Assessment set (blue)
+is used to test the learning model and tune parameters. The best model
+then, is finally evaluated on its own Test set.
 </p>
 </div>
-<p>
-<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-shapelets">
-Past versions of shapelets.svg
-</button>
-</p>
-<div id="fig-shapelets" class="collapse">
-<div class="table-responsive">
-<table class="table table-condensed table-hover">
-<thead>
-<tr>
-<th>
-Version
-</th>
-<th>
-Author
-</th>
-<th>
-Date
-</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>
-<a href="https://github.com/franzbischoff/false.alarm/blob/571ac342ed78d2be78faba65fbbae38b50f42692/docs/figure/shapelets.svg" target="_blank">571ac34</a>
-</td>
-<td>
-Francisco Bischoff
-</td>
-<td>
-2022-01-15
-</td>
-</tr>
-</tbody>
-</table>
-</div>
-</div>
-<div class="figure" style="text-align: center">
-<img src="figure/fullmodel.svg" alt="Figure 17 - Pipeline of the final process" width="60%" />
-<p class="caption">
-Figure 17 - Pipeline of the final process
-</p>
-</div>
-<p>
-<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-fullmodel">
-Past versions of fullmodel.svg
-</button>
-</p>
-<div id="fig-fullmodel" class="collapse">
-<div class="table-responsive">
-<table class="table table-condensed table-hover">
-<thead>
-<tr>
-<th>
-Version
-</th>
-<th>
-Author
-</th>
-<th>
-Date
-</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>
-<a href="https://github.com/franzbischoff/false.alarm/blob/571ac342ed78d2be78faba65fbbae38b50f42692/docs/figure/fullmodel.svg" target="_blank">571ac34</a>
-</td>
-<td>
-Francisco Bischoff
-</td>
-<td>
-2022-01-15
-</td>
-</tr>
-</tbody>
-</table>
-</div>
-</div>
-</div>
-<div id="preparing-for-modeling-and-parameter-tuning" class="section level4">
-<h4><span class="header-section-number">1.4.5.2</span> Preparing for modeling and parameter tuning</h4>
-<p>Here is one missing part that should have been addressed (formally) earlier. Although this work has its purpose of being finally deployed on small hardware, this prospective phase will need several hours of computing, tuning, evaluation, and validation of all findings.</p>
-<p>Thus it was necessary to revisit the frameworks we are used to working on R: <code>caret</code><span class="citation"><sup><a href="#ref-JSSv028i05">24</a></sup></span> and the newest <code>tidymodels</code><span class="citation"><sup><a href="#ref-tidymodels2020">25</a></sup></span> collection. For sure, there are other frameworks and opinions<span class="citation"><sup><a href="#ref-Thompson2020">26</a></sup></span>. Notwithstanding, this project will follow the <code>tidymodels</code> road. Two significant arguments 1) constantly improving and constantly being re-checked for bugs; large community contribution; 2) allows to plug in a custom modeling algorithm that, in this case, will be the one needed for developing this work.</p>
-</div>
-<div id="feasibility-trial" class="section level4">
-<h4><span class="header-section-number">1.4.5.3</span> Feasibility trial</h4>
-<p>A side-project called “false.alarm.io” has been derived from this work (an unfortunate mix of “false.alarm” and “PlatformIO”<span class="citation"><sup><a href="#ref-PlatformIO">27</a></sup></span>, the IDE chosen to interface the panoply of embedded systems we can experiment with). The current results of this side-project are very enlightening and show that the final algorithm can indeed be used in small hardware. Further data will be available in the future.</p>
-</div>
-<div id="and-others" class="section level4">
-<h4><span class="header-section-number">1.4.5.4</span> And others</h4>
-<p>After this “step back” to look forward, it was time to define how the regime change algorithm would integrate with the actual decision of triggering or not the alarm. Some hypotheses were thought out: (1) clustering similar patterns, (2) anomaly detection, (3) classification, and (4) forecasting. Among these methods, it was thought, in order to avoid exceeding processor capacity, an initial set of shapelets<span class="citation"><sup><a href="#ref-Rakthanmanon2013">28</a></sup></span> can be sufficient to rule in or out the <code>TRUE</code>/<code>FALSE</code> challenge. Depending on the accuracy of this approach and the resources available, another method can be introduced for both (1) improving the “negative”<a href="#fn1" class="footnote-ref" id="fnref1"><sup>1</sup></a> samples and (2) learning more shapelets to improve the <code>TRUE</code>/<code>FALSE</code> alarm discrimination.</p>
-</div>
-</div>
-<div id="scientific-contributions" class="section level3">
-<h3><span class="header-section-number">1.4.6</span> Scientific Contributions</h3>
-<ol style="list-style-type: decimal">
-<li><p><strong>On regime change detection:</strong> in the original paper, the FLOSS algorithm assumes the <em>Arc Counts</em> follow a “uniform distribution” when we add a temporal constraint (not considering arcs coming from older data), and the <em>Arc Counts</em> of newly incoming data are truncated by the same amount of temporal constraint. This prevents completely the detection of a regime change in the last 10 seconds as required. This issue is overcome using the theoretical distributions as shown in Fig. 18.</p></li>
-<li><p><strong>On the Matrix Profile:</strong> since the first paper presenting this new concept<span class="citation"><sup><a href="#ref-Yeh2017a">29</a></sup></span>, lots of investigations were made to speed up its computation. It is notable how all computations are not dependent on the <em>rolling window size</em> as previous works not using Matrix Profile. Aside from this, we can see that the first STAMP<span class="citation"><sup><a href="#ref-Yeh2017a">29</a></sup></span> algorithm has the time complexity of <span class="math inline">\(O(n^2log{n})\)</span> while STOMP<span class="citation"><sup><a href="#ref-zhu2016">30</a></sup></span> <span class="math inline">\(O(n^2)\)</span> (a significant improvement), but STOMP lacks the “any-time” property. Later SCRIMP<span class="citation"><sup><a href="#ref-zhu2018">31</a></sup></span> solves this problem keeping the same time complexity of <span class="math inline">\(O(n^2)\)</span>. Here we are in the “exact” algorithms domain and will not extend the scope for conciseness.</p>
-<ol style="list-style-type: decimal">
-<li><p>The main issue with the algorithms above is the dependency on a fast Fourier transform (FFT) library. FFT has been extensively optimized and architecture/CPU bounded to exploit the most of speed. Also, padding data to some power of 2 happens to increase the efficiency of the algorithm. We can argue that time complexity doesn’t mean “faster” when we can exploit low-level instructions. In our case, using FFT in a low-power device is overkilling. For example, a quick search over the internet gives us a hint that computing FFT on a 4096 data in an ESP32 takes about 21ms (~47 computations in 1 second). This means ~79 seconds for computing all FFT’s (~3797) required for STAMP using a window of 300. Currently, we can compute 50k full matrices in less time using no FFT in an ESP32 MCU (Fig. 19).</p></li>
-<li><p>Recent works using <em>exact</em> algorithms are using an unpublished algorithm called <strong>MPX</strong>, which computes the Matrix Profile using cross-correlation methods ending up faster and is easily portable.</p></li>
-<li><p><strong>The main contribution</strong> of this work on this area is adding the <strong>online</strong> capability to MPX, which means we can update the Matrix Profile as new data comes in.</p></li>
-</ol></li>
-<li><p><strong>On extending the Matrix Profile:</strong> an unexplored constraint that we could apply on building the Matrix Profile we are calling <em>Similarity Threshold</em> (ST). The original work outputs the similarity values in Euclidean Distance (ED) values, while MPX naturally outputs the values in Pearson’s correlation coefficients (CC). Both ED and CC are interchangeable using the equation <span class="math inline">\(\eqref{edcc}\)</span>. However, we may argue that it is easier to compare values that do not depend on the window size during an exploratory phase. MPX happens to naturally return values in CC, saving a few more computation time. The ST is an interesting factor that we can use, especially when detecting pattern changes during time. The FLOSS algorithm relies on counting references between indexes in the time series. ST can help remove “noise” from these references since only similar patterns above a certain threshold are referenced, and changes have more impact on these counts. The best ST threshold is still to be determined.</p></li>
-</ol>
 <p><br />
 </p>
+<p>After the understanding of the Nested Resampling<span
+class="citation"><sup><a href="#ref-Bischl2012"
+role="doc-biblioref">47</a></sup></span>, the following flowcharts can
+be better interpreted. Fig. 12 starts with the “Full Dataset” that
+contains all time series from the dataset described on section 1. Each
+time series represents one file from the database, and represents one
+patient.</p>
+<p>The regime change detection will use subsampling (bootstrapping can
+lead to substantial bias toward more complex models) in the Outer
+resampling and cross-validation in the Inner resampling. How the
+evaluation will be performed and why the use of cross-validation will be
+explained on section 1.</p>
+<div class="figure" style="text-align: center">
+<img src="figure/draw-regime-model.svg" alt="Figure 12 - Pipeline for regime change detection. The full dataset (containing several patients) is divided on a Training set and a Test set. The Training set is then resampled in an Analysis set and an Assessment set. The former is used for training/parameter tuning and the latter for assessing the result. The best parameters are then used for evaluation on the Test set. This may be repeated several times." width="90%" />
+<p class="caption">
+Figure 12 - Pipeline for regime change detection. The full dataset
+(containing several patients) is divided on a Training set and a Test
+set. The Training set is then resampled in an Analysis set and an
+Assessment set. The former is used for training/parameter tuning and the
+latter for assessing the result. The best parameters are then used for
+evaluation on the Test set. This may be repeated several times.
+</p>
+</div>
+<p>Fig. 13 shows the processes for training the classification model.
+First, the last ten seconds of each time series will be identified (the
+even occurs in this segment). Then the dataset will be grouped by class
+(type of event) and <code>TRUE</code>/<code>FALSE</code> (alarm), so the
+Outer/Inner resampling will produce a Training/Analysis set and
+Test/Assessment set with similar frequency of the full dataset.</p>
+<p>The next step will be to extract shapelet candidates using the
+Contrast Profile and train the classifier.</p>
+<p>This pipeline will use subsampling (for the same reason above) in the
+Outer resampling and cross-validation in the Inner resampling. How the
+evaluation will be performed and why the use of cross-validation will be
+explained on section 1.</p>
+<div class="figure" style="text-align: center">
+<img src="figure/draw-classif-model.svg" alt="Figure 13 - Pipeline for alarm classification. The full dataset (containing several patients) is grouped by class and by TRUE/FALSE alarm. This grouping allows resampling to keep a similar frequency of classes and TRUE/FALSE of the full dataset. Then the full dataset is divided on a Training set and a Test set. The Training set is then resampled in an Analysis set and an Assessment set. The former is used for extracting shapelets, training the model and parameter tuning; the latter for assessing the performance of the model. Finally, the best model is evaluated on the Test set. This may be repeated several times." width="60%" />
+<p class="caption">
+Figure 13 - Pipeline for alarm classification. The full dataset
+(containing several patients) is grouped by class and by TRUE/FALSE
+alarm. This grouping allows resampling to keep a similar frequency of
+classes and TRUE/FALSE of the full dataset. Then the full dataset is
+divided on a Training set and a Test set. The Training set is then
+resampled in an Analysis set and an Assessment set. The former is used
+for extracting shapelets, training the model and parameter tuning; the
+latter for assessing the performance of the model. Finally, the best
+model is evaluated on the Test set. This may be repeated several times.
+</p>
+</div>
+<p>Finally, Fig. 14 shows how the final model will be used on the field.
+In a streaming scenario, the data will be collected and processed in
+real-time to maintain an up to date Matrix Profile. The FLOSS algorithm
+will be looking for a regime change. When a regime change is detected, a
+sample of this new regime will be presented to the trained classifier
+that will evaluate if this new regime is a life-threatening condition or
+not.</p>
+<div class="figure" style="text-align: center">
+<img src="figure/draw-global-model.svg" alt="Pipeline of the final process. The streaming data, coming from one patient, is processed to create its Matrix Profile. Then, the FLOSS algorithm is computed for detecting a regime change. When a new regime is detected, a sample of this new regime is analysed by the model and a decision is made. If the new regime is life-threatening, the alarm will be fired." width="60%" />
+<p class="caption">
+Pipeline of the final process. The streaming data, coming from one
+patient, is processed to create its Matrix Profile. Then, the FLOSS
+algorithm is computed for detecting a regime change. When a new regime
+is detected, a sample of this new regime is analysed by the model and a
+decision is made. If the new regime is life-threatening, the alarm will
+be fired.
+</p>
+</div>
+</div>
+</div>
+<div id="evaluation" class="section level2">
+<h2>Evaluation of the algorithms</h2>
+<p>The subsampling method used on both algorithms, regime change and
+classification, will be the Cross Validation, as the learning task will
+be in batches.</p>
+<p>Other options dismissed<span class="citation"><sup><a
+href="#ref-Bischl2012" role="doc-biblioref">47</a></sup></span>:</p>
+<ul>
+<li><p>Leave-One-Out Cross Validation: has better properties for
+regression than for classification. It has a high variance as an
+estimator of the mean loss. It also is asymptotically inconsistent and
+tends to select too complex models. It is demonstrates empirically that
+10-fold CV is often superior.</p></li>
+<li><p>Bootstrapping: while it has low variance, it may be optimistic
+biased on more complex models. Also, its resampling method with
+replacement can leak information into the assessment set.</p></li>
+<li><p>Subsampling: is like bootstrapping, but without replacement. The
+only argument for not choosing it, is that with Cross Validation we make
+sure all the data is used for analysis and assessment.</p></li>
+</ul>
+<div id="regime-change" class="section level3">
+<h3>Regime change</h3>
+<p>A detailed discussion about the evaluation process of segmentation
+algorithms is made by the FLUSS/FLOSS author<span
+class="citation"><sup><a href="#ref-gharghabi2018"
+role="doc-biblioref">39</a></sup></span>. Previous researches have used
+precision/recall or derived measures for performance. The main issue is
+how to assume that the algorithm was correct? If the ground truth says
+the change occurred at location 10,000, and the algorithm detects a
+change at location 10,001, is this a miss?</p>
+<p>As pointed out by the author, several independent researchers have
+suggested a temporal tolerance, that solves one issue, but also has a
+hard time on penalize any tiny miss beyond this tolerance.</p>
+<p>The second issue is a over-penalization of an algorithm in which most
+of the detections are good, but just one (or a few) is poor.</p>
+<p>The author proposes the solution depicted in Fig. 16. It gives 0 as
+the best score and 1 as the worst. The function sums the distances
+between the ground truth locations and the locations suggested by the
+algorithm. The sum is then divided by
+<!--the product of the number of segments, and then --> the length of
+the time series to normalize the range to [0, 1].</p>
+<p>The goal is minimizing this score.</p>
+<!--
+TODO: review the problem when there are too many detections
+-->
+<div class="figure" style="text-align: center">
+<img src="figure/floss_eval.svg" alt="Figure 16 - Regime change evaluation. The top line illustrates the ground truth, and the bottom line the locations reported by the algorithm. Note that multiple proposed locations can be mapped to a single ground truth point." width="100%" />
+<p class="caption">
+Figure 16 - Regime change evaluation. The top line illustrates the
+ground truth, and the bottom line the locations reported by the
+algorithm. Note that multiple proposed locations can be mapped to a
+single ground truth point.
+</p>
+</div>
+</div>
+<div id="classification" class="section level3">
+<h3>Classification</h3>
+<p>As described on section 1, the model for classification will use a
+set of shapelets to identify if we have a <code>TRUE</code>
+(life-threatening) regime or a <code>FALSE</code> (non life-threatening)
+regime.</p>
+<p>Although the implementation of the final process will be using
+streaming data, the classification algorithm will work in batches,
+because it will not be applied on every single data point, but on
+samples that are extracted when a regime change is detected. During the
+training phase, the data is also analyzed in batches.</p>
+<p>One important factor we must consider is that, on real world, the
+majority of regime changes will be <code>FALSE</code> (i.e., not
+life-threatening). Thus, a performance measure that is robust to class
+imbalance is needed if we want to be able to assess the model after it
+was trained, on the field.</p>
+<p>It is well known that the <em>Accuracy</em> measure is not reliable
+for unbalanced data<span class="citation"><sup><a href="#ref-Akosa2017"
+role="doc-biblioref">29</a>,<a href="#ref-Bekkar2013"
+role="doc-biblioref">49</a></sup></span> as it returns optimistic
+results for a classifier on the majority class. A description of common
+measures used on classification is available<span
+class="citation"><sup><a href="#ref-Akosa2017"
+role="doc-biblioref">29</a>,<a href="#ref-Chicco2020"
+role="doc-biblioref">50</a></sup></span>. Here we will focus on three
+candidate measures that can be used: F-score (well discussed on<span
+class="citation"><sup><a href="#ref-Chicco2020"
+role="doc-biblioref">50</a></sup></span>), Matthew’s Correlation
+Coefficient (MCC)<span class="citation"><sup><a href="#ref-Matthews1975"
+role="doc-biblioref">51</a></sup></span> and <span
+class="math inline">\(\kappa_m\)</span> statistic<span
+class="citation"><sup><a href="#ref-Bifet2015"
+role="doc-biblioref">52</a></sup></span>.</p>
+<p>The F-score (let’s abbreviate to F<sub>1</sub> as this is the more
+common setting), is widely used on <em>information retrieval</em>, where
+the classes are usually classified as “relevant” and “irrelevant”, and
+combines the <em>recall</em> (also known as sensitivity) and the
+<em>precision</em> (the positive predicted value). <em>Recall</em>
+assess how well the algorithm retrieves relevant examples among the
+(usually few) relevant items in dataset, while <em>precision</em> assess
+the proportion of indeed relevant items are contained in the retrieved
+examples. It ranges from [0, 1]. It ignores completely the irrelevant
+items that were not retrieved (usually this set contain lots of items).
+In classification tasks, its main weakness is not evaluate the True
+Negatives, and if the proportion of a random classifier gets towards the
+<code>TRUE</code> class (increasing the False Positives significantly),
+this score actually gets better, thus not suitable to our case. The
+F<sub>1</sub> score is defined on equation <span
+class="math inline">\(\eqref{score}\)</span>.</p>
 <p><span class="math display">\[
-CC = 1 - \frac{ED}{(2 \times WindowSize)} \tag{2} \label{edcc}
+F_1 score = \frac{2 \cdot TP}{2 \cdot TP + FP + FN} = 2 \cdot
+\frac{precision \cdot recall}{precision + recall} \tag{4} \label{fscore}
 \]</span></p>
-<p><br />
-</p>
+<p>The MCC is a good alternative to the F<sub>1</sub> when we do care
+about the True negatives (both were considered to “provide more
+realistic estimates of real-world model performance”<span
+class="citation"><sup><a href="#ref-Dubey2018"
+role="doc-biblioref">53</a></sup></span>). It is a method to compute the
+<em>Pearson product-moment correlation coefficient</em><span
+class="citation"><sup><a href="#ref-Delgado2019"
+role="doc-biblioref">54</a></sup></span> between the actual and
+predicted values. It ranges from [-1, 1]. The MCC is the only binary
+classification rate that only gives a high score if the binary
+classifier was able to correctly classify the majority of the positive
+and negative instances<span class="citation"><sup><a
+href="#ref-Chicco2020" role="doc-biblioref">50</a></sup></span>. One may
+argue that Cohen’s <span class="math inline">\(\kappa\)</span> has the
+same behavior, but there are two main differences (1) MCC is
+<em>undefined</em> in the case of a <em>majority voter</em> while
+Cohen’s <span class="math inline">\(\kappa\)</span> doesn’t
+discriminates this case from the random classifier (<span
+class="math inline">\(\kappa\)</span> is zero for both cases) (2) It is
+proven that in an special case when the classifier is increasing the
+False Negatives, Cohen’s <span class="math inline">\(\kappa\)</span>
+doesn’t get worse as spected, MCC doesn’t have this issue<span
+class="citation"><sup><a href="#ref-Delgado2019"
+role="doc-biblioref">54</a></sup></span>. MCC is defined on equation
+<span class="math inline">\(\eqref{mccval}\)</span>.</p>
+<p><span class="math display">\[
+MCC = \frac{TP \cdot TN - FP \cdot FN}{\sqrt{(TP + FP) \cdot (TP + FN)
+\cdot (TN + FP) \cdot (TN + FN)}} \tag{5} \label{mccval}
+\]</span></p>
+<p>The <span class="math inline">\(\kappa_m\)</span> statistic<span
+class="citation"><sup><a href="#ref-Bifet2015"
+role="doc-biblioref">52</a></sup></span> is a measure that takes in
+account not the <em>random classifier</em> but the <em>majority
+voter</em> (a classifier that only votes on the larger class). It was
+introduced by Bifet <em>et al.</em><span class="citation"><sup><a
+href="#ref-Bifet2015" role="doc-biblioref">52</a></sup></span> for being
+used in online settings, where the class balance may change over time.
+It is defined on equation <span
+class="math inline">\(\eqref{kappam}\)</span>, where <span
+class="math inline">\(p_0\)</span> is the observed accuracy and <span
+class="math inline">\(p_m\)</span> is the accuracy of the majority
+voter. The score ranges from (<span
+class="math inline">\(-\infty\)</span>, 1], theoretically, but in
+practice you see negative numbers if the classifier is performing worse
+than the majority voter and positive numbers if performing better than
+the majority number, until the maximum of 1, when the classifier is
+optimal.</p>
+<p><span class="math display">\[
+\kappa_m = \frac{p_0 - p_m}{1 - p_m} \tag{6} \label{kappam}
+\]</span></p>
+<p>In the inner resampling (model training/tuning), the classification
+will be binary, and in our case we know that the data is slightly
+unbalanced (60% false alarms). For this step, the metric for model
+selection will be the MCC. Nevertheless, during the optimization
+process, the algorithm will seek to minimize the False Negative Rate
+(<span class="math inline">\(FNR = \frac{FN}{TP+FN}\)</span>), and
+between ties, the smaller FNR wins.</p>
+<p>In the outer resampling, the MCC and <span
+class="math inline">\(\kappa_m\)</span> of all winning models will
+aggregated and reported using the median and interquartile range.</p>
+<p>For different classifiers, we will use the Wilcoxon’s signed-rank
+test for comparing their performances, as this method is known to have
+low Type I and Type II errors in this kind of comparison<span
+class="citation"><sup><a href="#ref-Bifet2015"
+role="doc-biblioref">52</a></sup></span>.</p>
+</div>
+<div id="full-model-streaming-setting" class="section level3">
+<h3>Full model (streaming setting)</h3>
+<p>For the final assessment, the best and the average model of the
+previous pipelines will be assembled and tested using the whole original
+dataset.</p>
+<p>The algorithm will be tested in each of the five life-threatening
+event split individually, in order to evaluate its strengths and
+weakness.</p>
+<p>For more transparency, the whole confusion matrix will be reported,
+as well as the MCC, <span class="math inline">\(\kappa_m\)</span>, and
+the FLOSS evaluation.</p>
+</div>
+</div>
+</div>
+<div id="current-results" class="section level1">
+<h1>Current results</h1>
+<div id="regime-change-detection" class="section level2">
+<h2>Regime change detection</h2>
+<p>The current status on regime change detection pipeline is the
+implementation of the resampling strategies and evaluation in order to
+start the parameter tuning. An example of the current implementation is
+shown on Fig. 17.</p>
 <div class="figure" style="text-align: center">
-<img src="figure/report.Rmd/distributions-1.svg" alt="Figure 18 - 1D-IAC distributions for earlier temporal constraint (on Matrix Profile)" width="960" />
+<img src="figure/floss_regime.png" alt="Figure 17 - Regime change detection example. The graph on top shows the ECG streaming; the blue line marks the ten seconds before the original alarm was fired; the red line marks the time constraint of 1250; the dark red line marks the limit for taking a decision in this case of Asystole the blue horizontal line represents the size of the sliding window. The graph on the middle shows the Arc counts as seen by the algorithm (with the corrected distribution); the red line marks the current minimum value and its index; the blue horizontal line shows the minimum value seen until then. The graph on the bottom shows the computed Arc counts (raw) and the red line is the theoretical distribution used for correction." width="80%" height="80%" />
 <p class="caption">
-Figure 18 - 1D-IAC distributions for earlier temporal constraint (on Matrix Profile)
+Figure 17 - Regime change detection example. The graph on top shows the
+ECG streaming; the blue line marks the ten seconds before the original
+alarm was fired; the red line marks the time constraint of 1250; the
+dark red line marks the limit for taking a decision in this case of
+Asystole the blue horizontal line represents the size of the sliding
+window. The graph on the middle shows the Arc counts as seen by the
+algorithm (with the corrected distribution); the red line marks the
+current minimum value and its index; the blue horizontal line shows the
+minimum value seen until then. The graph on the bottom shows the
+computed Arc counts (raw) and the red line is the theoretical
+distribution used for correction.
 </p>
 </div>
-<p>
-<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-distributions-1">
-Past versions of distributions-1.svg
-</button>
-</p>
-<div id="fig-distributions-1" class="collapse">
-<div class="table-responsive">
-<table class="table table-condensed table-hover">
-<thead>
-<tr>
-<th>
-Version
-</th>
-<th>
-Author
-</th>
-<th>
-Date
-</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>
-<a href="https://github.com/franzbischoff/false.alarm/blob/571ac342ed78d2be78faba65fbbae38b50f42692/docs/figure/report.Rmd/distributions-1.svg" target="_blank">571ac34</a>
-</td>
-<td>
-Francisco Bischoff
-</td>
-<td>
-2022-01-15
-</td>
-</tr>
-</tbody>
-</table>
 </div>
-</div>
-<p><br />
-</p>
+<div id="classification-1" class="section level2">
+<h2>Classification</h2>
+<p>The current status on the classification pipeline is the
+implementation of the shapelets extraction using the Contrast
+Profile.</p>
+<p>An example of candidates for ventricular tachycardia is presented on
+Fig. 18.</p>
 <div class="figure" style="text-align: center">
-<img src="figure/esp32.jpg" alt="Figure 19 - ESP32 MCU" width="40%" />
+<img src="figure/report.Rmd/vtachy-1.svg" alt="Figure 18 - Shapelet candidates for Ventricular Tachycardia." width="90%" />
+<p class="caption">
+Figure 18 - Shapelet candidates for Ventricular Tachycardia.
+</p>
+</div>
+</div>
+<div id="feasibility-trial" class="section level2">
+<h2>Feasibility trial</h2>
+<p>A side-project called “false.alarm.io” has been derived from this
+work (an unfortunate mix of “false.alarm” and “PlatformIO”<span
+class="citation"><sup><a href="#ref-PlatformIO"
+role="doc-biblioref">55</a></sup></span>, the IDE chosen to interface
+the panoply of embedded systems we can experiment with). The current
+results of this side-project are very enlightening and show that the
+final algorithm can indeed be used in small hardware. Further data will
+be available in the future.</p>
+<p>A brief mentioning, linking back to the objectives of this work, an
+initial trial was done using an ESP32 MCU (Fig. 19) in order to be sure
+if such small device can handle the task.</p>
+<div class="figure" style="text-align: center">
+<img src="figure/esp32.jpg" alt="Figure 19 - ESP32 MCU" width="50%" />
 <p class="caption">
 Figure 19 - ESP32 MCU
 </p>
@@ -1928,105 +2709,599 @@ Francisco Bischoff
 </table>
 </div>
 </div>
-<div id="refs">
-<div id="ref-compendium2019">
-<p>1. Research compendium. Published 2019. Accessed April 8, 2021. <a href="https://research-compendium.science">https://research-compendium.science</a></p>
+<p>Current results show that such device has enough computation power to
+handle the task in real-time using just one of its two microprocessors.
+The main limitation seen in advance is the on-chip SRAM that must be
+well managed.</p>
 </div>
-<div id="ref-wilkinson2016">
-<p>2. Wilkinson M, Dumontier M, Aalbersberg I, et al. The fair guiding principles for scientific data management and stewardship. <em>Scientific Data</em>. 2016;3(1). doi:<a href="https://doi.org/10.1038/sdata.2016.18">10.1038/sdata.2016.18</a></p>
 </div>
-<div id="ref-CodeMeta2017">
-<p>3. The codemeta project. Published 2017. Accessed January 10, 2022. <a href="https://codemeta.github.io/">https://codemeta.github.io/</a></p>
+<div id="scientific-contributions" class="section level1">
+<h1>Scientific contributions</h1>
+<div id="matrix-profile" class="section level2">
+<h2>Matrix Profile</h2>
+<p>Since the first paper presenting this new concept<span
+class="citation"><sup><a href="#ref-Yeh2017a"
+role="doc-biblioref">13</a></sup></span>, lots of investigations were
+made to speed up its computation. It is notable how all computations are
+not dependent on the <em>rolling window size</em> as previous works not
+using Matrix Profile. Aside from this, we can see that the first
+STAMP<span class="citation"><sup><a href="#ref-Yeh2017a"
+role="doc-biblioref">13</a></sup></span> algorithm has the time
+complexity of <span class="math inline">\(O(n^2log{n})\)</span> while
+STOMP<span class="citation"><sup><a href="#ref-zhu2016"
+role="doc-biblioref">56</a></sup></span> <span
+class="math inline">\(O(n^2)\)</span> (a significant improvement), but
+STOMP lacks the “any-time” property. Later SCRIMP<span
+class="citation"><sup><a href="#ref-zhu2018"
+role="doc-biblioref">57</a></sup></span> solves this problem keeping the
+same time complexity of <span class="math inline">\(O(n^2)\)</span>.
+Here we are in the “exact” algorithms domain and we will not extend the
+scope for conciseness.</p>
+<p>The main issue with the algorithms above is the dependency on a fast
+Fourier transform (FFT) library. FFT has been extensively optimized and
+architecture/CPU bounded to exploit the most of speed. Also, padding
+data to some power of 2 happens to increase the efficiency of the
+algorithm. We can argue that time complexity doesn’t mean “faster” when
+we can exploit low-level instructions. In our case, using FFT in a
+low-power device is overkilling. For example, a quick search over the
+internet gives us a hint that computing FFT on a 4096 data in an ESP32
+takes about 21ms (~47 computations in 1 second). This means ~79 seconds
+for computing all FFT’s (~3797) required for STAMP using a window of
+300. Currently, we can compute a full matrix of 5k data in about 9
+seconds in an ESP32 MCU (Fig. 19), and keep updating it as fast as 1 min
+of data (at 250hz) in just 6 seconds.</p>
+<p>Recent works using <em>exact</em> algorithms are using an unpublished
+algorithm called <strong>MPX</strong>, which computes the Matrix Profile
+using cross-correlation methods ending up faster and is easily
+portable.</p>
+<p><strong>On computing the Matrix Profile:</strong> the contribution of
+this work on this area is adding the <em>Online</em> capability to MPX,
+which means we can update the Matrix Profile as new data comes in.</p>
+<p><strong>On extending the Matrix Profile:</strong> the contribution of
+this work on this area is the use of an unexplored constraint that we
+could apply on building the Matrix Profile we are calling <em>Similarity
+Threshold</em> (ST). The original work outputs the similarity values in
+Euclidean Distance (ED) values, while MPX naturally outputs the values
+in Pearson’s correlation coefficients (CC). Both ED and CC are
+interchangeable using the equation <span
+class="math inline">\(\eqref{edcc}\)</span>. However, we may argue that
+it is easier to compare values that do not depend on the window size
+during an exploratory phase. MPX happens to naturally return values in
+CC, saving a few more computation time. The ST is an interesting factor
+that we can use, especially when detecting pattern changes during time.
+The FLOSS algorithm relies on counting references between indexes in the
+time series. ST can help remove “noise” from these references since only
+similar patterns above a certain threshold are referenced, and changes
+have more impact on these counts. The best ST threshold is still to be
+determined.</p>
+<p><br />
+<span class="math display">\[
+CC = 1 - \frac{ED}{(2 \times WindowSize)} \tag{7} \label{edcc}
+\]</span><br />
+</p>
 </div>
-<div id="ref-bischoff2021">
-<p>4. Reducing false arrhythmia alarms in the icu - the physionet computing in cardiology challenge 2015. Published online March 24, 2021. doi:<a href="https://doi.org/10.5281/zenodo.4634013">10.5281/zenodo.4634013</a></p>
+<div id="regime-change-detection-1" class="section level2">
+<h2>Regime change detection</h2>
+<p>In the original paper, in chapter 3.5, the authors of FLOSS wisely
+introduce the <strong>temporal constraint</strong>, which improves the
+sensitivity of regime change detection on situations where a regime may
+alternate in short periods of time.</p>
+<p>Nevertheless, the authors declare the correction curve typically used
+on the algorithm as “simply a uniform distribution”, but this is not an
+accurate statement. the <em>Arc Counts</em> of newly incoming data are
+truncated by the same amount of temporal constraint. This prevents
+completely the detection of a regime change in the last 10 seconds as
+this thesis requires.</p>
+<p>The main contribution of this work on this area is overcoming this
+issue by computing the theoretical distribution using the temporal
+constraint parameters beforehand. as shown in Fig. 20. That gives us
+enough data to evaluate a regime change accurately utilizing a minimum
+of <span class="math inline">\(2 \times WindowSize\)</span>
+datapoints.</p>
+<div class="figure" style="text-align: center">
+<img src="figure/report.Rmd/distributions-1.svg" alt="Figure 20 - 1D-IAC distributions for earlier temporal constraint (on Matrix Profile)" width="960" />
+<p class="caption">
+Figure 20 - 1D-IAC distributions for earlier temporal constraint (on
+Matrix Profile)
+</p>
 </div>
-<div id="ref-Clifford2015">
-<p>5. Clifford GD, Silva I, Moody B, et al. The physionet/computing in cardiology challenge 2015: Reducing false arrhythmia alarms in the icu. In: <em>Computing in Cardiology</em>.; 2015. doi:<a href="https://doi.org/10.1109/cic.2015.7408639">10.1109/cic.2015.7408639</a></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-distributions-1">
+Past versions of distributions-1.svg
+</button>
+</p>
+<div id="fig-distributions-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/franzbischoff/false.alarm/blob/867bcf23d22203e3d807fda8a15d9ed6f74b9793/docs/figure/report.Rmd/distributions-1.svg" target="_blank">867bcf2</a>
+</td>
+<td>
+Francisco Bischoff
+</td>
+<td>
+2022-01-16
+</td>
+</tr>
+<tr>
+<td>
+<a href="https://github.com/franzbischoff/false.alarm/blob/571ac342ed78d2be78faba65fbbae38b50f42692/docs/figure/report.Rmd/distributions-1.svg" target="_blank">571ac34</a>
+</td>
+<td>
+Francisco Bischoff
+</td>
+<td>
+2022-01-15
+</td>
+</tr>
+</tbody>
+</table>
 </div>
-<div id="ref-AAMI2002">
-<p>6. Association for the Advancement of Medical Instrumentation. <em>Cardiac monitors, heart rate meters, and alarms</em>. Association for the Advancement of Medical Instrumentation; 2002.</p>
 </div>
-<div id="ref-landau2021">
-<p>7. Landau W, Landau W, Warkentin M, et al. <em>Ropensci/Targets, Dynamic Function-Oriented ’Make’-Like Declarative Workflows</em>. Zenodo; 2021. doi:<a href="https://doi.org/10.5281/ZENODO.4062936">10.5281/ZENODO.4062936</a></p>
 </div>
-<div id="ref-franz_website">
-<p>8. Franzbischoff/false.alarm: Reproducible reports. Published 2021. Accessed April 8, 2021. <a href="https://franzbischoff.github.io/false.alarm">https://franzbischoff.github.io/false.alarm</a></p>
 </div>
-<div id="ref-workflowr2021">
-<p>9. Blischak JD, Carbonetto P, Stephens M. Creating and sharing reproducible research code the workflowr way [version 1; peer review: 3 approved]. <em>F1000Research</em>. 2019;8(1749). doi:<a href="https://doi.org/10.12688/f1000research.20843.1">10.12688/f1000research.20843.1</a></p>
+<div id="scientific-outcomes" class="section level1">
+<h1>Scientific outcomes</h1>
+<p>This research has already yielded two R packages concerning the MP
+algorithms from UCR<span class="citation"><sup><a href="#ref-mpucr"
+role="doc-biblioref">17</a></sup></span>. The first package is called
+<code>tsmp</code>, and a paper has also been published in the R
+Journal<span class="citation"><sup><a href="#ref-RJ-2020-021"
+role="doc-biblioref">18</a></sup></span> (Journal Impact Factor™, 2020
+of 3.984). The second package is called <code>matrixprofiler</code> and
+enhances the first one, using low-level language to improve
+computational speed. The author has also joined the Matrix Profile
+Foundation as co-founder together with contributors from Python and Go
+languages<span class="citation"><sup><a href="#ref-mpf2020"
+role="doc-biblioref">19</a>,<a href="#ref-VanBenschoten2020"
+role="doc-biblioref">20</a></sup></span>. The benchmarks of the R
+implementation are available online<span class="citation"><sup><a
+href="#ref-Bischoff2021a" role="doc-biblioref">58</a></sup></span>.</p>
+<p>Additionally to the above publication and the publication of the
+ongoing literature survey it is planned to be published two articles
+about this thesis subject. The first regarding the application of the
+FLOSS algorithm on real-time ECG showing its potential on using it on
+low-power devices. The second regarding the use of combined shapelets
+for relevant ECG patterns identification.</p>
 </div>
-<div id="ref-bischoffrepo2021">
-<p>10. Bischoff F. GitHub false.alarm repository. Accessed July 14, 2021. <a href="https://github.com/franzbischoff/false.alarm">https://github.com/franzbischoff/false.alarm</a></p>
+<div id="expected-results-and-outcomes" class="section level1">
+<h1>Expected results and outcomes</h1>
+<p>At the end, this thesis will provide a framework for identify
+life-threatening conditions using biological streaming data on devices
+with low CPU and low memory specifications. We expect to achieve a high
+quality model on identifying these pathological conditions, maintaining
+its robustness in presence of noise and artifacts seen on real-world
+applications.</p>
+<div id="refs" class="references csl-bib-body">
+<div id="ref-compendium2019" class="csl-entry">
+<div class="csl-left-margin">1. </div><div
+class="csl-right-inline">Research compendium. Published 2019. Accessed
+April 8, 2021. <a
+href="https://research-compendium.science">https://research-compendium.science</a></div>
 </div>
-<div id="ref-gitactions2021">
-<p>11. GitHub Actions. Accessed July 14, 2021. <a href="https://github.com/features/actions">https://github.com/features/actions</a></p>
+<div id="ref-wilkinson2016" class="csl-entry">
+<div class="csl-left-margin">2. </div><div
+class="csl-right-inline">Wilkinson MD, Dumontier M, Aalbersberg IjJ, et
+al. The FAIR Guiding Principles for scientific data management and
+stewardship. <em>Scientific Data</em>. 2016;3(1). doi:<a
+href="https://doi.org/10.1038/sdata.2016.18">10.1038/sdata.2016.18</a></div>
 </div>
-<div id="ref-zenhub2021">
-<p>12. Zenhub workspace. Accessed July 14, 2021. <a href="https://app.zenhub.com/workspaces/phd-thesis-5eb2ce34f5f30b3aed0a35af/board">https://app.zenhub.com/workspaces/phd-thesis-5eb2ce34f5f30b3aed0a35af/board</a></p>
+<div id="ref-CodeMeta2017" class="csl-entry">
+<div class="csl-left-margin">3. </div><div class="csl-right-inline">The
+CodeMeta project. Published 2017. Accessed January 10, 2022. <a
+href="https://codemeta.github.io/">https://codemeta.github.io/</a></div>
 </div>
-<div id="ref-sparkfun2021">
-<p>13. SparkFun Single Lead Heart Rate Monitor - AD8232 - SEN-12650 - SparkFun Electronics. Accessed July 14, 2021. <a href="https://www.sparkfun.com/products/12650">https://www.sparkfun.com/products/12650</a></p>
+<div id="ref-landau2021" class="csl-entry">
+<div class="csl-left-margin">4. </div><div
+class="csl-right-inline">Landau W, Landau W, Warkentin MT, et al.
+<em>Ropensci/Targets, Dynamic Function-Oriented ’Make’-Like Declarative
+Workflows</em>. Zenodo; 2021. doi:<a
+href="https://doi.org/10.5281/ZENODO.4062936">10.5281/ZENODO.4062936</a></div>
 </div>
-<div id="ref-AnalogDevices2020">
-<p>14. Analog Devices. AD8232 Single-Lead, Heart Rate Monitor Front End. Published online 2020. Accessed July 14, 2021. <a href="https://www.analog.com/media/en/technical-documentation/data-sheets/ad8232.pdf">https://www.analog.com/media/en/technical-documentation/data-sheets/ad8232.pdf</a></p>
+<div id="ref-franz_website" class="csl-entry">
+<div class="csl-left-margin">5. </div><div
+class="csl-right-inline">Franzbischoff/false.alarm: Reproducible
+reports. Published 2021. Accessed April 8, 2021. <a
+href="https://franzbischoff.github.io/false.alarm">https://franzbischoff.github.io/false.alarm</a></div>
 </div>
-<div id="ref-arduino2021">
-<p>15. Arduino. Accessed July 14, 2021. <a href="https://www.arduino.cc/">https://www.arduino.cc/</a></p>
+<div id="ref-workflowr2021" class="csl-entry">
+<div class="csl-left-margin">6. </div><div
+class="csl-right-inline">Blischak JD, Carbonetto P, Stephens M. Creating
+and sharing reproducible research code the workflowr way [version 1;
+peer review: 3 approved]. <em>F1000Research</em>. 2019;8(1749). doi:<a
+href="https://doi.org/10.12688/f1000research.20843.1">10.12688/f1000research.20843.1</a></div>
 </div>
-<div id="ref-gharghabi2018">
-<p>16. Gharghabi S, Yeh C, Ding Y, et al. Domain agnostic online semantic segmentation for multi-dimensional time series. <em>Data Mining and Knowledge Discovery</em>. 2018;33(1):96-130. doi:<a href="https://doi.org/10.1007/s10618-018-0589-3">10.1007/s10618-018-0589-3</a></p>
+<div id="ref-JSSv028i05" class="csl-entry">
+<div class="csl-left-margin">7. </div><div class="csl-right-inline">Kuhn
+M. Building predictive models in r using the caret package. <em>Journal
+of Statistical Software, Articles</em>. 2008;28(5):1-26. doi:<a
+href="https://doi.org/10.18637/jss.v028.i05">10.18637/jss.v028.i05</a></div>
 </div>
-<div id="ref-RJ-2020-021">
-<p>17. Bischoff F, Rodrigues PP. tsmp: An R Package for Time Series with Matrix Profile. <em>The R Journal</em>. 2020;12(1):76-86. doi:<a href="https://doi.org/10.32614/RJ-2020-021">10.32614/RJ-2020-021</a></p>
+<div id="ref-tidymodels2020" class="csl-entry">
+<div class="csl-left-margin">8. </div><div class="csl-right-inline">Kuhn
+M, Wickham H. <em>Tidymodels: A Collection of Packages for Modeling and
+Machine Learning Using Tidyverse Principles.</em>; 2020. <a
+href="https://www.tidymodels.org">https://www.tidymodels.org</a></div>
 </div>
-<div id="ref-eerikainen2015">
-<p>18. Eerikainen L, Vanschoren J, Rooijakkers M, Vullings R, Aarts R. 2015 computing in cardiology conference (cinc). In: IEEE; 2015. doi:<a href="https://doi.org/10.1109/cic.2015.7408644">10.1109/cic.2015.7408644</a></p>
+<div id="ref-Thompson2020" class="csl-entry">
+<div class="csl-left-margin">9. </div><div
+class="csl-right-inline">Thompson J. On not using tidymodels. Published
+October 2020. Accessed January 5, 2022. <a
+href="https://staffblogs.le.ac.uk/teachingr/2020/10/05/on-not-using-tidymodels/">https://staffblogs.le.ac.uk/teachingr/2020/10/05/on-not-using-tidymodels/</a></div>
 </div>
-<div id="ref-gharghabi2017">
-<p>19. Gharghabi S, Ding Y, Yeh C-CM, Kamgar K, Ulanova L, Keogh E. 2017 ieee international conference on data mining (icdm). In: IEEE; 2017. doi:<a href="https://doi.org/10.1109/icdm.2017.21">10.1109/icdm.2017.21</a></p>
+<div id="ref-bischoffrepo2021" class="csl-entry">
+<div class="csl-left-margin">10. </div><div
+class="csl-right-inline">Bischoff F. <span class="nocase">GitHub
+false.alarm repository</span>. Accessed July 14, 2021. <a
+href="https://github.com/franzbischoff/false.alarm">https://github.com/franzbischoff/false.alarm</a></div>
 </div>
-<div id="ref-aminikhanghahi2016">
-<p>20. Aminikhanghahi S, Cook DJ. A survey of methods for time series change point detection. <em>Knowledge and Information Systems</em>. 2016;51(2):339-367. doi:<a href="https://doi.org/10.1007/s10115-016-0987-z">10.1007/s10115-016-0987-z</a></p>
+<div id="ref-gitactions2021" class="csl-entry">
+<div class="csl-left-margin">11. </div><div
+class="csl-right-inline"><span>GitHub Actions</span>. Accessed July 14,
+2021. <a
+href="https://github.com/features/actions">https://github.com/features/actions</a></div>
 </div>
-<div id="ref-Matsubara2014">
-<p>21. Matsubara Y, Sakurai Y, Faloutsos C. AutoPlait: Automatic mining of co-evolving time sequences. <em>Proceedings of the ACM SIGMOD International Conference on Management of Data</em>. Published online 2014:193-204. doi:<a href="https://doi.org/10.1145/2588555.2588556">10.1145/2588555.2588556</a></p>
+<div id="ref-zenhub2021" class="csl-entry">
+<div class="csl-left-margin">12. </div><div
+class="csl-right-inline"><span class="nocase">Zenhub roadmap</span>.
+Accessed January 27, 2022. <a
+href="https://app.zenhub.com/workspaces/phd-thesis-5eb2ce34f5f30b3aed0a35af/roadmap">https://app.zenhub.com/workspaces/phd-thesis-5eb2ce34f5f30b3aed0a35af/roadmap</a></div>
 </div>
-<div id="ref-Imani2018">
-<p>22. Imani S, Madrid F, Ding W, Crouter S, Keogh E. Matrix profile xiii : Time series snippets : A new primitive for time series data mining. In: <em>2018 Ieee International Conference on Data Mining (Icdm)</em>.; 2018.</p>
+<div id="ref-Yeh2017a" class="csl-entry">
+<div class="csl-left-margin">13. </div><div class="csl-right-inline">Yeh
+C-CM, Zhu Y, Ulanova L, et al. Matrix profile i: All pairs similarity
+joins for time series: A unifying view that includes motifs, discords
+and shapelets. In: <em>2016 IEEE 16th International Conference on Data
+Mining (ICDM)</em>. IEEE; 2016:1317-1322. doi:<a
+href="https://doi.org/10.1109/ICDM.2016.0179">10.1109/ICDM.2016.0179</a></div>
 </div>
-<div id="ref-gharghabi2018b">
-<p>23. Gharghabi S, Imani S, Bagnall A, Darvishzadeh A, Keogh E. Matrix profile xii: MPdist: A novel time series distance measure to allow data mining in more challenging scenarios. In: IEEE; 2018:965-970. doi:<a href="https://doi.org/10.1109/ICDM.2018.00119">10.1109/ICDM.2018.00119</a></p>
+<div id="ref-DePaepe2020" class="csl-entry">
+<div class="csl-left-margin">14. </div><div class="csl-right-inline">De
+Paepe D, Vanden Hautte S, Steenwinckel B, et al. <span class="nocase">A
+generalized matrix profile framework with support for contextual series
+analysis</span>. <em>Engineering Applications of Artificial
+Intelligence</em>. 2020;90(January):103487. doi:<a
+href="https://doi.org/10.1016/j.engappai.2020.103487">10.1016/j.engappai.2020.103487</a></div>
 </div>
-<div id="ref-JSSv028i05">
-<p>24. Kuhn M. Building predictive models in r using the caret package. <em>Journal of Statistical Software, Articles</em>. 2008;28(5):1-26. doi:<a href="https://doi.org/10.18637/jss.v028.i05">10.18637/jss.v028.i05</a></p>
+<div id="ref-Feremans2020" class="csl-entry">
+<div class="csl-left-margin">15. </div><div
+class="csl-right-inline">Feremans L, Vercruyssen V, Cule B, Meert W,
+Goethals B. <span class="nocase">Pattern-Based Anomaly Detection in
+Mixed-Type Time Series</span>. In: <em>Lecture Notes in Computer Science
+(Including Subseries Lecture Notes in Artificial Intelligence and
+Lecture Notes in Bioinformatics)</em>. Vol 11906 LNAI.; 2020:240-256.
+doi:<a
+href="https://doi.org/10.1007/978-3-030-46150-8_15">10.1007/978-3-030-46150-8_15</a></div>
 </div>
-<div id="ref-tidymodels2020">
-<p>25. Kuhn M, Wickham H. <em>Tidymodels: A Collection of Packages for Modeling and Machine Learning Using Tidyverse Principles.</em>; 2020. <a href="https://www.tidymodels.org">https://www.tidymodels.org</a></p>
+<div id="ref-Lin2007" class="csl-entry">
+<div class="csl-left-margin">16. </div><div class="csl-right-inline">Lin
+J, Keogh E, Wei L, Lonardi S. <span class="nocase">Experiencing SAX: A
+novel symbolic representation of time series</span>. <em>Data Mining and
+Knowledge Discovery</em>. 2007;15(2):107-144. doi:<a
+href="https://doi.org/10.1007/s10618-007-0064-z">10.1007/s10618-007-0064-z</a></div>
 </div>
-<div id="ref-Thompson2020">
-<p>26. Thompson J. On not using tidymodels. Published October 2020. Accessed January 5, 2022. <a href="https://staffblogs.le.ac.uk/teachingr/2020/10/05/on-not-using-tidymodels/">https://staffblogs.le.ac.uk/teachingr/2020/10/05/on-not-using-tidymodels/</a></p>
+<div id="ref-mpucr" class="csl-entry">
+<div class="csl-left-margin">17. </div><div
+class="csl-right-inline"><span>UCR Matrix Profile Page</span>. Accessed
+January 27, 2022. <a
+href="https://www.cs.ucr.edu/~eamonn/MatrixProfile.html">https://www.cs.ucr.edu/~eamonn/MatrixProfile.html</a></div>
 </div>
-<div id="ref-PlatformIO">
-<p>27. PlatformIO, a professional collaborative platform for embedded development. Accessed January 5, 2022. <a href="https://platformio.org/">https://platformio.org/</a></p>
+<div id="ref-RJ-2020-021" class="csl-entry">
+<div class="csl-left-margin">18. </div><div
+class="csl-right-inline">Bischoff F, Rodrigues PP. <span
+class="nocase">tsmp: An R Package for Time Series with Matrix
+Profile</span>. <em><span>The R Journal</span></em>. 2020;12(1):76-86.
+doi:<a
+href="https://doi.org/10.32614/RJ-2020-021">10.32614/RJ-2020-021</a></div>
 </div>
-<div id="ref-Rakthanmanon2013">
-<p>28. Rakthanmanon T, Keogh E. Fast shapelets: A scalable algorithm for discovering time series shapelets. In: <em>Proceedings of the 2013 Siam International Conference on Data Mining</em>. Society for Industrial; Applied Mathematics; 2013:668-676. doi:<a href="https://doi.org/10.1137/1.9781611972832.74">10.1137/1.9781611972832.74</a></p>
+<div id="ref-mpf2020" class="csl-entry">
+<div class="csl-left-margin">19. </div><div
+class="csl-right-inline"><span>Matrix Profile Foundation</span>.
+Accessed January 27, 2022. <a
+href="https://matrixprofile.org/">https://matrixprofile.org/</a></div>
 </div>
-<div id="ref-Yeh2017a">
-<p>29. Yeh C-CM, Zhu Y, Ulanova L, et al. Matrix profile i: All pairs similarity joins for time series: A unifying view that includes motifs, discords and shapelets. In: <em>2016 Ieee 16th International Conference on Data Mining (Icdm)</em>. IEEE; 2016:1317-1322. doi:<a href="https://doi.org/10.1109/ICDM.2016.0179">10.1109/ICDM.2016.0179</a></p>
+<div id="ref-VanBenschoten2020" class="csl-entry">
+<div class="csl-left-margin">20. </div><div class="csl-right-inline">Van
+Benschoten A, Ouyang A, Bischoff F, Marrs T. MPA: A novel cross-language
+API for time series analysis. <em>Journal of Open Source Software</em>.
+2020;5(49):2179. doi:<a
+href="https://doi.org/10.21105/joss.02179">10.21105/joss.02179</a></div>
 </div>
-<div id="ref-zhu2016">
-<p>30. Zhu Y, Zimmerman Z, Senobari NS, et al. 2016 ieee 16th international conference on data mining (icdm). In: IEEE; 2016. doi:<a href="https://doi.org/10.1109/icdm.2016.0085">10.1109/icdm.2016.0085</a></p>
+<div id="ref-bischoff2021" class="csl-entry">
+<div class="csl-left-margin">21. </div><div
+class="csl-right-inline">Reducing False Arrhythmia Alarms in the ICU -
+The PhysioNet Computing in Cardiology Challenge 2015. Published online
+March 24, 2021. doi:<a
+href="https://doi.org/10.5281/zenodo.4634013">10.5281/zenodo.4634013</a></div>
 </div>
-<div id="ref-zhu2018">
-<p>31. Zhu Y, Yeh C-CM, Zimmerman Z, Kamgar K, Keogh E. 2018 ieee international conference on data mining (icdm). In: IEEE; 2018. doi:<a href="https://doi.org/10.1109/icdm.2018.00099">10.1109/icdm.2018.00099</a></p>
+<div id="ref-Clifford2015" class="csl-entry">
+<div class="csl-left-margin">22. </div><div
+class="csl-right-inline">Clifford GD, Silva I, Moody B, et al. The
+PhysioNet/computing in cardiology challenge 2015: Reducing false
+arrhythmia alarms in the ICU. In: <em>Computing in Cardiology</em>.;
+2015. doi:<a
+href="https://doi.org/10.1109/cic.2015.7408639">10.1109/cic.2015.7408639</a></div>
+</div>
+<div id="ref-AAMI2002" class="csl-entry">
+<div class="csl-left-margin">23. </div><div
+class="csl-right-inline">Association for the Advancement of Medical
+Instrumentation. <em><span class="nocase">Cardiac monitors, heart rate
+meters, and alarms</span></em>. Association for the Advancement of
+Medical Instrumentation; 2002.</div>
+</div>
+<div id="ref-plesinger2015" class="csl-entry">
+<div class="csl-left-margin">24. </div><div
+class="csl-right-inline">Plesinger F, Klimes P, Halamek J, Jurak P.
+False alarms in intensive care unit monitors: Detection of
+life-threatening arrhythmias using elementary algebra, descriptive
+statistics and fuzzy logic. In: IEEE; 2015. doi:<a
+href="https://doi.org/10.1109/cic.2015.7408641">10.1109/cic.2015.7408641</a></div>
+</div>
+<div id="ref-kalidas2015" class="csl-entry">
+<div class="csl-left-margin">25. </div><div
+class="csl-right-inline">Kalidas V, Tamil LS. Enhancing accuracy of
+arrhythmia classification by combining logical and machine learning
+techniques. In: IEEE; 2015. doi:<a
+href="https://doi.org/10.1109/cic.2015.7411015">10.1109/cic.2015.7411015</a></div>
+</div>
+<div id="ref-couto2015" class="csl-entry">
+<div class="csl-left-margin">26. </div><div
+class="csl-right-inline">Couto P, Ramalho R, Rodrigues R. Suppression of
+false arrhythmia alarms using ECG and pulsatile waveforms. In: IEEE;
+2015. doi:<a
+href="https://doi.org/10.1109/cic.2015.7411019">10.1109/cic.2015.7411019</a></div>
+</div>
+<div id="ref-fallet2015" class="csl-entry">
+<div class="csl-left-margin">27. </div><div
+class="csl-right-inline">Fallet S, Yazdani S, Vesin J-M. A multimodal
+approach to reduce false arrhythmia alarms in the intensive care unit.
+In: IEEE; 2015. doi:<a
+href="https://doi.org/10.1109/cic.2015.7408640">10.1109/cic.2015.7408640</a></div>
+</div>
+<div id="ref-hoogantink2015" class="csl-entry">
+<div class="csl-left-margin">28. </div><div
+class="csl-right-inline">Hoog Antink C, Leonhardt S. Reducing false
+arrhythmia alarms using robust interval estimation and machine learning.
+In: IEEE; 2015. doi:<a
+href="https://doi.org/10.1109/cic.2015.7408642">10.1109/cic.2015.7408642</a></div>
+</div>
+<div id="ref-Akosa2017" class="csl-entry">
+<div class="csl-left-margin">29. </div><div
+class="csl-right-inline">Akosa JS. <span class="nocase">Predictive
+accuracy: A misleading performance measure for highly imbalanced
+data</span>. <em>SAS Global Forum</em>. 2017;942:1-12.</div>
+</div>
+<div id="ref-Wu2020" class="csl-entry">
+<div class="csl-left-margin">30. </div><div class="csl-right-inline">Wu
+R, Keogh E. <span class="nocase">Current Time Series Anomaly Detection
+Benchmarks are Flawed and are Creating the Illusion of Progress</span>.
+<em>IEEE Transactions on Knowledge and Data Engineering</em>. Published
+online September 2021. doi:<a
+href="https://doi.org/10.1109/TKDE.2021.3112126">10.1109/TKDE.2021.3112126</a></div>
+</div>
+<div id="ref-Bakeman2011" class="csl-entry">
+<div class="csl-left-margin">31. </div><div
+class="csl-right-inline">Bakeman R, Quera V. <em><span
+class="nocase">Sequential Analysis and Observational Methods for the
+Behavioral Sciences</span></em>. Cambridge University Press; 2011:1-183.
+doi:<a
+href="https://doi.org/10.1017/CBO9781139017343">10.1017/CBO9781139017343</a></div>
+</div>
+<div id="ref-Sim2005" class="csl-entry">
+<div class="csl-left-margin">32. </div><div class="csl-right-inline">Sim
+J, Wright CC. <span class="nocase">The Kappa Statistic in Reliability
+Studies: Use, Interpretation, and Sample Size Requirements</span>.
+<em>Physical Therapy</em>. 2005;85(3):257-268. doi:<a
+href="https://doi.org/10.1093/ptj/85.3.257">10.1093/ptj/85.3.257</a></div>
+</div>
+<div id="ref-Bakeman1997" class="csl-entry">
+<div class="csl-left-margin">33. </div><div
+class="csl-right-inline">Bakeman R, McArthur D, Quera V, Robinson BF.
+<span class="nocase">Detecting sequential patterns and determining their
+reliability with fallible observers.</span> <em>Psychological
+Methods</em>. 1997;2(4):357-370. doi:<a
+href="https://doi.org/10.1037/1082-989X.2.4.357">10.1037/1082-989X.2.4.357</a></div>
+</div>
+<div id="ref-Morgan2019" class="csl-entry">
+<div class="csl-left-margin">34. </div><div
+class="csl-right-inline">Morgan S. <em><span class="nocase">Research
+Methodology and Statistical Methods</span></em>.; 2019:300.</div>
+</div>
+<div id="ref-sparkfun2021" class="csl-entry">
+<div class="csl-left-margin">35. </div><div
+class="csl-right-inline">SparkFun Electronics. AD8232 single lead heart
+rate monitor. Published 2014. Accessed July 14, 2021. <a
+href="https://www.sparkfun.com/products/12650">https://www.sparkfun.com/products/12650</a></div>
+</div>
+<div id="ref-AnalogDevices2020" class="csl-entry">
+<div class="csl-left-margin">36. </div><div
+class="csl-right-inline">Analog Devices. <span>AD8232 Single-Lead, Heart
+Rate Monitor Front End</span>. Published online 2014. Accessed July 14,
+2021. <a
+href="https://www.analog.com/media/en/technical-documentation/data-sheets/ad8232.pdf">https://www.analog.com/media/en/technical-documentation/data-sheets/ad8232.pdf</a></div>
+</div>
+<div id="ref-arduino2021" class="csl-entry">
+<div class="csl-left-margin">37. </div><div
+class="csl-right-inline">Arduino. <span>Arduino</span>. Published 2008.
+Accessed July 14, 2021. <a
+href="https://www.arduino.cc/">https://www.arduino.cc/</a></div>
+</div>
+<div id="ref-eerikainen2015" class="csl-entry">
+<div class="csl-left-margin">38. </div><div
+class="csl-right-inline">Eerikainen LM, Vanschoren J, Rooijakkers MJ,
+Vullings R, Aarts RM. Decreasing the false alarm rate of arrhythmias in
+intensive care using a machine learning approach. In: IEEE; 2015. doi:<a
+href="https://doi.org/10.1109/cic.2015.7408644">10.1109/cic.2015.7408644</a></div>
+</div>
+<div id="ref-gharghabi2018" class="csl-entry">
+<div class="csl-left-margin">39. </div><div
+class="csl-right-inline">Gharghabi S, Yeh C-CM, Ding Y, et al. Domain
+agnostic online semantic segmentation for multi-dimensional time series.
+<em>Data Mining and Knowledge Discovery</em>. 2018;33(1):96-130. doi:<a
+href="https://doi.org/10.1007/s10618-018-0589-3">10.1007/s10618-018-0589-3</a></div>
+</div>
+<div id="ref-aminikhanghahi2016" class="csl-entry">
+<div class="csl-left-margin">40. </div><div
+class="csl-right-inline">Aminikhanghahi S, Cook DJ. A survey of methods
+for time series change point detection. <em>Knowledge and Information
+Systems</em>. 2016;51(2):339-367. doi:<a
+href="https://doi.org/10.1007/s10115-016-0987-z">10.1007/s10115-016-0987-z</a></div>
+</div>
+<div id="ref-Matsubara2014" class="csl-entry">
+<div class="csl-left-margin">41. </div><div
+class="csl-right-inline">Matsubara Y, Sakurai Y, Faloutsos C. AutoPlait:
+Automatic mining of co-evolving time sequences. <em>Proceedings of the
+ACM SIGMOD International Conference on Management of Data</em>.
+Published online 2014:193-204. doi:<a
+href="https://doi.org/10.1145/2588555.2588556">10.1145/2588555.2588556</a></div>
+</div>
+<div id="ref-Imani2018" class="csl-entry">
+<div class="csl-left-margin">42. </div><div
+class="csl-right-inline">Imani S, Madrid F, Ding W, Crouter S, Keogh E.
+Matrix profile XIII : Time series snippets : A new primitive for time
+series data mining. In: <em>2018 IEEE International Conference on Data
+Mining (ICDM)</em>.; 2018.</div>
+</div>
+<div id="ref-gharghabi2018b" class="csl-entry">
+<div class="csl-left-margin">43. </div><div
+class="csl-right-inline">Gharghabi S, Imani S, Bagnall A, Darvishzadeh
+A, Keogh E. Matrix profile XII: MPdist: A novel time series distance
+measure to allow data mining in more challenging scenarios. In: IEEE;
+2018:965-970. doi:<a
+href="https://doi.org/10.1109/ICDM.2018.00119">10.1109/ICDM.2018.00119</a></div>
+</div>
+<div id="ref-Keogh2005" class="csl-entry">
+<div class="csl-left-margin">44. </div><div
+class="csl-right-inline">Keogh E, Lin J. <span class="nocase">Clustering
+of time-series subsequences is meaningless: implications for previous
+and future research</span>. <em>Knowledge and Information Systems</em>.
+2005;8(2):154-177. doi:<a
+href="https://doi.org/10.1007/s10115-004-0172-7">10.1007/s10115-004-0172-7</a></div>
+</div>
+<div id="ref-Rakthanmanon2013" class="csl-entry">
+<div class="csl-left-margin">45. </div><div
+class="csl-right-inline">Rakthanmanon T, Keogh E. Fast shapelets: A
+scalable algorithm for discovering time series shapelets. In:
+<em>Proceedings of the 2013 SIAM International Conference on Data
+Mining</em>. Society for Industrial; Applied Mathematics; 2013:668-676.
+doi:<a
+href="https://doi.org/10.1137/1.9781611972832.74">10.1137/1.9781611972832.74</a></div>
+</div>
+<div id="ref-Mercer2021" class="csl-entry">
+<div class="csl-left-margin">46. </div><div
+class="csl-right-inline">Mercer R, Alaee S, Abdoli A, Singh S, Murillo
+A, Keogh E. Matrix profile XXIII: Contrast profile: A novel time series
+primitive that allows real world classification. In: <em>ICDM 2021</em>.
+IEEE; 2021:10.</div>
+</div>
+<div id="ref-Bischl2012" class="csl-entry">
+<div class="csl-left-margin">47. </div><div
+class="csl-right-inline">Bischl B, Mersmann O, Trautmann H, Weihs C.
+<span class="nocase">Resampling Methods for Meta-Model Validation with
+Recommendations for Evolutionary Computation</span>. <em>Evolutionary
+Computation</em>. 2012;20(2):249-275. doi:<a
+href="https://doi.org/10.1162/EVCO_a_00069">10.1162/EVCO_a_00069</a></div>
+</div>
+<div id="ref-Hastie2009" class="csl-entry">
+<div class="csl-left-margin">48. </div><div
+class="csl-right-inline">Hastie T, Tibshirani R, Friedman J. <em><span
+class="nocase">The Elements of Statistical Learning: Data Mining,
+Inference, and Prediction</span></em>. Springer; 2009. doi:<a
+href="https://doi.org/10.1007/978-0-387-84858-7">10.1007/978-0-387-84858-7</a></div>
+</div>
+<div id="ref-Bekkar2013" class="csl-entry">
+<div class="csl-left-margin">49. </div><div
+class="csl-right-inline">Bekkar M, Djemaa HK, Alitouche TA. <span
+class="nocase">Evaluation Measures for Models Assessment over Imbalanced
+Data Sets</span>. <em>Journal of Information Engineering and
+Applications</em>. 2013;3(10):27-38. <a
+href="http://www.iiste.org/Journals/index.php/JIEA/article/view/7633">http://www.iiste.org/Journals/index.php/JIEA/article/view/7633</a></div>
+</div>
+<div id="ref-Chicco2020" class="csl-entry">
+<div class="csl-left-margin">50. </div><div
+class="csl-right-inline">Chicco D, Jurman G. <span class="nocase">The
+advantages of the Matthews correlation coefficient (MCC) over F1 score
+and accuracy in binary classification evaluation</span>. <em>BMC
+Genomics</em>. 2020;21(1):6. doi:<a
+href="https://doi.org/10.1186/s12864-019-6413-7">10.1186/s12864-019-6413-7</a></div>
+</div>
+<div id="ref-Matthews1975" class="csl-entry">
+<div class="csl-left-margin">51. </div><div
+class="csl-right-inline">Matthews BW. <span class="nocase">Comparison of
+the predicted and observed secondary structure of T4 phage
+lysozyme</span>. <em>Biochimica et Biophysica Acta (BBA) - Protein
+Structure</em>. 1975;405(2):442-451. doi:<a
+href="https://doi.org/10.1016/0005-2795(75)90109-9">10.1016/0005-2795(75)90109-9</a></div>
+</div>
+<div id="ref-Bifet2015" class="csl-entry">
+<div class="csl-left-margin">52. </div><div
+class="csl-right-inline">Bifet A, de Francisci Morales G, Read J, Holmes
+G, Pfahringer B. <span class="nocase">Efficient Online Evaluation of Big
+Data Stream Classifiers</span>. In: <em>Proceedings of the 21th ACM
+SIGKDD International Conference on Knowledge Discovery and Data
+Mining</em>. Vol 2015-Augus. ACM; 2015:59-68. doi:<a
+href="https://doi.org/10.1145/2783258.2783372">10.1145/2783258.2783372</a></div>
+</div>
+<div id="ref-Dubey2018" class="csl-entry">
+<div class="csl-left-margin">53. </div><div
+class="csl-right-inline">Dubey A, Tarar S. <span
+class="nocase">Evaluation of approximate rank-order clustering using
+matthews correlation coefficient</span>. <em>International Journal of
+Engineering and Advanced Technology</em>. 2018;8(2):106-113.</div>
+</div>
+<div id="ref-Delgado2019" class="csl-entry">
+<div class="csl-left-margin">54. </div><div
+class="csl-right-inline">Delgado R, Tibau X-A. <span class="nocase">Why
+Cohen’s Kappa should be avoided as performance measure in
+classification</span>. Gu Q, ed. <em>PLOS ONE</em>. 2019;14(9):e0222916.
+doi:<a
+href="https://doi.org/10.1371/journal.pone.0222916">10.1371/journal.pone.0222916</a></div>
+</div>
+<div id="ref-PlatformIO" class="csl-entry">
+<div class="csl-left-margin">55. </div><div
+class="csl-right-inline">PlatformIO, a professional collaborative
+platform for embedded development. Accessed January 5, 2022. <a
+href="https://platformio.org/">https://platformio.org/</a></div>
+</div>
+<div id="ref-zhu2016" class="csl-entry">
+<div class="csl-left-margin">56. </div><div class="csl-right-inline">Zhu
+Y, Zimmerman Z, Senobari NS, et al. 2016 IEEE 16th international
+conference on data mining (ICDM). In: IEEE; 2016. doi:<a
+href="https://doi.org/10.1109/icdm.2016.0085">10.1109/icdm.2016.0085</a></div>
+</div>
+<div id="ref-zhu2018" class="csl-entry">
+<div class="csl-left-margin">57. </div><div class="csl-right-inline">Zhu
+Y, Yeh C-CM, Zimmerman Z, Kamgar K, Keogh E. 2018 IEEE international
+conference on data mining (ICDM). In: IEEE; 2018. doi:<a
+href="https://doi.org/10.1109/icdm.2018.00099">10.1109/icdm.2018.00099</a></div>
+</div>
+<div id="ref-Bischoff2021a" class="csl-entry">
+<div class="csl-left-margin">58. </div><div
+class="csl-right-inline">Bischoff F. RPubs - MatrixProfileR -
+benchmarks. Published 2021. Accessed January 12, 2022. <a
+href="https://rpubs.com/franzbischoff/matrixprofiler">https://rpubs.com/franzbischoff/matrixprofiler</a></div>
 </div>
 </div>
 <br>
 <p>
 <button type="button" class="btn btn-default btn-workflowr btn-workflowr-sessioninfo" data-toggle="collapse" data-target="#workflowr-sessioninfo" style="display: block;">
-<span class="glyphicon glyphicon-wrench" aria-hidden="true"></span> Session information
+<span class="glyphicon glyphicon-wrench" aria-hidden="true"></span>
+Session information
 </button>
 </p>
 <div id="workflowr-sessioninfo" class="collapse">
@@ -2048,46 +3323,42 @@ attached base packages:
 [1] stats     graphics  grDevices datasets  utils     methods   base     
 
 other attached packages:
- [1] stringr_1.4.0     ggplot2_3.3.5     gridExtra_2.3     kableExtra_1.3.4 
- [5] tibble_3.1.6      visNetwork_2.1.0  gittargets_0.0.1  tarchetypes_0.4.1
- [9] targets_0.10.0    workflowr_1.7.0   here_1.0.1       
+ [1] stringr_1.4.0         ggplot2_3.3.5         gridExtra_2.3        
+ [4] kableExtra_1.3.4      tibble_3.1.6          visNetwork_2.1.0     
+ [7] glue_1.6.1            gittargets_0.0.1.9000 tarchetypes_0.4.1    
+[10] targets_0.10.0        workflowr_1.7.0       here_1.0.1           
 
 loaded via a namespace (and not attached):
- [1] Rcpp_1.0.8            gert_1.5.0            svglite_2.0.0.9000   
- [4] languageserver_0.3.12 getPass_0.2-2         ps_1.6.0             
- [7] rprojroot_2.0.2       digest_0.6.29         utf8_1.2.2           
-[10] R6_2.5.1              backports_1.4.1       sys_3.4              
-[13] evaluate_0.14         highr_0.9             httr_1.4.2           
-[16] pillar_1.6.4          rlang_0.99.0.9003     uuid_1.0-3           
-[19] rstudioapi_0.13       data.table_1.14.2     whisker_0.4          
-[22] callr_3.7.0           jquerylib_0.1.4       rmarkdown_2.11       
-[25] labeling_0.4.2        webshot_0.5.2         htmlwidgets_1.5.4    
-[28] igraph_1.2.11         munsell_0.5.0         compiler_4.1.2       
-[31] httpuv_1.6.5          xfun_0.29             systemfonts_1.0.3    
-[34] pkgconfig_2.0.3       askpass_1.1           htmltools_0.5.2      
-[37] openssl_1.4.6         tidyselect_1.1.1      codetools_0.2-18     
-[40] viridisLite_0.4.0     fansi_1.0.2           crayon_1.4.2         
-[43] dplyr_1.0.7           withr_2.4.3           later_1.3.0          
-[46] grid_4.1.2            gtable_0.3.0          jsonlite_1.7.2       
-[49] lifecycle_1.0.1       git2r_0.29.0          magrittr_2.0.1       
-[52] credentials_1.3.2     scales_1.1.1          cli_3.1.0            
-[55] stringi_1.7.6         debugme_1.1.0         farver_2.1.0         
-[58] renv_0.15.1           fs_1.5.2              promises_1.2.0.1     
-[61] xml2_1.3.3            bslib_0.3.1           ellipsis_0.3.2       
-[64] generics_0.1.1        vctrs_0.3.8           tools_4.1.2          
-[67] glue_1.6.0            purrr_0.3.4           processx_3.5.2       
-[70] fastmap_1.1.0         yaml_2.2.1            colorspace_2.0-2     
-[73] base64url_1.4         rvest_1.0.2           knitr_1.37           
-[76] sass_0.4.0           </code></pre>
+ [1] fs_1.5.2              bit64_4.0.5           webshot_0.5.2        
+ [4] httr_1.4.2            rprojroot_2.0.2       tools_4.1.2          
+ [7] backports_1.4.1       bslib_0.3.1           utf8_1.2.2           
+[10] R6_2.5.1              colorspace_2.0-2      withr_2.4.3          
+[13] tidyselect_1.1.1      processx_3.5.2        bit_4.0.4            
+[16] compiler_4.1.2        git2r_0.29.0          cli_3.1.1            
+[19] rvest_1.0.2           xml2_1.3.3            labeling_0.4.2       
+[22] sass_0.4.0            scales_1.1.1          checkmate_2.0.0      
+[25] readr_2.1.2           callr_3.7.0           askpass_1.1          
+[28] systemfonts_1.0.3     digest_0.6.29         rmarkdown_2.11.15    
+[31] svglite_2.0.0.9000    pkgconfig_2.0.3       htmltools_0.5.2      
+[34] fastmap_1.1.0         highr_0.9             htmlwidgets_1.5.4    
+[37] rlang_1.0.0.9000      rstudioapi_0.13       farver_2.1.0         
+[40] jquerylib_0.1.4       generics_0.1.2        jsonlite_1.7.3       
+[43] vroom_1.5.7           dplyr_1.0.7           magrittr_2.0.2       
+[46] credentials_1.3.2     Rcpp_1.0.8            munsell_0.5.0        
+[49] fansi_1.0.2           lifecycle_1.0.1       stringi_1.7.6        
+[52] whisker_0.4           yaml_2.2.2            debugme_1.1.0        
+[55] grid_4.1.2            parallel_4.1.2        promises_1.2.0.1     
+[58] crayon_1.4.2          hms_1.1.1             sys_3.4              
+[61] knitr_1.37            ps_1.6.0              languageserver_0.3.12
+[64] pillar_1.7.0          igraph_1.2.11         uuid_1.0-3           
+[67] base64url_1.4         codetools_0.2-18      evaluate_0.14        
+[70] getPass_0.2-2         data.table_1.14.2     renv_0.15.2          
+[73] RcppParallel_5.1.5    vctrs_0.3.8           tzdb_0.2.0           
+[76] httpuv_1.6.5          gtable_0.3.0          openssl_1.4.6        
+[79] purrr_0.3.4           xfun_0.29             later_1.3.0          
+[82] viridisLite_0.4.0     gert_1.5.0            tsmp_0.4.14          
+[85] ellipsis_0.3.2       </code></pre>
 </div>
-</div>
-</div>
-</div>
-<div class="footnotes">
-<hr />
-<ol>
-<li id="fn1"><p>The term “negative” does not imply that the patient has a “normal” ECG. It means that the “negative” section is not a life-threatening condition that needs to trigger an alarm.<a href="#fnref1" class="footnote-back">↩</a></p></li>
-</ol>
 </div>
 
 
@@ -2104,6 +3375,10 @@ footer is added to webpages before the MathJax javascript. -->
 </script>
 
 
+
+
+</div>
+</div>
 
 </div>
 
@@ -2136,6 +3411,35 @@ $(document).ready(function () {
 
 <!-- code folding -->
 
+<script>
+$(document).ready(function ()  {
+
+    // temporarily add toc-ignore selector to headers for the consistency with Pandoc
+    $('.unlisted.unnumbered').addClass('toc-ignore')
+
+    // move toc-ignore selectors from section div to header
+    $('div.section.toc-ignore')
+        .removeClass('toc-ignore')
+        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
+
+    // establish options
+    var options = {
+      selectors: "h1,h2,h3",
+      theme: "bootstrap3",
+      context: '.toc-content',
+      hashGenerator: function (text) {
+        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_');
+      },
+      ignoreSelector: ".toc-ignore",
+      scrollTo: 0
+    };
+    options.showAndHide = true;
+    options.smoothScroll = true;
+
+    // tocify
+    var toc = $("#TOC").tocify(options).data("toc-tocify");
+});
+</script>
 
 <!-- dynamically load mathjax for compatibility with self-contained -->
 <script>

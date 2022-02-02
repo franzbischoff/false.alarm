@@ -35,7 +35,7 @@ print_duration <- function(start, end) {
 }
 ```
 
-Last Updated: `r lubridate::now("UTC")` UTC
+Last Updated: 2021-07-15 02:11:01 UTC
 
 <!-- -*- mode: gfm; extensions: +tex_math_dollars+raw_tex -*- -->
 
