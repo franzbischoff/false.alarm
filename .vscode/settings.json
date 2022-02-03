@@ -245,27 +245,7 @@
     "**/dev/**"
   ],
   "taskExplorer.showLastTasks": false,
-  "terminal.integrated.defaultProfile.linux": "bash",
-  "terminal.integrated.environmentChangesIndicator": "on",
-  "terminal.integrated.profiles.linux": {
-    "bash": {
-      "icon": "terminal-bash",
-      "path": "/bin/bash"
-    },
-    "fish": {
-      "path": "fish"
-    },
-    "tmux": {
-      "icon": "terminal-tmux",
-      "path": "tmux"
-    },
-    "zsh": {
-      "path": "zsh"
-    }
-  },
   "terminal.integrated.scrollback": 10000,
-  "terminal.integrated.tabs.enabled": true,
-  "terminal.integrated.tabs.focusMode": "singleClick",
   "todo-tree.filtering.includeGlobs": [
     "**/src/**",
     "**/R/**",

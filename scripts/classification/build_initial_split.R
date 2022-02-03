@@ -1,4 +1,4 @@
-# the seed is binded to the target hash value, so this is reproductible
+# the seed is binded to the target hash value, so this is reproducible
 # We could just apply initial_split over the `dataset`, but the `strata` argument
 # does not reach the `alarm` column that we use to stratify the sampling.
 # The stratification is done to keep classes, TRUEs and FALSEs proportional to the original dataset

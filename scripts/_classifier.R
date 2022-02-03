@@ -31,7 +31,7 @@ var_positive <- TRUE # c(TRUE, FALSE)
 var_num_shapelets <- 10
 var_num_neighbors <- 10
 var_min_corr_neighbors <- 0.85
-var_pan_contrast <- seq(10, 1000, by = 50)
+var_pan_contrast <- seq(20, 1000, by = 50)
 # var_n_workers <- 1 # This was used for a short time, but lucky seen that the currently code can't
 #  cope with NA/NaN/Inf using parallel tasks. So, let's just use the parallel pipeline feature.
 # var_limit_per_class <- 15
@@ -61,7 +61,7 @@ list(
     #### Pipeline: Make the initial training/test split ----
     ds_initial_split,
     {
-      # the seed is binded to the target hash value, so this is reproductible
+      # the seed is binded to the target hash value, so this is reproducible
       # We could just apply initial_split over the `dataset`, but the `strata` argument
       # does not accept more than one variable, so we need a dummy called "class_alarm" to stratify the sampling.
       # The stratification is done to keep classes, TRUEs and FALSEs proportional to the original dataset
@@ -73,48 +73,40 @@ list(
     tar_map(
       values = list(map_positive = var_positive),
       tar_target(
-        pan_contrast_seq,
-        seq(20, 1000, by = 50)
-      ),
-      tar_target(
         #### Pipeline: Build the positive and negative streams using all classes, with signal validation
-        data_pos_neg,
+        data_pos_neg_pan,
         build_pos_neg(ds_initial_split,
           signal = map_signals_include,
-          shapelet_size = pan_contrast_seq,
+          shapelet_size = var_pan_contrast,
           positive = map_positive,
           validate = TRUE,
-          same_class = FALSE
-        ),
-        pattern = map(pan_contrast_seq)
+          same_class = TRUE
+        )
       ),
       tar_target(
         pancontrast,
-        pan_contrast(data_pos_neg,
+        pan_contrast(data_pos_neg_pan,
           signal = map_signals_include,
-          shapelet_sizes = pan_contrast_seq
-        ),
-        pattern = map(data_pos_neg, pan_contrast_seq)
+          shapelet_sizes = var_pan_contrast
+        )
       ),
       tar_target(
         #### Pipeline: Build the positive and negative streams using all classes, with signal validation
-        data_all_pos_neg,
+        data_all_pos_neg_pan,
         build_pos_neg(ds_initial_split,
           signal = map_signals_include,
-          shapelet_size = pan_contrast_seq,
+          shapelet_size = var_pan_contrast,
           positive = map_positive,
           validate = TRUE,
           same_class = FALSE
-        ),
-        pattern = map(pan_contrast_seq)
+        )
       ),
       tar_target(
         pan_allcontrast,
-        pan_contrast(data_all_pos_neg,
+        pan_contrast(data_all_pos_neg_pan,
           signal = map_signals_include,
-          shapelet_sizes = pan_contrast_seq
-        ),
-        pattern = map(data_all_pos_neg, pan_contrast_seq)
+          shapelet_sizes = var_pan_contrast
+        )
       ),
       tar_map(
         values = list(map_shapelet_size = var_shapelet_size),

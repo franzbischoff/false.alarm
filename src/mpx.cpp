@@ -889,8 +889,8 @@ List mpxab_rcpp(NumericVector data_ref, NumericVector query_ref, uint64_t window
     uint32_t a_len = data_ref.length();
     uint32_t b_len = query_ref.length();
 
-    List msd_a = muinvn_rcpp_parallel(data_ref, window_size);
-    List msd_b = muinvn_rcpp_parallel(query_ref, window_size);
+    List msd_a = muinvn_rcpp(data_ref, window_size);
+    List msd_b = muinvn_rcpp(query_ref, window_size);
 
     NumericVector mmu_a = msd_a["avg"];
     NumericVector ssig_a = msd_a["sig"];
