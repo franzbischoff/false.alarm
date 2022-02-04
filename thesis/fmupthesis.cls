@@ -19,12 +19,13 @@
 %   Minor bug -- seems to be a more general LaTeX thing:
 %  If you use \frontmatter \mainmatter without any chapters inbetween
 %  be prepared to have the page numbering messed up. Not a big deal,
-%  but I'm not sure how to fix it.
-%
+%  but I'm not sure how to fix it
+%.
+% Modified by: Francisco Bischoff
 %
 
 \NeedsTeXFormat{LaTeX2e}
-\ProvidesClass{reedthesis}[2004/01/27 The Reed College Thesis Class]
+\ProvidesClass{fmupthesis}[2022/02/02 Faculdade de Medicina Universidade do Porto]
 \DeclareOption*{\PassOptionsToClass{\CurrentOption}{book}}
 \ProcessOptions\relax
 \LoadClass{book}
@@ -52,8 +53,8 @@
 \IfFileExists{upquote.sty}{\usepackage{upquote}}{}
 % use microtype if available
 \IfFileExists{microtype.sty}{%
-\usepackage{microtype}
-\UseMicrotypeSet[protrusion]{basicmath} % disable protrusion for tt fonts
+  \usepackage{microtype}
+  \UseMicrotypeSet[protrusion]{basicmath} % disable protrusion for tt fonts
 }{}
 \usepackage{color}
 %\newcommand{\VerbBar}{|}
@@ -105,24 +106,24 @@
 \AtBeginDocument{%
   \fancyhf{}
   \fancyhead[LE,RO]{\thepage}
-%  \fancyhead[RE]{\slshape \leftmark}
-%  \fancyhead[LO]{\slshape \rightmark}
-%	The above makes your headers in all caps. If you would like different headers, choose one of the following options (be sure to remove the % symbol from both the right and left headers):
-	 \fancyhead[RE]{\slshape \nouppercase \leftmark} % This makes the headers on the RIGHT side pages be italic and use lowercase With Capitals When Specified.
-	\fancyhead[LO]{\slshape \nouppercase \rightmark} % This does the same thing to the LEFT side pages
-%	or
-%	\fancyhead[RE]{\scshape \leftmark} % The RIGHT headers will be in small caps.
-%	\fancyhead[LO]{\scshape \rightmark} %  And so will the LEFT headers
+  %  \fancyhead[RE]{\slshape \leftmark}
+  %  \fancyhead[LO]{\slshape \rightmark}
+  %	The above makes your headers in all caps. If you would like different headers, choose one of the following options (be sure to remove the % symbol from both the right and left headers):
+  \fancyhead[RE]{\slshape \nouppercase \leftmark} % This makes the headers on the RIGHT side pages be italic and use lowercase With Capitals When Specified.
+  \fancyhead[LO]{\slshape \nouppercase \rightmark} % This does the same thing to the LEFT side pages
+  %	or
+  %	\fancyhead[RE]{\scshape \leftmark} % The RIGHT headers will be in small caps.
+  %	\fancyhead[LO]{\scshape \rightmark} %  And so will the LEFT headers
   \pagestyle{fancy}
 
-% Psych majors: You do not need the following six lines, as it conflicts with apacite, so comment them out.
+  % Psych majors: You do not need the following six lines, as it conflicts with apacite, so comment them out.
   \let\oldthebibliography=\thebibliography
   \let\endoldthebibliography=\endthebibliography
   \renewenvironment{thebibliography}[1]{
     \oldthebibliography{#1}
     \addcontentsline{toc}{chapter}{\bibname}
   }{\endoldthebibliography}
- %%%%%% end of things for psych majors to comment out
+  %%%%%% end of things for psych majors to comment out
 
   \let\oldtheindex=\theindex
   \let\endoldtheindex=\endtheindex
@@ -135,40 +136,40 @@
 % Stolen from book.cls and modified
 \let\RToldchapter\chapter
 \renewcommand{\chapter}{\if@openright\RTcleardoublepage
-		    \else\clearpage\fi
-		    \thispagestyle{empty}%
-		    \global\@topnum\z@
-		    \@afterindentfalse
-		    \secdef\@chapter\@schapter}
+  \else\clearpage\fi
+  \thispagestyle{empty}%
+  \global\@topnum\z@
+  \@afterindentfalse
+  \secdef\@chapter\@schapter}
 
 % Stolen from book.cls PBC 5/12/05
 % Using this to actually show "Chapter 1" in TOC instead of "1"
 \def\@chapter[#1]#2{\ifnum \c@secnumdepth >\m@ne
-                       \if@mainmatter
-                         \refstepcounter{chapter}%
-                         \typeout{\@chapapp\space\thechapter.}%
-                         \addcontentsline{toc}{chapter}%
-                         {\@chapapp\space\thechapter:\space#1}%
-                       \else
-                         \addcontentsline{toc}{chapter}{#1}%
-                       \fi
-                    \else
-                      \addcontentsline{toc}{chapter}{#1}%
-                    \fi
-                    \chaptermark{#1}%
-                    \addtocontents{lof}{\protect\addvspace{10\p@}}%
-                    \addtocontents{lot}{\protect\addvspace{10\p@}}%
-                    \if@twocolumn
-                      \@topnewpage[\@makechapterhead{#2}]%
-                    \else
-                      \@makechapterhead{#2}%
-                      \@afterheading
-                    \fi}
+    \if@mainmatter
+      \refstepcounter{chapter}%
+      \typeout{\@chapapp\space\thechapter.}%
+      \addcontentsline{toc}{chapter}%
+      {\@chapapp\space\thechapter:\space#1}%
+    \else
+      \addcontentsline{toc}{chapter}{#1}%
+    \fi
+  \else
+    \addcontentsline{toc}{chapter}{#1}%
+  \fi
+  \chaptermark{#1}%
+  \addtocontents{lof}{\protect\addvspace{10\p@}}%
+  \addtocontents{lot}{\protect\addvspace{10\p@}}%
+  \if@twocolumn
+    \@topnewpage[\@makechapterhead{#2}]%
+  \else
+    \@makechapterhead{#2}%
+    \@afterheading
+  \fi}
 
 \newcommand{\RTcleardoublepage}{
-	\clearpage\if@twoside \ifodd\c@page\else
-	\thispagestyle{empty}\hbox{}\newpage
-	\if@twocolumn\hbox{}\newpage\fi\fi\fi}
+  \clearpage\if@twoside \ifodd\c@page\else
+      \thispagestyle{empty}\hbox{}\newpage
+      \if@twocolumn\hbox{}\newpage\fi\fi\fi}
 
 \let\RToldcleardoublepage\cleardoublepage
 \renewcommand{\cleardoublepage}{\RTcleardoublepage}
@@ -217,15 +218,15 @@
     \vskip 1.0em \@plus\p@
     \setlength\@tempdima{1.5em}%
     \begingroup
-      \parindent \z@ \rightskip \@pnumwidth
-      \parfillskip -\@pnumwidth
-      \leavevmode \bfseries
-      \advance\leftskip\@tempdima
-      \hskip -\leftskip
-      #1\nobreak\normalfont
-      \leaders\hbox{$\m@th \mkern \@dotsep mu\hbox{.}\mkern \@dotsep mu$}\hfill
-      \nobreak\hb@xt@\@pnumwidth{\bfseries \hss #2}\par
-      \penalty\@highpenalty
+    \parindent \z@ \rightskip \@pnumwidth
+    \parfillskip -\@pnumwidth
+    \leavevmode \bfseries
+    \advance\leftskip\@tempdima
+    \hskip -\leftskip
+    #1\nobreak\normalfont
+    \leaders\hbox{$\m@th \mkern \@dotsep mu\hbox{.}\mkern \@dotsep mu$}\hfill
+    \nobreak\hb@xt@\@pnumwidth{\bfseries \hss #2}\par
+    \penalty\@highpenalty
     \endgroup
   \fi}
 
@@ -285,64 +286,64 @@
 
 \renewcommand{\maketitle}{%
   {\pagestyle{empty}
-  \fontsize{12}{14}\selectfont
-  \begin{titlepage}
-  \newpage
-  \let\footnotesize\small
-  \let\footnoterule\relax
-  \let \footnote \thanks
+      \fontsize{12}{14}\selectfont
+      \begin{titlepage}
+        \newpage
+        \let\footnotesize\small
+        \let\footnoterule\relax
+        \let \footnote \thanks
 
-  \baselineskip = 1.4\baselineskip
-  \setbox0=\hbox{of the Requirements for the Degree}
+        \baselineskip = 1.4\baselineskip
+        \setbox0=\hbox{of the Requirements for the Degree}
 
-  \begin{center}
-    \setcounter{page}{1}
-    \null\vfil
-    {\fontsize{12}{14}\selectfont \@title}
-    \vfil
-    \centerline{\hbox to \wd0 {\hbox{}\hrulefill\hbox{}}}
-    \vfil
-    A Thesis \\
-    Presented to \\
-    \@thedivisionof \ \@division \\
-    \@institution
-    \vfil
-    \centerline{\hbox to \wd0 {\hbox{}\hrulefill\hbox{}}}
-    \vfil
-    In Partial Fulfillment \\
-    of the Requirements for the Degree \\
-    \@degree
-    \vfil
-    \centerline{\hbox to \wd0 {\hbox{}\hrulefill\hbox{}}}
-    \bigskip
-    \centerline{}
-    \bigskip
-    {\fontsize{12}{14}\selectfont \lineskip .75em
-    \begin{tabular}[t]{c}%
-      \@author
-    \end{tabular}\par}
-    \vskip 1.5em
-    {\fontsize{12}{14}\selectfont \@date \par}
-  \end{center}\par
-  \end{titlepage}
+        \begin{center}
+          \setcounter{page}{1}
+          \null\vfil
+          {\fontsize{12}{14}\selectfont \@title}
+          \vfil
+          \centerline{\hbox to \wd0 {\hbox{}\hrulefill\hbox{}}}
+          \vfil
+          A Thesis \\
+          Presented to \\
+          \@thedivisionof \ \@division \\
+          \@institution
+          \vfil
+          \centerline{\hbox to \wd0 {\hbox{}\hrulefill\hbox{}}}
+          \vfil
+          In Partial Fulfillment \\
+          of the Requirements for the Degree \\
+          \@degree
+          \vfil
+          \centerline{\hbox to \wd0 {\hbox{}\hrulefill\hbox{}}}
+          \bigskip
+          \centerline{}
+          \bigskip
+          {\fontsize{12}{14}\selectfont \lineskip .75em
+            \begin{tabular}[t]{c}%
+              \@author
+            \end{tabular}\par}
+          \vskip 1.5em
+            {\fontsize{12}{14}\selectfont \@date \par}
+        \end{center}\par
+      \end{titlepage}
 
-%% Approved for the division page
-  \cleardoublepage
-  {\fontsize{12}{14}
-  \setbox0=\hbox{Approved for the \@approvedforthe}
-  \thispagestyle{empty}
-  \null\vfil		% just below center of page
-  \par\vskip 6cm	% below center, not center
-  \centerline{\copy0}	% approved
-  \centerline{(\@department)} %major
-  \vskip 1cm		%space to sign
-  \centerline{\makebox[\wd0][c]{\hrulefill}
-	\if@altadvisor \makebox[.5in]{} \makebox[\wd0][c]{\hrulefill} \fi}
-  \centerline{\makebox[\wd0][c]{\@advisor}
-	\if@altadvisor \makebox[.5in]{} \makebox[\wd0][c]{\@altadvisor} \fi}
-  \par\vfil\null}
-  \cleardoublepage
-  }
+      %% Approved for the division page
+      \cleardoublepage
+      {\fontsize{12}{14}
+        \setbox0=\hbox{Approved for the \@approvedforthe}
+        \thispagestyle{empty}
+        \null\vfil		% just below center of page
+        \par\vskip 6cm	% below center, not center
+        \centerline{\copy0}	% approved
+        \centerline{(\@department)} %major
+        \vskip 1cm		%space to sign
+        \centerline{\makebox[\wd0][c]{\hrulefill}
+          \if@altadvisor \makebox[.5in]{} \makebox[\wd0][c]{\hrulefill} \fi}
+        \centerline{\makebox[\wd0][c]{\@advisor}
+          \if@altadvisor \makebox[.5in]{} \makebox[\wd0][c]{\@altadvisor} \fi}
+        \par\vfil\null}
+      \cleardoublepage
+    }
 }
 
 % From JSS

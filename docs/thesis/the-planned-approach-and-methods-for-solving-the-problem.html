@@ -5,21 +5,21 @@
   <meta charset="utf-8" />
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
   <title>3 The planned approach and methods for solving the problem | Detecting life-threatening patterns in Point-of-care ECG using efficient memory and processor power</title>
-  <meta name="description" content="3 The planned approach and methods for solving the problem | Detecting life-threatening patterns in Point-of-care ECG using efficient memory and processor power" />
-  <meta name="generator" content="bookdown 0.24.1 and GitBook 2.6.7" />
+  <meta name="description" content="This thesis is about low-power devices and ECG" />
+  <meta name="generator" content="bookdown 0.24.4 and GitBook 2.6.7" />
 
   <meta property="og:title" content="3 The planned approach and methods for solving the problem | Detecting life-threatening patterns in Point-of-care ECG using efficient memory and processor power" />
   <meta property="og:type" content="book" />
-  
-  
-  
+  <meta property="og:url" content="https://franzbischoff.github.io/false.alarm/thesis/" />
+  <meta property="og:image" content="https://franzbischoff.github.io/false.alarm/thesis//figure/FullSetup.jpg" />
+  <meta property="og:description" content="This thesis is about low-power devices and ECG" />
   <meta name="github-repo" content="franzbischoff/false.alarm" />
 
   <meta name="twitter:card" content="summary" />
   <meta name="twitter:title" content="3 The planned approach and methods for solving the problem | Detecting life-threatening patterns in Point-of-care ECG using efficient memory and processor power" />
   
-  
-  
+  <meta name="twitter:description" content="This thesis is about low-power devices and ECG" />
+  <meta name="twitter:image" content="https://franzbischoff.github.io/false.alarm/thesis//figure/FullSetup.jpg" />
 
 <meta name="author" content="Francisco Bischoff" />
 
@@ -28,10 +28,11 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black" />
-  
+  <link rel="apple-touch-icon-precomposed" sizes="120x120" href="favicon.ico" />
   <link rel="shortcut icon" href="favicon.ico" type="image/x-icon" />
 <link rel="prev" href="related-works.html"/>
 <link rel="next" href="whatever.html"/>
+<script src="libs/header-attrs-2.11.13/header-attrs.js"></script>
 <script src="libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/fuse.js@6.4.6/dist/fuse.min.js"></script>
 <link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
@@ -49,15 +50,39 @@
 
 
 
-<script src="libs/accessible-code-block-0.0.1/empty-anchor.js"></script>
-<link href="libs/anchor-sections-1.0.1/anchor-sections.css" rel="stylesheet" />
-<script src="libs/anchor-sections-1.0.1/anchor-sections.js"></script>
+<link href="libs/anchor-sections-1.1.0/anchor-sections.css" rel="stylesheet" />
+<link href="libs/anchor-sections-1.1.0/anchor-sections-hash.css" rel="stylesheet" />
+<script src="libs/anchor-sections-1.1.0/anchor-sections.js"></script>
 <script src="libs/kePrint-0.0.1/kePrint.js"></script>
 <link href="libs/lightable-0.0.1/lightable.css" rel="stylesheet" />
 
 
 
+<style type="text/css">
+/* Used with Pandoc 2.11+ new --citeproc when CSL is used */
+div.csl-bib-body { }
+div.csl-entry {
+  clear: both;
+}
+.hanging div.csl-entry {
+  margin-left:2em;
+  text-indent:-2em;
+}
+div.csl-left-margin {
+  min-width:2em;
+  float:left;
+}
+div.csl-right-inline {
+  margin-left:2em;
+  padding-left:1em;
+}
+div.csl-indent {
+  margin-left: 2em;
+}
+</style>
 
+<link rel="stylesheet" href="css/style.css" type="text/css" />
+<link rel="stylesheet" href="css/toc.css" type="text/css" />
 </head>
 
 <body>
@@ -70,30 +95,29 @@
       <nav role="navigation">
 
 <ul class="summary">
-<li><a href='https://franzbischoff.github.io/false.alarm/'>Back to the workflow</a></li>
+<li>
+  <a href='https://franzbischoff.github.io/false.alarm/'>Back to the workflow</a>
+</li>
+
 <li class="divider"></li>
-<li class="chapter" data-level="" data-path="index.html"><a href="index.html"><i class="fa fa-check"></i>Preliminary Content</a><ul>
-<li class="chapter" data-level="" data-path="index.html"><a href="index.html#acknowledgements"><i class="fa fa-check"></i>Acknowledgements</a></li>
-<li class="chapter" data-level="" data-path="index.html"><a href="index.html#preface"><i class="fa fa-check"></i>Preface</a></li>
-<li class="chapter" data-level="" data-path="index.html"><a href="index.html#dedication"><i class="fa fa-check"></i>Dedication</a></li>
-<li class="chapter" data-level="" data-path="index.html"><a href="index.html#abstract"><i class="fa fa-check"></i>Abstract</a></li>
+<li><a href="introduction.html#introduction">Introduction<span></span></a></li>
+<li class="chapter" data-level="1" data-path="objectives-and-the-research-question.html"><a href="objectives-and-the-research-question.html"><i class="fa fa-check"></i><b>1</b> Objectives and the research question<span></span></a></li>
+<li class="chapter" data-level="2" data-path="related-works.html"><a href="related-works.html"><i class="fa fa-check"></i><b>2</b> Related Works<span></span></a></li>
+<li class="chapter" data-level="3" data-path="the-planned-approach-and-methods-for-solving-the-problem.html"><a href="the-planned-approach-and-methods-for-solving-the-problem.html"><i class="fa fa-check"></i><b>3</b> The planned approach and methods for solving the problem<span></span></a>
+<ul>
+<li class="chapter" data-level="3.1" data-path="the-planned-approach-and-methods-for-solving-the-problem.html"><a href="the-planned-approach-and-methods-for-solving-the-problem.html#state-of-the-art"><i class="fa fa-check"></i><b>3.1</b> State of the art<span></span></a></li>
+<li class="chapter" data-level="3.2" data-path="the-planned-approach-and-methods-for-solving-the-problem.html"><a href="the-planned-approach-and-methods-for-solving-the-problem.html#research-plan-and-methods"><i class="fa fa-check"></i><b>3.2</b> Research plan and methods<span></span></a>
+<ul>
+<li class="chapter" data-level="3.2.1" data-path="the-planned-approach-and-methods-for-solving-the-problem.html"><a href="the-planned-approach-and-methods-for-solving-the-problem.html#type-of-study"><i class="fa fa-check"></i><b>3.2.1</b> Type of study<span></span></a></li>
+<li class="chapter" data-level="3.2.2" data-path="the-planned-approach-and-methods-for-solving-the-problem.html"><a href="the-planned-approach-and-methods-for-solving-the-problem.html#the-data"><i class="fa fa-check"></i><b>3.2.2</b> The data<span></span></a></li>
+<li class="chapter" data-level="3.2.3" data-path="the-planned-approach-and-methods-for-solving-the-problem.html"><a href="the-planned-approach-and-methods-for-solving-the-problem.html#workflow"><i class="fa fa-check"></i><b>3.2.3</b> Workflow<span></span></a></li>
+<li class="chapter" data-level="3.2.4" data-path="the-planned-approach-and-methods-for-solving-the-problem.html"><a href="the-planned-approach-and-methods-for-solving-the-problem.html#statistical-analysis"><i class="fa fa-check"></i><b>3.2.4</b> Statistical analysis<span></span></a></li>
+<li class="chapter" data-level="3.2.5" data-path="the-planned-approach-and-methods-for-solving-the-problem.html"><a href="the-planned-approach-and-methods-for-solving-the-problem.html#research-team"><i class="fa fa-check"></i><b>3.2.5</b> Research Team<span></span></a></li>
 </ul></li>
-<li class="chapter" data-level="" data-path="introduction.html"><a href="introduction.html"><i class="fa fa-check"></i>Introduction</a></li>
-<li class="chapter" data-level="1" data-path="objectives-and-the-research-question.html"><a href="objectives-and-the-research-question.html"><i class="fa fa-check"></i><b>1</b> Objectives and the research question</a></li>
-<li class="chapter" data-level="2" data-path="related-works.html"><a href="related-works.html"><i class="fa fa-check"></i><b>2</b> Related Works</a></li>
-<li class="chapter" data-level="3" data-path="the-planned-approach-and-methods-for-solving-the-problem.html"><a href="the-planned-approach-and-methods-for-solving-the-problem.html"><i class="fa fa-check"></i><b>3</b> The planned approach and methods for solving the problem</a><ul>
-<li class="chapter" data-level="3.1" data-path="the-planned-approach-and-methods-for-solving-the-problem.html"><a href="the-planned-approach-and-methods-for-solving-the-problem.html#state-of-the-art"><i class="fa fa-check"></i><b>3.1</b> State of the art</a></li>
-<li class="chapter" data-level="3.2" data-path="the-planned-approach-and-methods-for-solving-the-problem.html"><a href="the-planned-approach-and-methods-for-solving-the-problem.html#research-plan-and-methods"><i class="fa fa-check"></i><b>3.2</b> Research plan and methods</a><ul>
-<li class="chapter" data-level="3.2.1" data-path="the-planned-approach-and-methods-for-solving-the-problem.html"><a href="the-planned-approach-and-methods-for-solving-the-problem.html#type-of-study"><i class="fa fa-check"></i><b>3.2.1</b> Type of study</a></li>
-<li class="chapter" data-level="3.2.2" data-path="the-planned-approach-and-methods-for-solving-the-problem.html"><a href="the-planned-approach-and-methods-for-solving-the-problem.html#the-data"><i class="fa fa-check"></i><b>3.2.2</b> The data</a></li>
-<li class="chapter" data-level="3.2.3" data-path="the-planned-approach-and-methods-for-solving-the-problem.html"><a href="the-planned-approach-and-methods-for-solving-the-problem.html#workflow"><i class="fa fa-check"></i><b>3.2.3</b> Workflow</a></li>
-<li class="chapter" data-level="3.2.4" data-path="the-planned-approach-and-methods-for-solving-the-problem.html"><a href="the-planned-approach-and-methods-for-solving-the-problem.html#statistical-analysis"><i class="fa fa-check"></i><b>3.2.4</b> Statistical analysis</a></li>
-<li class="chapter" data-level="3.2.5" data-path="the-planned-approach-and-methods-for-solving-the-problem.html"><a href="the-planned-approach-and-methods-for-solving-the-problem.html#research-team"><i class="fa fa-check"></i><b>3.2.5</b> Research Team</a></li>
+<li class="chapter" data-level="3.3" data-path="the-planned-approach-and-methods-for-solving-the-problem.html"><a href="the-planned-approach-and-methods-for-solving-the-problem.html#expected-results-and-outcomes"><i class="fa fa-check"></i><b>3.3</b> Expected results and outcomes<span></span></a></li>
 </ul></li>
-<li class="chapter" data-level="3.3" data-path="the-planned-approach-and-methods-for-solving-the-problem.html"><a href="the-planned-approach-and-methods-for-solving-the-problem.html#expected-results-and-outcomes"><i class="fa fa-check"></i><b>3.3</b> Expected results and outcomes</a></li>
-</ul></li>
-<li class="chapter" data-level="4" data-path="whatever.html"><a href="whatever.html"><i class="fa fa-check"></i><b>4</b> Whatever</a></li>
-<li class="chapter" data-level="" data-path="references.html"><a href="references.html"><i class="fa fa-check"></i>References</a></li>
+<li class="chapter" data-level="4" data-path="whatever.html"><a href="whatever.html"><i class="fa fa-check"></i><b>4</b> Whatever<span></span></a></li>
+<li><a href="references.html#references">References<span></span></a></li>
 </ul>
 
       </nav>
@@ -111,10 +135,10 @@
           <div class="page-inner">
 
             <section class="normal" id="section-">
-<div id="the-planned-approach-and-methods-for-solving-the-problem" class="section level1">
-<h1><span class="header-section-number">3</span> The planned approach and methods for solving the problem</h1>
-<div id="state-of-the-art" class="section level2">
-<h2><span class="header-section-number">3.1</span> State of the art</h2>
+<div id="the-planned-approach-and-methods-for-solving-the-problem" class="section level1 hasAnchor" number="3">
+<h1><span class="header-section-number">3</span> The planned approach and methods for solving the problem<a href="the-planned-approach-and-methods-for-solving-the-problem.html#the-planned-approach-and-methods-for-solving-the-problem" class="anchor-section" aria-label="Anchor link to header"></a></h1>
+<div id="state-of-the-art" class="section level2 hasAnchor" number="3.1">
+<h2><span class="header-section-number">3.1</span> State of the art<a href="the-planned-approach-and-methods-for-solving-the-problem.html#state-of-the-art" class="anchor-section" aria-label="Anchor link to header"></a></h2>
 <p>A literature review of the last ten years is being conducted to assess state of the art for ECG automatic processing
 collecting the following points if available : (1) The memory and space used to perform the primary goal of the
 algorithm (sound an alarm, for ex.). (2) The type of algorithms used to identify ECG anomalies. (3) The type of
@@ -130,8 +154,8 @@ algorithms used to identify specific diagnoses (like a flutter, hyperkalemia, an
 <p>Articles published after “The PhysioNet/Computing in Cardiology Challenge 2015: Reducing False Arrhythmia Alarms in the
 ICU” will also be analyzed.</p>
 </div>
-<div id="research-plan-and-methods" class="section level2">
-<h2><span class="header-section-number">3.2</span> Research plan and methods</h2>
+<div id="research-plan-and-methods" class="section level2 hasAnchor" number="3.2">
+<h2><span class="header-section-number">3.2</span> Research plan and methods<a href="the-planned-approach-and-methods-for-solving-the-problem.html#research-plan-and-methods" class="anchor-section" aria-label="Anchor link to header"></a></h2>
 <p>This research is being conducted using the Research Compendium principles<span class="citation"><sup><a href="references.html#ref-compendium2019" role="doc-biblioref">15</a></sup></span>:</p>
 <ol style="list-style-type: decimal">
 <li>Stick with the convention of your peers;</li>
@@ -142,17 +166,17 @@ ICU” will also be analyzed.</p>
 <p>Currently, the dataset used is stored on a public repository<span class="citation"><sup><a href="references.html#ref-franz_dataset" role="doc-biblioref">17</a></sup></span>, the source code is publicly open and
 stored on Github<span class="citation"><sup><a href="references.html#ref-franz_github" role="doc-biblioref">18</a></sup></span>, while the reports and reproducibility information on each step is found on a public
 website<span class="citation"><sup><a href="references.html#ref-franz_website" role="doc-biblioref">19</a></sup></span>.</p>
-<div id="type-of-study" class="section level3">
-<h3><span class="header-section-number">3.2.1</span> Type of study</h3>
+<div id="type-of-study" class="section level3 hasAnchor" number="3.2.1">
+<h3><span class="header-section-number">3.2.1</span> Type of study<a href="the-planned-approach-and-methods-for-solving-the-problem.html#type-of-study" class="anchor-section" aria-label="Anchor link to header"></a></h3>
 <p>This thesis will be a diagnostic study as the algorithm must classify the change in pattern as positive or negative for
 life-threatening.</p>
 </div>
-<div id="the-data" class="section level3">
-<h3><span class="header-section-number">3.2.2</span> The data</h3>
+<div id="the-data" class="section level3 hasAnchor" number="3.2.2">
+<h3><span class="header-section-number">3.2.2</span> The data<a href="the-planned-approach-and-methods-for-solving-the-problem.html#the-data" class="anchor-section" aria-label="Anchor link to header"></a></h3>
 <p>Initially we will use the CinC/Physionet Challenge 2015 dataset that is publicly available on Physionet. This dataset is
 a good start for exploring the main goal of reduce false alarms. This dataset was manually selected for this challenge
 and the events were labeled by experts, so it is not RAW data. All signals have been resampled (using anti-alias
-filters) to 12 bit, 250 Hz and have had FIR bandpass [0.05 to 40Hz] and mains notch filters applied to remove noise.
+filters) to 12 bit, 250 Hz and have had FIR band-pass [0.05 to 40Hz] and mains notch filters applied to remove noise.
 Pacemaker and other artifacts may be present on the ECG<span class="citation"><sup><a href="references.html#ref-Clifford2015" role="doc-biblioref">6</a></sup></span>. Furthermore, this dataset contains at least two
 ECG derivations and one or more variables like arterial blood pressure, photoplethysmograph readings, and respiration
 movements.</p>
@@ -164,15 +188,15 @@ dimension<span class="citation"><sup><a href="references.html#ref-gharghabi2018"
 the model in real settings and robustness (using RAW data instead of filtered data). The variables available on
 Physionet’s dataset are commonly available on Portuguese ICU’s.</p>
 </div>
-<div id="workflow" class="section level3">
-<h3><span class="header-section-number">3.2.3</span> Workflow</h3>
+<div id="workflow" class="section level3 hasAnchor" number="3.2.3">
+<h3><span class="header-section-number">3.2.3</span> Workflow<a href="the-planned-approach-and-methods-for-solving-the-problem.html#workflow" class="anchor-section" aria-label="Anchor link to header"></a></h3>
 <p>All steps of the process will be managed using the R package <code>targets</code><span class="citation"><sup><a href="references.html#ref-landau2021" role="doc-biblioref">21</a></sup></span> from data extraction to the final
-report, as shown in Fig. .</p>
+report, as shown in Fig. <span class="math inline">\(\ref{fig:targets}\)</span>.</p>
 <p>The report will then be available on the main webpage<span class="citation"><sup><a href="references.html#ref-franz_website" role="doc-biblioref">19</a></sup></span>, allowing inspection of previous versions managed
-by the R package <code>workflowr</code><span class="citation"><sup><a href="references.html#ref-workflowr2021" role="doc-biblioref">22</a></sup></span>, as we can see in Fig. .</p>
+by the R package <code>workflowr</code><span class="citation"><sup><a href="references.html#ref-workflowr2021" role="doc-biblioref">22</a></sup></span>, as we can see in Fig. <span class="math inline">\(\ref{fig:workflow_workflowr}\)</span>.</p>
 </div>
-<div id="statistical-analysis" class="section level3">
-<h3><span class="header-section-number">3.2.4</span> Statistical analysis</h3>
+<div id="statistical-analysis" class="section level3 hasAnchor" number="3.2.4">
+<h3><span class="header-section-number">3.2.4</span> Statistical analysis<a href="the-planned-approach-and-methods-for-solving-the-problem.html#statistical-analysis" class="anchor-section" aria-label="Anchor link to header"></a></h3>
 <p>The Statistical analysis will be performed using R language v4.0.5 or greater and it will be computed the ROC curve for
 the algorithm.</p>
 <p>The experiment will be conducted using the Matrix Profile concept<span class="citation"><sup><a href="references.html#ref-yeh2016" role="doc-biblioref">23</a></sup></span>, the state-of-the-art for time series
@@ -181,8 +205,8 @@ is the online semantic segmentation for multi-dimensional time series<span class
 <p>In addition, we will combine the fading factors<span class="citation"><sup><a href="references.html#ref-Gama2013" role="doc-biblioref">24</a>,<a href="references.html#ref-Rodrigues2010" role="doc-biblioref">25</a></sup></span> strategy to minimize the memory and space
 consumption lowering the processor power needed, allowing this algorithm to be used in almost any device.</p>
 </div>
-<div id="research-team" class="section level3">
-<h3><span class="header-section-number">3.2.5</span> Research Team</h3>
+<div id="research-team" class="section level3 hasAnchor" number="3.2.5">
+<h3><span class="header-section-number">3.2.5</span> Research Team<a href="the-planned-approach-and-methods-for-solving-the-problem.html#research-team" class="anchor-section" aria-label="Anchor link to header"></a></h3>
 <ul>
 <li>Thesis Author: Francisco Bischoff</li>
 <li>Supervisor: Professor Pedro Pereira Rodrigues</li>
@@ -190,8 +214,8 @@ consumption lowering the processor power needed, allowing this algorithm to be u
 </ul>
 </div>
 </div>
-<div id="expected-results-and-outcomes" class="section level2">
-<h2><span class="header-section-number">3.3</span> Expected results and outcomes</h2>
+<div id="expected-results-and-outcomes" class="section level2 hasAnchor" number="3.3">
+<h2><span class="header-section-number">3.3</span> Expected results and outcomes<a href="the-planned-approach-and-methods-for-solving-the-problem.html#expected-results-and-outcomes" class="anchor-section" aria-label="Anchor link to header"></a></h2>
 <p>We expect the following results: (1) Identify the obstacles of identifying life-threatening ECG changes within memory,
 space, and CPU constraints. (2) Be able to reduce ECG monitor’s false alarms using the proposed methodology. (3) Assess
 the feasibility of implementing the algorithm in the real world and other settings than ICU monitors.</p>
@@ -199,7 +223,7 @@ the feasibility of implementing the algorithm in the real world and other settin
 push forward the state-of-the-art technology on false alarms reduction, maybe even being domain agnostic. (3) To draw
 more attention to fading factors as a reliable, fast, and cheap approximation of the true value. (4) To draw more
 attention to the matrix profile concept as an efficient, agnostic, and almost parameter-free way to analyze time series.
-(5) To draw more attention of the Patient Monitorization industry on solving the false alarm problem.</p>
+(5) To draw more attention of the Patient Monitoring industry on solving the false alarm problem.</p>
 </div>
 </div>
             </section>
@@ -256,8 +280,11 @@ gitbook.start({
 "options": null
 },
 "toc": {
-"collapse": "section",
+"collapse": "none",
 "scroll_highlight": true
+},
+"toolbar": {
+"position": "fixed"
 },
 "info": true
 });

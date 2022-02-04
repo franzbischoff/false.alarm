@@ -6,11 +6,10 @@ editor_options:
     wrap: 120
 ---
 
-```{=html}
 <!--
 This is for including Chapter 1.  Notice that it's also good practice to name your chunk.  This will help you debug potential issues as you knit.  The chunk above is called intro and the one below is called chapter1.  Feel free to change the name of the Rmd file as you wish, but don't forget to change it here from chap1.Rmd.
 -->
-```
+
 # Objectives and the research question
 
 This research aims to identify, on streaming data, abnormal hearth electric patterns, specifically those which are
@@ -139,14 +138,14 @@ Physionet's dataset are commonly available on Portuguese ICU's.
 All steps of the process will be managed using the R package `targets`[@landau2021] from data extraction to the final
 report, as shown in Fig. \ref{fig:targets}.
 
-```{r targets, echo=FALSE, eval = FALSE, out.width="100%", fig.cap="Reprodutible research workflow using `targets`."}
+```{r targets, echo=FALSE, eval = FALSE, out.width="100%", fig.cap="Reproducible research workflow using `targets`."}
 knitr::include_graphics("figure/targets.png")
 ```
 
 The report will then be available on the main webpage[@franz_website], allowing inspection of previous versions managed
 by the R package `workflowr`[@workflowr2021], as we can see in Fig. \ref{fig:workflow_workflowr}.
 
-```{r workflow_workflowr, echo=FALSE, eval = FALSE, out.width="100%", fig.cap="Reprodutible reports using `workflowr.`"}
+```{r workflow_workflowr, echo=FALSE, eval = FALSE, out.width="100%", fig.cap="Reproducible reports using `workflowr.`"}
 knitr::include_graphics("figure/workflowr.png")
 ```
 
@@ -178,7 +177,7 @@ And outcomes: (1) To achieve a better score of false alarm reduction than the be
 push forward the state-of-the-art technology on false alarms reduction, maybe even being domain agnostic. (3) To draw
 more attention to fading factors as a reliable, fast, and cheap approximation of the true value. (4) To draw more
 attention to the matrix profile concept as an efficient, agnostic, and almost parameter-free way to analyze time series.
-(5) To draw more attention of the Patient Monitorization industry on solving the false alarm problem.
+(5) To draw more attention of the Patient Monitoring industry on solving the false alarm problem.
 
 # Whatever
 

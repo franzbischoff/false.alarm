@@ -41,11 +41,11 @@ hyphens to create the rows and columns.
 |                      |                                     |           |
 |        Income        |                0.08                 |   No No   |
 |     Family Size      |                0.18                 |  Slight
- 
+
 |c
 \| \cupational Prestige   \| 0.21 \light
 -   \
-(\#tab:inher) Correlation of Inheritance Factors for Parents and Child 
+(\#tab:inher) Correlation of Inheritance Factors for Parents and Child
 W can also create a link to the table by doing t
 e following: Table \@ref(tab:inher).   you go back to [Loading and e
 p oring data] and look at the `kable` table, we c
@@ -76,11 +76,11 @@ eated for you to assist.  u'll see their use below.
 
 <!| \<!-\`\`\`{=html}                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 |
 |-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| e thing that may be annoying is the way _R*Markdown_ *andles "floats" like tables and figures (it's really \LaTeX's fault). \LaTeX\  ll try to find the best place to put your object based on the text around it and until you're really, truly done writing you should just leave it where it lies. There are some optional arguments specified in the options parameter of the `label` function.  f you need to shift your figure around, it might be good to look here on tweaking the options argument:  https://en.wikibooks.org/wiki/LaTeX/Floats,_Figures_and_Captions>
+| e thing that may be annoying is the way _R*Markdown_ *andles "floats" like tables and figures (it's really \LaTeX's fault). \LaTeX\ ll try to find the best place to put your object based on the text around it and until you're really, truly done writing you should just leave it where it lies. There are some optional arguments specified in the options parameter of the `label` function.  f you need to shift your figure around, it might be good to look here on tweaking the options argument:  https://en.wikibooks.org/wiki/LaTeX/Floats,_Figures_and_Captions>
 
  |If you need a graphic or tabular material to be part of the text, you can just put it inline. If you need it to appear i
  the list of figures or tables, it should be placed in a code chunk.
--- 
+--
 
 \
 I`I\`\th **R** chunk below, we will load in a picture stored as `red.jpg` i\n our main directory.  Wthen give it the ca
@@ -97,7 +97,7 @@ nk that contains the figure, we can then reference that figure later as done in 
 o  o
 cify the caption for the figure via the R chunk option `fig.cap`.
 
-\clearpage 
+\clearpage
 
 -- starts a new page and stops trying to place floats such as tables and figures -->
 
@@ -141,7 +141,7 @@ th  PDF version of the book.)
 include_graphics("figure/subdivision.pdf")
 ```
 
-As another example, here is a reference: Figure \@ref(fig:subd2).  
+As another example, here is a reference: Figure \@ref(fig:subd2).
 \
 \ootnotes and Endnotes
 
@@ -170,7 +170,7 @@ ed `thesis.bib` in the `bib` folder.  Ts bibliography database file was created 
 
 th s file something else if you like (look at the YAML header in the main .Rmd file) and, by default, is to placed in
 t
-e  bib` folder.  
+e  bib` folder.
  more information about BibTeX and bibliographies, see our CUS site (<ht\
 p://web.reed.edu/cis/help/latex/index.html>)^\[@re[^2ere are three pages on this topic:  _b\b*x_ (\wh*ch talks about us
 n
@@ -187,7 +187,7 @@ graphy by referencing the appropriate csl file.  Yu an download a variety of dif
 
 - Li  ke   wh thesis formatting, the sooner you start compiling your bibliography for something as large as thesis, the be
    tte
-   
+
  r. Ty ping in source after source is mind-numbing enough; do you really want to do it for hours on end in late April
         ? Think of it as procrastination.
 - T
@@ -207,11 +207,11 @@ o   fo  rc capitalization in an article title or where all lowercase is generall
 - Y
 o  u c  anadd a Reed Thesis citation^[@nob[^3on. The best way to do this is to use the phdthesis type of citation, an
    d use t
-   optional "type" field to enter "Reed thesis" or "Undergraduate thesis." 
+   optional "type" field to enter "Reed thesis" or "Undergraduate thesis."
 
 # nything else?
 
-If you'd like to see examples of other things in this template, please contact the Data @ R\eed\ t m (email <da\ta
+If you'd like to see examples of other things in this template, please contact the Data @ R\eed\ tm (email <da\ta
 [eed.\edu>) \wit](mailto:data@reed.edu){.email} your suggestions. We love to see people using _R \Mar*down_ f\or *hi r
 theses, and are happy to help.
 

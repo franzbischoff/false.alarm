@@ -5,40 +5,9 @@
   "C_Cpp.default.defines": [
     "RC_INVOKED"
   ],
-  "markdown.extension.italic.indicator": "_",
-  "markdownlint.config": {
-    "default": true,
-    "MD003": {
-      "style": "atx"
-    },
-    "MD007": {
-      "indent": 2
-    },
-    "MD013": false,
-    "MD025": false,
-    "MD030": {
-      "ol_multi": 2,
-      "ol_single": 2,
-      "ul_multi": 2,
-      "ul_single": 2
-    },
-    "MD031": false,
-    "MD033": {
-      "allowed_elements": [
-        "center",
-        "img"
-      ]
-    },
-    "MD045": false
-  },
-  "markdownlint.lintWorkspaceGlobs": [
-    "**/*.{md,mkd,mdwn,mdown,markdown,markdn,mdtxt,mdtext,workbook}",
-    "!**/node_modules",
-    "!**/bower_components",
-    "!**/.git"
-  ],
-  "markdownlint.run": "onSave",
   "C_Cpp.intelliSenseEngineFallback": "Enabled",
+  "editor.fontFamily": "'Fira Code Retina', Consolas, 'Courier New', monospace",
+  "editor.formatOnSave": true,
   "editor.tabCompletion": "on",
   "editor.tabSize": 2,
   "editor.wordWrapColumn": 120,
@@ -215,10 +184,46 @@
   "latex-workshop.chktex.enabled": true,
   "latex-workshop.latex.autoBuild.run": "never",
   "latex-workshop.view.pdf.viewer": "tab",
+  "markdown.extension.italic.indicator": "_",
   "markdown.extension.preview.autoShowPreviewToSide": true,
+  "markdownlint.config": {
+    "default": true,
+    "MD003": {
+      "style": "atx"
+    },
+    "MD007": {
+      "indent": 2
+    },
+    "MD013": false,
+    "MD025": false,
+    "MD030": {
+      "ol_multi": 2,
+      "ol_single": 2,
+      "ul_multi": 2,
+      "ul_single": 2
+    },
+    "MD031": false,
+    "MD033": {
+      "allowed_elements": [
+        "center",
+        "img"
+      ]
+    },
+    "MD045": false
+  },
+  "markdownlint.lintWorkspaceGlobs": [
+    "**/*.{md,mkd,mdwn,mdown,markdown,markdn,mdtxt,mdtext,workbook}",
+    "!**/node_modules",
+    "!**/bower_components",
+    "!**/.git"
+  ],
+  "markdownlint.run": "onSave",
   "r.alwaysUseActiveTerminal": true,
   "r.rmarkdown.knit.focusOutputChannel": false,
   "r.session.levelOfObjectDetail": "Detailed",
+  "search.exclude": {
+    "**/_*/": true
+  },
   "taskExplorer.enableAnsiconForAnt": false,
   "taskExplorer.enableAnt": false,
   "taskExplorer.enableAppPublisher": false,
@@ -261,15 +266,6 @@
   "todo-tree.filtering.useBuiltInExcludes": "file and search excludes",
   "todo-tree.general.enableFileWatcher": true,
   "todo-tree.general.statusBar": "tags",
-  "todo-tree.highlights.useColourScheme": true,
-  "todo-tree.tree.buttons.export": true,
-  "todo-tree.tree.disableCompactFolders": true,
-  "todo-tree.tree.expanded": true,
-  "todo-tree.tree.scanMode": "current file",
-  "yaml.schemas": {
-    "**/.github/workflows/*.yaml": "https://json.schemastore.org/github-workflow.json"
-  },
-  "editor.formatOnSave": true,
   "todo-tree.general.tags": [
     "BUG",
     "HACK",
@@ -281,10 +277,14 @@
     "[ ]",
     "[x]"
   ],
-  "search.exclude": {
-    "**/_*/": true
-  },
-  "editor.fontFamily": "'Fira Code Retina', Consolas, 'Courier New', monospace",
+  "todo-tree.highlights.useColourScheme": true,
+  "todo-tree.tree.buttons.export": true,
+  "todo-tree.tree.disableCompactFolders": true,
+  "todo-tree.tree.expanded": true,
+  "todo-tree.tree.scanMode": "current file",
   "todo-tree.tree.showBadges": true,
-  "todo-tree.tree.showCountsInTree": true
+  "todo-tree.tree.showCountsInTree": true,
+  "yaml.schemas": {
+    "https://json.schemastore.org/github-workflow.json": "file:///home/workspace/false.alarm/.github/workflows/R-CMD-check.yaml"
+  }
 }

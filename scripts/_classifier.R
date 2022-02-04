@@ -85,7 +85,7 @@ list(
       ),
       tar_target(
         pancontrast,
-        pan_contrast(data_pos_neg_pan,
+        pan_contrast(data_pos_neg_pan, # tar_make(pancontrast_TRUE_II)
           signal = map_signals_include,
           shapelet_sizes = var_pan_contrast
         )
@@ -102,7 +102,7 @@ list(
         )
       ),
       tar_target(
-        pan_allcontrast,
+        pan_allcontrast, # tar_make(pan_allcontrast_TRUE_II)
         pan_contrast(data_all_pos_neg_pan,
           signal = map_signals_include,
           shapelet_sizes = var_pan_contrast

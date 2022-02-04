@@ -777,10 +777,10 @@
     },
     "foreach": {
       "Package": "foreach",
-      "Version": "1.5.1",
+      "Version": "1.5.2",
       "Source": "Repository",
       "Repository": "CRAN",
-      "Hash": "e32cfc0973caba11b65b1fa691b4d8c9",
+      "Hash": "618609b42c9406731ead03adf5379850",
       "Requirements": [
         "codetools",
         "iterators"
@@ -997,10 +997,10 @@
     },
     "gower": {
       "Package": "gower",
-      "Version": "0.2.2",
+      "Version": "1.0.0",
       "Source": "Repository",
       "Repository": "CRAN",
-      "Hash": "be6a2b3529928bd803d1c437d1d43152",
+      "Hash": "e30deda901954a80e035ad2e972ba7fd",
       "Requirements": []
     },
     "gridExtra": {
@@ -1947,15 +1947,15 @@
     },
     "rlang": {
       "Package": "rlang",
-      "Version": "1.0.0.9000",
+      "Version": "1.0.1.9000",
       "Source": "GitHub",
       "RemoteType": "github",
       "RemoteUsername": "r-lib",
       "RemoteRepo": "rlang",
       "RemoteRef": "main",
-      "RemoteSha": "47df80809cfccd3e7c0a9ca456dbd14a2ecdf2a7",
+      "RemoteSha": "f4c6d140ad82c041ba60d6d3665107dd4d0343a1",
       "RemoteHost": "api.github.com",
-      "Hash": "b0dde62e2fab948f82332c3e25194bdf",
+      "Hash": "abc02740948eabb7eb9e9e1843fe632e",
       "Requirements": []
     },
     "rmarkdown": {
@@ -1966,9 +1966,9 @@
       "RemoteUsername": "rstudio",
       "RemoteRepo": "rmarkdown",
       "RemoteRef": "main",
-      "RemoteSha": "328842a961cd26785ad8f0b4b5b5ab32fae35991",
+      "RemoteSha": "743c0ae783b5bac53ca023b9f0df0428e2c9e8ab",
       "RemoteHost": "api.github.com",
-      "Hash": "1dab1dbb0430060f85e80983f374d1f9",
+      "Hash": "cfc0fa80ef50b500a83cb812627abc60",
       "Requirements": [
         "bslib",
         "evaluate",
@@ -2282,15 +2282,15 @@
     },
     "svglite": {
       "Package": "svglite",
-      "Version": "2.0.0.9000",
+      "Version": "2.1.0.9000",
       "Source": "GitHub",
       "RemoteType": "github",
       "RemoteUsername": "r-lib",
       "RemoteRepo": "svglite",
       "RemoteRef": "main",
-      "RemoteSha": "b547e14c68ecf9fb0f6411706d460559ec54d505",
+      "RemoteSha": "8e66eac364b5c5c9cbd06135bdeb1dbb963b4320",
       "RemoteHost": "api.github.com",
-      "Hash": "ce7c58a53cdaaa0d35ccdf1fffb23a7d",
+      "Hash": "ca88475f88fc91bb2aa8aeb794126ab2",
       "Requirements": [
         "cpp11",
         "systemfonts"

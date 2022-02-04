@@ -98,7 +98,7 @@ To stack numbers or letters as in $\mathrm{Fe_2^{2+}}$, the subscript is defined
 
 ### Typesetting reactions
 
-You may wish to put your reaction in an equation environment, which means that LaTeX will place the reaction where it fits and will number the equations for you. 
+You may wish to put your reaction in an equation environment, which means that LaTeX will place the reaction where it fits and will number the equations for you.
 
 \begin{equation}
   \mathrm{C_6H_{12}O_6  + 6O_2} \longrightarrow \mathrm{6CO_2 + 6H_2O}
@@ -119,5 +119,5 @@ Many of the symbols you will need can be found on the math page <http://web.reed
 
 ## Biology
 
-You will probably find the resources at <http://www.lecb.ncifcrf.gov/~toms/latex.html> helpful, particularly the links to bsts for various journals. You may also be interested in TeXShade for nucleotide typesetting (<http://homepages.uni-tuebingen.de/beitz/txe.html>).  Be sure to read the proceeding chapter on graphics and tables.
+You will probably find the resources at <http://www.lecb.ncifcrf.gov/~toms/latex.html> helpful, particularly the links to  for various journals. You may also be interested in TeXShade for nucleotide typesetting (<http://homepages.uni-tuebingen.de/beitz/txe.html>).  Be sure to read the proceeding chapter on graphics and tables.
 
