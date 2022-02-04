@@ -4,11 +4,11 @@
 
   <meta charset="utf-8" />
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-  <title>1 Objectives and the research question | Detecting life-threatening patterns in Point-of-care ECG using efficient memory and processor power</title>
+  <title>6 Scientific outcomes | Detecting life-threatening patterns in Point-of-care ECG using efficient memory and processor power</title>
   <meta name="description" content="This thesis is about low-power devices and ECG" />
   <meta name="generator" content="bookdown 0.24.4 and GitBook 2.6.7" />
 
-  <meta property="og:title" content="1 Objectives and the research question | Detecting life-threatening patterns in Point-of-care ECG using efficient memory and processor power" />
+  <meta property="og:title" content="6 Scientific outcomes | Detecting life-threatening patterns in Point-of-care ECG using efficient memory and processor power" />
   <meta property="og:type" content="book" />
   <meta property="og:url" content="https://franzbischoff.github.io/false.alarm/thesis/" />
   <meta property="og:image" content="https://franzbischoff.github.io/false.alarm/thesis//figure/FullSetup.jpg" />
@@ -16,7 +16,7 @@
   <meta name="github-repo" content="franzbischoff/false.alarm" />
 
   <meta name="twitter:card" content="summary" />
-  <meta name="twitter:title" content="1 Objectives and the research question | Detecting life-threatening patterns in Point-of-care ECG using efficient memory and processor power" />
+  <meta name="twitter:title" content="6 Scientific outcomes | Detecting life-threatening patterns in Point-of-care ECG using efficient memory and processor power" />
   
   <meta name="twitter:description" content="This thesis is about low-power devices and ECG" />
   <meta name="twitter:image" content="https://franzbischoff.github.io/false.alarm/thesis//figure/FullSetup.jpg" />
@@ -30,8 +30,8 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black" />
   <link rel="apple-touch-icon-precomposed" sizes="120x120" href="favicon.ico" />
   <link rel="shortcut icon" href="favicon.ico" type="image/x-icon" />
-<link rel="prev" href="introduction.html"/>
-<link rel="next" href="principles.html"/>
+<link rel="prev" href="scientific-contributions.html"/>
+<link rel="next" href="conclusion.html"/>
 <script src="libs/header-attrs-2.11.13/header-attrs.js"></script>
 <script src="libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/fuse.js@6.4.6/dist/fuse.min.js"></script>
@@ -167,23 +167,26 @@ div.csl-indent {
           <div class="page-inner">
 
             <section class="normal" id="section-">
-<div id="objectives-and-the-research-question" class="section level1 hasAnchor" number="1">
-<h1><span class="header-section-number">1</span> Objectives and the research question<a href="objectives-and-the-research-question.html#objectives-and-the-research-question" class="anchor-section" aria-label="Anchor link to header"></a></h1>
-<p>While this research was inspired on the CinC/Physionet Challenge 2015, its purpose is not to beat
-the state of the art on that challenge, but to identify, on streaming data, abnormal hearth electric
-patterns, specifically those which are life-threatening, using low CPU and low memory requirements
-in order to be able to generalize the use of such information on lower-end devices, outside the ICU,
-as ward devices, home devices, and wearable devices.</p>
-<p>The main questions is: can we accomplish this objective using a minimalist approach (low CPU, low
-memory) while maintaining robustness?</p>
+<div id="scientific-outcomes" class="section level1 hasAnchor" number="6">
+<h1><span class="header-section-number">6</span> Scientific outcomes<a href="scientific-outcomes.html#scientific-outcomes" class="anchor-section" aria-label="Anchor link to header"></a></h1>
+<p>This research has already yielded two R packages concerning the MP algorithms from UCR<span class="citation"><sup><a href="references.html#ref-mpucr" role="doc-biblioref">26</a></sup></span>. The
+first package is called <code>tsmp</code>, and a paper has also been published in the R Journal<span class="citation"><sup><a href="references.html#ref-RJ-2020-021" role="doc-biblioref">27</a></sup></span>
+(Journal Impact Factor™, 2020 of 3.984). The second package is called <code>matrixprofiler</code> and enhances
+the first one, using low-level language to improve computational speed. The author has also joined
+the Matrix Profile Foundation as co-founder together with contributors from Python and Go languages<span class="citation"><sup><a href="references.html#ref-mpf2020" role="doc-biblioref">28</a>,<a href="references.html#ref-VanBenschoten2020" role="doc-biblioref">29</a></sup></span>. The benchmarks of the R implementation are available online<span class="citation"><sup><a href="references.html#ref-Bischoff2021a" role="doc-biblioref">66</a></sup></span>.</p>
+<p>Additionally to the above publication and the publication of the ongoing literature survey it is planned
+to be published two articles about this thesis subject. The first regarding the application of the
+FLOSS algorithm on real-time ECG showing its potential on using it on low-power devices. The second
+regarding the use of combined shapelets for relevant ECG patterns identification.</p>
+
 </div>
             </section>
 
           </div>
         </div>
       </div>
-<a href="introduction.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
-<a href="principles.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
+<a href="scientific-contributions.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
+<a href="conclusion.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
     </div>
   </div>
 <script src="libs/gitbook-2.6.7/js/app.min.js"></script>

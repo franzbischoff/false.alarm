@@ -6,7 +6,7 @@ editor_options:
     wrap: 120
 ---
 
-`r if(!knitr:::is_latex_output()) '# Preliminary Content {.unnumbered}'`
+`r if(identical(knitr:::pandoc_to(), 'html')) '# Preliminary Content {.unnumbered}'`
 
 ## Acknowledgements {.unnumbered}
 

@@ -97,7 +97,7 @@ library(gridExtra)
 suppressWarnings(library(ggplot2))
 # Set how wide the R output will go
 options(width = 70)
-knitr::opts_knit$set(root.dir = here("docs/thesis"), base.dir = here("docs/thesis"), progress = TRUE, verbose = TRUE)
+knitr::opts_knit$set(root.dir = here("thesis"), base.dir = here("thesis"), progress = TRUE, verbose = TRUE)
 suppressPackageStartupMessages(library(tibble))
 suppressPackageStartupMessages(library(kableExtra))
 ```
@@ -106,10 +106,9 @@ suppressPackageStartupMessages(library(kableExtra))
 
 ```{r include=identical(knitr:::pandoc_to(), 'html')}
 ```
-
+-->
 ```{r eval=FALSE, child=here::here("thesis/prelims", "00--prelim.Rmd")}
 ```
 
 ```{r eval=FALSE, child=here::here("thesis/prelims", "00-abstract.Rmd")}
 ```
--->

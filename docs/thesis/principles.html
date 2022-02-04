@@ -4,11 +4,11 @@
 
   <meta charset="utf-8" />
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-  <title>1 Objectives and the research question | Detecting life-threatening patterns in Point-of-care ECG using efficient memory and processor power</title>
+  <title>2 Principles | Detecting life-threatening patterns in Point-of-care ECG using efficient memory and processor power</title>
   <meta name="description" content="This thesis is about low-power devices and ECG" />
   <meta name="generator" content="bookdown 0.24.4 and GitBook 2.6.7" />
 
-  <meta property="og:title" content="1 Objectives and the research question | Detecting life-threatening patterns in Point-of-care ECG using efficient memory and processor power" />
+  <meta property="og:title" content="2 Principles | Detecting life-threatening patterns in Point-of-care ECG using efficient memory and processor power" />
   <meta property="og:type" content="book" />
   <meta property="og:url" content="https://franzbischoff.github.io/false.alarm/thesis/" />
   <meta property="og:image" content="https://franzbischoff.github.io/false.alarm/thesis//figure/FullSetup.jpg" />
@@ -16,7 +16,7 @@
   <meta name="github-repo" content="franzbischoff/false.alarm" />
 
   <meta name="twitter:card" content="summary" />
-  <meta name="twitter:title" content="1 Objectives and the research question | Detecting life-threatening patterns in Point-of-care ECG using efficient memory and processor power" />
+  <meta name="twitter:title" content="2 Principles | Detecting life-threatening patterns in Point-of-care ECG using efficient memory and processor power" />
   
   <meta name="twitter:description" content="This thesis is about low-power devices and ECG" />
   <meta name="twitter:image" content="https://franzbischoff.github.io/false.alarm/thesis//figure/FullSetup.jpg" />
@@ -30,8 +30,8 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black" />
   <link rel="apple-touch-icon-precomposed" sizes="120x120" href="favicon.ico" />
   <link rel="shortcut icon" href="favicon.ico" type="image/x-icon" />
-<link rel="prev" href="introduction.html"/>
-<link rel="next" href="principles.html"/>
+<link rel="prev" href="objectives-and-the-research-question.html"/>
+<link rel="next" href="materials-and-methods.html"/>
 <script src="libs/header-attrs-2.11.13/header-attrs.js"></script>
 <script src="libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/fuse.js@6.4.6/dist/fuse.min.js"></script>
@@ -167,23 +167,32 @@ div.csl-indent {
           <div class="page-inner">
 
             <section class="normal" id="section-">
-<div id="objectives-and-the-research-question" class="section level1 hasAnchor" number="1">
-<h1><span class="header-section-number">1</span> Objectives and the research question<a href="objectives-and-the-research-question.html#objectives-and-the-research-question" class="anchor-section" aria-label="Anchor link to header"></a></h1>
-<p>While this research was inspired on the CinC/Physionet Challenge 2015, its purpose is not to beat
-the state of the art on that challenge, but to identify, on streaming data, abnormal hearth electric
-patterns, specifically those which are life-threatening, using low CPU and low memory requirements
-in order to be able to generalize the use of such information on lower-end devices, outside the ICU,
-as ward devices, home devices, and wearable devices.</p>
-<p>The main questions is: can we accomplish this objective using a minimalist approach (low CPU, low
-memory) while maintaining robustness?</p>
+<div id="principles" class="section level1 hasAnchor" number="2">
+<h1><span class="header-section-number">2</span> Principles<a href="principles.html#principles" class="anchor-section" aria-label="Anchor link to header"></a></h1>
+<p>This research is being conducted using the Research Compendium principles<span class="citation"><sup><a href="references.html#ref-compendium2019" role="doc-biblioref">10</a></sup></span>:</p>
+<ol style="list-style-type: decimal">
+<li>Stick with the convention of your peers;</li>
+<li>Keep data, methods, and output separated;</li>
+<li>Specify your computational environment as clearly as you can.</li>
+</ol>
+<p>Data management follows the FAIR principle (findable, accessible, interoperable, reusable)<span class="citation"><sup><a href="references.html#ref-wilkinson2016" role="doc-biblioref">11</a></sup></span>. Concerning these principles, the dataset was converted from Matlab’s format to
+CSV format, allowing more interoperability. Additionally, all the project, including the dataset, is
+in conformity with the Codemeta Project<span class="citation"><sup><a href="references.html#ref-CodeMeta2017" role="doc-biblioref">12</a></sup></span>.</p>
+
+<!--
+This is for including Chapter 1. Notice that it's also good practice to name your chunk. This will
+help you debug potential issues as you knit. The chunk above is called intro and the one below is
+called chapter1. Feel free to change the name of the Rmd file as you wish, but don't forget to
+change it here from chap1.Rmd.
+-->
 </div>
             </section>
 
           </div>
         </div>
       </div>
-<a href="introduction.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
-<a href="principles.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
+<a href="objectives-and-the-research-question.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
+<a href="materials-and-methods.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
     </div>
   </div>
 <script src="libs/gitbook-2.6.7/js/app.min.js"></script>

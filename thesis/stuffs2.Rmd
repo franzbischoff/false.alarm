@@ -126,7 +126,7 @@ Next, we will explore the use of the `out.extra` chunk option, which can be used
 m a file by specifying `"scale= "`. Here we use the mathematical graph stored in the "subdivision.pdf" file.
 
 ```{r subd, eval = FALSE, results="asis", echo=FALSE, fig.cap="Subdiv. graph", out.extra="scale=0.75"}
-include_graphics("figure/subdivision.pdf")
+include_graphics(here("protocol", "figure/subdivision.pdf"))
 ```
 
 Here is a reference to this image: Figure \@ref(fig:subd).  Ne that `echo=FALSE` is specified so that the **R** code is hi
@@ -138,7 +138,7 @@ Lastly, we will explore how to rotate and enlarge figures using the `out.extra` 
 th  PDF version of the book.)
 
 ```{r subd2, eval = FALSE, results="asis", echo=FALSE, out.extra="angle=180, scale=1.1", fig.cap="A Larger Figure, Flipped Upside Down"}
-include_graphics("figure/subdivision.pdf")
+include_graphics(here("protocol", "figure/subdivision.pdf"))
 ```
 
 As another example, here is a reference: Figure \@ref(fig:subd2).

@@ -4,11 +4,11 @@
 
   <meta charset="utf-8" />
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-  <title>1 Objectives and the research question | Detecting life-threatening patterns in Point-of-care ECG using efficient memory and processor power</title>
+  <title>5 Scientific contributions | Detecting life-threatening patterns in Point-of-care ECG using efficient memory and processor power</title>
   <meta name="description" content="This thesis is about low-power devices and ECG" />
   <meta name="generator" content="bookdown 0.24.4 and GitBook 2.6.7" />
 
-  <meta property="og:title" content="1 Objectives and the research question | Detecting life-threatening patterns in Point-of-care ECG using efficient memory and processor power" />
+  <meta property="og:title" content="5 Scientific contributions | Detecting life-threatening patterns in Point-of-care ECG using efficient memory and processor power" />
   <meta property="og:type" content="book" />
   <meta property="og:url" content="https://franzbischoff.github.io/false.alarm/thesis/" />
   <meta property="og:image" content="https://franzbischoff.github.io/false.alarm/thesis//figure/FullSetup.jpg" />
@@ -16,7 +16,7 @@
   <meta name="github-repo" content="franzbischoff/false.alarm" />
 
   <meta name="twitter:card" content="summary" />
-  <meta name="twitter:title" content="1 Objectives and the research question | Detecting life-threatening patterns in Point-of-care ECG using efficient memory and processor power" />
+  <meta name="twitter:title" content="5 Scientific contributions | Detecting life-threatening patterns in Point-of-care ECG using efficient memory and processor power" />
   
   <meta name="twitter:description" content="This thesis is about low-power devices and ECG" />
   <meta name="twitter:image" content="https://franzbischoff.github.io/false.alarm/thesis//figure/FullSetup.jpg" />
@@ -30,8 +30,8 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black" />
   <link rel="apple-touch-icon-precomposed" sizes="120x120" href="favicon.ico" />
   <link rel="shortcut icon" href="favicon.ico" type="image/x-icon" />
-<link rel="prev" href="introduction.html"/>
-<link rel="next" href="principles.html"/>
+<link rel="prev" href="current-results.html"/>
+<link rel="next" href="scientific-outcomes.html"/>
 <script src="libs/header-attrs-2.11.13/header-attrs.js"></script>
 <script src="libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/fuse.js@6.4.6/dist/fuse.min.js"></script>
@@ -167,23 +167,83 @@ div.csl-indent {
           <div class="page-inner">
 
             <section class="normal" id="section-">
-<div id="objectives-and-the-research-question" class="section level1 hasAnchor" number="1">
-<h1><span class="header-section-number">1</span> Objectives and the research question<a href="objectives-and-the-research-question.html#objectives-and-the-research-question" class="anchor-section" aria-label="Anchor link to header"></a></h1>
-<p>While this research was inspired on the CinC/Physionet Challenge 2015, its purpose is not to beat
-the state of the art on that challenge, but to identify, on streaming data, abnormal hearth electric
-patterns, specifically those which are life-threatening, using low CPU and low memory requirements
-in order to be able to generalize the use of such information on lower-end devices, outside the ICU,
-as ward devices, home devices, and wearable devices.</p>
-<p>The main questions is: can we accomplish this objective using a minimalist approach (low CPU, low
-memory) while maintaining robustness?</p>
+<div id="scientific-contributions" class="section level1 hasAnchor" number="5">
+<h1><span class="header-section-number">5</span> Scientific contributions<a href="scientific-contributions.html#scientific-contributions" class="anchor-section" aria-label="Anchor link to header"></a></h1>
+<div id="matrix-profile" class="section level2 hasAnchor" number="5.1">
+<h2><span class="header-section-number">5.1</span> Matrix Profile<a href="scientific-contributions.html#matrix-profile" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<p>Since the first paper presenting this new concept<span class="citation"><sup><a href="references.html#ref-Yeh2017a" role="doc-biblioref">22</a></sup></span>, lots of investigations were made to
+speed up its computation. It is notable how all computations are not dependent on the <em>rolling
+window size</em> as previous works not using Matrix Profile. Aside from this, we can see that the first
+STAMP<span class="citation"><sup><a href="references.html#ref-Yeh2017a" role="doc-biblioref">22</a></sup></span> algorithm has the time complexity of <span class="math inline">\(O(n^2log{n})\)</span> while STOMP<span class="citation"><sup><a href="references.html#ref-zhu2016" role="doc-biblioref">64</a></sup></span>
+<span class="math inline">\(O(n^2)\)</span> (a significant improvement), but STOMP lacks the “any-time” property. Later SCRIMP<span class="citation"><sup><a href="references.html#ref-zhu2018" role="doc-biblioref">65</a></sup></span> solves this problem keeping the same time complexity of <span class="math inline">\(O(n^2)\)</span>. Here we are in the
+“exact” algorithms domain and we will not extend the scope for conciseness.</p>
+<p>The main issue with the algorithms above is the dependency on a fast Fourier transform (FFT)
+library. FFT has been extensively optimized and architecture/CPU bounded to exploit the most of
+speed. Also, padding data to some power of 2 happens to increase the efficiency of the
+algorithm. We can argue that time complexity doesn’t mean “faster” when we can exploit low-level
+instructions. In our case, using FFT in a low-power device is overkilling. For example, a quick
+search over the internet gives us a hint that computing FFT on a 4096 data in an ESP32 takes
+about 21ms (~47 computations in 1 second). This means ~79 seconds for computing all FFT’s
+(~3797) required for STAMP using a window of 300. Currently, we can compute a full matrix of 5k
+data in about 9 seconds in an ESP32 MCU (Fig. <a href="current-results.html#fig:esp32">4.3</a>), and keep updating it as fast as
+1 min of data (at 250hz) in just 6 seconds.</p>
+<p>Recent works using <em>exact</em> algorithms are using an unpublished algorithm called <strong>MPX</strong>, which
+computes the Matrix Profile using cross-correlation methods ending up faster and is easily
+portable.</p>
+<p><strong>On computing the Matrix Profile:</strong> the contribution of this work on this area is adding the
+<em>Online</em> capability to MPX, which means we can update the Matrix Profile as new data comes in.</p>
+<p><strong>On extending the Matrix Profile:</strong> the contribution of this work on this area is the use of an
+unexplored constraint that we could apply on building the Matrix Profile we are calling <em>Similarity
+Threshold</em> (ST). The original work outputs the similarity values in Euclidean Distance (ED) values,
+while MPX naturally outputs the values in Pearson’s correlation coefficients (CC). Both ED and CC
+are interchangeable using the equation <a href="scientific-contributions.html#eq:edcc">(5.1)</a>. However, we may argue that it is easier to
+compare values that do not depend on the window size during an exploratory phase. MPX happens to
+naturally return values in CC, saving a few more computation time. The ST is an interesting factor
+that we can use, especially when detecting pattern changes during time. The FLOSS algorithm relies
+on counting references between indexes in the time series. ST can help remove “noise” from these
+references since only similar patterns above a certain threshold are referenced, and changes have
+more impact on these counts. The best ST threshold is still to be determined.</p>
+<p><br />
+<span class="math display" id="eq:edcc">\[\begin{equation}
+CC = 1 - \frac{ED}{(2 \times WindowSize)} \tag{5.1}
+\end{equation}\]</span><br />
+</p>
+</div>
+<div id="regime-change-detection-1" class="section level2 hasAnchor" number="5.2">
+<h2><span class="header-section-number">5.2</span> Regime change detection<a href="scientific-contributions.html#regime-change-detection-1" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<p>In the original paper, in chapter 3.5, the authors of FLOSS wisely introduce the <strong>temporal
+constraint</strong>, which improves the sensitivity of regime change detection on situations where
+a regime may alternate in short periods of time.</p>
+<p>Nevertheless, the authors declare the correction curve typically used on the algorithm as “simply a
+uniform distribution”, but this is not an accurate statement. the <em>Arc Counts</em> of newly incoming
+data are truncated by the same amount of temporal constraint. This prevents completely the detection
+of a regime change in the last 10 seconds as this thesis requires.</p>
+<p>The main contribution of this work on this area is overcoming this issue by computing the
+theoretical distribution using the temporal constraint parameters beforehand. as shown in Fig.
+<a href="scientific-contributions.html#fig:distributions">5.1</a>. That gives us enough data to evaluate a regime change accurately utilizing
+a minimum of <span class="math inline">\(2 \times WindowSize\)</span> datapoints.</p>
+<div class="figure" style="text-align: center"><span style="display:block;" id="fig:distributions"></span>
+<img src="thesis_files/figure-html/distributions-1.svg" alt="1D-IAC distributions for earlier temporal constraint (on Matrix Profile)" width="960" />
+<p class="caption">
+FIGURE 5.1: 1D-IAC distributions for earlier temporal constraint (on Matrix Profile)
+</p>
+</div>
+
+<!--
+This is for including Chapter 1. Notice that it's also good practice to name your chunk. This will
+help you debug potential issues as you knit. The chunk above is called intro and the one below is
+called chapter1. Feel free to change the name of the Rmd file as you wish, but don't forget to
+change it here from chap1.Rmd.
+-->
+</div>
 </div>
             </section>
 
           </div>
         </div>
       </div>
-<a href="introduction.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
-<a href="principles.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
+<a href="current-results.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
+<a href="scientific-outcomes.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
     </div>
   </div>
 <script src="libs/gitbook-2.6.7/js/app.min.js"></script>

@@ -1,0 +1,39 @@
+---
+editor_options:
+  markdown:
+    canonical: true
+    mode: markdown
+    wrap: 120
+---
+
+<!--
+This is for including Chapter 1. Notice that it's also good practice to name your chunk. This will
+help you debug potential issues as you knit. The chunk above is called intro and the one below is
+called chapter1. Feel free to change the name of the Rmd file as you wish, but don't forget to
+change it here from chap1.Rmd.
+-->
+
+
+# Objectives and the research question
+
+While this research was inspired on the CinC/Physionet Challenge 2015, its purpose is not to beat
+the state of the art on that challenge, but to identify, on streaming data, abnormal hearth electric
+patterns, specifically those which are life-threatening, using low CPU and low memory requirements
+in order to be able to generalize the use of such information on lower-end devices, outside the ICU,
+as ward devices, home devices, and wearable devices.
+
+The main questions is: can we accomplish this objective using a minimalist approach (low CPU, low
+memory) while maintaining robustness?
+
+# Principles
+
+This research is being conducted using the Research Compendium principles [@compendium2019]:
+
+1.  Stick with the convention of your peers;
+2.  Keep data, methods, and output separated;
+3.  Specify your computational environment as clearly as you can.
+
+Data management follows the FAIR principle (findable, accessible, interoperable, reusable)
+[@wilkinson2016]. Concerning these principles, the dataset was converted from Matlab's format to
+CSV format, allowing more interoperability. Additionally, all the project, including the dataset, is
+in conformity with the Codemeta Project [@CodeMeta2017].
