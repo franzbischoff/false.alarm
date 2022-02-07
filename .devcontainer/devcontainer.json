@@ -4,13 +4,21 @@
 {
   "build": {
     "args": {
-      "BUILD_DATE": "${localEnv:date}",
-      "BUILD_VERSION": "3"
+      "BUILD_DATE": "${localEnv:DATE}",
+      "BUILD_VERSION": "3",
+      "CODE_VERSION": "code-insiders",
+      "USER_UID": "1000",
+      "flavor": "vscode",
+      "BUILD_DESCRIPTION": "ready to use environment for this PHD Thesis",
+      "VENDOR": "franzbischoff",
+      "PROJECT": "${localWorkspaceFolderBasename}",
+      "USERNAME": "coder",
+      "HOME_WORK": "/home/workspace"
     },
     "dockerfile": "Dockerfile",
   },
   // "image": "franzbischoff/false.alarm:stable",
-  "name": "false.alarm dev",
+  "name": "${localWorkspaceFolderBasename} dev",
   "containerEnv": {
     "DEBUGME": "R_GlobalEnv",
     "PUID": "1000",
@@ -187,9 +195,9 @@
     }
   },
   "shutdownAction": "stopContainer",
-  "workspaceFolder": "/home/workspace/false.alarm",
-  "workspaceMount": "source=${localWorkspaceFolder},target=/home/workspace/false.alarm,type=bind,consistency=consistent",
+  "workspaceFolder": "/home/workspace/${localWorkspaceFolderBasename}",
+  "workspaceMount": "source=${localWorkspaceFolder},target=/home/workspace/${localWorkspaceFolderBasename},type=bind,consistency=consistent",
   "mounts": [
-    "source=/home/franz/.gnupg,target=/home/workspace/.gnupg,type=bind,consistency=cached"
+    "source=/home/${localEnv:USER}/.gnupg,target=/home/workspace/.gnupg,type=bind,consistency=cached"
   ]
 }

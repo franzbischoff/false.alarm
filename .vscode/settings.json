@@ -286,5 +286,6 @@
   "todo-tree.tree.showCountsInTree": true,
   "yaml.schemas": {
     "https://json.schemastore.org/github-workflow.json": "file:///home/workspace/false.alarm/.github/workflows/R-CMD-check.yaml"
-  }
+  },
+  "todo-tree.ripgrep.ripgrep": "/usr/bin/rg"
 }
