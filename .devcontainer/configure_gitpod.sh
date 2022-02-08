@@ -4,9 +4,14 @@ source("renv/activate.R")
 
 renv::restore()
 
+options(warn = 1)
+
 tryCatch(
   {
-    pkg_date <- utils::packageDate("false.alarm")
+    suppressWarnings(pkg_date <- utils::packageDate("false.alarm"))
+    if (is.na(pkg_date)) {
+      stop("Package not installed")
+    }
     files_r <- paste0(here::here("R"), "/", list.files(here::here("R"), pattern = "*.R"))
     files_cpp <- paste0(here::here("R"), "/", list.files(here::here("src"), pattern = "*.cpp"))
     files_h <- paste0(here::here("R"), "/", list.files(here::here("src"), pattern = "*.h"))

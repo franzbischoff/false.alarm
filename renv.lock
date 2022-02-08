@@ -281,16 +281,16 @@
     },
     "bookdown": {
       "Package": "bookdown",
-      "Version": "0.24.7",
+      "Version": "0.24.8",
       "Source": "GitHub",
       "RemoteType": "github",
       "RemoteUsername": "rstudio",
       "RemoteRepo": "bookdown",
       "RemoteRef": "main",
-      "RemoteSha": "5ecc37a7acf16dea444219d7f37658da193ffe97",
+      "RemoteSha": "881de1e27612587b92bc874aa456ddb233ed67d2",
       "RemoteHost": "api.github.com",
       "Remotes": "rstudio/rmarkdown",
-      "Hash": "b8e4bd93321995e2cdc61bae9871b024",
+      "Hash": "581777de90ce2f23c2178eb157ce438b",
       "Requirements": [
         "htmltools",
         "jquerylib",
@@ -303,10 +303,10 @@
     },
     "brew": {
       "Package": "brew",
-      "Version": "1.0-6",
+      "Version": "1.0-7",
       "Source": "Repository",
       "Repository": "CRAN",
-      "Hash": "92a5f887f9ae3035ac7afde22ba73ee9",
+      "Hash": "38875ea52350ff4b4c03849fc69736c8",
       "Requirements": []
     },
     "brio": {
@@ -1966,9 +1966,9 @@
       "RemoteUsername": "rstudio",
       "RemoteRepo": "rmarkdown",
       "RemoteRef": "main",
-      "RemoteSha": "743c0ae783b5bac53ca023b9f0df0428e2c9e8ab",
+      "RemoteSha": "ede2d7cd3b711b40e5e1cefc4bdcef3848087f2a",
       "RemoteHost": "api.github.com",
-      "Hash": "cfc0fa80ef50b500a83cb812627abc60",
+      "Hash": "d0e7af877c2044eb71f29a099a12e7b2",
       "Requirements": [
         "bslib",
         "evaluate",
