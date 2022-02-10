@@ -4,23 +4,22 @@
 
 It is possible that at this moment gitpod is setting up the project for the first time.
 
-Let it install all dependencies first.
-
-The project will be ready when the `R Interactive` terminal shows up.
+Let it install all dependencies first, start the extensions, etc.
 
 ## First Run
 
 Checklist:
 
--   [ ] Ignore a warning about "X extensions are suggested but...".
--   [ ] The R terminal is started.
--   [ ] In the status bar (down-right), check for the status `R xxx` where xxx is a number. If no terminal is attached `R: (not attached)`, close the current R terminal (if any) using the command `q()`, open the command palette and select: `R: Create R terminal`.
--   [ ] Confirm that `renv` is activated: `Project '/workspace/false.alarm' loaded. [renv 0.13.2]`.
--   [ ] On the first run, the folder inst/extdata will be missing/empty. You need to run the `run.R` script first to download the dataset and start the first `targets` run.
+-  [ ] Ignore a warning about "X extensions are suggested but...".
+-  [ ] In the status bar (down-right), check for the status `R: xxx` or `R: (not attached)`. This means the R extension is prepared. Use Ctrl+Shift+P to open the command palette and select: `R: Create R terminal`.
+-  [ ] Confirm that `renv` is activated. Example: `Project '/workspace/false.alarm' loaded. [renv 0.13.2]`.
+-  [ ] On the first run, the folder inst/extdata will be missing/empty. You need to run the `run.R` script first to download the dataset and start the first `targets` run.
 
 ## Next
 
-Below the Explorer View, you'll see the Task Explorer, there I added the most used commands I used during the development (under the 'vscode' branch, not the 'bash').
+If gitpod didn't mess up, below the Explorer View, you'll see the Task Explorer, there I added the most used commands I used during the development (under the 'vscode' branch, not the 'bash').
+
+If there is no Task Explorer, use the command palette and select `Tasks: Run Task`.
 
 The most important ones:
 

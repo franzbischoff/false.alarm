@@ -63,6 +63,10 @@ tasks:
     init: |
       chmod 755 ./.devcontainer/configure_gitpod.sh
       ./.devcontainer/configure_gitpod.sh
+  - name: First run
+    command: |
+      gp open .github/gitpod-Instructions.md
+      exit
   - name: tailscaled
     command: |
       if [ -n "${TAILSCALE_STATE_GITPOD_FALSEALARM}" ]; then

@@ -174,10 +174,10 @@
     },
     "RcppThread": {
       "Package": "RcppThread",
-      "Version": "2.0.1",
+      "Version": "2.0.2",
       "Source": "Repository",
       "Repository": "CRAN",
-      "Hash": "648e43ec65f3d1e229f984ef57d7b567",
+      "Hash": "be90ef924416f0fa0d5a3accd6b26664",
       "Requirements": []
     },
     "SQUAREM": {
@@ -281,16 +281,16 @@
     },
     "bookdown": {
       "Package": "bookdown",
-      "Version": "0.24.8",
+      "Version": "0.24.9",
       "Source": "GitHub",
       "RemoteType": "github",
       "RemoteUsername": "rstudio",
       "RemoteRepo": "bookdown",
       "RemoteRef": "main",
-      "RemoteSha": "881de1e27612587b92bc874aa456ddb233ed67d2",
+      "RemoteSha": "7f92ffa84d37e93dd9271a7840db281398f9f6db",
       "RemoteHost": "api.github.com",
       "Remotes": "rstudio/rmarkdown",
-      "Hash": "581777de90ce2f23c2178eb157ce438b",
+      "Hash": "994463fa0b12bbd3fe9087222aa54e82",
       "Requirements": [
         "htmltools",
         "jquerylib",
@@ -681,10 +681,10 @@
     },
     "doSNOW": {
       "Package": "doSNOW",
-      "Version": "1.0.19",
+      "Version": "1.0.20",
       "Source": "Repository",
       "Repository": "CRAN",
-      "Hash": "d37ea40b304eec255022065947092af6",
+      "Hash": "4bf4423d2c8b68c93b47e32ec554c2f1",
       "Requirements": [
         "foreach",
         "iterators",
@@ -693,13 +693,12 @@
     },
     "dplyr": {
       "Package": "dplyr",
-      "Version": "1.0.7",
+      "Version": "1.0.8",
       "Source": "Repository",
       "Repository": "CRAN",
-      "Hash": "36f1ae62f026c8ba9f9b5c9a08c03297",
+      "Hash": "ef47665e64228a17609d6df877bf86f2",
       "Requirements": [
         "R6",
-        "ellipsis",
         "generics",
         "glue",
         "lifecycle",
@@ -1221,10 +1220,10 @@
     },
     "iterators": {
       "Package": "iterators",
-      "Version": "1.0.13",
+      "Version": "1.0.14",
       "Source": "Repository",
       "Repository": "CRAN",
-      "Hash": "64778782a89480e9a644f69aad9a2877",
+      "Hash": "8954069286b4b2b0d023d1b288dce978",
       "Requirements": []
     },
     "jquerylib": {
@@ -1953,22 +1952,22 @@
       "RemoteUsername": "r-lib",
       "RemoteRepo": "rlang",
       "RemoteRef": "main",
-      "RemoteSha": "f4c6d140ad82c041ba60d6d3665107dd4d0343a1",
+      "RemoteSha": "c84d52b6f01aaad98adfc57c29bca64a655f636e",
       "RemoteHost": "api.github.com",
-      "Hash": "abc02740948eabb7eb9e9e1843fe632e",
+      "Hash": "8f4b9c37f25ef371d3dda10b718bfb49",
       "Requirements": []
     },
     "rmarkdown": {
       "Package": "rmarkdown",
-      "Version": "2.11.15",
+      "Version": "2.11.16",
       "Source": "GitHub",
       "RemoteType": "github",
       "RemoteUsername": "rstudio",
       "RemoteRepo": "rmarkdown",
       "RemoteRef": "main",
-      "RemoteSha": "ede2d7cd3b711b40e5e1cefc4bdcef3848087f2a",
+      "RemoteSha": "880923dc33c45d34db688b7012c35fb3b9e815ae",
       "RemoteHost": "api.github.com",
-      "Hash": "d0e7af877c2044eb71f29a099a12e7b2",
+      "Hash": "2ed27d0a46278ca612ee1d5cc74f9515",
       "Requirements": [
         "bslib",
         "evaluate",
@@ -2158,10 +2157,10 @@
     },
     "shinyWidgets": {
       "Package": "shinyWidgets",
-      "Version": "0.6.3",
+      "Version": "0.6.4",
       "Source": "Repository",
       "Repository": "CRAN",
-      "Hash": "89b90f439e5a824f8bcbadd082106902",
+      "Hash": "02fba70d7c5c1ab0754d9c0108c029eb",
       "Requirements": [
         "bslib",
         "htmltools",
@@ -2254,13 +2253,12 @@
       "RemoteUsername": "r-lib",
       "RemoteRepo": "styler",
       "RemoteRef": "main",
-      "RemoteSha": "9274aed613282eca01909ae8c341224055d9c928",
+      "RemoteSha": "e435f57742ae59968f0481562cdabf57693088fc",
       "RemoteHost": "api.github.com",
-      "Hash": "ff00e2b50f223530da80fc6b7903221a",
+      "Hash": "2836fae1d5142aeea563ad67520a9811",
       "Requirements": [
         "R.cache",
         "cli",
-        "glue",
         "magrittr",
         "purrr",
         "rematch2",
