@@ -215,7 +215,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
   && rm -rf /var/lib/apt/lists/*
 
 # Install go + protobuf
-RUN curl -sL -o ${HOME_USER}/gobuf.tar.gz https://dl.google.com/go/go1.14.linux-amd64.tar.gz \
+RUN curl -sL -o ${HOME_USER}/gobuf.tar.gz https://go.dev/dl/go1.17.7.linux-amd64.tar.gz \
   && tar -xf ${HOME_USER}/gobuf.tar.gz -C ${HOME_USER} \
   && rm ${HOME_USER}/gobuf.tar.gz
 
@@ -298,7 +298,63 @@ ENV RENV_CONFIG_UPDATES_PARALLEL=4
 
 FROM base AS branch-vscode
 
+ARG USERNAME=coder
+
 RUN echo "This will be a version for vscode"
+
+# Modified from https://github.com/tailscale/codespace/
+# Copyright (c) 2021 Tailscale Inc & AUTHORS All rights reserved.
+# Use of this source code is governed by a BSD-style
+# license that can be found in their LICENSE file.
+
+USER root
+
+SHELL ["/bin/bash", "-o", "pipefail", "-c"]
+ENV DEBIAN_FRONTEND noninteractive
+
+# Magic DNS in a container where /etc/resolv.conf is a bind mount needed
+# extra support, currently on a development branch.
+RUN mkdir -p /home/tailscale /var/run/tailscale /var/cache/tailscale /var/lib/tailscale
+
+WORKDIR /home/tailscale
+
+COPY tailscaled /etc/init.d
+
+RUN chmod 755 /etc/init.d/tailscaled \
+  && git clone https://github.com/tailscale/tailscale.git
+
+WORKDIR /home/tailscale/tailscale
+
+ENV GOPATH "${HOME_USER}/go"
+ENV PATH ${GOPATH}/bin:$PATH
+
+RUN go mod download \
+  && go install -mod=readonly ./cmd/tailscaled ./cmd/tailscale
+
+RUN mv ${GOPATH}/bin/tailscaled /usr/sbin/tailscaled \
+  && mv ${GOPATH}/bin/tailscale /usr/bin/tailscale \
+  && rm -rf /home/tailscale
+
+RUN apt-get update && apt-get install -y --no-install-recommends \
+  iptables \
+  iputils-ping \
+  gpg \
+  dnsutils \
+  && rm -rf /var/lib/apt/lists/*
+
+RUN apt-get clean autoclean && apt-get autoremove --yes \
+  && rm -rf /var/lib/apt/lists/* \
+  && rm -rf /var/lib/cache/* \
+  && rm -rf /var/lib/log/*
+
+RUN updatedb
+
+USER $USERNAME
+
+ENV NOT_CRAN="true" \
+  LANG=C.UTF-8 \
+  LC_ALL=C.UTF-8 \
+  HOME=${HOME_USER}
 
 # ************************* vscode end ******************************
 

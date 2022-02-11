@@ -1,7 +1,13 @@
 # pull data from the internet
 if (!dir.exists(here::here("inst/extdata/physionet"))) {
   dir.create(here::here("inst/extdata"), recursive = TRUE, showWarnings = FALSE)
-  download.file("https://zenodo.org/record/4634013/files/physionet.zip?download=1", method = "libcurl", destfile = here::here("inst/extdata/data.zip"))
+  download.file("https://zenodo.org/record/5794658/files/physionet.zip?download=1", method = "libcurl", destfile = here::here("inst/extdata/data.zip"))
+
+  # if less than this, probably download error
+  if (file.size(here::here("inst/extdata/data.zip")) < 300000000) {
+    stop("Error downloading the dataset, the file seems too small. Please check what happened.")
+  }
+
   unzip(here::here("inst/extdata/data.zip"), exdir = here::here("inst/extdata"), setTimes = TRUE, overwrite = FALSE)
   file.remove(here::here("inst/extdata/data.zip"))
 }
@@ -67,7 +73,7 @@ if (dir.exists(here::here("inst/extdata"))) {
       rm(network)
       rm(tips)
 
-      source(here::here("scripts/create_output.R"), encoding = "UTF-8")
+      source(here::here("scripts/common/create_output.R"), encoding = "UTF-8")
       create_output(file = here::here("output/work_output.rds"))
       rm(create_output)
     },
