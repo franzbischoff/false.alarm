@@ -466,6 +466,31 @@ The regime change detection will be evaluated following the criterias explained 
 
 ### Classification of the new regime {#classregime}
 
+<!--
+
+Chin [10.1109/IEMBS.2010.5628088] uses cross-correlation between templates and the signal to
+identify arrhythmias. a light-weight algorithm suitable for short-term real-time ECG analysis which
+can be implemented on a mobile device platform will be presented.
+
+
+Silka [10.1109/CIC.1992.269406] and Caswell [10.1109/CIC.1993.378474], are pioneers in
+developing template matching algorithms for ECG analysis. Lai [10.1109/IEMBS.1998.745844] used
+fractal and cross-correlation analysis as parameters for a real-time ECG classification algorithm
+
+Bousselijot [10.1109/CIC.1998.731806]: The interpretation of ECGs without feature extraction is
+possible using the algorithm of cross correlation for normalized multi-lead waveforms
+
+Schuckers [10.1109/NEBC.1998.664864] compares algorithms
+
+
+Ruiz [10.1109/CIC.2003.1291259] in 2003 introduced a method to cross-correlate between a reference
+signal, which is the first 0.6 sec segment of the examined ECG signal, and a base signal, which is
+the rest of the signal.
+
+
+
+-->
+
 The next step towards the objective of this work is to verify if the new regime detected by the
 previous step is indeed a life-threatening pattern that we should trigger the alarm.
 

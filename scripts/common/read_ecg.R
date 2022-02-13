@@ -475,7 +475,7 @@ read_ecg_csv <- function(filename, plot = FALSE, subset = NULL,
 #'   - filename: the name of the original file, without the extension.
 #'   - frequency: the frequency of the observations, in Hz.
 #'
-read_and_prepare_ecgs <- function(file_paths, subset = FALSE, true_alarm = NULL, limit_per_class = NULL) {
+read_and_prepare_ecgs <- function(file_paths, subset = NULL, true_alarm = NULL, limit_per_class = NULL) {
   result <- list()
   classes <- list()
 

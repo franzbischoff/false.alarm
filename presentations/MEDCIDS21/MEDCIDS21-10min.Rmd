@@ -160,19 +160,19 @@ knitr::include_graphics("figures/compendium_principles2.png")
 All steps of the process will be managed using the R package `targets`[@landau2021] from data extraction to the final
 report, as shown in Fig. `r ref("fig:targets")`.
 
-```{r targets, echo=FALSE, fig.cap=paste0("Fig. ", ref("fig:targets"), ":  Reprodutible research workflow using `targets`.")}
+```{r targets, echo=FALSE, fig.cap=paste0("Fig. ", ref("fig:targets"), ":  Reproducible research workflow using `targets`.")}
 knitr::include_graphics("figures/targets.png")
 ```
 
 ------------------------------------------------------------------------------------------------------------------------
 
-```{r workflowr_print, echo=FALSE, fig.cap=paste0("Fig. ", ref("fig:workflowr_print"), ":  Reprodutible research workflow using `workflowr`.")}
+```{r workflowr_print, echo=FALSE, fig.cap=paste0("Fig. ", ref("fig:workflowr_print"), ":  Reproducible research workflow using `workflowr`.")}
 knitr::include_graphics("figures/workflowr_print.png")
 ```
 
 ------------------------------------------------------------------------------------------------------------------------
 
-```{r session_information, echo=FALSE, fig.cap=paste0("Fig. ", ref("fig:session_information"), ":  Reprodutible research workflow using `workflowr`.")}
+```{r session_information, echo=FALSE, fig.cap=paste0("Fig. ", ref("fig:session_information"), ":  Reproducible research workflow using `workflowr`.")}
 knitr::include_graphics("figures/session_information.png")
 ```
 

@@ -1,5 +1,5 @@
 
-win_complex <- function(data, window, dilution) {
+win_complex <- function(data, window) {
   profile_size <- length(data) - window + 1
   av <- vector(mode = "numeric", length = profile_size)
 

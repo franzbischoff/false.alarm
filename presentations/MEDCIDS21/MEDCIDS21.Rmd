@@ -44,7 +44,7 @@ ref <- function(use_name) {
 
 # Introduction
 
-```{r pocmonitor, echo=FALSE, fig.cap=paste0("Fig. ", ref("fig:pocmonitor"), ":  POC Monitor.")}
+```{r pocmonitor, echo=FALSE, fig.cap=paste0("Fig. ", ref("fig:pocmonitor"), ": POC Monitor.")}
 knitr::include_graphics("figures/pocmonitor.jpg")
 ```
 
@@ -55,7 +55,7 @@ knitr::include_graphics("figures/pocmonitor.jpg")
 
 ------------------------------------------------------------------------------------------------------------------------
 
-```{r ecg12deriv, echo=FALSE, fig.cap=paste0("Fig. ", ref("fig:ecg12deriv"), ":  12-derivation ECG.")}
+```{r ecg12deriv, echo=FALSE, fig.cap=paste0("Fig. ", ref("fig:ecg12deriv"), ": 12-derivation ECG.")}
 knitr::include_graphics("figures/ecg12deriv.jpg")
 ```
 
@@ -135,7 +135,7 @@ kbl(challenge, booktabs = TRUE, caption = paste("Table ", ref("tab:challenge"), 
 
 This research is being conducted using the Research Compendium principles[@compendium2019]:
 
-```{r compendium_principles, echo=FALSE, fig.cap=paste0("Fig. ", ref("fig:compendium_principles"), ":  Research Compendium principles.")}
+```{r compendium_principles, echo=FALSE, fig.cap=paste0("Fig. ", ref("fig:compendium_principles"), ": Research Compendium principles.")}
 knitr::include_graphics("figures/compendium_principles.png")
 ```
 
@@ -143,7 +143,7 @@ knitr::include_graphics("figures/compendium_principles.png")
 
 Data management follows the FAIR principle (findable, accessible, interoperable, reusable)[@wilkinson2016].
 
-```{r compendium_principles2, echo=FALSE, fig.cap=paste0("Fig. ", ref("fig:compendium_principles2"), ":  FAIR principle (findable, accessible, interoperable, reusable).")}
+```{r compendium_principles2, echo=FALSE, fig.cap=paste0("Fig. ", ref("fig:compendium_principles2"), ": FAIR principle (findable, accessible, interoperable, reusable).")}
 knitr::include_graphics("figures/compendium_principles2.png")
 ```
 
@@ -152,25 +152,25 @@ knitr::include_graphics("figures/compendium_principles2.png")
 All steps of the process will be managed using the R package `targets`[@landau2021] from data extraction to the final
 report, as shown in Fig. `r ref("fig:targets")`.
 
-```{r targets, echo=FALSE, fig.cap=paste0("Fig. ", ref("fig:targets"), ":  Reprodutible research workflow using `targets`.")}
+```{r targets, echo=FALSE, fig.cap=paste0("Fig. ", ref("fig:targets"), ": Reproducible research workflow using `targets`.")}
 knitr::include_graphics("figures/targets.png")
 ```
 
 ------------------------------------------------------------------------------------------------------------------------
 
-```{r workflowr_print, echo=FALSE, fig.cap=paste0("Fig. ", ref("fig:workflowr_print"), ":  Reprodutible research workflow using `workflowr`.")}
+```{r workflowr_print, echo=FALSE, fig.cap=paste0("Fig. ", ref("fig:workflowr_print"), ": Reproducible research workflow using `workflowr`.")}
 knitr::include_graphics("figures/workflowr_print.png")
 ```
 
 ------------------------------------------------------------------------------------------------------------------------
 
-```{r session_information, echo=FALSE, fig.cap=paste0("Fig. ", ref("fig:session_information"), ":  Reprodutible research workflow using `workflowr`.")}
+```{r session_information, echo=FALSE, fig.cap=paste0("Fig. ", ref("fig:session_information"), ": Reproducible research workflow using `workflowr`.")}
 knitr::include_graphics("figures/session_information.png")
 ```
 
 ------------------------------------------------------------------------------------------------------------------------
 
-```{r badges, echo=FALSE, fig.cap=paste0("Fig. ", ref("fig:badges"), ":  Ready to code, versioned, code quality checked.")}
+```{r badges, echo=FALSE, fig.cap=paste0("Fig. ", ref("fig:badges"), ": Ready to code, versioned, code quality checked.")}
 knitr::include_graphics("figures/badges.png")
 ```
 
@@ -178,7 +178,7 @@ knitr::include_graphics("figures/badges.png")
 
 The dataset is publicly available at Zenodo: ![](figures/zenodo.doi.svg){style="height:1em;margin: 0 0 -0.2em 0;"}
 
-```{r zenodo, echo=FALSE, fig.cap=paste0("Fig. ", ref("fig:zenodo"), ":  FAIR principle (findable, accessible, interoperable, reusable)."), out.width='60%'}
+```{r zenodo, echo=FALSE, fig.cap=paste0("Fig. ", ref("fig:zenodo"), ": FAIR principle (findable, accessible, interoperable, reusable)."), out.width='60%'}
 knitr::include_graphics("figures/zenodo.png")
 ```
 
@@ -193,7 +193,7 @@ principle.
 
 The proposed approach is depicted in Fig. `r ref("fig:workflow_image")`:
 
-```{r workflow_image, echo=FALSE, fig.cap=paste0("Fig. ", ref("fig:workflow_image"), ":  Proposed approach to train the model for relevant patterns detection.")}
+```{r workflow_image, echo=FALSE, fig.cap=paste0("Fig. ", ref("fig:workflow_image"), ": Proposed approach to train the model for relevant patterns detection.")}
 knitr::include_graphics("figures/false_alarm.svg")
 ```
 
@@ -212,7 +212,7 @@ While programming the pipeline for the current dataset, it has been acquired a S
 from Sparkfun^TM^ [@sparkfun2021] using the AD8232 [@AnalogDevices2020] microchip from Analog Devices Inc., compatible
 with Arduino^(R)^ [@arduino2021], for an in-house experiment. Fig. `r ref("fig:ad8232")`.
 
-```{r ad8232, echo=FALSE, fig.cap=paste0("Fig. ", ref("fig:ad8232"), ":  Single Lead Heart Rate Monitor")}
+```{r ad8232, echo=FALSE, fig.cap=paste0("Fig. ", ref("fig:ad8232"), ": Single Lead Heart Rate Monitor")}
 knitr::include_graphics("figures/sparkfun2.jpg")
 ```
 
@@ -220,14 +220,14 @@ knitr::include_graphics("figures/sparkfun2.jpg")
 
 The output gives us a raw signal as shown in Fig. `r ref("fig:rawsignal")`.
 
-```{r rawsignal, echo=FALSE, fig.cap=paste0("Fig. ", ref("fig:rawsignal"), ":  raw output from Arduino at ~300Hz")}
+```{r rawsignal, echo=FALSE, fig.cap=paste0("Fig. ", ref("fig:rawsignal"), ": raw output from Arduino at ~300Hz")}
 knitr::include_graphics("figures/arduino_plot.jpg")
 ```
 
 After applying the same settings as the Physionet database (collecting the data at 500Hz, resample to 250Hz,
 pass-filter, and notch filter), the signal is much better as shown in Fig. `r ref("fig:filtersignal")`.
 
-```{r filtersignal, echo=FALSE, fig.cap=paste0("Fig. ", ref("fig:filtersignal"), ":  Gray is raw, Red is filtered")}
+```{r filtersignal, echo=FALSE, fig.cap=paste0("Fig. ", ref("fig:filtersignal"), ": Gray is raw, Red is filtered")}
 knitr::include_graphics("figures/filtered_ecg.png")
 ```
 
@@ -249,7 +249,7 @@ $$
 
 The Fig. `r ref("fig:sqi")` shows some SQIs.
 
-```{r sqi, echo=FALSE, fig.cap=paste0("Fig. ", ref("fig:sqi"), ":  Green line is the \"complexity\" of the signal")}
+```{r sqi, echo=FALSE, fig.cap=paste0("Fig. ", ref("fig:sqi"), ": Green line is the \"complexity\" of the signal")}
 knitr::include_graphics("figures/noise.png")
 ```
 
@@ -259,7 +259,7 @@ Fig. `r ref("fig:regimefilter")` shows that noisy data (probably patient muscle 
 and thus are ignored by the algorithm. Also, valid for the following plots, the green and red lines on the data mark the
 10 seconds window where the "event" that triggers the alarm is supposed to happen.
 
-```{r regimefilter, echo=FALSE, fig.cap=paste0("Fig. ", ref("fig:regimefilter"), ":  Regime changes with noisy data - false alarm")}
+```{r regimefilter, echo=FALSE, fig.cap=paste0("Fig. ", ref("fig:regimefilter"), ": Regime changes with noisy data - false alarm")}
 knitr::include_graphics("figures/regime_filter.png")
 ```
 
@@ -268,7 +268,7 @@ knitr::include_graphics("figures/regime_filter.png")
 In Fig. `r ref("fig:regimefalse")`, the data is clean; thus, nothing is excluded. Interestingly one of the detected
 regime changes is inside the "green-red" window. But it is a false alarm.
 
-```{r regimefalse, echo=FALSE, fig.cap=paste0("Fig. ", ref("fig:regimefalse"), ":  Regime changes with good data - false alarm")}
+```{r regimefalse, echo=FALSE, fig.cap=paste0("Fig. ", ref("fig:regimefalse"), ": Regime changes with good data - false alarm")}
 knitr::include_graphics("figures/regime_false.png")
 ```
 
@@ -277,7 +277,7 @@ knitr::include_graphics("figures/regime_false.png")
 The last plot (Fig. `r ref("fig:regimetrue")`) shows the algorithm's robustness, not excluding good data with a
 wandering baseline, and the last regime change is correctly detected inside the "green-red" window.
 
-```{r regimetrue, echo=FALSE, fig.cap=paste0("Fig. ", ref("fig:regimetrue"), ":  Regime changes with good but wandering data - true alarm")}
+```{r regimetrue, echo=FALSE, fig.cap=paste0("Fig. ", ref("fig:regimetrue"), ": Regime changes with good but wandering data - true alarm")}
 knitr::include_graphics("figures/regime_true.png")
 ```
 
@@ -287,7 +287,7 @@ Briefly describing the regime detection algorithm, which can be explored in the 
 based on the assumption that between two regimes, the most similar shape (its nearest neighbor) is located on "the same
 side". This information is obtained from the Matrix Profile computation. More precisely, using only the Profile Index.
 
-```{r arcs_fluss_original, echo=FALSE, fig.cap=paste0("Fig. ", ref("fig:arcs_fluss_original"), ":  FLUSS algorithm, using arc counts.")}
+```{r arcs_fluss_original, echo=FALSE, fig.cap=paste0("Fig. ", ref("fig:arcs_fluss_original"), ": FLUSS algorithm, using arc counts.")}
 knitr::include_graphics("figures/arcs_fluss_original.png")
 ```
 
@@ -371,7 +371,7 @@ floss_data_2500 <- get_dist(0, 2500)
 floss_data_1250 <- get_dist(0, 1250)
 ```
 
-```{r distributions, echo=FALSE, fig.cap=paste0("Fig. ", ref("fig:distributions"), ":  1D-IAC distributions for earlier temporal constraint (on Matrix Profile)")}
+```{r distributions, echo=FALSE, fig.cap=paste0("Fig. ", ref("fig:distributions"), ": 1D-IAC distributions for earlier temporal constraint (on Matrix Profile)")}
 
 offset <- 120
 
@@ -415,7 +415,7 @@ On the other hand, it is possible to apply the time constraint in the FLOSS algo
 in its original form. See Fig. `r ref("fig:floss_dist")`. The theoretical distribution changes significantly according to
 the constraint value.
 
-```{r floss_dist, echo=FALSE, fig.cap=paste0("Fig. ", ref("fig:floss_dist"), ":  1D-IAC distributions for later temporal constraint (on FLOSS)")}
+```{r floss_dist, echo=FALSE, fig.cap=paste0("Fig. ", ref("fig:floss_dist"), ": 1D-IAC distributions for later temporal constraint (on FLOSS)")}
 
 offset <- 120
 
@@ -476,7 +476,7 @@ floss_data <- tibble(time = seq_along(floss_data$cac), cac = floss_data$cac, iac
 
 
 
-```{r constraints, echo=FALSE, fig.cap=paste0("Fig. ", ref("fig:constraints"), ":  CAC and Regime detection using early and later IAC")}
+```{r constraints, echo=FALSE, fig.cap=paste0("Fig. ", ref("fig:constraints"), ": CAC and Regime detection using early and later IAC")}
 
 landmark <- 5000 - 3 * 250
 mp_cac_landmark <- mp_data$cac[landmark]
