@@ -349,8 +349,9 @@
     },
     "SystemRequirements": "GNU make"
   },
-  "fileSize": "151457.613KB",
+  "fileSize": "151518.892KB",
   "readme": "https://github.com/franzbischoff/false.alarm/blob/master/README.md",
   "contIntegration": ["https://github.com/franzbischoff/false.alarm/actions/workflows/R-CMD-check.yaml", "https://codecov.io/gh/franzbischoff/false.alarm"],
-  "developmentStatus": "https://www.repostatus.org/#wip"
+  "developmentStatus": "https://www.repostatus.org/#wip",
+  "keywords": ["ecg", "signal-processing", "time-series", "matrix-profile"]
 }

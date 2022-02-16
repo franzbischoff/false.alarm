@@ -679,7 +679,7 @@ size_h <- 5
 data <- read_ecg_csv(here(glue("inst/extdata/physionet/{file}.hea")))
 data <- data[[file]]$II
 norm_data <- tsmp:::znorm(data)
-filter <- win_complex(norm_data, filter_w, 0)
+filter <- win_complex(norm_data, filter_w)
 filter <- filter > limit
 
 if (knitr::is_latex_output()) {

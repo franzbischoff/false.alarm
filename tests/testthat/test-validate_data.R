@@ -1,4 +1,4 @@
-# skip_on_ci()
+skip_on_ci()
 
 library(here)
 # library(glue)
@@ -8,6 +8,6 @@ source(here("scripts", "common", "validate_data.R"), encoding = "UTF-8")
 
 test_that("Data is valid", {
   set.seed(2022)
-  b <- win_complex(runif(1000), 10)
-  expect_equal(round(mean(b) + sd(b), 3), 0.018)
+  b <- validate_data(runif(1000), 10)
+  expect_equal(round(mean(b) + sd(b), 3), 0.787)
 })

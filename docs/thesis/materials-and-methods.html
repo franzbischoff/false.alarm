@@ -562,7 +562,9 @@ with artifacts, disconnected cables, wandering baselines and others.</p>
 measures as <em>kurtosis</em>, <em>skewness</em>, median local noise level, other more complex as pcaSQI (the
 ratio of the sum of the five largest eigenvalues associated with the principal components over the
 sum of all eigenvalues obtained by principal component analysis applied to the time aligned ECG
-segments in the window). By experimentation (yet to be validated), a simple formula gives us the
+segments in the window). An assessment of several different methods to estimate electrocardiogram
+signal quality can was performed by Del Rio, <em>et al</em><span class="citation"><sup><a href="references.html#ref-DelRio2011" role="doc-biblioref">47</a></sup></span>.</p>
+<p>By experimentation (yet to be validated), a simple formula gives us the
 “complexity” of the signal and correlates well with the noisy data is shown in Equation
 <a href="materials-and-methods.html#eq:complex">(3.2)</a>.</p>
 <p><br />
@@ -591,7 +593,7 @@ really necessary and the performance with and without “cleaning” will be rep
 <div id="detecting-regime-changes" class="section level3 hasAnchor" number="3.4.4">
 <h3><span class="header-section-number">3.4.4</span> Detecting regime changes<a href="materials-and-methods.html#detecting-regime-changes" class="anchor-section" aria-label="Anchor link to header"></a></h3>
 <p>The regime change approach will be using the <em>Arc Counts</em> concept, used on the FLUSS (Fast Low-cost
-Unipotent Semantic Segmentation) algorithm, as explained by Gharghabi, <em>et al.</em>,<span class="citation"><sup><a href="references.html#ref-gharghabi2018" role="doc-biblioref">47</a></sup></span>.</p>
+Unipotent Semantic Segmentation) algorithm, as explained by Gharghabi, <em>et al.</em>,<span class="citation"><sup><a href="references.html#ref-gharghabi2018" role="doc-biblioref">48</a></sup></span>.</p>
 <p>The FLUSS (and FLOSS, the on-line version) algorithm is built on top of the Matrix Profile
 (MP)<span class="citation"><sup><a href="references.html#ref-Yeh2017a" role="doc-biblioref">22</a></sup></span>, described on section <a href="materials-and-methods.html#matrixprofile">3.2.1</a>. Recalling that the MP and the companion
 Profile Index (PI) are two vectors holding information about the 1-NN. One can imagine several
@@ -613,12 +615,12 @@ available algorithms to date.</li>
 <li><strong>Streaming:</strong> the algorithm can provide real-time information.</li>
 <li><strong>Real-World Data Suitability:</strong> the objective is not to <em>explain</em> all the data. Therefore, areas
 marked as “don’t know” areas are acceptable.</li>
-<li><strong>FLOSS is not:</strong> a change point detection algorithm<span class="citation"><sup><a href="references.html#ref-aminikhanghahi2016" role="doc-biblioref">48</a></sup></span>. The interest here is
+<li><strong>FLOSS is not:</strong> a change point detection algorithm<span class="citation"><sup><a href="references.html#ref-aminikhanghahi2016" role="doc-biblioref">49</a></sup></span>. The interest here is
 changes in the shapes of a sequence of measurements.</li>
 </ul>
 <p>Other algorithms we can cite are based on Hidden Markov Models (HMM) that require at least two
 parameters to be set by domain experts: cardinality and dimensionality reduction. The most
-attractive alternative could be the Autoplait<span class="citation"><sup><a href="references.html#ref-Matsubara2014" role="doc-biblioref">49</a></sup></span>, which is also domain agnostic and
+attractive alternative could be the Autoplait<span class="citation"><sup><a href="references.html#ref-Matsubara2014" role="doc-biblioref">50</a></sup></span>, which is also domain agnostic and
 parameter-free. It segments the time series using Minimum Description Length (MDL) and recursively
 tests if the region is best modeled by one or two HMM. However, Autoplait is designed for batch
 operation, not streaming, and also requires discrete data. FLOSS was demonstrated to be superior in
@@ -626,7 +628,7 @@ several datasets in its original paper. In addition, FLOSS is robust to several 
 downsampling, bit depth reduction, baseline wandering, noise, smoothing, and even deleting 3% of the
 data and filling with simple interpolation. Finally, the most important, the algorithm is light and
 suitable for low-power devices.</p>
-<p>In the MP domain, it is worth also mentioning other possible algorithm: the Time Series Snippets<span class="citation"><sup><a href="references.html#ref-Imani2018" role="doc-biblioref">50</a></sup></span>, based on MPdist<span class="citation"><sup><a href="references.html#ref-gharghabi2018b" role="doc-biblioref">51</a></sup></span>. The latter measures the distance between two
+<p>In the MP domain, it is worth also mentioning other possible algorithm: the Time Series Snippets<span class="citation"><sup><a href="references.html#ref-Imani2018" role="doc-biblioref">51</a></sup></span>, based on MPdist<span class="citation"><sup><a href="references.html#ref-gharghabi2018b" role="doc-biblioref">52</a></sup></span>. The latter measures the distance between two
 sequences considering how many similar sub-sequences they share, no matter the order of matching. It
 proved to be a useful measure (not a metric) for meaningfully clustering similar sequences. Time
 Series Snippets exploits MPdist properties to summarize a dataset extracting the <span class="math inline">\(k\)</span> sequences that
@@ -639,11 +641,35 @@ to the trivial Euclidean distance.</p>
 </div>
 <div id="classregime" class="section level3 hasAnchor" number="3.4.5">
 <h3><span class="header-section-number">3.4.5</span> Classification of the new regime<a href="materials-and-methods.html#classregime" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<!--
+
+Chin [10.1109/IEMBS.2010.5628088] uses cross-correlation between templates and the signal to
+identify arrhythmias. a light-weight algorithm suitable for short-term real-time ECG analysis which
+can be implemented on a mobile device platform will be presented.
+
+
+Silka [10.1109/CIC.1992.269406] and Caswell [10.1109/CIC.1993.378474], are pioneers in
+developing template matching algorithms for ECG analysis. Lai [10.1109/IEMBS.1998.745844] used
+fractal and cross-correlation analysis as parameters for a real-time ECG classification algorithm
+
+Bousselijot [10.1109/CIC.1998.731806]: The interpretation of ECGs without feature extraction is
+possible using the algorithm of cross correlation for normalized multi-lead waveforms
+
+Schuckers [10.1109/NEBC.1998.664864] compares algorithms
+
+
+Ruiz [10.1109/CIC.2003.1291259] in 2003 introduced a method to cross-correlate between a reference
+signal, which is the first 0.6 sec segment of the examined ECG signal, and a base signal, which is
+the rest of the signal.
+
+
+
+-->
 <p>The next step towards the objective of this work is to verify if the new regime detected by the
 previous step is indeed a life-threatening pattern that we should trigger the alarm.</p>
 <p>First let’s dismiss some apparent solutions: (1) Clustering. It is well understood that we cannot
-cluster time series subsequences meaningfully with any distance measure, or with any algorithm<span class="citation"><sup><a href="references.html#ref-Keogh2005" role="doc-biblioref">52</a></sup></span>. The main argument is that in a meaningfull algorithm, the output depends on the input,
-and this has been proven to not happen in time series subsequence clustering<span class="citation"><sup><a href="references.html#ref-Keogh2005" role="doc-biblioref">52</a></sup></span>. (2)
+cluster time series subsequences meaningfully with any distance measure, or with any algorithm<span class="citation"><sup><a href="references.html#ref-Keogh2005" role="doc-biblioref">53</a></sup></span>. The main argument is that in a meaningfull algorithm, the output depends on the input,
+and this has been proven to not happen in time series subsequence clustering<span class="citation"><sup><a href="references.html#ref-Keogh2005" role="doc-biblioref">53</a></sup></span>. (2)
 Anomaly detection. In this work we are not looking for surprises, but for patterns that are known to
 be life-threatening. (3) Forecasting. We may be tempted to make predictions, but clearly this is not
 the idea here.</p>
@@ -654,9 +680,9 @@ classifiers or a “six-class” classifier (being the sixth class the <code>FAL
 <p>Since the model doesn’t know which life-threatening pattern will be present in the regime (or if it
 will be a <code>FALSE</code> case), the model will need to check for all five <code>TRUE</code> cases and if none of these
 cases are identified, it will classify the regime as <code>FALSE</code>.</p>
-<p>In order to avoid exceeding processor capacity, an initial set of shapelets<span class="citation"><sup><a href="references.html#ref-Rakthanmanon2013" role="doc-biblioref">53</a></sup></span> can
+<p>In order to avoid exceeding processor capacity, an initial set of shapelets<span class="citation"><sup><a href="references.html#ref-Rakthanmanon2013" role="doc-biblioref">54</a></sup></span> can
 be sufficient to build the <code>TRUE</code>/<code>FALSE</code> classifier. And to build such set of shapelets, leveraging
-on the MP, we will use the Contrast Profile<span class="citation"><sup><a href="references.html#ref-Mercer2021" role="doc-biblioref">54</a></sup></span>.</p>
+on the MP, we will use the Contrast Profile<span class="citation"><sup><a href="references.html#ref-Mercer2021" role="doc-biblioref">55</a></sup></span>.</p>
 <p>The Contrast Profile (CP) looks for patterns that are at the same time very <em>similar</em> to its
 neighbors in class <em>A</em> while is very <em>different</em> from the nearest neighbor from class <em>B</em>. In other
 words, this means that such pattern represents well class <em>A</em> and may be taken as a “signature” of
@@ -676,7 +702,7 @@ CP_w = \frac{MP_{w}^{(+-)} - MP_{w}^{(++)}}{\sqrt{2w}} \quad \text{where}\; w \;
 \end{equation}\]</span><br />
 </p>
 <p>For a more complete understanding of the process, Fig. <a href="materials-and-methods.html#fig:contrast">3.11</a> shows a practical example
-from the original article<span class="citation"><sup><a href="references.html#ref-Mercer2021" role="doc-biblioref">54</a></sup></span>.</p>
+from the original article<span class="citation"><sup><a href="references.html#ref-Mercer2021" role="doc-biblioref">55</a></sup></span>.</p>
 <br />
 <div class="figure" style="text-align: center"><span style="display:block;" id="fig:contrast"></span>
 <img src="/home/workspace/false.alarm/protocol/figure/contrast.svg" alt="Top to bottom: two weakly-labeled snippets of a larger time series. T(-) contains only normal beats. T(+) also contains PVC (premature ventricular contractions). Next, two Matrix Profiles with window size 91; AB-join is in red and self-join in blue. Bottom, the Contrast Profile showing the highest location." width="100%" />
@@ -692,13 +718,13 @@ evaluated using the criterias explained on section <a href="materials-and-method
 <p>In order to summarize the steps taken on this thesis to accomplish the main objective, Figs.
 <a href="materials-and-methods.html#fig:regimedetection">3.13</a>, <a href="materials-and-methods.html#fig:shapelets">3.14</a> and <a href="materials-and-methods.html#fig:fullmodel">3.15</a> show the overview of the
 processes involved.</p>
-<p>First let us introduce the concept of Nested Resampling<span class="citation"><sup><a href="references.html#ref-Bischl2012" role="doc-biblioref">55</a></sup></span>. It is known that when
-increasing model complexity, overfitting on the training set becomes more likely to happen<span class="citation"><sup><a href="references.html#ref-Hastie2009" role="doc-biblioref">56</a></sup></span>. This is an issue that this work has to countermeasure as there are many steps that
+<p>First let us introduce the concept of Nested Resampling<span class="citation"><sup><a href="references.html#ref-Bischl2012" role="doc-biblioref">56</a></sup></span>. It is known that when
+increasing model complexity, overfitting on the training set becomes more likely to happen<span class="citation"><sup><a href="references.html#ref-Hastie2009" role="doc-biblioref">57</a></sup></span>. This is an issue that this work has to countermeasure as there are many steps that
 requires parameter tuning, even for algorithms that are almost parameter-free like the MP.</p>
 <p>The rule that must be followed is simple: <em>do not</em> evaluate a model on the same resampling split used
 to perform its own parameter tuning. Using simple cross-validation, the information about the test
 set “leaks” into the evaluation, which leads to overfitting/overtuning, and gives us an optimistic
-biased estimative of the performance. Bernd Bischl, 2012<span class="citation"><sup><a href="references.html#ref-Bischl2012" role="doc-biblioref">55</a></sup></span> describes more deeply these
+biased estimative of the performance. Bernd Bischl, 2012<span class="citation"><sup><a href="references.html#ref-Bischl2012" role="doc-biblioref">56</a></sup></span> describes more deeply these
 factors, and also gives us a countermeasure for that: (1) from preprocessing the data to model
 selection use the training set; (2) the test set should be touched once, on the evaluation step; (3)
 repeat. This guarantees that a “new” separated data is only used <em>after</em> the model is trained/tuned.</p>
@@ -718,7 +744,7 @@ FIGURE 3.12: Nested resampling. The full dataset is resampled several times (out
 </div>
 <p><br />
 </p>
-<p>After the understanding of the Nested Resampling<span class="citation"><sup><a href="references.html#ref-Bischl2012" role="doc-biblioref">55</a></sup></span>, the following flowcharts can be
+<p>After the understanding of the Nested Resampling<span class="citation"><sup><a href="references.html#ref-Bischl2012" role="doc-biblioref">56</a></sup></span>, the following flowcharts can be
 better interpreted. Fig. <a href="materials-and-methods.html#fig:regimedetection">3.13</a> starts with the “Full Dataset” that contains all
 time series from the dataset described on section <a href="materials-and-methods.html#the-data">3.3</a>. Each time series represents one
 file from the database, and represents one patient.</p>
@@ -765,7 +791,7 @@ FIGURE 3.15: Pipeline of the final process. The streaming data, coming from one 
 <h2><span class="header-section-number">3.5</span> Evaluation of the algorithms<a href="materials-and-methods.html#evaluation" class="anchor-section" aria-label="Anchor link to header"></a></h2>
 <p>The subsampling method used on both algorithms, regime change and classification, will be
 the Cross Validation, as the learning task will be in batches.</p>
-<p>Other options dismissed<span class="citation"><sup><a href="references.html#ref-Bischl2012" role="doc-biblioref">55</a></sup></span>:</p>
+<p>Other options dismissed<span class="citation"><sup><a href="references.html#ref-Bischl2012" role="doc-biblioref">56</a></sup></span>:</p>
 <ul>
 <li><p>Leave-One-Out Cross Validation: has better properties for regression than for classification. It
 has a high variance as an estimator of the mean loss. It also is asymptotically inconsistent and
@@ -779,7 +805,7 @@ it, is that with Cross Validation we make sure all the data is used for analysis
 <div id="regime-change" class="section level3 hasAnchor" number="3.5.1">
 <h3><span class="header-section-number">3.5.1</span> Regime change<a href="materials-and-methods.html#regime-change" class="anchor-section" aria-label="Anchor link to header"></a></h3>
 <p>A detailed discussion about the evaluation process of segmentation algorithms is made by the
-FLUSS/FLOSS author<span class="citation"><sup><a href="references.html#ref-gharghabi2018" role="doc-biblioref">47</a></sup></span>. Previous researches have used precision/recall or derived
+FLUSS/FLOSS author<span class="citation"><sup><a href="references.html#ref-gharghabi2018" role="doc-biblioref">48</a></sup></span>. Previous researches have used precision/recall or derived
 measures for performance. The main issue is how to assume that the algorithm was correct? If the
 ground truth says the change occurred at location 10,000, and the algorithm detects a change at
 location 10,001, is this a miss?</p>
@@ -814,9 +840,9 @@ also analyzed in batches.</p>
 <p>One important factor we must consider is that, on real world, the majority of regime changes will be
 <code>FALSE</code> (i.e., not life-threatening). Thus, a performance measure that is robust to class imbalance
 is needed if we want to be able to assess the model after it was trained, on the field.</p>
-<p>It is well known that the <em>Accuracy</em> measure is not reliable for unbalanced data<span class="citation"><sup><a href="references.html#ref-Akosa2017" role="doc-biblioref">37</a>,<a href="references.html#ref-Bekkar2013" role="doc-biblioref">57</a></sup></span> as it returns optimistic results for a classifier on the majority class. A
-description of common measures used on classification is available<span class="citation"><sup><a href="references.html#ref-Akosa2017" role="doc-biblioref">37</a>,<a href="references.html#ref-Chicco2020" role="doc-biblioref">58</a></sup></span>. Here
-we will focus on three candidate measures that can be used: F-score (well discussed on<span class="citation"><sup><a href="references.html#ref-Chicco2020" role="doc-biblioref">58</a></sup></span>), Matthew’s Correlation Coefficient (MCC)<span class="citation"><sup><a href="references.html#ref-Matthews1975" role="doc-biblioref">59</a></sup></span> and <span class="math inline">\(\kappa_m\)</span> statistic<span class="citation"><sup><a href="references.html#ref-Bifet2015" role="doc-biblioref">60</a></sup></span>.</p>
+<p>It is well known that the <em>Accuracy</em> measure is not reliable for unbalanced data<span class="citation"><sup><a href="references.html#ref-Akosa2017" role="doc-biblioref">37</a>,<a href="references.html#ref-Bekkar2013" role="doc-biblioref">58</a></sup></span> as it returns optimistic results for a classifier on the majority class. A
+description of common measures used on classification is available<span class="citation"><sup><a href="references.html#ref-Akosa2017" role="doc-biblioref">37</a>,<a href="references.html#ref-Chicco2020" role="doc-biblioref">59</a></sup></span>. Here
+we will focus on three candidate measures that can be used: F-score (well discussed on<span class="citation"><sup><a href="references.html#ref-Chicco2020" role="doc-biblioref">59</a></sup></span>), Matthew’s Correlation Coefficient (MCC)<span class="citation"><sup><a href="references.html#ref-Matthews1975" role="doc-biblioref">60</a></sup></span> and <span class="math inline">\(\kappa_m\)</span> statistic<span class="citation"><sup><a href="references.html#ref-Bifet2015" role="doc-biblioref">61</a></sup></span>.</p>
 <p>The F-score (let’s abbreviate to F<sub>1</sub> as this is the more common setting), is widely used on
 <em>information retrieval</em>, where the classes are usually classified as “relevant” and “irrelevant”,
 and combines the <em>recall</em> (also known as sensitivity) and the <em>precision</em> (the positive predicted
@@ -831,22 +857,22 @@ better, thus not suitable to our case. The F<sub>1</sub> score is defined on equ
 F_1 score = \frac{2 \cdot TP}{2 \cdot TP + FP + FN} = 2 \cdot \frac{precision \cdot recall}{precision + recall} \tag{3.4}
 \end{equation}\]</span></p>
 <p>The MCC is a good alternative to the F<sub>1</sub> when we do care about the True negatives (both were
-considered to “provide more realistic estimates of real-world model performance”<span class="citation"><sup><a href="references.html#ref-Dubey2018" role="doc-biblioref">61</a></sup></span>). It
-is a method to compute the <em>Pearson product-moment correlation coefficient</em><span class="citation"><sup><a href="references.html#ref-Delgado2019" role="doc-biblioref">62</a></sup></span> between
+considered to “provide more realistic estimates of real-world model performance”<span class="citation"><sup><a href="references.html#ref-Dubey2018" role="doc-biblioref">62</a></sup></span>). It
+is a method to compute the <em>Pearson product-moment correlation coefficient</em><span class="citation"><sup><a href="references.html#ref-Delgado2019" role="doc-biblioref">63</a></sup></span> between
 the actual and predicted values. It ranges from [-1, 1]. The MCC is the only binary classification
 rate that only gives a high score if the binary classifier was able to correctly classify the
-majority of the positive and negative instances<span class="citation"><sup><a href="references.html#ref-Chicco2020" role="doc-biblioref">58</a></sup></span>. One may argue that Cohen’s <span class="math inline">\(\kappa\)</span>
+majority of the positive and negative instances<span class="citation"><sup><a href="references.html#ref-Chicco2020" role="doc-biblioref">59</a></sup></span>. One may argue that Cohen’s <span class="math inline">\(\kappa\)</span>
 has the same behavior, but there are two main differences (1) MCC is <em>undefined</em> in the case of a
 <em>majority voter</em> while Cohen’s <span class="math inline">\(\kappa\)</span> doesn’t discriminates this case from the random classifier
 (<span class="math inline">\(\kappa\)</span> is zero for both cases) (2) It is proven that in an special case when the classifier is
 increasing the False Negatives, Cohen’s <span class="math inline">\(\kappa\)</span> doesn’t get worse as spected, MCC
-doesn’t have this issue<span class="citation"><sup><a href="references.html#ref-Delgado2019" role="doc-biblioref">62</a></sup></span>. MCC is defined on equation <a href="materials-and-methods.html#eq:mccval">(3.5)</a>.</p>
+doesn’t have this issue<span class="citation"><sup><a href="references.html#ref-Delgado2019" role="doc-biblioref">63</a></sup></span>. MCC is defined on equation <a href="materials-and-methods.html#eq:mccval">(3.5)</a>.</p>
 <p><span class="math display" id="eq:mccval">\[\begin{equation}
 MCC = \frac{TP \cdot TN - FP \cdot FN}{\sqrt{(TP + FP) \cdot (TP + FN) \cdot (TN + FP) \cdot (TN + FN)}} \tag{3.5}
 \end{equation}\]</span></p>
-<p>The <span class="math inline">\(\kappa_m\)</span> statistic<span class="citation"><sup><a href="references.html#ref-Bifet2015" role="doc-biblioref">60</a></sup></span> is a measure that takes in account not the <em>random classifier</em>
+<p>The <span class="math inline">\(\kappa_m\)</span> statistic<span class="citation"><sup><a href="references.html#ref-Bifet2015" role="doc-biblioref">61</a></sup></span> is a measure that takes in account not the <em>random classifier</em>
 but the <em>majority voter</em> (a classifier that only votes on the larger class). It was introduced by
-Bifet <em>et al.</em><span class="citation"><sup><a href="references.html#ref-Bifet2015" role="doc-biblioref">60</a></sup></span> for being used in online settings, where the class balance may change
+Bifet <em>et al.</em><span class="citation"><sup><a href="references.html#ref-Bifet2015" role="doc-biblioref">61</a></sup></span> for being used in online settings, where the class balance may change
 over time. It is defined on equation <a href="materials-and-methods.html#eq:kappam">(3.6)</a>, where <span class="math inline">\(p_0\)</span> is the observed accuracy and
 <span class="math inline">\(p_m\)</span> is the accuracy of the majority voter. The score ranges from (<span class="math inline">\(-\infty\)</span>, 1], theoretically,
 but in practice you see negative numbers if the classifier is performing worse than the majority voter
@@ -862,7 +888,7 @@ minimize the False Negative Rate (<span class="math inline">\(FNR = \frac{FN}{TP
 <p>In the outer resampling, the MCC and <span class="math inline">\(\kappa_m\)</span> of all winning models will aggregated and reported
 using the median and interquartile range.</p>
 <p>For different classifiers, we will use the Wilcoxon’s signed-rank test for comparing their performances,
-as this method is known to have low Type I and Type II errors in this kind of comparison<span class="citation"><sup><a href="references.html#ref-Bifet2015" role="doc-biblioref">60</a></sup></span>.</p>
+as this method is known to have low Type I and Type II errors in this kind of comparison<span class="citation"><sup><a href="references.html#ref-Bifet2015" role="doc-biblioref">61</a></sup></span>.</p>
 </div>
 <div id="full-model-streaming-setting" class="section level3 hasAnchor" number="3.5.3">
 <h3><span class="header-section-number">3.5.3</span> Full model (streaming setting)<a href="materials-and-methods.html#full-model-streaming-setting" class="anchor-section" aria-label="Anchor link to header"></a></h3>

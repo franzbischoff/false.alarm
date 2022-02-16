@@ -108,3 +108,5 @@ protocol/**/*.svg
 mpxtest.RData
 .devcontainer/git-hours.tgz
 .devcontainer/mathjax.tgz
+docs/thesis/*.log
+docs/thesis/__*.tex

@@ -35,8 +35,7 @@ plot_regimes <- function(data_with_regimes, params, infos, save = FALSE) {
   filter_size <- "raw" # HACK
 
   file <- sprintf(
-    "%s_%s_%d_%.1f_%d_%d_%.1f_%s.png", filename, signal, window_size,
-    threshold, floss_time_constraint, mp_time_constraint, regime_threshold, filter_size
+    "%s_%s_%.1f_%d_%d_%.1f_%d_%s.png", filename, signal, regime_threshold, floss_time_constraint, mp_time_constraint, threshold, window_size, filter_size
   )
   title <- sprintf(
     "FLOSS-Regimes - %s-%s, w: %d, t: %.1f, ct: %.1f, c: %d, fc: %d, %s-%s", filename, signal, window_size, threshold,

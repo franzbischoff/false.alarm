@@ -131,6 +131,16 @@ read_ecg <- function(filename, plot = FALSE, subset = NULL,
     gain <- unlist(strsplit(gain, "/"))
     unit <- NULL
 
+    # gain_baseline?
+    gain_baseline <- unlist(strsplit(gain[1], "\\("))
+    if (length(gain_baseline) == 2) {
+      gain_baseline <- unlist(strsplit(gain_baseline, "\\)"))
+      gain[1] <- gain_baseline[1]
+      gain_baseline <- as.numeric(gain_baseline[2])
+    } else {
+      gain_baseline <- NULL
+    }
+
     if (length(gain) == 2) {
       unit <- gain[2]
       gain <- as.numeric(gain[1])
@@ -149,7 +159,11 @@ read_ecg <- function(filename, plot = FALSE, subset = NULL,
     siginfo[[i - 1]]["gain"] <- gain
     siginfo[[i - 1]]["unit"] <- unit
     siginfo[[i - 1]]["resolution"] <- as.numeric(hea_content[[i]][4]) # bits resolution of the analog-to-digital converter used to digitize the signal
-    siginfo[[i - 1]]["baseline"] <- as.numeric(hea_content[[i]][5])
+    if (is.null(gain_baseline)) {
+      siginfo[[i - 1]]["baseline"] <- as.numeric(hea_content[[i]][5])
+    } else {
+      siginfo[[i - 1]]["baseline"] <- gain_baseline
+    }
     siginfo[[i - 1]]["first"] <- as.numeric(hea_content[[i]][6])
     siginfo[[i - 1]]["chksum"] <- as.numeric(hea_content[[i]][7])
     siginfo[[i - 1]]["blocksize"] <- as.numeric(hea_content[[i]][8])
@@ -273,7 +287,7 @@ read_ecg <- function(filename, plot = FALSE, subset = NULL,
 read_ecg_csv <- function(filename, plot = FALSE, subset = NULL,
                          classes = c("all", "asystole", "bradycardia", "tachycardia", "fibv", "vtachy"),
                          true_alarm = NULL, normalize = TRUE) {
-  checkmate::assert_string(filename, 3)
+  checkmate::assert_string(filename, min.chars = 3)
   checkmate::qassert(plot, "B")
   checkmate::qassert(true_alarm, c("0", "B"))
   classes <- match.arg(classes, several.ok = TRUE)
@@ -311,7 +325,7 @@ read_ecg_csv <- function(filename, plot = FALSE, subset = NULL,
   content <- paste0(filename, ".csv.bz2")
   basename <- basename(filename)
 
-  if (!file.exists(header) | !file.exists(content)) {
+  if (any(!file.exists(c(header, content)))) {
     stop("File ", filename, "does not exist.")
   }
 
@@ -353,6 +367,16 @@ read_ecg_csv <- function(filename, plot = FALSE, subset = NULL,
     gain <- unlist(strsplit(gain, "/"))
     unit <- NULL
 
+    # gain_baseline?
+    gain_baseline <- unlist(strsplit(gain[1], "\\("))
+    if (length(gain_baseline) == 2) {
+      gain_baseline <- unlist(strsplit(gain_baseline, "\\)"))
+      gain[1] <- gain_baseline[1]
+      gain_baseline <- as.numeric(gain_baseline[2])
+    } else {
+      gain_baseline <- NULL
+    }
+
     if (length(gain) == 2) {
       unit <- gain[2]
       gain <- as.numeric(gain[1])
@@ -371,7 +395,11 @@ read_ecg_csv <- function(filename, plot = FALSE, subset = NULL,
     siginfo[[i - 1]]["gain"] <- gain
     siginfo[[i - 1]]["unit"] <- unit
     siginfo[[i - 1]]["resolution"] <- as.numeric(hea_content[[i]][4]) # bits resolution of the analog-to-digital converter used to digitize the signal
-    siginfo[[i - 1]]["baseline"] <- as.numeric(hea_content[[i]][5])
+    if (is.null(gain_baseline)) {
+      siginfo[[i - 1]]["baseline"] <- as.numeric(hea_content[[i]][5])
+    } else {
+      siginfo[[i - 1]]["baseline"] <- gain_baseline
+    }
     siginfo[[i - 1]]["first"] <- as.numeric(hea_content[[i]][6])
     siginfo[[i - 1]]["chksum"] <- as.numeric(hea_content[[i]][7])
     siginfo[[i - 1]]["blocksize"] <- as.numeric(hea_content[[i]][8])
@@ -449,6 +477,183 @@ read_ecg_csv <- function(filename, plot = FALSE, subset = NULL,
   return(output)
 }
 
+#' Reads ECG files with annotations.
+#' These were converted using python's wfdb library, so the signal is already normalized and
+#' converted from digital to physical value range.
+#' We need to pay attention to the signal frequency. This first dataset is 200Hz, not 250Hz
+
+read_ecg_with_atr <- function(filename, subset = NULL, classes = c("all", "persistent_afib", "paroxistical_afib", "non_afib"), resample_from = 0, resample_to = 0) {
+  checkmate::assert_string(filename, min.chars = 3)
+  classes <- match.arg(classes, several.ok = TRUE)
+
+  if (!("all" %in% classes)) {
+    filtered <- NULL
+
+    for (class in classes) {
+      res <- switch(class,
+        persistent_afib = grep("*.\\.per\\.hea", files, value = TRUE),
+        paroxistical_afib = grep("*.\\.par\\.hea", files, value = TRUE),
+        non_afib = grep("*.\\.non\\.hea", files, value = TRUE)
+      )
+
+      filtered <- c(filtered, res)
+    }
+
+    if (rlang::is_empty(filtered)) {
+      message("File skipped (not in class): ", filename)
+      return(NULL)
+    }
+  }
+
+  if (tools::file_ext(filename) == "hea") {
+    filename <- tools::file_path_sans_ext(filename)
+  }
+
+  header <- paste0(filename, ".hea")
+  content <- paste0(filename, ".csv.bz2")
+  annotation <- paste0(filename, ".atr.csv.bz2")
+  basename <- basename(filename)
+
+  if (any(!file.exists(c(header, content, annotation)))) {
+    stop("File ", filename, "does not exist.")
+  }
+
+  hea <- file(header, "r")
+  hea_content <- readLines(hea)
+  close(hea)
+
+  # Skip any comment lines
+  for (i in seq_along(hea_content)) {
+    if (substr(hea_content[i], 1, 1) == "#") {
+      next
+    } else {
+      break
+    }
+  }
+
+  if (i == length(hea_content)) {
+    stop("The file only contains comments.")
+  }
+
+  nlines <- length(hea_content)
+
+  hea_content <- strsplit(hea_content[i:length(hea_content)], " ")
+
+  n_signals <- as.numeric(hea_content[[1]][2]) # Number of signals present
+  freq_signal <- as.numeric(hea_content[[1]][3]) # Frequency of the signal
+
+  # Process Signal Specification lines. Assumes no comments between lines.
+  siginfo <- list()
+
+  # Set default parameter values
+  def_gain <- 200 # Default value for missing gains
+  wfdb_nan <- -32768 # This should be the case for all WFDB signal format types currently supported by RDMAT
+
+  # browser()
+  for (i in (seq_len(n_signals) + 1)) {
+    format <- hea_content[[i]][2]
+    gain <- hea_content[[i]][3]
+    # Get Signal Units if present
+    gain <- unlist(strsplit(gain, "/"))
+    unit <- NULL
+
+    # gain_baseline?
+    gain_baseline <- unlist(strsplit(gain[1], "\\("))
+    if (length(gain_baseline) == 2) {
+      gain_baseline <- unlist(strsplit(gain_baseline, "\\)"))
+      gain[1] <- gain_baseline[1]
+      gain_baseline <- as.numeric(gain_baseline[2])
+    } else {
+      gain_baseline <- NULL
+    }
+
+    if (length(gain) == 2) {
+      unit <- gain[2]
+      gain <- as.numeric(gain[1])
+    } else {
+      gain <- as.numeric(gain)
+
+      # if zero set as default
+      if (gain == 0) {
+        gain <- def_gain
+      }
+    }
+
+    siginfo[[i - 1]] <- list()
+
+    siginfo[[i - 1]]["format"] <- format # (-32767 +32767) 16+24 == 16 sixteen-bit amplitudes + 24 byte offset
+    siginfo[[i - 1]]["gain"] <- gain
+    siginfo[[i - 1]]["unit"] <- unit
+    siginfo[[i - 1]]["resolution"] <- as.numeric(hea_content[[i]][4]) # bits resolution of the analog-to-digital converter used to digitize the signal
+    if (is.null(gain_baseline)) {
+      siginfo[[i - 1]]["baseline"] <- as.numeric(hea_content[[i]][5])
+    } else {
+      siginfo[[i - 1]]["baseline"] <- gain_baseline
+    }
+    siginfo[[i - 1]]["first"] <- as.numeric(hea_content[[i]][6])
+    siginfo[[i - 1]]["chksum"] <- as.numeric(hea_content[[i]][7])
+    siginfo[[i - 1]]["blocksize"] <- as.numeric(hea_content[[i]][8])
+    siginfo[[i - 1]]["description"] <- hea_content[[i]][9]
+  }
+
+  if (nlines != n_signals) {
+    comment <- paste(hea_content[[nlines]], collapse = " ")
+    comment <- stringr::str_trim(ifelse(substr(comment, 1, 1) == "#", substring(comment, 2), comment))
+  }
+
+  csv_content <- readr::read_csv(content, show_col_types = FALSE, col_types = "nnnnnnn")
+  con_names <- names(csv_content)
+  csv_content <- as.list(csv_content)
+  attributes(csv_content) <- NULL
+  names(csv_content) <- con_names
+  csv_annotations <- readr::read_csv(annotation, show_col_types = FALSE, col_types = "ncnnncc")
+  ann_names <- names(csv_annotations)
+  csv_annotations <- as.list(csv_annotations)
+  attributes(csv_annotations) <- NULL
+  names(csv_annotations) <- ann_names
+
+  signals <- list()
+  subset_minmax <- FALSE
+  if (!is.null(subset)) {
+    subset_minmax <- c(min(subset), max(subset))
+  }
+
+  for (i in seq.int(1, length(csv_content))) {
+    checkmate::assert_true(siginfo[[i]]$description == names(csv_content[i]))
+
+    if (resample_from > 0) {
+      prop <- resample_to / resample_from
+      newsignal <- signal::resample(csv_content[[i]], resample_to, resample_from)
+      csv_content[[i]] <- newsignal
+      freq_signal <- resample_to
+
+      csv_annotations$sample <- csv_annotations$sample * prop
+    }
+
+    name <- siginfo[[i]]$description
+
+    if (!is.null(subset)) {
+      signals[[name]] <- csv_content[[i]][subset]
+    } else {
+      signals[[name]] <- csv_content[[i]]
+    }
+
+    attr(signals[[name]], "info") <- list(signal = name, baseline = siginfo[[i]]$baseline, gain = siginfo[[i]]$gain, unit = siginfo[[i]]$unit, subset = subset_minmax)
+  }
+
+  length_signal <- length(signals[[1]])
+
+  # Generate time vector
+  tm <- seq(0, (length_signal - 1) / freq_signal, length.out = length_signal)
+  output <- list()
+  output[[basename]] <- c(list(time = tm), signals)
+
+  attr(output[[basename]], "info") <- list(regime = comment, filename = basename, frequency = freq_signal, id = "base", ids = "base")
+  attr(output[[basename]], "annotations") <- csv_annotations
+
+  return(output)
+}
+
 #' Read the ECG files and build a dataset.
 #'
 #' This function reads the tuple data.mat and data.hea that contains the signal and the header with information about
@@ -475,31 +680,55 @@ read_ecg_csv <- function(filename, plot = FALSE, subset = NULL,
 #'   - filename: the name of the original file, without the extension.
 #'   - frequency: the frequency of the observations, in Hz.
 #'
-read_and_prepare_ecgs <- function(file_paths, subset = NULL, true_alarm = NULL, limit_per_class = NULL) {
+read_and_prepare_ecgs <- function(file_paths, subset = NULL, true_alarm = NULL, limit_per_class = NULL, data_type = NULL, resample_from = 0, resample_to = 0) {
   result <- list()
   classes <- list()
 
   for (file in file_paths) {
     filename <- tools::file_path_sans_ext(basename(file))
+    it <- NULL
 
-    it <- read_ecg_csv(file,
-      subset = subset,
-      true_alarm = true_alarm
-    )
-
-    if (!is.null(it)) {
+    if (is.null(data_type)) {
       if (is.numeric(limit_per_class)) {
         class <- substr(filename, 1, 1)
+
         if (is.null(classes[[class]])) {
           classes[[class]] <- 1
         } else {
           classes[[class]] <- classes[[class]] + 1
         }
+
         if (classes[[class]] > limit_per_class) {
           next
         }
       }
 
+      it <- read_ecg_csv(file,
+        subset = subset,
+        true_alarm = true_alarm
+      )
+    } else {
+      if (is.numeric(limit_per_class)) {
+        class <- tools::file_ext(filename)
+
+        if (is.null(classes[[class]])) {
+          classes[[class]] <- 1
+        } else {
+          classes[[class]] <- classes[[class]] + 1
+        }
+
+        if (classes[[class]] > limit_per_class) {
+          next
+        }
+      }
+
+      it <- read_ecg_with_atr(file,
+        subset = subset,
+        resample_from = resample_from, resample_to = resample_to
+      )
+    }
+
+    if (!is.null(it)) {
       result[filename] <- it
     }
   }

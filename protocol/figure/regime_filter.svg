@@ -9,9 +9,6 @@
       stroke-linejoin: round;
       stroke-miterlimit: 10.00;
     }
-    .svglite text {
-      white-space: pre;
-    }
   ]]></style>
 </defs>
 <rect width='100%' height='100%' style='stroke: none; fill: #FFFFFF;'/>
@@ -36,21 +33,21 @@
 <line x1='360.79' y1='286.56' x2='360.79' y2='293.76' style='stroke-width: 0.75;' />
 <line x1='623.19' y1='286.56' x2='623.19' y2='293.76' style='stroke-width: 0.75;' />
 <line x1='885.60' y1='286.56' x2='885.60' y2='293.76' style='stroke-width: 0.75;' />
-<text x='98.39' y='312.48' text-anchor='middle' style='font-size: 12.00px; font-family: "Arial";' textLength='7.64px' lengthAdjust='spacingAndGlyphs'>0</text>
-<text x='360.79' y='312.48' text-anchor='middle' style='font-size: 12.00px; font-family: "Arial";' textLength='38.20px' lengthAdjust='spacingAndGlyphs'>20000</text>
-<text x='623.19' y='312.48' text-anchor='middle' style='font-size: 12.00px; font-family: "Arial";' textLength='38.20px' lengthAdjust='spacingAndGlyphs'>40000</text>
-<text x='885.60' y='312.48' text-anchor='middle' style='font-size: 12.00px; font-family: "Arial";' textLength='38.20px' lengthAdjust='spacingAndGlyphs'>60000</text>
+<text x='98.39' y='312.48' text-anchor='middle' style='font-size: 12.00px; font-family: Arial;' textLength='7.64px' lengthAdjust='spacingAndGlyphs'>0</text>
+<text x='360.79' y='312.48' text-anchor='middle' style='font-size: 12.00px; font-family: Arial;' textLength='38.20px' lengthAdjust='spacingAndGlyphs'>20000</text>
+<text x='623.19' y='312.48' text-anchor='middle' style='font-size: 12.00px; font-family: Arial;' textLength='38.20px' lengthAdjust='spacingAndGlyphs'>40000</text>
+<text x='885.60' y='312.48' text-anchor='middle' style='font-size: 12.00px; font-family: Arial;' textLength='38.20px' lengthAdjust='spacingAndGlyphs'>60000</text>
 <line x1='59.04' y1='277.79' x2='59.04' y2='64.26' style='stroke-width: 0.75;' />
 <line x1='59.04' y1='277.79' x2='51.84' y2='277.79' style='stroke-width: 0.75;' />
 <line x1='59.04' y1='206.61' x2='51.84' y2='206.61' style='stroke-width: 0.75;' />
 <line x1='59.04' y1='135.43' x2='51.84' y2='135.43' style='stroke-width: 0.75;' />
 <line x1='59.04' y1='64.26' x2='51.84' y2='64.26' style='stroke-width: 0.75;' />
-<text transform='translate(41.76,277.79) rotate(-90)' text-anchor='middle' style='font-size: 12.00px; font-family: "Arial";' textLength='11.97px' lengthAdjust='spacingAndGlyphs'>-5</text>
-<text transform='translate(41.76,206.61) rotate(-90)' text-anchor='middle' style='font-size: 12.00px; font-family: "Arial";' textLength='7.64px' lengthAdjust='spacingAndGlyphs'>0</text>
-<text transform='translate(41.76,135.43) rotate(-90)' text-anchor='middle' style='font-size: 12.00px; font-family: "Arial";' textLength='7.64px' lengthAdjust='spacingAndGlyphs'>5</text>
-<text transform='translate(41.76,64.26) rotate(-90)' text-anchor='middle' style='font-size: 12.00px; font-family: "Arial";' textLength='15.28px' lengthAdjust='spacingAndGlyphs'>10</text>
-<polygon points='59.04,286.56 1121.76,286.56 1121.76,59.04 59.04,59.04 ' style='stroke-width: 0.75;' />
-<text x='590.40' y='341.28' text-anchor='middle' style='font-size: 12.00px; font-family: "Arial";' textLength='32.85px' lengthAdjust='spacingAndGlyphs'>index</text>
+<text transform='translate(41.76,277.79) rotate(-90)' text-anchor='middle' style='font-size: 12.00px; font-family: Arial;' textLength='11.97px' lengthAdjust='spacingAndGlyphs'>-5</text>
+<text transform='translate(41.76,206.61) rotate(-90)' text-anchor='middle' style='font-size: 12.00px; font-family: Arial;' textLength='7.64px' lengthAdjust='spacingAndGlyphs'>0</text>
+<text transform='translate(41.76,135.43) rotate(-90)' text-anchor='middle' style='font-size: 12.00px; font-family: Arial;' textLength='7.64px' lengthAdjust='spacingAndGlyphs'>5</text>
+<text transform='translate(41.76,64.26) rotate(-90)' text-anchor='middle' style='font-size: 12.00px; font-family: Arial;' textLength='15.28px' lengthAdjust='spacingAndGlyphs'>10</text>
+<polygon points='59.04,286.56 1121.76,286.56 1121.76,59.04 59.04,59.04 ' style='stroke-width: 0.75; fill: none;' />
+<text x='590.40' y='341.28' text-anchor='middle' style='font-size: 12.00px; font-family: Arial;' textLength='32.85px' lengthAdjust='spacingAndGlyphs'>index</text>
 </g>
 <g clip-path='url(#cpNTkuMDR8MTEyMS43Nnw1OS4wNHwyODYuNTY=)'>
 <circle cx='107.40' cy='206.61' r='2.70' style='stroke-width: 0.75; stroke: #0000FF; fill: #0000FF;' />

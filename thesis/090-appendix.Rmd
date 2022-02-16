@@ -17,7 +17,7 @@ This first appendix includes all of the R chunks of code that were hidden throug
 #
 ```
 
-**In Chapter \@ref(ref-labels):**
+**In Chapter \@ref(the-first-appendix):**
 
 ```{r ref.label='include_packages_2', results='hide', echo = TRUE}
 #

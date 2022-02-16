@@ -10,3 +10,8 @@ classifier:
   inherits: main
   store: _classifier
   script: scripts/_classifier.R
+
+regime_change:
+  inherits: main
+  store: _regime_change
+  script: scripts/_regime_change.R
