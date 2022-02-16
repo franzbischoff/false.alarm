@@ -349,7 +349,10 @@ Several SQIs (Signal Quality Indexes) are used in the literature [@eerikainen201
 measures as _kurtosis_, _skewness_, median local noise level, other more complex as pcaSQI (the
 ratio of the sum of the five largest eigenvalues associated with the principal components over the
 sum of all eigenvalues obtained by principal component analysis applied to the time aligned ECG
-segments in the window). By experimentation (yet to be validated), a simple formula gives us the
+segments in the window). An assessment of several different methods to estimate electrocardiogram
+signal quality can was performed by Del Rio, *et al* [@DelRio2011].
+
+ By experimentation (yet to be validated), a simple formula gives us the
 "complexity" of the signal and correlates well with the noisy data is shown in Equation
 \@ref(eq:complex).
 

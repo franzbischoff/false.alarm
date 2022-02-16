@@ -281,16 +281,16 @@
     },
     "bookdown": {
       "Package": "bookdown",
-      "Version": "0.24.9",
+      "Version": "0.24.10",
       "Source": "GitHub",
       "RemoteType": "github",
       "RemoteUsername": "rstudio",
       "RemoteRepo": "bookdown",
       "RemoteRef": "main",
-      "RemoteSha": "7f92ffa84d37e93dd9271a7840db281398f9f6db",
+      "RemoteSha": "6f475faac6189dff80496faf06d7d2243a24886c",
       "RemoteHost": "api.github.com",
       "Remotes": "rstudio/rmarkdown",
-      "Hash": "994463fa0b12bbd3fe9087222aa54e82",
+      "Hash": "af9d6c12e49cd37415e5c3498bb9518c",
       "Requirements": [
         "htmltools",
         "jquerylib",
@@ -413,10 +413,10 @@
     },
     "cli": {
       "Package": "cli",
-      "Version": "3.1.1",
+      "Version": "3.2.0",
       "Source": "Repository",
       "Repository": "CRAN",
-      "Hash": "da5160e769a652e3ec7111d63883f9bc",
+      "Hash": "1bdb126893e9ce6aae50ad1d6fc32faf",
       "Requirements": [
         "glue"
       ]
@@ -512,10 +512,10 @@
     },
     "crayon": {
       "Package": "crayon",
-      "Version": "1.4.2",
+      "Version": "1.5.0",
       "Source": "Repository",
       "Repository": "CRAN",
-      "Hash": "0a6a65d92bd45b47b94b84244b528d17",
+      "Hash": "741c2e098e98afe3dc26a7b0e5489f4e",
       "Requirements": []
     },
     "credentials": {
@@ -1014,10 +1014,10 @@
     },
     "gt": {
       "Package": "gt",
-      "Version": "0.3.1",
+      "Version": "0.4.0",
       "Source": "Repository",
       "Repository": "CRAN",
-      "Hash": "e027761c361e66a24e22f9446b3dd86c",
+      "Hash": "4905765870343c66704c9e495e4e3bc0",
       "Requirements": [
         "base64enc",
         "bitops",
@@ -1959,15 +1959,15 @@
     },
     "rmarkdown": {
       "Package": "rmarkdown",
-      "Version": "2.11.17",
+      "Version": "2.11.22",
       "Source": "GitHub",
       "RemoteType": "github",
       "RemoteUsername": "rstudio",
       "RemoteRepo": "rmarkdown",
       "RemoteRef": "main",
-      "RemoteSha": "894d089920d06192cfc234c271d73b6b1b5c3f21",
+      "RemoteSha": "f9af7ef6bb84eb2161d309dda8d038c30fe43b23",
       "RemoteHost": "api.github.com",
-      "Hash": "457c1aa58a831cfb88d7234de8d04bd5",
+      "Hash": "a5d594cecee1f2aab0cdd187280af2af",
       "Requirements": [
         "bslib",
         "evaluate",
@@ -2362,10 +2362,10 @@
       "RemoteUsername": "r-lib",
       "RemoteRepo": "testthat",
       "RemoteRef": "main",
-      "RemoteSha": "e5c5a76ce5d3af89c49592156aaa0bb1973e0424",
+      "RemoteSha": "27a3916a99acdde6613ca95767a627ac101bed89",
       "RemoteHost": "api.github.com",
       "Remotes": "r-lib/rlang",
-      "Hash": "3e9d7b49991d5b786d6a3cc5f9b5c38d",
+      "Hash": "cd95c579c9099f040caf48e41c2588a0",
       "Requirements": [
         "R6",
         "brio",

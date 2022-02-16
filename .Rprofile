@@ -80,8 +80,10 @@ if (Sys.getenv("CI") == "") { # not CI
       })
     )
 
-    if (suppressMessages(requireNamespace("prettycode", quietly = TRUE))) {
-      suppressMessages(prettycode::prettycode())
+    if (.Platform$OS.type != "windows") {
+      if (suppressMessages(requireNamespace("prettycode", quietly = TRUE))) {
+        suppressMessages(prettycode::prettycode())
+      }
     }
 
     if (suppressMessages(requireNamespace("prompt", quietly = TRUE))) {
