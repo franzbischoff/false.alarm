@@ -181,7 +181,6 @@
     "-n25",
     "-n45"
   ],
-  "latex-workshop.chktex.enabled": true,
   "latex-workshop.latex.autoBuild.run": "never",
   "latex-workshop.view.pdf.viewer": "tab",
   "markdown.extension.italic.indicator": "_",
