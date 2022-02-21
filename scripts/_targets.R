@@ -114,7 +114,7 @@ b_window_sizes <- tar_map(
           fun = compute_floss,
           params = list(
             window_size = map_window_size,
-            ez = var_ez * map_window_size,
+            ez = round(var_ez * map_window_size + .Machine$double.eps^0.5),
             mp_time_constraint = map_mp_time_constraint,
             floss_time_constraint = map_floss_time_constraint,
             history = var_mp_history,
@@ -137,8 +137,8 @@ b_window_sizes <- tar_map(
               ez = var_ez,
               regime_threshold = map_regime_threshold,
               regime_landmark = var_regime_landmark, # 3 sec from the end
-              progress = FALSE,
-              batch = var_mp_batch,
+              # progress = FALSE,
+              # batch = var_mp_batch,
               history = var_mp_history,
               mp_time_constraint = map_mp_time_constraint,
               floss_time_constraint = map_floss_time_constraint
@@ -271,7 +271,7 @@ b_window_sizes <- tar_map(
 #           fun = compute_floss,
 #           params = list(
 #             window_size = map_window_size,
-#             ez = var_ez * map_window_size,
+#             ez = round(var_ez * map_window_size + .Machine$double.eps^0.5),
 #             history = var_mp_history,
 #             mp_time_constraint = map_mp_time_constraint
 #           )
@@ -330,7 +330,7 @@ list(r_input, r_dataset, b_window_sizes)
 #     fun = compute_floss,
 #     params = list(
 #       window_size = var_window_size,
-#       ez = var_ez * var_window_size,
+#       ez = round(var_ez * var_window_size + .Machine$double.eps^0.5),
 #       mp_time_constraint = var_mp_time_constraint,
 #       history = var_mp_history
 #     )

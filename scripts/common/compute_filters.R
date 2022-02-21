@@ -1,7 +1,25 @@
+#' Pre-computes the filters markers that are used later on the pipeline.
+#'
+#' @param ecg_data a numeric vector. Contains the data that will be used for computing the results.
+#' @param params a `list` of parameters. More on details.
+#' @param infos a `list` containing the attributes of the imported file and attributes added later
+#'              in the pipeline. More on details.
+#'
+#' @details
+#' The `params` for this function currently are:
+#'
+#' Specific values:
+#' - filter_w_size (integer), the window size to be used by the filter.
+#' - cplx_lim (numeric), the cutoff for the complexity filter.
+#'
+#' The `infos` is made available in case there is a need to access the attributes of the file that
+#' contains the signal that is being processed
+#'
 
-
-compute_filters <- function(ecg_data, params, info) {
+compute_filters <- function(ecg_data, params, infos) {
   checkmate::qassert(ecg_data, "N+")
+  checkmate::qassert(params, "L+")
+  checkmate::qassert(infos, "L+")
 
   norm_data <- false.alarm::znorm(ecg_data)
   mean_std <- false.alarm::movmean_std(norm_data, params$filter_w_size)

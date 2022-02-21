@@ -1,5 +1,31 @@
+#' Computes the FLOSS algorithm on a previous computed Matrix Profile
+#'
+#' @param mp_data a `list`. Contains the data that will be used for computing the results.
+#' @param params a `list` of parameters. More on details.
+#' @param infos a `list` containing the attributes of the imported file and attributes added later
+#'              in the pipeline. More on details.
+#'
+#' @details
+#' The `params` for this function currently are:
+#'
+#' From mapped values (branches):
+#' - mp_time_constraint (integer) the time constraint applied on the Matrix Profile
+#'
+#' Common values:
+#' - ez (integer) the exclusion zone used on the matrix profile (this is the actual number in sample unit)
+#'
+#' Specific values:
+#' - floss_time_constraint (integer) the time constraint applied on FLOSS (it is overridden by the `mp_time_constraint`)
+#' - sample_freq ?
+#'
+#' @family process_ts_in_file
+#'
+
 compute_floss <- function(mp_data, params, infos) {
   checkmate::qassert(mp_data, "L")
+  checkmate::qassert(params, "L+")
+  checkmate::qassert(infos, "L+")
+
   ez <- params$ez
   mp_time_constraint <- ifelse(is.null(params$mp_time_constraint), 0, params$mp_time_constraint)
   floss_time_constraint <- ifelse(is.null(params$floss_time_constraint), 0, params$floss_time_constraint)
@@ -100,7 +126,7 @@ compute_arcs <- function(right_profile_index, window_size, exclusion_zone, aic_a
     cac[cac < 0 | is.na(cac)] <- 1.0
   } else {
     x <- seq(0, 1, length.out = cac_size)
-    mode <- 0.6311142 # best point to analize the segment change
+    mode <- 0.6311142 # best point to analyze the segment change
     a <- 1.939274
     b <- 1.69815
     iac <- a * b * x^(a - 1) * (1 - x^a)^(b - 1) * cac_size / 4.035477 # nolint # kumaraswamy distribution

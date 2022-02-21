@@ -1,7 +1,22 @@
+#' Title
+#'
+#' Short description
+#'
+#' @param params a `list` of parameters. More on details.
+#' @param infos a `list` containing the attributes of the imported file and attributes added later
+#'              in the pipeline. More on details.
+#'
+#' @details
+#' Details
+#'
+#' @family process_ts_in_file
+#'
+
 
 extract_regime_sample <- function(data_with_regimes, params, infos) {
   checkmate::qassert(data_with_regimes, "L2")
   checkmate::qassert(params, "L+")
+  checkmate::qassert(infos, "L+")
 
   checkmate::assert_true(identical(
     attr(data_with_regimes[[1]], "info"),

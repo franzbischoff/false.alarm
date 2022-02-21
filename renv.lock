@@ -832,10 +832,10 @@
     },
     "future": {
       "Package": "future",
-      "Version": "1.23.0",
+      "Version": "1.24.0",
       "Source": "Repository",
       "Repository": "CRAN",
-      "Hash": "7bf6fbed7f00cae876901fd70c04f3a4",
+      "Hash": "5cc7addaa73372fbee0a7d06c880068e",
       "Requirements": [
         "digest",
         "globals",
@@ -1360,10 +1360,10 @@
     },
     "lhs": {
       "Package": "lhs",
-      "Version": "1.1.3",
+      "Version": "1.1.4",
       "Source": "Repository",
       "Repository": "CRAN",
-      "Hash": "64645ac3590e26c258a281560d7c7cf7",
+      "Hash": "452453e7fc05361e7c8cf98e3972d22c",
       "Requirements": [
         "Rcpp"
       ]
@@ -1961,9 +1961,9 @@
       "RemoteUsername": "r-lib",
       "RemoteRepo": "rlang",
       "RemoteRef": "main",
-      "RemoteSha": "d5df93251d055721abb4a576433fb867ca40d527",
+      "RemoteSha": "7b0d33c82ad8e7c1981423dc9754a3372d88d386",
       "RemoteHost": "api.github.com",
-      "Hash": "66a89f9e56bfe16fc6a80decfde1d4ba",
+      "Hash": "f509df6298b0ee78971ad7343a867e6d",
       "Requirements": []
     },
     "rlist": {
@@ -2388,15 +2388,15 @@
     },
     "testthat": {
       "Package": "testthat",
-      "Version": "3.1.2.9000",
+      "Version": "3.1.3",
       "Source": "GitHub",
       "RemoteType": "github",
       "RemoteUsername": "r-lib",
       "RemoteRepo": "testthat",
       "RemoteRef": "main",
-      "RemoteSha": "e6d2d685fb94851298acd88ab11a9986d89441a2",
+      "RemoteSha": "22a68dd85b65c95173424760a78955b6c55f3848",
       "RemoteHost": "api.github.com",
-      "Hash": "27fe6ff5387f2444831b9c1ebb21a11d",
+      "Hash": "2eebbcb7853184010e103ff738e7d2cb",
       "Requirements": [
         "R6",
         "brio",

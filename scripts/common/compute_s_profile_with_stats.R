@@ -1,9 +1,40 @@
+#' Compute the Matrix Profile using batches, using the pre-computed statistics, for speed
+#'
+#' @param data_with_stats a `list` of size 2. Contains the data that will be used for computing the
+#'   results and the pre-computed statistics.
+#' @param params a `list` of parameters. More on details.
+#' @param infos a `list` containing the attributes of the imported file and attributes added later
+#'              in the pipeline. More on details.
+#'
+#' @details
+#' The `params` for this function currently are:
+#'
+#' From mapped values (branches):
+#' - window_size (integer)
+#' - threshold (numeric), similarity threshold
+#' - mp_time_constraint (integer)
+#'
+#' Common values:
+#' - ez (numeric), the exclusion zone to be used on MPX (proportion)
+#' - batch (integer), the size of the batch for simulate the stream.
+#' - history (integer), the size of the history buffer
+#'
+#' Specific values:
+#' - progress (logical), TRUE for printing MPX progress.
+#'
+#' The `infos` is made available in case there is a need to access the attributes of the file that
+#' contains the signal that is being processed
+#'
+#' @family process_ts_in_file
+#'
+
 compute_s_profile_with_stats <- function(data_with_stats, params, infos) {
   checkmate::qassert(data_with_stats, "L2")
   checkmate::assert_true(identical(
     attr(data_with_stats[[1]], "info"),
     attr(data_with_stats[[2]], "info")
   ))
+  checkmate::qassert(infos, "L+")
 
   data <- data_with_stats[[1]]
   data_info <- attr(data, "info")

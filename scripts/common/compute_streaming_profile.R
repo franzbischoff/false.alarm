@@ -1,4 +1,32 @@
-compute_streaming_profile <- function(ecg_data, params) {
+#' Compute the Matrix Profile using batches, without using pre-computed statistics
+#'
+#' @param ecg_data a numeric data containing the signal to be processed.
+#' @param params a `list` of parameters. More on details.
+#' @param infos a `list` containing the attributes of the imported file and attributes added later
+#'              in the pipeline. More on details.
+#'
+#' @details
+#' The `params` for this function currently are:
+#'
+#' From mapped values (branches):
+#' - window_size (integer)
+#' - mp_time_constraint (integer)
+#'
+#' Common values:
+#' - ez (numeric), the exclusion zone to be used on MPX (proportion)
+#' - batch (integer), the size of the batch for simulate the stream.
+#' - history (integer), the size of the history buffer
+#'
+#' Specific values:
+#' - progress (logical), TRUE for printing MPX progress.
+#'
+#' The `infos` is made available in case there is a need to access the attributes of the file that
+#' contains the signal that is being processed
+#'
+#' @family process_ts_in_file
+#'
+
+compute_streaming_profile <- function(ecg_data, params, infos) {
   checkmate::qassert(ecg_data, "N+")
 
   initial_data_vector <- seq.int(1, params$history)

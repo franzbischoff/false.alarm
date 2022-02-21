@@ -140,7 +140,7 @@ b_window_sizes <- tar_map(
           fun = compute_floss,
           params = list(
             window_size = map_window_size,
-            ez = var_ez * map_window_size,
+            ez = round(var_ez * map_window_size + .Machine$double.eps^0.5),
             mp_time_constraint = map_mp_time_constraint,
             floss_time_constraint = map_floss_time_constraint,
             history = var_mp_history,
@@ -163,8 +163,8 @@ b_window_sizes <- tar_map(
               ez = var_ez,
               regime_threshold = map_regime_threshold,
               regime_landmark = var_regime_landmark, # 3 sec from the end
-              progress = FALSE,
-              batch = var_mp_batch,
+              # progress = FALSE,
+              # batch = var_mp_batch,
               history = var_mp_history,
               mp_time_constraint = map_mp_time_constraint,
               floss_time_constraint = map_floss_time_constraint
@@ -184,8 +184,8 @@ b_window_sizes <- tar_map(
               ez = var_ez,
               regime_threshold = map_regime_threshold,
               regime_landmark = var_regime_landmark, # 3 sec from the end
-              progress = FALSE,
-              batch = var_mp_batch,
+              # progress = FALSE,
+              # batch = var_mp_batch,
               history = var_mp_history,
               mp_time_constraint = map_mp_time_constraint,
               floss_time_constraint = map_floss_time_constraint
@@ -193,32 +193,32 @@ b_window_sizes <- tar_map(
             exclude = var_signals_exclude
           ),
           pattern = map(dataset, regimes)
-        ),
-        tar_target(
-          ##### Pipeline: > NoFilters > WindowSize > MP Threshold > MP/FLOSS Constraints > Regime Threshold > Plot regime changes
-          graph_regime,
-          {
-            process_ts_in_file(c(dataset, regimes),
-              id = "plot_regimes",
-              fun = plot_regimes,
-              params = list(
-                window_size = map_window_size,
-                regime_threshold = map_regime_threshold,
-                threshold = map_mp_threshold,
-                history = var_mp_history,
-                mp_time_constraint = map_mp_time_constraint,
-                floss_time_constraint = map_floss_time_constraint,
-                save_png = FALSE
-              ),
-              exclude = var_signals_exclude
-            )
-          },
-          pattern = map(dataset, regimes)
         )
+        # tar_target(
+        #   ##### Pipeline: > NoFilters > WindowSize > MP Threshold > MP/FLOSS Constraints > Regime Threshold > Plot regime changes
+        #   graph_regime,
+        #   {
+        #     process_ts_in_file(c(dataset, regimes),
+        #       id = "plot_regimes",
+        #       fun = plot_regimes,
+        #       params = list(
+        #         window_size = map_window_size,
+        #         regime_threshold = map_regime_threshold,
+        #         threshold = map_mp_threshold,
+        #         history = var_mp_history,
+        #         mp_time_constraint = map_mp_time_constraint,
+        #         floss_time_constraint = map_floss_time_constraint,
+        #         save_png = FALSE
+        #       ),
+        #       exclude = var_signals_exclude
+        #     )
+        #   },
+        #   pattern = map(dataset, regimes)
+        # )
       )
     )
-  ),
-  combined_var <- tar_combine(combined_samples, b_mp_threshold[grepl("regimes_samples", names(b_mp_threshold))], command = list(!!!.x))
+  )
+  # combined_var <- tar_combine(combined_samples, b_mp_threshold[grepl("regimes_samples", names(b_mp_threshold))], command = list(!!!.x))
 )
 
 # #### Pipeline: > Filters Branch ----
@@ -296,7 +296,7 @@ b_window_sizes <- tar_map(
 #           fun = compute_floss,
 #           params = list(
 #             window_size = map_window_size,
-#             ez = var_ez * map_window_size,
+#             ez = round(var_ez * map_window_size + .Machine$double.eps^0.5),
 #             history = var_mp_history,
 #             mp_time_constraint = map_mp_time_constraint
 #           )
@@ -355,7 +355,7 @@ list(r_input, r_dataset, b_window_sizes)
 #     fun = compute_floss,
 #     params = list(
 #       window_size = var_window_size,
-#       ez = var_ez * var_window_size,
+#       ez = round(var_ez * var_window_size + .Machine$double.eps^0.5),
 #       mp_time_constraint = var_mp_time_constraint,
 #       history = var_mp_history
 #     )

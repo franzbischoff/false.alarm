@@ -1,3 +1,23 @@
+#' Wrapper function that receives branches from the pipeline and apply a function.
+#'
+#' This function is used as a layer for sanitize parameters and apply the function in a
+#' controlled manner. It aims to guarantee that the data and branches are consistent.
+#'
+#' @param ecg_data a `list` containing usually one branch of the pipeline. If the list has more than one item,
+#' it means we are using another branch to compute the result. More on details.
+#' @param id a string. An identifier that is added to the attributes for further tracking
+#' @param fun a variable. A variable containing the function that will be used. The function signature is (data, params, infos)
+#' @param params a `list` of parameters that will be passed to the `fun` and may be used for branch checking.
+#' @param exclude a character vector containing the signals (or the time vector) that must be excluded from the computation.
+#'
+#' @details
+#' The pipeline may create several branches during the process these branches may contain data that can be used later, for example
+#' the moving average of the data. These branches must be from the same "split" of the data, and this function will compare the
+#' attributes of these branches to assert that we are using the correct information. For example: window_size must be the same,
+#' the constraints applied must be the same.
+#'
+#' @family process_ts_in_file
+
 process_ts_in_file <- function(ecg_data, id, fun, params, exclude = "time") {
   checkmate::qassert(ecg_data, "L+")
   "!DEBUG receiving `length(ecg_data)` input."

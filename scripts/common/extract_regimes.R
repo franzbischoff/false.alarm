@@ -1,3 +1,39 @@
+#' Extract the changepoints of detected regimes.
+#'
+#' This function is used inside the pipeline. It receives several parameters for establishing the changepoints.
+#' More on details.
+#'
+#' @param floss_list a `list` of each computed 'CAC' (Corrected Arc Counts) in one signal.
+#' @param params a `list` of parameters. More on details.
+#' @param infos a `list` containing the attributes of the imported file and attributes added later
+#'              in the pipeline. More on details.
+#'
+#' @details
+#' This function simulates the streaming scenario by jumping from each element on the `floss_list` that was created
+#' in batches. This allows us to have small snapshots of the ongoing process for inspection, debugging, or stop/resume/update
+#' the pipeline without having to re-simulate the full streaming.
+#'
+#' Some parameters may look redundant but serves as assertation of the pipeline, assuring that the
+#' branches are not being mixed
+#'
+#' The `params` for this function currently are:
+#'
+#' From mapped values (branches):
+#' - window_size (integer)
+#' - regime_threshold (numeric)
+#' - mp_time_constraint (integer)
+#' - floss_time_constraint (integer)
+#'
+#' Common values:
+#' - regime_landmark (integer), currently 3 seconds from the end.
+#' - history (integer), the size of the history buffer
+#'
+#' The `infos` is made available in case there is a need to access the attributes of the file that
+#' contains the signal that is being processed
+#'
+#' @family process_ts_in_file
+
+
 extract_regimes <- function(floss_list, params, infos) {
   checkmate::qassert(floss_list, "L+")
   checkmate::qassert(params, "L+")
