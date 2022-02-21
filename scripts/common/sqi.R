@@ -26,9 +26,14 @@ zero_cross <- function(data) {
   return(count)
 }
 
+# "Activity": Defined as the variance of the signal
+
 activity <- function(data) {
   var(data)
 }
+
+# "Mobility": Squared root of the ratio of the variance of the first derivative of the signal to the
+# variance of the original signal
 
 mobility <- function(data) {
   act1der <- activity(diff(data))
@@ -38,6 +43,8 @@ mobility <- function(data) {
 
   return(res)
 }
+
+# "Complexity": Ratio of the mobility of the first derivative of the signals to the mobility of the signal itself
 
 complex <- function(data) {
   mob1der <- mobility(diff(data))
@@ -58,35 +65,29 @@ turning_points <- function(data) {
   return(sum(d))
 }
 
+# "Kurtosis": Measure of the Gaussianity of a distribution.
 # As ECG signals are hyper-Gaussian, higher kurtosis values are associated with lower
 # quality in the ECG. (DelRio2011)
-
 # 10 sec
+
 ecg_kurtosis <- function(data) {
   e1071::kurtosis(data)
 }
-
-# "Karhunen-Loeve transform" (KLT): KLT is a transformation that reduces a large set of variables down
-# to a smaller set. The smaller set of variables separates the information of the different sources
-# (ECG and Noise). In this way, noise can be estimated and the SNR calculated [3].
-
-# "Activity": Defined as the variance of the signal [3].
-
-# "Mobility": Squared root of the ratio of the variance of the first derivative of the signal to the
-# variance of the original signal [3].
-
-# "Complexity": Ratio of the mobility of the first derivative of the signals to the mobility of the signal itself [3].
-
-# "Turns counts" (TC): Counting of the number of local minimums with amplitude higher than a threshold. The threshold was defined as 0.1mV [3].
-# THIS IS ROBUST TO NOISE, WE WANT TO MEASURE NOISE!
 
 # "Zero Crossing Rate "(ZCR): Counting of the number of times the signal change its amplitude from positive to negative values or vice versa.
 # This value is then normalized dividing by the number of samples in the signal segment under study
 # [3].
 
+# "Karhunen-Loeve transform" (KLT): KLT is a transformation that reduces a large set of variables down
+# to a smaller set. The smaller set of variables separates the information of the different sources
+# (ECG and Noise). In this way, noise can be estimated and the SNR calculated [3].
+
+# "Turns counts" (TC): Counting of the number of local minimums with amplitude higher than a threshold. The threshold was defined as 0.1mV [3].
+# THIS IS ROBUST TO NOISE, WE WANT TO MEASURE NOISE!
+
 # "T-P interval average power divided by the QRS": TP=turning points? T-P interval average power divided by the QRS average power. This is calculated for every beat [4].
 
-# "Cumulative mismatch histogram": Mismatch values of consecutives QRS complex are stored as histograms for subsequent analysis generating a mismatch
+# "Cumulative mismatch histogram": Mismatch values of consecutive QRS complex are stored as histograms for subsequent analysis generating a mismatch
 
 # First-Difference histogram
 

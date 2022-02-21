@@ -1,6 +1,12 @@
+#' Get the "info" attribute from the object
+#'
+
 get_info <- function(obj) {
   return(attr(obj, "info"))
 }
+
+#' Get the parameters used to construct this object
+#'
 
 get_params <- function(obj) {
   return(attr(obj, "params"))
@@ -24,11 +30,19 @@ get_file_annotations <- function(obj) {
   return(NULL)
 }
 
+#' Get the "info" of the given signal if found on this object
+#'
+#' The signal may be down in the list hierarchy
+
 get_signal_info <- function(obj, sig) {
   checkmate::qassert(obj, "L+")
   checkmate::qassert(sig, "S")
   attr(rlist::list.search(obj, attr(., "info")$signal == sig)[[1]], "info")
 }
+
+#' Get the "info" of the file that originated this object
+#'
+#' The object may be down in the list hierarchy
 
 get_file_info <- function(obj) {
   checkmate::qassert(obj, "L+")

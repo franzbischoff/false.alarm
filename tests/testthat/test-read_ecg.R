@@ -11,7 +11,7 @@ test_that("Can read ECG file", {
   data <- read_and_prepare_ecgs(glue("{dataset_path}/a103l"))
   expect_equal(names(data[[1]]), c("time", "II", "V", "PLETH"))
   expect_equal(round(mean(data[[1]]$time) + sd(data[[1]]$time), 3), 260.261)
-  expect_equal(round(mean(data[[1]]$II) + sd(data[[1]]$II), 3), 0.191)
+  expect_equal(round(mean(data[[1]]$II) + sd(data[[1]]$II), 3), 0.191) # here is the error
   expect_equal(round(mean(data[[1]]$V) + sd(data[[1]]$V), 3), 0.982)
   expect_equal(round(mean(data[[1]]$PLETH) + sd(data[[1]]$PLETH), 3), 0.574)
   expect_equal(attributes(data[[1]]$II)$info$gain, 7247)

@@ -1,7 +1,14 @@
 #' Retrieve a list of files for ECG read
 #'
-#' This function reads
+#' This function retrieves a list of all ".hea" files in a folder, using defined
+#' constraints.
 #'
+#' @param path a string. The path of the desired folder.
+#' @param data_type a string. The dataset type ("alarm" or "regimes")
+#' @param classes character vector. Defines which classes will be imported. Default is "all"
+#' @param limit_per_class integer. Limit the size of the dataset by number of the same class. Used
+#'                        to speed up the pipeline before the final trial.
+#' @param long a logical. Only for the "alarm" dataset. Means that only the long series will be retrieved.
 
 find_all_files <- function(path = here::here("inst/extdata/physionet"),
                            data_type = c("alarm", "regimes"),

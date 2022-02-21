@@ -6,7 +6,32 @@
 # perturbs flat data with a bit of noise, scaled appropriately. If it flips
 # any nearest neighbors, they were already unreliable matches.
 
+
+#' Check and validate the data before the use of the contrast profile.
+#'
+#' This function is currently used for the shapelet candidates with Contrast Profile.
+#' More on details.
+#'
+#' @param data a numeric vector. The data that will be validated.
+#' @param window_size an integer. The size of the rolling window that will validate the data.
+#'
+#' @details
+#'
+#' This function is derived from the Contrast Profile original code that first apply some
+#' "validation" on the data in order to avoid spurious correlations.
+#'
+#' Some of the checks made:
+#' - replace non-finite values with "zero" (For streaming purposes it is valid to use zeros for NA/NaN/Inf)
+#' - detect places where the mov_std is non-finite
+#' - add a Gaussian noise where the data is "flat" (e.g.: disconnected lead) to avoid correlation with valid data.
+#'
+
 validate_data <- function(data, window_size) {
+  checkmate::qassert(data, "N+")
+  checkmate::qassert(window_size, "X1")
+
+  # TODO: validate_data() may be useful for MPX too, but needs to be checked.
+
   windowed_size <- length(data) - window_size + 1
   pad_size <- window_size - 1
   is_finite <- is.finite(data)
