@@ -18,6 +18,7 @@ find_all_files <- function(path = here::here("inst/extdata/physionet"),
   "!DEBUG Starting process"
 
   checkmate::assert_directory_exists(path, access = "r")
+  data_type <- match.arg(data_type)
   classes <- match.arg(classes, several.ok = TRUE)
 
   if (long) {

@@ -14,11 +14,44 @@ r_dataset <- tar_target(
   #### Pipeline: Import Files to R and Select Datasets ----
   dataset,
   read_and_prepare_ecgs(file_paths,
-    subset = var_subset,
+    subset = seq.int(45000, 75000),
     # true_alarm = TRUE,
-    limit_per_class = var_limit_per_class
+    limit_per_class = 15
   )
 )
+
+# tar_load(dataset); tar_load(filters); i <- 1; data <- dataset[[i]]$II; attr(data, "filters") <- filters[[i]]$II; plot_ecg2(data)
+
+r_filters <- tar_target(
+  filters,
+  process_ts_in_file(dataset,
+    id = "filters",
+    fun = compute_filters,
+    params = list(
+      window_size = 250,
+      filter_w_size = 100,
+      cplx_lim = 8
+    ),
+    exclude = var_signals_exclude
+  ),
+  pattern = map(dataset)
+)
+
+r_filters2 <- tar_target(
+  filters2,
+  process_ts_in_file(dataset,
+    id = "filters2",
+    fun = compute_filters,
+    params = list(
+      window_size = 250,
+      filter_w_size = 200,
+      cplx_lim = 8
+    ),
+    exclude = var_signals_exclude
+  ),
+  pattern = map(dataset)
+)
+
 # tar_target(
 #   neg_training_floss,
 #   create_floss_training()
@@ -283,7 +316,7 @@ b_window_sizes <- tar_map(
 # )
 
 #### Pipeline: Join targets ----
-list(r_input, r_dataset, b_window_sizes)
+list(r_input, r_dataset, r_filters, r_filters2, b_window_sizes)
 
 #### Pipeline: End ----
 

@@ -63,11 +63,11 @@ plot_ecg2 <- function(data) {
           )
         ),
         rangeslider = TRUE
+      ),
+      yaxis = list(
+        autorange = "visible", # not working yet
+        fixedrange = FALSE
       )
-      # yaxis = list(
-      #   autorange = "visible" # not working yet
-      #   fixedrange = FALSE
-      # )
     )
   }
 

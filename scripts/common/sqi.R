@@ -15,7 +15,17 @@ rmssd_r <- function(data) {
   sqrt(exp(diff(data)^2))
 }
 
-zero_cross <- function(data) {
+# w 50?
+# activity > 2
+# complex > 8? if hist_diff ~0 , FP
+# complex == 0, disconnected?
+# turning points == 1 means disconnected?
+
+
+# "Zero Crossing Rate "(ZCR): Counting of the number of times the signal change its amplitude from positive to negative values or vice versa.
+# This value is then normalized dividing by the number of samples in the signal segment under study
+
+zero_cross_rate <- function(data) {
   count <- 0
   for (i in seq.int(2, length(data))) {
     if ((data[i] * data[i - 1]) < 0) {
@@ -23,7 +33,7 @@ zero_cross <- function(data) {
     }
   }
 
-  return(count)
+  return(count / length(data))
 }
 
 # "Activity": Defined as the variance of the signal
@@ -55,14 +65,43 @@ complex <- function(data) {
   return(res)
 }
 
-hist_diff <- function(data) {
-  return(abs(-0.04870981 - median(data)))
+
+# Sum of Squared Differences
+
+win_complex <- function(data, window) {
+  profile_size <- length(data) - window + 1
+  av <- vector(mode = "numeric", length = profile_size)
+
+  for (j in 1:profile_size) {
+    av[j] <- tsmp:::complexity(data[j:(j + window - 1)])
+  }
+
+  # av <- tsmp:::zero_one_norm(av)
+  # av <- av + dilution
+  # av <- av / (dilution + 1L)
+
+  return(av)
+}
+
+
+# First-Difference histogram: The baseline is defined as the most common sample value during R-R
+# periods. The sample value corresponding to the histogram peak [mode] was declared the baseline and the
+# difference between consecutive baselines gives the baseline shift from beat to beat. Noise content
+# is estimated from the first-difference histogram of R-R intervals. Noise contribution is one minus
+# the frequency of occurrence of first differences with values around zero divided by the number of
+# samples in the R-R interval [6].
+
+hist_diff <- function(data, baseline = 0) {
+  bin <- round(data, 2)
+  ux <- unique(bin)
+  mode <- ux[which.max(tabulate(match(bin, ux)))]
+  return(abs(baseline - mode))
 }
 
 # 5 sec
 turning_points <- function(data) {
   d <- abs(diff(sign(diff(data)))) == 2
-  return(sum(d))
+  return(sum(d) / length(data))
 }
 
 # "Kurtosis": Measure of the Gaussianity of a distribution.
@@ -74,9 +113,12 @@ ecg_kurtosis <- function(data) {
   e1071::kurtosis(data)
 }
 
-# "Zero Crossing Rate "(ZCR): Counting of the number of times the signal change its amplitude from positive to negative values or vice versa.
-# This value is then normalized dividing by the number of samples in the signal segment under study
-# [3].
+
+# Difference between the original signal and the aligned averaged signal (Average): Noise is
+# estimated as the difference between the original signal and the aligned averaged signal.
+# Consequently the estimated SNR can be computed [2]
+# -- the average of each repeating pattern to create a "template", then compute the residuals, then
+#    low-pass ~15Hz, then add back to the average (there is a further step for adding the stretching)
 
 # "Karhunen-Loeve transform" (KLT): KLT is a transformation that reduces a large set of variables down
 # to a smaller set. The smaller set of variables separates the information of the different sources
@@ -85,19 +127,20 @@ ecg_kurtosis <- function(data) {
 # "Turns counts" (TC): Counting of the number of local minimums with amplitude higher than a threshold. The threshold was defined as 0.1mV [3].
 # THIS IS ROBUST TO NOISE, WE WANT TO MEASURE NOISE!
 
-# "T-P interval average power divided by the QRS": TP=turning points? T-P interval average power divided by the QRS average power. This is calculated for every beat [4].
+# "T-P interval average power divided by the QRS": T-P interval average power
+# divided by the QRS average power. This is calculated for every beat [4].
 
-# "Cumulative mismatch histogram": Mismatch values of consecutive QRS complex are stored as histograms for subsequent analysis generating a mismatch
+# "Cumulative mismatch histogram": Mismatch values of consecutive QRS complex are stored as histograms
+# for subsequent analysis generating a mismatch histogram. Cumulative histograms are then calculated.
+# The signal quality is determined based on how fast the cumulative histogram curves rise. The signals
+# with higher quality will rise faster than the signals with lower quality [5].
 
-# First-Difference histogram
-
-# Frequency content in six bandwidth and Out of range event (ORE)
+# Frequency content in six bandwidth and Out of range event (ORE): Energy of the signal in six
+# frequency bandwidths (0.05-0.25, 0.25-10, 10-20, 20-48, 48- 52, and 52-100 Hz). ORE: counting of the
+# number of times the signal go above or below a threshold. The threshold was defined as +-4 mV [7].
 
 # "LMS adaptive filtering": LMS adaptive filtering was used to remove the ECG signal and therefore
 # estimate the noise content. A template of the clean ECG signal was used as reference input signal to
 # the adaptive filter. Then SNR can be estimated.
-
-# "Kurtosis": Measure of the Gaussianity of a distribution [8]. As ECG signals are hyper-Gaussian,
-# higher kurtosis values are associated with lower quality in the ECG.
 
 # "Temporal Dispersion": defined as:

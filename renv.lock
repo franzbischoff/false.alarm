@@ -190,10 +190,10 @@
     },
     "XML": {
       "Package": "XML",
-      "Version": "3.99-0.8",
+      "Version": "3.99-0.9",
       "Source": "Repository",
       "Repository": "CRAN",
-      "Hash": "d493b952a9073c62f72392a673d7c548",
+      "Hash": "6e75b3884423e21eda89b424a98e091d",
       "Requirements": []
     },
     "askpass": {
@@ -431,10 +431,10 @@
     },
     "clipr": {
       "Package": "clipr",
-      "Version": "0.7.1",
+      "Version": "0.8.0",
       "Source": "Repository",
       "Repository": "CRAN",
-      "Hash": "ebaa97ac99cc2daf04e77eecc7b781d7",
+      "Hash": "3f038e5ac7f41d4ac41ce658c85e3042",
       "Requirements": []
     },
     "clustermq": {
@@ -469,10 +469,10 @@
     },
     "colorspace": {
       "Package": "colorspace",
-      "Version": "2.0-2",
+      "Version": "2.0-3",
       "Source": "Repository",
       "Repository": "CRAN",
-      "Hash": "6baccb763ee83c0bd313460fdb8b8a84",
+      "Hash": "bb4341986bc8b914f0f0acf2e4a3f2f7",
       "Requirements": []
     },
     "commonmark": {
@@ -950,9 +950,9 @@
       "RemoteUsername": "ropensci",
       "RemoteRepo": "git2r",
       "RemoteRef": "HEAD",
-      "RemoteSha": "0af32b553f7f95196c39b1203f29e9f66061e4d7",
+      "RemoteSha": "4a5dcb56f08b7ac9d89160558e182ebc08f3fb3d",
       "RemoteHost": "api.github.com",
-      "Hash": "748438f19675c875ccf20fedf3098562",
+      "Hash": "3ce8d5597a6e370e67f19f6c72601bc7",
       "Requirements": []
     },
     "gitcreds": {
@@ -996,10 +996,10 @@
     },
     "glue": {
       "Package": "glue",
-      "Version": "1.6.1",
+      "Version": "1.6.2",
       "Source": "Repository",
       "Repository": "CRAN",
-      "Hash": "de07842fc27ebf60e1102091c0c85e47",
+      "Hash": "4f2596dfb05dac67b9dc558e5c6fba2e",
       "Requirements": []
     },
     "gower": {
@@ -1246,10 +1246,10 @@
     },
     "jsonlite": {
       "Package": "jsonlite",
-      "Version": "1.7.3",
+      "Version": "1.8.0",
       "Source": "Repository",
       "Repository": "CRAN",
-      "Hash": "68c37fd8f863c6273dcd24928c17d6e1",
+      "Hash": "d07e729b27b372429d42d24d503613a0",
       "Requirements": []
     },
     "kableExtra": {
@@ -1463,10 +1463,10 @@
     },
     "mgcv": {
       "Package": "mgcv",
-      "Version": "1.8-38",
+      "Version": "1.8-39",
       "Source": "Repository",
       "Repository": "CRAN",
-      "Hash": "be3c61ffbb1e3d3b3df214d192ac5444",
+      "Hash": "055265005c238024e306fe0b600c89ff",
       "Requirements": [
         "Matrix",
         "nlme"
@@ -1961,9 +1961,9 @@
       "RemoteUsername": "r-lib",
       "RemoteRepo": "rlang",
       "RemoteRef": "main",
-      "RemoteSha": "7b0d33c82ad8e7c1981423dc9754a3372d88d386",
+      "RemoteSha": "379b387af5ec29a583f206aa6bc6acd46378a6c5",
       "RemoteHost": "api.github.com",
-      "Hash": "f509df6298b0ee78971ad7343a867e6d",
+      "Hash": "704c74b30f35b6c59308b52b89a63c27",
       "Requirements": []
     },
     "rlist": {
@@ -1987,9 +1987,9 @@
       "RemoteUsername": "rstudio",
       "RemoteRepo": "rmarkdown",
       "RemoteRef": "main",
-      "RemoteSha": "72062edf39012ce2e08ff05ece100747e4e34b92",
+      "RemoteSha": "1c0548786428ba98f661224eeae2ab8e01c7fdce",
       "RemoteHost": "api.github.com",
-      "Hash": "5dd98999122e7b5c96af214210281832",
+      "Hash": "d2ddadfafac4ba584f81fe635fbe00ff",
       "Requirements": [
         "bslib",
         "evaluate",
@@ -2193,10 +2193,10 @@
     },
     "shinybusy": {
       "Package": "shinybusy",
-      "Version": "0.2.2",
+      "Version": "0.3.0",
       "Source": "Repository",
       "Repository": "CRAN",
-      "Hash": "c38fc071d4def5e642c8dc34c3a082e4",
+      "Hash": "f64f08367358906d34a0ff490838d71c",
       "Requirements": [
         "htmltools",
         "htmlwidgets",
@@ -2508,10 +2508,10 @@
     },
     "tidyselect": {
       "Package": "tidyselect",
-      "Version": "1.1.1",
+      "Version": "1.1.2",
       "Source": "Repository",
       "Repository": "CRAN",
-      "Hash": "7243004a708d06d4716717fa1ff5b2fe",
+      "Hash": "17f6da8cfd7002760a859915ce7eef8f",
       "Requirements": [
         "ellipsis",
         "glue",
@@ -2872,10 +2872,10 @@
     },
     "yaml": {
       "Package": "yaml",
-      "Version": "2.3.4",
+      "Version": "2.3.5",
       "Source": "Repository",
       "Repository": "CRAN",
-      "Hash": "84c6e30ea1adddaebd4b33d6c5cb5e65",
+      "Hash": "458bb38374d73bf83b1bb85e353da200",
       "Requirements": []
     },
     "yardstick": {
