@@ -1,6 +1,6 @@
 
 
-plot_ecg2 <- function(data) {
+plot_ecg2 <- function(data, path = NULL) {
   plots <- list()
   filters <- attr(data, "filters")
   names <- names(filters)
@@ -10,23 +10,27 @@ plot_ecg2 <- function(data) {
       plots[[i]] <- plotly::plot_ly(
         x = as.POSIXct(seq_len(length(data)), origin = "1970-01-01", tz = "UTC"),
         y = data,
-        mode = "lines", type = "scatter",
+        mode = "lines", type = "scatter", size = I(0.5),
         name = "data"
       )
     } else {
       plots[[i]] <- plotly::plot_ly(
         x = as.POSIXct(seq_len(length(filters[[i - 1]])), origin = "1970-01-01", tz = "UTC"),
         y = filters[[i - 1]],
-        mode = "lines", type = "scatter",
+        mode = "lines", type = "scatter", size = I(1),
         name = names[i - 1]
       )
     }
     plots[[i]] <- plotly::layout(plots[[i]],
       margin = list(t = 80, b = 50, l = 50, r = 50, pad = 0),
       title = paste0(
-        "Monitor multiplot from file '", info$filename, "'\n",
-        info$alarm, " = ", info$true
+        "Monitor multiplot track '", info$signal, "'\n",
+        "gain = ", info$gain, " ", info$unit
       ),
+      # title = paste0(
+      #   "Monitor multiplot file '", info$filename, "'\n",
+      #   info$alarm, " = ", info$true
+      # ),
       xaxis = list(
         title = "time",
         type = "date",
@@ -72,6 +76,12 @@ plot_ecg2 <- function(data) {
   }
 
   fig <- plotly::subplot(plots, nrows = length(names) + 1, shareX = TRUE)
-  print(fig)
+
+  if (is.null(path)) {
+    print(fig)
+  } else {
+    plotly::export(fig, path)
+  }
+
   return(invisible(fig))
 }

@@ -748,7 +748,8 @@ read_and_prepare_ecgs <- function(file_paths, subset = NULL, true_alarm = NULL, 
 
       it <- read_ecg_csv(file,
         subset = subset,
-        true_alarm = true_alarm
+        true_alarm = true_alarm,
+        normalize = FALSE
       )
     } else {
       # Else, reads the other dataset

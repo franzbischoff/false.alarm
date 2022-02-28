@@ -354,7 +354,7 @@ signal quality can was performed by Del Rio, *et al* [@DelRio2011].
 
  By experimentation (yet to be validated), a simple formula gives us the
 "complexity" of the signal and correlates well with the noisy data is shown in Equation
-\@ref(eq:complex).
+\@ref(eq:complex) [@Batista2014].
 
 \
 \begin{equation}

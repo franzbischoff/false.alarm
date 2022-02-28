@@ -67,22 +67,25 @@ complex <- function(data) {
 
 
 # Sum of Squared Differences
-
+# sqrt(sum(diff(data)^2) / (w-2)) ==> sqrt(var(diff(data))) ==> sd(diff(data))
 win_complex <- function(data, window) {
   profile_size <- length(data) - window + 1
   av <- vector(mode = "numeric", length = profile_size)
 
   for (j in 1:profile_size) {
-    av[j] <- tsmp:::complexity(data[j:(j + window - 1)])
+    # av[j] <- tsmp:::complexity(data[j:(j + window - 1)])
+    av[j] <- sum(diff(data[j:(j + window - 1)])^2)
   }
 
+  av <- sqrt(av)
+
+  # dilution: limit -> 1, max is 1, min approaches 1 for big dilution
   # av <- tsmp:::zero_one_norm(av)
   # av <- av + dilution
   # av <- av / (dilution + 1L)
 
   return(av)
 }
-
 
 # First-Difference histogram: The baseline is defined as the most common sample value during R-R
 # periods. The sample value corresponding to the histogram peak [mode] was declared the baseline and the

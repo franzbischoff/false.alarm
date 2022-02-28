@@ -11,10 +11,10 @@
   "Packages": {
     "DT": {
       "Package": "DT",
-      "Version": "0.20",
+      "Version": "0.21",
       "Source": "Repository",
       "Repository": "CRAN",
-      "Hash": "0163cd2ce6c7995005a0fc363d570963",
+      "Hash": "45fa28dbf288cd606e13ca35d3d72437",
       "Requirements": [
         "crosstalk",
         "htmltools",
@@ -298,7 +298,7 @@
       "RemoteSha": "5f891ee1b7f71d850ce5a2dd7c1139d80126f350",
       "RemoteHost": "api.github.com",
       "Remotes": "rstudio/rmarkdown",
-      "Hash": "e5640f99b6483b1fcd525ad5ff59cd7f",
+      "Hash": "8a24ded5390339de6789290a5bf385c8",
       "Requirements": [
         "htmltools",
         "jquerylib",
@@ -950,9 +950,9 @@
       "RemoteUsername": "ropensci",
       "RemoteRepo": "git2r",
       "RemoteRef": "HEAD",
-      "RemoteSha": "4a5dcb56f08b7ac9d89160558e182ebc08f3fb3d",
+      "RemoteSha": "4a594af8af83704f18d0ef2f55ceb46ae2b35f58",
       "RemoteHost": "api.github.com",
-      "Hash": "3ce8d5597a6e370e67f19f6c72601bc7",
+      "Hash": "493a3837d567d64ce1fa87730624fe83",
       "Requirements": []
     },
     "gitcreds": {
@@ -1927,10 +1927,10 @@
     },
     "renv": {
       "Package": "renv",
-      "Version": "0.15.2",
+      "Version": "0.15.3",
       "Source": "Repository",
       "Repository": "CRAN",
-      "Hash": "206c4ef8b7ad6fb1060d69aa7b9dfe69",
+      "Hash": "318c703b833089e1bc0c6a198362ca19",
       "Requirements": []
     },
     "revealjs": {
@@ -2282,11 +2282,11 @@
       "Version": "1.6.2.9000",
       "Source": "GitHub",
       "RemoteType": "github",
+      "RemoteHost": "api.github.com",
       "RemoteUsername": "r-lib",
       "RemoteRepo": "styler",
       "RemoteRef": "main",
       "RemoteSha": "004783a6c5b44a5199ccefa872c968e4444af304",
-      "RemoteHost": "api.github.com",
       "Hash": "ccc3b5f7568d763ad1b69655ca346a0b",
       "Requirements": [
         "R.cache",

@@ -42,19 +42,39 @@ compute_filters <- function(ecg_data, params, infos) {
   # # wander
   # filters$wander <- (mean_of_sd < mean_std$sd)
   # hist_diff
-  filters$hist_diff <- zoo::rollapply(norm_data, params$filter_w_size, hist_diff, fill = 0, align = align)
+  # filters$hist_diff <- zoo::rollapply(norm_data, params$filter_w_size, hist_diff, fill = 0, align = align)
   # zero_cross_rate
-  filters$zero_cross_rate <- zoo::rollapply(norm_data, params$filter_w_size, zero_cross_rate, fill = 0, align = align)
-  # activity
-  filters$activity <- zoo::rollapply(norm_data, params$filter_w_size, activity, fill = 0, align = align)
-  # complexity2
-  filters$complexity <- zoo::rollapply(norm_data, params$filter_w_size, complex, fill = 0, align = align)
-  # complex
-  filters$complex <- c(rep(0, floor((params$filter_w_size - 1) / 2)), win_complex(norm_data, params$filter_w_size), rep(0, ceiling((params$filter_w_size - 1) / 2)))
-  # mobility
-  filters$mobility <- zoo::rollapply(norm_data, params$filter_w_size, mobility, fill = 0, align = align)
+  # filters$zero_cross_rate <- zoo::rollapply(norm_data, params$filter_w_size, zero_cross_rate, fill = 0, align = align)
+  # activity: give high values on normal signals that wander; >2
+
+  # sqrt(sum(diff(data)^2))
+
+  # filters$complex <- c(rep(0, floor((params$filter_w_size - 1) / 2)), win_complex(norm_data, params$filter_w_size), rep(0, ceiling((params$filter_w_size - 1) / 2)))
+  # filters$complextp <- filters$complex > 10
+  mins <- zoo::rollapply(norm_data, params$filter_w_size, min, fill = 0, align = align)
+  maxs <- zoo::rollapply(norm_data, params$filter_w_size, max, fill = 0, align = align)
+  filters$ampl <- maxs - mins
+  filters$ampl[1:1000] <- 0
+  rawmins <- zoo::rollapply(ecg_data, params$filter_w_size, min, fill = 0, align = align)
+  rawmaxs <- zoo::rollapply(ecg_data, params$filter_w_size, max, fill = 0, align = align)
+  filters$rawampl <- rawmaxs - rawmins
+  filters$rawampl[1:1000] <- 0
+  filters$rawnormampl <- filters$rawampl / get_info(ecg_data)$gain
+
+  # filters$activity <- zoo::rollapply(norm_data, params$filter_w_size, activity, fill = 0, align = align)
+  # filters$activitytp <- filters$activity > 2
+
+  # filters$test <- filters$activity + filters$complex
+  # filters$testtp <- filters$test > 11
+
+  # complexity2 false negatives
+  # filters$complexity <- zoo::rollapply(norm_data, params$filter_w_size, complex, fill = 0, align = align)
+  # complex values >6 (100 and 200) seems TP
+  # mobility: not sensible. >0.6
+  # filters$mobility <- zoo::rollapply(norm_data, params$filter_w_size, mobility, fill = 0, align = align)
+  # filters$mobility <- filters$mobility > 0.55
   # turning_points
-  filters$turning_points <- zoo::rollapply(norm_data, params$filter_w_size, turning_points, fill = 0, align = align)
+  # filters$turning_points <- zoo::rollapply(norm_data, params$filter_w_size, turning_points, fill = 0, align = align)
   # # mean more than sd
   # filters$mean_more <- (abs(mean_std$avg) >= mean_std$sd)
   # filters$complex_lim <- filters$complex > params$cplx_lim
@@ -68,8 +88,8 @@ compute_filters <- function(ecg_data, params, infos) {
   # filters$sum <- mean_std$sum
   # # sqrsum
   # filters$sqrsum <- mean_std$sqrsum
-  # kurtosis
-  filters$kurtosis <- zoo::rollapply(norm_data, params$filter_w_size, e1071::kurtosis, fill = 0, align = "left")
+  # kurtosis: not sensible > 10
+  # filters$kurtosis <- zoo::rollapply(norm_data, params$filter_w_size, e1071::kurtosis, fill = 0, align = "left")
   # skewness
   # filters$skewness <- zoo::rollapply(norm_data, params$filter_w_size, e1071::skewness, fill = 0, align = align)
 

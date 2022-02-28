@@ -13,7 +13,7 @@
       "VENDOR": "franzbischoff",
       "PROJECT": "${localWorkspaceFolderBasename}",
       "USERNAME": "coder",
-      "HOME_WORK": "/home/workspace"
+      "HOME_WORK": "/workspace"
     },
     "dockerfile": "Dockerfile",
   },
@@ -199,9 +199,9 @@
     }
   },
   "shutdownAction": "stopContainer",
-  "workspaceFolder": "/home/workspace/${localWorkspaceFolderBasename}",
-  "workspaceMount": "source=${localWorkspaceFolder},target=/home/workspace/${localWorkspaceFolderBasename},type=bind,consistency=consistent",
+  "workspaceFolder": "/workspace/${localWorkspaceFolderBasename}",
+  "workspaceMount": "source=${localWorkspaceFolder},target=/workspace/${localWorkspaceFolderBasename},type=bind,consistency=consistent",
   "mounts": [
-    "source=/home/${localEnv:USER}/.gnupg,target=/home/workspace/.gnupg,type=bind,consistency=cached"
+    "source=/home/${localEnv:USER}/.gnupg,target=/workspace/.gnupg,type=bind,consistency=cached"
   ]
 }
