@@ -33,7 +33,7 @@ compute_filters <- function(ecg_data, params, infos) {
     norm_data[fix] <- 0
   }
 
-  # norm_data <- ecg_data
+  # norm_data is the same with or without the / gain
 
   filters <- list()
 
@@ -49,19 +49,54 @@ compute_filters <- function(ecg_data, params, infos) {
 
   # sqrt(sum(diff(data)^2))
 
-  # filters$complex <- c(rep(0, floor((params$filter_w_size - 1) / 2)), win_complex(norm_data, params$filter_w_size), rep(0, ceiling((params$filter_w_size - 1) / 2)))
-  # filters$complextp <- filters$complex > 10
-  mins <- zoo::rollapply(norm_data, params$filter_w_size, min, fill = 0, align = align)
-  maxs <- zoo::rollapply(norm_data, params$filter_w_size, max, fill = 0, align = align)
-  filters$ampl <- maxs - mins
-  filters$ampl[1:1000] <- 0
-  rawmins <- zoo::rollapply(ecg_data, params$filter_w_size, min, fill = 0, align = align)
-  rawmaxs <- zoo::rollapply(ecg_data, params$filter_w_size, max, fill = 0, align = align)
-  filters$rawampl <- rawmaxs - rawmins
-  filters$rawampl[1:1000] <- 0
-  filters$rawnormampl <- filters$rawampl / get_info(ecg_data)$gain
+  filters$complex <- c(rep(NA, floor((params$filter_w_size - 1) / 2)), win_complex(norm_data, params$filter_w_size), rep(NA, ceiling((params$filter_w_size - 1) / 2)))
+  filters$complex2 <- c(rep(NA, floor((params$filter_w_size - 1) / 2)), win_complex(ecg_data, params$filter_w_size), rep(NA, ceiling((params$filter_w_size - 1) / 2)))
+  filters$complex[1:1000] <- NA
+  filters$complex2[1:1000] <- NA
 
-  # filters$activity <- zoo::rollapply(norm_data, params$filter_w_size, activity, fill = 0, align = align)
+
+  # filters$complextp <- filters$complex > 10
+  filters$activity <- zoo::rollapply(norm_data, params$filter_w_size, activity, fill = NA, align = align)
+  filters$activity[1:1000] <- NA
+  filters$activity2 <- zoo::rollapply(ecg_data, params$filter_w_size, activity, fill = NA, align = align)
+  filters$activity2[1:1000] <- NA
+  mins <- zoo::rollapply(norm_data, params$filter_w_size, min, fill = NA, align = align)
+  maxs <- zoo::rollapply(norm_data, params$filter_w_size, max, fill = NA, align = align)
+  filters$ampl <- maxs - mins
+  filters$ampl[1:1000] <- NA
+  rawmins <- zoo::rollapply(ecg_data, params$filter_w_size, min, fill = NA, align = align)
+  rawmaxs <- zoo::rollapply(ecg_data, params$filter_w_size, max, fill = NA, align = align)
+  filters$amplraw <- rawmaxs - rawmins
+  filters$amplraw[1:1000] <- NA
+
+
+  filters$complex <- tsmp:::zero_one_norm(filters$complex)
+  filters$complex2 <- tsmp:::zero_one_norm(filters$complex2)
+  filters$activity <- tsmp:::zero_one_norm(filters$activity)
+  filters$activity2 <- tsmp:::zero_one_norm(filters$activity2)
+  filters$ampl <- tsmp:::zero_one_norm(filters$ampl)
+  filters$amplraw <- tsmp:::zero_one_norm(filters$amplraw)
+
+  # filters$complex <- filters$complex / 4
+  # filters$complex2 <- filters$complex2 / 6000
+  # filters$complex3 <- filters$complex3 / 2
+  # filters$complex4 <- filters$complex4 * 2000
+  # filters$activity <- filters$activity / 2
+  # filters$activity2 <- filters$activity2 / (4 * 1e6)
+  # filters$activity3 <- filters$activity3 / 1e3
+  # filters$ampl <- filters$ampl / 10
+  # filters$amplraw <- filters$amplraw / 10000
+  # filters$rawnormampl <- filters$rawnormampl / 2.7
+
+  # filters$activity[filters$activity > 1] <- 1 * 1.5
+  # filters$activity2[filters$activity2 > 1] <- 1 * 1.5
+  # filters$activity3[filters$activity3 > 1] <- 1 * 1.5
+  # filters$ampl[filters$ampl > 1] <- 1 * 1.5
+  # filters$amplraw[filters$amplraw > 1] <- 1 * 1.5
+  # filters$rawnormampl[filters$rawnormampl > 1] <- 1 * 1.5
+
+
+
   # filters$activitytp <- filters$activity > 2
 
   # filters$test <- filters$activity + filters$complex

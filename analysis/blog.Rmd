@@ -69,7 +69,7 @@ obviously is not the way to handle it. Thus, the raw data is stored only on the 
 reused where needed.
 
 Now, any modification to the raw data will create a new object, for example, "ds_filtered," where
-the SQI filter is applied over the data.
+the SQI filter is applied to the data.
 
 ### Streaming paradigm
 
@@ -102,21 +102,18 @@ Claims about the algorithm:
 - **FLOSS is not:** a change point detection algorithm [@aminikhanghahi2016]. The interest here is
   changes in the shapes of a sequence of measurements.
 
-Briefly describing the regime detection algorithm, which can be explored in the original paper
-[@gharghabi2018], it is based on the assumption that between two regimes, the most similar shape (its
-nearest neighbor) is located on "the same side". This information is obtained from the Matrix
-Profile computation. More precisely, using only the Profile Index.
+Briefly describing the regime detection algorithm, which can be explored in the original paper [@gharghabi2018], it is based on the assumption that between two regimes, the most similar shape (its nearest neighbor) is located on "the same side". This information is obtained from the Matrix Profile computation. More precisely, using only the Profile Index.
 
 Before talking about the Matrix Profile computation, some findings deserve to be mentioned:
 
-In the original paper, in chapter 3.5, the authors of FLOSS wisely introduce the **temporal
+In chapter 3.5 in the original paper, the authors of FLOSS wisely introduce the **temporal
 constraint**. Nevertheless, some details are not mentioned. 1) As this algorithm only needs the
 Profile Index, should we use the already computed Indexes or recompute the Matrix Profile using this
-constraint (i.e., the constraint is on the Profile Index or in the FLOSS algorithm?). That is not an
-issue about the algorithm but a choice we need to be aware of beforehand. One option is to apply the
+constraint (i.e., the constraint is on the Profile Index or the FLOSS algorithm?). That is not an
+issue about the algorithm but a choice we need to make beforehand. One option is to apply the
 constraint on the Profile Index, and we need to have this parameter set from the start. The second
-option is to have the FLOSS algorithm not accounting for the indexes beyond the constraint, keeping
-the original Profile Index. 2) The authors declare the correction curve typically used on FLUSS and
+option is to have the FLOSS algorithm not account for the indexes beyond the constraint, keeping the
+original Profile Index. 2) The authors declare the correction curve typically used on FLUSS and
 FLOSS as "simply a uniform distribution", but this is not an accurate statement. Empirically, there
 is a helpful pattern to know about the distribution when using **temporal constraints** (at least
 from the start, in the Matrix Profile stage). At first glance, we see that the distribution
@@ -331,9 +328,8 @@ is easily portable.
 
 This work contributes to extending the MPX algorithm to allow the _Online_ computation of the Matrix
 Profile. More precisely, we are interested in the Right Matrix Profile, whose updated indexes refer
-only to the last incoming datapoint, since we are looking for future changes in the regime, not
-looking backward. This one-directional algorithm is already described in the FLOSS paper
-[@gharghabi2018].
+only to the last incoming datapoint since we are looking for future regime changes, not backward.
+This one-directional algorithm is already described in the FLOSS paper [@gharghabi2018].
 
 Another contribution of this work is an unexplored constraint that we could apply on building the
 Matrix Profile that we will call _Similarity Threshold_ (ST). The original work outputs the
@@ -365,7 +361,7 @@ These last months were dedicated to several important things:
 
 ### Refining the main pipeline
 
-That can also be thought of as "rethinking" the pipeline. What also lead to the roadmap
+That can also be thought of as "rethinking" the pipeline. What also leads to the roadmap
 restructuration.
 
 It is essential not only to write a pipeline that can "autoplot" itself for fine-grain inspection
@@ -375,9 +371,8 @@ that are not so obvious when thinking "low-level".
 
 ### Preparing for modeling and parameter tuning
 
-Here is one missing part that should have been addressed (formally) earlier. Although this work has
-its purpose of being finally deployed on small hardware, this prospective phase will need several
-hours of computing, tuning, evaluation, and validation of all findings.
+Although this work has its purpose of being finally deployed on small hardware, this prospective
+phase will need several hours of computing, tuning, evaluation, and validation of all findings.
 
 Thus it was necessary to revisit the frameworks we are used to working on R: `caret` and the newest
 `tidymodels` collection. For sure, there are other frameworks and opinions [@Thompson2020].
@@ -398,8 +393,8 @@ the future.
 After this "step back" to look forward, it was time to define how the regime change algorithm would
 integrate with the actual decision of triggering or not the alarm. Some hypotheses were thought out:
 (1) clustering similar patterns, (2) anomaly detection, (3) classification, and (4) forecasting.
-Among these methods, it was thought, in order to avoid exceeding processor capacity, an initial set
-of shapelets [@Rakthanmanon2013] can be sufficient to rule in or out the `TRUE`/`FALSE` challenge.
+Among these methods, it was thought to avoid exceeding processor capacity, an initial set of
+shapelets [@Rakthanmanon2013] can be sufficient to rule in or out the `TRUE`/`FALSE` challenge.
 Depending on the accuracy of this approach and the resources available, another method can be
 introduced for both (1) improving the "negative"[^1] samples and (2) learning more shapelets to
 improve the `TRUE`/`FALSE` alarm discrimination.

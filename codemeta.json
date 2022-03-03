@@ -2,7 +2,7 @@
   "@context": "https://doi.org/10.5063/schema/codemeta-2.0",
   "@type": "SoftwareSourceCode",
   "identifier": "false.alarm",
-  "description": "PhD work about detecting life-threatening patterns in Point-of-care ECG using efficient memory and processor power.",
+  "description": "Ph.D. work about detecting life-threatening patterns in Point-of-care ECG using efficient memory and processor power.",
   "name": "false.alarm: Detecting life-threatening patterns in Point-of-care ECG using efficient memory and processor power",
   "codeRepository": "https://github.com/franzbischoff/false.alarm",
   "issueTracker": "https://github.com/franzbischoff/false.alarm/issues",
@@ -351,7 +351,15 @@
   },
   "fileSize": "151518.892KB",
   "readme": "https://github.com/franzbischoff/false.alarm/blob/master/README.md",
-  "contIntegration": ["https://github.com/franzbischoff/false.alarm/actions/workflows/R-CMD-check.yaml", "https://codecov.io/gh/franzbischoff/false.alarm"],
+  "contIntegration": [
+    "https://github.com/franzbischoff/false.alarm/actions/workflows/R-CMD-check.yaml",
+    "https://codecov.io/gh/franzbischoff/false.alarm"
+  ],
   "developmentStatus": "https://www.repostatus.org/#wip",
-  "keywords": ["ecg", "signal-processing", "time-series", "matrix-profile"]
+  "keywords": [
+    "ecg",
+    "signal-processing",
+    "time-series",
+    "matrix-profile"
+  ]
 }

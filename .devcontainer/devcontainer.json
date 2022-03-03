@@ -9,7 +9,7 @@
       "CODE_VERSION": "code-insiders",
       "USER_UID": "1000",
       "flavor": "vscode",
-      "BUILD_DESCRIPTION": "ready to use environment for this PHD Thesis",
+      "BUILD_DESCRIPTION": "ready to use environment for this Ph.D. Thesis",
       "VENDOR": "franzbischoff",
       "PROJECT": "${localWorkspaceFolderBasename}",
       "USERNAME": "coder",

@@ -286,5 +286,39 @@
   "yaml.schemas": {
     "https://json.schemastore.org/github-workflow.json": "file:///workspace/false.alarm/.github/workflows/R-CMD-check.yaml"
   },
-  "todo-tree.ripgrep.ripgrep": "/usr/bin/rg"
+  "todo-tree.ripgrep.ripgrep": "/usr/bin/rg",
+  "grammarly.overrides": [
+    {
+      "files": [
+        "**/analysis/blog.Rmd"
+      ],
+      "config": {
+        "audience": "knowledgeable",
+        "dialect": "american",
+        "domain": "casual",
+        "emotions": [
+          "optimistic"
+        ],
+        "goals": [
+          "describe"
+        ]
+      }
+    },
+    {
+      "files": [
+        "**/analysis/report.Rmd"
+      ],
+      "config": {
+        "audience": "knowledgeable",
+        "dialect": "american",
+        "domain": "casual",
+        "emotions": [
+          "confident"
+        ],
+        "goals": [
+          "describe"
+        ]
+      }
+    }
+  ]
 }

@@ -65,6 +65,10 @@ complex <- function(data) {
   return(res)
 }
 
+hard_limit <- function(data) {
+  value <- sum(data == max(data) | data == min(data))
+}
+
 
 # Sum of Squared Differences
 # sqrt(sum(diff(data)^2) / (w-2)) ==> sqrt(var(diff(data))) ==> sd(diff(data))
