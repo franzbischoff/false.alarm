@@ -653,7 +653,7 @@ ratio of the sum of the five largest eigenvalues associated with the principal c
 sum of all eigenvalues obtained by principal component analysis applied to the time aligned ECG
 segments in the window). By experimentation (yet to be validated), a simple formula gives us the
 "complexity" of the signal and correlates well with the noisy data is shown in Equation
-\@ref(eq:complex).
+\@ref(eq:complex) [@Batista2014].
 
 \
 \begin{equation}
@@ -669,7 +669,7 @@ knitr::include_graphics(here("protocol", "figure/noise.png"))
 
 ```{r createfilter, include=FALSE}
 source(here("scripts", "common", "read_ecg.R"))
-source(here("scripts", "common", "win_complex.R"))
+source(here("scripts", "common", "sqi.R"))
 filter_w <- 200
 limit <- 8
 file <- "a104s"

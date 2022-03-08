@@ -2,12 +2,12 @@
 title: "Blog"
 author: "Francisco Bischoff"
 date: "on `r format(Sys.time(), '%B %d, %Y')`"
-output:
-  workflowr::wflow_html:
-    number_sections: true
-    fig_caption: yes
-    code_folding: none
-    toc: no
+# output:
+#   workflowr::wflow_html:
+#     number_sections: true
+#     fig_caption: yes
+#     code_folding: none
+#     toc: no
 bibliography: ../papers/references.bib
 link-citations: true
 csl: ../thesis/csl/ama.csl
@@ -25,8 +25,9 @@ knitr::opts_chunk$set(
 )
 library(here)
 library(ggplot2)
-# library(visNetwork)
+library(glue)
 library(tibble)
+# library(visNetwork)
 # library(kableExtra)
 # library(targets)
 knitr::opts_knit$set(root.dir = here("docs"), base.dir = here("docs"))
@@ -155,7 +156,8 @@ get_dist <- function(mp_const = 1250, floss_const = 0) {
   pro_size <- 5000
   mp_time_constraint <- mp_const
   floss_time_constraint <- floss_const
-  for (i in 1:500) {
+  for (i in 1:5) { # DEBUG
+    # for (i in 1:500) { # RELEASE
     iac[[i]] <- get_asym(pro_size, mp_time_constraint, floss_time_constraint)
   }
 
@@ -405,11 +407,220 @@ improve the `TRUE`/`FALSE` alarm discrimination.
 [^1]: The term "negative" does not imply that the patient has a "normal" ECG. It means that the
 "negative" section is not a life-threatening condition that needs to trigger an alarm.
 
+## 2022, March Update #1
+
+These last couple of months were dedicated to:
+
+1. Writing the new [report](report.html)
+2. Presenting the report to the jury
+3. Getting back to the filters
+
+## Back to the filters
+
+```{r btof, echo=FALSE, out.width="40%", fig.align = "left"}
+knitr::include_graphics("figure/back_to_filters.svg")
+```
+
+Back at the beginning of this thesis, we have talked about using some kind of filtering to be used
+during the signal acquisition in order to not process artifacts and disconnected cables, for
+example. This was described in the section "Preparing the data" on the [report](report.html).
+
+The initial approach to select the "complexity" formula [@Batista2014] was based on a few
+experiments that I felt deserved a more scientific approach.
+
+TLDR; "complexity" is still the best choice, but here are the steps for choosing it.
+
+Several signal quality indexes (SQI) were used to assess the ECG signal's noise in literature. A brief
+list of them:
+
+1. **Activity**: is just the variance of the signal
+  $$
+  Activity = Var(data)
+  $$
+2. **Mobility**: derives from the Activity. The squared root of the ratio of the variance of the first
+   derivative of the signal to the variance of the original signal
+   $$
+   Mobility = \sqrt{\frac{Var(\nabla{data})}{Var(data)}}
+   $$
+3. **Complexity**[^2]: Ratio of the Mobility of the first derivative of the signal to the Mobility
+   of the original signal
+   $$
+   Complexity = \frac{\sqrt{\frac{Var(\nabla^2{data})}{Var(\nabla{data})}}}{\sqrt{\frac{Var(\nabla{data})}{Var(data)}}}
+   \rightarrow \frac{\sqrt{Var(\nabla^2{data}) \cdot Var(data)}}{Var(\nabla{data})}
+   $$
+4. **complexity**: This is the SQI defined by Batista, *et al.* [@Batista2014], and we will write it
+   as complexity (lower case) to not confuse with the Complexity from point 3. This was built by the
+   author around a simple intuition: more complex signals, when "stretched", are longer than simple
+   signals. Fig. `r ref("fig:cplxty")` shows this intuition. The formula is just the "sum of squares
+   of the differences".
+
+```{r cplxty, echo=FALSE, out.width="80%", fig.cap=paste("Figure", ref("fig:cplxty"), " - From Batista _et al._ shows on the left side, the signal, and on the right side, the signal \"stretched\".")}
+knitr::include_graphics("figure/complx.svg")
+```
+
+$$
+complexity = \sqrt{\sum{(\nabla data)^2}}
+$$
+
+5. **Kurtosis**: Measure of the Gaussianity of a distribution. As ECG signals are hyper-Gaussian,
+   higher kurtosis values are associated with lower quality in the ECG. One of its simples formula
+   (which is quite complicated) is:
+
+$$
+Kurtosis = \frac{1}{n}\sum_{i=1}^{n}{z_i^4} - 3
+$$
+
+6. **Karhunen-Loeve transform (KLT)**: KLT is a transformation that reduces a large set of variables
+   down to a smaller set. The smaller set of variables separates the information of the different
+   sources (ECG and Noise). In this way, noise can be estimated, and the SNR calculated.
+7. **First-Difference histogram**: The baseline is defined as the most common sample value during
+   R-R periods. The sample value corresponding to the histogram peak (mode) was declared the
+   baseline, and the difference between consecutive baselines gives the baseline shift from beat to
+   beat. Noise is estimated from the first-difference histogram of R-R intervals. Noise
+   contribution is one minus the frequency of occurrence of first differences with values around
+   zero divided by the number of samples in the R-R interval.
+8. **Turns counts**: Counting of the number of local minimums with amplitude higher than a threshold
+   (e.g. 0.1mV). This SQI is actually robust to noise, so it is not suitable for evaluating noise.
+
+[^2]: This is not the same "complexity" from Batista, *et al.* [@Batista2014], but from Del Rio, *et
+al.* [@DelRio2011].
+
+This is not an exhaustive list. Also, we want a simple SQI as we must use the smallest processor
+and memory possible. For this reason, we will do the experiments with the following SQI on that list:
+Activity, Mobility, Complexity, and complexity. In addition, we will experiment with another
+simple index, the signal's amplitude.
+
+Let's take the first 12 files from Physionet's Challenge dataset, in alphabetic order, from `a103l` to `a165l`.
+By manual inspection, we have the following files as _negative_ for noise #4, #7, #8, #10, #11, #12.
+And for _positive_ for noise the following #1, #2, #3, #5, #6, #9.
+
+```{r load_scripts}
+source(here("scripts/common/find_all_files.R"), encoding = "UTF-8")
+source(here("scripts/common/read_ecg.R"), encoding = "UTF-8")
+source(here("scripts/common/get_set_attributes.R"), encoding = "UTF-8")
+source(here("scripts/common/compute_filters.R"), encoding = "UTF-8")
+source(here("scripts/common/sqi.R"), encoding = "UTF-8")
+```
+
+```{r read_files_filters, cache = TRUE}
+neg <- c(4, 7, 8, 10, 11, 12)
+pos <- c(1, 2, 3, 5, 6, 9)
+
+filenames <- find_all_files(classes = "asystole", limit_per_class = 12)
+
+pos_files <- list()
+i <- 1
+for (file in filenames[pos]) {
+  pos_files[i] <- read_ecg_csv(file, normalize = FALSE)
+  i <- i + 1
+}
+
+neg_files <- list()
+i <- 1
+for (file in filenames[neg]) {
+  neg_files[i] <- read_ecg_csv(file, normalize = FALSE)
+  i <- i + 1
+}
+
+pos_filters <- list()
+for (i in seq.int(1, length(pos_files))) {
+  pos_filters[[i]] <- compute_filters(pos_files[[i]]$II, list(window_size = 250, filter_w_size = 100), get_info(pos_files[[i]]))
+  pos_filters[[i]]$time <- pos_files[[i]]$time
+}
+
+neg_filters <- list()
+for (i in seq.int(1, length(neg_files))) {
+  neg_filters[[i]] <- compute_filters(neg_files[[i]]$II, list(window_size = 250, filter_w_size = 100), get_info(neg_files[[i]]))
+  neg_filters[[i]]$time <- neg_files[[i]]$time
+}
+```
+
+Fig. `r ref("fig:filters_samples")` shows a sample of a positive and a negative signal (for noise) and a sample of some SQI.
+What we need is an index that has a low value when the signal has low noise, and a high value when there is a noisy signal (that we will not process).
+
+```{r filters_samples, fig.cap = paste("Figure", ref("fig:filters_samples"), " - ECG samples of the positive (for noise) and negative"), warning=FALSE}
+lwy <- 0.2
+size <- 9
+sample_pos <- ggplot(as_tibble(pos_files[[2]])[15500:19000, ], aes(time, II)) +
+  geom_line(size = lwy) +
+  ggtitle(glue("ECG with artifacts (file: {get_info(pos_files[[1]])$filename})")) +
+  theme_grey(base_size = size) +
+  theme(
+    axis.title.y = element_blank(),
+    axis.text.y = element_blank(),
+    axis.ticks.y = element_blank(),
+    axis.title.x = element_blank(),
+    axis.text.x = element_blank(),
+    axis.ticks.x = element_blank(),
+    plot.margin = margin(5, 5, 0, 5)
+  )
+
+sample_filter_pos <- ggplot(as_tibble(pos_filters[[2]])[15500:19000, ], aes(time, complex_norm)) +
+  geom_line(size = lwy) +
+  ylim(0, 15) +
+  ggtitle(glue("Sample SQI")) +
+  theme_grey(base_size = size) +
+  theme(
+    axis.title.y = element_blank(),
+    axis.text.y = element_blank(),
+    axis.ticks.y = element_blank(),
+    plot.margin = margin(-13, 5, 5, 5),
+    plot.title = element_text(vjust = -8, size = 8)
+  ) +
+  labs(x = "time (s)")
+
+sample_neg <- ggplot(as_tibble(neg_files[[2]])[1001:4500, ], aes(time, II)) +
+  geom_line(size = lwy) +
+  ggtitle(glue("ECG without artifacts (file: {get_info(neg_files[[1]])$filename})")) +
+  theme_grey(base_size = size) +
+  theme(
+    axis.title.y = element_blank(),
+    axis.text.y = element_blank(),
+    axis.ticks.y = element_blank(),
+    axis.title.x = element_blank(),
+    axis.text.x = element_blank(),
+    axis.ticks.x = element_blank(),
+    plot.margin = margin(5, 5, 0, 5)
+  )
+
+sample_filter_neg <- ggplot(as_tibble(neg_filters[[2]])[1001:4500, ], aes(time, complex_norm)) +
+  geom_line(size = lwy) +
+  ylim(0, 15) +
+  ggtitle(glue("Sample SQI")) +
+  theme_grey(base_size = size) +
+  theme(
+    axis.title.y = element_blank(),
+    axis.text.y = element_blank(),
+    axis.ticks.y = element_blank(),
+    plot.margin = margin(-13, 5, 5, 5),
+    plot.title = element_text(vjust = -8, size = 8)
+  ) +
+  labs(x = "time (s)")
+
+gridExtra::grid.arrange(sample_pos, sample_filter_pos, sample_neg, sample_filter_neg,
+  nrow = 4, newpage = TRUE,
+  bottom = grid::textGrob(glue("The plot above shows a section of an ECG signal that is suddenly interfered with by a bad lead connection or muscle contractions. \n The plot below is a fairly good ECG signal with distortions caused by atrial fibrillation but no artifacts."), just = "center", gp = grid::gpar(fontsize = 9))
+)
+```
+
+First we need to specify how to evaluate the performance of the SQIs, without a hard labeled annotation, i.e. only knowing that one series has noise (but we don't know where) and other series doesn't have noise. Another information by quick inspection is that all 12 time series are "clean" from data points 30500 to 32500. This gives us a hint of the starting threshold for what is "negative".
+
+As we can see on Fig. `r ref("fig:filters_samples")`, the SQI fluctuates where there is a clean QRS complex. The threshold must be above this fluctuation.
+
+To be more robust on defining such threshold, instead of finding the maximum value, we will take the quantile 0.9 of those values, and then multiply this value by some constant:
+
+$$
+\text{thr} = Q_{SQI}(0.9) \cdot \epsilon, \quad \text{for} \, \epsilon \in \mathbb{R}^+_*
+$$
+
+What is expected is that on the negative set, we will have no values above the threshold. And on the positive set, we will have values above, where there are noise.
+
+Another think we must consider is the normalization of the time series and the gain value.
+
+
 ## Further Steps {-}
 
-- Explanation on the evaluation method for regime change detection (as described in the FLOSS paper
-  [@gharghabi2018] )
-- Explain the Cross-validation and evaluation of the algorithm
+
 - Publish results
 
 ## References {-}

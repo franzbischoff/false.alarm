@@ -1,9 +1,40 @@
+# First derivative of vector using 2-point central difference.
+# Example: deriv([1 1 1 2 3 4]) yeilds [0 0 .5 1 1 1]
+# Original for Matlab from T. C. O'Haver, 1988. https://terpconnect.umd.edu/~toh
 deriv <- function(data) {
-  res <- NULL
-  for (i in seq.int(2, length(data) - 1)) {
-    d <- (data[i + 1] - data[i - 1]) / 2
-    res <- c(res, d)
+  n <- length(data)
+  res <- vector(mode = "numeric", n)
+  res[1] <- data[2] - data[1]
+  res[n] <- data[n] - data[n - 1]
+  for (i in seq.int(2, n - 1)) {
+    res[i] <- (data[i + 1] - data[i - 1]) / 2
   }
+  return(res)
+}
+
+# Second derivative of vector using 3-point central difference.
+# Original for Matlab from T. C. O'Haver, 2006. https://terpconnect.umd.edu/~toh
+deriv2 <- function(data) {
+  n <- length(data)
+  res <- vector(mode = "numeric", n)
+  for (i in seq.int(2, n - 1)) {
+    res[i] <- data[i + 1] - 2 * data[i] + data[i - 1]
+  }
+  res[1] <- data[2]
+  res[n] <- data[n - 1]
+  return(res)
+}
+
+# Third derivative of vector a
+# Original for Matlab T. C. O'Haver, 2008. https://terpconnect.umd.edu/~toh
+deriv3 <- function(data) {
+  n <- length(data)
+  res <- vector(mode = "numeric", n)
+  for (i in seq.int(3, n - 2)) {
+    res[i] <- data[i + 2] - 2 * data[i + 1] + 2 * data[i - 1] - data[i - 2]
+  }
+  res[1:2] <- data[3]
+  res[(n - 1):n] <- data[n - 2]
   return(res)
 }
 
@@ -56,7 +87,7 @@ mobility <- function(data) {
 
 # "Complexity": Ratio of the mobility of the first derivative of the signals to the mobility of the signal itself
 
-complex <- function(data) {
+complexity <- function(data) {
   mob1der <- mobility(diff(data))
   mob <- mobility(data)
 

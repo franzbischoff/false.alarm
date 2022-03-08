@@ -4,7 +4,7 @@ library(here)
 # library(glue)
 # library(checkmate)
 
-source(here("scripts", "common", "win_complex.R"), encoding = "UTF-8")
+source(here("scripts", "common", "sqi.R"), encoding = "UTF-8")
 
 test_that("Data is valid", {
   set.seed(2022)

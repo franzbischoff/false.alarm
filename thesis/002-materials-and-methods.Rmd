@@ -370,7 +370,7 @@ knitr::include_graphics(here("protocol", "figure/noise.png"))
 
 ```{r createfilter, include=FALSE}
 source(here("scripts", "common", "read_ecg.R"))
-source(here("scripts", "common", "win_complex.R"))
+source(here("scripts", "common", "sqi.R"))
 filter_w <- 200
 limit <- 8
 file <- "a104s"

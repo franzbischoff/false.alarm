@@ -441,16 +441,18 @@ knitr::include_graphics("figure/filtered_ecg.png")
 ### Preparing the data
 
 Usually, data obtained by sensors needs to be "cleaned" for proper evaluation. That is different
-from the initial filtering process, where the purpose is to enhance the signal. Here we deal
-with artifacts, disconnected cables, wandering baselines, and others.
+from the initial filtering process where the purpose is to enhance the signal. Here we are dealing
+with artifacts, disconnected cables, wandering baselines and others.
 
 Several SQIs (Signal Quality Indexes) are used in the literature [@eerikainen2015], some trivial
 measures as _kurtosis_, _skewness_, median local noise level, other more complex as pcaSQI (the
 ratio of the sum of the five largest eigenvalues associated with the principal components over the
 sum of all eigenvalues obtained by principal component analysis applied to the time aligned ECG
-segments in the window). By experimentation (yet to be validated), a simple formula gives us the
-"complexity" of the signal and correlates well with the noisy data is shown in Equation
-$\eqref{complex}$.
+segments in the window). An assessment of several different methods to estimate electrocardiogram
+signal quality can was performed by Del Rio, *et al* [@DelRio2011].
+
+ By experimentation (yet to be validated), a simple formula gives us the "complexity" of the signal
+ and correlates well with the noisy data is shown in Equation $\eqref{complex}$ [@Batista2014].
 
 \
 $$
@@ -466,7 +468,7 @@ knitr::include_graphics("figure/noise.png")
 
 ```{r createfilter, include=FALSE}
 source(here("scripts", "common", "read_ecg.R"))
-source(here("scripts", "common", "win_complex.R"))
+source(here("scripts", "common", "sqi.R"))
 filter_w <- 200
 limit <- 8
 file <- "a104s"

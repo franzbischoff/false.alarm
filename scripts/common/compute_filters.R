@@ -22,7 +22,8 @@ compute_filters <- function(ecg_data, params, infos) {
   checkmate::qassert(infos, "L+")
 
   # norm_data <- false.alarm::znorm(ecg_data)
-  mean_std <- false.alarm::movmean_std(ecg_data, params$window_size)
+  data_size <- length(ecg_data)
+  mean_std <- matrixprofiler::movmean_std(ecg_data, params$window_size)
   # mean_of_sd <- mean(mean_std$sd)
   pad <- rep(1, (params$window_size - 1))
   norm_data <- (ecg_data - c(pad, mean_std$avg)) / c(pad, mean_std$sd)
@@ -38,6 +39,9 @@ compute_filters <- function(ecg_data, params, infos) {
   filters <- list()
 
   align <- "center"
+  start_s <- 1:1000
+  end_s <- (data_size - 1000 + 1):data_size
+  all_s <- c(start_s, end_s)
 
   # # wander
   # filters$wander <- (mean_of_sd < mean_std$sd)
@@ -49,86 +53,35 @@ compute_filters <- function(ecg_data, params, infos) {
 
   # sqrt(sum(diff(data)^2))
 
-  filters$complex <- c(rep(NA, floor((params$filter_w_size - 1) / 2)), win_complex(norm_data, params$filter_w_size), rep(NA, ceiling((params$filter_w_size - 1) / 2)))
-  filters$complex2 <- c(rep(NA, floor((params$filter_w_size - 1) / 2)), win_complex(ecg_data, params$filter_w_size), rep(NA, ceiling((params$filter_w_size - 1) / 2)))
-  filters$complex[1:1000] <- NA
-  filters$complex2[1:1000] <- NA
-
+  filters$complex_norm <- c(rep(NA, floor((params$filter_w_size - 1) / 2)), win_complex(norm_data, params$filter_w_size), rep(NA, ceiling((params$filter_w_size - 1) / 2)))
+  filters$complex_raw <- c(rep(NA, floor((params$filter_w_size - 1) / 2)), win_complex(ecg_data, params$filter_w_size), rep(NA, ceiling((params$filter_w_size - 1) / 2)))
+  filters$complex_norm[all_s] <- NA
+  filters$complex_raw[all_s] <- NA
 
   # filters$complextp <- filters$complex > 10
-  filters$activity <- zoo::rollapply(norm_data, params$filter_w_size, activity, fill = NA, align = align)
-  filters$activity[1:1000] <- NA
-  filters$activity2 <- zoo::rollapply(ecg_data, params$filter_w_size, activity, fill = NA, align = align)
-  filters$activity2[1:1000] <- NA
+  filters$activity_norm <- zoo::rollapply(norm_data, params$filter_w_size, activity, fill = NA, align = align)
+  filters$activity_norm[all_s] <- NA
+  filters$activity_raw <- zoo::rollapply(ecg_data, params$filter_w_size, activity, fill = NA, align = align)
+  filters$activity_raw[all_s] <- NA
+
+  filters$mobility_norm <- zoo::rollapply(norm_data, params$filter_w_size, mobility, fill = NA, align = align)
+  filters$mobility_norm[all_s] <- NA
+  filters$mobility_raw <- zoo::rollapply(ecg_data, params$filter_w_size, mobility, fill = NA, align = align)
+  filters$mobility_raw[all_s] <- NA
+
+  filters$complexity_norm <- zoo::rollapply(norm_data, params$filter_w_size, complexity, fill = NA, align = align)
+  filters$complexity_norm[all_s] <- NA
+  filters$complexity_raw <- zoo::rollapply(ecg_data, params$filter_w_size, complexity, fill = NA, align = align)
+  filters$complexity_raw[all_s] <- NA
+
   mins <- zoo::rollapply(norm_data, params$filter_w_size, min, fill = NA, align = align)
   maxs <- zoo::rollapply(norm_data, params$filter_w_size, max, fill = NA, align = align)
-  filters$ampl <- maxs - mins
-  filters$ampl[1:1000] <- NA
+  filters$ampl_norm <- maxs - mins
+  filters$ampl_norm[all_s] <- NA
   rawmins <- zoo::rollapply(ecg_data, params$filter_w_size, min, fill = NA, align = align)
   rawmaxs <- zoo::rollapply(ecg_data, params$filter_w_size, max, fill = NA, align = align)
-  filters$amplraw <- rawmaxs - rawmins
-  filters$amplraw[1:1000] <- NA
-
-
-  filters$complex <- tsmp:::zero_one_norm(filters$complex)
-  filters$complex2 <- tsmp:::zero_one_norm(filters$complex2)
-  filters$activity <- tsmp:::zero_one_norm(filters$activity)
-  filters$activity2 <- tsmp:::zero_one_norm(filters$activity2)
-  filters$ampl <- tsmp:::zero_one_norm(filters$ampl)
-  filters$amplraw <- tsmp:::zero_one_norm(filters$amplraw)
-
-  # filters$complex <- filters$complex / 4
-  # filters$complex2 <- filters$complex2 / 6000
-  # filters$complex3 <- filters$complex3 / 2
-  # filters$complex4 <- filters$complex4 * 2000
-  # filters$activity <- filters$activity / 2
-  # filters$activity2 <- filters$activity2 / (4 * 1e6)
-  # filters$activity3 <- filters$activity3 / 1e3
-  # filters$ampl <- filters$ampl / 10
-  # filters$amplraw <- filters$amplraw / 10000
-  # filters$rawnormampl <- filters$rawnormampl / 2.7
-
-  # filters$activity[filters$activity > 1] <- 1 * 1.5
-  # filters$activity2[filters$activity2 > 1] <- 1 * 1.5
-  # filters$activity3[filters$activity3 > 1] <- 1 * 1.5
-  # filters$ampl[filters$ampl > 1] <- 1 * 1.5
-  # filters$amplraw[filters$amplraw > 1] <- 1 * 1.5
-  # filters$rawnormampl[filters$rawnormampl > 1] <- 1 * 1.5
-
-
-
-  # filters$activitytp <- filters$activity > 2
-
-  # filters$test <- filters$activity + filters$complex
-  # filters$testtp <- filters$test > 11
-
-  # complexity2 false negatives
-  # filters$complexity <- zoo::rollapply(norm_data, params$filter_w_size, complex, fill = 0, align = align)
-  # complex values >6 (100 and 200) seems TP
-  # mobility: not sensible. >0.6
-  # filters$mobility <- zoo::rollapply(norm_data, params$filter_w_size, mobility, fill = 0, align = align)
-  # filters$mobility <- filters$mobility > 0.55
-  # turning_points
-  # filters$turning_points <- zoo::rollapply(norm_data, params$filter_w_size, turning_points, fill = 0, align = align)
-  # # mean more than sd
-  # filters$mean_more <- (abs(mean_std$avg) >= mean_std$sd)
-  # filters$complex_lim <- filters$complex > params$cplx_lim
-  # # abs-mean
-  # filters$absmean <- abs(mean_std$avg)
-  # # std
-  # filters$std <- mean_std$sd
-  # # std
-  # filters$sig <- mean_std$sig
-  # # sum
-  # filters$sum <- mean_std$sum
-  # # sqrsum
-  # filters$sqrsum <- mean_std$sqrsum
-  # kurtosis: not sensible > 10
-  # filters$kurtosis <- zoo::rollapply(norm_data, params$filter_w_size, e1071::kurtosis, fill = 0, align = "left")
-  # skewness
-  # filters$skewness <- zoo::rollapply(norm_data, params$filter_w_size, e1071::skewness, fill = 0, align = align)
-
-  # filters <- purrr::map(filters, ~ c(rep(0, floor(params$filter_w_size / 2)), .x))
+  filters$ampl_raw <- rawmaxs - rawmins
+  filters$ampl_raw[all_s] <- NA
 
   attr(filters, "info") <- attr(ecg_data, "info")
   attr(filters, "params") <- params

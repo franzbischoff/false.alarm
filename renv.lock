@@ -172,12 +172,22 @@
       "Hash": "1c0aa18b97e6aaa17f93b8b866c0ace5",
       "Requirements": []
     },
-    "RcppThread": {
-      "Package": "RcppThread",
-      "Version": "2.0.2",
+    "RcppTOML": {
+      "Package": "RcppTOML",
+      "Version": "0.1.7",
       "Source": "Repository",
       "Repository": "CRAN",
-      "Hash": "be90ef924416f0fa0d5a3accd6b26664",
+      "Hash": "f8a578aa91321ecec1292f1e2ffadeda",
+      "Requirements": [
+        "Rcpp"
+      ]
+    },
+    "RcppThread": {
+      "Package": "RcppThread",
+      "Version": "2.1.0",
+      "Source": "Repository",
+      "Repository": "CRAN",
+      "Hash": "52d8a67456731033ecfc853019e63f9c",
       "Requirements": []
     },
     "SQUAREM": {
@@ -295,10 +305,10 @@
       "RemoteUsername": "rstudio",
       "RemoteRepo": "bookdown",
       "RemoteRef": "main",
-      "RemoteSha": "5f891ee1b7f71d850ce5a2dd7c1139d80126f350",
+      "RemoteSha": "28212732e6a57d697b6852de335967195e4a7c56",
       "RemoteHost": "api.github.com",
       "Remotes": "rstudio/rmarkdown",
-      "Hash": "8a24ded5390339de6789290a5bf385c8",
+      "Hash": "2897a51f7565d14961b6652afb8a8175",
       "Requirements": [
         "htmltools",
         "jquerylib",
@@ -595,13 +605,13 @@
     },
     "desc": {
       "Package": "desc",
-      "Version": "1.4.0",
+      "Version": "1.4.1",
       "Source": "Repository",
       "Repository": "CRAN",
-      "Hash": "28763d08fadd0b733e3cee9dab4e12fe",
+      "Hash": "eebd27ee58fcc58714eedb7aa07d8ad1",
       "Requirements": [
         "R6",
-        "crayon",
+        "cli",
         "rprojroot"
       ]
     },
@@ -1450,6 +1460,20 @@
         "xfun"
       ]
     },
+    "matrixprofiler": {
+      "Package": "matrixprofiler",
+      "Version": "0.1.7",
+      "Source": "Repository",
+      "Repository": "CRAN",
+      "Hash": "28933c6fd5e142f64178d969aa5569cf",
+      "Requirements": [
+        "Rcpp",
+        "RcppParallel",
+        "RcppProgress",
+        "RcppThread",
+        "checkmate"
+      ]
+    },
     "memoise": {
       "Package": "memoise",
       "Version": "2.0.1",
@@ -1537,10 +1561,10 @@
     },
     "openssl": {
       "Package": "openssl",
-      "Version": "1.4.6",
+      "Version": "2.0.0",
       "Source": "Repository",
       "Repository": "CRAN",
-      "Hash": "69fdf291af288f32fd4cd93315084ea8",
+      "Hash": "cf4329aac12c2c44089974559c18e446",
       "Requirements": [
         "askpass"
       ]
@@ -1705,6 +1729,14 @@
       "Requirements": [
         "Rcpp"
       ]
+    },
+    "png": {
+      "Package": "png",
+      "Version": "0.1-7",
+      "Source": "Repository",
+      "Repository": "CRAN",
+      "Hash": "03b7076c234cb3331288919983326c55",
+      "Requirements": []
     },
     "praise": {
       "Package": "praise",
@@ -1927,11 +1959,28 @@
     },
     "renv": {
       "Package": "renv",
-      "Version": "0.15.3",
+      "Version": "0.15.4",
       "Source": "Repository",
       "Repository": "CRAN",
-      "Hash": "318c703b833089e1bc0c6a198362ca19",
+      "Hash": "c1078316e1d4f70275fc1ea60c0bc431",
       "Requirements": []
+    },
+    "reticulate": {
+      "Package": "reticulate",
+      "Version": "1.24",
+      "Source": "Repository",
+      "Repository": "CRAN",
+      "Hash": "ffdf27627a3c1537478073c43b6e7980",
+      "Requirements": [
+        "Matrix",
+        "Rcpp",
+        "RcppTOML",
+        "here",
+        "jsonlite",
+        "png",
+        "rappdirs",
+        "withr"
+      ]
     },
     "revealjs": {
       "Package": "revealjs",
@@ -1955,15 +2004,15 @@
     },
     "rlang": {
       "Package": "rlang",
-      "Version": "1.0.1.9000",
+      "Version": "1.0.2.9000",
       "Source": "GitHub",
       "RemoteType": "github",
       "RemoteUsername": "r-lib",
       "RemoteRepo": "rlang",
       "RemoteRef": "main",
-      "RemoteSha": "379b387af5ec29a583f206aa6bc6acd46378a6c5",
+      "RemoteSha": "6ef02564a3f2a71240ee9354ff89c97fed595824",
       "RemoteHost": "api.github.com",
-      "Hash": "704c74b30f35b6c59308b52b89a63c27",
+      "Hash": "0a6e2d909a3eced216d92d153a36adcf",
       "Requirements": []
     },
     "rlist": {
@@ -1981,15 +2030,15 @@
     },
     "rmarkdown": {
       "Package": "rmarkdown",
-      "Version": "2.11.22",
+      "Version": "2.12.1",
       "Source": "GitHub",
       "RemoteType": "github",
       "RemoteUsername": "rstudio",
       "RemoteRepo": "rmarkdown",
       "RemoteRef": "main",
-      "RemoteSha": "1c0548786428ba98f661224eeae2ab8e01c7fdce",
+      "RemoteSha": "1b61776efbf1a072a55a48b7ed9f9a4f6ad8d1cc",
       "RemoteHost": "api.github.com",
-      "Hash": "d2ddadfafac4ba584f81fe635fbe00ff",
+      "Hash": "7d3f925fa776527f5ed8eefe5084f232",
       "Requirements": [
         "bslib",
         "evaluate",
@@ -2282,12 +2331,12 @@
       "Version": "1.6.2.9000",
       "Source": "GitHub",
       "RemoteType": "github",
-      "RemoteHost": "api.github.com",
       "RemoteUsername": "r-lib",
       "RemoteRepo": "styler",
       "RemoteRef": "main",
-      "RemoteSha": "004783a6c5b44a5199ccefa872c968e4444af304",
-      "Hash": "ccc3b5f7568d763ad1b69655ca346a0b",
+      "RemoteSha": "b70aebe2890956eb599d8c9cb47414a97250f68b",
+      "RemoteHost": "api.github.com",
+      "Hash": "9a109fb14aaf4f4989b1d78d819f2d95",
       "Requirements": [
         "R.cache",
         "cli",
@@ -2302,10 +2351,10 @@
     },
     "survival": {
       "Package": "survival",
-      "Version": "3.2-13",
+      "Version": "3.3-1",
       "Source": "Repository",
       "Repository": "CRAN",
-      "Hash": "6f0a0fadc63bc6570fe172770f15bbc4",
+      "Hash": "f6189c70451d3d68e0d571235576e833",
       "Requirements": [
         "Matrix"
       ]
@@ -2318,9 +2367,9 @@
       "RemoteUsername": "r-lib",
       "RemoteRepo": "svglite",
       "RemoteRef": "main",
-      "RemoteSha": "8e66eac364b5c5c9cbd06135bdeb1dbb963b4320",
+      "RemoteSha": "d673908b4ea246aa45fddde56d4d96eb0db87164",
       "RemoteHost": "api.github.com",
-      "Hash": "ca88475f88fc91bb2aa8aeb794126ab2",
+      "Hash": "b1532fbfbc6c6eaaa1fe46c707de5221",
       "Requirements": [
         "cpp11",
         "systemfonts"
@@ -2754,10 +2803,10 @@
     },
     "withr": {
       "Package": "withr",
-      "Version": "2.4.3",
+      "Version": "2.5.0",
       "Source": "Repository",
       "Repository": "CRAN",
-      "Hash": "a376b424c4817cda4920bbbeb3364e85",
+      "Hash": "c0e49a9760983e81e55cdd9be92e7182",
       "Requirements": []
     },
     "workflowr": {
@@ -2830,10 +2879,10 @@
     },
     "xfun": {
       "Package": "xfun",
-      "Version": "0.29",
+      "Version": "0.30",
       "Source": "Repository",
       "Repository": "CRAN",
-      "Hash": "e2e5fb1a74fbb68b27d6efc5372635dc",
+      "Hash": "e83f48136b041845e50a6658feffb197",
       "Requirements": []
     },
     "xml2": {

@@ -708,7 +708,7 @@ read_ecg_with_atr <- function(filename, subset = NULL, classes = c("all", "persi
 #'   - frequency: the frequency of the observations, in Hz.
 #'
 
-read_and_prepare_ecgs <- function(file_paths, subset = NULL, true_alarm = NULL, limit_per_class = NULL, data_type = NULL, resample_from = 0, resample_to = 0) {
+read_and_prepare_ecgs <- function(file_paths, subset = NULL, true_alarm = NULL, limit_per_class = NULL, data_type = NULL, resample_from = 0, resample_to = 0, normalize = FALSE) {
   checkmate::qassert(file_paths, "S+")
   checkmate::qassert(subset, c("0", "X"))
   checkmate::qassert(true_alarm, c("0", "B"))
@@ -749,7 +749,7 @@ read_and_prepare_ecgs <- function(file_paths, subset = NULL, true_alarm = NULL, 
       it <- read_ecg_csv(file,
         subset = subset,
         true_alarm = true_alarm,
-        normalize = FALSE
+        normalize = normalize
       )
     } else {
       # Else, reads the other dataset

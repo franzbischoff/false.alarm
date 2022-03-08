@@ -1,6 +1,7 @@
 # pull data from the internet
 if (!dir.exists(here::here("inst/extdata/physionet"))) {
   dir.create(here::here("inst/extdata"), recursive = TRUE, showWarnings = FALSE)
+  options(timeout = max(300, getOption("timeout")))
   download.file("https://zenodo.org/record/5794658/files/physionet.zip?download=1", method = "libcurl", destfile = here::here("inst/extdata/data.zip"))
 
   # if less than this, probably download error
