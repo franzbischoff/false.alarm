@@ -2,12 +2,12 @@
 title: "Blog"
 author: "Francisco Bischoff"
 date: "on `r format(Sys.time(), '%B %d, %Y')`"
-# output:
-#   workflowr::wflow_html:
-#     number_sections: true
-#     fig_caption: yes
-#     code_folding: none
-#     toc: no
+output:
+  workflowr::wflow_html:
+    number_sections: true
+    fig_caption: yes
+    code_folding: none
+    toc: no
 bibliography: ../papers/references.bib
 link-citations: true
 csl: ../thesis/csl/ama.csl

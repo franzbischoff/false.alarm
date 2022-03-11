@@ -26,20 +26,21 @@ navbar:
     - icon: fa fa-share-alt
       href: https://www.facebook.com/sharer/sharer.php?u=https%3A%2F%2Ffranzbischoff.github.io%2Ffalse.alarm%2F
 output:
-  bookdown::html_document2:
-    toc: false
-    toc_float: false
+  workflowr::wflow_html:
+    toc: true
+    toc_float: true
     number_sections: false
+    theme: lumen
+    highlight: textmate
     css: style.css
-    theme: default
-    highlight: tango
-  # workflowr::wflow_html:
-  #   toc: true
-  #   toc_float: true
+  # bookdown::html_document2:
+  #   toc: false
+  #   toc_float: false
   #   number_sections: false
-  #   theme: lumen
-  #   highlight: textmate
   #   css: style.css
+  #   theme: default
+  #   highlight: tango
+
 #  paper spacelab lumen yeti
 
 # textmate tango pygments kate
