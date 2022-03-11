@@ -3,7 +3,7 @@
   "@type": "SoftwareSourceCode",
   "identifier": "false.alarm",
   "description": "Ph.D. work about detecting life-threatening patterns in Point-of-care ECG using efficient memory and processor power.",
-  "name": "false.alarm: Detecting life-threatening patterns in Point-of-care ECG using efficient memory and processor power",
+  "name": "false.alarm: Detecting life-threatening patterns in Point-of-care ECG using\n    efficient memory and processor power",
   "codeRepository": "https://github.com/franzbischoff/false.alarm",
   "issueTracker": "https://github.com/franzbischoff/false.alarm/issues",
   "license": "https://spdx.org/licenses/CC-BY-NC-SA-4.0",
@@ -33,19 +33,6 @@
     }
   ],
   "softwareSuggestions": [
-    {
-      "@type": "SoftwareApplication",
-      "identifier": "DT",
-      "name": "DT",
-      "version": ">= 0.18",
-      "provider": {
-        "@id": "https://cran.r-project.org",
-        "@type": "Organization",
-        "name": "Comprehensive R Archive Network (CRAN)",
-        "url": "https://cran.r-project.org"
-      },
-      "sameAs": "https://CRAN.R-project.org/package=DT"
-    },
     {
       "@type": "SoftwareApplication",
       "identifier": "clustermq",
@@ -97,6 +84,19 @@
         "url": "https://cran.r-project.org"
       },
       "sameAs": "https://CRAN.R-project.org/package=debugme"
+    },
+    {
+      "@type": "SoftwareApplication",
+      "identifier": "DT",
+      "name": "DT",
+      "version": ">= 0.18",
+      "provider": {
+        "@id": "https://cran.r-project.org",
+        "@type": "Organization",
+        "name": "Comprehensive R Archive Network (CRAN)",
+        "url": "https://cran.r-project.org"
+      },
+      "sameAs": "https://CRAN.R-project.org/package=DT"
     },
     {
       "@type": "SoftwareApplication",
@@ -243,6 +243,19 @@
     },
     {
       "@type": "SoftwareApplication",
+      "identifier": "rlang",
+      "name": "rlang",
+      "version": ">= 1.0.2",
+      "provider": {
+        "@id": "https://cran.r-project.org",
+        "@type": "Organization",
+        "name": "Comprehensive R Archive Network (CRAN)",
+        "url": "https://cran.r-project.org"
+      },
+      "sameAs": "https://CRAN.R-project.org/package=rlang"
+    },
+    {
+      "@type": "SoftwareApplication",
       "identifier": "spelling",
       "name": "spelling",
       "version": ">= 2.0.0",
@@ -316,32 +329,6 @@
     },
     "2": {
       "@type": "SoftwareApplication",
-      "identifier": "Rcpp",
-      "name": "Rcpp",
-      "version": ">= 1.0.6",
-      "provider": {
-        "@id": "https://cran.r-project.org",
-        "@type": "Organization",
-        "name": "Comprehensive R Archive Network (CRAN)",
-        "url": "https://cran.r-project.org"
-      },
-      "sameAs": "https://CRAN.R-project.org/package=Rcpp"
-    },
-    "3": {
-      "@type": "SoftwareApplication",
-      "identifier": "RcppParallel",
-      "name": "RcppParallel",
-      "version": ">= 5.1.4",
-      "provider": {
-        "@id": "https://cran.r-project.org",
-        "@type": "Organization",
-        "name": "Comprehensive R Archive Network (CRAN)",
-        "url": "https://cran.r-project.org"
-      },
-      "sameAs": "https://CRAN.R-project.org/package=RcppParallel"
-    },
-    "4": {
-      "@type": "SoftwareApplication",
       "identifier": "bookdown",
       "name": "bookdown",
       "version": ">= 0.22",
@@ -353,7 +340,7 @@
       },
       "sameAs": "https://github.com/rstudio/bookdown"
     },
-    "5": {
+    "3": {
       "@type": "SoftwareApplication",
       "identifier": "checkmate",
       "name": "checkmate",
@@ -366,7 +353,7 @@
       },
       "sameAs": "https://CRAN.R-project.org/package=checkmate"
     },
-    "6": {
+    "4": {
       "@type": "SoftwareApplication",
       "identifier": "future",
       "name": "future",
@@ -379,7 +366,7 @@
       },
       "sameAs": "https://CRAN.R-project.org/package=future"
     },
-    "7": {
+    "5": {
       "@type": "SoftwareApplication",
       "identifier": "ggplot2",
       "name": "ggplot2",
@@ -392,7 +379,7 @@
       },
       "sameAs": "https://CRAN.R-project.org/package=ggplot2"
     },
-    "8": {
+    "6": {
       "@type": "SoftwareApplication",
       "identifier": "glue",
       "name": "glue",
@@ -405,7 +392,7 @@
       },
       "sameAs": "https://CRAN.R-project.org/package=glue"
     },
-    "9": {
+    "7": {
       "@type": "SoftwareApplication",
       "identifier": "gridExtra",
       "name": "gridExtra",
@@ -418,7 +405,7 @@
       },
       "sameAs": "https://CRAN.R-project.org/package=gridExtra"
     },
-    "10": {
+    "8": {
       "@type": "SoftwareApplication",
       "identifier": "here",
       "name": "here",
@@ -431,7 +418,7 @@
       },
       "sameAs": "https://CRAN.R-project.org/package=here"
     },
-    "11": {
+    "9": {
       "@type": "SoftwareApplication",
       "identifier": "kableExtra",
       "name": "kableExtra",
@@ -444,7 +431,7 @@
       },
       "sameAs": "https://CRAN.R-project.org/package=kableExtra"
     },
-    "12": {
+    "10": {
       "@type": "SoftwareApplication",
       "identifier": "plotly",
       "name": "plotly",
@@ -457,7 +444,7 @@
       },
       "sameAs": "https://CRAN.R-project.org/package=plotly"
     },
-    "13": {
+    "11": {
       "@type": "SoftwareApplication",
       "identifier": "purrr",
       "name": "purrr",
@@ -469,6 +456,32 @@
         "url": "https://cran.r-project.org"
       },
       "sameAs": "https://CRAN.R-project.org/package=purrr"
+    },
+    "12": {
+      "@type": "SoftwareApplication",
+      "identifier": "Rcpp",
+      "name": "Rcpp",
+      "version": ">= 1.0.6",
+      "provider": {
+        "@id": "https://cran.r-project.org",
+        "@type": "Organization",
+        "name": "Comprehensive R Archive Network (CRAN)",
+        "url": "https://cran.r-project.org"
+      },
+      "sameAs": "https://CRAN.R-project.org/package=Rcpp"
+    },
+    "13": {
+      "@type": "SoftwareApplication",
+      "identifier": "RcppParallel",
+      "name": "RcppParallel",
+      "version": ">= 5.1.4",
+      "provider": {
+        "@id": "https://cran.r-project.org",
+        "@type": "Organization",
+        "name": "Comprehensive R Archive Network (CRAN)",
+        "url": "https://cran.r-project.org"
+      },
+      "sameAs": "https://CRAN.R-project.org/package=RcppParallel"
     },
     "14": {
       "@type": "SoftwareApplication",
@@ -557,19 +570,6 @@
     },
     "21": {
       "@type": "SoftwareApplication",
-      "identifier": "yardstick",
-      "name": "yardstick",
-      "version": ">= 0.0.9",
-      "provider": {
-        "@id": "https://cran.r-project.org",
-        "@type": "Organization",
-        "name": "Comprehensive R Archive Network (CRAN)",
-        "url": "https://cran.r-project.org"
-      },
-      "sameAs": "https://CRAN.R-project.org/package=yardstick"
-    },
-    "22": {
-      "@type": "SoftwareApplication",
       "identifier": "workflowr",
       "name": "workflowr",
       "version": ">= 1.6.2",
@@ -581,9 +581,22 @@
       },
       "sameAs": "https://CRAN.R-project.org/package=workflowr"
     },
+    "22": {
+      "@type": "SoftwareApplication",
+      "identifier": "yardstick",
+      "name": "yardstick",
+      "version": ">= 0.0.9",
+      "provider": {
+        "@id": "https://cran.r-project.org",
+        "@type": "Organization",
+        "name": "Comprehensive R Archive Network (CRAN)",
+        "url": "https://cran.r-project.org"
+      },
+      "sameAs": "https://CRAN.R-project.org/package=yardstick"
+    },
     "SystemRequirements": "GNU make"
   },
-  "fileSize": "14823968.383KB",
+  "fileSize": "72235.897KB",
   "readme": "https://github.com/franzbischoff/false.alarm/blob/master/README.md",
   "contIntegration": ["https://github.com/franzbischoff/false.alarm/actions/workflows/R-CMD-check.yaml", "https://codecov.io/gh/franzbischoff/false.alarm"],
   "developmentStatus": "https://www.repostatus.org/#wip",

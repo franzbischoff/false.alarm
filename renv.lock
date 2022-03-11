@@ -1000,6 +1000,14 @@
         "rstudioapi"
       ]
     },
+    "getopt": {
+      "Package": "getopt",
+      "Version": "1.20.3",
+      "Source": "Repository",
+      "Repository": "CRAN",
+      "Hash": "ad68e3263f0bc9269aab8c2039440117",
+      "Requirements": []
+    },
     "ggnetwork": {
       "Package": "ggnetwork",
       "Version": "0.5.10",
@@ -1719,6 +1727,16 @@
       "Hash": "cf4329aac12c2c44089974559c18e446",
       "Requirements": [
         "askpass"
+      ]
+    },
+    "optparse": {
+      "Package": "optparse",
+      "Version": "1.7.1",
+      "Source": "Repository",
+      "Repository": "CRAN",
+      "Hash": "2490600671344e847c37a7f75ee458c0",
+      "Requirements": [
+        "getopt"
       ]
     },
     "pROC": {

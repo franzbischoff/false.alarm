@@ -329,7 +329,7 @@ WORKDIR /home/tailscale
 COPY tailscaled /etc/init.d
 
 RUN chmod 755 /etc/init.d/tailscaled \
-  && git clone -depth 1 https://github.com/tailscale/tailscale.git
+  && git clone --depth 1 https://github.com/tailscale/tailscale.git
 
 WORKDIR /home/tailscale/tailscale
 

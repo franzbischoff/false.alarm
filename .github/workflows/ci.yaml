@@ -290,8 +290,13 @@ jobs:
         run: |
           if (!requireNamespace("renv", quietly = TRUE)) install.packages("renv")
           Sys.unsetenv("GITHUB_PAT")
-          renv::restore()
+          renv::hydrate()
         shell: Rscript {0}
+
+      - name: pull database
+        run: |
+          chmod 755 run.R && ./run.R -r FALSE
+        shell: bash
 
       - name: Configure git
         run: |
