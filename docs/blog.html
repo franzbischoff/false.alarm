@@ -30,6 +30,7 @@
        code {color: inherit; background-color: rgba(0, 0, 0, 0.04);}
        pre:not([class]) { background-color: white }</style>
 <script src="site_libs/navigation-1.1/tabsets.js"></script>
+<script src="site_libs/accessible-code-block-0.0.1/empty-anchor.js"></script>
 <link href="site_libs/font-awesome-5.1.0/css/all.css" rel="stylesheet" />
 <link href="site_libs/font-awesome-5.1.0/css/v4-shims.css" rel="stylesheet" />
 
@@ -47,28 +48,6 @@
 
 
 
-<style type="text/css">
-/* for pandoc --citeproc since 2.11 */
-div.csl-bib-body { }
-div.csl-entry {
-  clear: both;
-}
-.hanging div.csl-entry {
-  margin-left:2em;
-  text-indent:-2em;
-}
-div.csl-left-margin {
-  min-width:2em;
-  float:left;
-}
-div.csl-right-inline {
-  margin-left:2em;
-  padding-left:1em;
-}
-div.csl-indent {
-  margin-left: 2em;
-}
-</style>
 
 <link rel="stylesheet" href="style.css" type="text/css" />
 
@@ -314,7 +293,7 @@ $(document).ready(function () {
 
 <h1 class="title toc-ignore">Blog</h1>
 <h4 class="author">Francisco Bischoff</h4>
-<h4 class="date">on March 10, 2022</h4>
+<h4 class="date">on March 11, 2022</h4>
 
 </div>
 
@@ -353,7 +332,7 @@ pre-computation also allows experimenting with parameters during this process.</
 <h3>Regime Change Detection</h3>
 <p>While implementing the streaming-like pipeline, some declarations must be made. In 2017, the FLUSS
 (Fast Low-cost Unipotent Semantic Segmentation) and the FLOSS (Fast Low-cost Online Semantic
-Segmentation) algorithms were introduced by Gharghabi <em>et al.</em><span class="citation"><sup><a href="#ref-gharghabi2017" role="doc-biblioref">1</a></sup></span>. In 2018, the same
+Segmentation) algorithms were introduced by Gharghabi <em>et al.</em>.<span class="citation"><sup><a href="#ref-gharghabi2017" role="doc-biblioref">1</a></sup></span> In 2018, the same
 group published their findings using multi-dimensional time series<span class="citation"><sup><a href="#ref-gharghabi2018" role="doc-biblioref">2</a></sup></span> using the same
 algorithms.</p>
 <p>Claims about the algorithm:</p>
@@ -363,10 +342,10 @@ available algorithms to date.</li>
 <li><strong>Streaming:</strong> the algorithm can provide real-time information.</li>
 <li><strong>Real-World Data Suitability:</strong> the objective is not to <em>explain</em> all the data. Therefore, areas
 marked as “don’t know” areas are acceptable.</li>
-<li><strong>FLOSS is not:</strong> a change point detection algorithm<span class="citation"><sup><a href="#ref-aminikhanghahi2016" role="doc-biblioref">3</a></sup></span>. The interest here is
+<li><strong>FLOSS is not:</strong> a change point detection algorithm.<span class="citation"><sup><a href="#ref-aminikhanghahi2016" role="doc-biblioref">3</a></sup></span> The interest here is
 changes in the shapes of a sequence of measurements.</li>
 </ul>
-<p>Briefly describing the regime detection algorithm, which can be explored in the original paper<span class="citation"><sup><a href="#ref-gharghabi2018" role="doc-biblioref">2</a></sup></span>, it is based on the assumption that between two regimes, the most similar shape (its nearest neighbor) is located on “the same side”. This information is obtained from the Matrix Profile computation. More precisely, using only the Profile Index.</p>
+<p>Briefly describing the regime detection algorithm, which can be explored in the original paper,<span class="citation"><sup><a href="#ref-gharghabi2018" role="doc-biblioref">2</a></sup></span> it is based on the assumption that between two regimes, the most similar shape (its nearest neighbor) is located on “the same side”. This information is obtained from the Matrix Profile computation. More precisely, using only the Profile Index.</p>
 <p>Before talking about the Matrix Profile computation, some findings deserve to be mentioned:</p>
 <p>In chapter 3.5 in the original paper, the authors of FLOSS wisely introduce the <strong>temporal
 constraint</strong>. Nevertheless, some details are not mentioned. 1) As this algorithm only needs the
@@ -424,22 +403,22 @@ Figure 2: Figure 3 - CAC and Regime detection using early and later IAC
 </div>
 <div id="the-matrix-profile-algorithm" class="section level3">
 <h3>The Matrix Profile Algorithm</h3>
-<p>Since the first Matrix Profile computation algorithm, the STAMP<span class="citation"><sup><a href="#ref-yeh2016" role="doc-biblioref">4</a></sup></span>, several improvements on
-the algorithm were made<span class="citation"><sup><a href="#ref-zhu2016" role="doc-biblioref">5</a>,<a href="#ref-zhu2018" role="doc-biblioref">6</a></sup></span>. Still, the ability to keep a growing Matrix Profile
+<p>Since the first Matrix Profile computation algorithm, the STAMP,<span class="citation"><sup><a href="#ref-yeh2016" role="doc-biblioref">4</a></sup></span> several improvements on
+the algorithm were made.<span class="citation"><sup><a href="#ref-zhu2016" role="doc-biblioref">5</a>,<a href="#ref-zhu2018" role="doc-biblioref">6</a></sup></span> Still, the ability to keep a growing Matrix Profile
 (i.e., <em>Online</em>) relies on the STAMP algorithm. If the problem allows collecting several data points
 (chunks), STOMP<span class="citation"><sup><a href="#ref-zhu2016" role="doc-biblioref">5</a></sup></span> can speed up the computation. Curiously, the main bottleneck of all these
 algorithms is the FFT (Fast Fourier Transform) algorithm that is the core of the MASS algorithm
 published by Mueen <em>et al.</em><span class="citation"><sup><a href="#ref-mueen2010" role="doc-biblioref">7</a></sup></span> in 2010 and later in 2015, having its code released on
-Professor Mueen’s webpage<span class="citation"><sup><a href="#ref-mass2015" role="doc-biblioref">8</a></sup></span>. The FFT libraries available are highly optimized and CPU (or
+Professor Mueen’s webpage.<span class="citation"><sup><a href="#ref-mass2015" role="doc-biblioref">8</a></sup></span> The FFT libraries available are highly optimized and CPU (or
 GPU) dependent what makes it at the same time fast but brittle and not suitable for MCU’s
 (Microcontroller Unit), for example. More interestingly yet, is the fact that several published
-works using Matrix Profile, MPdist<span class="citation"><sup><a href="#ref-gharghabi2018a" role="doc-biblioref">9</a></sup></span>, for instance, uses an unpublished algorithm
+works using Matrix Profile, MPdist,<span class="citation"><sup><a href="#ref-gharghabi2018a" role="doc-biblioref">9</a></sup></span> for instance, uses an unpublished algorithm
 called ‘MPX’ that computes the Matrix Profile using cross-correlation methods ending up faster and
 is easily portable.</p>
 <p>This work contributes to extending the MPX algorithm to allow the <em>Online</em> computation of the Matrix
 Profile. More precisely, we are interested in the Right Matrix Profile, whose updated indexes refer
 only to the last incoming datapoint since we are looking for future regime changes, not backward.
-This one-directional algorithm is already described in the FLOSS paper<span class="citation"><sup><a href="#ref-gharghabi2018" role="doc-biblioref">2</a></sup></span>.</p>
+This one-directional algorithm is already described in the FLOSS paper.<span class="citation"><sup><a href="#ref-gharghabi2018" role="doc-biblioref">2</a></sup></span></p>
 <p>Another contribution of this work is an unexplored constraint that we could apply on building the
 Matrix Profile that we will call <em>Similarity Threshold</em> (ST). The original work outputs the
 similarity values in Euclidean Distance (ED) values, while MPX naturally outputs the values in
@@ -481,7 +460,7 @@ that are not so obvious when thinking “low-level”.</p>
 <p>Although this work has its purpose of being finally deployed on small hardware, this prospective
 phase will need several hours of computing, tuning, evaluation, and validation of all findings.</p>
 <p>Thus it was necessary to revisit the frameworks we are used to working on R: <code>caret</code> and the newest
-<code>tidymodels</code> collection. For sure, there are other frameworks and opinions<span class="citation"><sup><a href="#ref-Thompson2020" role="doc-biblioref">10</a></sup></span>.
+<code>tidymodels</code> collection. For sure, there are other frameworks and opinions.<span class="citation"><sup><a href="#ref-Thompson2020" role="doc-biblioref">10</a></sup></span>
 Notwithstanding, this project will follow the <code>tidymodels</code> road. Two significant arguments 1)
 constantly improving and constantly being re-checked for bugs; 2) allows to plug in a custom
 modeling algorithm that, in this case, will be the one needed for developing this work.</p>
@@ -489,7 +468,7 @@ modeling algorithm that, in this case, will be the one needed for developing thi
 <div id="feasibility-trial" class="section level3">
 <h3>Feasibility trial</h3>
 <p>A side-project called “false.alarm.io” has been derived from this work (an unfortunate mix of
-“false.alarm” and “PlatformIO”<span class="citation"><sup><a href="#ref-PlatformIO" role="doc-biblioref">11</a></sup></span>, the IDE chosen to interface the panoply of embedded
+“false.alarm” and “PlatformIO,”<span class="citation"><sup><a href="#ref-PlatformIO" role="doc-biblioref">11</a></sup></span> the IDE chosen to interface the panoply of embedded
 systems we can experiment). The current results of this side-project are very enlightening and show
 that the final algorithm can indeed be used in small hardware. Further data will be available in
 the future.</p>
@@ -546,7 +525,7 @@ of the original signal
 Complexity = \frac{\sqrt{\frac{Var(\nabla^2{data})}{Var(\nabla{data})}}}{\sqrt{\frac{Var(\nabla{data})}{Var(data)}}}
 \rightarrow \frac{\sqrt{Var(\nabla^2{data}) \cdot Var(data)}}{Var(\nabla{data})}
 \]</span></li>
-<li><strong>complexity</strong>: This is the SQI defined by Batista, <em>et al.</em><span class="citation"><sup><a href="#ref-Batista2014" role="doc-biblioref">14</a></sup></span>, and we will write it
+<li><strong>complexity</strong>: This is the SQI defined by Batista, <em>et al.</em>,<span class="citation"><sup><a href="#ref-Batista2014" role="doc-biblioref">14</a></sup></span> and we will write it
 as complexity (lower case) to not confuse with the Complexity from point 3. This was built by the
 author around a simple intuition: more complex signals, when “stretched”, are longer than simple
 signals. Fig. 4 shows this intuition. The formula is just the “sum of squares
@@ -605,21 +584,21 @@ We need an index with a low value when the signal has low noise and a high value
 \]</span></p>
 <p>What is expected is that we will have no values above the threshold on the negative set. And on the positive set, we will have values above, where there is noise.</p>
 <p>Another aspect we must consider is the <strong>normalization</strong> of the time series and the <strong>gain</strong> value. The Physionet’s data, in general, has the information about the gain used to convert the signal from mV to the digital format. Afterward, when importing the dataset, their tool divides the digital values by the gain, converting them back to mV. This should, in theory, give us signals on a similar scale, but in some recordings, the gain seems to introduce some differences (maybe the patient had a weak signal or the wrong gain was used?). This is only a problem if we do not normalize (mean zero and standard deviation one) the signal before computing the SQI. Thus the SQIs must be compared on four settings 1) with normalization, 2) without normalization without gain, and 2) without normalization with gain and, for completeness, let’s also apply the gain in the SQI only (data without normalization and without gain).</p>
-<p>It is important to say that the normalization step is done when computing the Matrix Profile. Thus, we don’t want to compute yet another normalization. This means we must use the window size of the Matrix Profile, while the filter does not necessarily need to use that same window size. This has implications on comparing Mobility, Complexity<span class="citation"><sup><a href="#ref-DelRio2011" role="doc-biblioref">15</a></sup></span>, and Kurtosis because they are invariant to applying or not the gain on the original data (since all have the data in numerator and denominator). They would be invariant to the normalization only if both the normalization and the SQI use the same window size.</p>
+<p>It is important to say that the normalization step is done when computing the Matrix Profile. Thus, we don’t want to compute yet another normalization. This means we must use the window size of the Matrix Profile, while the filter does not necessarily need to use that same window size. This has implications on comparing Mobility, Complexity,<span class="citation"><sup><a href="#ref-DelRio2011" role="doc-biblioref">15</a></sup></span> and Kurtosis because they are invariant to applying or not the gain on the original data (since all have the data in numerator and denominator). They would be invariant to the normalization only if both the normalization and the SQI use the same window size.</p>
 <p>Furthermore, as we can see below, we can anticipate that the remaining SQIs are invariant to the gain <span class="math inline">\(g\)</span> applied directly on the data or on the SQI itself.</p>
 <p>The Activity (variance):</p>
 <p><span class="math display">\[
 \begin{eqnarray}
 Activity(\vec{X}) &amp;=&amp; Var\left(\frac{(x_i, x_{i+1}, \ldots, x_n)}{g}\right) \\
-&amp;\equiv&amp; \frac{Var(x_i, x_{i+1}, \ldots, x_n)}{g^2}
+ &amp;\equiv&amp; \frac{Var(x_i, x_{i+1}, \ldots, x_n)}{g^2}
 \end{eqnarray}
 \quad, \{ \vec{X} \in \mathbb{R}, g \in \mathbb{R} \mid g \gt 0 \}
 \]</span></p>
-<p>The complexity, from Batista, <em>et al.</em><span class="citation"><sup><a href="#ref-Batista2014" role="doc-biblioref">14</a></sup></span>:</p>
+<p>The complexity, from Batista, <em>et al.</em>:<span class="citation"><sup><a href="#ref-Batista2014" role="doc-biblioref">14</a></sup></span></p>
 <p><span class="math display">\[
 \begin{eqnarray}
 complexity(\vec{X}) &amp;=&amp; \sqrt{\sum_{i=1}^n{\left[\nabla \frac{(x_i, x_{i+1}, \ldots, x_n)}{g}\right]^2}} \\
-&amp;\equiv&amp; \frac{\sqrt{\sum_{i=1}^n{\left[\nabla (x_i, x_{i+1}, \ldots, x_n)\right]^2}}}{g}
+ &amp;\equiv&amp; \frac{\sqrt{\sum_{i=1}^n{\left[\nabla (x_i, x_{i+1}, \ldots, x_n)\right]^2}}}{g}
 \end{eqnarray}
 \quad, \{ \vec{X} \in \mathbb{R}, g \in \mathbb{R} \mid g \gt 0 \}
 \]</span></p>
@@ -627,7 +606,7 @@ complexity(\vec{X}) &amp;=&amp; \sqrt{\sum_{i=1}^n{\left[\nabla \frac{(x_i, x_{i
 <p><span class="math display">\[
 \begin{eqnarray}
 A(\vec{X}) &amp;=&amp; \max{\left(\frac{(x_i, x_{i+1}, \ldots, x_n)}{g}\right)} - \min{\left(\frac{(x_i, x_{i+1}, \ldots, x_n)}{g}\right)}  \\
-&amp;\equiv&amp; \frac{\max{(x_i, x_{i+1}, \ldots, x_n)} - \min{(x_i, x_{i+1}, \ldots, x_n)}}{g}
+ &amp;\equiv&amp; \frac{\max{(x_i, x_{i+1}, \ldots, x_n)} - \min{(x_i, x_{i+1}, \ldots, x_n)}}{g}
 \end{eqnarray}
 \ , \{ \vec{X} \in \mathbb{R}, g \in \mathbb{R}\}
 \]</span></p>
@@ -641,62 +620,62 @@ A(\vec{X}) &amp;=&amp; \max{\left(\frac{(x_i, x_{i+1}, \ldots, x_n)}{g}\right)} 
 </div>
 <div id="references" class="section level2 unnumbered">
 <h2>References</h2>
-<div id="refs" class="references csl-bib-body">
-<div id="ref-gharghabi2017" class="csl-entry">
-<div class="csl-left-margin">1. </div><div class="csl-right-inline">Gharghabi S, Ding Y, Yeh C-CM, Kamgar K, Ulanova L, Keogh E. 2017 IEEE international conference on data mining (ICDM). In: IEEE; 2017. doi:<a href="https://doi.org/10.1109/icdm.2017.21">10.1109/icdm.2017.21</a></div>
+<div id="refs" class="references">
+<div id="ref-gharghabi2017">
+<p>1. Gharghabi S, Ding Y, Yeh C-CM, Kamgar K, Ulanova L, Keogh E. 2017 ieee international conference on data mining (icdm). In: IEEE; 2017. doi:<a href="https://doi.org/10.1109/icdm.2017.21">10.1109/icdm.2017.21</a></p>
 </div>
-<div id="ref-gharghabi2018" class="csl-entry">
-<div class="csl-left-margin">2. </div><div class="csl-right-inline">Gharghabi S, Yeh C-CM, Ding Y, et al. Domain agnostic online semantic segmentation for multi-dimensional time series. <em>Data Mining and Knowledge Discovery</em>. 2018;33(1):96-130. doi:<a href="https://doi.org/10.1007/s10618-018-0589-3">10.1007/s10618-018-0589-3</a></div>
+<div id="ref-gharghabi2018">
+<p>2. Gharghabi S, Yeh C, Ding Y, et al. Domain agnostic online semantic segmentation for multi-dimensional time series. <em>Data Mining and Knowledge Discovery</em>. 2018;33(1):96-130. doi:<a href="https://doi.org/10.1007/s10618-018-0589-3">10.1007/s10618-018-0589-3</a></p>
 </div>
-<div id="ref-aminikhanghahi2016" class="csl-entry">
-<div class="csl-left-margin">3. </div><div class="csl-right-inline">Aminikhanghahi S, Cook DJ. A survey of methods for time series change point detection. <em>Knowledge and Information Systems</em>. 2016;51(2):339-367. doi:<a href="https://doi.org/10.1007/s10115-016-0987-z">10.1007/s10115-016-0987-z</a></div>
+<div id="ref-aminikhanghahi2016">
+<p>3. Aminikhanghahi S, Cook DJ. A survey of methods for time series change point detection. <em>Knowledge and Information Systems</em>. 2016;51(2):339-367. doi:<a href="https://doi.org/10.1007/s10115-016-0987-z">10.1007/s10115-016-0987-z</a></p>
 </div>
-<div id="ref-yeh2016" class="csl-entry">
-<div class="csl-left-margin">4. </div><div class="csl-right-inline">Yeh C-CM, Zhu Y, Ulanova L, et al. 2016 IEEE 16th international conference on data mining (ICDM). In: IEEE; 2016. doi:<a href="https://doi.org/10.1109/icdm.2016.0179">10.1109/icdm.2016.0179</a></div>
+<div id="ref-yeh2016">
+<p>4. Yeh C, Zhu Y, Ulanova L, et al. 2016 ieee 16th international conference on data mining (icdm). In: IEEE; 2016. doi:<a href="https://doi.org/10.1109/icdm.2016.0179">10.1109/icdm.2016.0179</a></p>
 </div>
-<div id="ref-zhu2016" class="csl-entry">
-<div class="csl-left-margin">5. </div><div class="csl-right-inline">Zhu Y, Zimmerman Z, Senobari NS, et al. 2016 IEEE 16th international conference on data mining (ICDM). In: IEEE; 2016. doi:<a href="https://doi.org/10.1109/icdm.2016.0085">10.1109/icdm.2016.0085</a></div>
+<div id="ref-zhu2016">
+<p>5. Zhu Y, Zimmerman Z, Senobari NS, et al. 2016 ieee 16th international conference on data mining (icdm). In: IEEE; 2016. doi:<a href="https://doi.org/10.1109/icdm.2016.0085">10.1109/icdm.2016.0085</a></p>
 </div>
-<div id="ref-zhu2018" class="csl-entry">
-<div class="csl-left-margin">6. </div><div class="csl-right-inline">Zhu Y, Yeh C-CM, Zimmerman Z, Kamgar K, Keogh E. 2018 IEEE international conference on data mining (ICDM). In: IEEE; 2018. doi:<a href="https://doi.org/10.1109/icdm.2018.00099">10.1109/icdm.2018.00099</a></div>
+<div id="ref-zhu2018">
+<p>6. Zhu Y, Yeh C-CM, Zimmerman Z, Kamgar K, Keogh E. 2018 ieee international conference on data mining (icdm). In: IEEE; 2018. doi:<a href="https://doi.org/10.1109/icdm.2018.00099">10.1109/icdm.2018.00099</a></p>
 </div>
-<div id="ref-mueen2010" class="csl-entry">
-<div class="csl-left-margin">7. </div><div class="csl-right-inline">Mueen A, Nath S, Liu J. SIGMOD/PODS ’10: International conference on management of data. In: ACM; 2010. doi:<a href="https://doi.org/10.1145/1807167.1807188">10.1145/1807167.1807188</a></div>
+<div id="ref-mueen2010">
+<p>7. Mueen A, Nath S, Liu J. SIGMOD/pods ’10: International conference on management of data. In: ACM; 2010. doi:<a href="https://doi.org/10.1145/1807167.1807188">10.1145/1807167.1807188</a></p>
 </div>
-<div id="ref-mass2015" class="csl-entry">
-<div class="csl-left-margin">8. </div><div class="csl-right-inline">Mueen A, Zhu Y, Yeh M, et al. The fastest similarity search algorithm for time series subsequences under euclidean distance. Published 2017. Accessed October 2, 2021. <a href="https://www.cs.unm.edu/~mueen/FastestSimilaritySearch.html">https://www.cs.unm.edu/~mueen/FastestSimilaritySearch.html</a></div>
+<div id="ref-mass2015">
+<p>8. Mueen A, Zhu Y, Yeh M, et al. The fastest similarity search algorithm for time series subsequences under euclidean distance. Published 2017. Accessed October 2, 2021. <a href="https://www.cs.unm.edu/~mueen/FastestSimilaritySearch.html">https://www.cs.unm.edu/~mueen/FastestSimilaritySearch.html</a></p>
 </div>
-<div id="ref-gharghabi2018a" class="csl-entry">
-<div class="csl-left-margin">9. </div><div class="csl-right-inline">Gharghabi S, Imani S, Bagnall A, Darvishzadeh A, Keogh E. 2018 IEEE international conference on data mining (ICDM). In: IEEE; 2018. doi:<a href="https://doi.org/10.1109/icdm.2018.00119">10.1109/icdm.2018.00119</a></div>
+<div id="ref-gharghabi2018a">
+<p>9. Gharghabi S, Imani S, Bagnall A, Darvishzadeh A, Keogh E. 2018 ieee international conference on data mining (icdm). In: IEEE; 2018. doi:<a href="https://doi.org/10.1109/icdm.2018.00119">10.1109/icdm.2018.00119</a></p>
 </div>
-<div id="ref-Thompson2020" class="csl-entry">
-<div class="csl-left-margin">10. </div><div class="csl-right-inline">Thompson J. On not using tidymodels. Published October 2020. Accessed January 5, 2022. <a href="https://staffblogs.le.ac.uk/teachingr/2020/10/05/on-not-using-tidymodels/">https://staffblogs.le.ac.uk/teachingr/2020/10/05/on-not-using-tidymodels/</a></div>
+<div id="ref-Thompson2020">
+<p>10. Thompson J. On not using tidymodels. Published October 2020. Accessed January 5, 2022. <a href="https://staffblogs.le.ac.uk/teachingr/2020/10/05/on-not-using-tidymodels/">https://staffblogs.le.ac.uk/teachingr/2020/10/05/on-not-using-tidymodels/</a></p>
 </div>
-<div id="ref-PlatformIO" class="csl-entry">
-<div class="csl-left-margin">11. </div><div class="csl-right-inline">PlatformIO, a professional collaborative platform for embedded development. Accessed January 5, 2022. <a href="https://platformio.org/">https://platformio.org/</a></div>
+<div id="ref-PlatformIO">
+<p>11. PlatformIO, a professional collaborative platform for embedded development. Accessed January 5, 2022. <a href="https://platformio.org/">https://platformio.org/</a></p>
 </div>
-<div id="ref-Rakthanmanon2013" class="csl-entry">
-<div class="csl-left-margin">12. </div><div class="csl-right-inline">Rakthanmanon T, Keogh E. Fast shapelets: A scalable algorithm for discovering time series shapelets. In: <em>Proceedings of the 2013 SIAM International Conference on Data Mining</em>. Society for Industrial; Applied Mathematics; 2013:668-676. doi:<a href="https://doi.org/10.1137/1.9781611972832.74">10.1137/1.9781611972832.74</a></div>
+<div id="ref-Rakthanmanon2013">
+<p>12. Rakthanmanon T, Keogh E. Fast shapelets: A scalable algorithm for discovering time series shapelets. In: <em>Proceedings of the 2013 Siam International Conference on Data Mining</em>. Society for Industrial; Applied Mathematics; 2013:668-676. doi:<a href="https://doi.org/10.1137/1.9781611972832.74">10.1137/1.9781611972832.74</a></p>
 </div>
-<div id="ref-bischoff2021" class="csl-entry">
-<div class="csl-left-margin">13. </div><div class="csl-right-inline">Reducing False Arrhythmia Alarms in the ICU - The PhysioNet Computing in Cardiology Challenge 2015. Published online March 24, 2021. doi:<a href="https://doi.org/10.5281/zenodo.4634013">10.5281/zenodo.4634013</a></div>
+<div id="ref-bischoff2021">
+<p>13. Reducing false arrhythmia alarms in the icu - the physionet computing in cardiology challenge 2015. Published online March 24, 2021. doi:<a href="https://doi.org/10.5281/zenodo.4634013">10.5281/zenodo.4634013</a></p>
 </div>
-<div id="ref-Batista2014" class="csl-entry">
-<div class="csl-left-margin">14. </div><div class="csl-right-inline">Batista GEAPA, Keogh EJ, Tataw OM, Souza VMA de. <span class="nocase">CID: an efficient complexity-invariant distance for time series</span>. <em>Data Mining and Knowledge Discovery</em>. 2014;28(3):634-669. doi:<a href="https://doi.org/10.1007/s10618-013-0312-3">10.1007/s10618-013-0312-3</a></div>
+<div id="ref-Batista2014">
+<p>14. Batista GEAPA, Keogh EJ, Tataw OM, Souza VMA de. CID: an efficient complexity-invariant distance for time series. <em>Data Mining and Knowledge Discovery</em>. 2014;28(3):634-669. doi:<a href="https://doi.org/10.1007/s10618-013-0312-3">10.1007/s10618-013-0312-3</a></p>
 </div>
-<div id="ref-DelRio2011" class="csl-entry">
-<div class="csl-left-margin">15. </div><div class="csl-right-inline">Del Rio BAS, Lopetegi T, Romero I. <span class="nocase">Assessment of different methods to estimate electrocardiogram signal quality</span>. <em>Computing in Cardiology</em>. 2011;38:609-612.</div>
-</div>
-</div>
+<div id="ref-DelRio2011">
+<p>15. Del Rio BAS, Lopetegi T, Romero I. Assessment of different methods to estimate electrocardiogram signal quality. <em>Computing in Cardiology</em>. 2011;38:609-612.</p>
 </div>
 </div>
-<div class="footnotes footnotes-end-of-document">
+</div>
+</div>
+<div class="footnotes">
 <hr />
 <ol>
 <li id="fn1"><p>The term “negative” does not imply that the patient has a “normal” ECG. It means that the
 “negative” section is not a life-threatening condition that needs to trigger an alarm.<a href="#fnref1" class="footnote-back">↩︎</a></p></li>
-<li id="fn2"><p>This is not the same “complexity” from Batista, <em>et al.</em><span class="citation"><sup><a href="#ref-Batista2014" role="doc-biblioref">14</a></sup></span>, but from Del Rio, <em>et
-al.</em><span class="citation"><sup><a href="#ref-DelRio2011" role="doc-biblioref">15</a></sup></span>.<a href="#fnref2" class="footnote-back">↩︎</a></p></li>
+<li id="fn2"><p>This is not the same “complexity” from Batista, <em>et al.</em>,<span class="citation"><sup><a href="#ref-Batista2014" role="doc-biblioref">14</a></sup></span> but from Del Rio, <em>et
+al.</em>.<span class="citation"><sup><a href="#ref-DelRio2011" role="doc-biblioref">15</a></sup></span><a href="#fnref2" class="footnote-back">↩︎</a></p></li>
 </ol>
 </div>
 
