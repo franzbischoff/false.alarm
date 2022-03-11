@@ -5,7 +5,7 @@
   "tasks": [
     {
       "type": "shell",
-      "label": "R: ASAN/USBAN",
+      "label": "R: misc: ASAN/USBAN",
       "command": "echo 'MingW does not support ASAN/UBSAN'",
       "linux": {
         "type": "process",
@@ -73,8 +73,8 @@
     },
     {
       "type": "process",
-      "label": "R: knit and view",
-      "command": "C:/Program Files/R/R-4.1.1/bin/x64/Rscript.exe",
+      "label": "R: misc: knit and view",
+      "command": "C:/Program Files/R/R-4.1.2/bin/x64/Rscript.exe",
       "linux": {
         "command": "/usr/lib/R/bin/Rscript"
       },
@@ -99,8 +99,8 @@
     },
     {
       "type": "process",
-      "label": "R: style project",
-      "command": "C:/Program Files/R/R-4.1.1/bin/x64/Rscript.exe",
+      "label": "R: routine: Style project",
+      "command": "C:/Program Files/R/R-4.1.2/bin/x64/Rscript.exe",
       "linux": {
         "command": "/usr/lib/R/bin/Rscript"
       },
@@ -121,8 +121,8 @@
     },
     {
       "type": "process",
-      "label": "R: gittargets",
-      "command": "C:/Program Files/R/R-4.1.1/bin/x64/Rscript.exe",
+      "label": "R: targets: gittargets",
+      "command": "C:/Program Files/R/R-4.1.2/bin/x64/Rscript.exe",
       "linux": {
         "command": "/usr/lib/R/bin/Rscript"
       },
@@ -142,14 +142,14 @@
     },
     {
       "type": "process",
-      "label": "R: update codemeta",
-      "command": "C:/Program Files/R/R-4.1.1/bin/x64/Rscript.exe",
+      "label": "R: routine: Update codemeta",
+      "command": "C:/Program Files/R/R-4.1.2/bin/x64/Rscript.exe",
       "linux": {
         "command": "/usr/lib/R/bin/Rscript"
       },
       "args": [
         "-e",
-        "codemetar::write_codemeta(write_minimeta=TRUE); codemetar::give_opinions()"
+        "codemetar::write_codemeta(use_filesize=TRUE, write_minimeta=TRUE, verbose=TRUE); codemetar::give_opinions()"
       ],
       "options": {
         "cwd": "${workspaceFolder}"
@@ -165,8 +165,52 @@
     },
     {
       "type": "process",
-      "label": "R: lint project",
-      "command": "C:/Program Files/R/R-4.1.1/bin/x64/Rscript.exe",
+      "label": "R: routine: Update docs and self install",
+      "command": "C:/Program Files/R/R-4.1.2/bin/x64/Rscript.exe",
+      "linux": {
+        "command": "/usr/lib/R/bin/Rscript"
+      },
+      "args": [
+        "-e",
+        "devtools::check_man(); renv::install('.')"
+      ],
+      "options": {
+        "cwd": "${workspaceFolder}"
+      },
+      "group": "none",
+      "presentation": {
+        "clear": true,
+        "group": "R",
+        "reveal": "always",
+        "panel": "shared"
+      },
+      "problemMatcher": [
+        {
+          "owner": "R",
+          "severity": "warning",
+          "fileLocation": [
+            "relative",
+            "${workspaceFolder}/R"
+          ],
+          "pattern": [
+            {
+              "kind": "file",
+              "regexp": "^(Undocumented.*)\\s+in.*object\\s+'(.*)'$",
+              "message": 1,
+              "file": 2
+            },
+            {
+              "regexp": "(.*)",
+              "message": 1
+            }
+          ]
+        },
+      ]
+    },
+    {
+      "type": "process",
+      "label": "R: routine: Lint project",
+      "command": "C:/Program Files/R/R-4.1.2/bin/x64/Rscript.exe",
       "linux": {
         "command": "/usr/lib/R/bin/Rscript"
       },
@@ -190,14 +234,14 @@
     },
     {
       "type": "process",
-      "label": "R: test units",
-      "command": "C:/Program Files/R/R-4.1.1/bin/x64/Rscript.exe",
+      "label": "R: routine: Test units",
+      "command": "C:/Program Files/R/R-4.1.2/bin/x64/Rscript.exe",
       "linux": {
         "command": "/usr/lib/R/bin/Rscript"
       },
       "args": [
         "-e",
-        "testthat::test_local(reporter = testthat::SummaryReporter)"
+        "testthat::test_local()"
       ],
       "options": {
         "cwd": "${workspaceFolder}"
@@ -215,9 +259,34 @@
     },
     {
       "type": "process",
-      "label": "R: test coverage",
-      "dependsOn": "R: test units",
-      "command": "C:/Program Files/R/R-4.1.1/bin/x64/Rscript.exe",
+      "label": "R: routine: Update renv and isolate",
+      "command": "C:/Program Files/R/R-4.1.2/bin/x64/Rscript.exe",
+      "linux": {
+        "command": "/usr/lib/R/bin/Rscript"
+      },
+      "args": [
+        "-e",
+        "renv::update(prompt=FALSE); renv::isolate()"
+      ],
+      "options": {
+        "cwd": "${workspaceFolder}"
+      },
+      "group": {
+        "kind": "test",
+        "isDefault": true
+      },
+      "presentation": {
+        "reveal": "always",
+        "panel": "dedicated",
+        "clear": true
+      },
+      "problemMatcher": []
+    },
+    {
+      "type": "process",
+      "label": "R: misc: test coverage",
+      "dependsOn": "R: routine: test units",
+      "command": "C:/Program Files/R/R-4.1.2/bin/x64/Rscript.exe",
       "linux": {
         "command": "/usr/lib/R/bin/Rscript"
       },
@@ -238,8 +307,8 @@
     },
     {
       "type": "process",
-      "label": "R: Watch",
-      "command": "C:/Program Files/R/R-4.1.1/bin/x64/Rscript.exe",
+      "label": "R: targets: Start watch page",
+      "command": "C:/Program Files/R/R-4.1.2/bin/x64/Rscript.exe",
       "linux": {
         "command": "/usr/lib/R/bin/Rscript"
       },
@@ -260,8 +329,8 @@
     },
     {
       "type": "process",
-      "label": "zR: DESTROY targets",
-      "command": "C:/Program Files/R/R-4.1.1/bin/x64/Rscript.exe",
+      "label": "R: targets: zDESTROY targets",
+      "command": "C:/Program Files/R/R-4.1.2/bin/x64/Rscript.exe",
       "linux": {
         "command": "/usr/lib/R/bin/Rscript"
       },
@@ -285,8 +354,8 @@
     },
     {
       "type": "process",
-      "label": "zR: PRUNE targets",
-      "command": "C:/Program Files/R/R-4.1.1/bin/x64/Rscript.exe",
+      "label": "R: targets: zPRUNE targets",
+      "command": "C:/Program Files/R/R-4.1.2/bin/x64/Rscript.exe",
       "linux": {
         "command": "/usr/lib/R/bin/Rscript"
       },
@@ -310,8 +379,8 @@
     },
     {
       "type": "process",
-      "label": "R: profile targets",
-      "command": "C:/Program Files/R/R-4.1.1/bin/x64/Rscript.exe",
+      "label": "R: targets: zPROFILE targets",
+      "command": "C:/Program Files/R/R-4.1.2/bin/x64/Rscript.exe",
       "linux": {
         "command": "/usr/lib/R/bin/Rscript"
       },
@@ -383,8 +452,8 @@
     {
       // config file is stored on ./index/_bookdown.yml
       "type": "process",
-      "label": "R: thesis down",
-      "command": "C:/Program Files/R/R-4.1.1/bin/x64/Rscript.exe",
+      "label": "R: workflowr: Render thesisdown",
+      "command": "C:/Program Files/R/R-4.1.2/bin/x64/Rscript.exe",
       "linux": {
         "command": "/usr/lib/R/bin/Rscript"
       },
@@ -408,8 +477,8 @@
     },
     {
       "type": "process",
-      "label": "R: preview thesisdown",
-      "command": "C:/Program Files/R/R-4.1.1/bin/x64/Rscript.exe",
+      "label": "R: workflowr: Live-preview thesisdown",
+      "command": "C:/Program Files/R/R-4.1.2/bin/x64/Rscript.exe",
       "linux": {
         "command": "/usr/lib/R/bin/Rscript"
       },
@@ -434,14 +503,14 @@
     {
       // config file is stored on ./analysis/_site.yml
       "type": "process",
-      "label": "R: workflowr build",
-      "command": "C:/Program Files/R/R-4.1.1/bin/x64/Rscript.exe",
+      "label": "R: workflowr: Pre-build workflowr", // Used while editing. Only project .Rprofile is used.
+      "command": "C:/Program Files/R/R-4.1.2/bin/x64/Rscript.exe",
       "linux": {
         "command": "/usr/lib/R/bin/Rscript"
       },
       "args": [
         "-e",
-        "workflowr::wflow_build(update = TRUE)"
+        "workflowr::wflow_build(make = TRUE, update = TRUE, verbose = TRUE)"
       ],
       "options": {
         "cwd": "${workspaceFolder}"
@@ -455,14 +524,64 @@
     },
     {
       "type": "process",
-      "label": "R: targets",
-      "command": "C:/Program Files/R/R-4.1.1/bin/x64/Rscript.exe",
+      "label": "R: targets: Run main pipeline",
+      "command": "C:/Program Files/R/R-4.1.2/bin/x64/Rscript.exe",
       "linux": {
         "command": "/usr/lib/R/bin/Rscript"
       },
       "args": [
         "-e",
-        "targets::tar_make_future(workers = 4L, reporter = 'summary')"
+        "targets::tar_make_future(workers = 4L, reporter = 'summary', script = 'scripts/_targets.R', store = '_targets')"
+      ],
+      "options": {
+        "cwd": "${workspaceFolder}"
+      },
+      "group": {
+        "kind": "test",
+        "isDefault": true
+      },
+      "presentation": {
+        "reveal": "always",
+        "panel": "dedicated",
+        "clear": true
+      },
+      "problemMatcher": []
+    },
+    {
+      "type": "process",
+      "label": "R: targets: Run classifier pipeline",
+      "command": "C:/Program Files/R/R-4.1.2/bin/x64/Rscript.exe",
+      "linux": {
+        "command": "/usr/lib/R/bin/Rscript"
+      },
+      "args": [
+        "-e",
+        "targets::tar_make_future(workers = 4L, reporter = 'summary', script = 'scripts/_classifier.R', store = '_classifier')"
+      ],
+      "options": {
+        "cwd": "${workspaceFolder}"
+      },
+      "group": {
+        "kind": "test",
+        "isDefault": true
+      },
+      "presentation": {
+        "reveal": "always",
+        "panel": "dedicated",
+        "clear": true
+      },
+      "problemMatcher": []
+    },
+    {
+      "type": "process",
+      "label": "R: targets: Run regime pipeline",
+      "command": "C:/Program Files/R/R-4.1.2/bin/x64/Rscript.exe",
+      "linux": {
+        "command": "/usr/lib/R/bin/Rscript"
+      },
+      "args": [
+        "-e",
+        "targets::tar_make_future(workers = 4L, reporter = 'summary', script = 'scripts/_regime_change.R', store = '_regime_change')"
       ],
       "options": {
         "cwd": "${workspaceFolder}"

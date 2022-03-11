@@ -98,7 +98,7 @@ b_window_sizes <- tar_map(
       # -- first get all the combinations from the variables
       # -- second, keep only the combinations where one (or both) sides are zero
       # This will create a "common" branch where no constraint is applied and one branch with mp constraints and other with floss constraints.
-      # Seems complicated here, but has simplified the pileline a lot.
+      # Seems complicated here, but has simplified the pipeline a lot.
       values = dplyr::filter(tidyr::expand_grid(
         map_floss_time_constraint = var_floss_time_constraint,
         map_mp_time_constraint = var_mp_time_constraint

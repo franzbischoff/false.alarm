@@ -1,5 +1,5 @@
 # First derivative of vector using 2-point central difference.
-# Example: deriv([1 1 1 2 3 4]) yeilds [0 0 .5 1 1 1]
+# Example: deriv([1 1 1 2 3 4]) yields [0 0 .5 1 1 1]
 # Original for Matlab from T. C. O'Haver, 1988. https://terpconnect.umd.edu/~toh
 deriv <- function(data) {
   n <- length(data)
@@ -68,6 +68,7 @@ zero_cross_rate <- function(data) {
 }
 
 # "Activity": Defined as the variance of the signal
+# invariant to var(data/gain) -> var(data)/gain^2
 
 activity <- function(data) {
   var(data)
@@ -75,6 +76,8 @@ activity <- function(data) {
 
 # "Mobility": Squared root of the ratio of the variance of the first derivative of the signal to the
 # variance of the original signal
+# invariant to normalization (same window)
+# invariant to data -> data/gain
 
 mobility <- function(data) {
   act1der <- activity(diff(data))
@@ -86,7 +89,8 @@ mobility <- function(data) {
 }
 
 # "Complexity": Ratio of the mobility of the first derivative of the signals to the mobility of the signal itself
-
+# invariant to normalization (same window)
+# invariant to data -> data/gain
 complexity <- function(data) {
   mob1der <- mobility(diff(data))
   mob <- mobility(data)
@@ -103,6 +107,7 @@ hard_limit <- function(data) {
 
 # Sum of Squared Differences
 # sqrt(sum(diff(data)^2) / (w-2)) ==> sqrt(var(diff(data))) ==> sd(diff(data))
+# invariant to f(data/gain) -> f(data)/gain
 win_complex <- function(data, window) {
   profile_size <- length(data) - window + 1
   av <- vector(mode = "numeric", length = profile_size)
@@ -145,6 +150,8 @@ turning_points <- function(data) {
 # "Kurtosis": Measure of the Gaussianity of a distribution.
 # As ECG signals are hyper-Gaussian, higher kurtosis values are associated with lower
 # quality in the ECG. (DelRio2011)
+# invariant to normalization (same window)
+# invariant to data -> data/gain
 # 10 sec
 
 ecg_kurtosis <- function(data) {
@@ -180,5 +187,3 @@ ecg_kurtosis <- function(data) {
 # "LMS adaptive filtering": LMS adaptive filtering was used to remove the ECG signal and therefore
 # estimate the noise content. A template of the clean ECG signal was used as reference input signal to
 # the adaptive filter. Then SNR can be estimated.
-
-# "Temporal Dispersion": defined as:

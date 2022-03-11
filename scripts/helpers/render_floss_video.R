@@ -89,7 +89,7 @@ render_floss_video <- function(video_file = here::here("dev", "floss_default.mp4
       batch_size = batch_size, rate = rate, abs_event_line = abs_event_line
     )
 
-    # cac_min_idx <- which.min(arc_counts[[d]]$cac[seq.int(kumarovski_idx, cac_size)]) + kumarovski_idx - 1
+    # cac_min_idx <- which.min(arc_counts[[d]]$cac[seq.int(kumaraswamy_idx, cac_size)]) + kumaraswamy_idx - 1
 
     bb <- plot_cac_streaming(arc_counts[[d]]$cac, data_constraint, window_size, mp_time_constraint, floss_time_constraint,
       arc_counts[[d]]$offset,
@@ -217,7 +217,7 @@ plot_cac_streaming <- function(arcs, data_constraint, window_size, mp_time_const
   }
 
   mid_idx <- data_constraint / 2
-  # kumarovski_idx <- round(cac_size * 0.6311142)
+  # kumaraswamy_idx <- round(cac_size * 0.6311142)
 
   if (mp_time_constraint > 0) {
     cac_left_idx <- (data_constraint - mp_time_constraint)

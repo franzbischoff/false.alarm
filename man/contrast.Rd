@@ -11,7 +11,6 @@ contrast(
   positive_matrix = NULL,
   exclusion_zone = 0.5,
   distance = "euclidean",
-  n_workers = 1,
   progress = FALSE
 )
 }
@@ -30,7 +29,7 @@ on Ogita's work for better precision computing mean and standard deviation (part
 }
 }
 \section{This document}{
-Last updated on 2021-12-28 using R version 4.1.2.
+Last updated on 2022-03-10 using R version 4.1.2.
 }
 
 \seealso{

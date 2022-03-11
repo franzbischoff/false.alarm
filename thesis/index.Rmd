@@ -105,10 +105,13 @@ suppressPackageStartupMessages(library(kableExtra))
 <!--
 
 ```{r include=identical(knitr:::pandoc_to(), 'html')}
+
 ```
 -->
 ```{r eval=FALSE, child=here::here("thesis/prelims", "00--prelim.Rmd")}
+
 ```
 
 ```{r eval=FALSE, child=here::here("thesis/prelims", "00-abstract.Rmd")}
+
 ```

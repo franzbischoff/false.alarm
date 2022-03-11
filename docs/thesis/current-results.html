@@ -6,7 +6,7 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
   <title>4 Current results | Detecting life-threatening patterns in Point-of-care ECG using efficient memory and processor power</title>
   <meta name="description" content="This thesis is about low-power devices and ECG" />
-  <meta name="generator" content="bookdown 0.24.4 and GitBook 2.6.7" />
+  <meta name="generator" content="bookdown 0.24.10 and GitBook 2.6.7" />
 
   <meta property="og:title" content="4 Current results | Detecting life-threatening patterns in Point-of-care ECG using efficient memory and processor power" />
   <meta property="og:type" content="book" />
@@ -32,7 +32,6 @@
   <link rel="shortcut icon" href="favicon.ico" type="image/x-icon" />
 <link rel="prev" href="materials-and-methods.html"/>
 <link rel="next" href="scientific-contributions.html"/>
-<script src="libs/header-attrs-2.11.13/header-attrs.js"></script>
 <script src="libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/fuse.js@6.4.6/dist/fuse.min.js"></script>
 <link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
@@ -174,7 +173,7 @@ div.csl-indent {
 <p>The current status on regime change detection pipeline is the implementation of the resampling strategies and evaluation in
 order to start the parameter tuning. An example of the current implementation is shown on Fig. <a href="current-results.html#fig:flossregime">4.1</a>.</p>
 <div class="figure" style="text-align: center"><span style="display:block;" id="fig:flossregime"></span>
-<img src="/home/workspace/false.alarm/protocol/figure/floss_regime.png" alt="Regime change detection example. The graph on top shows the ECG streaming; the blue line marks the ten seconds before the original alarm was fired; the red line marks the time constraint of 1250; the dark red line marks the limit for taking a decision in this case of Asystole the blue horizontal line represents the size of the sliding window. The graph on the middle shows the Arc counts as seen by the algorithm (with the corrected distribution); the red line marks the current minimum value and its index; the blue horizontal line shows the minimum value seen until then. The graph on the bottom shows the computed Arc counts (raw) and the red line is the theoretical distribution used for correction." width="80%" height="80%" />
+<img src="/workspace/false.alarm/protocol/figure/floss_regime.png" alt="Regime change detection example. The graph on top shows the ECG streaming; the blue line marks the ten seconds before the original alarm was fired; the red line marks the time constraint of 1250; the dark red line marks the limit for taking a decision in this case of Asystole the blue horizontal line represents the size of the sliding window. The graph on the middle shows the Arc counts as seen by the algorithm (with the corrected distribution); the red line marks the current minimum value and its index; the blue horizontal line shows the minimum value seen until then. The graph on the bottom shows the computed Arc counts (raw) and the red line is the theoretical distribution used for correction." width="80%" height="80%" />
 <p class="caption">
 FIGURE 4.1: Regime change detection example. The graph on top shows the ECG streaming; the blue line marks the ten seconds before the original alarm was fired; the red line marks the time constraint of 1250; the dark red line marks the limit for taking a decision in this case of Asystole the blue horizontal line represents the size of the sliding window. The graph on the middle shows the Arc counts as seen by the algorithm (with the corrected distribution); the red line marks the current minimum value and its index; the blue horizontal line shows the minimum value seen until then. The graph on the bottom shows the computed Arc counts (raw) and the red line is the theoretical distribution used for correction.
 </p>
@@ -195,14 +194,14 @@ FIGURE 4.2: Shapelet candidates for Ventricular Tachycardia.
 <div id="feasibility-trial" class="section level2 hasAnchor" number="4.3">
 <h2><span class="header-section-number">4.3</span> Feasibility trial<a href="current-results.html#feasibility-trial" class="anchor-section" aria-label="Anchor link to header"></a></h2>
 <p>A side-project called “false.alarm.io” has been derived from this work (an unfortunate mix of
-“false.alarm” and “PlatformIO”<span class="citation"><sup><a href="references.html#ref-PlatformIO" role="doc-biblioref">64</a></sup></span>, the IDE chosen to interface the panoply of embedded
+“false.alarm” and “PlatformIO”<span class="citation"><sup><a href="references.html#ref-PlatformIO" role="doc-biblioref">65</a></sup></span>, the IDE chosen to interface the panoply of embedded
 systems we can experiment with). The current results of this side-project are very enlightening and
 show that the final algorithm can indeed be used in small hardware. Further data will be available
 in the future.</p>
 <p>A brief mentioning, linking back to the objectives of this work, an initial trial was done using an
 ESP32 MCU (Fig. <a href="current-results.html#fig:esp32">4.3</a>) in order to be sure if such small device can handle the task.</p>
 <div class="figure" style="text-align: center"><span style="display:block;" id="fig:esp32"></span>
-<img src="/home/workspace/false.alarm/protocol/figure/esp32.jpg" alt="ESP32 MCU" width="50%" />
+<img src="/workspace/false.alarm/protocol/figure/esp32.jpg" alt="ESP32 MCU" width="50%" />
 <p class="caption">
 FIGURE 4.3: ESP32 MCU
 </p>

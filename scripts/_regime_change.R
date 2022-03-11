@@ -8,7 +8,7 @@ options(target_ds_path = here("inst/extdata/afib_regimes"))
 # signal sample frequency, this is a constant
 const_sample_freq <- 200
 const_signals <- c("time", "I", "II")
-const_classes <- c("persistent_afib", "paroxistical_afib", "non_afib")
+const_classes <- c("persistent_afib", "paroxysmal_afib", "non_afib")
 # keep only the X filenames
 var_head <- 10
 # The subset that will be keep from the dataset (seq.int(240 * const_sample_freq + 1, 300 * const_sample_freq) means the last 60 seconds)
@@ -16,7 +16,7 @@ var_head <- 10
 var_subset <- NULL
 var_limit_per_class <- NULL
 
-var_classes_include <- "paroxistical_afib"
+var_classes_include <- "paroxysmal_afib"
 var_classes_exclude <- setdiff(const_classes, var_classes_include)
 
 var_signals_include <- "II"
@@ -107,7 +107,7 @@ b_window_sizes <- tar_map(
       # -- first get all the combinations from the variables
       # -- second, keep only the combinations where one (or both) sides are zero
       # This will create a "common" branch where no constraint is applied and one branch with mp constraints and other with floss constraints.
-      # Seems complicated here, but has simplified the pileline a lot.
+      # Seems complicated here, but has simplified the pipeline a lot.
       values = dplyr::filter(tidyr::expand_grid(
         map_floss_time_constraint = var_floss_time_constraint,
         map_mp_time_constraint = var_mp_time_constraint

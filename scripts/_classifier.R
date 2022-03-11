@@ -1,6 +1,6 @@
 # Sys.setenv(TAR_PROJECT = "classifier")
 
-# Erros: data_pos_neg_150_II
+# Errors: data_pos_neg_150_II
 # data_pos_neg_150_PLETH, data_pos_neg_300_II, data_pos_neg_300_PLETH
 # longer object length is not a multiple of shorter object length
 

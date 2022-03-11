@@ -502,7 +502,7 @@ read_ecg_csv <- function(filename, plot = FALSE, subset = NULL,
 #' @param resample_to integer. If not zero, sets the new frequency of the signal. E.g.: 250. Only used if `resample_from` is not zero. Default is 0.
 #'
 
-read_ecg_with_atr <- function(filename, subset = NULL, classes = c("all", "persistent_afib", "paroxistical_afib", "non_afib"), resample_from = 0, resample_to = 0) {
+read_ecg_with_atr <- function(filename, subset = NULL, classes = c("all", "persistent_afib", "paroxysmal_afib", "non_afib"), resample_from = 0, resample_to = 0) {
   checkmate::assert_string(filename, min.chars = 3)
   classes <- match.arg(classes, several.ok = TRUE)
   checkmate::qassert(resample_from, "X>=0")
@@ -514,7 +514,7 @@ read_ecg_with_atr <- function(filename, subset = NULL, classes = c("all", "persi
     for (class in classes) {
       res <- switch(class,
         persistent_afib = grep("*.\\.per\\.hea", files, value = TRUE),
-        paroxistical_afib = grep("*.\\.par\\.hea", files, value = TRUE),
+        paroxysmal_afib = grep("*.\\.par\\.hea", files, value = TRUE),
         non_afib = grep("*.\\.non\\.hea", files, value = TRUE)
       )
 

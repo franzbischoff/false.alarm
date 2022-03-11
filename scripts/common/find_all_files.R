@@ -12,7 +12,7 @@
 
 find_all_files <- function(path = here::here("inst/extdata/physionet"),
                            data_type = c("alarm", "regimes"),
-                           classes = c("all", "asystole", "bradycardia", "tachycardia", "fibv", "vtachy", "persistent_afib", "paroxistical_afib", "non_afib"),
+                           classes = c("all", "asystole", "bradycardia", "tachycardia", "fibv", "vtachy", "persistent_afib", "paroxysmal_afib", "non_afib"),
                            limit_per_class = 1000,
                            long = FALSE) {
   "!DEBUG Starting process"
@@ -58,7 +58,7 @@ find_all_files <- function(path = here::here("inst/extdata/physionet"),
       for (class in classes) {
         res <- switch(class,
           persistent_afib = grep("*.\\.per\\.hea", files, value = TRUE),
-          paroxistical_afib = grep("*.\\.par\\.hea", files, value = TRUE),
+          paroxysmal_afib = grep("*.\\.par\\.hea", files, value = TRUE),
           non_afib = grep("*.\\.non\\.hea", files, value = TRUE)
         )
 

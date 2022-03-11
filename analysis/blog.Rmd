@@ -407,7 +407,7 @@ improve the `TRUE`/`FALSE` alarm discrimination.
 [^1]: The term "negative" does not imply that the patient has a "normal" ECG. It means that the
 "negative" section is not a life-threatening condition that needs to trigger an alarm.
 
-## 2022, March Update #1
+## 2022, March Update #1 (work in progress)
 
 These last couple of months were dedicated to:
 
@@ -467,7 +467,7 @@ $$
    (which is quite complicated) is:
 
 $$
-Kurtosis = \frac{1}{n}\sum_{i=1}^{n}{z_i^4} - 3
+Kurtosis = \frac{1}{n}\sum_{i=1}^{n}{\left(\frac{x_i - \bar x}{\sigma}\right)^4} - 3
 $$
 
 6. **Karhunen-Loeve transform (KLT)**: KLT is a transformation that reduces a large set of variables
@@ -536,7 +536,7 @@ for (i in seq.int(1, length(neg_files))) {
 ```
 
 Fig. `r ref("fig:filters_samples")` shows a sample of a positive and a negative signal (for noise) and a sample of some SQI.
-What we need is an index that has a low value when the signal has low noise, and a high value when there is a noisy signal (that we will not process).
+We need an index with a low value when the signal has low noise and a high value when there is a noisy signal (that we will not process).
 
 ```{r filters_samples, fig.cap = paste("Figure", ref("fig:filters_samples"), " - ECG samples of the positive (for noise) and negative"), warning=FALSE}
 lwy <- 0.2
@@ -603,19 +603,56 @@ gridExtra::grid.arrange(sample_pos, sample_filter_pos, sample_neg, sample_filter
 )
 ```
 
-First we need to specify how to evaluate the performance of the SQIs, without a hard labeled annotation, i.e. only knowing that one series has noise (but we don't know where) and other series doesn't have noise. Another information by quick inspection is that all 12 time series are "clean" from data points 30500 to 32500. This gives us a hint of the starting threshold for what is "negative".
+First, we need to specify how to evaluate the performance of the SQIs, without a hard labeled annotation, i.e., only knowing that one series has noise (but we don't know where) and other series doesn't have noise. Another information by quick inspection is that all 12 time series are "clean" from data points 30500 to 32500. This gives us a hint of the starting threshold for what is "negative".
 
-As we can see on Fig. `r ref("fig:filters_samples")`, the SQI fluctuates where there is a clean QRS complex. The threshold must be above this fluctuation.
+As we can see in Fig. `r ref("fig:filters_samples")`, the SQI fluctuates where there is a clean QRS complex. The threshold must be above this fluctuation.
 
-To be more robust on defining such threshold, instead of finding the maximum value, we will take the quantile 0.9 of those values, and then multiply this value by some constant:
+To be more robust in defining such threshold $\theta$, instead of finding the maximum value, we will take the quantile 0.9 of those values and then multiply this value by some constant:
 
 $$
-\text{thr} = Q_{SQI}(0.9) \cdot \epsilon, \quad \text{for} \, \epsilon \in \mathbb{R}^+_*
+\theta = Q_{SQI}(0.9) \cdot \epsilon, \quad \{\epsilon \in \mathbb{R}^+_*\}
 $$
 
-What is expected is that on the negative set, we will have no values above the threshold. And on the positive set, we will have values above, where there are noise.
+What is expected is that we will have no values above the threshold on the negative set. And on the positive set, we will have values above, where there is noise.
 
-Another think we must consider is the normalization of the time series and the gain value.
+Another aspect we must consider is the **normalization** of the time series and the **gain** value. The Physionet's data, in general, has the information about the gain used to convert the signal from mV to the digital format. Afterward, when importing the dataset, their tool divides the digital values by the gain, converting them back to mV. This should, in theory, give us signals on a similar scale, but in some recordings, the gain seems to introduce some differences (maybe the patient had a weak signal or the wrong gain was used?). This is only a problem if we do not normalize (mean zero and standard deviation one) the signal before computing the SQI. Thus the SQIs must be compared on four settings 1) with normalization, 2) without normalization without gain, and 2) without normalization with gain and, for completeness, let's also apply the gain in the SQI only (data without normalization and without gain).
+
+It is important to say that the normalization step is done when computing the Matrix Profile. Thus, we don't want to compute yet another normalization. This means we must use the window size of the Matrix Profile, while the filter does not necessarily need to use that same window size. This has implications on comparing Mobility, Complexity [@DelRio2011], and Kurtosis because they are invariant to applying or not the gain on the original data (since all have the data in numerator and denominator). They would be invariant to the normalization only if both the normalization and the SQI use the same window size.
+
+Furthermore, as we can see below, we can anticipate that the remaining SQIs are invariant to the gain $g$ applied directly on the data or on the SQI itself.
+
+The Activity (variance):
+
+$$
+\begin{eqnarray}
+Activity(\vec{X}) &=& Var\left(\frac{(x_i, x_{i+1}, \ldots, x_n)}{g}\right) \\
+ &\equiv& \frac{Var(x_i, x_{i+1}, \ldots, x_n)}{g^2}
+\end{eqnarray}
+\quad, \{ \vec{X} \in \mathbb{R}, g \in \mathbb{R} \mid g \gt 0 \}
+$$
+
+The complexity, from Batista, *et al.* [@Batista2014]:
+
+$$
+\begin{eqnarray}
+complexity(\vec{X}) &=& \sqrt{\sum_{i=1}^n{\left[\nabla \frac{(x_i, x_{i+1}, \ldots, x_n)}{g}\right]^2}} \\
+ &\equiv& \frac{\sqrt{\sum_{i=1}^n{\left[\nabla (x_i, x_{i+1}, \ldots, x_n)\right]^2}}}{g}
+\end{eqnarray}
+\quad, \{ \vec{X} \in \mathbb{R}, g \in \mathbb{R} \mid g \gt 0 \}
+$$
+
+The amplitude of the segments:
+
+$$
+\begin{eqnarray}
+A(\vec{X}) &=& \max{\left(\frac{(x_i, x_{i+1}, \ldots, x_n)}{g}\right)} - \min{\left(\frac{(x_i, x_{i+1}, \ldots, x_n)}{g}\right)}  \\
+ &\equiv& \frac{\max{(x_i, x_{i+1}, \ldots, x_n)} - \min{(x_i, x_{i+1}, \ldots, x_n)}}{g}
+\end{eqnarray}
+\ , \{ \vec{X} \in \mathbb{R}, g \in \mathbb{R}\}
+$$
+
+
+To be continued...
 
 
 ## Further Steps {-}

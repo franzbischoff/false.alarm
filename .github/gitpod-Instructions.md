@@ -2,7 +2,7 @@
 
 ## DON'T TOUCH ANYTHING YET, README FIRST
 
-It is possible that at this moment gitpod is setting up the project for the first time.
+It is possible that at this moment, gitpod is setting up the project for the first time.
 
 Let it install all dependencies first, start the extensions, etc.
 
@@ -17,7 +17,7 @@ Checklist:
 
 ## Next
 
-If gitpod didn't mess up, below the Explorer View, you'll see the Task Explorer, there I added the most used commands I used during the development (under the 'vscode' branch, not the 'bash').
+If gitpod didn't mess up, you'd see the Task Explorer below the Explorer View. There I added the most used commands I used during the development (under the 'vscode' branch, not the 'bash').
 
 If there is no Task Explorer, use the command palette and select `Tasks: Run Task`.
 
@@ -26,4 +26,4 @@ The most important ones:
 -  **R: test units**: This checks if the basic functions are working as supposed. If all runs without errors, it is properly working. You can run the tests individually using the Testing view on the left bar (an Erlenmeyer tube).
 -  **R: targets**: Run the targets pipeline in the background, using a summary report.
 
-> Obs: **R: ASAN/USBAN** was used only for sanity check, not available in the project.
+> Obs: **R: ASAN/USBAN** was used only for a sanity check, not available in the project.

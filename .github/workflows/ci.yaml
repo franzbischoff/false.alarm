@@ -17,8 +17,8 @@ concurrency:
 jobs:
   lint:
     name: Apply lintr in all R and Rmd files
-    # runs-on: ubuntu-latest
-    runs-on: self-hosted
+    runs-on: ubuntu-latest
+    # runs-on: self-hosted
     env:
       R_REMOTES_NO_ERRORS_FROM_WARNINGS: true
       GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
@@ -89,10 +89,10 @@ jobs:
         shell: Rscript {0}
 
   targets:
-    name: Run targets pileline
+    name: Run targets pipeline
     needs: lint
-    # runs-on: ubuntu-latest
-    runs-on: self-hosted
+    runs-on: ubuntu-latest
+    # runs-on: self-hosted
     if: "contains(github.event.head_commit.message, 'targets')"
     env:
       R_REMOTES_NO_ERRORS_FROM_WARNINGS: true
@@ -230,8 +230,8 @@ jobs:
 
   workflowr:
     name: Runs Workflowr versioning
-    # runs-on: ubuntu-latest
-    runs-on: self-hosted
+    runs-on: ubuntu-latest
+    # runs-on: self-hosted
     if: "contains(github.event.head_commit.message, 'workflowr')"
     needs:
       - lint

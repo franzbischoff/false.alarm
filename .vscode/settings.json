@@ -144,6 +144,40 @@
     ".github/workflows/ci.yaml",
     ".github/workflows/binder.yaml"
   ],
+  "grammarly.overrides": [
+    {
+      "config": {
+        "audience": "knowledgeable",
+        "dialect": "american",
+        "domain": "casual",
+        "emotions": [
+          "optimistic"
+        ],
+        "goals": [
+          "describe"
+        ]
+      },
+      "files": [
+        "**/analysis/blog.Rmd"
+      ]
+    },
+    {
+      "config": {
+        "audience": "knowledgeable",
+        "dialect": "american",
+        "domain": "casual",
+        "emotions": [
+          "confident"
+        ],
+        "goals": [
+          "describe"
+        ]
+      },
+      "files": [
+        "**/analysis/report.Rmd"
+      ]
+    }
+  ],
   "json.schemas": [
     {
       "fileMatch": [
@@ -223,14 +257,28 @@
   "search.exclude": {
     "**/_*/": true
   },
+  "sortJSON.orderOverride": [
+    "label",
+    "type"
+  ],
+  "sortJSON.orderUnderride": [
+    "problemMatcher"
+  ],
   "taskExplorer.enableAnsiconForAnt": false,
   "taskExplorer.enableAnt": false,
   "taskExplorer.enableAppPublisher": false,
+  "taskExplorer.enableBash": false,
+  "taskExplorer.enableBatch": false,
+  "taskExplorer.enableComposer": false,
+  "taskExplorer.enableGradle": false,
   "taskExplorer.enableGrunt": false,
   "taskExplorer.enableGulp": false,
+  "taskExplorer.enableMake": false,
+  "taskExplorer.enableMaven": false,
   "taskExplorer.enableNpm": false,
   "taskExplorer.enableNsis": false,
   "taskExplorer.enablePerl": false,
+  "taskExplorer.enablePipenv": false,
   "taskExplorer.enablePowershell": false,
   "taskExplorer.enablePython": false,
   "taskExplorer.enableRuby": false,
@@ -248,6 +296,8 @@
     "**/.github/**",
     "**/dev/**"
   ],
+  "taskExplorer.groupMaxLevel": 2,
+  "taskExplorer.groupSeparator": ": ",
   "taskExplorer.showLastTasks": false,
   "terminal.integrated.scrollback": 10000,
   "todo-tree.filtering.includeGlobs": [
@@ -277,6 +327,7 @@
     "[x]"
   ],
   "todo-tree.highlights.useColourScheme": true,
+  "todo-tree.ripgrep.ripgrep": "/usr/bin/rg",
   "todo-tree.tree.buttons.export": true,
   "todo-tree.tree.disableCompactFolders": true,
   "todo-tree.tree.expanded": true,
@@ -284,41 +335,6 @@
   "todo-tree.tree.showBadges": true,
   "todo-tree.tree.showCountsInTree": true,
   "yaml.schemas": {
-    "https://json.schemastore.org/github-workflow.json": "file:///workspace/false.alarm/.github/workflows/R-CMD-check.yaml"
-  },
-  "todo-tree.ripgrep.ripgrep": "/usr/bin/rg",
-  "grammarly.overrides": [
-    {
-      "files": [
-        "**/analysis/blog.Rmd"
-      ],
-      "config": {
-        "audience": "knowledgeable",
-        "dialect": "american",
-        "domain": "casual",
-        "emotions": [
-          "optimistic"
-        ],
-        "goals": [
-          "describe"
-        ]
-      }
-    },
-    {
-      "files": [
-        "**/analysis/report.Rmd"
-      ],
-      "config": {
-        "audience": "knowledgeable",
-        "dialect": "american",
-        "domain": "casual",
-        "emotions": [
-          "confident"
-        ],
-        "goals": [
-          "describe"
-        ]
-      }
-    }
-  ]
+    "https://json.schemastore.org/github-workflow.json": "file:///workspace/false.alarm/.github/workflows/ci.yaml"
+  }
 }

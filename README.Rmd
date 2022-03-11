@@ -167,7 +167,7 @@ License](https://creativecommons.org/licenses/by-nc-sa/4.0/).
 <center>
 
 ```{r dependency_plot, echo = FALSE, fig.width = 16, fig.height = 10, message = FALSE, warning = FALSE, fig.path = "man/figures/"}
-source("https://gist.githubusercontent.com/franzbischoff/3b83243dfdfa73e459935112f3f783e3/raw/239548243f984843b3a87d8cc82f99395a8ed26e/plot_dependencies.R")
+devtools::source_gist("3b83243dfdfa73e459935112f3f783e3", filename = "plot_dependencies.R", sha1 = "a0ff78da8ddf58a4129abb89498abb90ca91738b", quiet = TRUE)
 plot_dependencies()
 ```
 

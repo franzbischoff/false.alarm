@@ -1,4 +1,5 @@
 skip_on_ci()
+skip_on_cran()
 
 datal0 <- rev(as.numeric(tsmp::mp_fluss_data$tilt_abp$data)[5001:6000])
 datal01 <- rev(as.numeric(tsmp::mp_fluss_data$tilt_abp$data)[5001:6001])
