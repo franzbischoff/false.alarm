@@ -480,8 +480,13 @@ file <- "a104s"
 size_w <- 16
 size_h <- 5
 
-data <- read_ecg_csv(here(glue("inst/extdata/physionet/{file}.hea")))
-data <- data[[file]]$II
+if (file.exists(here("output/createfilter.rds"))) {
+  data <- readRDS(here("output/createfilter.rds"))
+} else {
+  data <- read_ecg_csv(here(glue("inst/extdata/physionet/{file}.hea")))
+  data <- data[[file]]$II
+  saveRDS(data, here("output/createfilter.rds"), compress = "xz")
+}
 norm_data <- tsmp:::znorm(data)
 filter <- win_complex(norm_data, filter_w)
 filter <- filter > limit
