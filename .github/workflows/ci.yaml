@@ -262,7 +262,7 @@ jobs:
       - name: Install additional LaTeX packages
         run: |
           tlmgr --version
-          tlmgr install svg flafter subfig
+          tlmgr install svg subfig
           tlmgr list --only-installed
 
       - name: Cache R packages
