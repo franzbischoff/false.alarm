@@ -308,19 +308,17 @@ jobs:
       #     chmod 755 run.R && ./run.R -r FALSE
       #   shell: bash
 
-      - name: Configure git
-        run: |
-          git config --local user.name "GitHub Actions"
-          git config --local user.email "actions@github.com"
-
       - name: Knit thesisdown
         run: |
           bookdown::render_book("thesis", output_format="all")
         shell: Rscript {0}
 
-      - name: Stage thesisdown changes
+      - name: Configure git and stage changes
         run: |
+          git config --local user.name "GitHub Actions"
+          git config --local user.email "actions@github.com"
           git add --all -- ':!renv'
+          git commit -am "Update thesisdown"
 
       - name: Build workflowr that creates the commit
         run: workflowr::wflow_publish(all = TRUE, update = TRUE, verbose = TRUE)

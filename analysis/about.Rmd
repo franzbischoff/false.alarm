@@ -19,6 +19,7 @@ knitr::opts_chunk$set(
   collapse = TRUE,
   comment = "#>"
 )
+
 # library(here)
 # knitr::opts_knit$set(root.dir = here("docs"), base.dir = here("docs"))
 ```

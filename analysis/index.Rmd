@@ -16,6 +16,7 @@ editor_options:
 knitr::opts_chunk$set(echo = FALSE, fig.align = "center", dev = "svg")
 library(here)
 library(visNetwork)
+
 # knitr::opts_knit$set(root.dir = here("docs"), base.dir = here("docs"))
 ```
 

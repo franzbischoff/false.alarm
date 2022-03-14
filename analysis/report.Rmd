@@ -23,6 +23,7 @@ knitr::opts_chunk$set(
   tidy = "styler",
   tidy.opts = list(strict = TRUE)
 )
+
 if (knitr::is_latex_output()) {
   knitr::opts_chunk$set(dev = "pdf")
 } else {
