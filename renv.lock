@@ -150,10 +150,10 @@
     },
     "Rcpp": {
       "Package": "Rcpp",
-      "Version": "1.0.8",
+      "Version": "1.0.8.2",
       "Source": "Repository",
       "Repository": "CRAN",
-      "Hash": "22b546dd7e337f6c0c58a39983a496bc",
+      "Hash": "6d93fbe4e93e43cbf59fd90d7932c5fb",
       "Requirements": []
     },
     "RcppParallel": {
@@ -184,10 +184,10 @@
     },
     "RcppThread": {
       "Package": "RcppThread",
-      "Version": "2.1.1",
+      "Version": "2.1.2",
       "Source": "Repository",
       "Repository": "CRAN",
-      "Hash": "e88ee128fbb6688205acfa903e38608e",
+      "Hash": "7be6571b61c787c78e602e4ae050bea0",
       "Requirements": []
     },
     "SQUAREM": {

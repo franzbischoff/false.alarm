@@ -252,7 +252,6 @@
   ],
   "markdownlint.run": "onSave",
   "r.alwaysUseActiveTerminal": true,
-  "r.rmarkdown.knit.focusOutputChannel": false,
   "r.session.levelOfObjectDetail": "Detailed",
   "search.exclude": {
     "**/_*/": true
@@ -336,5 +335,8 @@
   "todo-tree.tree.showCountsInTree": true,
   "yaml.schemas": {
     "https://json.schemastore.org/github-workflow.json": "file:///workspace/false.alarm/.github/workflows/ci.yaml"
-  }
+  },
+  "testExplorer.useNativeTesting": true,
+  "reflowMarkdown.preferredLineLength": 100,
+  "r.rmarkdown.knit.focusOutputChannel": false
 }

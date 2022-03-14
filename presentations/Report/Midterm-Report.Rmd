@@ -297,7 +297,7 @@ and thus are ignored by the algorithm. Also, valid for the following plots, the 
 10 seconds window where the "event" that triggers the alarm is supposed to happen.
 
 ```{r regimefilter, echo=FALSE, fig.cap=paste0("Fig. ", ref("fig:regimefilter"), ": Regime changes with noisy data - false alarm")}
-knitr::include_graphics("figures/regime_filter.png")
+knitr::include_graphics("figures/regime_filtered.png")
 ```
 
 ------------------------------------------------------------------------------------------------------------------------

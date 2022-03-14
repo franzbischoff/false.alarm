@@ -3,17 +3,16 @@ title: "Blog"
 author: "Francisco Bischoff"
 date: "on `r format(Sys.time(), '%B %d, %Y')`"
 output:
-  workflowr::wflow_html:
-    number_sections: true
-    fig_caption: yes
-    code_folding: none
-    toc: no
+  bookdown::html_document2:
+    base_format: workflowr::wflow_html
+    toc: false
+    number_sections: false
 bibliography: ../papers/references.bib
 link-citations: true
 csl: ../thesis/csl/ama.csl
 css: style.css
 editor_options:
-  chunk_output_type: inline
+  chunk_output_type: console
 ---
 
 ```{r setup, include=FALSE}
@@ -30,25 +29,26 @@ library(tibble)
 # library(visNetwork)
 # library(kableExtra)
 # library(targets)
-knitr::opts_knit$set(root.dir = here("docs"), base.dir = here("docs"))
+# knitr::opts_knit$set(root.dir = here("docs"))
+# knitr::opts_knit$set(root.dir = ".", base.dir = ".")
 
-.rmdenvir <- environment()
-.refctr <- c(`_` = 0)
+# .rmdenvir <- environment()
+# .refctr <- c(`_` = 0)
 
-ref <- function(use_name) {
-  require(stringr)
-  if (!exists(".refctr")) .refctr <- c(`_` = 0)
-  if (any(names(.refctr) == use_name)) {
-    return(.refctr[use_name])
-  }
-  type <- str_split(use_name, ":")[[1]][1]
-  n_obj <- sum(str_detect(names(.refctr), type))
-  use_num <- n_obj + 1
-  newrefctr <- c(.refctr, use_num)
-  names(newrefctr)[length(.refctr) + 1] <- use_name
-  assign(".refctr", newrefctr, envir = .rmdenvir)
-  return(use_num)
-}
+# ref <- function(use_name) {
+#   require(stringr)
+#   if (!exists(".refctr")) .refctr <- c(`_` = 0)
+#   if (any(names(.refctr) == use_name)) {
+#     return(.refctr[use_name])
+#   }
+#   type <- str_split(use_name, ":")[[1]][1]
+#   n_obj <- sum(str_detect(names(.refctr), type))
+#   use_num <- n_obj + 1
+#   newrefctr <- c(.refctr, use_num)
+#   names(newrefctr)[length(.refctr) + 1] <- use_name
+#   assign(".refctr", newrefctr, envir = .rmdenvir)
+#   return(use_num)
+# }
 ```
 
 # Purpose
@@ -121,7 +121,7 @@ from the start, in the Matrix Profile stage). At first glance, we see that the d
 resembles the skewed distribution used in FLOSS but is shorter, while the $constraint \ge
 MatrixProfileSize/2$. For lower constraints, the maximum value of this distribution is equal to
 $MatrixProfileSize/2$ between the indexes $constraint$ to the index $MatrixProfileSize - (constraint
-\times 0.9)$. This is shown in Fig. `r ref("fig:distributions")`. That is important because the
+\times 0.9)$. This is shown in Fig. \@ref(fig:distributions). That is important because the
 output of the FLOSS algorithm should be normalized and constrained between 0 and 1, which allows us
 to compare different trials using different parameters in the process. Finally, the last datapoints
 are **not** irrelevant, opposed to what was stated by the authors, since an _Online_ algorithm needs
@@ -135,11 +135,11 @@ the Matrix Profile algorithm, and indeed this is what the original paper did. Th
 computation time of the online Matrix Profile, and any post-processing done afterward will inherit
 this constraint. The distribution for correcting the FLOSS algorithm is also simpler. On the other
 hand, it is possible to apply the time constraint in the FLOSS algorithm, leaving the online Matrix
-Profile in its original form. See Fig. `r ref("fig:floss_dist")`. The theoretical distribution
+Profile in its original form. See Fig. \@ref(fig:floss-dist). The theoretical distribution
 changes significantly according to the constraint value. The upside of this approach, at least
 during the prospective phase, is to allow us to decide the time constraint value later in the
 pipeline, avoiding the recomputation of the Matrix Profile. The results on detecting regime changes
-are very similar to the first approach. See Fig. `r ref("fig:cac_regimes")`.
+are very similar to the first approach. See Fig. \@ref(fig:cac-regimes).
 
 Concerning the second point mentioned above, the solution for evaluating the effect of using time
 constraints in this work's setting was to generate the ideal distribution using the constrained
@@ -177,7 +177,7 @@ floss_data_2500 <- get_dist(0, 2500)
 floss_data_1250 <- get_dist(0, 1250)
 ```
 
-```{r distributions, echo=FALSE, fig.cap=paste("Figure", ref("fig:distributions"), " - 1D-IAC distributions for earlier temporal constraint (on Matrix Profile)"), message=FALSE, warning=FALSE}
+```{r distributions, echo=FALSE, fig.cap="1D-IAC distributions for earlier temporal constraint (on Matrix Profile)", message=FALSE, warning=FALSE}
 
 floss_dist <- ggplot(data_5000, aes(index, counts)) +
   geom_line(size = 0.1) +
@@ -213,7 +213,7 @@ gg <- gridExtra::grid.arrange(floss_dist, floss_4250, floss_2500, floss_1250,
 )
 ```
 
-```{r floss_dist, echo=FALSE, fig.cap=paste("Figure", ref("fig:floss_dist"), " - 1D-IAC distributions for later temporal constraint (on FLOSS)"), message=FALSE, warning=FALSE}
+```{r floss-dist, echo=FALSE, fig.cap="1D-IAC distributions for later temporal constraint (on FLOSS)", message=FALSE, warning=FALSE}
 
 floss_dist <- ggplot(floss_data_5000, aes(index, counts)) +
   geom_line(size = 0.1) +
@@ -258,7 +258,7 @@ floss_data <- tibble(time = seq_along(floss_data$cac), cac = floss_data$cac, iac
 # rm(output)
 ```
 
-```{r constraints, echo=FALSE, fig.cap=paste("Figure", ref("fig:cac_regimes"), " - CAC and Regime detection using early and later IAC"), message=FALSE, warning=FALSE}
+```{r cac-regimes, echo=FALSE, fig.cap="CAC and Regime detection using early and later IAC", message=FALSE, warning=FALSE}
 
 landmark <- 5000 - 3 * 250
 mp_cac_landmark <- mp_data$cac[landmark]
@@ -418,7 +418,7 @@ These last couple of months were dedicated to:
 ## Back to the filters
 
 ```{r btof, echo=FALSE, out.width="40%", fig.align = "left"}
-knitr::include_graphics("figure/back_to_filters.svg")
+# knitr::include_graphics("figure/back_to_filters.svg")
 ```
 
 Back at the beginning of this thesis, we have talked about using some kind of filtering to be used
@@ -451,10 +451,10 @@ list of them:
 4. **complexity**: This is the SQI defined by Batista, *et al.* [@Batista2014], and we will write it
    as complexity (lower case) to not confuse with the Complexity from point 3. This was built by the
    author around a simple intuition: more complex signals, when "stretched", are longer than simple
-   signals. Fig. `r ref("fig:cplxty")` shows this intuition. The formula is just the "sum of squares
+   signals. Fig. \@ref(fig:cplxty) shows this intuition. The formula is just the "sum of squares
    of the differences".
 
-```{r cplxty, echo=FALSE, out.width="80%", fig.cap=paste("Figure", ref("fig:cplxty"), " - From Batista _et al._ shows on the left side, the signal, and on the right side, the signal \"stretched\".")}
+```{r cplxty, echo=FALSE, out.width="80%", fig.cap="From Batista _et al._ shows on the left side, the signal, and on the right side, the signal \"stretched\"."}
 knitr::include_graphics("figure/complx.svg")
 ```
 
@@ -490,9 +490,9 @@ and memory possible. For this reason, we will do the experiments with the follow
 Activity, Mobility, Complexity, and complexity. In addition, we will experiment with another
 simple index, the signal's amplitude.
 
-Let's take the first 12 files from Physionet's Challenge dataset, in alphabetic order, from `a103l` to `a165l`.
-By manual inspection, we have the following files as _negative_ for noise #4, #7, #8, #10, #11, #12.
-And for _positive_ for noise the following #1, #2, #3, #5, #6, #9.
+Let's take the first 12 files from Physionet's Challenge dataset, in alphabetic order, from `a103l`
+to `a165l`. By manual inspection, we have the following files as _negative_ for noise #4, #7, #8,
+#10, #11, #12. And for _positive_ for noise the following #1, #2, #3, #5, #6, #9.
 
 ```{r load_scripts}
 source(here("scripts/common/find_all_files.R"), encoding = "UTF-8")
@@ -502,11 +502,14 @@ source(here("scripts/common/compute_filters.R"), encoding = "UTF-8")
 source(here("scripts/common/sqi.R"), encoding = "UTF-8")
 ```
 
-```{r read_files_filters, cache = TRUE}
-neg <- c(4, 7, 8, 10, 11, 12)
-pos <- c(1, 2, 3, 5, 6, 9)
+```{r read_files_filters, cache=TRUE}
+# neg <- c(4, 7, 8, 10, 11, 12)
+# pos <- c(1, 2, 3, 5, 6, 9)
+neg <- c(2, 1)
+pos <- c(2, 1)
 
-filenames <- find_all_files(classes = "asystole", limit_per_class = 12)
+
+filenames <- find_all_files(classes = "asystole", limit_per_class = length(neg) + length(pos))
 
 pos_files <- list()
 i <- 1
@@ -535,10 +538,11 @@ for (i in seq.int(1, length(neg_files))) {
 }
 ```
 
-Fig. `r ref("fig:filters_samples")` shows a sample of a positive and a negative signal (for noise) and a sample of some SQI.
-We need an index with a low value when the signal has low noise and a high value when there is a noisy signal (that we will not process).
+Fig. \@ref(fig:filters-samples) shows a sample of a positive and a negative signal (for noise)
+and a sample of some SQI. We need an index with a low value when the signal has low noise and a high
+value when there is a noisy signal (that we will not process).
 
-```{r filters_samples, fig.cap = paste("Figure", ref("fig:filters_samples"), " - ECG samples of the positive (for noise) and negative"), warning=FALSE}
+```{r filters-samples, fig.cap = "ECG samples of the positive (for noise) and negative", warning=FALSE}
 lwy <- 0.2
 size <- 9
 sample_pos <- ggplot(as_tibble(pos_files[[2]])[15500:19000, ], aes(time, II)) +
@@ -603,23 +607,46 @@ gridExtra::grid.arrange(sample_pos, sample_filter_pos, sample_neg, sample_filter
 )
 ```
 
-First, we need to specify how to evaluate the performance of the SQIs, without a hard labeled annotation, i.e., only knowing that one series has noise (but we don't know where) and other series doesn't have noise. Another information by quick inspection is that all 12 time series are "clean" from data points 30500 to 32500. This gives us a hint of the starting threshold for what is "negative".
+First, we need to specify how to evaluate the performance of the SQIs, without a hard labeled
+annotation, i.e., only knowing that one series has noise (but we don't know where) and other series
+doesn't have noise. Another information by quick inspection is that all 12 time series are "clean"
+from data points 30500 to 32500. This gives us a hint of the starting threshold for what is
+"negative".
 
-As we can see in Fig. `r ref("fig:filters_samples")`, the SQI fluctuates where there is a clean QRS complex. The threshold must be above this fluctuation.
+As we can see in Fig. \@ref(fig:filters-samples), the SQI fluctuates where there is a clean QRS
+complex. The threshold must be above this fluctuation.
 
-To be more robust in defining such threshold $\theta$, instead of finding the maximum value, we will take the quantile 0.9 of those values and then multiply this value by some constant:
+To be more robust in defining such threshold $\theta$, instead of finding the maximum value, we will
+take the quantile 0.9 of those values and then multiply this value by some constant:
 
 $$
 \theta = Q_{SQI}(0.9) \cdot \epsilon, \quad \{\epsilon \in \mathbb{R}^+_*\}
 $$
 
-What is expected is that we will have no values above the threshold on the negative set. And on the positive set, we will have values above, where there is noise.
+What is expected is that we will have no values above the threshold on the negative set. And on the
+positive set, we will have values above, where there is noise.
 
-Another aspect we must consider is the **normalization** of the time series and the **gain** value. The Physionet's data, in general, has the information about the gain used to convert the signal from mV to the digital format. Afterward, when importing the dataset, their tool divides the digital values by the gain, converting them back to mV. This should, in theory, give us signals on a similar scale, but in some recordings, the gain seems to introduce some differences (maybe the patient had a weak signal or the wrong gain was used?). This is only a problem if we do not normalize (mean zero and standard deviation one) the signal before computing the SQI. Thus the SQIs must be compared on four settings 1) with normalization, 2) without normalization without gain, and 2) without normalization with gain and, for completeness, let's also apply the gain in the SQI only (data without normalization and without gain).
+Another aspect we must consider is the **normalization** of the time series and the **gain** value.
+The Physionet's data, in general, has the information about the gain used to convert the signal from
+mV to the digital format. Afterward, when importing the dataset, their tool divides the digital
+values by the gain, converting them back to mV. This should, in theory, give us signals on a similar
+scale, but in some recordings, the gain seems to introduce some differences (maybe the patient had a
+weak signal or the wrong gain was used?). This is only a problem if we do not normalize (mean zero
+and standard deviation one) the signal before computing the SQI. Thus the SQIs must be compared on
+four settings 1) with normalization, 2) without normalization without gain, and 2) without
+normalization with gain and, for completeness, let's also apply the gain in the SQI only (data
+without normalization and without gain).
 
-It is important to say that the normalization step is done when computing the Matrix Profile. Thus, we don't want to compute yet another normalization. This means we must use the window size of the Matrix Profile, while the filter does not necessarily need to use that same window size. This has implications on comparing Mobility, Complexity [@DelRio2011], and Kurtosis because they are invariant to applying or not the gain on the original data (since all have the data in numerator and denominator). They would be invariant to the normalization only if both the normalization and the SQI use the same window size.
+It is important to say that the normalization step is done when computing the Matrix Profile. Thus,
+we don't want to compute yet another normalization. This means we must use the window size of the
+Matrix Profile, while the filter does not necessarily need to use that same window size. This has
+implications on comparing Mobility, Complexity [@DelRio2011], and Kurtosis because they are
+invariant to applying or not the gain on the original data (since all have the data in numerator and
+denominator). They would be invariant to the normalization only if both the normalization and the
+SQI use the same window size.
 
-Furthermore, as we can see below, we can anticipate that the remaining SQIs are invariant to the gain $g$ applied directly on the data or on the SQI itself.
+Furthermore, as we can see below, we can anticipate that the remaining SQIs are invariant to the
+gain $g$ applied directly on the data or on the SQI itself.
 
 The Activity (variance):
 
@@ -652,7 +679,7 @@ A(\vec{X}) &=& \max{\left(\frac{(x_i, x_{i+1}, \ldots, x_n)}{g}\right)} - \min{\
 $$
 
 
-To be continued...
+To be continued...s
 
 
 ## Further Steps {-}

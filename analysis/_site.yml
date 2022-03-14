@@ -14,7 +14,7 @@ navbar:
     - text: License
       href: license.html
     - text: Thesis
-      href: thesis/index.html
+      href: thesis/introduction.html
     - icon: fa fa-github
       text: Source
       href: https://github.com/franzbischoff/false.alarm
@@ -26,21 +26,13 @@ navbar:
     - icon: fa fa-share-alt
       href: https://www.facebook.com/sharer/sharer.php?u=https%3A%2F%2Ffranzbischoff.github.io%2Ffalse.alarm%2F
 output:
-  workflowr::wflow_html:
+  bookdown::html_document2:
+    base_format: workflowr::wflow_html
     toc: true
-    toc_float: true
-    number_sections: false
-    theme: lumen
-    highlight: textmate
+    toc_float: false
+    self_contained: false
+    number_sections: true
+    code_folding: none
     css: style.css
-  # bookdown::html_document2:
-  #   toc: false
-  #   toc_float: false
-  #   number_sections: false
-  #   css: style.css
-  #   theme: default
-  #   highlight: tango
-
-#  paper spacelab lumen yeti
-
-# textmate tango pygments kate
+    theme: default
+    highlight: tango

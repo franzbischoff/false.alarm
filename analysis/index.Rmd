@@ -4,8 +4,10 @@ author: "Francisco Bischoff"
 date: "on `r format(Sys.time(), '%B %d, %Y')`"
 site: workflowr::wflow_site
 output:
-  workflowr::wflow_html:
+  bookdown::html_document2:
+    base_format: workflowr::wflow_html
     toc: false
+    number_sections: false
 editor_options:
   chunk_output_type: console
 ---
@@ -14,7 +16,7 @@ editor_options:
 knitr::opts_chunk$set(echo = FALSE, fig.align = "center", dev = "svg")
 library(here)
 library(visNetwork)
-knitr::opts_knit$set(root.dir = here("docs"), base.dir = here("docs"))
+# knitr::opts_knit$set(root.dir = here("docs"), base.dir = here("docs"))
 ```
 
 <!-- badges init -->

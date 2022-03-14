@@ -77,7 +77,8 @@
     "yzhang.markdown-all-in-one",
     "mechatroner.rainbow-csv",
     "cschlosser.doxdocgen",
-    "hediet.vscode-drawio"
+    "hediet.vscode-drawio",
+    "PsykoSoldi3r.vscode-git-flow"
   ],
   // Use 'forwardPorts' to make a list of ports inside the container available locally.
   // "forwardPorts": [

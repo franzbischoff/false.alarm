@@ -2,12 +2,14 @@
 title: "About"
 author: "Francisco Bischoff"
 date: "on July 22, 2020"
+output:
+  bookdown::html_document2:
+    base_format: workflowr::wflow_html
+    toc: false
 bibliography: ../papers/references.bib
 link-citations: true
 csl: ../thesis/csl/ama.csl
-output:
-  workflowr::wflow_html:
-      toc: false
+css: style.css
 editor_options:
   chunk_output_type: console
 ---
@@ -17,8 +19,8 @@ knitr::opts_chunk$set(
   collapse = TRUE,
   comment = "#>"
 )
-library(here)
-knitr::opts_knit$set(root.dir = here("docs"), base.dir = here("docs"))
+# library(here)
+# knitr::opts_knit$set(root.dir = here("docs"), base.dir = here("docs"))
 ```
 
 <!-- badges: start -->

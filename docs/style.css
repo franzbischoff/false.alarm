@@ -1,100 +1,132 @@
 svg.svglite {
-  width: 100%;
   height: auto;
+  width: 100%;
 }
 
 div.polcont {
-  text-align: center;
-  padding-top: 15px;
   font-weight: bold;
+  padding-top: 15px;
+  text-align: center;
 }
 div.polaroid {
-  width: 80%;
+  background-color: white;
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
   height: auto;
   margin-left: auto;
   margin-right: auto;
-  background-color: white;
-  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+  width: 80%;
 }
 div.figure {
-  padding: 10px;
-  margin: 20px 0px 20px 0px;
   background-color: white;
   box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+  margin: 20px 0px 20px 0px;
+  padding: 10px;
 }
 p.caption {
-  padding: 20px 0 0 0;
-  font-size: 13px;
   color: black;
+  font-size: 13px;
+  padding: 20px 0 0 0;
+}
+
+table {
+  border-color: black;
+  border-spacing: 0;
+  border-style: solid;
+  border-width: 3px 0 3px 0;
+}
+
+table th {
+  border-color: black;
+  border-style: solid;
+  border-width: 0 0 1px 0;
+  font-size: 1.1em;
+  font-weight: bold;
+}
+
+table td {
+  border-color: white;
+  border-style: solid;
+  border-width: 1px;
 }
 
 .tg {
-  border-collapse: collapse;
-  vertical-align: middle;
+  border-color: black;
   border-spacing: 0;
-  margin: 0px auto;
+  border-style: solid;
+  margin: 0 auto;
+  vertical-align: middle;
 }
 
 .tg td {
-  border-color: black;
-  border-style: solid;
+  border-color: blue;
   border-width: 0;
+  border-style: solid;
   font-family: Arial, sans-serif;
   padding: 2px 5px;
   word-break: normal;
 }
 
 .tg .tg-top {
-  border-color: black;
-  border-style: solid;
   font-size: 16px;
-  border-width: 2px 0 0 0;
   font-weight: bold;
-  text-align: center;
-}
-
-.tg .tg-cross {
-  text-align: center;
-  border-color: black;
-  border-width: 1px 0 0px 0;
-}
-
-.tg .tg-crosslow {
-  text-align: center;
-  border-color: black;
-  border-width: 0px 0 1px 0;
-}
-
-.tg .tg-3z1b {
-  text-align: right;
-}
-
-.tg .tg-wp8o {
-  border-color: black;
-  border-width: 1px 0 1px 0;
-  text-align: center;
-}
-
-.tg .tg-body {
-  border-color: black;
   border-width: 0;
   text-align: center;
 }
 
-.tg .tg-73oq {
+.tg .tg-second-top {
+  border-color: black;
+  border-style: solid;
+  border-width: 1px 0 0 0;
+  text-align: center;
+}
+
+.tg .tg-cross-top {
+  border-color: black;
+  border-style: solid;
+  border-width: 2px 0 0 0;
+  text-align: center;
+}
+
+.tg .tg-cross-low {
+  border-color: black;
+  border-style: solid;
+  border-width: 0 0 2px 0;
+  text-align: center;
+}
+
+.tg .tg-cross-top-low {
+  border-color: black;
+  border-style: solid;
+  border-width: 2px 0 2px 0;
+  text-align: center;
+}
+
+.tg .tg-body-center {
+  border-color: black;
+  border-style: solid;
+  border-width: 0;
+  text-align: center;
+}
+
+.tg .tg-body-left {
+  border-color: black;
+  border-style: solid;
+  border-width: 0;
   text-align: left;
 }
 
-.tg .tg-mqa1 {
+.tg .tg-bottom {
   border-color: black;
-  border-width: 1px 0 2px 0;
+  border-style: solid;
+  border-width: 1px 0 0 0;
   font-weight: bold;
   text-align: center;
 }
 
-.tg .tg-mcqj {
+.tg .tg-bottom-left {
   border-color: black;
-  border-width: 1px 0 2px 0;
+  border-style: solid;
+  border-width: 1px 0 0 0;
   font-weight: bold;
   text-align: left;
 }

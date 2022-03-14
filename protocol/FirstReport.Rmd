@@ -6,6 +6,7 @@ bibliography: ../papers/references.bib
 csl: ../thesis/csl/ama.csl
 linestretch: 1.5
 indent: true
+always_allow_html: true
 header-includes:
     - \usepackage{caption}
     - \captionsetup{font=footnotesize}
@@ -17,32 +18,48 @@ output:
     css: style.css
     theme: default
     highlight: tango
-  # bookdown::pdf_document2:
-  #   extra_dependencies: ["flafter"]
-  #   toc: yes
-  #   # toc_depth: 2
-  #   fig_caption: yes
-  #   number_sections: yes
-  # html_notebook:
-  #   toc: yes
-  #   toc_depth: 2
-  #   code_folding: none
-  #   fig_width: 10
-  #   fig_height: 5
-  #   number_sections: yes
-  #   fig_caption: yes
-  # github_document:
-  #   toc: true
-  #   toc_depth: 2
+  bookdown::pdf_document2:
+    keep_tex: true
+    extra_dependencies: ["svg", "flafter", "subfig"]
+    toc: yes
+    toc_depth: 3
+    fig_caption: yes
+    number_sections: yes
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = FALSE, fig.align = "center")
+knitr::opts_chunk$set(
+  echo = FALSE, fig.align = "center", autodep = TRUE,
+  fig.height = 5, fig.width = 10,
+  tidy = "styler",
+  tidy.opts = list(strict = TRUE)
+)
+if (knitr::is_latex_output()) {
+  knitr::opts_chunk$set(dev = "pdf")
+} else {
+  knitr::opts_chunk$set(dev = "svg")
+}
+
+my_kable <- function(title, label, content) {
+  res <- glue(r"(<br><table class="tg"><caption>)", "(\\#tab:{label}) {title}", r"(</caption>{content}</table>)")
+  out <- structure(res, format = "html", class = "knitr_kable")
+  attr(out, "format") <- "html"
+  out
+}
+# tinytex::tlmgr_install("tabu")
 library(here)
+library(glue)
 library(visNetwork)
 library(tibble)
 library(kableExtra)
+library(gridExtra)
 library(targets)
+library(ggplot2)
+
+knitr::opts_knit$set(
+  root.dir = here("docs"),
+  base.dir = here("protocol"), verbose = TRUE
+)
 ```
 
 Last Updated: 2021-08-12 1:35:04 UTC
@@ -165,10 +182,15 @@ alarms <- tribble(
   "Ventricular Flutter/Fibrillation", "Fibrillatory, flutter, or oscillatory waveform for at least 4 seconds"
 )
 
-kbl(alarms, booktabs = TRUE, caption = "Definition of the five alarm types used in CinC/Physionet Challenge 2015 challenge.", align = "ll") %>%
-  kable_styling(full_width = TRUE) %>%
-  # column_spec(c(1,2), width = "50px") %>%
-  row_spec(0, bold = TRUE)
+kbl(alarms,
+  booktabs = TRUE,
+  caption = "Definition of the five alarm types used in CinC/Physionet Challenge 2015.",
+  align = "ll",
+  position = "ht",
+  linesep = "\\addlinespace"
+) %>%
+  row_spec(0, bold = TRUE) %>%
+  kable_styling(full_width = TRUE)
 ```
 
 The fifth minute is precisely where the alarm has been triggered on the original recording set. To
@@ -182,7 +204,7 @@ All steps of the process are being managed using the R package `targets` [@landa
 extraction to the final report, as shown in Fig. \@ref(fig:targets).
 
 ```{r targets, echo=FALSE, out.width="100%", fig.cap="Reproducible research workflow using `targets`."}
-knitr::include_graphics("figure/targets.svg")
+knitr::include_graphics(here("docs", "figure/targets.svg"))
 ```
 
 The report is available on the main webpage [@franz_website], allowing inspection of previous
@@ -190,7 +212,7 @@ versions managed by the R package `workflowr`[@workflowr2021], as shown in Fig.
 \@ref(fig:workflowr).
 
 ```{r workflowr, echo=FALSE, out.width="100%", fig.cap="Reproducible reports using `workflowr`."}
-knitr::include_graphics("figure/workflowr_print.png")
+knitr::include_graphics(here("docs", "figure/workflowr_print.png"))
 ```
 
 ## Work in Progress
@@ -221,17 +243,22 @@ criteria <- tribble(
   "Specific diagnosis (like a flutter, hyperkalemia, etc.)", ""
 )
 
-kbl(criteria, booktabs = TRUE, caption = "Literature review criteria.", align = "ll") %>%
-  kable_styling(full_width = TRUE) %>%
-  column_spec(1, width = "10cm") %>%
-  row_spec(0, bold = TRUE)
+kbl(criteria,
+  booktabs = TRUE,
+  caption = "Literature review criteria.",
+  align = "ll",
+  position = "ht",
+  linesep = "\\addlinespace"
+) %>%
+  row_spec(0, bold = TRUE) %>%
+  kable_styling(full_width = TRUE)
 ```
 
 The current stage of the review is on Data Extraction, from the resulting screening shown in Fig.
 \@ref(fig:prisma).
 
 ```{r prisma, echo=FALSE, out.width="80%", fig.cap="Prisma results"}
-knitr::include_graphics("figure/PRISMA.png")
+knitr::include_graphics(here("docs", "figure/PRISMA.png"))
 ```
 
 Meanwhile, the project pipeline has been set up on GitHub, Inc. [@bischoffrepo2021] leveraging on
@@ -244,11 +271,11 @@ Fig. \@ref(fig:zenhub1) it is shown the initial roadmap (as of May 2020) and Fig
 the modified roadmap (as of July 2021).
 
 ```{r zenhub1, echo=FALSE, out.width="100%", fig.cap="Roadmap original"}
-knitr::include_graphics("figure/roadmap_original.png")
+knitr::include_graphics(here("docs", "figure/roadmap_original.png"))
 ```
 
 ```{r zenhub2, echo=FALSE, out.width="100%", fig.cap="Roadmap updated"}
-knitr::include_graphics("figure/roadmap_updated.png")
+knitr::include_graphics(here("docs", "figure/roadmap_updated.png"))
 ```
 
 ### Preliminary Experimentations
@@ -261,17 +288,17 @@ microchip from Analog Devices Inc., compatible with Arduino^(R)^ [@arduino2021],
 experiment (Figs. \@ref(fig:ad8232) and \@ref(fig:fullsetup)).
 
 ```{r ad8232, echo=FALSE, out.width="50%", fig.cap="Single Lead Heart Rate Monitor"}
-knitr::include_graphics("figure/sparkfun.jpg")
+knitr::include_graphics(here("docs", "figure/sparkfun.jpg"))
 ```
 
 ```{r fullsetup, echo=FALSE, out.width="50%", fig.cap="Single Lead Heart Rate Monitor"}
-knitr::include_graphics("figure/FullSetup.jpg")
+knitr::include_graphics(here("docs", "figure/FullSetup.jpg"))
 ```
 
 The output gives us a RAW signal as shown in Fig. \@ref(fig:rawsignal).
 
 ```{r rawsignal, echo=FALSE, out.width="50%", fig.cap="RAW output from Arduino at ~300hz"}
-knitr::include_graphics("figure/arduino_plot.jpg")
+knitr::include_graphics(here("docs", "figure/arduino_plot.jpg"))
 ```
 
 After applying the same settings as the Physionet database (collecting the data at 500hz, resample
@@ -279,7 +306,7 @@ to 250hz, pass-filter, and notch filter), the signal is much better as shown in 
 \@ref(fig:filtersignal). Note: the leads were not placed on the correct location.
 
 ```{r filtersignal, echo=FALSE, out.width="100%", fig.cap="Gray is RAW, Red is filtered"}
-knitr::include_graphics("figure/filtered_ecg.png")
+knitr::include_graphics(here("docs", "figure/filtered_ecg.png"))
 ```
 
 So in this way, we allow us to import RAW data from other devices and build our own test dataset in
@@ -309,12 +336,13 @@ shown in Equation \@ref(eq:complex).
 \begin{equation}
 \sqrt{\sum_{i=1}^w((x_{i+1}-x_i)^2)}, \quad \text{where}\; w \; \text{is the window size} (\#eq:complex)
 \end{equation}
+
 \
 \
 The Fig. \@ref(fig:sqi) shows some SQIs.
 
 ```{r sqi, echo=FALSE, out.width="100%", fig.cap="Green line is the \"complexity\" of the signal"}
-knitr::include_graphics("figure/noise.png")
+knitr::include_graphics(here("docs", "figure/noise.png"))
 ```
 
 Finally, a sample of the regime change detection is shown in Figs. \@ref(fig:regimefilter) to
@@ -326,14 +354,14 @@ green and red lines on the data mark the 10 seconds window where the "event" tha
 is supposed to happen.
 
 ```{r regimefilter, echo=FALSE, out.width="100%", fig.cap="Regime changes with noisy data - false alarm"}
-knitr::include_graphics("figure/regime_filter.png")
+knitr::include_graphics(here("docs", "figure/regime_filtered.png"))
 ```
 
 In Fig. \@ref(fig:regimefalse), the data is clean; thus, nothing is excluded. Interestingly one of
 the detected regime changes is inside the "green-red" window. But it is a false alarm.
 
 ```{r regimefalse, echo=FALSE, out.width="100%", fig.cap="Regime changes with good data - false alarm"}
-knitr::include_graphics("figure/regime_false.png")
+knitr::include_graphics(here("docs", "figure/regime_false.png"))
 ```
 
 The last plot (Fig. \@ref(fig:regimetrue)) shows the algorithm's robustness, not excluding good data
@@ -341,7 +369,7 @@ with a wandering baseline, and the last regime change is correctly detected insi
 window.
 
 ```{r regimetrue, echo=FALSE, out.width="100%", fig.cap="Regime changes with good but wandering data - true alarm"}
-knitr::include_graphics("figure/regime_true.png")
+knitr::include_graphics(here("docs", "figure/regime_true.png"))
 ```
 
 ## Scientific outcomes

@@ -1,9 +1,30 @@
+svg.svglite {
+  width: 100%;
+  height: auto;
+}
+
+div.polcont {
+  text-align: center;
+  padding-top: 15px;
+  font-weight: bold;
+}
+
+div.polaroid {
+  width: 80%;
+  height: auto;
+  margin-left: auto;
+  margin-right: auto;
+  background-color: white;
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+}
+
 div.figure {
   padding: 10px;
   margin: 20px 0px 20px 0px;
   background-color: white;
   box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
 }
+
 p.caption {
   padding: 20px 0 0 0;
   font-size: 13px;
@@ -12,14 +33,15 @@ p.caption {
 
 table {
   border-width: 3px 0 3px 0;
+  border-spacing: 0;
   border-style: solid;
   border-color: black;
 }
 
 table th {
-  border-width: 0px;
+  border-width: 0 0 1px 0;
   border-style: solid;
-  border-color: white;
+  border-color: black;
   font-weight: bold;
   font-size: 1.1em;
 }
@@ -30,23 +52,68 @@ table td {
   border-color: white;
 }
 
-.csl-entry {
-  break-inside: avoid-column;
+.tg {
+  vertical-align: middle;
+  border-spacing: 0;
+  margin: 0px auto;
 }
 
-/*
+.tg td {
+  border-color: blue;
+  border-width: 0;
+  border-style: solid;
+  font-family: Arial, sans-serif;
+  padding: 2px 5px;
+  word-break: normal;
+}
 
-
- */
-/*
-.header {
-  margin: 10px auto 10px auto;
-  text-align: center;
-  font-family: "Source Sans Pro";
+.tg .tg-top {
+  border-color: black;
+  border-style: solid;
+  font-size: 16px;
+  border-width: 2px 0 0 0;
   font-weight: bold;
-  position: absolute;
-  width: 100%;
-  color: rgb(184, 184, 184);
+  text-align: center;
 }
 
-*/
+.tg .tg-cross {
+  text-align: center;
+  border-color: black;
+  border-width: 1px 0 0px 0;
+}
+
+.tg .tg-crosslow {
+  text-align: center;
+  border-color: black;
+  border-width: 0px 0 1px 0;
+}
+
+.tg .tg-wp8o {
+  border-color: black;
+  border-width: 1px 0 1px 0;
+  text-align: center;
+}
+
+.tg .tg-body {
+  border-color: black;
+  border-width: 0;
+  text-align: center;
+}
+
+.tg .tg-73oq {
+  text-align: left;
+}
+
+.tg .tg-mqa1 {
+  border-color: black;
+  border-width: 1px 0 2px 0;
+  font-weight: bold;
+  text-align: center;
+}
+
+.tg .tg-mcqj {
+  border-color: black;
+  border-width: 1px 0 2px 0;
+  font-weight: bold;
+  text-align: left;
+}

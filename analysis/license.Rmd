@@ -3,7 +3,8 @@ title: "License"
 author: "Francisco Bischoff"
 date: "on July 22, 2020"
 output:
-  workflowr::wflow_html:
+  bookdown::html_document2:
+    base_format: workflowr::wflow_html
     toc: false
 editor_options:
   chunk_output_type: console
@@ -12,7 +13,7 @@ editor_options:
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = FALSE, fig.align = "center", dev = "svg")
 library(here)
-knitr::opts_knit$set(root.dir = here("docs"), base.dir = here("docs"))
+# knitr::opts_knit$set(root.dir = here("docs"), base.dir = here("docs"))
 ```
 
 <center>
