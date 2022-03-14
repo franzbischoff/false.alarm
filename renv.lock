@@ -2183,9 +2183,9 @@
       "RemoteUsername": "r-lib",
       "RemoteRepo": "rlang",
       "RemoteRef": "main",
-      "RemoteSha": "6ef02564a3f2a71240ee9354ff89c97fed595824",
+      "RemoteSha": "22fe9e9d729d562fcfd580c7a350f56d7a864639",
       "RemoteHost": "api.github.com",
-      "Hash": "0a6e2d909a3eced216d92d153a36adcf",
+      "Hash": "d89a6dcc80b1e5e232c78a38ad38bad2",
       "Requirements": []
     },
     "rlist": {
@@ -2522,15 +2522,15 @@
     },
     "styler": {
       "Package": "styler",
-      "Version": "1.6.2.9000",
+      "Version": "1.7.0",
       "Source": "GitHub",
       "RemoteType": "github",
       "RemoteUsername": "r-lib",
       "RemoteRepo": "styler",
       "RemoteRef": "main",
-      "RemoteSha": "b70aebe2890956eb599d8c9cb47414a97250f68b",
+      "RemoteSha": "9a5d2565fae87a88b7499bf7b61d4e8d607489d4",
       "RemoteHost": "api.github.com",
-      "Hash": "9a109fb14aaf4f4989b1d78d819f2d95",
+      "Hash": "caa0c79e6742e6a628d54b5544559814",
       "Requirements": [
         "R.cache",
         "cli",
