@@ -418,7 +418,7 @@ These last couple of months were dedicated to:
 ## Back to the filters
 
 ```{r btof, echo=FALSE, out.width="40%", fig.align = "left"}
-# knitr::include_graphics("figure/back_to_filters.svg")
+my_graphics("back_to_filters", "figure")
 ```
 
 Back at the beginning of this thesis, we have talked about using some kind of filtering to be used
@@ -455,7 +455,7 @@ list of them:
    of the differences".
 
 ```{r cplxty, echo=FALSE, out.width="80%", fig.cap="From Batista _et al._ shows on the left side, the signal, and on the right side, the signal \"stretched\"."}
-knitr::include_graphics("figure/complx.svg")
+my_graphics("complx", "figure")
 ```
 
 $$

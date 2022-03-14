@@ -40,6 +40,30 @@ if (knitr::is_latex_output()) {
   knitr::opts_chunk$set(dev = "svg")
 }
 
+my_graphics <- function(image_name, base_path = here::here("docs", "figure")) {
+  file_path <- glue::glue("{base_path}/{image_name}")
+
+  if (knitr::is_latex_output()) {
+    if (file.exists(glue::glue("{file_path}.pdf"))) {
+      file_path <- glue::glue("{file_path}.pdf")
+    } else if (file.exists(glue::glue("{file_path}.png"))) {
+      file_path <- glue::glue("{file_path}.png")
+    } else {
+      file_path <- glue::glue("{file_path}.jpg")
+    }
+  } else {
+    if (file.exists(glue::glue("{file_path}.svg"))) {
+      file_path <- glue::glue("{file_path}.svg")
+    } else if (file.exists(glue::glue("{file_path}.png"))) {
+      file_path <- glue::glue("{file_path}.png")
+    } else {
+      file_path <- glue::glue("{file_path}.jpg")
+    }
+  }
+
+  knitr::include_graphics(file_path)
+}
+
 my_kable <- function(title, label, content) {
   res <- glue(r"(<br><table class="tg"><caption>)", "(\\#tab:{label}) {title}", r"(</caption>{content}</table>)")
   out <- structure(res, format = "html", class = "knitr_kable")
@@ -204,7 +228,7 @@ All steps of the process are being managed using the R package `targets` [@landa
 extraction to the final report, as shown in Fig. \@ref(fig:targets).
 
 ```{r targets, echo=FALSE, out.width="100%", fig.cap="Reproducible research workflow using `targets`."}
-knitr::include_graphics(here("docs", "figure/targets.svg"))
+my_graphics("targets")
 ```
 
 The report is available on the main webpage [@franz_website], allowing inspection of previous
@@ -212,7 +236,7 @@ versions managed by the R package `workflowr`[@workflowr2021], as shown in Fig.
 \@ref(fig:workflowr).
 
 ```{r workflowr, echo=FALSE, out.width="100%", fig.cap="Reproducible reports using `workflowr`."}
-knitr::include_graphics(here("docs", "figure/workflowr_print.png"))
+my_graphics("workflowr_print")
 ```
 
 ## Work in Progress
@@ -258,7 +282,7 @@ The current stage of the review is on Data Extraction, from the resulting screen
 \@ref(fig:prisma).
 
 ```{r prisma, echo=FALSE, out.width="80%", fig.cap="Prisma results"}
-knitr::include_graphics(here("docs", "figure/PRISMA.png"))
+my_graphics("PRISMA")
 ```
 
 Meanwhile, the project pipeline has been set up on GitHub, Inc. [@bischoffrepo2021] leveraging on
@@ -271,11 +295,11 @@ Fig. \@ref(fig:zenhub1) it is shown the initial roadmap (as of May 2020) and Fig
 the modified roadmap (as of July 2021).
 
 ```{r zenhub1, echo=FALSE, out.width="100%", fig.cap="Roadmap original"}
-knitr::include_graphics(here("docs", "figure/roadmap_original.png"))
+my_graphics("roadmap_original")
 ```
 
 ```{r zenhub2, echo=FALSE, out.width="100%", fig.cap="Roadmap updated"}
-knitr::include_graphics(here("docs", "figure/roadmap_updated.png"))
+my_graphics("roadmap_updated")
 ```
 
 ### Preliminary Experimentations
@@ -288,17 +312,17 @@ microchip from Analog Devices Inc., compatible with Arduino^(R)^ [@arduino2021],
 experiment (Figs. \@ref(fig:ad8232) and \@ref(fig:fullsetup)).
 
 ```{r ad8232, echo=FALSE, out.width="50%", fig.cap="Single Lead Heart Rate Monitor"}
-knitr::include_graphics(here("docs", "figure/sparkfun.jpg"))
+my_graphics("sparkfun")
 ```
 
 ```{r fullsetup, echo=FALSE, out.width="50%", fig.cap="Single Lead Heart Rate Monitor"}
-knitr::include_graphics(here("docs", "figure/FullSetup.jpg"))
+my_graphics("FullSetup")
 ```
 
 The output gives us a RAW signal as shown in Fig. \@ref(fig:rawsignal).
 
 ```{r rawsignal, echo=FALSE, out.width="50%", fig.cap="RAW output from Arduino at ~300hz"}
-knitr::include_graphics(here("docs", "figure/arduino_plot.jpg"))
+my_graphics("arduino_plot")
 ```
 
 After applying the same settings as the Physionet database (collecting the data at 500hz, resample
@@ -306,7 +330,7 @@ to 250hz, pass-filter, and notch filter), the signal is much better as shown in 
 \@ref(fig:filtersignal). Note: the leads were not placed on the correct location.
 
 ```{r filtersignal, echo=FALSE, out.width="100%", fig.cap="Gray is RAW, Red is filtered"}
-knitr::include_graphics(here("docs", "figure/filtered_ecg.png"))
+my_graphics("filtered_ecg")
 ```
 
 So in this way, we allow us to import RAW data from other devices and build our own test dataset in
@@ -342,7 +366,7 @@ shown in Equation \@ref(eq:complex).
 The Fig. \@ref(fig:sqi) shows some SQIs.
 
 ```{r sqi, echo=FALSE, out.width="100%", fig.cap="Green line is the \"complexity\" of the signal"}
-knitr::include_graphics(here("docs", "figure/noise.png"))
+my_graphics("noise")
 ```
 
 Finally, a sample of the regime change detection is shown in Figs. \@ref(fig:regimefilter) to
@@ -354,14 +378,14 @@ green and red lines on the data mark the 10 seconds window where the "event" tha
 is supposed to happen.
 
 ```{r regimefilter, echo=FALSE, out.width="100%", fig.cap="Regime changes with noisy data - false alarm"}
-knitr::include_graphics(here("docs", "figure/regime_filtered.png"))
+my_graphics("regime_filtered")
 ```
 
 In Fig. \@ref(fig:regimefalse), the data is clean; thus, nothing is excluded. Interestingly one of
 the detected regime changes is inside the "green-red" window. But it is a false alarm.
 
 ```{r regimefalse, echo=FALSE, out.width="100%", fig.cap="Regime changes with good data - false alarm"}
-knitr::include_graphics(here("docs", "figure/regime_false.png"))
+my_graphics("regime_false")
 ```
 
 The last plot (Fig. \@ref(fig:regimetrue)) shows the algorithm's robustness, not excluding good data
@@ -369,7 +393,7 @@ with a wandering baseline, and the last regime change is correctly detected insi
 window.
 
 ```{r regimetrue, echo=FALSE, out.width="100%", fig.cap="Regime changes with good but wandering data - true alarm"}
-knitr::include_graphics(here("docs", "figure/regime_true.png"))
+my_graphics("regime_true")
 ```
 
 ## Scientific outcomes

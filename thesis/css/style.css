@@ -7,7 +7,7 @@
   margin-bottom: 10px;
   background: #f5f5f5 5px center/3em no-repeat;
 }
-.rmdcaution {
+/* .rmdcaution {
   background-image: url("../figure/caution.png");
 }
 .rmdimportant {
@@ -21,7 +21,7 @@
 }
 .rmdwarning {
   background-image: url("../figure/warning.png");
-}
+} */
 p.caption {
   color: #777;
   margin-top: 10px;

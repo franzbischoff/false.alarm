@@ -4,3 +4,4 @@
 *.synctex.gz
 *.aux
 *_files/
+thesis.Rmd

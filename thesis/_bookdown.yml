@@ -16,6 +16,7 @@ download:
   - ["thesis.epub", "EPUB"]
   - ["thesis.docx", "Word"]
 delete_merged_file: true
+new_session: false
 output_dir: "../docs/thesis"
 language:
   label:

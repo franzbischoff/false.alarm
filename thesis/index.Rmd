@@ -14,7 +14,7 @@ documentclass: book
 github-repo: 'franzbischoff/false.alarm'
 favicon: 'favicon.ico'
 description: 'This thesis is about low-power devices and ECG'
-url: 'https\://franzbischoff.github.io/false.alarm/thesis/'
+url: 'https\://franzbischoff.github.io/false.alarm/thesis'
 cover-image: 'figure/FullSetup.jpg'
 apple-touch-icon: 'favicon.ico'
 apple-touch-icon-size: 120
@@ -63,6 +63,37 @@ if (knitr::is_latex_output()) {
 }
 library(here)
 library(glue)
+
+my_graphics <- function(image_name, base_path = here::here("docs", "figure")) {
+  file_path <- glue::glue("{base_path}/{image_name}")
+
+  if (knitr::is_latex_output()) {
+    if (file.exists(glue::glue("{file_path}.pdf"))) {
+      file_path <- glue::glue("{file_path}.pdf")
+    } else if (file.exists(glue::glue("{file_path}.png"))) {
+      file_path <- glue::glue("{file_path}.png")
+    } else {
+      file_path <- glue::glue("{file_path}.jpg")
+    }
+  } else {
+    if (file.exists(glue::glue("{file_path}.svg"))) {
+      file_path <- glue::glue("{file_path}.svg")
+    } else if (file.exists(glue::glue("{file_path}.png"))) {
+      file_path <- glue::glue("{file_path}.png")
+    } else {
+      file_path <- glue::glue("{file_path}.jpg")
+    }
+  }
+
+  knitr::include_graphics(file_path)
+}
+
+my_kable <- function(title, label, content) {
+  res <- glue(r"(<br><table class="tg"><caption>)", "(\\#tab:{label}) {title}", r"(</caption>{content}</table>)")
+  out <- structure(res, format = "html", class = "knitr_kable")
+  attr(out, "format") <- "html"
+  out
+}
 
 # This chunk ensures that the thesisdown package is
 # installed and loaded. This thesisdown package includes

@@ -305,7 +305,7 @@ jobs:
 
       - name: Knit thesisdown
         run: |
-          bookdown::render_book("thesis")
+          bookdown::render_book("thesis", output_format="all")
         shell: Rscript {0}
 
       - name: Stage thesisdown changes

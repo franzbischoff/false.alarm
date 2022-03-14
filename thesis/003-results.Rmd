@@ -31,7 +31,7 @@ order to start the parameter tuning. An example of the current implementation is
 #|  horizontal line shows the minimum value seen until then.
 #|  The graph on the bottom shows the computed Arc counts (raw) and the red line is the
 #|  theoretical distribution used for correction."
-knitr::include_graphics(here("protocol", "figure/floss_regime.png"))
+my_graphics("floss_regime")
 ```
 
 ## Classification
@@ -70,7 +70,7 @@ A brief mentioning, linking back to the objectives of this work, an initial tria
 ESP32 MCU (Fig. \@ref(fig:esp32)) in order to be sure if such small device can handle the task.
 
 ```{r esp32, echo=FALSE, out.width="50%", fig.cap="ESP32 MCU"}
-knitr::include_graphics(here("protocol", "figure/esp32.jpg"))
+my_graphics("esp32")
 ```
 
 Current results show that such device has enough computation power to handle the task in real-time

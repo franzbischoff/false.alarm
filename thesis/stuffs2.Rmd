@@ -89,7 +89,7 @@ nk op
 ions that are given in the R Markdown file (not shown in the knitted document).
 
 ```{r reedlogo, eval = FALSE, fig.cap="Reed logo"}
-include_graphics(path = "figure/reed.jpg")
+my_graphics("reed")
 ```
 
 Here is a reference to the Reed logo: Figure \@ref(fig:reedlogo).  Ne the use of the `fig:` code here.  Bnaming the **
@@ -126,7 +126,7 @@ Next, we will explore the use of the `out.extra` chunk option, which can be used
 m a file by specifying `"scale= "`. Here we use the mathematical graph stored in the "subdivision.pdf" file.
 
 ```{r subd, eval = FALSE, results="asis", echo=FALSE, fig.cap="Subdiv. graph", out.extra="scale=0.75"}
-include_graphics(here("protocol", "figure/subdivision.pdf"))
+my_graphics("subdivision")
 ```
 
 Here is a reference to this image: Figure \@ref(fig:subd).  Ne that `echo=FALSE` is specified so that the **R** code is hi
@@ -138,7 +138,7 @@ Lastly, we will explore how to rotate and enlarge figures using the `out.extra` 
 th  PDF version of the book.)
 
 ```{r subd2, eval = FALSE, results="asis", echo=FALSE, out.extra="angle=180, scale=1.1", fig.cap="A Larger Figure, Flipped Upside Down"}
-include_graphics(here("protocol", "figure/subdivision.pdf"))
+my_graphics("subdivision")
 ```
 
 As another example, here is a reference: Figure \@ref(fig:subd2).

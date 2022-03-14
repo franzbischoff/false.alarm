@@ -48,6 +48,30 @@ library(gridExtra)
 library(targets)
 library(ggplot2)
 
+my_graphics <- function(image_name, base_path = here::here("docs", "figure")) {
+  file_path <- glue::glue("{base_path}/{image_name}")
+
+  if (knitr::is_latex_output()) {
+    if (file.exists(glue::glue("{file_path}.pdf"))) {
+      file_path <- glue::glue("{file_path}.pdf")
+    } else if (file.exists(glue::glue("{file_path}.png"))) {
+      file_path <- glue::glue("{file_path}.png")
+    } else {
+      file_path <- glue::glue("{file_path}.jpg")
+    }
+  } else {
+    if (file.exists(glue::glue("{file_path}.svg"))) {
+      file_path <- glue::glue("{file_path}.svg")
+    } else if (file.exists(glue::glue("{file_path}.png"))) {
+      file_path <- glue::glue("{file_path}.png")
+    } else {
+      file_path <- glue::glue("{file_path}.jpg")
+    }
+  }
+
+  knitr::include_graphics(file_path)
+}
+
 print_duration <- function(start, end) {
   period <- lubridate::as.period(lubridate::interval(lubridate::date(start), lubridate::date(end)))
   paste(period@month, "months", period@day, "days")
@@ -385,7 +409,7 @@ kbl(miles,
 
 ```{r timeline, echo=FALSE, out.width="100%", fig.link="https://app.zenhub.com/workspaces/phd-thesis-5eb2ce34f5f30b3aed0a35af/roadmap"}
 #| fig.cap="Click on the image to open an interactive Gantt webpage."
-knitr::include_graphics(here("docs", "figure/timeline.png"))
+my_graphics("timeline")
 ```
 
 # Budget

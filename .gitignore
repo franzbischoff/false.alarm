@@ -69,30 +69,30 @@ debugme.log
 .radian_history
 
 # use github-actions to build the webpage
-/pkgdown/
-/code/
-dev/
-LOCAL_APPDATA_FONTCONFIG_CACHE/
-src-*/
-packrat/lib*/
-packrat/src/
-/pdfs/
-/review/
-Rplots.pdf
-/src/*.o
-/src/*.so
-/src/*.dll
-/revdep/checks
-/revdep/library
-/revdep/checks.noindex
-/revdep/library.noindex
-/revdep/data.sqlite
-/revdep/*.html
-README.html
-workspace.RData
 /.travis.yml
 /R/RcppExports.R
+/code/
+/pdfs/
+/pkgdown/
+/revdep/*.html
+/revdep/checks
+/revdep/checks.noindex
+/revdep/data.sqlite
+/revdep/library
+/revdep/library.noindex
+/review/
+/src/*.dll
+/src/*.o
+/src/*.so
 /src/RcppExports.cpp
+LOCAL_APPDATA_FONTCONFIG_CACHE/
+README.html
+Rplots.pdf
+dev/
+packrat/lib*/
+packrat/src/
+src-*/
+workspace.RData
 
 # Workflowr
 .DS_Store

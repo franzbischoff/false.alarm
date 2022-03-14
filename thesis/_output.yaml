@@ -27,6 +27,7 @@ thesisdown::thesis_gitbook:
   number_sections: yes
   anchor_sections: yes
   template: "default"
+  self_contained: true
   pandoc_args: null
   split_by: "chapter" # https://bookdown.org/yihui/bookdown/html.html
   split_bib: no
