@@ -255,64 +255,6 @@ my_graphics("PRISMA")
 The peer review is being conducted by the author of this thesis together with another coleague, Dr.
 Andrew Van Benschoten from the Matrix Profile Foundation [@mpf2020].
 
-Table. \@ref(tab:kappa) shows the Inter-rater Reliability (IRR) of the screening phases, using Cohen's $\kappa$ statistic.
-The bottom line shows the estimated accuracy after corrected for possible confounders [@Bakeman2011].
-
-```{r kappa, echo=FALSE, eval=!knitr::is_latex_output()}
-my_kable(
-  title = "Inter-rater Reliability on the literature survey process.",
-  label = "kappa",
-  content = r"(<thead> <tr> <th class="tg-top" colspan="2"> </th> <th class="tg-top"
-colspan="2"> Title-Abstract<br>(2388 articles) </th> <th class="tg-top"> </th> <th class="tg-top"
-colspan="2"> Full-Review<br>(303 articles) </th> </tr></thead> <tbody> <tr> <td
-colspan="2"> </td><td class="tg-second-top" colspan="2"> Reviewer #2 </td><td></td><td
-class="tg-second-top" colspan="2"> Reviewer #2 </td></tr><tr> <td colspan="2"> </td><td
-class="tg-second-top"> Include </td><td class="tg-second-top"> Exclude </td><td></td><td
-class="tg-second-top"> Include </td><td class="tg-second-top"> Exclude </td></tr><tr> <td class="tg-cross-top-low"
-rowspan="2"> Reviewer #1 </td><td class="tg-cross-top"> Include </td><td class="tg-cross-top"> 185 </td><td
-class="tg-cross-top"> 381 </td><td class="tg-cross-top"></td><td class="tg-cross-top"> 63 </td><td
-class="tg-cross-top"> 58 </td></tr><tr> <td class="tg-cross-low"> Exclude </td><td class="tg-cross-low"> 129
-</td><td class="tg-cross-low"> 1693 </td><td class="tg-cross-low"> </td><td class="tg-cross-low"> 13
-</td><td class="tg-cross-low"> 169 </td></tr><tr> <td class="tg-body-left" colspan="2"> Cohen’s omnibus
-<span class="math inline">\(\kappa\)</span> </td><td class="tg-body-center" colspan="2"> 0.30 </td><td
-class="tg-body-center"> </td><td class="tg-body-center" colspan="2"> 0.48 </td></tr><tr> <td class="tg-body-left"
-colspan="2"> Maximum possible <span class="math inline">\(\kappa\)</span> </td><td class="tg-body-center"
-colspan="2"> 0.66 </td><td class="tg-body-center"> </td><td class="tg-body-center" colspan="2"> 0.67
-</td></tr><tr> <td class="tg-body-left" colspan="2"> Std Err for <span class="math
-inline">\(\kappa\)</span> </td><td class="tg-body-center" colspan="2"> 0.02 </td><td class="tg-body-center">
-</td><td class="tg-body-center" colspan="2"> 0.05 </td></tr><tr> <td class="tg-body-left" colspan="2"> Observed
-Agreement </td><td class="tg-body-center" colspan="2"> 79% </td><td class="tg-body-center"> </td><td
-class="tg-body-center" colspan="2"> 77% </td></tr><tr> <td class="tg-body-left" colspan="2"> Random Agreement
-</td><td class="tg-body-center" colspan="2"> 69% </td><td class="tg-body-center"> </td><td class="tg-body-center"
-colspan="2"> 55% </td></tr><tr> <td class="tg-bottom-left" colspan="2"> Agreement corrected with KappaAcc
-</td><td class="tg-bottom" colspan="2"> 82% </td><td class="tg-bottom"> </td><td class="tg-bottom"
-colspan="2"> 85% </td></tr></tbody>)"
-)
-```
-\
-```{r kappaa, echo = FALSE, eval=knitr::is_latex_output(), results="asis"}
-cat(r"(
-\begin{table}[ht]
-\caption{\label{tab:kappa}Inter-rater Reliability on the literature survey process.}
-\centering
-\begin{tabular}{llcclcc}
-\toprule
-                                                  &                             & \multicolumn{2}{c}{\textbf{\begin{tabular}[c]{@{}c@{}}Title-Abstract\\ (2388 articles)\end{tabular}}} & \textbf{} & \multicolumn{2}{c}{\textbf{\begin{tabular}[c]{@{}c@{}}Full-Review\\ (303 articles)\end{tabular}}} \\ \cline{3-4} \cline{6-7}
-                                                  &                             & \multicolumn{2}{c}{Reviewer \#2}                                                                      &           & \multicolumn{2}{c}{Reviewer \#2}                                                                  \\ \cline{3-4} \cline{6-7}
-                                                  &                             & \multicolumn{1}{l}{Include}                       & \multicolumn{1}{l}{Exclude}                       &           & \multicolumn{1}{l}{Include}                     & \multicolumn{1}{l}{Exclude}                     \\ \hline
-\multicolumn{1}{r}{\multirow{2}{*}{Reviewer \#1}} & \multicolumn{1}{r}{Include} & 185                                               & 381                                               &           & 63                                              & 58                                              \\
-\multicolumn{1}{r}{}                              & \multicolumn{1}{r}{Exclude} & 129                                               & 1693                                              &           & 13                                              & 169                                             \\ \hline
-Cohen's omnibus  $\kappa$                         &                             & \multicolumn{2}{c}{0.30}                                                                              &           & \multicolumn{2}{c}{0.48}                                                                          \\
-Maximum possible $\kappa$                         &                             & \multicolumn{2}{c}{0.66}                                                                              &           & \multicolumn{2}{c}{0.67}                                                                          \\
-Std Err for $\kappa$                              &                             & \multicolumn{2}{c}{0.02}                                                                              &           & \multicolumn{2}{c}{0.05}                                                                          \\
-Observed Agreement                                &                             & \multicolumn{2}{c}{79\%}                                                                              &           & \multicolumn{2}{c}{77\%}                                                                          \\
-Random Agreement                                  &                             & \multicolumn{2}{c}{69\%}                                                                              &           & \multicolumn{2}{c}{55\%}                                                                          \\ \hline\addlinespace
-\multicolumn{2}{l}{\textbf{Agreement corrected with KappaAcc}}          & \multicolumn{2}{c}{\textbf{82\%}}                                                                     & \textbf{} & \multicolumn{2}{c}{\textbf{85\%}}                                                                 \\ \bottomrule
-\end{tabular}
-\end{table}
-)")
-```
-
 The purpose of using Cohen's $\kappa$ in such review is to allow us to gauge the agreement of both
 reviewers on the task of selecting the articles according to the goal of the survey. The most naive
 way to verify this would be simply to measure the overall agreement (the number of articles included
