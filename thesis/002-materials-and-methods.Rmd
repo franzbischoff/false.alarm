@@ -293,8 +293,8 @@ colspan="2"> 85% </td></tr></tbody>)"
 ```{r kappaa, echo = FALSE, eval=knitr::is_latex_output(), results="asis"}
 cat(r"(
 \begin{table}[ht]
-\centering
 \caption{\label{tab:kappa}Inter-rater Reliability on the literature survey process.}
+\centering
 \begin{tabular}{llcclcc}
 \toprule
                                                   &                             & \multicolumn{2}{c}{\textbf{\begin{tabular}[c]{@{}c@{}}Title-Abstract\\ (2388 articles)\end{tabular}}} & \textbf{} & \multicolumn{2}{c}{\textbf{\begin{tabular}[c]{@{}c@{}}Full-Review\\ (303 articles)\end{tabular}}} \\ \cline{3-4} \cline{6-7}
