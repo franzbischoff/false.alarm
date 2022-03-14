@@ -147,7 +147,7 @@ parameters beforehand. That gives us enough data to evaluate a regime change acc
 minimum of $2 \times WindowSize$ datapoints. The best index is still to be determined, and current
 tests are using 3 seconds limit.
 
-```{r dist data, message=FALSE, warning=FALSE, cache=TRUE, include=FALSE}
+```{r dist data, message=FALSE, warning=FALSE, include=FALSE}
 source(here("scripts", "common", "compute_floss.R"))
 
 get_dist <- function(mp_const = 1250, floss_const = 0) {
@@ -249,13 +249,16 @@ gg <- gridExtra::grid.arrange(floss_dist, floss_4250, floss_2500, floss_1250,
 )
 ```
 
-```{r output_data, cache=TRUE, include=FALSE}
-output <- readRDS(here("output/work_output.rds"))
-mp_data <- output$mp_constraint[[1]]$II[[76]]
-mp_data <- tibble(time = seq_along(mp_data$cac), cac = mp_data$cac, iac = mp_data$iac, arcs = mp_data$arcs)
-floss_data <- output$floss_constraint[[1]]$II[[76]]
-floss_data <- tibble(time = seq_along(floss_data$cac), cac = floss_data$cac, iac = floss_data$iac, arcs = floss_data$arcs)
-# rm(output)
+```{r output_data, include=FALSE}
+if (file.exists(here("output/work_output.rds"))) {
+  output <- readRDS(here("output/work_output.rds"))
+  mp_data <- output$mp_constraint[[1]]$II[[76]]
+  mp_data <- tibble(time = seq_along(mp_data$cac), cac = mp_data$cac, iac = mp_data$iac, arcs = mp_data$arcs)
+  floss_data <- output$floss_constraint[[1]]$II[[76]]
+  floss_data <- tibble(time = seq_along(floss_data$cac), cac = floss_data$cac, iac = floss_data$iac, arcs = floss_data$arcs)
+  rm(output)
+  gc()
+}
 ```
 
 ```{r cac-regimes, echo=FALSE, fig.cap="CAC and Regime detection using early and later IAC", message=FALSE, warning=FALSE}
@@ -502,40 +505,51 @@ source(here("scripts/common/compute_filters.R"), encoding = "UTF-8")
 source(here("scripts/common/sqi.R"), encoding = "UTF-8")
 ```
 
-```{r read_files_filters, cache=TRUE}
-# neg <- c(4, 7, 8, 10, 11, 12)
-# pos <- c(1, 2, 3, 5, 6, 9)
-neg <- c(2, 1)
-pos <- c(2, 1)
+```{r read_files_filters}
+neg <- c(4, 7, 8, 10, 11, 12)
+pos <- c(1, 2, 3, 5, 6, 9)
 
+if (file.exists(here::here("output/backtofilters.rds"))) {
+  backtofilters <- readRDS(here::here("output/backtofilters.rds"))
+  pos_files <- backtofilters$pos_files
+  neg_files <- backtofilters$neg_files
+  pos_filters <- backtofilters$pos_filters
+  neg_filters <- backtofilters$neg_filters
+  rm(backtofilters)
+} else {
+  filenames <- find_all_files(classes = "asystole", limit_per_class = length(neg) + length(pos))
 
-filenames <- find_all_files(classes = "asystole", limit_per_class = length(neg) + length(pos))
+  pos_files <- list()
+  i <- 1
+  for (file in filenames[pos]) {
+    pos_files[i] <- read_ecg_csv(file, normalize = FALSE)
+    i <- i + 1
+  }
 
-pos_files <- list()
-i <- 1
-for (file in filenames[pos]) {
-  pos_files[i] <- read_ecg_csv(file, normalize = FALSE)
-  i <- i + 1
+  neg_files <- list()
+  i <- 1
+  for (file in filenames[neg]) {
+    neg_files[i] <- read_ecg_csv(file, normalize = FALSE)
+    i <- i + 1
+  }
+
+  pos_filters <- list()
+  for (i in seq.int(1, length(pos_files))) {
+    pos_filters[[i]] <- compute_filters(pos_files[[i]]$II, list(window_size = 250, filter_w_size = 100), get_info(pos_files[[i]]))
+    pos_filters[[i]]$time <- pos_files[[i]]$time
+  }
+
+  neg_filters <- list()
+  for (i in seq.int(1, length(neg_files))) {
+    neg_filters[[i]] <- compute_filters(neg_files[[i]]$II, list(window_size = 250, filter_w_size = 100), get_info(neg_files[[i]]))
+    neg_filters[[i]]$time <- neg_files[[i]]$time
+  }
+
+  saveRDS(list(neg_files = neg_files, pos_files = pos_files, neg_filters = neg_filters, pos_filters = pos_filters),
+    file = here::here("output/backtofilters.rds"), compress = "xz"
+  )
 }
-
-neg_files <- list()
-i <- 1
-for (file in filenames[neg]) {
-  neg_files[i] <- read_ecg_csv(file, normalize = FALSE)
-  i <- i + 1
-}
-
-pos_filters <- list()
-for (i in seq.int(1, length(pos_files))) {
-  pos_filters[[i]] <- compute_filters(pos_files[[i]]$II, list(window_size = 250, filter_w_size = 100), get_info(pos_files[[i]]))
-  pos_filters[[i]]$time <- pos_files[[i]]$time
-}
-
-neg_filters <- list()
-for (i in seq.int(1, length(neg_files))) {
-  neg_filters[[i]] <- compute_filters(neg_files[[i]]$II, list(window_size = 250, filter_w_size = 100), get_info(neg_files[[i]]))
-  neg_filters[[i]]$time <- neg_files[[i]]$time
-}
+gc()
 ```
 
 Fig. \@ref(fig:filters-samples) shows a sample of a positive and a negative signal (for noise)

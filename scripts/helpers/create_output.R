@@ -4,5 +4,5 @@ create_output <- function(file = here::here("output/work_output.rds")) {
   mp_constraint <- tar_read_raw(floss_objects_names_wc[1])
   floss_constraint <- tar_read_raw(floss_objects_names_nc[1])
 
-  saveRDS(list(mp_constraint = mp_constraint, floss_constraint = floss_constraint), file)
+  saveRDS(list(mp_constraint = mp_constraint, floss_constraint = floss_constraint), file, compress = "xz")
 }
