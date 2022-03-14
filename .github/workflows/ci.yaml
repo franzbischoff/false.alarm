@@ -110,15 +110,6 @@ jobs:
       - name: Setting up pandoc and pandoc-citeproc
         uses: r-lib/actions/setup-pandoc@v1
 
-      - name: Setting up tinytex
-        uses: r-lib/actions/setup-tinytex@v2
-
-      - name: Install additional LaTeX packages
-        run: |
-          tlmgr --version
-          tlmgr install svg flafter subfig
-          tlmgr list --only-installed
-
       - name: Cache R packages
         uses: actions/cache@v2.1.4
         id: cache-packages
@@ -264,6 +255,15 @@ jobs:
 
       - name: Setting up pandoc and pandoc-citeproc
         uses: r-lib/actions/setup-pandoc@v1
+
+      - name: Setting up tinytex
+        uses: r-lib/actions/setup-tinytex@v2
+
+      - name: Install additional LaTeX packages
+        run: |
+          tlmgr --version
+          tlmgr install svg flafter subfig
+          tlmgr list --only-installed
 
       - name: Cache R packages
         uses: actions/cache@v2.1.4
