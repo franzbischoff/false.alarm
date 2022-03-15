@@ -30,26 +30,36 @@ library(tibble)
 # library(visNetwork)
 # library(kableExtra)
 # library(targets)
-# knitr::opts_knit$set(root.dir = here("docs"))
-# knitr::opts_knit$set(root.dir = ".", base.dir = ".")
+my_graphics <- function(image_name, base_path = here::here("docs", "figure")) {
+  file_path <- glue::glue("{base_path}/{image_name}")
 
-# .rmdenvir <- environment()
-# .refctr <- c(`_` = 0)
+  if (knitr::is_latex_output()) {
+    if (file.exists(glue::glue("{file_path}.pdf"))) {
+      file_path <- glue::glue("{file_path}.pdf")
+    } else if (file.exists(glue::glue("{file_path}.png"))) {
+      file_path <- glue::glue("{file_path}.png")
+    } else {
+      file_path <- glue::glue("{file_path}.jpg")
+    }
+  } else {
+    if (file.exists(glue::glue("{file_path}.svg"))) {
+      file_path <- glue::glue("{file_path}.svg")
+    } else if (file.exists(glue::glue("{file_path}.png"))) {
+      file_path <- glue::glue("{file_path}.png")
+    } else {
+      file_path <- glue::glue("{file_path}.jpg")
+    }
+  }
 
-# ref <- function(use_name) {
-#   require(stringr)
-#   if (!exists(".refctr")) .refctr <- c(`_` = 0)
-#   if (any(names(.refctr) == use_name)) {
-#     return(.refctr[use_name])
-#   }
-#   type <- str_split(use_name, ":")[[1]][1]
-#   n_obj <- sum(str_detect(names(.refctr), type))
-#   use_num <- n_obj + 1
-#   newrefctr <- c(.refctr, use_num)
-#   names(newrefctr)[length(.refctr) + 1] <- use_name
-#   assign(".refctr", newrefctr, envir = .rmdenvir)
-#   return(use_num)
-# }
+  knitr::include_graphics(file_path)
+}
+
+my_kable <- function(title, label, content) {
+  res <- glue(r"(<br><table class="tg"><caption>)", "(\\#tab:{label}) {title}", r"(</caption>{content}</table>)")
+  out <- structure(res, format = "html", class = "knitr_kable")
+  attr(out, "format") <- "html"
+  out
+}
 ```
 
 # Purpose
