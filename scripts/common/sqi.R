@@ -101,9 +101,21 @@ complexity <- function(data) {
 }
 
 hard_limit <- function(data) {
-  value <- sum(data == max(data) | data == min(data))
+  value <- sum(data == max(data, na.rm = TRUE) | data == min(data, na.rm = TRUE), na.rm = TRUE)
 }
 
+compl <- function(data) {
+  # return(sd(diff(data)))
+  return(sqrt(sum(diff(data)^2, na.rm = TRUE)))
+}
+
+ampl <- function(data) {
+  return(max(data, na.rm = TRUE) - min(data, na.rm = TRUE))
+}
+
+maximum <- function(data) {
+  return(max(data, na.rm = TRUE))
+}
 
 # Sum of Squared Differences
 # sqrt(sum(diff(data)^2) / (w-2)) ==> sqrt(var(diff(data))) ==> sd(diff(data))
@@ -114,7 +126,7 @@ win_complex <- function(data, window) {
 
   for (j in 1:profile_size) {
     # av[j] <- tsmp:::complexity(data[j:(j + window - 1)])
-    av[j] <- sum(diff(data[j:(j + window - 1)])^2)
+    av[j] <- sum(diff(data[j:(j + window - 1)])^2, na.rm = TRUE)
   }
 
   av <- sqrt(av)
@@ -144,7 +156,7 @@ hist_diff <- function(data, baseline = 0) {
 # 5 sec
 turning_points <- function(data) {
   d <- abs(diff(sign(diff(data)))) == 2
-  return(sum(d) / length(data))
+  return(sum(d, na.rm = TRUE) / length(data))
 }
 
 # "Kurtosis": Measure of the Gaussianity of a distribution.

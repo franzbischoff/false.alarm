@@ -526,7 +526,7 @@
       "@type": "SoftwareApplication",
       "identifier": "thesisdown",
       "name": "thesisdown",
-      "version": ">= 0.2.0",
+      "version": ">= 0.1.9",
       "sameAs": "https://github.com/ismayc/thesisdown"
     },
     "18": {
@@ -596,7 +596,7 @@
     },
     "SystemRequirements": "GNU make"
   },
-  "fileSize": "72235.897KB",
+  "fileSize": "75762.534KB",
   "readme": "https://github.com/franzbischoff/false.alarm/blob/master/README.md",
   "contIntegration": ["https://github.com/franzbischoff/false.alarm/actions/workflows/R-CMD-check.yaml", "https://codecov.io/gh/franzbischoff/false.alarm"],
   "developmentStatus": "https://www.repostatus.org/#wip",

@@ -53,7 +53,7 @@
 #'
 read_ecg <- function(filename, plot = FALSE, subset = NULL,
                      classes = c("all", "asystole", "bradycardia", "tachycardia", "fibv", "vtachy"),
-                     true_alarm = NULL) {
+                     true_alarm = NULL, normalize = TRUE) {
   checkmate::assert_string(filename, 3)
   checkmate::qassert(plot, "B")
   checkmate::qassert(true_alarm, c("0", "B"))
@@ -207,9 +207,17 @@ read_ecg <- function(filename, plot = FALSE, subset = NULL,
     }
     checkmate::assert_true(chksum == siginfo[[i]]$chksum)
 
-    mat_content$val[i, is.na(mat_content$val[i, ])] <- wfdb_nan
     signal <- siginfo[[i]]$description
-    signals[[signal]] <- (mat_content$val[i, ] - siginfo[[i]]$baseline) / siginfo[[i]]$gain
+    if (normalize) {
+      # if normalizing, set all wfdb_nan to NA
+      mat_content$val[i, mat_content$val[i, ] == wfdb_nan] <- NA
+      signals[[signal]] <- (mat_content$val[i, ] - siginfo[[i]]$baseline) / siginfo[[i]]$gain
+    } else {
+      # if not normalizing, set all NA to wfdb_nan
+      mat_content$val[i, is.na(mat_content$val[i, ])] <- wfdb_nan
+      signals[[signal]] <- mat_content$val[i, ]
+    }
+
 
     if (!is.null(subset)) {
       signals[[signal]] <- signals[[signal]][subset]
@@ -451,12 +459,15 @@ read_ecg_csv <- function(filename, plot = FALSE, subset = NULL,
     }
     checkmate::assert_true(chksum == siginfo[[i]]$chksum)
 
-    csv_content[is.na(csv_content[[i]]), i] <- wfdb_nan
     signal <- siginfo[[i]]$description
 
     if (normalize) {
+      # if normalizing, set all wfdb_nan to NA
+      csv_content[csv_content[[i]] == wfdb_nan, i] <- NA
       signals[[signal]] <- (csv_content[[i]] - siginfo[[i]]$baseline) / siginfo[[i]]$gain
     } else {
+      # if not normalizing, set all NA to wfdb_nan
+      csv_content[is.na(csv_content[[i]]), i] <- wfdb_nan
       signals[[signal]] <- csv_content[[i]]
     }
 
@@ -502,7 +513,8 @@ read_ecg_csv <- function(filename, plot = FALSE, subset = NULL,
 #' @param resample_to integer. If not zero, sets the new frequency of the signal. E.g.: 250. Only used if `resample_from` is not zero. Default is 0.
 #'
 
-read_ecg_with_atr <- function(filename, subset = NULL, classes = c("all", "persistent_afib", "paroxysmal_afib", "non_afib"), resample_from = 0, resample_to = 0) {
+read_ecg_with_atr <- function(filename, subset = NULL, classes = c("all", "persistent_afib", "paroxysmal_afib", "non_afib"), resample_from = 0, resample_to = 0,
+                              normalize = TRUE) {
   checkmate::assert_string(filename, min.chars = 3)
   classes <- match.arg(classes, several.ok = TRUE)
   checkmate::qassert(resample_from, "X>=0")
@@ -654,10 +666,20 @@ read_ecg_with_atr <- function(filename, subset = NULL, classes = c("all", "persi
 
     name <- siginfo[[i]]$description
 
-    if (!is.null(subset)) {
-      signals[[name]] <- csv_content[[i]][subset]
-    } else {
+    # this dataset was stored normalized...
+    if (normalize) {
+      # if normalizing, set all wfdb_nan to NA
+      # csv_content[csv_content[[i]] == wfdb_nan, i] <- NA
       signals[[name]] <- csv_content[[i]]
+      # signals[[name]] <- (csv_content[[i]] - siginfo[[i]]$baseline) / siginfo[[i]]$gain
+    } else {
+      signals[[name]] <- ((csv_content[[i]] - 5)* siginfo[[i]]$gain)# + siginfo[[i]]$baseline
+      # if not normalizing, set all NA to wfdb_nan
+      signals[[name]][is.na(signals[[name]])] <- wfdb_nan
+    }
+
+    if (!is.null(subset)) {
+      signals[[name]] <- signals[[name]][subset]
     }
 
     attr(signals[[name]], "info") <- list(signal = name, baseline = siginfo[[i]]$baseline, gain = siginfo[[i]]$gain, unit = siginfo[[i]]$unit, subset = subset_minmax)
@@ -771,7 +793,8 @@ read_and_prepare_ecgs <- function(file_paths, subset = NULL, true_alarm = NULL, 
 
       it <- read_ecg_with_atr(file,
         subset = subset,
-        resample_from = resample_from, resample_to = resample_to
+        resample_from = resample_from, resample_to = resample_to,
+        normalize = normalize
       )
     }
 

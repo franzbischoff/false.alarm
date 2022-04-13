@@ -227,10 +227,9 @@ RUN curl -sL -o /usr/bin/hadolint https://github.com/hadolint/hadolint/releases/
 RUN install.r targets tarchetypes jsonlite rlang \
   clustermq workflowr R.matlab visNetwork \
   bookdown lubridate kableExtra renv \
-  thesisdown here Rcpp RcppParallel \
-  RcppProgress RcppThread codetools \
-  lattice MASS Matrix mgcv nlme proffer\
-  languageserver
+  thesisdown here Rcpp RcppParallel matrixprofiler \
+  RcppProgress RcppThread codetools signal e1071 \
+  lattice MASS Matrix mgcv nlme proffer languageserver
 
 # install dotnet
 RUN curl -sSL -o ${HOME_USER}/packages-microsoft-prod.deb "https://packages.microsoft.com/config/ubuntu/$(lsb_release -rs)/packages-microsoft-prod.deb" \
