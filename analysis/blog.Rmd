@@ -531,43 +531,43 @@ source(here("scripts/common/sqi.R"), encoding = "UTF-8")
 ```
 
 ```{r read_files_filters}
-# neg <- c(4, 7, 8, 10, 11, 12)
-# pos <- c(1, 2, 3, 5, 6, 9)
+neg <- c(4, 7, 8, 10, 11, 12)
+pos <- c(1, 2, 3, 5, 6, 9)
 
-neg <- c(1, 2, 3, 4, 5, 6)
-pos <- c(12, 15, 17, 28, 31, 35)
+# neg <- c(1, 2, 3, 4, 5, 6)
+# pos <- c(12, 15, 17, 28, 31, 35)
 
-slot <- c(1659:4501, 5181:8784, 11830:14252)
+# slot <- c(1659:4501, 5181:8784, 11830:14252)
 
-if (file.exists(here::here("output/backtofiltersx.rds"))) {
-  backtofilters <- readRDS(here::here("output/backtofiltersx.rds"))
+if (file.exists(here::here("dev/backtofilters.rds"))) {
+  backtofilters <- readRDS(here::here("dev/backtofilters.rds"))
   pos_files <- backtofilters$pos_files
   neg_files <- backtofilters$neg_files
   pos_filters <- backtofilters$pos_filters
   neg_filters <- backtofilters$neg_filters
   rm(backtofilters)
 } else {
-  # filenames <- find_all_files(classes = "asystole", limit_per_class = max(neg, pos))
+  filenames <- find_all_files(classes = "asystole", limit_per_class = max(neg, pos))
 
-  filenames <- find_all_files(here("inst/extdata/afib_regimes"), data_type = "regimes", classes = "paroxysmal_afib", limit_per_class = max(neg, pos))
+  # filenames <- find_all_files(here("inst/extdata/afib_regimes"), data_type = "regimes", classes = "paroxysmal_afib", limit_per_class = max(neg, pos))
 
   pos_files <- list()
   i <- 1
   for (file in filenames[pos]) {
-    # pos_files[i] <- read_ecg_csv(file, normalize = FALSE)
-    pos_files[i] <- read_ecg_with_atr(file, resample_from = 200, resample_to = 250, normalize = FALSE)
+    pos_files[i] <- read_ecg_csv(file, normalize = FALSE)
+    # pos_files[i] <- read_ecg_with_atr(file, resample_from = 200, resample_to = 250, normalize = FALSE)
     i <- i + 1
   }
 
-  info <- attr(pos_files[[4]]$II, "info")
-  pos_files[[4]]$II <- pos_files[[4]]$II[slot]
-  attr(pos_files[[4]]$II, "info") <- info
+  # info <- attr(pos_files[[4]]$II, "info")
+  # pos_files[[4]]$II <- pos_files[[4]]$II[slot]
+  # attr(pos_files[[4]]$II, "info") <- info
 
   neg_files <- list()
   i <- 1
   for (file in filenames[neg]) {
-    # neg_files[i] <- read_ecg_csv(file, normalize = FALSE)
-    neg_files[i] <- read_ecg_with_atr(file, subset = 1:10000, resample_from = 200, resample_to = 250, normalize = FALSE)
+    neg_files[i] <- read_ecg_csv(file, normalize = FALSE)
+    # neg_files[i] <- read_ecg_with_atr(file, subset = 1:10000, resample_from = 200, resample_to = 250, normalize = FALSE)
     i <- i + 1
   }
 
@@ -584,7 +584,7 @@ if (file.exists(here::here("output/backtofiltersx.rds"))) {
   }
 
   saveRDS(list(neg_files = neg_files, pos_files = pos_files, neg_filters = neg_filters, pos_filters = pos_filters),
-    file = here::here("output/backtofiltersx.rds"), compress = "xz"
+    file = here::here("dev/backtofilters.rds"), compress = "xz"
   )
 }
 invisible(gc())
@@ -829,8 +829,8 @@ factors <- tibble(
   type = c("raw", "norm", "raw_gain", "norm_gain"),
   # activity_raw, activity_raw_gain and have good enough performance; activity_norm has less sensitivity on positives
   # activity_norm_gain have more FP
-  # activity = c(3, 1.1, 3, 1.1), # raw? norm?, raw_gain?
-  activity = c(1.1, 1.1, 1.1, 1.1), # raw? norm?, raw_gain?
+  activity = c(3, 1.1, 3, 1.1), # raw? norm?, raw_gain?
+  # activity = c(1.1, 1.1, 1.1, 1.1), # raw? norm?, raw_gain?
   # ampl_raw is very good; ampl_norm has many FP; ampl_raw_gain started to have more FP without improvement on TP;
   # ampl_norm_gain needs <1 and gets many FP
   ampl = c(1.1, 1.1, 1.1, 1.1),
@@ -838,15 +838,15 @@ factors <- tibble(
   # complex_norm_gain needs <1 and gets many FP
   complex = c(1.1, 1.1, 1.1, 1.1), # raw, norm, raw_gain,
   # complexity seems to suffer from the same problem as mobility, but seems to be attracted by slopes
-  # complexity = c(2, 2, 3.86198, 3.144),
-  complexity = c(1.1, 1.1, 1.1, 1.1),
+  complexity = c(2, 2, 3.86198, 3.144),
+  # complexity = c(1.1, 1.1, 1.1, 1.1),
   # mobility_raw and mobility_norm fail completely on classification and seems to be sensitive to high frequency-high amplitude changes.
   # The gain seems to change this sensitivity.
-  # mobility = c(1.5, 1.562, 1.1, 1.1),
-  mobility = c(1.1, 1.1, 1.1, 1.1),
+  mobility = c(1.5, 1.562, 1.1, 1.1),
+  # mobility = c(1.1, 1.1, 1.1, 1.1),
   # poor results
-  # kurtosis = c(2, 2, 2.17999, 2.13179),
-  kurtosis = c(1.1, 1.1, 1.1, 1.1),
+  kurtosis = c(2, 2, 2.17999, 2.13179),
+  # kurtosis = c(1.1, 1.1, 1.1, 1.1),
   maximum = c(1.1, 1.1, 1.1, 1.1)
 )
 
@@ -1540,7 +1540,8 @@ invisible(gc())
 
 all_values_neg <- purrr::list_modify(values_neg_raw, !!!values_neg_norm, !!!values_neg_raw_gain, !!!values_neg_norm_gain)
 
-df_neg_all <- list_df(all_values_neg, TRUE, lag = 10, pad = 1000)
+df_neg_all <- list_df(all_values_neg, TRUE, lag = 10, pad = 100)
+df_neg_all <- df_neg_all[seq.int(1, nrow(df_neg_all), by = 5), ] # resize
 vars <- setdiff(names(df_neg_all), "x")
 plots_neg_all <- lapply(vars, function(var) {
   plot_ly(df_neg_all, x = ~x, y = as.formula(paste0("~", var))) %>%
@@ -1560,7 +1561,8 @@ concatenation of the records with a boundary of 1000 samples before and after an
 
 all_values_pos <- purrr::list_modify(values_pos_raw, !!!values_pos_norm, !!!values_pos_raw_gain, !!!values_pos_norm_gain)
 
-df_pos_all <- list_df(all_values_pos, TRUE, lag = 10, pad = 1000)
+df_pos_all <- list_df(all_values_pos, TRUE, lag = 10, pad = 100)
+df_pos_all <- df_pos_all[seq.int(1, nrow(df_pos_all), by = 5), ] # resize
 vars <- setdiff(names(df_pos_all), "x")
 plots_pos_all <- lapply(vars, function(var) {
   plot_ly(df_pos_all, x = ~x, y = as.formula(paste0("~", var))) %>%
@@ -1570,7 +1572,6 @@ plots_pos_all <- lapply(vars, function(var) {
 subplot(plots_pos_all, nrows = length(plots_pos_all), shareX = TRUE, titleX = FALSE, margin = 0) %>%
   config(displaylogo = FALSE, scrollZoom = TRUE, toImageButtonOptions = list(format = "svg"))
 ```
-
 
 Fig. \@ref(fig:posfiles-plot-best) shows the best SQIs only.
 
@@ -1600,15 +1601,15 @@ fibrillation".
 neg <- c(1, 2, 3, 4, 5, 7, 8, 9, 10)
 pos <- c(6, 11, 12, 13, 14, 15)
 
-if (file.exists(here::here("output/backtofilters2.rds"))) {
-  backtofilters2 <- readRDS(here::here("output/backtofilters2.rds"))
+if (file.exists(here::here("dev/backtofilters2.rds"))) {
+  backtofilters2 <- readRDS(here::here("dev/backtofilters2.rds"))
   pos_files <- backtofilters2$pos_files
   neg_files <- backtofilters2$neg_files
   pos_filters <- backtofilters2$pos_filters
   neg_filters <- backtofilters2$neg_filters
   rm(backtofilters2)
 } else {
-  filenames <- find_all_files(classes = "vfib", limit_per_class = length(neg) + length(pos))
+  filenames <- find_all_files(classes = "fibv", limit_per_class = max(neg, pos))
 
   pos_files <- list()
   i <- 1
@@ -1637,7 +1638,7 @@ if (file.exists(here::here("output/backtofilters2.rds"))) {
   }
 
   saveRDS(list(neg_files = neg_files, pos_files = pos_files, neg_filters = neg_filters, pos_filters = pos_filters),
-    file = here::here("output/backtofilters2.rds"), compress = "xz"
+    file = here::here("dev/backtofilters2.rds"), compress = "xz"
   )
 }
 invisible(gc())
@@ -1753,8 +1754,9 @@ Here are the false positives (Fig. \@ref(fig:negfiles2-plot-all)):
 
 all_values_neg <- purrr::list_modify(values_neg_raw, !!!values_neg_norm, !!!values_neg_raw_gain, !!!values_neg_norm_gain)
 
-df_neg_all <- list_df(all_values_neg, TRUE, lag = 10, pad = 1000) %>%
+df_neg_all <- list_df(all_values_neg, TRUE, lag = 10, pad = 100) %>%
   select(x, data, maximum_raw, maximum_raw_gain, maximum_norm, maximum_norm_gain, activity_raw, activity_raw_gain, ampl_raw, complex_norm, complex_raw, complex_raw_gain)
+df_neg_all <- df_neg_all[seq.int(1, nrow(df_neg_all), by = 5), ] # resize
 vars <- setdiff(names(df_neg_all), "x")
 plots_neg_all <- lapply(vars, function(var) {
   plot_ly(df_neg_all, x = ~x, y = as.formula(paste0("~", var))) %>%
@@ -1772,8 +1774,9 @@ And the Recall (Fig. \@ref(fig:posfiles2-plot-all)):
 
 all_values_pos <- purrr::list_modify(values_pos_raw, !!!values_pos_norm, !!!values_pos_raw_gain, !!!values_pos_norm_gain)
 
-df_pos_all <- list_df(all_values_pos, TRUE, lag = 10, pad = 1000) %>%
+df_pos_all <- list_df(all_values_pos, TRUE, lag = 10, pad = 100) %>%
   select(x, data, maximum_raw, maximum_raw_gain, maximum_norm, maximum_norm_gain, activity_raw, activity_raw_gain, ampl_raw, complex_norm, complex_raw, complex_raw_gain)
+df_pos_all <- df_pos_all[seq.int(1, nrow(df_pos_all), by = 5), ] # resize
 vars <- setdiff(names(df_pos_all), "x")
 plots_pos_all <- lapply(vars, function(var) {
   plot_ly(df_pos_all, x = ~x, y = as.formula(paste0("~", var))) %>%
@@ -1815,9 +1818,5 @@ don't have a precise label of the artifacts position to acuratelly calculate the
 
 Further work still to be done in order to attempt to leverage the gain information and baseline
 shifts in order to improve the performance of the algorithms.
-
-## Further Steps {-}
-
-- Publish results
 
 ## References {-}
