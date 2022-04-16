@@ -1,0 +1,1235 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<meta charset="utf-8">
+	<meta name="generator" content="pandoc">
+	<meta name="author" content="Francisco Bischoff" />
+	<meta name="dcterms.date" content="2021-10-21" />
+	<title>False Alarm</title>
+	<meta name="apple-mobile-web-app-capable" content="yes">
+	<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+	<meta name="viewport"
+		content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui">
+	<link rel="stylesheet" href="MEDCIDS21-10min_files/reveal.js-3.3.0.1/css/reveal.css" />
+
+
+
+	<link rel="stylesheet" href="MEDCIDS21-10min_files/reveal.js-3.3.0.1/css/theme/white.css" id="theme">
+
+
+	<!-- some tweaks to reveal css -->
+	<style type="text/css">
+		.reveal h1 {
+			font-size: 2.0em;
+		}
+
+		.reveal h2 {
+			font-size: 1.5em;
+		}
+
+		.reveal h3 {
+			font-size: 1.25em;
+		}
+
+		.reveal h4 {
+			font-size: 1em;
+		}
+
+		.reveal .slides>section,
+		.reveal .slides>section>section {
+			padding: 0px 0px;
+		}
+
+
+
+		.reveal table {
+			border-width: 1px;
+			border-spacing: 2px;
+			border-style: dotted;
+			border-color: gray;
+			border-collapse: collapse;
+			font-size: 0.7em;
+		}
+
+		.reveal table th {
+			border-width: 1px;
+			padding-left: 10px;
+			padding-right: 25px;
+			font-weight: bold;
+			border-style: dotted;
+			border-color: gray;
+		}
+
+		.reveal table td {
+			border-width: 1px;
+			padding-left: 10px;
+			padding-right: 25px;
+			border-style: dotted;
+			border-color: gray;
+		}
+	</style>
+
+	<style type="text/css">
+		code {
+			white-space: pre;
+		}
+	</style>
+
+	<link rel="stylesheet" href="style.css" />
+
+	<!-- Printing and PDF exports -->
+	<script id="paper-css" type="application/dynamic-css">
+
+/* Default Print Stylesheet Template
+   by Rob Glazebrook of CSSnewbie.com
+   Last Updated: June 4, 2008
+
+   Feel free (nay, compelled) to edit, append, and
+   manipulate this file as you see fit. */
+
+
+@media print {
+
+	/* SECTION 1: Set default width, margin, float, and
+	   background. This prevents elements from extending
+	   beyond the edge of the printed page, and prevents
+	   unnecessary background images from printing */
+	html {
+		background: #fff;
+		width: auto;
+		height: auto;
+		overflow: visible;
+	}
+	body {
+		background: #fff;
+		font-size: 20pt;
+		width: auto;
+		height: auto;
+		border: 0;
+		margin: 0 5%;
+		padding: 0;
+		overflow: visible;
+		float: none !important;
+	}
+
+	/* SECTION 2: Remove any elements not needed in print.
+	   This would include navigation, ads, sidebars, etc. */
+	.nestedarrow,
+	.controls,
+	.fork-reveal,
+	.share-reveal,
+	.state-background,
+	.reveal .progress,
+	.reveal .backgrounds {
+		display: none !important;
+	}
+
+	/* SECTION 3: Set body font face, size, and color.
+	   Consider using a serif font for readability. */
+	body, p, td, li, div {
+		font-size: 20pt!important;
+		font-family: Georgia, "Times New Roman", Times, serif !important;
+		color: #000;
+	}
+
+	/* SECTION 4: Set heading font face, sizes, and color.
+	   Differentiate your headings from your body text.
+	   Perhaps use a large sans-serif for distinction. */
+	h1,h2,h3,h4,h5,h6 {
+		color: #000!important;
+		height: auto;
+		line-height: normal;
+		font-family: Georgia, "Times New Roman", Times, serif !important;
+		text-shadow: 0 0 0 #000 !important;
+		text-align: left;
+		letter-spacing: normal;
+	}
+	/* Need to reduce the size of the fonts for printing */
+	h1 { font-size: 28pt !important;  }
+	h2 { font-size: 24pt !important; }
+	h3 { font-size: 22pt !important; }
+	h4 { font-size: 22pt !important; font-variant: small-caps; }
+	h5 { font-size: 21pt !important; }
+	h6 { font-size: 20pt !important; font-style: italic; }
+
+	/* SECTION 5: Make hyperlinks more usable.
+	   Ensure links are underlined, and consider appending
+	   the URL to the end of the link for usability. */
+	a:link,
+	a:visited {
+		color: #000 !important;
+		font-weight: bold;
+		text-decoration: underline;
+	}
+	/*
+	.reveal a:link:after,
+	.reveal a:visited:after {
+		content: " (" attr(href) ") ";
+		color: #222 !important;
+		font-size: 90%;
+	}
+	*/
+
+
+	/* SECTION 6: more reveal.js specific additions by @skypanther */
+	ul, ol, div, p {
+		visibility: visible;
+		position: static;
+		width: auto;
+		height: auto;
+		display: block;
+		overflow: visible;
+		margin: 0;
+		text-align: left !important;
+	}
+	.reveal pre,
+	.reveal table {
+		margin-left: 0;
+		margin-right: 0;
+	}
+	.reveal pre code {
+		padding: 20px;
+		border: 1px solid #ddd;
+	}
+	.reveal blockquote {
+		margin: 20px 0;
+	}
+	.reveal .slides {
+		position: static !important;
+		width: auto !important;
+		height: auto !important;
+
+		left: 0 !important;
+		top: 0 !important;
+		margin-left: 0 !important;
+		margin-top: 0 !important;
+		padding: 0 !important;
+		zoom: 1 !important;
+
+		overflow: visible !important;
+		display: block !important;
+
+		text-align: left !important;
+		-webkit-perspective: none;
+		   -moz-perspective: none;
+		    -ms-perspective: none;
+		        perspective: none;
+
+		-webkit-perspective-origin: 50% 50%;
+		   -moz-perspective-origin: 50% 50%;
+		    -ms-perspective-origin: 50% 50%;
+		        perspective-origin: 50% 50%;
+	}
+	.reveal .slides section {
+		visibility: visible !important;
+		position: static !important;
+		width: auto !important;
+		height: auto !important;
+		display: block !important;
+		overflow: visible !important;
+
+		left: 0 !important;
+		top: 0 !important;
+		margin-left: 0 !important;
+		margin-top: 0 !important;
+		padding: 60px 20px !important;
+		z-index: auto !important;
+
+		opacity: 1 !important;
+
+		page-break-after: always !important;
+
+		-webkit-transform-style: flat !important;
+		   -moz-transform-style: flat !important;
+		    -ms-transform-style: flat !important;
+		        transform-style: flat !important;
+
+		-webkit-transform: none !important;
+		   -moz-transform: none !important;
+		    -ms-transform: none !important;
+		        transform: none !important;
+
+		-webkit-transition: none !important;
+		   -moz-transition: none !important;
+		    -ms-transition: none !important;
+		        transition: none !important;
+	}
+	.reveal .slides section.stack {
+		padding: 0 !important;
+	}
+	.reveal section:last-of-type {
+		page-break-after: avoid !important;
+	}
+	.reveal section .fragment {
+		opacity: 1 !important;
+		visibility: visible !important;
+
+		-webkit-transform: none !important;
+		   -moz-transform: none !important;
+		    -ms-transform: none !important;
+		        transform: none !important;
+	}
+	.reveal section img {
+		display: block;
+		margin: 15px 0px;
+		background: rgba(255,255,255,1);
+		border: 1px solid #666;
+		box-shadow: none;
+	}
+
+	.reveal section small {
+		font-size: 0.8em;
+	}
+
+}
+</script>
+
+
+	<script id="pdf-css" type="application/dynamic-css">
+
+/**
+ * This stylesheet is used to print reveal.js
+ * presentations to PDF.
+ *
+ * https://github.com/hakimel/reveal.js#pdf-export
+ */
+
+* {
+	-webkit-print-color-adjust: exact;
+}
+
+body {
+	margin: 0 auto !important;
+	border: 0;
+	padding: 0;
+	float: none !important;
+	overflow: visible;
+}
+
+html {
+	width: 100%;
+	height: 100%;
+	overflow: visible;
+}
+
+/* Remove any elements not needed in print. */
+.nestedarrow,
+.reveal .controls,
+.reveal .progress,
+.reveal .playback,
+.reveal.overview,
+.fork-reveal,
+.share-reveal,
+.state-background {
+	display: none !important;
+}
+
+h1, h2, h3, h4, h5, h6 {
+	text-shadow: 0 0 0 #000 !important;
+}
+
+.reveal pre code {
+	overflow: hidden !important;
+	font-family: Courier, 'Courier New', monospace !important;
+}
+
+ul, ol, div, p {
+	visibility: visible;
+	position: static;
+	width: auto;
+	height: auto;
+	display: block;
+	overflow: visible;
+	margin: auto;
+}
+.reveal {
+	width: auto !important;
+	height: auto !important;
+	overflow: hidden !important;
+}
+.reveal .slides {
+	position: static;
+	width: 100%;
+	height: auto;
+
+	left: auto;
+	top: auto;
+	margin: 0 !important;
+	padding: 0 !important;
+
+	overflow: visible;
+	display: block;
+
+	-webkit-perspective: none;
+	   -moz-perspective: none;
+	    -ms-perspective: none;
+	        perspective: none;
+
+	-webkit-perspective-origin: 50% 50%; /* there isn't a none/auto value but 50-50 is the default */
+	   -moz-perspective-origin: 50% 50%;
+	    -ms-perspective-origin: 50% 50%;
+	        perspective-origin: 50% 50%;
+}
+
+.reveal .slides section {
+	page-break-after: always !important;
+
+	visibility: visible !important;
+	position: relative !important;
+	display: block !important;
+	position: relative !important;
+
+	margin: 0 !important;
+	padding: 0 !important;
+	box-sizing: border-box !important;
+	min-height: 1px;
+
+	opacity: 1 !important;
+
+	-webkit-transform-style: flat !important;
+	   -moz-transform-style: flat !important;
+	    -ms-transform-style: flat !important;
+	        transform-style: flat !important;
+
+	-webkit-transform: none !important;
+	   -moz-transform: none !important;
+	    -ms-transform: none !important;
+	        transform: none !important;
+}
+
+.reveal section.stack {
+	margin: 0 !important;
+	padding: 0 !important;
+	page-break-after: avoid !important;
+	height: auto !important;
+	min-height: auto !important;
+}
+
+.reveal img {
+	box-shadow: none;
+}
+
+.reveal .roll {
+	overflow: visible;
+	line-height: 1em;
+}
+
+/* Slide backgrounds are placed inside of their slide when exporting to PDF */
+.reveal section .slide-background {
+	display: block !important;
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 100%;
+	z-index: -1;
+}
+
+/* All elements should be above the slide-background */
+.reveal section>* {
+	position: relative;
+	z-index: 1;
+}
+
+/* Display slide speaker notes when 'showNotes' is enabled */
+.reveal .speaker-notes-pdf {
+	display: block;
+	width: 100%;
+	max-height: none;
+	left: auto;
+	top: auto;
+	z-index: 100;
+}
+
+/* Display slide numbers when 'slideNumber' is enabled */
+.reveal .slide-number-pdf {
+	display: block;
+	position: absolute;
+	font-size: 14px;
+}
+
+</script>
+
+
+	<script>
+		var style = document.createElement('style');
+		style.type = 'text/css';
+		var style_script_id = window.location.search.match(/print-pdf/gi) ? 'pdf-css' : 'paper-css';
+		var style_script = document.getElementById(style_script_id).text;
+		style.innerHTML = style_script;
+		document.getElementsByTagName('head')[0].appendChild(style);
+	</script>
+
+	<div class="header">Francisco Bischoff - False Alarm - CINTESIS - 2021</div>
+	<script src="MEDCIDS21-10min_files/header-attrs-2.11/header-attrs.js"></script>
+	<script src="MEDCIDS21-10min_files/kePrint-0.0.1/kePrint.js"></script>
+	<link href="MEDCIDS21-10min_files/lightable-0.0.1/lightable.css" rel="stylesheet" />
+</head>
+
+<body>
+	<div class="reveal">
+		<div class="slides">
+
+			<section>
+				<h1 class="title">False Alarm</h1>
+				<h2 class="author">Francisco Bischoff</h2>
+				<h3 class="date">2021-10-21</h3>
+			</section>
+
+			<section>
+				<section id="introduction" class="title-slide slide level1">
+					<h1>Introduction</h1>
+					<div class="figure" style="text-align: center">
+						<img src="figures/pocmonitor.jpg" alt="Fig. 1:  POC Monitor." />
+						<p class="caption">
+							Fig. 1:  POC Monitor.
+						</p>
+					</div>
+					<aside class="notes">
+						<div style="font-size:0.9em">
+							<ul>
+								<li>POC devices works “either” as plot or alarms using predefined normal trigger ranges</li>
+								<li>Modern devices also incorporate algorithms to analyze arrhythmias improving their specificity</li>
+							</ul>
+						</div>
+					</aside>
+				</section>
+				<section class="slide level2">
+
+					<div class="figure" style="text-align: center">
+						<img src="figures/ecg12deriv.jpg" alt="Fig. 2:  12-derivation ECG." />
+						<p class="caption">
+							Fig. 2:  12-derivation ECG.
+						</p>
+					</div>
+					<p><br />
+						False alarms increases both patient and staff’s stress; depending on how it is measured, the rate of false
+						alarms (overall) in ICU is estimated at 65 to 95% <span class="citation"
+							data-cites="donchin2002">(<em>Donchin, 2002</em>)</span>.</p>
+					<aside class="notes">
+						<div style="font-size:0.9em">
+							<p>12-derivation ECG machines are complex</p>
+							<ul>
+								<li>Both systems do not handle disconnected leads and patient’s motions, being strictly necessary to
+									have a good and stable signal to allow proper diagnosis.</li>
+							</ul>
+						</div>
+					</aside>
+				</section>
+			</section>
+			<section id="objectives-and-the-research-question" class="title-slide slide level1">
+				<h1>Objectives and the research question</h1>
+				<p><strong>AIM:</strong> to identify, on streaming data, abnormal hearth electric patterns, specifically those
+					which are life-threatening, to be a reliable signal for Intensive Care Units to respond quickly to those
+					situations.</p>
+				<p><strong>If possible:</strong> It also may be able to continuously analyze new data and correct itself
+					shutting off false alarms.</p>
+				<p>Questions:</p>
+				<ol type="1">
+					<li>
+						<p>Can we reduce the number of false alarms in the ICU setting?</p>
+					</li>
+					<li>
+						<p>Can we accomplish this objective using a minimalist approach (low CPU, low memory) while maintaining
+							robustness?</p>
+					</li>
+					<li>
+						<p>Can this approach be used in other health domains other than ICU or ECG?</p>
+					</li>
+				</ol>
+			</section>
+
+			<section>
+				<section id="related-works" class="title-slide slide level1">
+					<h1>Related Works</h1>
+					<p>The CinC/Physionet Challenge 2015 produced several papers aiming to reduce false alarms on their
+						dataset.<br />
+					</p>
+					<table class="table" style="margin-left: auto; margin-right: auto;">
+						<caption>
+							Table 1 - Definition of the 5 alarm types used in CinC/Physionet Challenge 2015 challenge.
+						</caption>
+						<thead>
+							<tr>
+								<th style="text-align:left;font-weight: bold;">
+									Alarm
+								</th>
+								<th style="text-align:left;font-weight: bold;">
+									Definition
+								</th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr>
+								<td style="text-align:left;width: 5cm; ">
+									Asystole
+								</td>
+								<td style="text-align:left;">
+									No QRS for at least 4 seconds
+								</td>
+							</tr>
+							<tr>
+								<td style="text-align:left;width: 5cm; ">
+									Extreme Bradycardia
+								</td>
+								<td style="text-align:left;">
+									Heart rate lower than 40 bpm for 5 consecutive beats
+								</td>
+							</tr>
+							<tr>
+								<td style="text-align:left;width: 5cm; ">
+									Extreme Tachycardia
+								</td>
+								<td style="text-align:left;">
+									Heart rate higher than 140 bpm for 17 consecutive beats
+								</td>
+							</tr>
+							<tr>
+								<td style="text-align:left;width: 5cm; ">
+									Ventricular Tachycardia
+								</td>
+								<td style="text-align:left;">
+									5 or more ventricular beats with heart rate higher than 100 bpm
+								</td>
+							</tr>
+							<tr>
+								<td style="text-align:left;width: 5cm; ">
+									Ventricular Flutter/Fibrillation
+								</td>
+								<td style="text-align:left;">
+									Fibrillatory, flutter, or oscillatory waveform for at least 4 seconds
+								</td>
+							</tr>
+						</tbody>
+					</table>
+					<aside class="notes">
+						<div style="font-size:0.9em">
+							<ul>
+								<li>In Table 1 it is listed the five life-threatening alarms present in their dataset.</li>
+							</ul>
+						</div>
+					</aside>
+				</section>
+				<section class="slide level2">
+
+					<table class="table" style="margin-left: auto; margin-right: auto;">
+						<caption>
+							Table 2 - Challenge Results on Streaming
+						</caption>
+						<thead>
+							<tr>
+								<th style="text-align:center;font-weight: bold;">
+									Score
+								</th>
+								<th style="text-align:left;font-weight: bold;">
+									Authors
+								</th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr>
+								<td style="text-align:center;">
+									81.39
+								</td>
+								<td style="text-align:left;width: 9cm; ">
+									Filip Plesinger, Petr Klimes, Josef Halamek, Pavel Jurak
+								</td>
+							</tr>
+							<tr>
+								<td style="text-align:center;">
+									79.44
+								</td>
+								<td style="text-align:left;width: 9cm; ">
+									Vignesh Kalidas
+								</td>
+							</tr>
+							<tr>
+								<td style="text-align:center;">
+									79.02
+								</td>
+								<td style="text-align:left;width: 9cm; ">
+									Paula Couto, Ruben Ramalho, Rui Rodrigues
+								</td>
+							</tr>
+							<tr>
+								<td style="text-align:center;">
+									76.11
+								</td>
+								<td style="text-align:left;width: 9cm; ">
+									Sibylle Fallet, Sasan Yazdani, Jean-Marc Vesin
+								</td>
+							</tr>
+							<tr>
+								<td style="text-align:center;">
+									75.55
+								</td>
+								<td style="text-align:left;width: 9cm; ">
+									Christoph Hoog Antink, Steffen Leonhardt
+								</td>
+							</tr>
+						</tbody>
+					</table>
+					<aside class="notes">
+						<div style="font-size:0.9em">
+							<ul>
+								<li>In Table 3 it is listed the top-5 Challenge Results on Streaming.</li>
+							</ul>
+						</div>
+					</aside>
+				</section>
+			</section>
+			<section>
+				<section id="research-plan-and-methods" class="title-slide slide level1">
+					<h1>Research plan and methods</h1>
+					<p>This research is being conducted using the Research Compendium principles<span class="citation"
+							data-cites="compendium2019">(<em><span>“Research compendium,”</span> 2019</em>)</span>:</p>
+					<div class="figure" style="text-align: center">
+						<img src="figures/compendium_principles.png" alt="Fig. 3:  Research Compendium principles." />
+						<p class="caption">
+							Fig. 3:  Research Compendium principles.
+						</p>
+					</div>
+				</section>
+				<section class="slide level2">
+
+					<p>Data management follows the FAIR principle (findable, accessible, interoperable, reusable)<span
+							class="citation" data-cites="wilkinson2016">(<em>Wilkinson, 2016</em>)</span>.</p>
+					<div class="figure" style="text-align: center">
+						<img src="figures/compendium_principles2.png"
+							alt="Fig. 4:  FAIR principle (findable, accessible, interoperable, reusable)." />
+						<p class="caption">
+							Fig. 4:  FAIR principle (findable, accessible, interoperable, reusable).
+						</p>
+					</div>
+				</section>
+				<section class="slide level2">
+
+					<p>All steps of the process will be managed using the R package <code>targets</code><span class="citation"
+							data-cites="landau2021">(<em>Landau, 2021</em>)</span> from data extraction to the final report, as shown
+						in Fig. 5.</p>
+					<div class="figure" style="text-align: center">
+						<img src="figures/targets.png" alt="Fig. 5:  Reproducible research workflow using `targets`." />
+						<p class="caption">
+							Fig. 5:  Reproducible research workflow using <code>targets</code>.
+						</p>
+					</div>
+				</section>
+				<section class="slide level2">
+
+					<div class="figure" style="text-align: center">
+						<img src="figures/workflowr_print.png" alt="Fig. 6:  Reproducible research workflow using `workflowr`." />
+						<p class="caption">
+							Fig. 6:  Reproducible research workflow using <code>workflowr</code>.
+						</p>
+					</div>
+				</section>
+				<section class="slide level2">
+
+					<div class="figure" style="text-align: center">
+						<img src="figures/session_information.png"
+							alt="Fig. 7:  Reproducible research workflow using `workflowr`." />
+						<p class="caption">
+							Fig. 7:  Reproducible research workflow using <code>workflowr</code>.
+						</p>
+					</div>
+				</section>
+				<section class="slide level2">
+
+					<div class="figure" style="text-align: center">
+						<img src="figures/badges.png" alt="Fig. 8:  Ready to code, versioned, code quality checked." />
+						<p class="caption">
+							Fig. 8:  Ready to code, versioned, code quality checked.
+						</p>
+					</div>
+				</section>
+				<section class="slide level2">
+
+					<p>The dataset is publicly available at Zenodo: <img data-src="figures/zenodo.doi.svg"
+							style="height:1em;margin: 0 0 -0.2em 0;" /></p>
+					<div class="figure" style="text-align: center">
+						<img src="figures/zenodo.png" alt="Fig. 9:  FAIR principle (findable, accessible, interoperable, reusable)."
+							width="60%" />
+						<p class="caption">
+							Fig. 9:  FAIR principle (findable, accessible, interoperable, reusable).
+						</p>
+					</div>
+					<aside class="notes">
+						<div style="font-size:0.9em">
+							<p>Currently, the dataset used is stored on a public repository<span class="citation"
+									data-cites="franz_dataset">(<em><span>“The PhysioNet computing in cardiology challenge 2015 -
+											dataset,”</span> 2021</em>)</span>, the source code is publicly open and stored on Github<span
+									class="citation" data-cites="franz_github">(<em><span>“Franzbischoff/false.alarm,”</span>
+										2020</em>)</span>, while the reports and reproducibility information on each step is found on a
+								public website<span class="citation"
+									data-cites="franz_website">(<em><span>“Franzbischoff/false.alarm,”</span> 2021</em>)</span>. The
+								current dataset and further collected data will be publicly available following the FAIR principle.</p>
+						</div>
+					</aside>
+				</section>
+				<section id="proposed-approach" class="slide level2">
+					<h2>Proposed approach</h2>
+					<p>The proposed approach is depicted in Fig. 10:</p>
+					<div class="figure" style="text-align: center">
+						<img src="figures/false_alarm.svg"
+							alt="Fig. 10:  Proposed approach to train the model for relevant patterns detection." />
+						<p class="caption">
+							Fig. 10:  Proposed approach to train the model for relevant patterns detection.
+						</p>
+					</div>
+					<aside class="notes">
+						<div style="font-size:0.9em">
+							<ul>
+								<li>That is only a draft of the final workflow.</li>
+								<li>The algorithm for the classification of the regime changes is still to be defined.</li>
+								<li>However, the main innovation resides in the correct regime detection.</li>
+								<li>Also, to achieve the goal of low CPU and memory usage, the strategy will be to combine fading
+									factors<span class="citation" data-cites="Gama2013 Rodrigues2010">(<em>Gama, 2013</em>; <em>Rodrigues,
+											2010</em>)</span> to reduce computation in online settings like in this research.</li>
+							</ul>
+						</div>
+					</aside>
+				</section>
+			</section>
+			<section>
+				<section id="preliminary-experimentations" class="title-slide slide level1">
+					<h1>Preliminary Experimentations</h1>
+
+				</section>
+				<section id="raw-data" class="slide level2">
+					<h2>Raw Data</h2>
+					<p>While programming the pipeline for the current dataset, it has been acquired a Single Lead Heart Rate
+						Monitor breakout from Sparkfun<sup>TM</sup> <span class="citation"
+							data-cites="sparkfun2021">(<em><span>“<span>SparkFun Single Lead Heart Rate Monitor - AD8232 - SEN-12650 -
+										SparkFun Electronics</span>,”</span> n.d.</em>)</span> using the AD8232 <span class="citation"
+							data-cites="AnalogDevices2020">(<em>Analog Devices, 2020</em>)</span> microchip from Analog Devices Inc.,
+						compatible with Arduino<sup>(R)</sup> <span class="citation"
+							data-cites="arduino2021">(<em><span>“<span>Arduino</span>,”</span> n.d.</em>)</span>, for an in-house
+						experiment. Fig. 11.</p>
+					<div class="figure" style="text-align: center">
+						<img src="figures/sparkfun2.jpg" alt="Fig. 11:  Single Lead Heart Rate Monitor" />
+						<p class="caption">
+							Fig. 11:  Single Lead Heart Rate Monitor
+						</p>
+					</div>
+				</section>
+				<section class="slide level2">
+
+					<p>The output gives us a raw signal as shown in Fig. 12.</p>
+					<div class="figure" style="text-align: center">
+						<img src="figures/arduino_plot.jpg" alt="Fig. 12:  raw output from Arduino at ~300Hz" />
+						<p class="caption">
+							Fig. 12:  raw output from Arduino at ~300Hz
+						</p>
+					</div>
+					<p>After applying the same settings as the Physionet database (collecting the data at 500Hz, resample to
+						250Hz, pass-filter, and notch filter), the signal is much better as shown in Fig. 13.</p>
+					<div class="figure" style="text-align: center">
+						<img src="figures/filtered_ecg.png" alt="Fig. 13:  Gray is raw, Red is filtered" />
+						<p class="caption">
+							Fig. 13:  Gray is raw, Red is filtered
+						</p>
+					</div>
+				</section>
+				<section id="data-quality" class="slide level2">
+					<h2>Data quality</h2>
+					<p>At the same time, the ECG data needs to be “cleaned” for proper evaluation. That is different from the
+						initial filtering process. Several SQIs (Signal Quality Indexes) are used on literature <span
+							class="citation" data-cites="eerikainen2015">(<em>Eerikainen, 2015</em>)</span>, some trivial measures as
+						<em>kurtosis</em>, <em>skewness</em>, median local noise level, other more complex as pcaSQI (the ratio of
+						the sum of the five largest eigenvalues associated with the principal components over the sum of all
+						eigenvalues obtained by principal component analysis applied to the time aligned ECG segments in the
+						window). By experimentation (yet to be validated), a simple formula gives us the “complexity” of the signal
+						and correlates well with the noisy data is shown in Equation <span
+							class="math inline">\(\eqref{complex}\)</span>.
+					</p>
+					<p><span class="math display">\[
+							\sqrt{\sum_{i=1}^w((x_{i+1}-x_i)^2)}, \quad \text{where}\; w \; \text{is the window size} \tag{1}
+							\label{complex}
+							\]</span></p>
+				</section>
+				<section class="slide level2">
+
+					<p>The Fig. 14 shows some SQIs.</p>
+					<div class="figure" style="text-align: center">
+						<img src="figures/noise.png" alt="Fig. 14:  Green line is the &quot;complexity&quot; of the signal" />
+						<p class="caption">
+							Fig. 14:  Green line is the “complexity” of the signal
+						</p>
+					</div>
+				</section>
+				<section class="slide level2">
+
+					<p>Fig. 15 shows that noisy data (probably patient muscle movements) are marked with a blue point and thus are
+						ignored by the algorithm. Also, valid for the following plots, the green and red lines on the data mark the
+						10 seconds window where the “event” that triggers the alarm is supposed to happen.</p>
+					<div class="figure" style="text-align: center">
+						<img src="figures/regime_filtered.png" alt="Fig. 15:  Regime changes with noisy data - false alarm" />
+						<p class="caption">
+							Fig. 15:  Regime changes with noisy data - false alarm
+						</p>
+					</div>
+				</section>
+				<section class="slide level2">
+
+					<p>In Fig. 16, the data is clean; thus, nothing is excluded. Interestingly one of the detected regime changes
+						is inside the “green-red” window. But it is a false alarm.</p>
+					<div class="figure" style="text-align: center">
+						<img src="figures/regime_false.png" alt="Fig. 16:  Regime changes with good data - false alarm" />
+						<p class="caption">
+							Fig. 16:  Regime changes with good data - false alarm
+						</p>
+					</div>
+				</section>
+				<section class="slide level2">
+
+					<p>The last plot (Fig. 17) shows the algorithm’s robustness, not excluding good data with a wandering
+						baseline, and the last regime change is correctly detected inside the “green-red” window.</p>
+					<div class="figure" style="text-align: center">
+						<img src="figures/regime_true.png"
+							alt="Fig. 17:  Regime changes with good but wandering data - true alarm" />
+						<p class="caption">
+							Fig. 17:  Regime changes with good but wandering data - true alarm
+						</p>
+					</div>
+				</section>
+			</section>
+			<section>
+				<section id="detecting-regime-changes" class="title-slide slide level1">
+					<h1>Detecting Regime Changes</h1>
+					<p>Briefly describing the regime detection algorithm, which can be explored in the original paper <span
+							class="citation" data-cites="gharghabi2018">(<em>Gharghabi, 2018</em>)</span>, it is based on the
+						assumption that between two regimes, the most similar shape (its nearest neighbor) is located on “the same
+						side.” This information is obtained from the Matrix Profile computation. More precisely, using only the
+						Profile Index.</p>
+					<div class="figure" style="text-align: center">
+						<img src="figures/arcs_fluss_original.png" alt="Fig. 18:  FLUSS algorithm, using arc counts." />
+						<p class="caption">
+							Fig. 18:  FLUSS algorithm, using arc counts.
+						</p>
+					</div>
+				</section>
+				<section class="slide level2">
+
+					<p>Claims about the algorithm:</p>
+					<ul>
+						<li><strong>Domain Agnosticism:</strong> the algorithm makes no assumptions about the data as opposed to
+							most available algorithms to date.</li>
+						<li><strong>Streaming:</strong> the algorithm can provide real-time information.</li>
+						<li><strong>Real-World Data Suitability:</strong> the objective is not to <em>explain</em> all the data.
+							Therefore, areas marked as “don’t know” areas are acceptable.</li>
+						<li><strong>FLUSS/FLOSS is not:</strong> a change point detection algorithm <span class="citation"
+								data-cites="aminikhanghahi2016">(<em>Aminikhanghahi, 2016</em>)</span>. The interest here is changes in
+							the shapes of a sequence of measurements.</li>
+					</ul>
+				</section>
+			</section>
+			<section>
+				<section id="current-state" class="title-slide slide level1">
+					<h1>Current state</h1>
+					<p>One example:</p>
+					<div class="figure" style="text-align: center">
+						<img src="figures/graph_regime_0.3_0_2500_0_200.svg" alt="Fig. 19:  Regime change detection example." />
+						<p class="caption">
+							Fig. 19:  Regime change detection example.
+						</p>
+					</div>
+				</section>
+				<section class="slide level2">
+
+					<p>The Online algorithm (FLOSS) considers only the arcs pointing forward.</p>
+					<p>One change to the algorithm is the <strong>temporal constraint</strong> that allows to detect repeated and
+						short-time regimes:</p>
+					<div class="figure" style="text-align: center">
+						<img src="figures/forward.svg" alt="Fig. 20:  FLOSS with temporal constraint." />
+						<p class="caption">
+							Fig. 20:  FLOSS with temporal constraint.
+						</p>
+					</div>
+				</section>
+				<section id="some-findings" class="slide level2">
+					<h2>Some findings</h2>
+					<p>In the original paper, in chapter 3.5, the authors of FLOSS wisely introduce the <strong>temporal
+							constraint</strong>.</p>
+					<p>Nevertheless,</p>
+					<ul>
+						<li>Should we use the already computed Indexes or recompute the Matrix Profile using this constraint?</li>
+						<li>The authors declare the correction curve typically used on FLUSS and FLOSS as “simply a uniform
+							distribution,” but this is not an accurate statement.</li>
+						<li>The original paper discards the datapoints within <span class="math inline">\((ProfileSize - constraint)
+								\cdots ProfileSize\)</span>.</li>
+					</ul>
+					<p>The solution for evaluating the effect of using time constraints in this work’s setting was to generate the
+						ideal distribution using the constrained parameters beforehand. That gives us enough data to evaluate a
+						regime change accurately utilizing a minimum of <span class="math inline">\(2 \times WindowSize\)</span>
+						datapoints. The best index is still to be determined, and current tests are using 3 seconds limit.</p>
+					<aside class="notes">
+						<div style="font-size:0.9em">
+							<p>That is important because the output of the FLOSS algorithm should be normalized and constrained
+								between 0 and 1, which allows us to compare different trials using different parameters in the process.
+								Finally, the last datapoints are <strong>not</strong> irrelevant, opposed to what was stated by the
+								authors, since an <em>Online</em> algorithm needs to return an answer as soon as the application domain
+								requires. That is very much relevant to this work’s field, as, for example, for asystole detection, we
+								have a window of 4 seconds to fire the alarm. If the time constraint is 10 seconds, this would mean (by
+								the original article) that the last 10 seconds of the incoming data would not be sufficient to detect
+								the regime change.</p>
+						</div>
+					</aside>
+				</section>
+				<section id="temporal-constraint" class="slide level2">
+					<h2>Temporal constraint</h2>
+					<p>By experimenting, we see that the original paper set the temporal constraint in the Matrix Profile
+						algorithm (as it seems more appropriate too). That reduces the computation time of the online Matrix
+						Profile, and any post-processing done afterward will inherit this constraint. The distribution for
+						correcting the FLOSS algorithm is also simpler. Fig. 21.</p>
+					<div class="figure" style="text-align: center">
+						<img src="MEDCIDS21-10min_files/figure-revealjs/distributions-1.svg"
+							alt="Fig. 21:  1D-IAC distributions for earlier temporal constraint (on Matrix Profile)" />
+						<p class="caption">
+							Fig. 21:  1D-IAC distributions for earlier temporal constraint (on Matrix Profile)
+						</p>
+					</div>
+				</section>
+				<section class="slide level2">
+
+					<p>On the other hand, it is possible to apply the time constraint in the FLOSS algorithm, leaving the online
+						Matrix Profile in its original form. See Fig. 22. The theoretical distribution changes significantly
+						according to the constraint value.</p>
+					<div class="figure" style="text-align: center">
+						<img src="MEDCIDS21-10min_files/figure-revealjs/floss_dist-1.svg"
+							alt="Fig. 22:  1D-IAC distributions for later temporal constraint (on FLOSS)" />
+						<p class="caption">
+							Fig. 22:  1D-IAC distributions for later temporal constraint (on FLOSS)
+						</p>
+					</div>
+					<aside class="notes">
+						<div style="font-size:0.9em">
+							<p>The upside of this approach, at least during the prospective phase, is to allow us to decide the time
+								constraint value later in the pipeline, avoiding the recomputation of the Matrix Profile. The results on
+								detecting regime changes are very similar to the first approach.</p>
+						</div>
+					</aside>
+				</section>
+				<section class="slide level2">
+
+					<p>The results on detecting regime changes are very similar in both cases. Fig. 23.</p>
+					<div class="figure" style="text-align: center">
+						<img src="MEDCIDS21-10min_files/figure-revealjs/constraints-1.svg"
+							alt="Fig. 23:  CAC and Regime detection using early and later IAC" />
+						<p class="caption">
+							Fig. 23:  CAC and Regime detection using early and later IAC
+						</p>
+					</div>
+				</section>
+			</section>
+			<section id="one-more-contribution" class="title-slide slide level1">
+				<h1>One more contribution</h1>
+				<p>The <em>Similarity Threshold</em> (ST).</p>
+				<p>The ST is an interesting factor that we can use, especially when detecting pattern changes during time. The
+					FLUSS/FLOSS algorithms rely on counting references between indexes in the time series. ST can help remove
+					“noise” from these references since only similar patterns above a certain threshold are referenced, and
+					changes have more impact on these counts. More information and visual content on ST will be provided later.
+					The best ST threshold is still to be determined.</p>
+				<div class="figure" style="text-align: center">
+					<img src="figures/similarity.png" alt="Fig. 24:  Example of similar patterns." width="50%" />
+					<p class="caption">
+						Fig. 24:  Example of similar patterns.
+					</p>
+				</div>
+			</section>
+
+			<section id="further-steps" class="title-slide slide level1">
+				<h1>Further Steps</h1>
+				<ul>
+					<li>Explanation on the evaluation method for regime change detection, as described in the FLOSS paper <span
+							class="citation" data-cites="gharghabi2018">(<em>Gharghabi, 2018</em>)</span></li>
+					<li>Extraction of regime samples and classification of <code>TRUE</code> or <code>FALSE</code> for Asystole
+					</li>
+					<li>Cross-validation and evaluation of the algorithm</li>
+					<li>Publish results</li>
+				</ul>
+				<p>Later:</p>
+				<ul>
+					<li>Extend the classification algorithm to the five life-threatening patterns</li>
+					<li>Combine fading factors<span class="citation" data-cites="Gama2013 Rodrigues2010">(<em>Gama, 2013</em>;
+							<em>Rodrigues, 2010</em>)</span> to reduce computation requirements</li>
+					<li>Implement the final model on a low-power CPU, e.g.: Raspberry Pi (ARM), Arduino (atmega) or NodeMCU
+						(ESP12)</li>
+				</ul>
+			</section>
+
+			<section id="references" class="title-slide slide level1">
+				<h1>References</h1>
+				<div id="refs" class="references csl-bib-body hanging-indent" data-line-spacing="2" role="doc-bibliography">
+					<div id="ref-aminikhanghahi2016" class="csl-entry" role="doc-biblioentry">
+						Aminikhanghahi, S., &amp; Cook, D. J. (2016). <span>“A survey of methods for time series change point
+							detection.”</span> Knowledge and Information Systems, 51(2), 339–367. <a
+							href="https://doi.org/10.1007/s10115-016-0987-z">https://doi.org/10.1007/s10115-016-0987-z</a>
+					</div>
+					<div id="ref-AnalogDevices2020" class="csl-entry" role="doc-biblioentry">
+						Analog Devices. (2020). <span>“<span>AD8232 Single-Lead, Heart Rate Monitor Front End</span>.”</span>
+						Retrieved from <a
+							href="https://www.analog.com/media/en/technical-documentation/data-sheets/ad8232.pdf">https://www.analog.com/media/en/technical-documentation/data-sheets/ad8232.pdf</a>
+					</div>
+					<div id="ref-arduino2021" class="csl-entry" role="doc-biblioentry">
+						<span>“<span>Arduino</span>.”</span> (n.d.). Retrieved July 14, 2021, from <a
+							href="https://www.arduino.cc/">https://www.arduino.cc/</a>
+					</div>
+					<div id="ref-donchin2002" class="csl-entry" role="doc-biblioentry">
+						Donchin, Y., &amp; Seagull, F. J. (2002). <span>“The hostile environment of the intensive care unit.”</span>
+						Current Opinion in Critical Care, 8(4), 316–320. <a
+							href="https://doi.org/10.1097/00075198-200208000-00008">https://doi.org/10.1097/00075198-200208000-00008</a>
+					</div>
+					<div id="ref-eerikainen2015" class="csl-entry" role="doc-biblioentry">
+						Eerikainen, L. M., Vanschoren, J., Rooijakkers, M. J., Vullings, R., &amp; Aarts, R. M. (2015). <span>“2015
+							computing in cardiology conference (CinC).”</span> IEEE. <a
+							href="https://doi.org/10.1109/cic.2015.7408644">https://doi.org/10.1109/cic.2015.7408644</a>
+					</div>
+					<div id="ref-franz_github" class="csl-entry" role="doc-biblioentry">
+						<span>“Franzbischoff/false.alarm: Ph.D. programme in health data science.”</span> (2020). Retrieved April 8,
+						2021, from <a
+							href="https://github.com/franzbischoff/false.alarm">https://github.com/franzbischoff/false.alarm</a>
+					</div>
+					<div id="ref-franz_website" class="csl-entry" role="doc-biblioentry">
+						<span>“Franzbischoff/false.alarm: Reproducible reports.”</span> (2021). Retrieved April 8, 2021, from <a
+							href="https://franzbischoff.github.io/false.alarm">https://franzbischoff.github.io/false.alarm</a>
+					</div>
+					<div id="ref-Gama2013" class="csl-entry" role="doc-biblioentry">
+						Gama, J., Sebastião, R., &amp; Rodrigues, P. P. (2013). <span>“<span class="nocase">On evaluating stream
+								learning algorithms</span>.”</span> Machine Learning, 90(3), 317–346. <a
+							href="https://doi.org/10.1007/s10994-012-5320-9">https://doi.org/10.1007/s10994-012-5320-9</a>
+					</div>
+					<div id="ref-gharghabi2018" class="csl-entry" role="doc-biblioentry">
+						Gharghabi, S., Yeh, C.-C. M., Ding, Y., Ding, W., Hibbing, P., LaMunion, S., … Keogh, E. (2018).
+						<span>“Domain agnostic online semantic segmentation for multi-dimensional time series.”</span> Data Mining
+						and Knowledge Discovery, 33(1), 96–130. <a
+							href="https://doi.org/10.1007/s10618-018-0589-3">https://doi.org/10.1007/s10618-018-0589-3</a>
+					</div>
+					<div id="ref-landau2021" class="csl-entry" role="doc-biblioentry">
+						Landau, W., Landau, W., Warkentin, M. T., Barrett, M., Albers, S., Kendon Bell, … Hyde, R. (2021).
+						Ropensci/targets, dynamic function-oriented ’make’-like declarative workflows. Zenodo. <a
+							href="https://doi.org/10.5281/ZENODO.4062936">https://doi.org/10.5281/ZENODO.4062936</a>
+					</div>
+					<div id="ref-compendium2019" class="csl-entry" role="doc-biblioentry">
+						<span>“Research compendium.”</span> (2019). Retrieved April 8, 2021, from <a
+							href="https://research-compendium.science">https://research-compendium.science</a>
+					</div>
+					<div id="ref-Rodrigues2010" class="csl-entry" role="doc-biblioentry">
+						Rodrigues, P. P., Gama, J., &amp; Sebastião, R. (2010). <span>“<span class="nocase">Memoryless Fading
+								Windows in Ubiquitous Settings</span>.”</span> In Proceedings of the first ubiquitous data mining
+						workshop (pp. 23–27).
+					</div>
+					<div id="ref-sparkfun2021" class="csl-entry" role="doc-biblioentry">
+						<span>“<span>SparkFun Single Lead Heart Rate Monitor - AD8232 - SEN-12650 - SparkFun
+								Electronics</span>.”</span> (n.d.). Retrieved July 14, 2021, from <a
+							href="https://www.sparkfun.com/products/12650">https://www.sparkfun.com/products/12650</a>
+					</div>
+					<div id="ref-franz_dataset" class="csl-entry" role="doc-biblioentry">
+						<span>“The PhysioNet computing in cardiology challenge 2015 - dataset.”</span> (2021). Retrieved April 8,
+						2021, from <a href="https://zenodo.org/record/4634013">https://zenodo.org/record/4634013</a>
+					</div>
+					<div id="ref-wilkinson2016" class="csl-entry" role="doc-biblioentry">
+						Wilkinson, M. D., Dumontier, M., Aalbersberg, Ij. J., Appleton, G., Axton, M., Baak, A., … Mons, B. (2016).
+						<span>“The FAIR Guiding Principles for scientific data management and stewardship.”</span> Scientific Data,
+						3(1). <a href="https://doi.org/10.1038/sdata.2016.18">https://doi.org/10.1038/sdata.2016.18</a>
+					</div>
+				</div>
+			</section>
+		</div>
+	</div>
+
+	<script src="MEDCIDS21-10min_files/reveal.js-3.3.0.1/lib/js/head.min.js"></script>
+	<script src="MEDCIDS21-10min_files/reveal.js-3.3.0.1/js/reveal.js"></script>
+
+	<script>
+
+		// Full list of configuration options available at:
+		// https://github.com/hakimel/reveal.js#configuration
+		Reveal.initialize({
+			// Display controls in the bottom right corner
+			controls: true,
+			// Display a presentation progress bar
+			progress: true,
+			// Display the page number of the current slide
+			slideNumber: 'h/v',
+			// Push each slide change to the browser history
+			history: true,
+			// Enable keyboard shortcuts for navigation
+			keyboard: true,
+			// Enable the slide overview mode
+			overview: true,
+			// Vertical centering of slides
+			center: true,
+			// Enables touch navigation on devices with touch input
+			touch: true,
+			// Loop the presentation
+			loop: false,
+			// Change the presentation direction to be RTL
+			rtl: false,
+			// Turns fragments on and off globally
+			fragments: true,
+			// Flags if the presentation is running in an embedded mode,
+			// i.e. contained within a limited portion of the screen
+			embedded: false,
+			// Flags if we should show a help overlay when the questionmark
+			// key is pressed
+			help: true,
+			// Number of milliseconds between automatically proceeding to the
+			// next slide, disabled when set to 0, this value can be overwritten
+			// by using a data-autoslide attribute on your slides
+			autoSlide: 0,
+			// Stop auto-sliding after user input
+			autoSlideStoppable: true,
+			// Enable slide navigation via mouse wheel
+			mouseWheel: true,
+			// Opens links in an iframe preview overlay
+			previewLinks: true,
+			// Transition style
+			transition: 'default', // none/fade/slide/convex/concave/zoom
+			// Transition speed
+			transitionSpeed: 'default', // default/fast/slow
+			// Transition style for full page slide backgrounds
+			backgroundTransition: 'default', // none/fade/slide/convex/concave/zoom
+			// Number of slides away from the current that are visible
+			viewDistance: 3,
+			// The "normal" size of the presentation, aspect ratio will be preserved
+			// when the presentation is scaled to fit different resolutions. Can be
+			// specified using percentage units.
+			width: 1920,
+			height: 1200,
+			// Factor of the display size that should remain empty around the content
+			margin: 0.04,
+
+
+
+			// Optional reveal.js plugins
+			dependencies: [
+				{ src: 'MEDCIDS21-10min_files/reveal.js-3.3.0.1/plugin/notes/notes.js', async: true },
+				{ src: 'MEDCIDS21-10min_files/reveal.js-3.3.0.1/plugin/zoom-js/zoom.js', async: true },
+			]
+		});
+	</script>
+	<!-- dynamically load mathjax for compatibility with self-contained -->
+	<script>
+		(function () {
+			var script = document.createElement("script");
+			script.type = "text/javascript";
+			script.src = "MEDCIDS21-10min_files/mathjax-local/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+			document.getElementsByTagName("head")[0].appendChild(script);
+		})();
+	</script>
+
+	<script>
+		(function () {
+			if (window.jQuery) {
+				Reveal.addEventListener('slidechanged', function (event) {
+					window.jQuery(event.previousSlide).trigger('hidden');
+					window.jQuery(event.currentSlide).trigger('shown');
+				});
+			}
+		})();
+	</script>
+
+
+</body>
+
+</html>

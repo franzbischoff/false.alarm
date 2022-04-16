@@ -1,43 +1,89 @@
 ---
 title: "Research Protocol"
 author: "Francisco Bischoff"
-editor_options:
-  markdown:
-    mode: markdown
 link-citations: true
-bibliography: '`r here::here("papers", "references.bib")`'
-csl: https://raw.githubusercontent.com/citation-style-language/styles/master/american-medical-association.csl
+bibliography: ../papers/references.bib
+csl: ../thesis/csl/ama.csl
+linestretch: 1.5
+indent: true
+always_allow_html: true
+header-includes:
+    - \usepackage{caption}
+    - \captionsetup{font=footnotesize}
 output:
-  pdf_document:
+  bookdown::html_document2:
+    toc: true
+    toc_float: false
+    number_sections: true
+    css: style.css
+    theme: default
+    highlight: tango
+  bookdown::pdf_document2:
+    keep_tex: true
+    extra_dependencies: ["svg", "flafter", "subfig"]
     toc: yes
-    toc_depth: 2
+    toc_depth: 3
+    fig_caption: yes
     number_sections: yes
-    md_extensions: -tex_math_single_backslash
-  html_notebook:
-    toc: true
-    toc_depth: 2
-    code_folding: none
-    fig_width: 10
-    fig_height: 5
-    number_sections: yes
-    md_extensions: -tex_math_single_backslash
-  github_document:
-    toc: true
-    toc_depth: 2
-    md_extensions: -tex_math_single_backslash
 ---
 
 ```{r setup, echo = FALSE, warning=FALSE, message=FALSE}
-knitr::opts_chunk$set(echo = FALSE)
+knitr::opts_chunk$set(
+  echo = FALSE, fig.align = "center", autodep = TRUE,
+  fig.height = 5, fig.width = 10,
+  tidy = "styler",
+  tidy.opts = list(strict = TRUE)
+)
+if (knitr::is_latex_output()) {
+  knitr::opts_chunk$set(dev = "pdf")
+} else {
+  knitr::opts_chunk$set(dev = "svg")
+}
+library(here)
+library(glue)
+library(visNetwork)
+library(tibble)
+library(kableExtra)
+library(gridExtra)
+library(targets)
+library(ggplot2)
+
+my_graphics <- function(image_name, base_path = here::here("docs", "figure")) {
+  file_path <- glue::glue("{base_path}/{image_name}")
+
+  if (knitr::is_latex_output()) {
+    if (file.exists(glue::glue("{file_path}.pdf"))) {
+      file_path <- glue::glue("{file_path}.pdf")
+    } else if (file.exists(glue::glue("{file_path}.png"))) {
+      file_path <- glue::glue("{file_path}.png")
+    } else {
+      file_path <- glue::glue("{file_path}.jpg")
+    }
+  } else {
+    if (file.exists(glue::glue("{file_path}.svg"))) {
+      file_path <- glue::glue("{file_path}.svg")
+    } else if (file.exists(glue::glue("{file_path}.png"))) {
+      file_path <- glue::glue("{file_path}.png")
+    } else {
+      file_path <- glue::glue("{file_path}.jpg")
+    }
+  }
+
+  knitr::include_graphics(file_path)
+}
+
 print_duration <- function(start, end) {
   period <- lubridate::as.period(lubridate::interval(lubridate::date(start), lubridate::date(end)))
   paste(period@month, "months", period@day, "days")
 }
+
+knitr::opts_knit$set(
+  root.dir = here("docs"),
+  base.dir = here("protocol"), verbose = TRUE
+)
 ```
 
-Last Updated: `r lubridate::now("UTC")` UTC
-
-<!-- -*- mode: gfm; extensions: +tex_math_dollars+raw_tex -*- -->
+Last Updated: 2021-07-15 02:11:01 UTC
 
 # Identification of the project
 
@@ -104,7 +150,7 @@ problem. Also, we expect that fading factors can contribute to the state of the 
 
 The research team is well experienced in time-series and has studied the Matrix Profile since its beginning, being
 founders of the Matrix Profile Foundation whose goal is to have a concise and stable cross-language API for developing
-with the Matrix Profile technology.[@RJ-2020-021; @VanBenschoten2020]
+with the Matrix Profile technology [@RJ-2020-021; @VanBenschoten2020].
 
 # Rationale
 
@@ -132,7 +178,7 @@ device.
 # Background / Literature review
 
 In 2015 the PhysioNet/Computing in Cardiology has launched a challenge to address the problem of high false alarm rates
-by encouraging the development of new algorithms to improve the specificity of ICU alarms[@Clifford2015]. This challenge
+by encouraging the development of new algorithms to improve the specificity of ICU alarms [@Clifford2015]. This challenge
 comprised of minimizing the false alarms for five life-threatening arrhythmia: asystole, extreme bradycardia, extreme
 tachycardia, ventricular tachycardia and ventricular fibrillation or flutter.
 
@@ -141,32 +187,35 @@ atrioventricular block and others that may be life-threatening in some settings 
 atrialflutter and paroxysmal supraventricular tachycardia. Pulseless electrical activity is a frequent condition in
 cardiac arrest but cannot be identified without blood pressure information.
 
-They used as score the following formula:
+They used as score the formula on Equation \@ref(eq:score):
 
-<center>
+\begin{equation}
+Score = \frac{TP+TN}{TP+TN+FP+5*FN}   (\#eq:score)
+\end{equation}
 
-<img src="https://render.githubusercontent.com/render/math?math=%5Chuge%20Score%3D%5Cfrac%7BTP%2BTN%7D%7BTP%2BTN%2BFP%2B5%20%2A%20FN%7D"/>
+The five-best scores (for real-time) in this challenge are described on Table \@ref(tab:challenge):
 
-</center>
+```{r challenge, echo=FALSE}
 
-<br/>
-
-The five-best scores (for real-time) in this challenge were:
-
-```{r scores, echo=FALSE, warning=FALSE}
-suppressPackageStartupMessages(library(dplyr))
-suppressPackageStartupMessages(library(lubridate))
-suppressPackageStartupMessages(library(tibble))
 challenge <- tribble(
   ~Score, ~Authors,
-  81.39, "Filip Plesinger, Petr Klimes, Josef Halamek, Pavel Jurak",
-  79.44, "Vignesh Kalidas",
-  79.02, "Paula Couto, Ruben Ramalho, Rui Rodrigues",
-  76.11, "Sibylle Fallet, Sasan Yazdani, Jean-Marc Vesin",
-  75.55, "Christoph Hoog Antink, Steffen Leonhardt"
+  "81.39", "Filip Plesinger, Petr Klimes, Josef Halamek, Pavel Jurak",
+  "79.44", "Vignesh Kalidas",
+  "79.02", "Paula Couto, Ruben Ramalho, Rui Rodrigues",
+  "76.11", "Sibylle Fallet, Sasan Yazdani, Jean-Marc Vesin",
+  "75.55", "Christoph Hoog Antink, Steffen Leonhardt"
 )
 
-knitr::kable(challenge, caption = "Challenge Results")
+kbl(challenge,
+  booktabs = TRUE,
+  caption = "Challenge Results on real-time data. The scores were multiplied by 100.",
+  align = "cl",
+  position = "ht"
+) %>%
+  row_spec(0, bold = TRUE) %>%
+  # column_spec(1, width = "5em") %>%
+  # column_spec(2, width = "30em") %>%
+  kable_styling(full_width = FALSE)
 ```
 
 A literature review will be conducted to assess the state of the art for ECG automatic processing:
@@ -182,7 +231,7 @@ A broad search will be conducted on Pubmed, Scopus, Google Scholar, device manua
 Keywords:
 
 -   ECG AND monitoring AND ICU
--   ECG AND \[time series\]
+-   ECG AND [time series]
 -   ECG AND automatic AND interpretation
 
 Articles published after "The PhysioNet/Computing in Cardiology Challenge 2015: Reducing False Arrhythmia Alarms in the
@@ -198,7 +247,7 @@ life-threatening.
 ## Selection of data
 
 Initially, the data used for exploring the properties of the algorithm will be publicly available data on
-Physionet[@Goldberger2000; @Clifford2015].
+Physionet [@Goldberger2000; @Clifford2015].
 
 It will be asked for Physionet's permission to use more sensitive data if needed.
 
@@ -345,13 +394,23 @@ miles <- tribble(
   "M5", "Dec, 2022", "Thesis", "Finish and Deliver Ph.D. Thesis"
 )
 
-knitr::kable(miles, caption = "Milestones")
+kbl(miles,
+  booktabs = TRUE,
+  caption = "Milestones.",
+  align = "ccll",
+  position = "ht",
+  linesep = "\\addlinespace"
+) %>%
+  row_spec(0, bold = TRUE) %>%
+  kable_styling(full_width = FALSE)
 ```
 
 ## Timeline
 
-[![](figure/timeline.png)](https://app.zenhub.com/workspaces/phd-thesis-5eb2ce34f5f30b3aed0a35af/roadmap) Click on the image to
-open an interactive Gantt webpage
+```{r timeline, echo=FALSE, out.width="100%", fig.link="https://app.zenhub.com/workspaces/phd-thesis-5eb2ce34f5f30b3aed0a35af/roadmap"}
+#| fig.cap="Click on the image to open an interactive Gantt webpage."
+my_graphics("timeline")
+```
 
 # Budget
 
@@ -363,7 +422,15 @@ budgets <- tribble(
   "Tuition Fees", 11000, "Researcher Maintenance", "No"
 )
 
-knitr::kable(budgets, caption = "Expected expenses")
+kbl(budgets,
+  booktabs = TRUE,
+  caption = "Expected expenses.",
+  align = "lrlc",
+  position = "ht",
+  linesep = "\\addlinespace"
+) %>%
+  row_spec(0, bold = TRUE) %>%
+  kable_styling(full_width = FALSE)
 ```
 
 # Expected results and outcomes

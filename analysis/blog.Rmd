@@ -1,0 +1,1822 @@
+---
+title: "Blog"
+author: "Francisco Bischoff"
+date: "on `r format(Sys.time(), '%B %d, %Y')`"
+output:
+  bookdown::html_document2:
+    base_format: workflowr::wflow_html
+    toc: false
+    number_sections: false
+bibliography: ../papers/references.bib
+link-citations: true
+csl: ../thesis/csl/ama.csl
+css: style.css
+editor_options:
+  chunk_output_type: console
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(
+  echo = FALSE, fig.align = "center", dev = "svg", autodep = TRUE,
+  fig.height = 5, fig.width = 10,
+  tidy = "styler",
+  tidy.opts = list(strict = TRUE)
+)
+
+library(here)
+library(ggplot2)
+library(glue)
+library(dplyr)
+library(tibble)
+library(plotly)
+library(kableExtra)
+conflicted::conflict_prefer("filter", "dplyr")
+options(ggplot2.discrete.fill = c("#1b9e77", "#d95f02"))
+# library(visNetwork)
+# library(kableExtra)
+# library(targets)
+my_graphics <- function(image_name, base_path = here::here("docs", "figure")) {
+  file_path <- glue::glue("{base_path}/{image_name}")
+
+  if (knitr::is_latex_output()) {
+    if (file.exists(glue::glue("{file_path}.pdf"))) {
+      file_path <- glue::glue("{file_path}.pdf")
+    } else if (file.exists(glue::glue("{file_path}.png"))) {
+      file_path <- glue::glue("{file_path}.png")
+    } else {
+      file_path <- glue::glue("{file_path}.jpg")
+    }
+  } else {
+    if (file.exists(glue::glue("{file_path}.svg"))) {
+      file_path <- glue::glue("{file_path}.svg")
+    } else if (file.exists(glue::glue("{file_path}.png"))) {
+      file_path <- glue::glue("{file_path}.png")
+    } else {
+      file_path <- glue::glue("{file_path}.jpg")
+    }
+  }
+
+  knitr::include_graphics(file_path)
+}
+
+my_kable <- function(title, label, content) {
+  res <- glue(r"(<br><table class="tg"><caption>)", "(\\#tab:{label}) {title}", r"(</caption>{content}</table>)")
+  out <- structure(res, format = "html", class = "knitr_kable")
+  attr(out, "format") <- "html"
+  out
+}
+```
+
+# Purpose
+
+This blog is a continuation of the thesis Report [link](report.html). The reader must follow this
+page from top to bottom.
+
+## 2021, August Update #1
+
+The first workflow presented in July has changed. Its purpose was to define a "big picture" of the
+process.
+
+The main changes introduced were:
+
+### The Data
+
+Initially, the data had been carried along the workflow, being copied at each new step. That
+obviously is not the way to handle it. Thus, the raw data is stored only on the "dataset" object and
+reused where needed.
+
+Now, any modification to the raw data will create a new object, for example, "ds_filtered," where
+the SQI filter is applied to the data.
+
+### Streaming paradigm
+
+The goal of this work is to operate with streaming data. Thus, the Matrix Profile computation
+algorithm has been rewritten to handle receiving data in chunks. The algorithm can simulate one
+observation at a time or a batch of observations (for efficiency). The result will always be as if
+one observation had been received individually by the model.
+
+To avoid unnecessary recomputations for this analysis phase, the companion statistics needed by the
+model are pre-computed and fed alongside the data the algorithm needs to process. The
+pre-computation also allows experimenting with parameters during this process.
+
+## 2021, October Update #1
+
+### Regime Change Detection
+
+While implementing the streaming-like pipeline, some declarations must be made. In 2017, the FLUSS
+(Fast Low-cost Unipotent Semantic Segmentation) and the FLOSS (Fast Low-cost Online Semantic
+Segmentation) algorithms were introduced by Gharghabi _et al._ [@gharghabi2017]. In 2018, the same
+group published their findings using multi-dimensional time series [@gharghabi2018] using the same
+algorithms.
+
+Claims about the algorithm:
+
+- **Domain Agnosticism:** the algorithm makes no assumptions about the data as opposed to most
+  available algorithms to date.
+- **Streaming:** the algorithm can provide real-time information.
+- **Real-World Data Suitability:** the objective is not to _explain_ all the data. Therefore, areas
+  marked as "don't know" areas are acceptable.
+- **FLOSS is not:** a change point detection algorithm [@aminikhanghahi2016]. The interest here is
+  changes in the shapes of a sequence of measurements.
+
+Briefly describing the regime detection algorithm, which can be explored in the original paper
+[@gharghabi2018], it is based on the assumption that between two regimes, the most similar shape
+(its nearest neighbor) is located on "the same side". This information is obtained from the Matrix
+Profile computation. More precisely, using only the Profile Index.
+
+Before talking about the Matrix Profile computation, some findings deserve to be mentioned:
+
+In chapter 3.5 in the original paper, the authors of FLOSS wisely introduce the **temporal
+constraint**. Nevertheless, some details are not mentioned. 1) As this algorithm only needs the
+Profile Index, should we use the already computed Indexes or recompute the Matrix Profile using this
+constraint (i.e., the constraint is on the Profile Index or the FLOSS algorithm?). That is not an
+issue about the algorithm but a choice we need to make beforehand. One option is to apply the
+constraint on the Profile Index, and we need to have this parameter set from the start. The second
+option is to have the FLOSS algorithm not account for the indexes beyond the constraint, keeping the
+original Profile Index. 2) The authors declare the correction curve typically used on FLUSS and
+FLOSS as "simply a uniform distribution", but this is not an accurate statement. Empirically, there
+is a helpful pattern to know about the distribution when using **temporal constraints** (at least
+from the start, in the Matrix Profile stage). At first glance, we see that the distribution
+resembles the skewed distribution used in FLOSS but is shorter, while the $constraint \ge
+MatrixProfileSize/2$. For lower constraints, the maximum value of this distribution is equal to
+$MatrixProfileSize/2$ between the indexes $constraint$ to the index $MatrixProfileSize - (constraint
+\times 0.9)$. This is shown in Fig. \@ref(fig:distributions). That is important because the
+output of the FLOSS algorithm should be normalized and constrained between 0 and 1, which allows us
+to compare different trials using different parameters in the process. Finally, the last datapoints
+are **not** irrelevant, opposed to what was stated by the authors, since an _Online_ algorithm needs
+to return an answer as soon as the application domain requires. That is very much relevant to this
+work's field, as, for example, for asystole detection, we have a window of 4 seconds to fire the
+alarm. If the time constraint is 10 seconds, this would mean (by the original article) that the last
+10 seconds of the incoming data would not be sufficient to detect the regime change.
+
+As for the first point mentioned above, it seems more appropriate to set the temporal constraint in
+the Matrix Profile algorithm, and indeed this is what the original paper did. That reduces the
+computation time of the online Matrix Profile, and any post-processing done afterward will inherit
+this constraint. The distribution for correcting the FLOSS algorithm is also simpler. On the other
+hand, it is possible to apply the time constraint in the FLOSS algorithm, leaving the online Matrix
+Profile in its original form. See Fig. \@ref(fig:floss-dist). The theoretical distribution
+changes significantly according to the constraint value. The upside of this approach, at least
+during the prospective phase, is to allow us to decide the time constraint value later in the
+pipeline, avoiding the recomputation of the Matrix Profile. The results on detecting regime changes
+are very similar to the first approach. See Fig. \@ref(fig:cac-regimes).
+
+Concerning the second point mentioned above, the solution for evaluating the effect of using time
+constraints in this work's setting was to generate the ideal distribution using the constrained
+parameters beforehand. That gives us enough data to evaluate a regime change accurately utilizing a
+minimum of $2 \times WindowSize$ datapoints. The best index is still to be determined, and current
+tests are using 3 seconds limit.
+
+```{r dist data, message=FALSE, warning=FALSE, include=FALSE}
+source(here("scripts", "common", "compute_floss.R"))
+
+get_dist <- function(mp_const = 1250, floss_const = 0) {
+  set.seed(2021)
+  iac <- list()
+  pro_size <- 5000
+  mp_time_constraint <- mp_const
+  floss_time_constraint <- floss_const
+  for (i in 1:5) { # DEBUG
+    # for (i in 1:500) { # RELEASE
+    iac[[i]] <- get_asym(pro_size, mp_time_constraint, floss_time_constraint)
+  }
+
+  aic_avg <- rowMeans(as.data.frame(iac))
+
+  data.frame(index = 1:5000, counts = aic_avg)
+}
+
+data_5000 <- get_dist(5000)
+data_4250 <- get_dist(4250)
+data_2500 <- get_dist(2500)
+data_1250 <- get_dist(1250)
+
+floss_data_5000 <- get_dist(0, 5000)
+floss_data_4250 <- get_dist(0, 4250)
+floss_data_2500 <- get_dist(0, 2500)
+floss_data_1250 <- get_dist(0, 1250)
+```
+
+```{r distributions, echo=FALSE, fig.cap="1D-IAC distributions for earlier temporal constraint (on Matrix Profile)", message=FALSE, warning=FALSE}
+
+floss_dist <- ggplot(data_5000, aes(index, counts)) +
+  geom_line(size = 0.1) +
+  ggtitle("a) No constraint") +
+  theme_grey(base_size = 7)
+
+floss_4250 <- ggplot(data_4250, aes(index, counts)) +
+  geom_line(size = 0.1) +
+  ggtitle("b) Constraint of 4250") +
+  theme_grey(base_size = 7)
+
+floss_2500 <- ggplot(data_2500, aes(index, counts)) +
+  geom_line(size = 0.1) +
+  annotate("segment", y = 0, yend = max(data_2500$counts), x = 2500, xend = 2500, linetype = 2, size = 0.1) +
+  annotate("text", x = 2500 - 80, y = 40, label = "start", color = "black", size = 2, angle = 90, hjust = 0) +
+  annotate("segment", y = 0, yend = max(data_2500$counts), x = 5000 - 2500 * 0.9, xend = 5000 - 2500 * 0.9, linetype = 2, size = 0.1) +
+  annotate("text", x = 5000 - 2500 * 0.9 - 80, y = 40, label = "end", color = "black", size = 2, angle = 90, hjust = 0) +
+  ggtitle("c) Constraint of 2500") +
+  theme_grey(base_size = 7)
+
+floss_1250 <- ggplot(data_1250, aes(index, counts)) +
+  geom_line(size = 0.1) +
+  annotate("segment", y = 0, yend = max(data_1250$counts), x = 1250, xend = 1250, linetype = 2, size = 0.1) +
+  annotate("text", x = 1250 - 80, y = 40, label = "start", color = "black", size = 2, angle = 90, hjust = 0) +
+  annotate("segment", y = 0, yend = max(data_1250$counts), x = 5000 - 1250 * 0.9, xend = 5000 - 1250 * 0.9, linetype = 2, size = 0.1) +
+  annotate("text", x = 5000 - 1250 * 0.9 - 80, y = 40, label = "end", color = "black", size = 2, angle = 90, hjust = 0) +
+  ggtitle("d) Constraint of 1250") +
+  theme_grey(base_size = 7)
+
+gg <- gridExtra::grid.arrange(floss_dist, floss_4250, floss_2500, floss_1250,
+  nrow = 2, newpage = TRUE,
+  bottom = grid::textGrob(paste("The plot a) shows the distribution used for the arc count correction when there is no time constraint.", "\n", "b) Shows a constraint of 3/4 of the total. c) 1/2 of the total. d) 1/4 of the total; here we see clearly the flat line.", "\n", "The dashed line marks the start and the end of the uniform zone."), just = "center", gp = grid::gpar(fontsize = 7))
+)
+rm(gg)
+```
+
+```{r floss-dist, echo=FALSE, fig.cap="1D-IAC distributions for later temporal constraint (on FLOSS)", message=FALSE, warning=FALSE}
+
+floss_dist <- ggplot(floss_data_5000, aes(index, counts)) +
+  geom_line(size = 0.1) +
+  ggtitle("a) No constraint") +
+  theme_grey(base_size = 7)
+
+floss_4250 <- ggplot(floss_data_4250, aes(index, counts)) +
+  geom_line(size = 0.1) +
+  ggtitle("b) Constraint of 4250") +
+  theme_grey(base_size = 7)
+
+floss_2500 <- ggplot(floss_data_2500, aes(index, counts)) +
+  geom_line(size = 0.1) +
+  annotate("segment", y = 0, yend = max(data_2500$counts), x = 2500, xend = 2500, linetype = 3, size = 0.1) +
+  annotate("text", x = 2500 - 80, y = 40, label = "start", color = "black", size = 2, angle = 90, hjust = 0) +
+  annotate("segment", y = 0, yend = max(data_2500$counts), x = 5000 - 2500 * 0.9, xend = 5000 - 2500 * 0.9, linetype = 3, size = 0.1) +
+  annotate("text", x = 5000 - 2500 * 0.9 - 80, y = 40, label = "end", color = "black", size = 2, angle = 90, hjust = 0) +
+  ggtitle("c) Constraint of 2500") +
+  theme_grey(base_size = 7)
+
+floss_1250 <- ggplot(floss_data_1250, aes(index, counts)) +
+  geom_line(size = 0.1) +
+  annotate("segment", y = 0, yend = max(data_1250$counts), x = 1250, xend = 1250, linetype = 3, size = 0.1) +
+  annotate("text", x = 1250 - 80, y = 40, label = "start", color = "black", size = 2, angle = 90, hjust = 0) +
+  annotate("segment", y = 0, yend = max(data_1250$counts), x = 5000 - 1250 * 0.9, xend = 5000 - 1250 * 0.9, linetype = 3, size = 0.1) +
+  annotate("text", x = 5000 - 1250 * 0.9 - 80, y = 40, label = "end", color = "black", size = 2, angle = 90, hjust = 0) +
+  ggtitle("d) Constraint of 1250") +
+  theme_grey(base_size = 7)
+
+gg <- gridExtra::grid.arrange(floss_dist, floss_4250, floss_2500, floss_1250,
+  nrow = 2, newpage = TRUE,
+  bottom = grid::textGrob(paste("The plot a) shows the distribution used for the arc count correction when there is no time constraint.", "\n", "b) Shows a constraint of 3/4 of the total. c) 1/2 of the total. d) 1/4 of the total; here we see clearly the flat line.", "\n", "The dotted line marks the start and the end of the uniform zone if using the constraint in the Matrix Profile."), just = "center", gp = grid::gpar(fontsize = 7))
+)
+rm(gg)
+```
+
+```{r output_data, include=FALSE}
+if (file.exists(here("output/work_output.rds"))) {
+  output <- readRDS(here("output/work_output.rds"))
+  mp_data <- output$mp_constraint[[1]]$II[[76]]
+  mp_data <- tibble(time = seq_along(mp_data$cac), cac = mp_data$cac, iac = mp_data$iac, arcs = mp_data$arcs)
+  floss_data <- output$floss_constraint[[1]]$II[[76]]
+  floss_data <- tibble(time = seq_along(floss_data$cac), cac = floss_data$cac, iac = floss_data$iac, arcs = floss_data$arcs)
+  rm(output)
+  invisible(gc())
+}
+```
+
+```{r cac-regimes, echo=FALSE, fig.cap="CAC and Regime detection using early and later IAC", message=FALSE, warning=FALSE}
+
+landmark <- 5000 - 3 * 250
+mp_cac_landmark <- mp_data$cac[landmark]
+floss_cac_landmark <- floss_data$cac[landmark]
+
+mp_constraint <- ggplot(mp_data, aes(time, cac)) +
+  geom_line(size = 0.1) +
+  ylim(0, 1) +
+  ylab("CAC") +
+  xlab("") +
+  annotate("segment", y = 0, yend = 1, x = landmark, xend = landmark, linetype = 1, size = 0.1, color = "red") +
+  annotate("text", x = landmark, y = mp_cac_landmark, label = sprintf("%.2f", mp_cac_landmark), color = "red", size = 2, vjust = 0, hjust = -0.2) +
+  ggtitle("a) Constraint of 1250 on Matrix Profile") +
+  theme_grey(base_size = 7)
+
+floss_constraint <- ggplot(floss_data, aes(time, cac)) +
+  geom_line(size = 0.1) +
+  ylim(0, 1) +
+  ylab("") +
+  xlab("") +
+  annotate("segment", y = 0, yend = 1, x = landmark, xend = landmark, linetype = 1, size = 0.1, color = "red") +
+  annotate("text", x = landmark, y = floss_cac_landmark, label = sprintf("%.2f", floss_cac_landmark), color = "red", size = 2, vjust = 0, hjust = -0.2) +
+  ggtitle("b) Constraint of 1250 on FLOSS") +
+  theme_grey(base_size = 7)
+
+mp_arcs <- ggplot(mp_data, aes(time, arcs)) +
+  geom_line(size = 0.1) +
+  geom_line(aes(time, iac), size = 0.1, color = "red") +
+  ylab("Arcs and IAC") +
+  annotate("segment", y = 0, yend = 900, x = 1250, xend = 1250, linetype = 3, size = 0.1) +
+  annotate("segment", y = 0, yend = 900, x = 5000 - 1250 * 0.9, xend = 5000 - 1250 * 0.9, linetype = 3, size = 0.1) +
+  theme_grey(base_size = 7)
+
+floss_arcs <- ggplot(floss_data, aes(time, arcs)) +
+  geom_line(size = 0.1) +
+  geom_line(aes(time, iac), size = 0.1, color = "red") +
+  ylab("") +
+  annotate("segment", y = 0, yend = 800, x = 1250, xend = 1250, linetype = 3, size = 0.1) +
+  annotate("segment", y = 0, yend = 800, x = 5000 - 1250 * 0.9, xend = 5000 - 1250 * 0.9, linetype = 3, size = 0.1) +
+  theme_grey(base_size = 7)
+
+
+gg <- gridExtra::grid.arrange(mp_constraint, floss_constraint, mp_arcs, floss_arcs,
+  nrow = 2, newpage = TRUE,
+  bottom = grid::textGrob(paste(
+    "The plots on a) show above the Corrected Arc Count (CAC) and below the raw arc counts (black) and the ideal arc count (IAC) (red) using the temporal\n constraint earlier on the Matrix Profile.",
+    "The plots on b) show above the Corrected Arc Count (CAC) and below the raw arc counts (black) and\nthe ideal arc count (IAC) (red) using the temporal constraint later on the FLOSS algorithm.",
+    "The red vertical line marks the point\nwhere the current algorithm watches for regime changes."
+  ),
+  just = "center", gp = grid::gpar(fontsize = 7)
+  )
+)
+rm(gg)
+```
+
+### The Matrix Profile Algorithm
+
+Since the first Matrix Profile computation algorithm, the STAMP [@yeh2016], several improvements on
+the algorithm were made [@zhu2016; @zhu2018]. Still, the ability to keep a growing Matrix Profile
+(i.e., _Online_) relies on the STAMP algorithm. If the problem allows collecting several data points
+(chunks), STOMP [@zhu2016] can speed up the computation. Curiously, the main bottleneck of all these
+algorithms is the FFT (Fast Fourier Transform) algorithm that is the core of the MASS algorithm
+published by Mueen _et al._ [@mueen2010] in 2010 and later in 2015, having its code released on
+Professor Mueen's webpage [@mass2015]. The FFT libraries available are highly optimized and CPU (or
+GPU) dependent what makes it at the same time fast but brittle and not suitable for MCU's
+(Microcontroller Unit), for example. More interestingly yet, is the fact that several published
+works using Matrix Profile, MPdist [@gharghabi2018a], for instance, uses an unpublished algorithm
+called 'MPX' that computes the Matrix Profile using cross-correlation methods ending up faster and
+is easily portable.
+
+This work contributes to extending the MPX algorithm to allow the _Online_ computation of the Matrix
+Profile. More precisely, we are interested in the Right Matrix Profile, whose updated indexes refer
+only to the last incoming datapoint since we are looking for future regime changes, not backward.
+This one-directional algorithm is already described in the FLOSS paper [@gharghabi2018].
+
+Another contribution of this work is an unexplored constraint that we could apply on building the
+Matrix Profile that we will call _Similarity Threshold_ (ST). The original work outputs the
+similarity values in Euclidean Distance (ED) values, while MPX naturally outputs the values in
+Pearson's correlation (CC) coefficients. Both ED and CC are interchangeable using the equation
+\@ref(eq:correlation). However, we may argue that it is easier to compare values that do not depend on the
+$WindowSize$ during an exploratory phase. MPX happens to naturally return values in CC, saving a few
+more computation time.
+
+$$
+CC = 1 - \frac{ED}{(2 \times WindowSize)} (\#eq:correlation)
+$$
+
+The ST is an interesting factor that we can use, especially when detecting pattern changes during
+time. The FLUSS/FLOSS algorithms rely on counting references between indexes in the time series. ST
+can help remove "noise" from these references since only similar patterns above a certain threshold
+are referenced, and changes have more impact on these counts. More information and visual content on
+ST will be provided later. The best ST threshold is still to be determined.
+
+## 2022, January Update #1
+
+These last months were dedicated to several important things:
+
+1. Restructuring the roadmap
+2. Refining the main pipeline
+3. Preparing for modeling and parameter tuning
+4. Feasibility trial
+5. And others
+
+### Refining the main pipeline
+
+That can also be thought of as "rethinking" the pipeline. What also leads to the roadmap
+restructuration.
+
+It is essential not only to write a pipeline that can "autoplot" itself for fine-grain inspection
+but also to design a high-level graph that can explain it "in a glance". This exercise was helpful
+both ways: telling the story in a short version also reveals missing things and misleading paths
+that are not so obvious when thinking "low-level".
+
+### Preparing for modeling and parameter tuning
+
+Although this work has its purpose of being finally deployed on small hardware, this prospective
+phase will need several hours of computing, tuning, evaluation, and validation of all findings.
+
+Thus it was necessary to revisit the frameworks we are used to working on R: `caret` and the newest
+`tidymodels` collection. For sure, there are other frameworks and opinions [@Thompson2020].
+Notwithstanding, this project will follow the `tidymodels` road. Two significant arguments 1)
+constantly improving and constantly being re-checked for bugs; 2) allows to plug in a custom
+modeling algorithm that, in this case, will be the one needed for developing this work.
+
+### Feasibility trial
+
+A side-project called "false.alarm.io" has been derived from this work (an unfortunate mix of
+"false.alarm" and "PlatformIO" [@PlatformIO], the IDE chosen to interface the panoply of embedded
+systems we can experiment). The current results of this side-project are very enlightening and show
+that the final algorithm can indeed be used in small hardware. Further data will be available in
+the future.
+
+### And others
+
+After this "step back" to look forward, it was time to define how the regime change algorithm would
+integrate with the actual decision of triggering or not the alarm. Some hypotheses were thought out:
+(1) clustering similar patterns, (2) anomaly detection, (3) classification, and (4) forecasting.
+Among these methods, it was thought to avoid exceeding processor capacity, an initial set of
+shapelets [@Rakthanmanon2013] can be sufficient to rule in or out the `TRUE`/`FALSE` challenge.
+Depending on the accuracy of this approach and the resources available, another method can be
+introduced for both (1) improving the "negative"[^1] samples and (2) learning more shapelets to
+improve the `TRUE`/`FALSE` alarm discrimination.
+
+> Minor update, but also important concerning the _FAIR_ principle "Interoperability": the dataset
+ stored publicly on Zenodo [@bischoff2021] was converted from `.mat` to `.csv`.
+
+[^1]: The term "negative" does not imply that the patient has a "normal" ECG. It means that the
+"negative" section is not a life-threatening condition that needs to trigger an alarm.
+
+## 2022, April Update #1
+
+These last couple of months were dedicated to:
+
+1. Writing the new [report](report.html)
+2. Presenting the report to the jury
+3. Getting back to the filters
+
+### Back to the filters
+
+```{r btof, echo=FALSE, out.width="40%", fig.align = "left"}
+my_graphics("back_to_filters", "figure")
+```
+
+Back at the beginning of this thesis, we talked about using some kind of filtering during signal
+acquisition to remove artifacts and disconnected cables. This was described in the section
+"Preparing the data" on the [report](report.html).
+
+The initial approach to selecting the "complexity" formula [@Batista2014] (from now on, we will
+change this name to "complex") was based on a few experiments, and I felt it deserves a more
+scientific approach.
+
+We will use the terms 'noise' and 'artifact' interchangeably for simplicity.
+
+Several signal quality indexes (SQI) were used to assess the ECG signal's noise in the literature. A
+brief list of them:
+
+1. **Activity**: is just the variance of the signal
+  $$
+  Activity = Var(data)  (\#eq:activity)
+  $$
+2. **Mobility**: derives from the Activity. The squared root of the ratio of the variance of the first
+   derivative of the signal to the variance of the original signal.
+   $$
+   Mobility = \sqrt{\frac{Var(\nabla{data})}{Var(data)}}  (\#eq:mobility)
+   $$
+3. **Complexity**[^2]: Ratio of the Mobility of the first derivative of the signal to the Mobility of the original signal
+   $$
+   Complexity = \frac{\sqrt{\frac{Var(\nabla^2{data})}{Var(\nabla{data})}}}{\sqrt{\frac{Var(\nabla{data})}{Var(data)}}}
+   \rightarrow \frac{\sqrt{Var(\nabla^2{data}) \cdot Var(data)}}{Var(\nabla{data})}  (\#eq:complexity)
+   $$
+4. **complex**: This is the SQI defined by Batista, *et al.* [@Batista2014], and we will write it as
+   "complex" to not confuse it with the Complexity from point 3. This was built by the author around
+   a simple intuition: more complex signals, when "stretched", are longer than simple signals. Fig.
+   \@ref(fig:cplxty) shows this intuition. The formula is just the "sum of squares of the
+   differences".
+
+$$
+complex = \sqrt{\sum{(\nabla data)^2}}  (\#eq:complex)
+$$
+
+
+
+```{r cplxty, echo=FALSE, out.width="80%", fig.cap="From Batista _et al._ shows on the left side, the signal, and on the right side, the signal \"stretched\"."}
+my_graphics("complx", "figure")
+```
+
+5. **Kurtosis**: Measure the Gaussianity of a distribution. As ECG signals are hyper-Gaussian,
+   higher kurtosis values are associated with lower quality in the ECG. One of its simples formula
+   (which is quite complicated) is:
+
+$$
+Kurtosis = \frac{1}{n}\sum_{i=1}^{n}{\left(\frac{x_i - \bar x}{\sigma}\right)^4} - 3  (\#eq:kurtosis)
+$$
+
+6. **Karhunen-Loeve transform (KLT)**: KLT is a transformation that reduces a large set of variables
+   down to a smaller set. The smaller set of variables separates the information of the different
+   sources (ECG and Noise). In this way, noise can be estimated, and the SNR calculated.
+7. **First-Difference histogram**: The baseline is defined as the most common sample value during
+   R-R periods. The sample value corresponding to the histogram peak (mode) was declared the
+   baseline, and the difference between consecutive baselines gives the baseline shift from beat to
+   beat. Noise is estimated from the first-difference histogram of R-R intervals. Noise
+   contribution is one minus the frequency of occurrence of first differences with values around
+   zero divided by the number of samples in the R-R interval.
+8. **Turns counts**: Counting of the number of local minimums with amplitude higher than a threshold
+   (e.g. 0.1mV). This SQI is actually robust to noise, so it is not suitable for evaluating noise.
+
+[^2]: This is not the same "complexity" from Batista, *et al.* [@Batista2014], but from Del Rio, *et
+al.* [@DelRio2011].
+
+This is not an exhaustive list. Also, we want a simple SQI as we must use the smallest processor and
+memory possible. For this reason, we will do the experiments with the following SQI on that list:
+Activity, Mobility, Complexity, and complex. In addition, we will experiment with another simple
+index, the signal's amplitude. For the baseline, we will use the "maximum" of the clean signal that
+will be naïvely "true" if the signal gets above a certain reading.
+
+Let's take the first 12 files from Physionet's Challenge dataset, in alphabetic order, from `a103l`
+to `a165l`. By manual inspection, we have the following files as _negative_ for artifacts (clean)
+#4, #7, #8, #10, #11, #12. And for _positive_ for artifacts the following #1, #2, #3, #5, #6, #9.
+
+```{r load_scripts}
+source(here("scripts/common/find_all_files.R"), encoding = "UTF-8")
+source(here("scripts/common/read_ecg.R"), encoding = "UTF-8")
+source(here("scripts/common/get_set_attributes.R"), encoding = "UTF-8")
+source(here("scripts/common/compute_filters.R"), encoding = "UTF-8")
+source(here("scripts/common/sqi.R"), encoding = "UTF-8")
+```
+
+```{r read_files_filters}
+neg <- c(4, 7, 8, 10, 11, 12)
+pos <- c(1, 2, 3, 5, 6, 9)
+
+# neg <- c(1, 2, 3, 4, 5, 6)
+# pos <- c(12, 15, 17, 28, 31, 35)
+
+# slot <- c(1659:4501, 5181:8784, 11830:14252)
+
+if (file.exists(here::here("dev/backtofilters.rds"))) {
+  backtofilters <- readRDS(here::here("dev/backtofilters.rds"))
+  pos_files <- backtofilters$pos_files
+  neg_files <- backtofilters$neg_files
+  pos_filters <- backtofilters$pos_filters
+  neg_filters <- backtofilters$neg_filters
+  rm(backtofilters)
+} else {
+  filenames <- find_all_files(classes = "asystole", limit_per_class = max(neg, pos))
+
+  # filenames <- find_all_files(here("inst/extdata/afib_regimes"), data_type = "regimes", classes = "paroxysmal_afib", limit_per_class = max(neg, pos))
+
+  pos_files <- list()
+  i <- 1
+  for (file in filenames[pos]) {
+    pos_files[i] <- read_ecg_csv(file, normalize = FALSE)
+    # pos_files[i] <- read_ecg_with_atr(file, resample_from = 200, resample_to = 250, normalize = FALSE)
+    i <- i + 1
+  }
+
+  # info <- attr(pos_files[[4]]$II, "info")
+  # pos_files[[4]]$II <- pos_files[[4]]$II[slot]
+  # attr(pos_files[[4]]$II, "info") <- info
+
+  neg_files <- list()
+  i <- 1
+  for (file in filenames[neg]) {
+    neg_files[i] <- read_ecg_csv(file, normalize = FALSE)
+    # neg_files[i] <- read_ecg_with_atr(file, subset = 1:10000, resample_from = 200, resample_to = 250, normalize = FALSE)
+    i <- i + 1
+  }
+
+  pos_filters <- list()
+  for (i in seq.int(1, length(pos_files))) {
+    pos_filters[[i]] <- compute_filters(pos_files[[i]]$II, list(window_size = 250, filter_w_size = 100), get_info(pos_files[[i]]))
+    pos_filters[[i]]$time <- pos_files[[i]]$time
+  }
+
+  neg_filters <- list()
+  for (i in seq.int(1, length(neg_files))) {
+    neg_filters[[i]] <- compute_filters(neg_files[[i]]$II, list(window_size = 250, filter_w_size = 100), get_info(neg_files[[i]]))
+    neg_filters[[i]]$time <- neg_files[[i]]$time
+  }
+
+  saveRDS(list(neg_files = neg_files, pos_files = pos_files, neg_filters = neg_filters, pos_filters = pos_filters),
+    file = here::here("dev/backtofilters.rds"), compress = "xz"
+  )
+}
+invisible(gc())
+```
+
+Fig. \@ref(fig:filters-samples) shows a sample of records containing artifacts and a clean signal
+and an example of some SQI. We need an index with a low value when the signal has low noise and a
+high value when there is a noisy signal (that we will not process).
+
+```{r filters-samples, fig.cap = "ECG samples of containing a clean signal or with artifacts", warning=FALSE}
+if (file.exists(here("output/filters-samples.rds"))) {
+  output <- readRDS(here("output/filters-samples.rds"))
+  sample_pos <- output$sample_pos
+  sample_filter_pos <- output$sample_filter_pos
+  sample_neg <- output$sample_neg
+  sample_filter_neg <- output$sample_filter_neg
+  rm(output)
+  invisible(gc())
+} else {
+  lwy <- 0.2
+  size <- 9
+  sample_pos <- ggplot(as_tibble(pos_files[[2]])[15500:19000, ], aes(time, II)) +
+    geom_line(size = lwy) +
+    ggtitle(glue("ECG with artifacts (file: {get_info(pos_files[[1]])$filename})")) +
+    theme_grey(base_size = size) +
+    theme(
+      axis.title.y = element_blank(),
+      axis.text.y = element_blank(),
+      axis.ticks.y = element_blank(),
+      axis.title.x = element_blank(),
+      axis.text.x = element_blank(),
+      axis.ticks.x = element_blank(),
+      plot.margin = margin(5, 5, 0, 5)
+    )
+
+  sample_filter_pos <- ggplot(as_tibble(pos_filters[[2]])[15500:19000, ], aes(time, complex_norm)) +
+    geom_line(size = lwy) +
+    ylim(0, 20) +
+    ggtitle(glue("Sample SQI")) +
+    theme_grey(base_size = size) +
+    theme(
+      axis.title.y = element_blank(),
+      # axis.text.y = element_blank(),
+      # axis.ticks.y = element_blank(),
+      plot.margin = margin(-13, 5, 5, 5),
+      plot.title = element_text(vjust = -8, size = 8)
+    ) +
+    labs(x = "time (s)")
+
+  sample_neg <- ggplot(as_tibble(neg_files[[2]])[1001:4500, ], aes(time, II)) +
+    geom_line(size = lwy) +
+    ggtitle(glue("ECG without artifacts (file: {get_info(neg_files[[1]])$filename})")) +
+    theme_grey(base_size = size) +
+    theme(
+      axis.title.y = element_blank(),
+      axis.text.y = element_blank(),
+      axis.ticks.y = element_blank(),
+      axis.title.x = element_blank(),
+      axis.text.x = element_blank(),
+      axis.ticks.x = element_blank(),
+      plot.margin = margin(5, 5, 0, 5)
+    )
+
+  sample_filter_neg <- ggplot(as_tibble(neg_filters[[2]])[1001:4500, ], aes(time, complex_norm)) +
+    geom_line(size = lwy) +
+    ylim(0, 20) +
+    ggtitle(glue("Sample SQI")) +
+    theme_grey(base_size = size) +
+    theme(
+      axis.title.y = element_blank(),
+      # axis.text.y = element_blank(),
+      # axis.ticks.y = element_blank(),
+      plot.margin = margin(-13, 5, 5, 5),
+      plot.title = element_text(vjust = -8, size = 8)
+    ) +
+    labs(x = "time (s)")
+
+  saveRDS(list(sample_pos = sample_pos, sample_filter_pos = sample_filter_pos, sample_neg = sample_neg, sample_filter_neg = sample_filter_neg),
+    file = here::here("output/filters-samples.rds"), compress = "xz"
+  )
+}
+gridExtra::grid.arrange(sample_pos, sample_filter_pos, sample_neg, sample_filter_neg,
+  nrow = 4, newpage = TRUE,
+  bottom = grid::textGrob(glue("The plot above shows a section of an ECG signal that is suddenly interfered with by a bad lead connection or muscle contractions. \n The plot below is a fairly good ECG signal with distortions caused by atrial fibrillation but no artifacts."), just = "center", gp = grid::gpar(fontsize = 9))
+)
+rm(sample_pos, sample_filter_pos, sample_neg, sample_filter_neg)
+invisible(gc())
+```
+
+First, we need to specify how to evaluate the performance of the SQIs, without a hard labeled
+annotation, i.e., only knowing that one series has artifacts (but we don't know where) and other
+series doesn't. Another piece of information by quick inspection is that all 12 time series are
+"clean" from data points 30500 to 32500. This gives us a hint of the starting threshold for what is
+"clean".
+
+As shown in Fig. \@ref(fig:filters-samples), the SQI fluctuates where there is a clean QRS complex.
+The threshold must be above this fluctuation.
+
+#### Establishing a threshold
+
+To be more robust in defining such threshold $\theta$, instead of finding the maximum value, we will
+take the quantile 0.9 of those values and then multiply the largest sample by some constant $\epsilon$
+(by default $\epsilon = 1.1$):
+
+$$
+\theta = \max{(Q_{SQI}(0.9))} \cdot \epsilon, \quad \{\epsilon \in \mathbb{R}^+_*\}  (\#eq:theta)
+$$
+
+What is expected is that we will have no values above the threshold on the negative set. And on the
+positive set, we will have values above, where there is noise.
+
+Another aspect we must consider is the **normalization** of the time series and the **gain** value.
+The Physionet's data, in general, has the information about the gain used to convert the signal from
+mV to the digital format. Afterward, when importing the dataset, their tool divides the digital
+values by the gain, converting them back to mV. This should, in theory, give us signals on a similar
+scale, but in some recordings, the gain seems to introduce some differences (maybe the patient had a
+weak signal or the wrong gain was used?). This is only a problem if we do not normalize (mean zero
+and standard deviation one) the signal before computing the SQI.
+
+It is essential to say that the normalization step is done when computing the Matrix Profile. Thus,
+we don't want to add yet another normalization. This means we must use the window size of the Matrix
+Profile, while the filter does not necessarily need to use that same window size. This has
+implications for comparing Mobility, Complexity [@DelRio2011], and Kurtosis because they are
+invariant to applying or not the gain on the data (since all have the data in numerator and
+denominator). They would also be invariant to normalization only if both the normalization and the
+SQI use the same window size.
+
+Furthermore, as we can see below, we can anticipate that the remaining SQIs are invariant to the
+gain $g$ applied directly to the data or on the SQI itself.
+
+The Activity (variance):
+
+$$
+\begin{eqnarray}
+Activity(\vec{X}) &=& Var\left(\frac{(x_i, x_{i+1}, \ldots, x_n)}{g}\right) \\
+ &\equiv& \frac{Var(x_i, x_{i+1}, \ldots, x_n)}{g^2}
+\end{eqnarray}
+\quad, \{ \vec{X} \in \mathbb{R}, g \in \mathbb{R} \mid g \gt 0 \}  (\#eq:activityeq)
+$$
+
+The complex, from Batista, *et al.* [@Batista2014]:
+
+$$
+\begin{eqnarray}
+complex(\vec{X}) &=& \sqrt{\sum_{i=1}^n{\left[\nabla \frac{(x_i, x_{i+1}, \ldots, x_n)}{g}\right]^2}} \\
+ &\equiv& \frac{\sqrt{\sum_{i=1}^n{\left[\nabla (x_i, x_{i+1}, \ldots, x_n)\right]^2}}}{g}
+\end{eqnarray}
+\quad, \{ \vec{X} \in \mathbb{R}, g \in \mathbb{R} \mid g \gt 0 \}  (\#eq:complexeq)
+$$
+
+The amplitude of the segments:
+
+$$
+\begin{eqnarray}
+A(\vec{X}) &=& \max{\left(\frac{(x_i, x_{i+1}, \ldots, x_n)}{g}\right)} - \min{\left(\frac{(x_i, x_{i+1}, \ldots, x_n)}{g}\right)}  \\
+ &\equiv& \frac{\max{(x_i, x_{i+1}, \ldots, x_n)} - \min{(x_i, x_{i+1}, \ldots, x_n)}}{g}
+\end{eqnarray}
+\ , \{ \vec{X} \in \mathbb{R}, g \in \mathbb{R}\}  (\#eq:amplitudeeq)
+$$
+
+Thus, assuming these characteristics of each SQI, the combinations needed for comparison are:
+
+1) Raw data
+2) Normalized data
+3) Raw data and gain applied after computing the SQI.
+4) Normalized data and gain applied after computing the SQI.
+
+The gain, applied before or after normalization, doesn't create another set of different results to be compared.
+
+#### Analysis of the chosen thresholds
+
+Using the Equation \@ref(eq:theta), we set a threshold $\theta$ using the subsets we know have no
+artifacts.
+
+```{r setthr}
+# Gain was not applied to the data nor the filters (yet)
+# The filters were precomputed for this demonstration.
+# The code is available in the source code of this page
+thresholds <- list()
+# subset <- seq.int(30500, 32500)
+subset <- seq.int(2700, 3700)
+algorithms <- c("activity", "ampl", "complex", "complexity", "kurtosis", "mobility", "maximum")
+
+for (a in algorithms) {
+  a_raw <- glue("{a}_raw")
+  a_norm <- glue("{a}_norm")
+  a_raw_gain <- glue("{a}_raw_gain")
+  a_norm_gain <- glue("{a}_norm_gain")
+
+  thr_raw <- thr_raw_gain <- thr_norm_gain <- thr_norm <- NULL
+
+  # records without artifacts
+  for (i in seq.int(1, 6)) {
+    gain <- get_info(neg_filters[[i]])$gain # the gain of this record
+    # gain <- gain / 800 # keep it small, we just want the relative effect between records.
+
+    thr_raw <- c(thr_raw, quantile(neg_filters[[i]][[a_raw]][subset], 0.9, na.rm = TRUE))
+    thr_norm <- c(thr_norm, quantile(neg_filters[[i]][[a_norm]][subset], 0.9, na.rm = TRUE))
+    thr_raw_gain <- c(thr_raw_gain, quantile(neg_filters[[i]][[a_raw]][subset] / gain, 0.9, na.rm = TRUE))
+    thr_norm_gain <- c(thr_norm_gain, quantile(neg_filters[[i]][[a_norm]][subset] / gain, 0.9, na.rm = TRUE))
+  }
+
+  # records with artifacts
+  for (i in seq.int(1, 6)) {
+    gain <- get_info(pos_filters[[i]])$gain # the gain of this record
+    # gain <- gain / 800 # keep it small, we just want the relative effect between records.
+
+    thr_raw <- c(thr_raw, quantile(pos_filters[[i]][[a_raw]][subset], 0.9, na.rm = TRUE))
+    thr_norm <- c(thr_norm, quantile(pos_filters[[i]][[a_norm]][subset], 0.9, na.rm = TRUE))
+    thr_raw_gain <- c(thr_raw_gain, quantile(pos_filters[[i]][[a_raw]][subset] / gain, 0.9, na.rm = TRUE))
+    thr_norm_gain <- c(thr_norm_gain, quantile(pos_filters[[i]][[a_norm]][subset] / gain, 0.9, na.rm = TRUE))
+  }
+
+  thresholds[[a_raw]] <- thr_raw
+  thresholds[[a_norm]] <- thr_norm
+  thresholds[[a_raw_gain]] <- thr_raw_gain
+  thresholds[[a_norm_gain]] <- thr_norm_gain
+}
+# lint elements
+thresholds <- lapply(thresholds, function(x) {
+  attr(x, "names") <- NULL
+  x
+})
+```
+
+Now we will evaluate the first aspect of each algorithm, which is the variability of values that can
+(in theory) be our negative threshold. Assuming a perfect scenario, we may suggest that the lower
+this variability, the better (and stable) the algorithm is across the dataset.
+
+The SQI doesn't have a defined unit. Thus, to compare different SQIs, we must define a standard
+range for normalization. Except for Kurtosis (that returns actually the "excess" of Kurtosis), all
+studied algorithms have a minimum of `zero`. The maximum value will be taken empirically using a
+value that will multiply the computed threshold into an optimized threshold that minimizes the false
+positives. These "multipliers" are listed in Table \@ref(tab:multipliers).
+
+```{r multipliers, warning=FALSE}
+# these are empirical values to multiply the maximum threshold obtained
+# in previous steps, in order to have a minimum of false positives in all the "negative" records
+# used here
+
+factors <- tibble(
+  type = c("raw", "norm", "raw_gain", "norm_gain"),
+  # activity_raw, activity_raw_gain and have good enough performance; activity_norm has less sensitivity on positives
+  # activity_norm_gain have more FP
+  activity = c(3, 1.1, 3, 1.1), # raw? norm?, raw_gain?
+  # activity = c(1.1, 1.1, 1.1, 1.1), # raw? norm?, raw_gain?
+  # ampl_raw is very good; ampl_norm has many FP; ampl_raw_gain started to have more FP without improvement on TP;
+  # ampl_norm_gain needs <1 and gets many FP
+  ampl = c(1.1, 1.1, 1.1, 1.1),
+  # complex_raw, complex_norm and complex_raw_gain have good enough performance (complex_raw "seems" to get less FP);
+  # complex_norm_gain needs <1 and gets many FP
+  complex = c(1.1, 1.1, 1.1, 1.1), # raw, norm, raw_gain,
+  # complexity seems to suffer from the same problem as mobility, but seems to be attracted by slopes
+  complexity = c(2, 2, 3.86198, 3.144),
+  # complexity = c(1.1, 1.1, 1.1, 1.1),
+  # mobility_raw and mobility_norm fail completely on classification and seems to be sensitive to high frequency-high amplitude changes.
+  # The gain seems to change this sensitivity.
+  mobility = c(1.5, 1.562, 1.1, 1.1),
+  # mobility = c(1.1, 1.1, 1.1, 1.1),
+  # poor results
+  kurtosis = c(2, 2, 2.17999, 2.13179),
+  # kurtosis = c(1.1, 1.1, 1.1, 1.1),
+  maximum = c(1.1, 1.1, 1.1, 1.1)
+)
+
+kbl(factors,
+  booktabs = TRUE,
+  caption = "Multipliers for tweaking the thresholds.",
+  # align = "ll",
+  position = "ht",
+  linesep = "\\addlinespace"
+) %>%
+  row_spec(0, bold = TRUE) %>%
+  column_spec(1, bold = TRUE) %>%
+  kable_styling(full_width = TRUE)
+```
+
+
+Fig. \@ref(fig:setthr2) shows a boxplot of the threshold candidates obtained for each algorithm.
+
+```{r setthr2, fig.height = 5, fig.width = 9, warning=FALSE}
+#| fig.cap="The variability of the threshold candidates for each algorithm"
+
+algorithms <- c("activity", "ampl", "complex", "complexity", "kurtosis", "mobility", "maximum")
+values_thld <- list()
+values_thld_wide <- list()
+
+for (a in algorithms) {
+  a_raw <- glue("{a}_raw")
+  a_norm <- glue("{a}_norm")
+  a_raw_gain <- glue("{a}_raw_gain")
+  a_norm_gain <- glue("{a}_norm_gain")
+
+  raw_thld <- max(thresholds[[a_raw]])
+  norm_thld <- max(thresholds[[a_norm]])
+  raw_gain_thld <- max(thresholds[[a_raw_gain]])
+  norm_gain_thld <- max(thresholds[[a_norm_gain]])
+
+  values_thld[[a_raw]] <- raw_thld
+  values_thld[[a_norm]] <- norm_thld
+  values_thld[[a_raw_gain]] <- raw_gain_thld
+  values_thld[[a_norm_gain]] <- norm_gain_thld
+
+  # this will hold the actual threshold used on the "positive" records
+  values_thld_wide[[a_raw]] <- raw_thld * factors[[a]][1]
+  values_thld_wide[[a_norm]] <- norm_thld * factors[[a]][2]
+  values_thld_wide[[a_raw_gain]] <- raw_gain_thld * factors[[a]][3]
+  values_thld_wide[[a_norm_gain]] <- norm_gain_thld * factors[[a]][4]
+}
+
+# debug
+saveRDS(values_thld, file = here::here("dev/values_thld.rds"), compress = "xz")
+
+# normalize by thld
+thrs_normalized <- thresholds %>%
+  purrr::imap(function(.x, .y) {
+    .x / values_thld[[.y]]
+  })
+# convert to tibble
+thrs_tibble <- as_tibble(thrs_normalized)
+# pivot long to create plots
+thrs_long <- thrs_tibble %>% tidyr::pivot_longer(tidyr::everything(), names_to = "algorithm")
+
+# Plot some box-plots
+plot_ly(thrs_long,
+  type = "box",
+  y = ~value, x = ~algorithm,
+  boxpoints = FALSE,
+  boxmean = TRUE
+) %>%
+  plotly::layout(
+    font = list(size = 8), yaxis = list(title = "Normalized value"),
+    xaxis = list(title = "Algorithms")
+  ) %>%
+  config(displaylogo = FALSE, scrollZoom = FALSE, toImageButtonOptions = list(format = "svg"))
+```
+
+
+From these boxplots, we may state some observations that may or not be relevant to the final choice:
+
+- The need for tweaking the threshold: "activity" (norm and norm_gain), "amplitude" (all), "complex"
+  (all), and "mobility" (norm_gain and raw_gain) didn't need to be adjusted. "activity" (raw and
+  raw_gain) needed an adjustment of x3 (rounded). The remaining needed a fine tweak. We can infer that
+  SQIs that don't need tweaks (or have a fixed value, as "activity") are more robust.
+
+- The range of values: "activity_norm" seems to have the most compact distribution. While "kurtosis"
+  (norm and raw) have a wide range of candidate values for the threshold. We can infer that SQIs
+  that have lower variability are more robust.
+
+- Skewness: The use of "gain" seems to have an effect on skewness. Also, two different patterns are
+  present, "Complexity", "Kurtosis," and "Mobility" seem to be more affected by gain, and the other
+  SQIs follow a different pattern of distribution. We could infer that less skewness is better than
+  a skewed distribution.
+
+##### *The 'negative' records*
+
+Now let's analyze the values considered "artifacts" by the thresholds we've set.
+
+```{r abovethr}
+values_pos_pos <- list()
+values_pos_neg <- list()
+values_neg_pos <- list()
+values_neg_neg <- list()
+mask_len_neg_neg <- 0
+mask_len_neg_pos <- 0
+mask_len_pos_neg <- 0
+mask_len_pos_pos <- 0
+
+for (a in algorithms) {
+  a_raw <- glue("{a}_raw")
+  a_norm <- glue("{a}_norm")
+  a_raw_gain <- glue("{a}_raw_gain")
+  a_norm_gain <- glue("{a}_norm_gain")
+
+  raw_thld <- values_thld_wide[[a_raw]]
+  norm_thld <- values_thld_wide[[a_norm]]
+  raw_gain_thld <- values_thld_wide[[a_raw_gain]]
+  norm_gain_thld <- values_thld_wide[[a_norm_gain]]
+
+  values_neg_pos_raw <- values_neg_pos_raw_gain <- values_neg_pos_norm_gain <- values_neg_pos_norm <- list()
+  values_neg_neg_raw <- values_neg_neg_raw_gain <- values_neg_neg_norm_gain <- values_neg_neg_norm <- list()
+  # records without artifacts
+  for (i in seq.int(1, 6)) {
+    gain <- get_info(neg_filters[[i]])$gain # the gain of this record
+
+    lbl <- glue("neg{i}")
+
+    mask <- which(neg_filters[[i]][[a_raw]] > raw_thld)
+    mask_len_neg_pos <- ifelse(mask_len_neg_pos < length(mask), length(mask), mask_len_neg_pos)
+    values_neg_pos_raw[[lbl]] <- neg_filters[[i]][[a_raw]][mask]
+    mask <- which(neg_filters[[i]][[a_norm]] > norm_thld)
+    mask_len_neg_pos <- ifelse(mask_len_neg_pos < length(mask), length(mask), mask_len_neg_pos)
+    values_neg_pos_norm[[lbl]] <- neg_filters[[i]][[a_norm]][mask]
+    mask <- which((neg_filters[[i]][[a_raw]] / gain) > raw_gain_thld)
+    mask_len_neg_pos <- ifelse(mask_len_neg_pos < length(mask), length(mask), mask_len_neg_pos)
+    values_neg_pos_raw_gain[[lbl]] <- (neg_filters[[i]][[a_raw]] / gain)[mask]
+    mask <- which((neg_filters[[i]][[a_norm]] / gain) > norm_gain_thld)
+    mask_len_neg_pos <- ifelse(mask_len_neg_pos < length(mask), length(mask), mask_len_neg_pos)
+    values_neg_pos_norm_gain[[lbl]] <- (neg_filters[[i]][[a_norm]] / gain)[mask]
+
+    mask <- which(neg_filters[[i]][[a_raw]] <= raw_thld)
+    mask_len_neg_neg <- ifelse(mask_len_neg_neg < length(mask), length(mask), mask_len_neg_neg)
+    values_neg_neg_raw[[lbl]] <- neg_filters[[i]][[a_raw]][mask]
+    mask <- which(neg_filters[[i]][[a_norm]] <= norm_thld)
+    mask_len_neg_neg <- ifelse(mask_len_neg_neg < length(mask), length(mask), mask_len_neg_neg)
+    values_neg_neg_norm[[lbl]] <- neg_filters[[i]][[a_norm]][mask]
+    mask <- which((neg_filters[[i]][[a_raw]] / gain) <= raw_gain_thld)
+    mask_len_neg_neg <- ifelse(mask_len_neg_neg < length(mask), length(mask), mask_len_neg_neg)
+    values_neg_neg_raw_gain[[lbl]] <- (neg_filters[[i]][[a_raw]] / gain)[mask]
+    mask <- which((neg_filters[[i]][[a_norm]] / gain) <= norm_gain_thld)
+    mask_len_neg_neg <- ifelse(mask_len_neg_neg < length(mask), length(mask), mask_len_neg_neg)
+    values_neg_neg_norm_gain[[lbl]] <- (neg_filters[[i]][[a_norm]] / gain)[mask]
+    invisible(gc())
+  }
+
+  # this will hold some false positives
+  values_neg_pos[[a_raw]] <- values_neg_pos_raw
+  values_neg_pos[[a_norm]] <- values_neg_pos_norm
+  values_neg_pos[[a_raw_gain]] <- values_neg_pos_raw_gain
+  values_neg_pos[[a_norm_gain]] <- values_neg_pos_norm_gain
+
+  # this will hold true negatives
+  values_neg_neg[[a_raw]] <- values_neg_neg_raw
+  values_neg_neg[[a_norm]] <- values_neg_neg_norm
+  values_neg_neg[[a_raw_gain]] <- values_neg_neg_raw_gain
+  values_neg_neg[[a_norm_gain]] <- values_neg_neg_norm_gain
+
+  values_pos_pos_raw <- values_pos_pos_raw_gain <- values_pos_pos_norm_gain <- values_pos_pos_norm <- list()
+  values_pos_neg_raw <- values_pos_neg_raw_gain <- values_pos_neg_norm_gain <- values_pos_neg_norm <- list()
+
+  for (i in seq.int(1, 6)) {
+    gain <- get_info(pos_filters[[i]])$gain # the gain of this record
+
+    lbl <- glue("pos{i}")
+
+    mask <- which(pos_filters[[i]][[a_raw]] > raw_thld)
+    mask_len_pos_pos <- ifelse(mask_len_pos_pos < length(mask), length(mask), mask_len_pos_pos)
+    values_pos_pos_raw[[lbl]] <- pos_filters[[i]][[a_raw]][mask]
+    mask <- which(pos_filters[[i]][[a_norm]] > norm_thld)
+    mask_len_pos_pos <- ifelse(mask_len_pos_pos < length(mask), length(mask), mask_len_pos_pos)
+    values_pos_pos_norm[[lbl]] <- pos_filters[[i]][[a_norm]][mask]
+    mask <- which((pos_filters[[i]][[a_raw]] / gain) > raw_gain_thld)
+    mask_len_pos_pos <- ifelse(mask_len_pos_pos < length(mask), length(mask), mask_len_pos_pos)
+    values_pos_pos_raw_gain[[lbl]] <- (pos_filters[[i]][[a_raw]] / gain)[mask]
+    mask <- which((pos_filters[[i]][[a_norm]] / gain) > norm_gain_thld)
+    mask_len_pos_pos <- ifelse(mask_len_pos_pos < length(mask), length(mask), mask_len_pos_pos)
+    values_pos_pos_norm_gain[[lbl]] <- (pos_filters[[i]][[a_norm]] / gain)[mask]
+
+    mask <- which(pos_filters[[i]][[a_raw]] <= raw_thld)
+    mask_len_pos_neg <- ifelse(mask_len_pos_neg < length(mask), length(mask), mask_len_pos_neg)
+    values_pos_neg_raw[[lbl]] <- pos_filters[[i]][[a_raw]][mask]
+    mask <- which(pos_filters[[i]][[a_norm]] <= norm_thld)
+    mask_len_pos_neg <- ifelse(mask_len_pos_neg < length(mask), length(mask), mask_len_pos_neg)
+    values_pos_neg_norm[[lbl]] <- pos_filters[[i]][[a_norm]][mask]
+    mask <- which((pos_filters[[i]][[a_raw]] / gain) <= raw_gain_thld)
+    mask_len_pos_neg <- ifelse(mask_len_pos_neg < length(mask), length(mask), mask_len_pos_neg)
+    values_pos_neg_raw_gain[[lbl]] <- (pos_filters[[i]][[a_raw]] / gain)[mask]
+    mask <- which((pos_filters[[i]][[a_norm]] / gain) <= norm_gain_thld)
+    mask_len_pos_neg <- ifelse(mask_len_pos_neg < length(mask), length(mask), mask_len_pos_neg)
+    values_pos_neg_norm_gain[[lbl]] <- (pos_filters[[i]][[a_norm]] / gain)[mask]
+    invisible(gc())
+  }
+
+  # this will hold the values above the threshold. Possibly a lot of false positives.
+  values_pos_pos[[a_raw]] <- values_pos_pos_raw
+  values_pos_pos[[a_norm]] <- values_pos_pos_norm
+  values_pos_pos[[a_raw_gain]] <- values_pos_pos_raw_gain
+  values_pos_pos[[a_norm_gain]] <- values_pos_pos_norm_gain
+
+  # this will hold the values below the threshold. Possibly a lot of true negatives.
+  values_pos_neg[[a_raw]] <- values_pos_neg_raw
+  values_pos_neg[[a_norm]] <- values_pos_neg_norm
+  values_pos_neg[[a_raw_gain]] <- values_pos_neg_raw_gain
+  values_pos_neg[[a_norm_gain]] <- values_pos_neg_norm_gain
+  invisible(gc())
+}
+
+values_neg_neg_tbl <- values_neg_neg %>%
+  purrr::modify_depth(2, function(x) {
+    xlen <- length(x)
+    pad <- mask_len_neg_neg - xlen
+    c(x, rep(NA, pad))
+  }) %>%
+  purrr::map(as_tibble) %>%
+  as_tibble() %>%
+  tidyr::unnest(everything(), names_sep = "-") %>%
+  tidyr::pivot_longer(everything(), names_to = c("algorithm", "record"), names_sep = "-", values_drop_na = TRUE)
+
+values_neg_pos_tbl <- values_neg_pos %>%
+  purrr::modify_depth(2, function(x) {
+    xlen <- length(x)
+    pad <- mask_len_neg_pos - xlen
+    c(x, rep(NA, pad))
+  }) %>%
+  purrr::map(as_tibble) %>%
+  as_tibble() %>%
+  tidyr::unnest(everything(), names_sep = "-") %>%
+  tidyr::pivot_longer(everything(), names_to = c("algorithm", "record"), names_sep = "-", values_drop_na = TRUE)
+
+values_pos_neg_tbl <- values_pos_neg %>%
+  purrr::modify_depth(2, function(x) {
+    xlen <- length(x)
+    pad <- mask_len_pos_neg - xlen
+    c(x, rep(NA, pad))
+  }) %>%
+  purrr::map(as_tibble) %>%
+  as_tibble() %>%
+  tidyr::unnest(everything(), names_sep = "-") %>%
+  tidyr::pivot_longer(everything(), names_to = c("algorithm", "record"), names_sep = "-", values_drop_na = TRUE)
+
+values_pos_pos_tbl <- values_pos_pos %>%
+  purrr::modify_depth(2, function(x) {
+    xlen <- length(x)
+    pad <- mask_len_pos_pos - xlen
+    c(x, rep(NA, pad))
+  }) %>%
+  purrr::map(as_tibble) %>%
+  as_tibble() %>%
+  tidyr::unnest(everything(), names_sep = "-") %>%
+  tidyr::pivot_longer(everything(), names_to = c("algorithm", "record"), names_sep = "-", values_drop_na = TRUE)
+```
+
+```{r histogram-pos}
+thld_ds <- tibble(algorithm = names(values_thld_wide), thld = unlist(values_thld_wide, use.names = FALSE)) %>%
+  arrange(algorithm)
+
+pospos <- values_pos_pos_tbl %>%
+  mutate(class = "artifact") %>%
+  slice_sample(prop = 0.5)
+posneg <- values_pos_neg_tbl %>%
+  mutate(class = "clean") %>%
+  slice_sample(prop = 0.5)
+
+pospos_slice <- pospos %>%
+  rowwise() %>%
+  dplyr::filter(value <= values_thld_wide[[algorithm]] * 2)
+# posall_slice <- dplyr::bind_rows(pospos_slice, posneg)
+# posall <- dplyr::bind_rows(pospos, posneg)
+rm(values_neg_neg, values_neg_pos, values_pos_neg, values_pos_pos)
+rm(values_neg_neg_raw, values_neg_neg_norm, values_neg_neg_raw_gain, values_neg_neg_norm_gain)
+rm(values_neg_pos_raw, values_neg_pos_norm, values_neg_pos_raw_gain, values_neg_pos_norm_gain)
+rm(values_pos_pos_raw, values_pos_pos_norm, values_pos_pos_raw_gain, values_pos_pos_norm_gain)
+rm(values_pos_neg_raw, values_pos_neg_norm, values_pos_neg_raw_gain, values_pos_neg_norm_gain)
+invisible(gc())
+```
+
+```{r histogram-neg}
+negpos <- values_neg_pos_tbl %>%
+  mutate(class = "artifact") %>%
+  slice_sample(prop = 0.5)
+negneg <- values_neg_neg_tbl %>%
+  mutate(class = "clean") %>%
+  slice_sample(prop = 0.5)
+
+negpos_slice <- negpos %>%
+  rowwise() %>%
+  dplyr::filter(value <= values_thld_wide[[algorithm]] * 2)
+# negall_slice <- dplyr::bind_rows(negpos_slice, negneg)
+# negall <- dplyr::bind_rows(negpos, negneg)
+rm(values_pos_pos_tbl, values_pos_neg_tbl)
+invisible(gc())
+```
+
+Fig. \@ref(fig:histogram-neg-plot) shows the histograms of all 'negative' records for each SQI. The
+threshold divides the histogram into 'artifact' and 'clean' classes. We assume that the artifacts
+detected here are, in fact, false positives as we are looking in the 'negative' records.
+
+```{r histogram-neg-plot, fig.height = 12, fig.width = 14, warning=FALSE}
+#| fig.cap="Histogram showing the distribution of false positives for
+#|  the defined threshold for each algorithm through all 'negative' records.
+#|  The counts are in logarithmic scale."
+
+p <- negpos %>%
+  ggplot(aes(value)) +
+  geom_histogram(
+    aes(fill = class),
+    alpha = 0.8,
+    bins = 20
+  ) +
+  geom_histogram(
+    aes(fill = class),
+    alpha = 0.8,
+    bins = 20,
+    data = negneg
+  ) +
+  geom_vline(aes(xintercept = thld),
+    colour = "#5e5e5e", size = 0.8, data = thld_ds
+  ) +
+  facet_wrap(~algorithm,
+    ncol = 4,
+    scales = "free",
+    drop = FALSE
+  ) +
+  scale_y_continuous(
+    trans = scales::log10_trans(),
+    label = scales::label_number_si()
+  ) +
+  scale_x_continuous(
+    label = scales::label_number_si(2)
+  ) +
+  labs(x = "SQI value", y = "Counts (log scale)", fill = "Class", title = "Negative records (overall)") +
+  theme_bw() +
+  theme(
+    axis.title.x = element_text(size = 16),
+    axis.title.y = element_text(size = 16),
+    legend.title = element_text(size = 16)
+  )
+p
+rm(values_neg_pos_tbl, values_neg_neg_tbl)
+invisible(gc())
+```
+
+Fig. \@ref(fig:histogram-neg-plots) shows each record individually. Each line is a different SQI,
+and each column one of the six records.
+
+```{r histogram-neg-plots,fig.height = 30, fig.width = 14, warning=FALSE}
+#| fig.cap="Histogram showing the distribution of false positives for
+#|  the defined threshold for each algorithm through all 'negative' records individually.
+#|  The counts are in logarithmic scale."
+# options(vsc.dev.args = list(width = 2800, height = 2800))
+p <- negpos_slice %>%
+  ggplot(aes(value)) +
+  geom_histogram(
+    aes(fill = class),
+    alpha = 0.8,
+    bins = 40
+  ) +
+  geom_blank(aes(x = thld * 2), data = thld_ds) +
+  geom_blank(aes(x = 0)) +
+  geom_histogram(
+    aes(fill = class),
+    alpha = 0.8,
+    bins = 40,
+    data = negneg
+  ) +
+  geom_vline(aes(xintercept = thld),
+    colour = "#5e5e5e", size = 0.8, data = thld_ds
+  ) +
+  # facet_grid(
+  #   rows = vars(record), cols = vars(algorithm),
+  #   scales = "free",
+  #   drop = FALSE
+  # ) +
+  facet_wrap(~ algorithm + record,
+    ncol = 6,
+    scales = "free",
+    labeller = as_labeller(function(x) {
+      return(x)
+    }, multi_line = FALSE),
+    drop = FALSE
+  ) +
+  scale_y_continuous(
+    trans = scales::log10_trans(),
+    label = scales::label_number_si()
+  ) +
+  scale_x_continuous(
+    label = scales::label_number_si(2)
+  ) +
+  labs(x = "SQI value", y = "Counts (log scale)", fill = "Class", title = "Negative records") +
+  theme_bw() +
+  theme(
+    axis.title.x = element_text(size = 16),
+    axis.title.y = element_text(size = 16),
+    legend.title = element_text(size = 16)
+  )
+p
+invisible(gc())
+```
+
+##### *The 'positive' records*
+
+Fig. \@ref(fig:histogram-pos-plot) shows the histograms of all 'positive' records for each SQI. The
+best scenario, in this case, would be having an SQI that results in two distinct distributions with
+a clear boundary between them. Clearly, this is not the case, but we may infer some characteristics
+like 1) does the threshold have some gap between the artifact and clean distribution? 2) does the
+distribution has some "inflection point" that may suggest a threshold point? 3) does the positive
+results contain all the true artifacts? This may be better analyzed by looking at the next figure
+(Fig. \@ref(fig:histogram-pos-plots)).
+
+```{r histogram-pos-plot, fig.height = 12, fig.width = 14, warning=FALSE}
+#| fig.cap="Histogram showing the distribution of 'artifact' and 'clean' classes
+#|  for each algorithm through all 'positive' records.
+#|  The counts are in logarithmic scale."
+# options(vsc.dev.args = list(width = 1000, height = 1000))
+p <- pospos %>%
+  ggplot(aes(value)) +
+  geom_histogram(
+    aes(fill = class),
+    alpha = 0.8,
+    bins = 20
+  ) +
+  geom_histogram(
+    aes(fill = class),
+    alpha = 0.8,
+    bins = 20,
+    data = posneg
+  ) +
+  geom_vline(aes(xintercept = thld),
+    colour = "#5e5e5e", size = 0.8, data = thld_ds
+  ) +
+  facet_wrap(~algorithm,
+    ncol = 4,
+    scales = "free",
+    drop = FALSE
+  ) +
+  scale_y_continuous(
+    trans = scales::log10_trans(),
+    label = scales::label_number_si()
+  ) +
+  scale_x_continuous(
+    label = scales::label_number_si(2)
+  ) +
+  labs(x = "SQI value", y = "Counts (log scale)", fill = "Class", title = "Positive records (overall)") +
+  theme_bw() +
+  theme(
+    axis.title.x = element_text(size = 16),
+    axis.title.y = element_text(size = 16),
+    legend.title = element_text(size = 16)
+  )
+p
+invisible(gc())
+```
+
+Fig. \@ref(fig:histogram-pos-plots) shows each record individually. As we can see, some SQIs are not
+able to detect the 'artifact' class in all records: "Activity", "Amplitude," and "complex"
+(norm_gain); "Complexity" (all); "Kurtosis" and "Mobility" (gain).
+
+```{r histogram-pos-plots, fig.height = 30, fig.width = 14, warning=FALSE}
+#| fig.cap="Histogram showing the distribution of 'artifact' and 'clean' classes
+#|  for each algorithm through all 'positive' records individually.
+#|  The counts are in logarithmic scale."
+# options(vsc.dev.args = list(width = 3000, height = 1000))
+p <- pospos_slice %>%
+  ggplot(aes(value)) +
+  geom_histogram(
+    aes(fill = class),
+    alpha = 0.8,
+    bins = 40
+  ) +
+  geom_blank(aes(x = thld * 2), data = thld_ds) +
+  geom_blank(aes(x = 0)) +
+  geom_histogram(
+    aes(fill = class),
+    alpha = 0.8,
+    bins = 40,
+    data = posneg
+  ) +
+  geom_vline(aes(xintercept = thld),
+    colour = "#5e5e5e", size = 0.8, data = thld_ds
+  ) +
+  # facet_grid(
+  #   rows = vars(record), cols = vars(algorithm),
+  #   scales = "free",
+  #   drop = FALSE
+  # ) +
+  facet_wrap(~ algorithm + record,
+    ncol = 6,
+    scales = "free",
+    labeller = as_labeller(function(x) {
+      return(x)
+    }, multi_line = FALSE),
+    drop = FALSE
+  ) +
+  scale_y_continuous(
+    trans = scales::log10_trans(),
+    label = scales::label_number_si()
+  ) +
+  scale_x_continuous(
+    label = scales::label_number_si(2)
+  ) +
+  labs(x = "SQI value", y = "Counts (log scale)", fill = "Class", title = "Positive records") +
+  theme_bw() +
+  theme(
+    axis.title.x = element_text(size = 16),
+    axis.title.y = element_text(size = 16),
+    legend.title = element_text(size = 16)
+  )
+p
+invisible(gc())
+```
+
+##### *The Recall*
+
+Finally, as we set the threshold to give us a lower false-positive rate, we want a good recall.
+
+First, let's show how the false positives are distributed in the "negative" records. The following
+plots show the false positives of each SQI. The upper plot of Fig. \@ref(fig:negfiles-plot-all) is a
+concatenation of the "negative" records with a margin of 100 samples before and after any detection.
+The figure is interactive and may be zoomed in for inspection.
+
+```{r posfiles, warning=FALSE}
+find_sequences <- function(data, lag = 10, pad = 0) {
+  if (lag == 0) {
+    lag <- 1
+  }
+  dd <- diff(data)
+
+  if (all(is.na(dd))) {
+    warning("There is no sequence")
+    return(NULL)
+  }
+
+  edges <- which(abs(dd) > lag) # find the edges of the sequences
+
+  edges <- sort(c(1, edges, edges + 1, length(data))) # add the first and last element
+  idxs <- data[edges] # get the values of the sequences
+
+  if (length(idxs) %% 2 != 0) {
+    warning("Indexes are not even")
+    return(NULL)
+  }
+
+  st <- if_else(idxs[1] > pad, idxs[1] - pad, 1)
+  en <- idxs[length(idxs)]
+
+  seqs <- NULL
+  for (j in seq.int(1, length(idxs), by = 2)) {
+    seqs <- c(seqs, seq.int(idxs[j] - pad, idxs[j + 1] + pad))
+  }
+
+  seqs <- sort(unique(seqs[seqs >= st & seqs <= en]))
+
+  return(seqs)
+}
+
+values_pos_raw <- values_pos_raw_gain <- values_pos_norm_gain <- values_pos_norm <- list()
+
+for (a in algorithms) {
+  a_raw <- glue("{a}_raw")
+  a_norm <- glue("{a}_norm")
+  a_raw_gain <- glue("{a}_raw_gain")
+  a_norm_gain <- glue("{a}_norm_gain")
+
+  for (i in seq.int(1, 6)) {
+    gain <- get_info(pos_filters[[i]])$gain # the gain of this record
+    record_size <- length(pos_files[[i]]$II)
+    result <- rep(NA_real_, record_size)
+    values_pos_raw[["data"]][[i]] <- as.numeric(pos_files[[i]]$II)
+    values_pos_norm[["data"]][[i]] <- as.numeric(pos_files[[i]]$II)
+    values_pos_raw_gain[["data"]][[i]] <- as.numeric(pos_files[[i]]$II)
+    values_pos_norm_gain[["data"]][[i]] <- as.numeric(pos_files[[i]]$II)
+    values_pos_raw[[a_raw]][[i]] <- result
+    values_pos_norm[[a_norm]][[i]] <- result
+    values_pos_raw_gain[[a_raw_gain]][[i]] <- result
+    values_pos_norm_gain[[a_norm_gain]][[i]] <- result
+
+    pos_values <- which(pos_filters[[i]][[a_raw]] > values_thld_wide[[a_raw]])
+    if (length(pos_values) > 0) {
+      idxs <- find_sequences(pos_values)
+      values_pos_raw[[a_raw]][[i]][idxs] <- pos_files[[i]]$II[idxs]
+    }
+
+    pos_values <- which(pos_filters[[i]][[a_norm]] > values_thld_wide[[a_norm]])
+    if (length(pos_values) > 0) {
+      idxs <- find_sequences(pos_values)
+      values_pos_norm[[a_norm]][[i]][idxs] <- pos_files[[i]]$II[idxs]
+    }
+
+    pos_values <- which((pos_filters[[i]][[a_raw]] / gain) > values_thld_wide[[a_raw_gain]])
+    if (length(pos_values) > 0) {
+      idxs <- find_sequences(pos_values)
+      values_pos_raw_gain[[a_raw_gain]][[i]][idxs] <- pos_files[[i]]$II[idxs]
+    }
+
+    pos_values <- which((pos_filters[[i]][[a_norm]] / gain) > values_thld_wide[[a_norm_gain]])
+    if (length(pos_values) > 0) {
+      idxs <- find_sequences(pos_values)
+      values_pos_norm_gain[[a_norm_gain]][[i]][idxs] <- pos_files[[i]]$II[idxs]
+    }
+  }
+}
+
+# for negatives,
+
+values_neg_raw <- values_neg_raw_gain <- values_neg_norm_gain <- values_neg_norm <- list()
+
+for (a in algorithms) {
+  a_raw <- glue("{a}_raw")
+  a_norm <- glue("{a}_norm")
+  a_raw_gain <- glue("{a}_raw_gain")
+  a_norm_gain <- glue("{a}_norm_gain")
+
+  for (i in seq.int(1, 6)) {
+    gain <- get_info(neg_filters[[i]])$gain # the gain of this record
+    record_size <- length(neg_files[[i]]$II)
+    result <- rep(NA_real_, record_size)
+    values_neg_raw[["data"]][[i]] <- as.numeric(neg_files[[i]]$II)
+    values_neg_norm[["data"]][[i]] <- as.numeric(neg_files[[i]]$II)
+    values_neg_raw_gain[["data"]][[i]] <- as.numeric(neg_files[[i]]$II)
+    values_neg_norm_gain[["data"]][[i]] <- as.numeric(neg_files[[i]]$II)
+    values_neg_raw[[a_raw]][[i]] <- result
+    values_neg_norm[[a_norm]][[i]] <- result
+    values_neg_raw_gain[[a_raw_gain]][[i]] <- result
+    values_neg_norm_gain[[a_norm_gain]][[i]] <- result
+
+    neg_values <- which(neg_filters[[i]][[a_raw]] > values_thld_wide[[a_raw]])
+    if (length(neg_values) > 0) {
+      idxs <- find_sequences(neg_values)
+      values_neg_raw[[a_raw]][[i]][idxs] <- neg_files[[i]]$II[idxs]
+    }
+
+    neg_values <- which(neg_filters[[i]][[a_norm]] > values_thld_wide[[a_norm]])
+    if (length(neg_values) > 0) {
+      idxs <- find_sequences(neg_values)
+      values_neg_norm[[a_norm]][[i]][idxs] <- neg_files[[i]]$II[idxs]
+    }
+
+    neg_values <- which((neg_filters[[i]][[a_raw]] / gain) > values_thld_wide[[a_raw_gain]])
+    if (length(neg_values) > 0) {
+      idxs <- find_sequences(neg_values)
+      values_neg_raw_gain[[a_raw_gain]][[i]][idxs] <- neg_files[[i]]$II[idxs]
+    }
+
+    neg_values <- which((neg_filters[[i]][[a_norm]] / gain) > values_thld_wide[[a_norm_gain]])
+    if (length(neg_values) > 0) {
+      idxs <- find_sequences(neg_values)
+      values_neg_norm_gain[[a_norm_gain]][[i]][idxs] <- neg_files[[i]]$II[idxs]
+    }
+  }
+}
+```
+
+```{r list_df, warning = FALSE}
+list_df <- function(data, idx = FALSE, lag = 10, pad = 500) {
+  df <- purrr::map_dfc(data, function(x) {
+    unlist(x)
+  })
+
+  names <- setdiff(sort(colnames(df)), "data")
+  df <- df %>% select(c("data", all_of(names)))
+
+  df_temp <- df
+  df_temp$data <- NULL
+  df_temp <- bind_cols(idxs = seq.int(1, nrow(df_temp)), df_temp)
+  df_temp <- df_temp %>% filter(!if_all(!idxs, ~ is.na(.)))
+  keep <- find_sequences(df_temp$idxs, lag, pad)
+  rm(df_temp)
+
+  df <- df[keep, ]
+
+  if (idx) {
+    df <- bind_cols(x = seq.int(1, nrow(df)), df)
+  }
+
+  as_tibble(df)
+}
+rm(pos_files, pos_filters)
+invisible(gc())
+```
+
+```{r negfiles-plot-all, fig.height = 12, fig.width = 9, warning=FALSE}
+#| fig.cap="False positives of SQIs in the 'negative' records."
+
+all_values_neg <- purrr::list_modify(values_neg_raw, !!!values_neg_norm, !!!values_neg_raw_gain, !!!values_neg_norm_gain)
+
+df_neg_all <- list_df(all_values_neg, TRUE, lag = 10, pad = 100)
+df_neg_all <- df_neg_all[seq.int(1, nrow(df_neg_all), by = 5), ] # resize
+vars <- setdiff(names(df_neg_all), "x")
+plots_neg_all <- lapply(vars, function(var) {
+  plot_ly(df_neg_all, x = ~x, y = as.formula(paste0("~", var))) %>%
+    add_lines(name = var, line = list(width = 1)) %>%
+    plotly::layout(font = list(size = 8))
+})
+subplot(plots_neg_all, nrows = length(plots_neg_all), shareX = TRUE, titleX = FALSE, margin = 0) %>%
+  config(displaylogo = FALSE, scrollZoom = TRUE, toImageButtonOptions = list(format = "svg"))
+```
+
+Finally, Fig. \@ref(fig:posfiles-plot-all) displays the detection in the "positive" records for each
+SQI. The figure is interactive and may be zoomed in for inspection. As before, the first plot is a
+concatenation of the records with a boundary of 1000 samples before and after any detection.
+
+```{r posfiles-plot-all, fig.height = 12, fig.width = 9, warning=FALSE}
+#| fig.cap="Recall of SQIs in the 'positive' records."
+
+all_values_pos <- purrr::list_modify(values_pos_raw, !!!values_pos_norm, !!!values_pos_raw_gain, !!!values_pos_norm_gain)
+
+df_pos_all <- list_df(all_values_pos, TRUE, lag = 10, pad = 100)
+df_pos_all <- df_pos_all[seq.int(1, nrow(df_pos_all), by = 5), ] # resize
+vars <- setdiff(names(df_pos_all), "x")
+plots_pos_all <- lapply(vars, function(var) {
+  plot_ly(df_pos_all, x = ~x, y = as.formula(paste0("~", var))) %>%
+    add_lines(name = var, line = list(width = 1)) %>%
+    plotly::layout(font = list(size = 8))
+})
+subplot(plots_pos_all, nrows = length(plots_pos_all), shareX = TRUE, titleX = FALSE, margin = 0) %>%
+  config(displaylogo = FALSE, scrollZoom = TRUE, toImageButtonOptions = list(format = "svg"))
+```
+
+Fig. \@ref(fig:posfiles-plot-best) shows the best SQIs only.
+
+```{r posfiles-plot-best, fig.height = 8, fig.width = 9, warning=FALSE}
+#| fig.cap="Recall of SQIs in the 'positive' records, only the best algorithms."
+
+df_pos_best <- df_pos_all %>%
+  select(x, data, maximum_raw, maximum_raw_gain, maximum_norm, maximum_norm_gain, activity_raw, activity_raw_gain, ampl_raw, complex_norm, complex_raw, complex_raw_gain)
+vars <- setdiff(names(df_pos_best), "x")
+plots_pos_best <- lapply(vars, function(var) {
+  plot_ly(df_pos_best, x = ~x, y = as.formula(paste0("~", var))) %>%
+    add_lines(name = var, line = list(width = 1)) %>%
+    plotly::layout(font = list(size = 8))
+})
+subplot(plots_pos_best, nrows = length(plots_pos_best), shareX = TRUE, shareY = TRUE, titleX = FALSE, margin = 0) %>%
+  config(displaylogo = FALSE, scrollZoom = TRUE, toImageButtonOptions = list(format = "svg"))
+```
+
+
+##### *Sanity check*
+
+In order do have some "validation", let's use the study's parameters and apply them to a different
+set of records. These records are not from the "asystole" set but from the "ventricular
+fibrillation".
+
+```{r read_files_filters2}
+neg <- c(1, 2, 3, 4, 5, 7, 8, 9, 10)
+pos <- c(6, 11, 12, 13, 14, 15)
+
+if (file.exists(here::here("dev/backtofilters2.rds"))) {
+  backtofilters2 <- readRDS(here::here("dev/backtofilters2.rds"))
+  pos_files <- backtofilters2$pos_files
+  neg_files <- backtofilters2$neg_files
+  pos_filters <- backtofilters2$pos_filters
+  neg_filters <- backtofilters2$neg_filters
+  rm(backtofilters2)
+} else {
+  filenames <- find_all_files(classes = "fibv", limit_per_class = max(neg, pos))
+
+  pos_files <- list()
+  i <- 1
+  for (file in filenames[pos]) {
+    pos_files[i] <- read_ecg_csv(file, normalize = FALSE)
+    i <- i + 1
+  }
+
+  neg_files <- list()
+  i <- 1
+  for (file in filenames[neg]) {
+    neg_files[i] <- read_ecg_csv(file, normalize = FALSE)
+    i <- i + 1
+  }
+
+  pos_filters <- list()
+  for (i in seq.int(1, length(pos_files))) {
+    pos_filters[[i]] <- compute_filters(pos_files[[i]]$II, list(window_size = 250, filter_w_size = 100), get_info(pos_files[[i]]))
+    pos_filters[[i]]$time <- pos_files[[i]]$time
+  }
+
+  neg_filters <- list()
+  for (i in seq.int(1, length(neg_files))) {
+    neg_filters[[i]] <- compute_filters(neg_files[[i]]$II, list(window_size = 250, filter_w_size = 100), get_info(neg_files[[i]]))
+    neg_filters[[i]]$time <- neg_files[[i]]$time
+  }
+
+  saveRDS(list(neg_files = neg_files, pos_files = pos_files, neg_filters = neg_filters, pos_filters = pos_filters),
+    file = here::here("dev/backtofilters2.rds"), compress = "xz"
+  )
+}
+invisible(gc())
+```
+
+
+```{r posfiles2, warning=FALSE}
+
+values_pos_raw <- values_pos_raw_gain <- values_pos_norm_gain <- values_pos_norm <- list()
+
+for (a in algorithms) {
+  a_raw <- glue("{a}_raw")
+  a_norm <- glue("{a}_norm")
+  a_raw_gain <- glue("{a}_raw_gain")
+  a_norm_gain <- glue("{a}_norm_gain")
+
+  for (i in seq.int(1, 6)) {
+    gain <- get_info(pos_filters[[i]])$gain # the gain of this record
+    record_size <- length(pos_files[[i]]$II)
+    result <- rep(NA_real_, record_size)
+    values_pos_raw[["data"]][[i]] <- as.numeric(pos_files[[i]]$II)
+    values_pos_norm[["data"]][[i]] <- as.numeric(pos_files[[i]]$II)
+    values_pos_raw_gain[["data"]][[i]] <- as.numeric(pos_files[[i]]$II)
+    values_pos_norm_gain[["data"]][[i]] <- as.numeric(pos_files[[i]]$II)
+    values_pos_raw[[a_raw]][[i]] <- result
+    values_pos_norm[[a_norm]][[i]] <- result
+    values_pos_raw_gain[[a_raw_gain]][[i]] <- result
+    values_pos_norm_gain[[a_norm_gain]][[i]] <- result
+
+    pos_values <- which(pos_filters[[i]][[a_raw]] > values_thld_wide[[a_raw]])
+    if (length(pos_values) > 0) {
+      idxs <- find_sequences(pos_values)
+      values_pos_raw[[a_raw]][[i]][idxs] <- pos_files[[i]]$II[idxs]
+    }
+
+    pos_values <- which(pos_filters[[i]][[a_norm]] > values_thld_wide[[a_norm]])
+    if (length(pos_values) > 0) {
+      idxs <- find_sequences(pos_values)
+      values_pos_norm[[a_norm]][[i]][idxs] <- pos_files[[i]]$II[idxs]
+    }
+
+    pos_values <- which((pos_filters[[i]][[a_raw]] / gain) > values_thld_wide[[a_raw_gain]])
+    if (length(pos_values) > 0) {
+      idxs <- find_sequences(pos_values)
+      values_pos_raw_gain[[a_raw_gain]][[i]][idxs] <- pos_files[[i]]$II[idxs]
+    }
+
+    pos_values <- which((pos_filters[[i]][[a_norm]] / gain) > values_thld_wide[[a_norm_gain]])
+    if (length(pos_values) > 0) {
+      idxs <- find_sequences(pos_values)
+      values_pos_norm_gain[[a_norm_gain]][[i]][idxs] <- pos_files[[i]]$II[idxs]
+    }
+  }
+}
+
+# for negatives,
+
+values_neg_raw <- values_neg_raw_gain <- values_neg_norm_gain <- values_neg_norm <- list()
+
+for (a in algorithms) {
+  a_raw <- glue("{a}_raw")
+  a_norm <- glue("{a}_norm")
+  a_raw_gain <- glue("{a}_raw_gain")
+  a_norm_gain <- glue("{a}_norm_gain")
+
+  for (i in seq.int(1, 6)) {
+    gain <- get_info(neg_filters[[i]])$gain # the gain of this record
+    record_size <- length(neg_files[[i]]$II)
+    result <- rep(NA_real_, record_size)
+    values_neg_raw[["data"]][[i]] <- as.numeric(neg_files[[i]]$II)
+    values_neg_norm[["data"]][[i]] <- as.numeric(neg_files[[i]]$II)
+    values_neg_raw_gain[["data"]][[i]] <- as.numeric(neg_files[[i]]$II)
+    values_neg_norm_gain[["data"]][[i]] <- as.numeric(neg_files[[i]]$II)
+    values_neg_raw[[a_raw]][[i]] <- result
+    values_neg_norm[[a_norm]][[i]] <- result
+    values_neg_raw_gain[[a_raw_gain]][[i]] <- result
+    values_neg_norm_gain[[a_norm_gain]][[i]] <- result
+
+    neg_values <- which(neg_filters[[i]][[a_raw]] > values_thld_wide[[a_raw]])
+    if (length(neg_values) > 0) {
+      idxs <- find_sequences(neg_values)
+      values_neg_raw[[a_raw]][[i]][idxs] <- neg_files[[i]]$II[idxs]
+    }
+
+    neg_values <- which(neg_filters[[i]][[a_norm]] > values_thld_wide[[a_norm]])
+    if (length(neg_values) > 0) {
+      idxs <- find_sequences(neg_values)
+      values_neg_norm[[a_norm]][[i]][idxs] <- neg_files[[i]]$II[idxs]
+    }
+
+    neg_values <- which((neg_filters[[i]][[a_raw]] / gain) > values_thld_wide[[a_raw_gain]])
+    if (length(neg_values) > 0) {
+      idxs <- find_sequences(neg_values)
+      values_neg_raw_gain[[a_raw_gain]][[i]][idxs] <- neg_files[[i]]$II[idxs]
+    }
+
+    neg_values <- which((neg_filters[[i]][[a_norm]] / gain) > values_thld_wide[[a_norm_gain]])
+    if (length(neg_values) > 0) {
+      idxs <- find_sequences(neg_values)
+      values_neg_norm_gain[[a_norm_gain]][[i]][idxs] <- neg_files[[i]]$II[idxs]
+    }
+  }
+}
+
+rm(pos_files, pos_filters)
+invisible(gc())
+```
+
+Here are the false positives (Fig. \@ref(fig:negfiles2-plot-all)):
+
+```{r negfiles2-plot-all, fig.height = 8, fig.width = 9, warning=FALSE}
+#| fig.cap="False positives of SQIs in a different set of 'negative' records (only the best algorithms)."
+
+all_values_neg <- purrr::list_modify(values_neg_raw, !!!values_neg_norm, !!!values_neg_raw_gain, !!!values_neg_norm_gain)
+
+df_neg_all <- list_df(all_values_neg, TRUE, lag = 10, pad = 100) %>%
+  select(x, data, maximum_raw, maximum_raw_gain, maximum_norm, maximum_norm_gain, activity_raw, activity_raw_gain, ampl_raw, complex_norm, complex_raw, complex_raw_gain)
+df_neg_all <- df_neg_all[seq.int(1, nrow(df_neg_all), by = 5), ] # resize
+vars <- setdiff(names(df_neg_all), "x")
+plots_neg_all <- lapply(vars, function(var) {
+  plot_ly(df_neg_all, x = ~x, y = as.formula(paste0("~", var))) %>%
+    add_lines(name = var, line = list(width = 1)) %>%
+    plotly::layout(font = list(size = 8))
+})
+subplot(plots_neg_all, nrows = length(plots_neg_all), shareX = TRUE, shareY = TRUE, titleX = FALSE, margin = 0) %>%
+  config(displaylogo = FALSE, scrollZoom = TRUE, toImageButtonOptions = list(format = "svg"))
+```
+
+And the Recall (Fig. \@ref(fig:posfiles2-plot-all)):
+
+```{r posfiles2-plot-all, fig.height = 8, fig.width = 9, warning=FALSE}
+#| fig.cap="Recall of SQIs in a different set of 'positive' records (only the best algorithms)."
+
+all_values_pos <- purrr::list_modify(values_pos_raw, !!!values_pos_norm, !!!values_pos_raw_gain, !!!values_pos_norm_gain)
+
+df_pos_all <- list_df(all_values_pos, TRUE, lag = 10, pad = 100) %>%
+  select(x, data, maximum_raw, maximum_raw_gain, maximum_norm, maximum_norm_gain, activity_raw, activity_raw_gain, ampl_raw, complex_norm, complex_raw, complex_raw_gain)
+df_pos_all <- df_pos_all[seq.int(1, nrow(df_pos_all), by = 5), ] # resize
+vars <- setdiff(names(df_pos_all), "x")
+plots_pos_all <- lapply(vars, function(var) {
+  plot_ly(df_pos_all, x = ~x, y = as.formula(paste0("~", var))) %>%
+    add_lines(name = var, line = list(width = 1)) %>%
+    plotly::layout(font = list(size = 8))
+})
+subplot(plots_pos_all, nrows = length(plots_pos_all), shareX = TRUE, shareY = TRUE, titleX = FALSE, margin = 0) %>%
+  config(displaylogo = FALSE, scrollZoom = TRUE, toImageButtonOptions = list(format = "svg"))
+```
+
+#### Current considerations
+
+From Fig. \@ref(fig:posfiles2-plot-all), we can see that four algorithms worked similarly across the
+new positive set of records: activity_raw, activity_raw_gain, ampl_raw, and complex_raw.
+
+It is worth mentioning that these algorithms are susceptible to the signal scale (not just the
+gain). The implication of this matter is that the threshold should be set according to the expected
+range of values reported by the hardware. For example, if all records are divided by the same
+factor, the threshold will change. Unfortunately, the algorithms invariant to the signal scale
+didn't perform well on this task.
+
+The baseline algorithm (maximum) have some similar pattern to the other algorithms, but at close
+inspection we see that the detected values are not consistent and a shift on the global mean is
+enough to trigger several false positives.
+
+During this exercise, it was found that the dataset used on PhysioNet's 2015 challenge is not fully
+normalized as other datasets also available on PhysioNet. For example, the Paroxysmal Atrial
+Fibrillation Challenge [@yoma91] dataset has the raw data well constrained in the whole 16-bit
+range. One record also stood out on PhysioNet's 2015 challenge for having an uncommon value for gain
+(a non-integer value) of 470.7mV. Using such a value, the range of physical values gets about +-56mV
+while the usually seen range is less than +-5mV. Was this a "typo"?
+
+It is understandable that the dataset used on PhysioNet's 2015 challenge is not fully normalized
+because it contains several wandering patterns and some artifacts that blow out the steady ECG
+signal range. Nevertheless, it is a factor that must be considered when implementing on a device.
+
+At this point, we can't tell for sure which algorithm is the best for filtering artifacts, as we
+don't have a precise label of the artifacts position to acuratelly calculate their performances.
+
+Further work still to be done in order to attempt to leverage the gain information and baseline
+shifts in order to improve the performance of the algorithms.
+
+## References {-}

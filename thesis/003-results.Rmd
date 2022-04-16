@@ -1,0 +1,79 @@
+---
+editor_options:
+  markdown:
+    canonical: true
+    mode: markdown
+    wrap: 120
+---
+
+<!--
+This is for including Chapter 1. Notice that it's also good practice to name your chunk. This will
+help you debug potential issues as you knit. The chunk above is called intro and the one below is
+called chapter1. Feel free to change the name of the Rmd file as you wish, but don't forget to
+change it here from chap1.Rmd.
+-->
+
+# Current results
+
+## Regime change detection
+
+The current status on regime change detection pipeline is the implementation of the resampling strategies and evaluation in
+order to start the parameter tuning. An example of the current implementation is shown on Fig. \@ref(fig:flossregime).
+
+```{r flossregime, echo=FALSE, out.height="80%", out.width="80%"}
+#| fig.cap="Regime change detection example.
+#|  The graph on top shows the ECG streaming; the blue line marks the ten seconds
+#|  before the original alarm was fired; the red line marks the time constraint of 1250;
+#|  the dark red line marks the limit for taking a decision in this case of Asystole
+#|  the blue horizontal line represents the size of the sliding window.
+#|  The graph on the middle shows the Arc counts as seen by the algorithm (with the corrected
+#|  distribution); the red line marks the current minimum value and its index; the blue
+#|  horizontal line shows the minimum value seen until then.
+#|  The graph on the bottom shows the computed Arc counts (raw) and the red line is the
+#|  theoretical distribution used for correction."
+my_graphics("floss_regime")
+```
+
+## Classification
+
+The current status on the classification pipeline is the implementation of the shapelets extraction
+using the Contrast Profile.
+
+An example of candidates for ventricular tachycardia is presented on Fig. \@ref(fig:vtachy).
+
+```{r vtachy, echo=FALSE, out.width="90%", fig.cap="Shapelet candidates for Ventricular Tachycardia.", fig.height=9, fig.width=14}
+def_par <- graphics::par(no.readonly = TRUE)
+graphics::layout(matrix(1:6, ncol = 2, byrow = TRUE))
+graphics::par(mai = c(0.8, 0.5, 0.6, 0.5), cex = 1)
+
+data <- readRDS(here("presentations/Report/contrast.rds"))
+
+for (i in (1:6)) {
+  plot(tsmp:::znorm(data[[i]]$plato), type = "l", ylab = "", xlab = "samples (250hz)")
+  for (j in seq_along(data[[i]]$neighbors)) {
+    lines(tsmp:::znorm(data[[i]]$neighbors[[j]]$data), col = j + 1)
+  }
+}
+graphics::par(def_par)
+```
+
+
+## Feasibility trial
+
+A side-project called "false.alarm.io" has been derived from this work (an unfortunate mix of
+"false.alarm" and "PlatformIO" [@PlatformIO], the IDE chosen to interface the panoply of embedded
+systems we can experiment with). The current results of this side-project are very enlightening and
+show that the final algorithm can indeed be used in small hardware. Further data will be available
+in the future.
+
+A brief mentioning, linking back to the objectives of this work, an initial trial was done using an
+ESP32 MCU (Fig. \@ref(fig:esp32)) in order to be sure if such small device can handle the task.
+
+```{r esp32, echo=FALSE, out.width="50%", fig.cap="ESP32 MCU"}
+my_graphics("esp32")
+```
+
+Current results show that such device has enough computation power to handle the task in real-time
+using just one of its two microprocessors. The main limitation seen in advance is the on-chip SRAM
+that must be well managed.
+

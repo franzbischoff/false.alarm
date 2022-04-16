@@ -14,9 +14,9 @@
 
 <title>Home</title>
 
-<script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
+<script src="site_libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<link href="site_libs/bootstrap-3.3.5/css/lumen.min.css" rel="stylesheet" />
+<link href="site_libs/bootstrap-3.3.5/css/bootstrap.min.css" rel="stylesheet" />
 <script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
 <script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
 <script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
@@ -30,22 +30,22 @@
        code {color: inherit; background-color: rgba(0, 0, 0, 0.04);}
        pre:not([class]) { background-color: white }</style>
 <script src="site_libs/navigation-1.1/tabsets.js"></script>
-<link href="site_libs/highlightjs-9.12.0/textmate.css" rel="stylesheet" />
-<script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
-<script src="site_libs/htmlwidgets-1.5.3/htmlwidgets.js"></script>
-<link href="site_libs/vis-4.20.1/vis.css" rel="stylesheet" />
-<script src="site_libs/vis-4.20.1/vis.min.js"></script>
-<script src="site_libs/visNetwork-binding-2.0.9/visNetwork.js"></script>
+<script src="site_libs/htmlwidgets-1.5.4/htmlwidgets.js"></script>
+<link href="site_libs/vis-9.1.0/vis-network.min.css" rel="stylesheet" />
+<script src="site_libs/vis-9.1.0/vis-network.min.js"></script>
+<script src="site_libs/visNetwork-binding-2.1.0/visNetwork.js"></script>
 <link href="site_libs/font-awesome-5.1.0/css/all.css" rel="stylesheet" />
 <link href="site_libs/font-awesome-5.1.0/css/v4-shims.css" rel="stylesheet" />
 
-<link rel="icon" href="https://github.com/workflowr/workflowr-assets/raw/master/img/reproducible.png">
+<link rel="icon" href="https://github.com/workflowr/workflowr-assets/raw/main/img/reproducible.png">
 <!-- Add a small amount of space between sections. -->
 <style type="text/css">
 div.section {
   padding-top: 12px;
 }
 </style>
+
+
 
 <style type="text/css">
   code{white-space: pre-wrap;}
@@ -56,21 +56,13 @@ div.section {
   ul.task-list{list-style: none;}
     </style>
 
-<style type="text/css">code{white-space: pre;}</style>
-<script type="text/javascript">
-if (window.hljs) {
-  hljs.configure({languages: []});
-  hljs.initHighlightingOnLoad();
-  if (document.readyState && document.readyState === "complete") {
-    window.setTimeout(function() { hljs.initHighlighting(); }, 0);
-  }
-}
-</script>
 
 
 
 
 
+
+<link rel="stylesheet" href="style.css" type="text/css" />
 
 
 
@@ -94,6 +86,9 @@ button.code-folding-btn:focus {
 }
 summary {
   display: list-item;
+}
+details > summary > p:only-child {
+  display: inline;
 }
 pre code {
   padding: 0;
@@ -246,7 +241,7 @@ $(document).ready(function () {
 <div class="navbar navbar-default  navbar-fixed-top" role="navigation">
   <div class="container">
     <div class="navbar-header">
-      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-bs-toggle="collapse" data-target="#navbar" data-bs-target="#navbar">
         <span class="icon-bar"></span>
         <span class="icon-bar"></span>
         <span class="icon-bar"></span>
@@ -259,6 +254,9 @@ $(document).ready(function () {
   <a href="index.html">Home</a>
 </li>
 <li>
+  <a href="blog.html">Blog</a>
+</li>
+<li>
   <a href="report.html">Report</a>
 </li>
 <li>
@@ -268,7 +266,7 @@ $(document).ready(function () {
   <a href="license.html">License</a>
 </li>
 <li>
-  <a href="thesis/index.html">Thesis</a>
+  <a href="thesis/introduction.html">Thesis</a>
 </li>
 <li>
   <a href="https://github.com/franzbischoff/false.alarm">
@@ -308,14 +306,16 @@ $(document).ready(function () {
 
 <h1 class="title toc-ignore">Home</h1>
 <h4 class="author">Francisco Bischoff</h4>
-<h4 class="date">on July 15, 2021</h4>
+<h4 class="date">on March 15, 2022</h4>
 
 </div>
 
 
 <p>
 <button type="button" class="btn btn-default btn-workflowr btn-workflowr-report" data-toggle="collapse" data-target="#workflowr-report">
-<span class="glyphicon glyphicon-list" aria-hidden="true"></span> workflowr <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span>
+<span class="glyphicon glyphicon-list" aria-hidden="true"></span>
+workflowr
+<span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span>
 </button>
 </p>
 <div id="workflowr-report" class="collapse">
@@ -324,7 +324,9 @@ $(document).ready(function () {
 <a data-toggle="tab" href="#summary">Summary</a>
 </li>
 <li>
-<a data-toggle="tab" href="#checks"> Checks <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> </a>
+<a data-toggle="tab" href="#checks">
+Checks <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span>
+</a>
 </li>
 <li>
 <a data-toggle="tab" href="#versions">Past versions</a>
@@ -333,17 +335,28 @@ $(document).ready(function () {
 <div class="tab-content">
 <div id="summary" class="tab-pane fade in active">
 <p>
-<strong>Last updated:</strong> 2021-07-15
+<strong>Last updated:</strong> 2022-03-15
 </p>
 <p>
-<strong>Checks:</strong> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> 7 <span class="glyphicon glyphicon-exclamation-sign text-danger" aria-hidden="true"></span> 0
+<strong>Checks:</strong>
+<span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span>
+7
+<span class="glyphicon glyphicon-exclamation-sign text-danger" aria-hidden="true"></span>
+0
 </p>
 <p>
-<strong>Knit directory:</strong> <code>false.alarm/</code> <span class="glyphicon glyphicon-question-sign" aria-hidden="true" title="This is the local directory in which the code in this file was executed."> </span>
+<strong>Knit directory:</strong>
+<code>false.alarm/docs/</code>
+<span class="glyphicon glyphicon-question-sign" aria-hidden="true" title="This is the local directory in which the code in this file was executed.">
+</span>
 </p>
 <p>
-This reproducible <a href="http://rmarkdown.rstudio.com">R Markdown</a> analysis was created with <a
-  href="https://github.com/jdblischak/workflowr">workflowr</a> (version 1.6.2). The <em>Checks</em> tab describes the reproducibility checks that were applied when the results were created. The <em>Past versions</em> tab lists the development history.
+This reproducible <a href="https://rmarkdown.rstudio.com">R Markdown</a>
+analysis was created with <a
+  href="https://github.com/workflowr/workflowr">workflowr</a> (version
+1.7.0). The <em>Checks</em> tab describes the
+reproducibility checks that were applied when the results were created.
+The <em>Past versions</em> tab lists the development history.
 </p>
 <hr>
 </div>
@@ -352,100 +365,195 @@ This reproducible <a href="http://rmarkdown.rstudio.com">R Markdown</a> analysis
 <div class="panel panel-default">
 <div class="panel-heading">
 <p class="panel-title">
-<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRMarkdownfilestronguptodate"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>R Markdown file:</strong> up-to-date </a>
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRMarkdownfilestronguptodate">
+<span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span>
+<strong>R Markdown file:</strong> up-to-date
+</a>
 </p>
 </div>
 <div id="strongRMarkdownfilestronguptodate" class="panel-collapse collapse">
 <div class="panel-body">
-<p>Great! Since the R Markdown file has been committed to the Git repository, you know the exact version of the code that produced these results.</p>
+<p>Great! Since the R Markdown file has been committed to the Git repository, you
+know the exact version of the code that produced these results.</p>
 </div>
 </div>
 </div>
 <div class="panel panel-default">
 <div class="panel-heading">
 <p class="panel-title">
-<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongEnvironmentstrongempty"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Environment:</strong> empty </a>
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongEnvironmentstrongempty">
+<span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span>
+<strong>Environment:</strong> empty
+</a>
 </p>
 </div>
 <div id="strongEnvironmentstrongempty" class="panel-collapse collapse">
 <div class="panel-body">
-<p>Great job! The global environment was empty. Objects defined in the global environment can affect the analysis in your R Markdown file in unknown ways. For reproduciblity it’s best to always run the code in an empty environment.</p>
+<p>Great job! The global environment was empty. Objects defined in the global
+environment can affect the analysis in your R Markdown file in unknown ways.
+For reproduciblity it’s best to always run the code in an empty environment.</p>
 </div>
 </div>
 </div>
 <div class="panel panel-default">
 <div class="panel-heading">
 <p class="panel-title">
-<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongSeedstrongcodesetseed20201020code"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Seed:</strong> <code>set.seed(20201020)</code> </a>
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongSeedstrongcodesetseed20201020code">
+<span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span>
+<strong>Seed:</strong> <code>set.seed(20201020)</code>
+</a>
 </p>
 </div>
 <div id="strongSeedstrongcodesetseed20201020code" class="panel-collapse collapse">
 <div class="panel-body">
-<p>The command <code>set.seed(20201020)</code> was run prior to running the code in the R Markdown file. Setting a seed ensures that any results that rely on randomness, e.g. subsampling or permutations, are reproducible.</p>
+<p>The command <code>set.seed(20201020)</code> was run prior to running the code in the R Markdown file.
+Setting a seed ensures that any results that rely on randomness, e.g.
+subsampling or permutations, are reproducible.</p>
 </div>
 </div>
 </div>
 <div class="panel panel-default">
 <div class="panel-heading">
 <p class="panel-title">
-<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongSessioninformationstrongrecorded"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Session information:</strong> recorded </a>
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongSessioninformationstrongrecorded">
+<span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span>
+<strong>Session information:</strong> recorded
+</a>
 </p>
 </div>
 <div id="strongSessioninformationstrongrecorded" class="panel-collapse collapse">
 <div class="panel-body">
-<p>Great job! Recording the operating system, R version, and package versions is critical for reproducibility.</p>
+<p>Great job! Recording the operating system, R version, and package versions is
+critical for reproducibility.</p>
 </div>
 </div>
 </div>
 <div class="panel panel-default">
 <div class="panel-heading">
 <p class="panel-title">
-<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongCachestrongnone"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Cache:</strong> none </a>
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongCachestrongnone">
+<span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span>
+<strong>Cache:</strong> none
+</a>
 </p>
 </div>
 <div id="strongCachestrongnone" class="panel-collapse collapse">
 <div class="panel-body">
-<p>Nice! There were no cached chunks for this analysis, so you can be confident that you successfully produced the results during this run.</p>
+<p>Nice! There were no cached chunks for this analysis, so you can be confident
+that you successfully produced the results during this run.</p>
 </div>
 </div>
 </div>
 <div class="panel panel-default">
 <div class="panel-heading">
 <p class="panel-title">
-<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongFilepathsstrongrelative"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>File paths:</strong> relative </a>
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongFilepathsstrongrelative">
+<span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span>
+<strong>File paths:</strong> relative
+</a>
 </p>
 </div>
 <div id="strongFilepathsstrongrelative" class="panel-collapse collapse">
 <div class="panel-body">
-<p>Great job! Using relative paths to the files within your workflowr project makes it easier to run your code on other machines.</p>
+<p>Great job! Using relative paths to the files within your workflowr project
+makes it easier to run your code on other machines.</p>
 </div>
 </div>
 </div>
 <div class="panel panel-default">
 <div class="panel-heading">
 <p class="panel-title">
-<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomfranzbischofffalsealarmtree64efa8b33607ef60adf929a1de9cf9901630ce61targetblank64efa8ba"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Repository version:</strong> <a href="https://github.com/franzbischoff/false.alarm/tree/64efa8b33607ef60adf929a1de9cf9901630ce61" target="_blank">64efa8b</a> </a>
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomfranzbischofffalsealarmtreea0d56a13c333d1335590c0043a369b3963064e96targetblanka0d56a1a">
+<span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span>
+<strong>Repository version:</strong> <a href="https://github.com/franzbischoff/false.alarm/tree/a0d56a13c333d1335590c0043a369b3963064e96" target="_blank">a0d56a1</a>
+</a>
 </p>
 </div>
-<div id="strongRepositoryversionstrongahrefhttpsgithubcomfranzbischofffalsealarmtree64efa8b33607ef60adf929a1de9cf9901630ce61targetblank64efa8ba" class="panel-collapse collapse">
+<div id="strongRepositoryversionstrongahrefhttpsgithubcomfranzbischofffalsealarmtreea0d56a13c333d1335590c0043a369b3963064e96targetblanka0d56a1a" class="panel-collapse collapse">
 <div class="panel-body">
 <p>
-Great! You are using Git for version control. Tracking code development and connecting the code version to the results is critical for reproducibility.
+Great! You are using Git for version control. Tracking code development and
+connecting the code version to the results is critical for reproducibility.
 </p>
 <p>
-The results in this page were generated with repository version <a href="https://github.com/franzbischoff/false.alarm/tree/64efa8b33607ef60adf929a1de9cf9901630ce61" target="_blank">64efa8b</a>. See the <em>Past versions</em> tab to see a history of the changes made to the R Markdown and HTML files.
+The results in this page were generated with repository version <a href="https://github.com/franzbischoff/false.alarm/tree/a0d56a13c333d1335590c0043a369b3963064e96" target="_blank">a0d56a1</a>.
+See the <em>Past versions</em> tab to see a history of the changes made to the
+R Markdown and HTML files.
 </p>
 <p>
-Note that you need to be careful to ensure that all relevant files for the analysis have been committed to Git prior to generating the results (you can use <code>wflow_publish</code> or <code>wflow_git_commit</code>). workflowr only checks the R Markdown file, but you know if there are other scripts or data files that it depends on. Below is the status of the Git repository when the results were generated:
+Note that you need to be careful to ensure that all relevant files for the
+analysis have been committed to Git prior to generating the results (you can
+use <code>wflow_publish</code> or <code>wflow_git_commit</code>). workflowr only
+checks the R Markdown file, but you know if there are other scripts or data
+files that it depends on. Below is the status of the Git repository when the
+results were generated:
 </p>
 <pre><code>
 Ignored files:
+    Ignored:    .Renviron
+    Ignored:    .Rhistory
+    Ignored:    .Rproj.user/
+    Ignored:    .devcontainer/exts/
+    Ignored:    .devcontainer/git-hours.tgz
+    Ignored:    .devcontainer/mathjax.tgz
+    Ignored:    .github/ISSUE_TEMPLATE/
+    Ignored:    .httr-oauth
+    Ignored:    R/RcppExports.R
+    Ignored:    _classifier/.gittargets
+    Ignored:    _classifier/meta/process
+    Ignored:    _classifier/meta/progress
+    Ignored:    _classifier/objects/
+    Ignored:    _classifier/scratch/
+    Ignored:    _classifier/user/
+    Ignored:    _regime_change/meta/process
+    Ignored:    _regime_change/meta/progress
+    Ignored:    _regime_change/objects/
+    Ignored:    _regime_change/scratch/
+    Ignored:    _regime_change/user/
+    Ignored:    _targets/meta/process
+    Ignored:    _targets/meta/progress
+    Ignored:    _targets/objects/
+    Ignored:    _targets/scratch/
+    Ignored:    _targets/user/
+    Ignored:    dev/
+    Ignored:    inst/extdata/
+    Ignored:    output/images/
+    Ignored:    papers/aime2021/aime2021.md
+    Ignored:    presentations/MEDCIDS21/MEDCIDS21-10min_files/
+    Ignored:    presentations/MEDCIDS21/MEDCIDS21_files/
+    Ignored:    presentations/Report/Midterm-Report.md
+    Ignored:    presentations/Report/Midterm-Report_cache/
+    Ignored:    presentations/Report/Midterm-Report_files/
+    Ignored:    protocol/FirstReport.tex
+    Ignored:    protocol/Protocol.tex
+    Ignored:    protocol/SecondReport.tex
+    Ignored:    protocol/SecondReport_cache/
+    Ignored:    protocol/SecondReport_files/
+    Ignored:    protocol/_files/
     Ignored:    renv/library/
+    Ignored:    renv/python/
     Ignored:    renv/staging/
+    Ignored:    src/RcppExports.cpp
+    Ignored:    src/RcppExports.o
+    Ignored:    src/contrast.o
+    Ignored:    src/false.alarm.so
+    Ignored:    src/fft.o
+    Ignored:    src/mass.o
+    Ignored:    src/math.o
+    Ignored:    src/mpx.o
+    Ignored:    src/scrimp.o
+    Ignored:    src/stamp.o
+    Ignored:    src/stomp.o
+    Ignored:    src/windowfunc.o
+    Ignored:    thesis/Rplots.pdf
+    Ignored:    thesis/_bookdown_files/
+    Ignored:    tmp/
 
 </code></pre>
 <p>
-Note that any generated files, e.g. HTML, png, CSS, etc., are not included in this status report because it is ok for generated content to have uncommitted changes.
+Note that any generated files, e.g. HTML, png, CSS, etc., are not included in
+this status report because it is ok for generated content to have uncommitted
+changes.
 </p>
 </div>
 </div>
@@ -456,7 +564,11 @@ Note that any generated files, e.g. HTML, png, CSS, etc., are not included in t
 <div id="versions" class="tab-pane fade">
 
 <p>
-These are the previous versions of the repository in which changes were made to the R Markdown (<code>analysis/index.Rmd</code>) and HTML (<code>docs/index.html</code>) files. If you’ve configured a remote Git repository (see <code>?wflow_git_remote</code>), click on the hyperlinks in the table below to view the files as they were in that past version.
+These are the previous versions of the repository in which changes were made
+to the R Markdown (<code>analysis/index.Rmd</code>) and HTML (<code>docs/index.html</code>)
+files. If you’ve configured a remote Git repository (see
+<code>?wflow_git_remote</code>), click on the hyperlinks in the table below to
+view the files as they were in that past version.
 </p>
 <div class="table-responsive">
 <table class="table table-condensed table-hover">
@@ -480,6 +592,363 @@ Message
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+html
+</td>
+<td>
+<a href="https://rawcdn.githack.com/franzbischoff/false.alarm/1006f277b6ddde079d0d7caa08ef41e0f564e58f/docs/index.html" target="_blank">1006f27</a>
+</td>
+<td>
+Francisco Bischoff
+</td>
+<td>
+2022-03-15
+</td>
+<td>
+Build site.
+</td>
+</tr>
+<tr>
+<td>
+html
+</td>
+<td>
+<a href="https://rawcdn.githack.com/franzbischoff/false.alarm/c340b46745d043794b746de3bfa936fef718eeae/docs/index.html" target="_blank">c340b46</a>
+</td>
+<td>
+GitHub Actions
+</td>
+<td>
+2022-03-15
+</td>
+<td>
+Build site.
+</td>
+</tr>
+<tr>
+<td>
+Rmd
+</td>
+<td>
+<a href="https://github.com/franzbischoff/false.alarm/blob/c155156fed32f4ec0181e728543d9e4329c70f0c/analysis/index.Rmd" target="_blank">c155156</a>
+</td>
+<td>
+Francisco Bischoff
+</td>
+<td>
+2022-03-14
+</td>
+<td>
+workflowr asd
+</td>
+</tr>
+<tr>
+<td>
+Rmd
+</td>
+<td>
+<a href="https://github.com/franzbischoff/false.alarm/blob/5f35362580d8467b0008a1c8326fc07b67b87d1c/analysis/index.Rmd" target="_blank">5f35362</a>
+</td>
+<td>
+Francisco Bischoff
+</td>
+<td>
+2022-03-14
+</td>
+<td>
+rekniting
+</td>
+</tr>
+<tr>
+<td>
+html
+</td>
+<td>
+<a href="https://rawcdn.githack.com/franzbischoff/false.alarm/0aefdd1e404bb46b581c500c334be2dc6cc6f96c/docs/index.html" target="_blank">0aefdd1</a>
+</td>
+<td>
+Francisco Bischoff
+</td>
+<td>
+2022-03-14
+</td>
+<td>
+workflowr 2
+</td>
+</tr>
+<tr>
+<td>
+html
+</td>
+<td>
+<a href="https://rawcdn.githack.com/franzbischoff/false.alarm/5f35362580d8467b0008a1c8326fc07b67b87d1c/docs/index.html" target="_blank">5f35362</a>
+</td>
+<td>
+Francisco Bischoff
+</td>
+<td>
+2022-03-14
+</td>
+<td>
+rekniting
+</td>
+</tr>
+<tr>
+<td>
+html
+</td>
+<td>
+<a href="https://rawcdn.githack.com/franzbischoff/false.alarm/6004462785c9fce6af7dc2b1d5f7252c152c208d/docs/index.html" target="_blank">6004462</a>
+</td>
+<td>
+Francisco Bischoff
+</td>
+<td>
+2022-03-11
+</td>
+<td>
+workflowr
+</td>
+</tr>
+<tr>
+<td>
+Rmd
+</td>
+<td>
+<a href="https://github.com/franzbischoff/false.alarm/blob/0f2f48725aa19540dc469d9514bad59d9e3b292c/analysis/index.Rmd" target="_blank">0f2f487</a>
+</td>
+<td>
+Francisco Bischoff
+</td>
+<td>
+2022-03-03
+</td>
+<td>
+spellchecking
+</td>
+</tr>
+<tr>
+<td>
+html
+</td>
+<td>
+<a href="https://rawcdn.githack.com/franzbischoff/false.alarm/0f2f48725aa19540dc469d9514bad59d9e3b292c/docs/index.html" target="_blank">0f2f487</a>
+</td>
+<td>
+Francisco Bischoff
+</td>
+<td>
+2022-03-03
+</td>
+<td>
+spellchecking
+</td>
+</tr>
+<tr>
+<td>
+Rmd
+</td>
+<td>
+<a href="https://github.com/franzbischoff/false.alarm/blob/4884ec1db6c0dda7131fe403dd38926ddbf52865/analysis/index.Rmd" target="_blank">4884ec1</a>
+</td>
+<td>
+Francisco Bischoff
+</td>
+<td>
+2022-02-02
+</td>
+<td>
+work
+</td>
+</tr>
+<tr>
+<td>
+html
+</td>
+<td>
+<a href="https://rawcdn.githack.com/franzbischoff/false.alarm/4884ec1db6c0dda7131fe403dd38926ddbf52865/docs/index.html" target="_blank">4884ec1</a>
+</td>
+<td>
+Francisco Bischoff
+</td>
+<td>
+2022-02-02
+</td>
+<td>
+work
+</td>
+</tr>
+<tr>
+<td>
+html
+</td>
+<td>
+<a href="https://rawcdn.githack.com/franzbischoff/false.alarm/867bcf23d22203e3d807fda8a15d9ed6f74b9793/docs/index.html" target="_blank">867bcf2</a>
+</td>
+<td>
+Francisco Bischoff
+</td>
+<td>
+2022-01-16
+</td>
+<td>
+workflowr
+</td>
+</tr>
+<tr>
+<td>
+Rmd
+</td>
+<td>
+<a href="https://github.com/franzbischoff/false.alarm/blob/95ae431bf67c2ba8f58e135de6e1bd06941efd2c/analysis/index.Rmd" target="_blank">95ae431</a>
+</td>
+<td>
+Francisco Bischoff
+</td>
+<td>
+2022-01-05
+</td>
+<td>
+blogdog
+</td>
+</tr>
+<tr>
+<td>
+html
+</td>
+<td>
+<a href="https://rawcdn.githack.com/franzbischoff/false.alarm/95ae431bf67c2ba8f58e135de6e1bd06941efd2c/docs/index.html" target="_blank">95ae431</a>
+</td>
+<td>
+Francisco Bischoff
+</td>
+<td>
+2022-01-05
+</td>
+<td>
+blogdog
+</td>
+</tr>
+<tr>
+<td>
+Rmd
+</td>
+<td>
+<a href="https://github.com/franzbischoff/false.alarm/blob/7278108a889a0bce34c68dfa4f545aa9616a376b/analysis/index.Rmd" target="_blank">7278108</a>
+</td>
+<td>
+Francisco Bischoff
+</td>
+<td>
+2021-12-21
+</td>
+<td>
+update dataset on zenodo
+</td>
+</tr>
+<tr>
+<td>
+html
+</td>
+<td>
+<a href="https://rawcdn.githack.com/franzbischoff/false.alarm/7278108a889a0bce34c68dfa4f545aa9616a376b/docs/index.html" target="_blank">7278108</a>
+</td>
+<td>
+Francisco Bischoff
+</td>
+<td>
+2021-12-21
+</td>
+<td>
+update dataset on zenodo
+</td>
+</tr>
+<tr>
+<td>
+html
+</td>
+<td>
+<a href="https://rawcdn.githack.com/franzbischoff/false.alarm/ca1941e6f9416ba7648c9175367a39e9382044d8/docs/index.html" target="_blank">ca1941e</a>
+</td>
+<td>
+GitHub Actions
+</td>
+<td>
+2021-10-12
+</td>
+<td>
+Build site.
+</td>
+</tr>
+<tr>
+<td>
+Rmd
+</td>
+<td>
+<a href="https://github.com/franzbischoff/false.alarm/blob/6b03f431bca6d1df980893c70577fba8ec23554d/analysis/index.Rmd" target="_blank">6b03f43</a>
+</td>
+<td>
+Francisco Bischoff
+</td>
+<td>
+2021-10-11
+</td>
+<td>
+Squashed commit of the following:
+</td>
+</tr>
+<tr>
+<td>
+html
+</td>
+<td>
+<a href="https://rawcdn.githack.com/franzbischoff/false.alarm/c19ec017e1a0cdd909f673a745546e5f34813afa/docs/index.html" target="_blank">c19ec01</a>
+</td>
+<td>
+Francisco Bischoff
+</td>
+<td>
+2021-08-17
+</td>
+<td>
+Build site.
+</td>
+</tr>
+<tr>
+<td>
+html
+</td>
+<td>
+<a href="https://rawcdn.githack.com/franzbischoff/false.alarm/a5ec160176f456ba8e8f7f2e8650cbf5c68b1e97/docs/index.html" target="_blank">a5ec160</a>
+</td>
+<td>
+Francisco Bischoff
+</td>
+<td>
+2021-08-17
+</td>
+<td>
+Build site.
+</td>
+</tr>
+<tr>
+<td>
+html
+</td>
+<td>
+<a href="https://rawcdn.githack.com/franzbischoff/false.alarm/e7e5d4861f1f3b21e25787e0ed6b6066b57ff857/docs/index.html" target="_blank">e7e5d48</a>
+</td>
+<td>
+GitHub Actions
+</td>
+<td>
+2021-07-15
+</td>
+<td>
+Build site.
+</td>
+</tr>
 <tr>
 <td>
 Rmd
@@ -658,71 +1127,151 @@ gh-pages placeholder
 </div>
 </div>
 <!-- badges init -->
-<p><a href="https://cran.r-project.org/"><img src="https://img.shields.io/badge/R%3E=-3.6.2-brightgreen.svg" alt="minimal R version" /></a> <a href="http://creativecommons.org/licenses/by-nc-sa/4.0/"><img src="https://mirrors.creativecommons.org/presskit/buttons/80x15/svg/by-nc-sa.svg" alt="Licence" /></a></p>
+<p><a href="https://cran.r-project.org/"><img src="https://img.shields.io/badge/R%3E=-4.0.0-brightgreen.svg" alt="minimal R version" /></a>
+<a href="http://creativecommons.org/licenses/by-nc-sa/4.0/"><img src="https://mirrors.creativecommons.org/presskit/buttons/80x15/svg/by-nc-sa.svg" alt="Licence" /></a></p>
 <p>Dataset hosted by:</p>
-<p><a href="https://doi.org/10.5281/zenodo.4634014"><img src="https://zenodo.org/badge/DOI/10.5281/zenodo.4634014.svg" /></a></p>
+<p><a href="https://doi.org/10.5281/zenodo.4634013"><img src="https://zenodo.org/badge/DOI/10.5281/zenodo.4634013.svg" /></a></p>
 <!-- badges end -->
 <div id="tldr" class="section level2">
 <h2>TLDR;</h2>
-<p>This website contains all the necessary for reproducibility of this PhD. It is build joining three frameworks:</p>
+<p>This website contains all the necessary for reproducibility of this Ph.D. It is built joining three frameworks:</p>
 <ul>
-<li><a href="https://jdblischak.github.io/workflowr/">workflowr</a>, the main infrastructure that organizes every analysis step as of Github versions. But instead of showing all commits, it just keep the important ones.</li>
-<li><a href="https://docs.ropensci.org/targets/">targets</a>, a <a href="https://www.gnu.org/software/make/">Make</a>-like pipeline toolkit for Statistics and data science in R. It supersedes <a href="https://books.ropensci.org/drake/">drake</a> package. This allows to keep track of every step of the data science workflow and helps to understand what needs to be rebuild and what has not changed since last iteration. Every complete analysis shall be registered by one entry in the previous package (<a href="https://jdblischak.github.io/workflowr/">workflowr</a>)</li>
-<li><a href="https://ismayc.github.io/thesisdown_book/">thesisdown</a>, inspired by the package <a href="https://github.com/rstudio/bookdown">bookdown</a>, and helps to write the thesis in rmarkdown that is easily compiled in PDF, Doc, EPUB, and allows to change the theme/format for several universities/journals.</li>
+<li><a href="https://jdblischak.github.io/workflowr/">workflowr</a>, the main infrastructure that organizes
+every analysis step as Github versions. But instead of showing all commits, it just keeps the
+important ones.</li>
+<li><a href="https://docs.ropensci.org/targets/">targets</a>, a
+<a href="https://www.gnu.org/software/make/">Make</a>-like pipeline toolkit for Statistics and data science
+in R. It supersedes <a href="https://books.ropensci.org/drake/">drake</a> package. This allows to keep
+track of every step of the data science workflow and helps understand what needs to be rebuilt
+and what has not changed since the last iteration. Every complete analysis shall be registered
+by one entry in the previous package (<a href="https://jdblischak.github.io/workflowr/">workflowr</a>)</li>
+<li><a href="https://ismayc.github.io/thesisdown_book/">thesisdown</a>, inspired by the package
+<a href="https://github.com/rstudio/bookdown">bookdown</a> helps write the thesis in rmarkdown that is
+easily compiled in PDF, Doc, EPUB, and allows to change the theme/format for several
+universities/journals.</li>
 </ul>
-<p>Use the big button above <img src="figure/workflowr.png" /> to navigate thorough the older commits.</p>
+<p>Use the big button above <img src="figure/workflowr.png" /> to navigate through the older commits.</p>
 <p>Use the top menu for further information and the thesis itself.</p>
 <p>Last Targets Run network:</p>
 <div id="htmlwidget-24512ae3b9d6a760b942" style="width:960px;height:480px;" class="visNetwork html-widget"></div>
-<script type="application/json" data-for="htmlwidget-24512ae3b9d6a760b942">{"x":{"nodes":{"name":["file_paths","file_paths_files","fluss_plots","whole_dataset","whole_dataset_filter","whole_dataset_mp","whole_dataset_mp_arcs","whole_dataset_mp_filtered","whole_dataset_mp_fluss"],"type":["pattern","stem","pattern","pattern","pattern","pattern","pattern","pattern","pattern"],"status":["uptodate","uptodate","uptodate","uptodate","uptodate","uptodate","uptodate","uptodate","uptodate"],"seconds":[0.001,0.001,7.021,0.906,155.028,32.788,4.648,0.03,0.057],"bytes":[2606,131,92289316,10580544,58745198,75194707,77307401,74929769,77308360],"branches":[12,null,12,12,12,12,12,12,12],"id":["file_paths","file_paths_files","fluss_plots","whole_dataset","whole_dataset_filter","whole_dataset_mp","whole_dataset_mp_arcs","whole_dataset_mp_filtered","whole_dataset_mp_fluss"],"label":["file_paths","file_paths_files","fluss_plots","whole_dataset","whole_dataset_filter","whole_dataset_mp","whole_dataset_mp_arcs","whole_dataset_mp_filtered","whole_dataset_mp_fluss"],"level":[2,1,9,3,4,5,7,6,8],"color":["#354823","#354823","#354823","#354823","#354823","#354823","#354823","#354823","#354823"],"shape":["square","dot","square","square","square","square","square","square","square"],"title":["0.001 seconds<br />2.606 kilobytes<br />12 branches","0.001 seconds<br />131 bytes<br />","7.021 seconds<br />92.289 megabytes<br />12 branches","0.906 seconds<br />10.581 megabytes<br />12 branches","2.584 minutes<br />58.745 megabytes<br />12 branches","32.788 seconds<br />75.195 megabytes<br />12 branches","4.648 seconds<br />77.307 megabytes<br />12 branches","0.03 seconds<br />74.93 megabytes<br />12 branches","0.057 seconds<br />77.308 megabytes<br />12 branches"]},"edges":{"from":["whole_dataset","whole_dataset_mp_arcs","whole_dataset_filter","whole_dataset_mp_fluss","whole_dataset_mp_filtered","whole_dataset_mp","file_paths","file_paths_files"],"to":["whole_dataset_filter","whole_dataset_mp_fluss","whole_dataset_mp","fluss_plots","whole_dataset_mp_arcs","whole_dataset_mp_filtered","whole_dataset","file_paths"],"arrows":["to","to","to","to","to","to","to","to"]},"nodesToDataframe":true,"edgesToDataframe":true,"options":{"width":"100%","height":"100%","nodes":{"shape":"dot","physics":false},"manipulation":{"enabled":false},"edges":{"smooth":{"type":"cubicBezier","forceDirection":"horizontal"}},"physics":{"stabilization":false},"layout":{"hierarchical":{"enabled":true,"direction":"LR"}},"interaction":{"hover":true,"multiselect":true,"tooltipDelay":0}},"groups":null,"width":null,"height":null,"idselection":{"enabled":false,"style":"width: 150px; height: 26px","useLabels":true,"main":"Select by id"},"byselection":{"enabled":false,"style":"width: 150px; height: 26px","multiple":false,"hideColor":"rgba(200,200,200,0.5)","highlight":false},"main":{"text":"","style":"font-family:Georgia, Times New Roman, Times, serif;font-weight:bold;font-size:20px;text-align:center;"},"submain":null,"footer":null,"background":"rgba(0, 0, 0, 0)","highlight":{"enabled":false,"hoverNearest":false,"degree":1,"algorithm":"all","hideColor":"rgba(200,200,200,0.5)","labelOnly":true},"collapse":{"enabled":true,"fit":false,"resetHighlight":true,"clusterOptions":null,"keepCoord":true,"labelSuffix":"(cluster)"},"legend":{"width":0.2,"useGroups":false,"position":"right","ncol":1,"stepX":100,"stepY":100,"zoom":true,"nodes":{"label":["Up to date","Pattern","Stem"],"color":["#354823","#899DA4","#899DA4"],"shape":["dot","square","dot"]},"nodesToDataframe":true},"tooltipStay":300,"tooltipStyle":"position: fixed;visibility:hidden;padding: 5px;white-space: nowrap;font-family: verdana;font-size:14px;font-color:#000000;background-color: #f5f4ed;-moz-border-radius: 3px;-webkit-border-radius: 3px;border-radius: 3px;border: 1px solid #808074;box-shadow: 3px 3px 10px rgba(0, 0, 0, 0.2);"},"evals":[],"jsHooks":[]}</script>
+<script type="application/json" data-for="htmlwidget-24512ae3b9d6a760b942">{"x":{"nodes":{"name":["dataset","ds_stats_200","ds_stats_mps_0_0_0_200","ds_stats_mps_0_1250_0_200","ds_stats_mps_0_2500_0_200","ds_stats_mps_1250_0_0_200","ds_stats_mps_2500_0_0_200","ds_stats_mps_floss_0_0_0_200","ds_stats_mps_floss_0_1250_0_200","ds_stats_mps_floss_0_2500_0_200","ds_stats_mps_floss_1250_0_0_200","ds_stats_mps_floss_2500_0_0_200","file_paths","file_paths_files","regimes_0.3_0_0_0_200","regimes_0.3_0_1250_0_200","regimes_0.3_0_2500_0_200","regimes_0.3_1250_0_0_200","regimes_0.3_2500_0_0_200","regimes_0.4_0_0_0_200","regimes_0.4_0_1250_0_200","regimes_0.4_0_2500_0_200","regimes_0.4_1250_0_0_200","regimes_0.4_2500_0_0_200","regimes_0.5_0_0_0_200","regimes_0.5_0_1250_0_200","regimes_0.5_0_2500_0_200","regimes_0.5_1250_0_0_200","regimes_0.5_2500_0_0_200","regimes_samples_0.3_0_0_0_200","regimes_samples_0.3_0_1250_0_200","regimes_samples_0.3_0_2500_0_200","regimes_samples_0.3_1250_0_0_200","regimes_samples_0.3_2500_0_0_200","regimes_samples_0.4_0_0_0_200","regimes_samples_0.4_0_1250_0_200","regimes_samples_0.4_0_2500_0_200","regimes_samples_0.4_1250_0_0_200","regimes_samples_0.4_2500_0_0_200","regimes_samples_0.5_0_0_0_200","regimes_samples_0.5_0_1250_0_200","regimes_samples_0.5_0_2500_0_200","regimes_samples_0.5_1250_0_0_200","regimes_samples_0.5_2500_0_0_200"],"type":["stem","pattern","pattern","pattern","pattern","pattern","pattern","pattern","pattern","pattern","pattern","pattern","pattern","stem","pattern","pattern","pattern","pattern","pattern","pattern","pattern","pattern","pattern","pattern","pattern","pattern","pattern","pattern","pattern","pattern","pattern","pattern","pattern","pattern","pattern","pattern","pattern","pattern","pattern","pattern","pattern","pattern","pattern","pattern"],"status":["uptodate","uptodate","uptodate","uptodate","uptodate","uptodate","uptodate","uptodate","uptodate","uptodate","uptodate","uptodate","uptodate","uptodate","uptodate","uptodate","uptodate","uptodate","uptodate","uptodate","uptodate","uptodate","uptodate","uptodate","uptodate","uptodate","uptodate","uptodate","uptodate","uptodate","uptodate","uptodate","uptodate","uptodate","uptodate","uptodate","uptodate","uptodate","uptodate","uptodate","uptodate","uptodate","uptodate","uptodate"],"seconds":[2.249,0.057,1.113,0.364,0.605,1.344,1.163,1.66,20.43,20.734,15.917,17.565,0.111,0.003,0.01,0.012,0.01,0.006,0.009,0.014,0.01,0.01,0.042,0.009,0.017,0.012,0.017,0.016,0.015,0.002,0.003,0.002,0.002,0.002,0.002,0.003,0.002,0.021,0.002,0.002,0.004,0.003,0.005,0.003],"bytes":[380317,703540,8376555,8602259,8468870,8376555,8376555,12820273,4331999,8059460,7123324,7888935,26221,460,1141,1107,1128,1024,1127,1225,1109,1151,1108,1147,1263,1131,1237,1255,1232,4288,3442,3905,826,3905,8093,3444,4296,3442,4294,9338,4281,8492,12773,8489],"branches":[null,2,2,2,2,2,2,2,2,2,2,2,122,null,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2],"id":["dataset","ds_stats_200","ds_stats_mps_0_0_0_200","ds_stats_mps_0_1250_0_200","ds_stats_mps_0_2500_0_200","ds_stats_mps_1250_0_0_200","ds_stats_mps_2500_0_0_200","ds_stats_mps_floss_0_0_0_200","ds_stats_mps_floss_0_1250_0_200","ds_stats_mps_floss_0_2500_0_200","ds_stats_mps_floss_1250_0_0_200","ds_stats_mps_floss_2500_0_0_200","file_paths","file_paths_files","regimes_0.3_0_0_0_200","regimes_0.3_0_1250_0_200","regimes_0.3_0_2500_0_200","regimes_0.3_1250_0_0_200","regimes_0.3_2500_0_0_200","regimes_0.4_0_0_0_200","regimes_0.4_0_1250_0_200","regimes_0.4_0_2500_0_200","regimes_0.4_1250_0_0_200","regimes_0.4_2500_0_0_200","regimes_0.5_0_0_0_200","regimes_0.5_0_1250_0_200","regimes_0.5_0_2500_0_200","regimes_0.5_1250_0_0_200","regimes_0.5_2500_0_0_200","regimes_samples_0.3_0_0_0_200","regimes_samples_0.3_0_1250_0_200","regimes_samples_0.3_0_2500_0_200","regimes_samples_0.3_1250_0_0_200","regimes_samples_0.3_2500_0_0_200","regimes_samples_0.4_0_0_0_200","regimes_samples_0.4_0_1250_0_200","regimes_samples_0.4_0_2500_0_200","regimes_samples_0.4_1250_0_0_200","regimes_samples_0.4_2500_0_0_200","regimes_samples_0.5_0_0_0_200","regimes_samples_0.5_0_1250_0_200","regimes_samples_0.5_0_2500_0_200","regimes_samples_0.5_1250_0_0_200","regimes_samples_0.5_2500_0_0_200"],"label":["dataset","ds_stats_200","ds_stats_mps_0_0_0_200","ds_stats_mps_0_1250_0_200","ds_stats_mps_0_2500_0_200","ds_stats_mps_1250_0_0_200","ds_stats_mps_2500_0_0_200","ds_stats_mps_floss_0_0_0_200","ds_stats_mps_floss_0_1250_0_200","ds_stats_mps_floss_0_2500_0_200","ds_stats_mps_floss_1250_0_0_200","ds_stats_mps_floss_2500_0_0_200","file_paths","file_paths_files","regimes_0.3_0_0_0_200","regimes_0.3_0_1250_0_200","regimes_0.3_0_2500_0_200","regimes_0.3_1250_0_0_200","regimes_0.3_2500_0_0_200","regimes_0.4_0_0_0_200","regimes_0.4_0_1250_0_200","regimes_0.4_0_2500_0_200","regimes_0.4_1250_0_0_200","regimes_0.4_2500_0_0_200","regimes_0.5_0_0_0_200","regimes_0.5_0_1250_0_200","regimes_0.5_0_2500_0_200","regimes_0.5_1250_0_0_200","regimes_0.5_2500_0_0_200","regimes_samples_0.3_0_0_0_200","regimes_samples_0.3_0_1250_0_200","regimes_samples_0.3_0_2500_0_200","regimes_samples_0.3_1250_0_0_200","regimes_samples_0.3_2500_0_0_200","regimes_samples_0.4_0_0_0_200","regimes_samples_0.4_0_1250_0_200","regimes_samples_0.4_0_2500_0_200","regimes_samples_0.4_1250_0_0_200","regimes_samples_0.4_2500_0_0_200","regimes_samples_0.5_0_0_0_200","regimes_samples_0.5_0_1250_0_200","regimes_samples_0.5_0_2500_0_200","regimes_samples_0.5_1250_0_0_200","regimes_samples_0.5_2500_0_0_200"],"level":[3,4,5,5,5,5,5,6,6,6,6,6,2,1,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8],"color":["#354823","#354823","#354823","#354823","#354823","#354823","#354823","#354823","#354823","#354823","#354823","#354823","#354823","#354823","#354823","#354823","#354823","#354823","#354823","#354823","#354823","#354823","#354823","#354823","#354823","#354823","#354823","#354823","#354823","#354823","#354823","#354823","#354823","#354823","#354823","#354823","#354823","#354823","#354823","#354823","#354823","#354823","#354823","#354823"],"shape":["dot","square","square","square","square","square","square","square","square","square","square","square","square","dot","square","square","square","square","square","square","square","square","square","square","square","square","square","square","square","square","square","square","square","square","square","square","square","square","square","square","square","square","square","square"],"title":["2.249 seconds<br />380.317 kilobytes<br />","0.057 seconds<br />703.54 kilobytes<br />2 branches","1.113 seconds<br />8.377 megabytes<br />2 branches","0.364 seconds<br />8.602 megabytes<br />2 branches","0.605 seconds<br />8.469 megabytes<br />2 branches","1.344 seconds<br />8.377 megabytes<br />2 branches","1.163 seconds<br />8.377 megabytes<br />2 branches","1.66 seconds<br />12.82 megabytes<br />2 branches","20.43 seconds<br />4.332 megabytes<br />2 branches","20.734 seconds<br />8.059 megabytes<br />2 branches","15.917 seconds<br />7.123 megabytes<br />2 branches","17.565 seconds<br />7.889 megabytes<br />2 branches","0.111 seconds<br />26.221 kilobytes<br />122 branches","0.003 seconds<br />460 bytes<br />","0.01 seconds<br />1.141 kilobytes<br />2 branches","0.012 seconds<br />1.107 kilobytes<br />2 branches","0.01 seconds<br />1.128 kilobytes<br />2 branches","0.006 seconds<br />1.024 kilobytes<br />2 branches","0.009 seconds<br />1.127 kilobytes<br />2 branches","0.014 seconds<br />1.225 kilobytes<br />2 branches","0.01 seconds<br />1.109 kilobytes<br />2 branches","0.01 seconds<br />1.151 kilobytes<br />2 branches","0.042 seconds<br />1.108 kilobytes<br />2 branches","0.009 seconds<br />1.147 kilobytes<br />2 branches","0.017 seconds<br />1.263 kilobytes<br />2 branches","0.012 seconds<br />1.131 kilobytes<br />2 branches","0.017 seconds<br />1.237 kilobytes<br />2 branches","0.016 seconds<br />1.255 kilobytes<br />2 branches","0.015 seconds<br />1.232 kilobytes<br />2 branches","0.002 seconds<br />4.288 kilobytes<br />2 branches","0.003 seconds<br />3.442 kilobytes<br />2 branches","0.002 seconds<br />3.905 kilobytes<br />2 branches","0.002 seconds<br />826 bytes<br />2 branches","0.002 seconds<br />3.905 kilobytes<br />2 branches","0.002 seconds<br />8.093 kilobytes<br />2 branches","0.003 seconds<br />3.444 kilobytes<br />2 branches","0.002 seconds<br />4.296 kilobytes<br />2 branches","0.021 seconds<br />3.442 kilobytes<br />2 branches","0.002 seconds<br />4.294 kilobytes<br />2 branches","0.002 seconds<br />9.338 kilobytes<br />2 branches","0.004 seconds<br />4.281 kilobytes<br />2 branches","0.003 seconds<br />8.492 kilobytes<br />2 branches","0.005 seconds<br />12.773 kilobytes<br />2 branches","0.003 seconds<br />8.489 kilobytes<br />2 branches"]},"edges":{"from":["ds_stats_mps_floss_2500_0_0_200","dataset","regimes_0.5_0_2500_0_200","dataset","regimes_0.4_0_1250_0_200","dataset","regimes_0.4_0_2500_0_200","dataset","regimes_0.5_0_1250_0_200","dataset","regimes_0.3_0_2500_0_200","dataset","ds_stats_mps_floss_0_0_0_200","dataset","regimes_0.4_0_0_0_200","dataset","ds_stats_200","ds_stats_mps_floss_0_0_0_200","dataset","regimes_0.5_0_0_0_200","file_paths","ds_stats_mps_floss_1250_0_0_200","ds_stats_mps_floss_1250_0_0_200","ds_stats_mps_floss_0_1250_0_200","dataset","regimes_0.3_0_1250_0_200","ds_stats_mps_floss_0_1250_0_200","ds_stats_mps_floss_1250_0_0_200","ds_stats_mps_1250_0_0_200","dataset","ds_stats_200","dataset","ds_stats_200","ds_stats_mps_0_0_0_200","ds_stats_mps_2500_0_0_200","ds_stats_mps_0_1250_0_200","ds_stats_mps_floss_0_1250_0_200","dataset","regimes_0.4_1250_0_0_200","ds_stats_mps_floss_0_2500_0_200","dataset","regimes_0.4_2500_0_0_200","dataset","regimes_0.5_1250_0_0_200","ds_stats_mps_0_2500_0_200","file_paths_files","ds_stats_mps_floss_0_2500_0_200","dataset","regimes_0.5_2500_0_0_200","ds_stats_mps_floss_2500_0_0_200","ds_stats_mps_floss_0_2500_0_200","dataset","ds_stats_200","dataset","regimes_0.3_1250_0_0_200","ds_stats_mps_floss_2500_0_0_200","dataset","ds_stats_200","ds_stats_mps_floss_0_0_0_200","dataset","regimes_0.3_2500_0_0_200","dataset","regimes_0.3_0_0_0_200"],"to":["regimes_0.3_2500_0_0_200","regimes_samples_0.5_0_2500_0_200","regimes_samples_0.5_0_2500_0_200","regimes_samples_0.4_0_1250_0_200","regimes_samples_0.4_0_1250_0_200","regimes_samples_0.4_0_2500_0_200","regimes_samples_0.4_0_2500_0_200","regimes_samples_0.5_0_1250_0_200","regimes_samples_0.5_0_1250_0_200","regimes_samples_0.3_0_2500_0_200","regimes_samples_0.3_0_2500_0_200","ds_stats_200","regimes_0.4_0_0_0_200","regimes_samples_0.4_0_0_0_200","regimes_samples_0.4_0_0_0_200","ds_stats_mps_1250_0_0_200","ds_stats_mps_1250_0_0_200","regimes_0.5_0_0_0_200","regimes_samples_0.5_0_0_0_200","regimes_samples_0.5_0_0_0_200","dataset","regimes_0.4_1250_0_0_200","regimes_0.5_1250_0_0_200","regimes_0.4_0_1250_0_200","regimes_samples_0.3_0_1250_0_200","regimes_samples_0.3_0_1250_0_200","regimes_0.5_0_1250_0_200","regimes_0.3_1250_0_0_200","ds_stats_mps_floss_1250_0_0_200","ds_stats_mps_2500_0_0_200","ds_stats_mps_2500_0_0_200","ds_stats_mps_0_1250_0_200","ds_stats_mps_0_1250_0_200","ds_stats_mps_floss_0_0_0_200","ds_stats_mps_floss_2500_0_0_200","ds_stats_mps_floss_0_1250_0_200","regimes_0.3_0_1250_0_200","regimes_samples_0.4_1250_0_0_200","regimes_samples_0.4_1250_0_0_200","regimes_0.5_0_2500_0_200","regimes_samples_0.4_2500_0_0_200","regimes_samples_0.4_2500_0_0_200","regimes_samples_0.5_1250_0_0_200","regimes_samples_0.5_1250_0_0_200","ds_stats_mps_floss_0_2500_0_200","file_paths","regimes_0.4_0_2500_0_200","regimes_samples_0.5_2500_0_0_200","regimes_samples_0.5_2500_0_0_200","regimes_0.4_2500_0_0_200","regimes_0.3_0_2500_0_200","ds_stats_mps_0_0_0_200","ds_stats_mps_0_0_0_200","regimes_samples_0.3_1250_0_0_200","regimes_samples_0.3_1250_0_0_200","regimes_0.5_2500_0_0_200","ds_stats_mps_0_2500_0_200","ds_stats_mps_0_2500_0_200","regimes_0.3_0_0_0_200","regimes_samples_0.3_2500_0_0_200","regimes_samples_0.3_2500_0_0_200","regimes_samples_0.3_0_0_0_200","regimes_samples_0.3_0_0_0_200"],"arrows":["to","to","to","to","to","to","to","to","to","to","to","to","to","to","to","to","to","to","to","to","to","to","to","to","to","to","to","to","to","to","to","to","to","to","to","to","to","to","to","to","to","to","to","to","to","to","to","to","to","to","to","to","to","to","to","to","to","to","to","to","to","to","to"]},"nodesToDataframe":true,"edgesToDataframe":true,"options":{"width":"100%","height":"100%","nodes":{"shape":"dot","physics":false},"manipulation":{"enabled":false},"edges":{"smooth":{"type":"cubicBezier","forceDirection":"horizontal"}},"physics":{"stabilization":false},"layout":{"hierarchical":{"enabled":true,"direction":"LR"}},"interaction":{"hover":true,"multiselect":true,"tooltipDelay":0,"zoomSpeed":1}},"groups":null,"width":null,"height":null,"idselection":{"enabled":false,"style":"width: 150px; height: 26px","useLabels":true,"main":"Select by id"},"byselection":{"enabled":false,"style":"width: 150px; height: 26px","multiple":false,"hideColor":"rgba(200,200,200,0.5)","highlight":false},"main":{"text":"","style":"font-family:Georgia, Times New Roman, Times, serif;font-weight:bold;font-size:20px;text-align:center;"},"submain":null,"footer":null,"background":"rgba(0, 0, 0, 0)","highlight":{"enabled":true,"hoverNearest":false,"degree":{"from":1,"to":1},"algorithm":"hierarchical","hideColor":"rgba(200,200,200,0.5)","labelOnly":true},"collapse":{"enabled":true,"fit":false,"resetHighlight":true,"clusterOptions":null,"keepCoord":true,"labelSuffix":"(cluster)"},"legend":{"width":0.2,"useGroups":false,"position":"right","ncol":1,"stepX":100,"stepY":100,"zoom":true,"nodes":{"label":["Up to date","Stem","Pattern"],"color":["#354823","#899DA4","#899DA4"],"shape":["dot","dot","square"]},"nodesToDataframe":true},"tooltipStay":300,"tooltipStyle":"position: fixed;visibility:hidden;padding: 5px;white-space: nowrap;font-family: verdana;font-size:14px;font-color:#000000;background-color: #f5f4ed;-moz-border-radius: 3px;-webkit-border-radius: 3px;border-radius: 3px;border: 1px solid #808074;box-shadow: 3px 3px 10px rgba(0, 0, 0, 0.2);"},"evals":[],"jsHooks":[]}</script>
 <br>
 <p>
 <button type="button" class="btn btn-default btn-workflowr btn-workflowr-sessioninfo" data-toggle="collapse" data-target="#workflowr-sessioninfo" style="display: block;">
-<span class="glyphicon glyphicon-wrench" aria-hidden="true"></span> Session information
+<span class="glyphicon glyphicon-wrench" aria-hidden="true"></span>
+Session information
 </button>
 </p>
 <div id="workflowr-sessioninfo" class="collapse">
-<pre><code>R version 4.1.0 (2021-05-18)
-Platform: x86_64-pc-linux-gnu (64-bit)
-Running under: Ubuntu 20.04.2 LTS
+<pre><code>─ Session info ───────────────────────────────────────────────────────────────
+ setting  value
+ version  R version 4.1.2 (2021-11-01)
+ os       Ubuntu 20.04.3 LTS
+ system   x86_64, linux-gnu
+ ui       X11
+ language (EN)
+ collate  en_US.UTF-8
+ ctype    en_US.UTF-8
+ tz       Europe/Lisbon
+ date     2022-03-15
+ pandoc   2.17.0.1 @ /usr/bin/ (via rmarkdown)
 
-Matrix products: default
-BLAS:   /usr/lib/x86_64-linux-gnu/blas/libblas.so.3.9.0
-LAPACK: /usr/lib/x86_64-linux-gnu/lapack/liblapack.so.3.9.0
+─ Packages ───────────────────────────────────────────────────────────────────
+ package        * version    date (UTC) lib source
+ askpass          1.1        2019-01-13 [1] CRAN (R 4.1.2)
+ backports        1.4.1      2021-12-13 [1] CRAN (R 4.1.2)
+ base64url        1.4        2018-05-14 [1] CRAN (R 4.1.2)
+ bookdown         0.24.11    2022-03-10 [1] Github (rstudio/bookdown@7fd6224)
+ brio             1.1.3      2021-11-30 [1] CRAN (R 4.1.2)
+ bslib            0.3.1      2021-10-06 [1] CRAN (R 4.1.2)
+ cachem           1.0.6      2021-08-19 [1] CRAN (R 4.1.2)
+ callr            3.7.0      2021-04-20 [1] CRAN (R 4.1.2)
+ cli              3.2.0      2022-02-14 [1] CRAN (R 4.1.2)
+ codetools        0.2-18     2020-11-04 [1] CRAN (R 4.1.2)
+ crayon           1.5.0      2022-02-14 [1] CRAN (R 4.1.2)
+ credentials      1.3.2      2021-11-29 [1] CRAN (R 4.1.2)
+ data.table       1.14.2     2021-09-27 [1] CRAN (R 4.1.2)
+ debugme          1.1.0      2017-10-22 [1] CRAN (R 4.1.2)
+ desc             1.4.1      2022-03-06 [1] CRAN (R 4.1.2)
+ devtools         2.4.3      2021-11-30 [1] CRAN (R 4.1.2)
+ digest           0.6.29     2021-12-01 [1] CRAN (R 4.1.2)
+ dplyr            1.0.8      2022-02-08 [1] CRAN (R 4.1.2)
+ ellipsis         0.3.2      2021-04-29 [1] CRAN (R 4.1.2)
+ evaluate         0.15       2022-02-18 [1] CRAN (R 4.1.2)
+ fansi            1.0.2      2022-01-14 [1] CRAN (R 4.1.2)
+ fastmap          1.1.0      2021-01-25 [1] CRAN (R 4.1.2)
+ fs               1.5.2      2021-12-08 [1] CRAN (R 4.1.2)
+ generics         0.1.2      2022-01-31 [1] CRAN (R 4.1.2)
+ gert             1.5.0      2022-01-03 [1] CRAN (R 4.1.2)
+ getPass          0.2-2      2017-07-21 [1] CRAN (R 4.1.2)
+ git2r            0.29.0     2022-03-10 [1] Github (ropensci/git2r@d128a42)
+ gittargets     * 0.0.3.9000 2022-02-27 [1] Github (wlandau/gittargets@13a9cd8)
+ glue             1.6.2      2022-02-24 [1] CRAN (R 4.1.2)
+ here           * 1.0.1      2020-12-13 [1] CRAN (R 4.1.2)
+ htmltools        0.5.2      2021-08-25 [1] CRAN (R 4.1.2)
+ htmlwidgets      1.5.4      2021-09-08 [1] CRAN (R 4.1.2)
+ httpuv           1.6.5      2022-01-05 [1] CRAN (R 4.1.2)
+ httr             1.4.2      2020-07-20 [1] CRAN (R 4.1.2)
+ igraph           1.2.11     2022-01-04 [1] CRAN (R 4.1.2)
+ jquerylib        0.1.4      2021-04-26 [1] CRAN (R 4.1.2)
+ jsonlite         1.8.0      2022-02-22 [1] CRAN (R 4.1.2)
+ knitr            1.37       2021-12-16 [1] CRAN (R 4.1.2)
+ languageserver   0.3.12     2021-10-19 [1] CRAN (R 4.1.2)
+ later            1.3.0      2021-08-18 [1] CRAN (R 4.1.2)
+ lifecycle        1.0.1      2021-09-24 [1] CRAN (R 4.1.2)
+ magrittr         2.0.2      2022-01-26 [1] CRAN (R 4.1.2)
+ memoise          2.0.1      2021-11-26 [1] CRAN (R 4.1.2)
+ openssl          2.0.0      2022-03-02 [1] CRAN (R 4.1.2)
+ pillar           1.7.0      2022-02-01 [1] CRAN (R 4.1.2)
+ pkgbuild         1.3.1      2021-12-20 [1] CRAN (R 4.1.2)
+ pkgconfig        2.0.3      2019-09-22 [1] CRAN (R 4.1.2)
+ pkgload          1.2.4      2021-11-30 [1] CRAN (R 4.1.2)
+ prettyunits      1.1.1      2020-01-24 [1] CRAN (R 4.1.2)
+ processx         3.5.2      2021-04-30 [1] CRAN (R 4.1.2)
+ promises         1.2.0.1    2021-02-11 [1] CRAN (R 4.1.2)
+ ps               1.6.0      2021-02-28 [1] CRAN (R 4.1.2)
+ purrr            0.3.4      2020-04-17 [1] CRAN (R 4.1.2)
+ R6               2.5.1      2021-08-19 [1] CRAN (R 4.1.2)
+ Rcpp             1.0.8.2    2022-03-11 [1] CRAN (R 4.1.2)
+ remotes          2.4.2      2021-11-30 [1] CRAN (R 4.1.2)
+ renv             0.15.4     2022-03-03 [1] CRAN (R 4.1.2)
+ rlang            1.0.2.9000 2022-03-14 [1] Github (r-lib/rlang@22fe9e9)
+ rmarkdown        2.13.1     2022-03-10 [1] Github (rstudio/rmarkdown@1ef2cf3)
+ rprojroot        2.0.2      2020-11-15 [1] CRAN (R 4.1.2)
+ rstudioapi       0.13       2020-11-12 [1] CRAN (R 4.1.2)
+ sass             0.4.0      2021-05-12 [1] CRAN (R 4.1.2)
+ sessioninfo      1.2.2      2021-12-06 [1] CRAN (R 4.1.2)
+ stringi          1.7.6      2021-11-29 [1] CRAN (R 4.1.2)
+ stringr          1.4.0      2019-02-10 [1] CRAN (R 4.1.2)
+ sys              3.4        2020-07-23 [1] CRAN (R 4.1.2)
+ tarchetypes    * 0.4.1      2022-01-07 [1] CRAN (R 4.1.2)
+ targets        * 0.10.0     2022-01-07 [1] CRAN (R 4.1.2)
+ testthat         3.1.3      2022-02-27 [1] Github (r-lib/testthat@22a68dd)
+ tibble           3.1.6      2021-11-07 [1] CRAN (R 4.1.2)
+ tidyselect       1.1.2      2022-02-21 [1] CRAN (R 4.1.2)
+ usethis          2.1.5      2021-12-09 [1] CRAN (R 4.1.2)
+ utf8             1.2.2      2021-07-24 [1] CRAN (R 4.1.2)
+ uuid             1.0-3      2021-11-01 [1] CRAN (R 4.1.2)
+ vctrs            0.3.8      2021-04-29 [1] CRAN (R 4.1.2)
+ visNetwork     * 2.1.0      2021-09-29 [1] CRAN (R 4.1.2)
+ whisker          0.4        2019-08-28 [1] CRAN (R 4.1.2)
+ withr            2.5.0      2022-03-03 [1] CRAN (R 4.1.2)
+ workflowr      * 1.7.0      2021-12-21 [1] CRAN (R 4.1.2)
+ xfun             0.30       2022-03-02 [1] CRAN (R 4.1.2)
+ xml2             1.3.3      2021-11-30 [1] CRAN (R 4.1.2)
+ yaml             2.3.5      2022-02-21 [1] CRAN (R 4.1.2)
 
-locale:
- [1] LC_CTYPE=C.UTF-8       LC_NUMERIC=C           LC_TIME=C.UTF-8       
- [4] LC_COLLATE=C.UTF-8     LC_MONETARY=C.UTF-8    LC_MESSAGES=C.UTF-8   
- [7] LC_PAPER=C.UTF-8       LC_NAME=C              LC_ADDRESS=C          
-[10] LC_TELEPHONE=C         LC_MEASUREMENT=C.UTF-8 LC_IDENTIFICATION=C   
+ [1] /workspace/.cache/R/renv/library/false.alarm-d6f1a0d1/R-4.1/x86_64-pc-linux-gnu
+ [2] /usr/lib/R/library
 
-attached base packages:
-[1] stats     graphics  grDevices datasets  utils     methods   base     
-
-other attached packages:
-[1] visNetwork_2.0.9  tarchetypes_0.2.1 targets_0.4.2     workflowr_1.6.2  
-[5] here_1.0.1       
-
-loaded via a namespace (and not attached):
- [1] Rcpp_1.0.7        git2r_0.28.0      jquerylib_0.1.4   bslib_0.2.5.1    
- [5] compiler_4.1.0    pillar_1.6.1      later_1.2.0       tools_4.1.0      
- [9] digest_0.6.27     jsonlite_1.7.2    evaluate_0.14     lifecycle_1.0.0  
-[13] tibble_3.1.2      pkgconfig_2.0.3   rlang_0.4.11      igraph_1.2.6     
-[17] cli_3.0.0         yaml_2.2.1        xfun_0.24         stringr_1.4.0    
-[21] withr_2.4.2       knitr_1.33        htmlwidgets_1.5.3 sass_0.4.0       
-[25] fs_1.5.0          vctrs_0.3.8       rprojroot_2.0.2   tidyselect_1.1.1 
-[29] glue_1.4.2        data.table_1.14.0 R6_2.5.0          processx_3.5.2   
-[33] fansi_0.5.0       rmarkdown_2.9.3   whisker_0.4       callr_3.7.0      
-[37] purrr_0.3.4       magrittr_2.0.1    promises_1.2.0.1  ps_1.6.0         
-[41] codetools_0.2-18  ellipsis_0.3.2    htmltools_0.5.1.1 renv_0.13.2      
-[45] httpuv_1.6.1      utf8_1.2.1        stringi_1.7.2     crayon_1.4.1     </code></pre>
+──────────────────────────────────────────────────────────────────────────────</code></pre>
 </div>
 </div>
 
 
 <!-- Adjust MathJax settings so that all math formulae are shown using
 TeX fonts only; see
-http://docs.mathjax.org/en/latest/configuration.html.  This will make
+https://docs.mathjax.org/en/latest/web/configuration.html. This will make
 the presentation more consistent at the cost of the webpage sometimes
 taking slightly longer to load. Note that this only works because the
 footer is added to webpages before the MathJax javascript. -->
@@ -731,6 +1280,8 @@ footer is added to webpages before the MathJax javascript. -->
     "HTML-CSS": { availableFonts: ["TeX"] }
   });
 </script>
+
+
 
 
 

@@ -9,6 +9,7 @@
 \alias{normalize}
 \alias{complexity}
 \alias{binary_split}
+\alias{motif_quality}
 \title{Math Functions}
 \usage{
 znorm(data, rcpp = TRUE)
@@ -26,6 +27,13 @@ normalize(data, min_lim = 0, max_lim = 1, rcpp = FALSE)
 complexity(data)
 
 binary_split(n, rcpp = TRUE)
+
+motif_quality(
+  mp,
+  method = c("mean", "median"),
+  input_format = c("euclidean", "pearson"),
+  window_size = NULL
+)
 }
 \arguments{
 \item{data}{a \code{vector} of \code{numeric}.}
@@ -44,6 +52,14 @@ that may or not be slower.}
 \item{max_lim}{A number}
 
 \item{n}{size of the vector}
+
+\item{mp}{a \code{vector} of \code{numeric}. The computed matrix profile.}
+
+\item{method}{a \code{string}. What will be the comparative measurement. Currently "mean" or "median". Default is "mean".}
+
+\item{input_format}{a \code{string}. The values in \code{mp} are "euclidean" distances or "pearson" coefficients? Default is "euclidean".}
+
+\item{window_size}{an \code{integer} or \code{NULL}. If \code{input_format} is "pearson", this value must be given. Default is \code{NULL}.}
 }
 \value{
 \code{znorm()}: Returns the normalized data
@@ -61,6 +77,8 @@ that may or not be slower.}
 \code{complexity()}: Returns the complexity index of the data provided (normally a subset).
 
 \code{complexity()}: Returns a \code{vector} with the binary split indexes.
+
+\code{motif_quality()}: Returns a value between 0.0 and 1.0. Large is better.
 }
 \description{
 \code{znorm()}: Normalizes data for mean Zero and Standard Deviation One
@@ -78,6 +96,9 @@ that may or not be slower.}
 \code{complexity()}: Computes the complexity index of the data
 
 \code{binary_split()}: Creates a vector with the indexes of binary split.
+
+\code{motif_quality()}: Computes a coefficient of quality for the best motif in the matrix profile. Depends on
+the window size used for the matrix profile computation.
 }
 \examples{
 normalized <- znorm(tsmp::motifs_discords_small)
@@ -95,4 +116,6 @@ fake_data <- c(1, 1.4, 4.3, 5.1, 2, 3.6, 1.24, 8, 9, 4.3, 5, 2.1, 3)
 res <- complexity(fake_data)
 fake_data <- c(10)
 res <- binary_split(fake_data)
+fake_data <- c(1, 1, 4, 5, 2, 3, 1, 7, 9, 4, 5, 2, 3)
+coef <- motif_quality(fake_data)
 }

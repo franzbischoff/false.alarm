@@ -1,0 +1,88 @@
+vscode:
+  extensions:
+    - streetsidesoftware.code-spell-checker
+    - gruntfuggly.todo-tree
+    - hbenl.vscode-test-explorer
+    - streetsidesoftware.code-spell-checker-portuguese
+    - streetsidesoftware.code-spell-checker-medical-terms
+    - cschleiden.vscode-github-actions
+    - editorconfig.editorconfig
+    - donjayamanne.git-extension-pack
+    - codezombiech.gitignore
+    - james-yu.latex-workshop
+    - richie5um2.vscode-sort-json
+    - redhat.vscode-yaml
+    - christian-kohler.path-intellisense
+    - pkief.material-icon-theme
+    - esbenp.prettier-vscode
+    - foxundermoon.shell-format
+    # - alefragnani.bookmarks
+    - richie5um2.vscode-sort-json
+    - alefragnani.project-manager
+    - ms-python.python
+    - donjayamanne.githistory
+    - eamodio.gitlens
+    - ziyasal.vscode-open-in-github
+    - github.vscode-pull-request-github
+    - bierner.markdown-preview-github-styles
+    - yzhang.markdown-all-in-one
+    # twilight theme
+    - https://djtp2g.am.files.1drv.com/y4mWZFd3Enbc5UfyFJ-mmTQ8JLm6yb7qU8JoV4IaWXFhBqwyyPRFFU2NOsFLaGvDQy3IT6BiPDedePLzhFOszCY0NCy0eGgmGVqNShlloLTeDR9RmymOluoRqo2KpRncX33X4-4hUOgx_unxLKAEFHOzD-oFTximiITGut9Deu1eip5prcEYSmTcRMUmwJWjvBAWbch-vufYYxEeIgk4CkkRQ
+    # r-test-adapter
+    - https://djtn2g.am.files.1drv.com/y4mf1j4F-_rPDVh_IxzPfOv4KggNs3jACE50oaJ7K2p91ET0jKhqYH_ASfOTI8Lj9H_K2fjaNBveLrKoJEoTK5yL5N4tp1L2zFwsyrWBzs6BfAvM3tv2eam3l2MoRxtZHynTgtUd69RKSXzBbW7nFJWGsKK4AbSLCY8jYW413xGiCz_Lcpe2Lp75s-VSth1i7CL6v_Kaqp4D8sjYtiPvehDKg
+    # resource monitor
+    - https://djtk2g.am.files.1drv.com/y4mTnG5MOkqranpxQ5r4EF_hl_cWoPzlpYsSTAqJ6GAhF_Pzg1NYEKjVElSOUNt5WAYZLjNYGOZFmfO1DIIsc1OchM9wDBAtth_j4KPzm5yMsVZrhuZhHiJIzW00sHZwtr5zoT93h6ZQxlVW76iArkCF6J57x9oMypaWOwGOxNRRlZ2EkemKZH66uR7xzXYLXxBIbUQC4mKNxs7BlU3WyEoQg
+    # reload
+    - https://djtm2g.am.files.1drv.com/y4mTqBzeC64GoiJCrLGDqgoqe5qVax5kq8-4NAWHnSNWHcJpDBIMHSm168EVPXIvKF1TCukRGQeugac7aqp_fFiQ8XgIsZvNr7x8fBPTB7CA9ST73InN9ZMKu2Pqn3deLOwAzqZz7ZrApooDjmMGAbLdmdotWAc7w0AnE-wzlW8NOoj74T54pqPBn0D4ilFt2EPIhbDPJOmrqYGOFiaQkORzA
+    # task explorer
+    - https://djtl2g.am.files.1drv.com/y4miTvFR9OwSr-v91JawK3lgvKiu011y2jJbWyIkZPVdty-vTmH91ZAJOn7vBTq5NmaQcnCxLbf75d4-0qfUHqcXfJcVNZQeKXljzKn4viHjNooNStPtOhrNcnvmLCv1qhpPmR6zPSAJHJri3_OWTs0R3-NQNBhuJCCVYYoBM0tWHVHjI3FR5tdZlpAKlR4cCdw8mjtpJaJ2l0BB3W08dlUzg
+
+github:
+  prebuilds:
+    # enable for the master/default branch (defaults to true)
+    master: true
+    # enable for all branches in this repo (defaults to false)
+    branches: true
+#     # enable for pull requests coming from this repo (defaults to true)
+#     pullRequests: false
+#     # enable for pull requests coming from forks (defaults to false)
+#     pullRequestsFromForks: false
+#     # add a "Review in Gitpod" button as a comment to pull requests (defaults to true)
+#     addComment: false
+#     # add a "Review in Gitpod" button to pull requests (defaults to false)
+#     addBadge: false
+#     # add a label once the prebuild is ready to pull requests (defaults to false)
+#     addLabel: false
+
+image:
+  # franzbischoff/false.alarm-gitpod:stable
+  file: .devcontainer/Dockerfile
+
+tasks:
+  - name: Setup
+    init: |
+      chmod 755 ./.devcontainer/configure_gitpod.sh
+      ./.devcontainer/configure_gitpod.sh
+  - name: First run
+    command: |
+      gp open .github/gitpod-Instructions.md
+      exit
+  - name: tailscaled
+    command: |
+      if [ -n "${TAILSCALE_STATE_GITPOD_FALSEALARM}" ]; then
+        # restore the tailscale state from gitpod user's env vars
+        sudo mkdir -p /var/lib/tailscale
+        echo "${TAILSCALE_STATE_GITPOD_FALSEALARM}" | sudo tee /var/lib/tailscale/tailscaled.state > /dev/null
+      fi
+      sudo tailscaled &
+      exit
+  - name: tailscale
+    command: |
+      if [ -n "${TAILSCALE_STATE_GITPOD_FALSEALARM}" ]; then
+        sudo -E tailscale up
+      else
+        sudo -E tailscale up --hostname "gitpod-${GITPOD_GIT_USER_NAME// /-}-$(echo ${GITPOD_WORKSPACE_CONTEXT} | jq -r .repository.name)"
+        # store the tailscale state into gitpod user
+        gp env TAILSCALE_STATE_GITPOD_FALSEALARM="$(sudo cat /var/lib/tailscale/tailscaled.state)"
+      fi
+      exit

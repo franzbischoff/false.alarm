@@ -8,7 +8,7 @@ stomp(
   ...,
   window_size,
   exclusion_zone = getOption("tsmp.exclusion_zone", 1/2),
-  time_constraint = NULL,
+  mp_time_constraint = NULL,
   verbose = getOption("tsmp.verbose", 2)
 )
 }
@@ -21,7 +21,7 @@ profile.}
 \item{exclusion_zone}{a \code{numeric}. Size of the exclusion zone, based on window size (default is
 \code{1/2}). See details.}
 
-\item{time_constraint}{an \code{int}. Max distance where to look for the best match in matrix profile.
+\item{mp_time_constraint}{an \code{int}. Max distance where to look for the best match in matrix profile.
 (default is NULL).}
 
 \item{verbose}{an \code{int}. See details. (Default is \code{2}).}

@@ -8,6 +8,7 @@
 \usepackage{multirow}
 \usepackage{wrapfig}
 \usepackage{float}
+\usepackage{svg}
 \usepackage{colortbl}
 \usepackage{pdflscape}
 \usepackage{tabu}
@@ -61,8 +62,8 @@
 \begin{document}
 %
 \title{Framework for ECG analysis\thanks{This work has been done under
-the scope of - and funded by - the PhD Program in Health Data Science of
-the Faculty of Medicine of the University of Porto, Portugal -
+the scope of - and funded by - the Ph.D.~Program in Health Data Science
+of the Faculty of Medicine of the University of Porto, Portugal -
 heads.med.up.pt}}
 %
 %\titlerunning{Abbreviated paper title}
@@ -94,7 +95,7 @@ University of Porto, Porto, Portugal }
   devices or alarms for abnormal cardiac rhythms using predefined normal
   trigger ranges and some rhythm analysis, which raises the problem of
   false alarms. In comparison, complex 12-derivation ECG machines are
-  not suitable to use as simple monitors and are used with strict
+  not suitable to use as simple monitors, and are used with strict
   techniques for formal diagnostics. We aim to identify, on streaming
   data, life-threatening hearth electric patterns to reduce the number
   of false alarms, using low CPU and memory maintaining robustness. The
@@ -126,20 +127,20 @@ University of Porto, Porto, Portugal }
 \hypertarget{introduction}{%
 \section{Introduction}\label{introduction}}
 
-Currently, Point-of-Care (POC) ECG monitoring works either as plot
-devices or alarms for abnormal cardiac rhythms using predefined normal
-trigger ranges. Modern devices also incorporate algorithms to analyze
+Point-of-Care (POC) ECG monitoring works either as plot devices or
+alarms for abnormal cardiac rhythms using predefined normal trigger
+ranges. Modern devices also incorporate algorithms to analyze
 arrhythmias improving their specificity. On the other hand, full
 12-derivation ECG machines are complex, are not suited to use as simple
-monitors and are used with strict techniques for formal diagnostics of
+monitors, and are used with strict techniques for formal diagnostics of
 hearth electric conduction pathologies. The automatic diagnostics are
-derived from a complete analysis of the 12-dimension data after it is
-fully and well collected. Both systems do not handle disconnected leads
-and patient's motions, being strictly necessary to have a good and
-stable signal to allow proper diagnosis. These interferences with the
-data collection frequently originate false alarms increasing both
-patient and staff's stress; depending on how it is measured, the rate of
-false alarms (overall) in ICU is estimated at 65 to
+derived from a complete analysis of the 12-dimension data after fully
+and well collected. Both systems do not handle disconnected leads and
+patient's motions, being strictly necessary to have a good and stable
+signal to allow proper diagnosis. These interferences with the data
+collection frequently originate false alarms increasing both patient and
+staff's stress; depending on how it is measured, the rate of false
+alarms (overall) in ICU is estimated at 65 to
 95\%{[}\protect\hyperlink{ref-donchin2002}{11}{]}.
 
 Alarm fatigue is a well-known problem that consists of a sensory
@@ -157,19 +158,13 @@ In April of 2013, The Joint
 Commission{[}\protect\hyperlink{ref-the_jc}{4}{]} issued the Sentinel
 Event Alert{[}\protect\hyperlink{ref-JointCommission2013}{16}{]},
 establishing alarm system safety as a top hospital priority in the
-National Patient Safety Goal. Nowadays (2021), this subject still on
+National Patient Safety Goal. Nowadays (2021), this subject is still on
 their list, in fourth place of
 importance{[}\protect\hyperlink{ref-the_jc2021}{5}{]}.
 
-In February of 2015, the CinC/Physionet Challenge 2015 was about
-"Reducing False Arrhythmia Alarms in the
-ICU{[}\protect\hyperlink{ref-Clifford2015}{9}{]}. The introduction
-article stated that it had been reported that up to 86\% resulting of
-the alarms are false, and this can lead to decreased staff attention and
-an increase in patients'
-delirium{[}\protect\hyperlink{ref-Chambrin2001}{8},
-\protect\hyperlink{ref-Lawless1994}{19},
-\protect\hyperlink{ref-Parthasarathy2004}{20}{]}.
+In February 2015, the CinC/Physionet Challenge 2015 was about ``Reducing
+False Arrhythmia Alarms in the
+ICU{[}\protect\hyperlink{ref-Lawless1994}{19}{]}.
 
 Due to this matter's importance, this research aims to identify abnormal
 hearth electric patterns using streaming data, specifically those who
@@ -196,7 +191,7 @@ this approach be used in other health domains other than ICU or ECG?
 \section{Related Works}\label{related-works}}
 
 The CinC/Physionet Challenge 2015 produced several papers aiming to
-reduce false alarms on their dataset. On Table \ref{tab:alarms} it is
+reduce false alarms on their dataset. In Table \ref{tab:alarms} it is
 listed the five life-threatening alarms present in their dataset.
 
 \begin{table}
@@ -245,7 +240,7 @@ The five-best scores in this challenge are presented on Table
 \end{tabu}
 \end{table}
 
-Their algorithm did a pretty good job on the Physionet test-set.
+Their algorithm did a pretty good job on the Physionet test set.
 However, independently of their approach to this problem, none of the
 authors reported benchmarks, memory usage, robustness test, or context
 invariance that could assure its implementation on real monitors to
@@ -283,7 +278,7 @@ Keywords:
 \item
   ECG AND monitoring AND ICU
 \item
-  ECG AND{[}time series{]}
+  ECG AND {[} time series {]}
 \item
   ECG AND automatic AND interpretation
 \end{itemize}
@@ -309,7 +304,7 @@ principles{[}\protect\hyperlink{ref-compendium2019}{3}{]}:
   Specify your computational environment as clearly as you can.
 \end{enumerate}
 
-Data management is following the FAIR principle (findable, accessible,
+Data management follows the FAIR principle (findable, accessible,
 interoperable, reusable){[}\protect\hyperlink{ref-wilkinson2016}{24}{]}.
 
 Currently, the dataset used is stored on a public
@@ -317,7 +312,9 @@ repository{[}\protect\hyperlink{ref-franz_dataset}{6}{]}, the source
 code is publicly open and stored on
 Github{[}\protect\hyperlink{ref-franz_github}{1}{]}, while the reports
 and reproducibility information on each step is found on a public
-website{[}\protect\hyperlink{ref-franz_website}{2}{]}.
+website{[}\protect\hyperlink{ref-franz_website}{2}{]}. The current
+dataset and further collected data will be publicly available following
+the FAIR principle.
 
 \hypertarget{type-of-study}{%
 \subsubsection{Type of study}\label{type-of-study}}
@@ -328,41 +325,54 @@ the change in pattern as positive or negative for life-threatening.
 \hypertarget{the-data}{%
 \subsubsection{The data}\label{the-data}}
 
-Initially we will use the CinC/Physionet Challenge 2015 dataset that is
+Initially, we will use the CinC/Physionet Challenge 2015 dataset that is
 publicly available on Physionet. This dataset is a good start for
-exploring the main goal of reduce false alarms. This dataset was
-manually selected for this challenge and the events were labeled by
-experts, so it is not RAW data. All signals have been resampled (using
-anti-alias filters) to 12 bit, 250 Hz and have had FIR bandpass {[}0.05
-to 40Hz{]} and mains notch filters applied to remove noise. Pacemaker
-and other artifacts may be present on the
+exploring the primary goal of reducing false alarms. This dataset has
+been curated for this challenge, and the events were labeled by experts,
+so it is not raw data. All signals have been resampled (using anti-alias
+filters) to 12 bits, 250 Hz, and have had FIR band-pass {[}0.05 to
+40Hz{]} and mains notch filters applied to remove noise. Pacemaker and
+other artifacts may be present on the
 ECG{[}\protect\hyperlink{ref-Clifford2015}{9}{]}. Furthermore, this
 dataset contains at least two ECG derivations and one or more variables
 like arterial blood pressure, photoplethysmograph readings, and
 respiration movements.
 
 These variables may or may not be helpful for increasing the sensitivity
-or specificity of the algorithm. It is planned to use the minimum set of
+or specificity of the algorithm. We plan to use the minimum set of
 variables as it is known in multi-dimensional analysis that using just
 two (or some small subset) of all the dimensions can be much more
-accurate than either using all dimensions or a single
+accurate than using all dimensions or a single
 dimension{[}\protect\hyperlink{ref-gharghabi2018}{14}{]}.
 
-It is desirable that real data extracted from Portuguese ICU could be
-used in further stage to assess the validity of the model in real
-settings and robustness (using RAW data instead of filtered data). The
-variables available on Physionet's dataset are commonly available on
-Portuguese ICU's.
+At first, we will assemble a workflow to explore the Physionet's dataset
+and find a suitable solution for detecting regime changes and verify if
+these changes are, in fact, clinical changes or just artifacts. At this
+stage, the aim is to build a classifier for the ``simplest'' type of
+change: Asystole. While one may think detecting the ``absence'' of
+heartbeats may be trivial, this will set the grounds for distinguishing
+patient data from artifacts.
 
-\hypertarget{workflow}{%
-\subsubsection{Workflow}\label{workflow}}
+It is desirable that real data extracted from Portuguese ICU could be
+used in a further stage to assess the validity of the model in real
+settings and robustness (using raw data instead of filtered data). The
+variables available on Physionet's dataset are commonly available on
+Portuguese ICUs. However, this real data also need to go through several
+stages, including manual labeling, which can hold back this project. In
+addition to the dataset used on Challenge 2015, Physionet has a vast
+collection of ECG recordings well labeled and reviewed by cardiologists.
+Therefore, these data can be used as a final test for the resulting
+model.
+
+\hypertarget{workflow-management}{%
+\subsubsection{Workflow management}\label{workflow-management}}
 
 All steps of the process will be managed using the R package
 \texttt{targets}{[}\protect\hyperlink{ref-landau2021}{18}{]} from data
 extraction to the final report, as shown in Fig. \ref{fig:targets}.
 
 \begin{figure}
-\includegraphics[width=1\linewidth]{targets} \caption{Reprodutible research workflow using `targets`.}\label{fig:targets}
+\includegraphics[width=1\linewidth]{targets} \caption{Reproducible research workflow using `targets`.}\label{fig:targets}
 \end{figure}
 
 The report will then be available on the main
@@ -372,14 +382,30 @@ inspection of previous versions managed by the R package
 can see in Fig. \ref{fig:workflow_workflowr}.
 
 \begin{figure}
-\includegraphics[width=1\linewidth]{workflowr} \caption{Reprodutible reports using `workflowr.`}\label{fig:workflow_workflowr}
+\includegraphics[width=1\linewidth]{workflowr} \caption{Reproducible reports using `workflowr.`}\label{fig:workflow_workflowr}
+\end{figure}
+
+\hypertarget{proposed-approach}{%
+\subsubsection{Proposed approach}\label{proposed-approach}}
+
+The proposed approach is depicted in Fig. \ref{fig:workflow_image}. That
+is only a draft of the final workflow. The algorithm for the
+classification of the regime changes is still to be defined. However,
+the main innovation resides in the correct regime detection. Also, to
+achieve the goal of low CPU and memory usage, the strategy will be to
+combine fading factors{[}\protect\hyperlink{ref-Gama2013}{13},
+\protect\hyperlink{ref-Rodrigues2010}{22}{]} to reduce computation in
+online settings like in this research.
+
+\begin{figure}
+\includegraphics[width=1\linewidth]{false_alarm} \caption{Proposed approach to train the model for relevant patterns detection.}\label{fig:workflow_image}
 \end{figure}
 
 \hypertarget{statistical-analysis}{%
 \subsubsection{Statistical analysis}\label{statistical-analysis}}
 
-The Statistical analysis will be performed using R language v4.0.5 or
-greater and it will be computed the ROC curve for the algorithm.
+The Statistical analysis will be performed using R language v4.1.1 or
+greater, and it will be computed the ROC curve for the algorithm.
 
 The experiment will be conducted using the Matrix Profile
 concept{[}\protect\hyperlink{ref-yeh2016}{25}{]}, the state-of-the-art
@@ -435,7 +461,7 @@ alarm problem.
 \begin{CSLReferences}{0}{0}
 \leavevmode\vadjust pre{\hypertarget{ref-franz_github}{}}%
 \CSLLeftMargin{1. }
-\CSLRightInline{Franzbischoff/false.alarm: PhD programme in health data
+\CSLRightInline{Franzbischoff/false.alarm: Ph.D. programme in health data
 science, \url{https://github.com/franzbischoff/false.alarm}, last
 accessed 2021/04/08.}
 
@@ -464,7 +490,7 @@ last accessed 2021/04/08.}
 \leavevmode\vadjust pre{\hypertarget{ref-franz_dataset}{}}%
 \CSLLeftMargin{6. }
 \CSLRightInline{The PhysioNet computing in cardiology challenge 2015 -
-dataset, \url{https://zenodo.org/record/4634014}, last accessed
+dataset, \url{https://zenodo.org/record/4634013}, last accessed
 2021/04/08.}
 
 \leavevmode\vadjust pre{\hypertarget{ref-workflowr2021}{}}%

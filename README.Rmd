@@ -26,11 +26,13 @@ suppressPackageStartupMessages(library(kableExtra))
 
 <!-- badges: start -->
 
-![Binder](https://github.com/franzbischoff/false.alarm/workflows/Binder/badge.svg) [![Launch binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/franzbischoff/false.alarm/master?urlpath=rstudio)
+[![Gitpod Ready-to-Code](https://img.shields.io/badge/Gitpod-Ready--to--Code-blue?logo=gitpod)](https://gitpod.io/#https://github.com/franzbischoff/false.alarm/tree/develop) [![Launch binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/franzbischoff/false.alarm/master?urlpath=rstudio)
 [![Read Thesis](https://img.shields.io/badge/read-thesis__down-brightgreen)](https://franzbischoff.github.io/false.alarm/)
 [![](https://zenodo.org/badge/261530912.svg)](https://zenodo.org/badge/latestdoi/261530912)
+[![Project Status: WIP](https://www.repostatus.org/badges/latest/wip.svg)](https://www.repostatus.org/#wip)
 
 
+[![R-CMD-check](https://github.com/franzbischoff/false.alarm/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/franzbischoff/false.alarm/actions/workflows/R-CMD-check.yaml)
 [![codecov](https://codecov.io/gh/franzbischoff/false.alarm/branch/develop/graph/badge.svg?token=w7AmbwhNvn)](https://codecov.io/gh/franzbischoff/false.alarm)
 [![CodeQL](https://github.com/franzbischoff/false.alarm/actions/workflows/codeql-analysis.yaml/badge.svg?branch=master)](https://github.com/github/codeql-action/)
 [![Language grade: C/C++](https://img.shields.io/lgtm/grade/cpp/g/franzbischoff/false.alarm.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/franzbischoff/false.alarm/context:cpp)
@@ -165,7 +167,7 @@ License](https://creativecommons.org/licenses/by-nc-sa/4.0/).
 <center>
 
 ```{r dependency_plot, echo = FALSE, fig.width = 16, fig.height = 10, message = FALSE, warning = FALSE, fig.path = "man/figures/"}
-source("https://gist.githubusercontent.com/franzbischoff/3b83243dfdfa73e459935112f3f783e3/raw/239548243f984843b3a87d8cc82f99395a8ed26e/plot_dependencies.R")
+devtools::source_gist("3b83243dfdfa73e459935112f3f783e3", filename = "plot_dependencies.R", sha1 = "a0ff78da8ddf58a4129abb89498abb90ca91738b", quiet = TRUE)
 plot_dependencies()
 ```
 

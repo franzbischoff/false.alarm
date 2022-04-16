@@ -1,0 +1,22 @@
+{
+  "@context": "https://schema.org",
+  "type": "SoftwareSourceCode",
+  "author": {
+    "id": "https://orcid.org/0000-0002-5301-8672",
+    "type": "Person",
+    "email": "fbischoff@med.up.pt",
+    "familyName": "Bischoff",
+    "givenName": "Francisco"
+  },
+  "codeRepository": "https://github.com/franzbischoff/false.alarm",
+  "description": "Ph.D. work about detecting life-threatening patterns in Point-of-care ECG using efficient memory and processor power.",
+  "license": "https://spdx.org/licenses/CC-BY-NC-SA-4.0",
+  "name": "false.alarm: Detecting life-threatening patterns in Point-of-care ECG using\n    efficient memory and processor power",
+  "programmingLanguage": {
+    "type": "ComputerLanguage",
+    "name": "R",
+    "url": "https://r-project.org"
+  },
+  "runtimePlatform": "R version 4.1.2 (2021-11-01)",
+  "version": "0.0.0.9200"
+}

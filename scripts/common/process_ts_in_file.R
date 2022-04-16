@@ -1,0 +1,114 @@
+#' Wrapper function that receives branches from the pipeline and apply a function.
+#'
+#' This function is used as a layer for sanitize parameters and apply the function in a
+#' controlled manner. It aims to guarantee that the data and branches are consistent.
+#'
+#' @param ecg_data a `list` containing usually one branch of the pipeline. If the list has more than one item,
+#' it means we are using another branch to compute the result. More on details.
+#' @param id a string. An identifier that is added to the attributes for further tracking
+#' @param fun a variable. A variable containing the function that will be used. The function signature is (data, params, infos)
+#' @param params a `list` of parameters that will be passed to the `fun` and may be used for branch checking.
+#' @param exclude a character vector containing the signals (or the time vector) that must be excluded from the computation.
+#'
+#' @details
+#' The pipeline may create several branches during the process these branches may contain data that can be used later, for example
+#' the moving average of the data. These branches must be from the same "split" of the data, and this function will compare the
+#' attributes of these branches to assert that we are using the correct information. For example: window_size must be the same,
+#' the constraints applied must be the same.
+#'
+#' @family process_ts_in_file
+
+process_ts_in_file <- function(ecg_data, id, fun, params, exclude = "time") {
+  checkmate::qassert(ecg_data, "L+")
+  "!DEBUG receiving `length(ecg_data)` input."
+  file <- unique(names(ecg_data))
+  "!DEBUG file `file`."
+  checkmate::qassert(file, "S1")
+
+  fun_name <- substitute(fun)
+
+  paas <- attr(ecg_data[[1]], "params")
+
+  "!!DEBUG assert paas: `paas$window_size`, params: `params$window_size`."
+  "!!DEBUG assert paas: `paas$mp_time_constraint`, params: `params$mp_time_constraint`."
+  "!!DEBUG assert paas: `paas$floss_time_constraint`, params: `params$floss_time_constraint`."
+  "!!DEBUG assert paas: `paas$history`, params: `params$history`."
+
+  if (!is.null(paas$window_size)) {
+    checkmate::assert_true(identical(paas$window_size, params$window_size))
+  }
+  # if (!is.null(paas$mp_time_constraint)) {
+  #   checkmate::assert_true(identical(paas$mp_time_constraint, params$mp_time_constraint))
+  # }
+  # if (!is.null(paas$floss_time_constraint)) {
+  #   checkmate::assert_true(identical(paas$floss_time_constraint, params$floss_time_constraint))
+  # }
+  if (!is.null(paas$history)) {
+    checkmate::assert_true(identical(paas$history, params$history))
+  }
+
+  info <- attr(ecg_data[[1]], "info")
+  info$id <- id
+  info$ids <- c(id, info$ids)
+
+  pars <- NULL
+  if (length(ecg_data) > 1) {
+    pars <- attr(ecg_data[[2]], "params")
+
+    "!!DEBUG assert pars: `pars$window_size`, params: `params$window_size`."
+    "!!DEBUG assert pars: `pars$mp_time_constraint`, params: `params$mp_time_constraint`."
+    "!!DEBUG assert pars: `pars$floss_time_constraint`, params: `params$floss_time_constraint`."
+    "!!DEBUG assert pars: `pars$history`, params: `params$history`."
+
+    if (!is.null(pars$window_size)) {
+      checkmate::assert_true(identical(pars$window_size, params$window_size))
+    }
+    if (!is.null(pars$mp_time_constraint)) {
+      checkmate::assert_true(identical(pars$mp_time_constraint, params$mp_time_constraint))
+    }
+    if (!is.null(pars$floss_time_constraint)) {
+      checkmate::assert_true(identical(pars$floss_time_constraint, params$floss_time_constraint))
+    }
+    if (!is.null(pars$history)) {
+      checkmate::assert_true(identical(pars$history, params$history))
+    }
+  }
+
+  ecg_data <- purrr::map(ecg_data, function(x) {
+    names <- intersect(names(x), exclude)
+    "!DEBUG excluding names `names`."
+    for (n in names) {
+      purrr::pluck(x, n) <- NULL
+    }
+    "!DEBUG keeping names `names(x)`."
+    x
+  })
+
+  nms <- purrr::reduce(purrr::map(ecg_data, names), union)
+  # "!DEBUG names = `nms`."
+  # ecg_data <- purrr::transpose(ecg_data, .names = nms)
+  ecg_data <- purrr::transpose(ecg_data)
+
+  checkmate::assert_true(all.equal(nms, attributes(ecg_data)$names))
+
+  params$exclude <- exclude
+
+  result <- list()
+  result[[file]] <- purrr::map(ecg_data, function(x) { ## attributes are lost with 2 lists
+    "!DEBUG calling `fun_name`() for TS `names(x)`."
+
+    if (checkmate::qtest(x, "L1")) {
+      x <- x[[1]]
+    }
+    fun(x, params, info)
+  })
+  attr(result[[file]], "info") <- info
+
+  endpars <- purrr::list_modify(params, !!!pars, !!!paas)
+  attr(result[[file]], "params") <- endpars
+
+  checkmate::qassert(result, "L1")
+
+  "!DEBUG returning `length(result)` output."
+  return(result)
+}

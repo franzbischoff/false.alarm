@@ -10,10 +10,15 @@ on:
   workflow_dispatch:
   repository_dispatch:
 
+concurrency:
+  group: ci
+  cancel-in-progress: true
+
 jobs:
   lint:
     name: Apply lintr in all R and Rmd files
     runs-on: ubuntu-latest
+    # runs-on: self-hosted
     env:
       R_REMOTES_NO_ERRORS_FROM_WARNINGS: true
       GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
@@ -84,9 +89,10 @@ jobs:
         shell: Rscript {0}
 
   targets:
-    name: Run targets pileline
+    name: Run targets pipeline
     needs: lint
     runs-on: ubuntu-latest
+    # runs-on: self-hosted
     if: "contains(github.event.head_commit.message, 'targets')"
     env:
       R_REMOTES_NO_ERRORS_FROM_WARNINGS: true
@@ -225,6 +231,7 @@ jobs:
   workflowr:
     name: Runs Workflowr versioning
     runs-on: ubuntu-latest
+    # runs-on: self-hosted
     if: "contains(github.event.head_commit.message, 'workflowr')"
     needs:
       - lint
@@ -249,6 +256,15 @@ jobs:
       - name: Setting up pandoc and pandoc-citeproc
         uses: r-lib/actions/setup-pandoc@v1
 
+      - name: Setting up tinytex
+        uses: r-lib/actions/setup-tinytex@v2
+
+      - name: Install additional LaTeX packages
+        run: |
+          tlmgr --version
+          tlmgr install svg subfig
+          tlmgr list --only-installed
+
       - name: Cache R packages
         uses: actions/cache@v2.1.4
         id: cache-packages
@@ -261,6 +277,7 @@ jobs:
       - name: Query dependencies
         run: |
           install.packages('remotes')
+          install.packages('yaml')
           saveRDS(remotes::dev_package_deps(dependencies = TRUE), ".github/depends.Rds", version = 2)
           writeLines(sprintf("R-%i.%i", getRversion()$major, getRversion()$minor), ".github/R-version")
         shell: Rscript {0}
@@ -286,19 +303,22 @@ jobs:
           renv::restore()
         shell: Rscript {0}
 
-      - name: Configure git
-        run: |
-          git config --local user.name "GitHub Actions"
-          git config --local user.email "actions@github.com"
+      # - name: pull database
+      #   run: |
+      #     chmod 755 run.R && ./run.R -r FALSE
+      #   shell: bash
 
       - name: Knit thesisdown
         run: |
-          bookdown::render_book("thesis")
+          bookdown::render_book("thesis", output_format="all")
         shell: Rscript {0}
 
-      - name: Stage thesisdown changes
+      - name: Configure git and stage changes
         run: |
+          git config --local user.name "GitHub Actions"
+          git config --local user.email "actions@github.com"
           git add --all -- ':!renv'
+          git commit -am "Update thesisdown"
 
       - name: Build workflowr that creates the commit
         run: workflowr::wflow_publish(all = TRUE, update = TRUE, verbose = TRUE)

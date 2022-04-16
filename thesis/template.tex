@@ -1,4 +1,4 @@
-% This is the Reed College LaTeX thesis template. Most of the work
+% This is based on the Reed College LaTeX thesis template. Most of the work
 % for the document class was done by Sam Noble (SN), as well as this
 % template. Later comments etc. by Ben Salzberg (BTS). Additional
 % restructuring and APA support by Jess Youngberg (JY).
@@ -24,12 +24,15 @@
 %% Preamble
 %%
 % \documentclass{<something>} must begin each LaTeX document
-\documentclass[12pt,twoside]{reedthesis}
+\documentclass[12pt,twoside]{fmupthesis}
 % Packages are extensions to the basic LaTeX functions. Whatever you
 % want to typeset, there is probably a package out there for it.
 % Chemistry (chemtex), screenplays, you name it.
 % Check out CTAN to see: https://www.ctan.org/
 %%
+\usepackage{svg}
+\usepackage{flafter}
+\usepackage{subfig}
 \usepackage{graphicx,latexsym}
 \usepackage{amsmath}
 \usepackage{amssymb,amsthm}
@@ -189,49 +192,49 @@ $endfor$
 
 % Everything below added by CII
 $if(title)$
-  \maketitle
+\maketitle
 $endif$
 
 \frontmatter % this stuff will be roman-numbered
 \pagestyle{empty} % this removes page numbers from the frontmatter
 
 $if(acknowledgements)$
-  \begin{acknowledgements}
-    $acknowledgements$
-  \end{acknowledgements}
+\begin{acknowledgements}
+  $acknowledgements$
+\end{acknowledgements}
 $endif$
 
 $if(preface)$
-  \begin{preface}
-    $preface$
-  \end{preface}
+\begin{preface}
+  $preface$
+\end{preface}
 $endif$
 
 $if(toc)$
-  \hypersetup{linkcolor=$if(toccolor)$$toccolor$$else$black$endif$}
-  \setcounter{secnumdepth}{$toc-depth$}
-  \setcounter{tocdepth}{$toc-depth$}
-  \tableofcontents
+\hypersetup{linkcolor=$if(toccolor)$$toccolor$$else$black$endif$}
+\setcounter{secnumdepth}{$toc-depth$}
+\setcounter{tocdepth}{$toc-depth$}
+\tableofcontents
 $endif$
 
 $if(lot)$
-  \listoftables
+\listoftables
 $endif$
 
 $if(lof)$
-  \listoffigures
+\listoffigures
 $endif$
 
 $if(abstract)$
-  \begin{abstract}
-    $abstract$
-  \end{abstract}
+\begin{abstract}
+  $abstract$
+\end{abstract}
 $endif$
 
 $if(dedication)$
-  \begin{dedication}
-    $dedication$
-  \end{dedication}
+\begin{dedication}
+  $dedication$
+\end{dedication}
 $endif$
 
 \mainmatter % here the regular arabic numbering starts

@@ -1,0 +1,137 @@
+/* body {
+  background-color: #141414;
+  color: rgb(203, 203, 203);
+} */
+
+svg.svglite {
+  height: auto;
+  width: 100%;
+}
+
+div.polcont {
+  font-weight: bold;
+  padding-top: 15px;
+  text-align: center;
+}
+div.polaroid {
+  background-color: white;
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+  height: auto;
+  margin-left: auto;
+  margin-right: auto;
+  width: 80%;
+}
+div.figure {
+  background-color: white;
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+  margin: 20px 0px 20px 0px;
+  padding: 10px;
+}
+p.caption {
+  color: black;
+  font-size: 13px;
+  padding: 20px 0 0 0;
+}
+
+table {
+  border-color: black;
+  border-spacing: 0;
+  border-style: solid;
+  border-width: 3px 0 3px 0;
+}
+
+table th {
+  border-color: black;
+  border-style: solid;
+  border-width: 0 0 1px 0;
+  font-size: 1.1em;
+  font-weight: bold;
+}
+
+table td {
+  border-color: white;
+  border-style: solid;
+  border-width: 1px;
+}
+
+.tg {
+  border-color: black;
+  border-spacing: 0;
+  border-style: solid;
+  margin: 0 auto;
+  vertical-align: middle;
+}
+
+.tg td {
+  border-color: blue;
+  border-width: 0;
+  border-style: solid;
+  font-family: Arial, sans-serif;
+  padding: 2px 5px;
+  word-break: normal;
+}
+
+.tg .tg-top {
+  font-size: 16px;
+  font-weight: bold;
+  border-width: 0;
+  text-align: center;
+}
+
+.tg .tg-second-top {
+  border-color: black;
+  border-style: solid;
+  border-width: 1px 0 0 0;
+  text-align: center;
+}
+
+.tg .tg-cross-top {
+  border-color: black;
+  border-style: solid;
+  border-width: 2px 0 0 0;
+  text-align: center;
+}
+
+.tg .tg-cross-low {
+  border-color: black;
+  border-style: solid;
+  border-width: 0 0 2px 0;
+  text-align: center;
+}
+
+.tg .tg-cross-top-low {
+  border-color: black;
+  border-style: solid;
+  border-width: 2px 0 2px 0;
+  text-align: center;
+}
+
+.tg .tg-body-center {
+  border-color: black;
+  border-style: solid;
+  border-width: 0;
+  text-align: center;
+}
+
+.tg .tg-body-left {
+  border-color: black;
+  border-style: solid;
+  border-width: 0;
+  text-align: left;
+}
+
+.tg .tg-bottom {
+  border-color: black;
+  border-style: solid;
+  border-width: 1px 0 0 0;
+  font-weight: bold;
+  text-align: center;
+}
+
+.tg .tg-bottom-left {
+  border-color: black;
+  border-style: solid;
+  border-width: 1px 0 0 0;
+  font-weight: bold;
+  text-align: left;
+}

@@ -1,0 +1,1349 @@
+---
+title: "Research Progress Report"
+author: "Francisco Bischoff"
+link-citations: true
+bibliography: ../papers/references.bib
+csl: ../thesis/csl/ama.csl
+linestretch: 1.5
+indent: true
+always_allow_html: true
+header-includes:
+    - \usepackage{caption}
+    - \captionsetup{font=footnotesize}
+output:
+  bookdown::html_document2:
+    toc: true
+    toc_float: false
+    number_sections: true
+    css: style.css
+    theme: default
+    highlight: tango
+  bookdown::pdf_document2:
+    keep_tex: true
+    extra_dependencies: ["svg", "flafter", "subfig"]
+    toc: yes
+    toc_depth: 3
+    fig_caption: yes
+    number_sections: yes
+---
+
+<!--
+MPX results are in correlation. All correlation coefficients are the same:
+
+$$
+  r = \frac{\sum{Z_{x_i} Z_{y_i}}}{N} = \frac{COV_{xy}}{\sqrt{VAR_x VAR_y}}
+$$
+
+-->
+
+<!--
+Sugestões:
+jgama:
+
+The research topic is quite relevant, with potential social impact. The author claim that the
+principles that guide this investigation are: FAIR principle (findable, accessible, interpretable,
+reusable). However, this document is far from achieving these goals.
+
+A scientific document must be rigorous, substantiated, and supported by facts. The document
+presented lacks rigor in the definition of the research questions, the description of the methods
+and algorithms used, the definition of the design of experiments, and the definition of evaluation
+metrics.
+
+1) The author should present the research question rigorously. As it is stated, "(1) Can we
+reduce the number of false alarms in the ICU setting?" has a trivial solution for which it does not
+qualify for the title of Ph.D.
+
+2) The literature survey seems to be in a preliminary phase. The author selected the papers to read,
+and it is not clear if the author read the papers! There is no related work section. Moreover, I
+could not understand the relevance of the roadmap Figures 4, 5, 6.
+
+3) The document should be self-contained. The main algorithms used or planned to use should be
+described or explained -- for example,the FLOSS algorithm, the Matrix Profile algorithm, etc. These
+algorithms should be described in a related work section.
+
+Conclusions
+Overall, the work has the potential for excellent work. From the current document, it is
+not easy to have a clear idea of the scientific merits of the work developed so far.
+
+- The document presented lacks rigor in the definition of the research questions
+[x]Tiago: - Deve ser claramente determinado o objeto de investigação sobre o qual o candidato se pretende debruçar
+[x]jgama: - Research question - Must be proven
+[x]jgama: "(1) Can we reduce the number of false alarms in the ICU setting?" NOK, trivial
+[x]jgama: Rigor: the description of the methods
+[x]jgama: Rigor: and algorithms used
+[x]jgama: Rigor: the definition of the design of experiments
+[x]jgama: Rigor: and the definition of evaluation metrics.
+
+[x]jgama: The literature survey seems to be in a preliminary phase. The author selected the papers to read (mostrar o peer-review)
+[ ]jgama: There is no related work section, could not understand the relevance of the roadmap Figures 4, 5, 6.
+[x]jgama: The main algorithms used or planned to use should be described or explained for example,the FLOSS algorithm, the Matrix Profile algorithm, etc. These algorithms should be described in a related work section.
+
+[x]jgama: The document is not self-contained
+[x]jgama: - Refer to lots of things that not describe
+[x]jgama: *** The FLOSS algorithm
+[x]jgama: *** Explain how we obtain the arcs how to interpret them
+[x]jgama: *** RQ is reduce the ICU false alarm?
+[x]jgama: *** As it is written, reduce the FA is like do not report any alarm
+[x]jgama: *** Be very precise about the goal
+[x]jgama: - The competition, the formula is not on the report
+[x]jgama: *** they penalize the FN, why?
+
+[x]jgama: - Be VERY clear about the experimental setup evaluation criteria
+[x]jgama: *** What you want to minimize
+[x]jgama: *** What is your target
+
+[x]jgama: - Cross validation: explain, it for TS
+[x]jgama: *** Explain the Full dataset: are patients, not one TS. A set of patients
+[x]jgama: *** You never talked about patients
+[x]jgama: *** BE MORE PRECISE on the report
+[x]jgama: - Green red lines??
+
+[x]jgama: - Evaluation criteria - Must be proven
+[x]jgama: - Experimental setup - Must be proven
+
+[x]jgama: - The description of the method must be self-contained
+
+Tiago:
+
+O candidato propõe desenvolver o seu trabalho sobre um tema atual e pertinente. Demonstra
+competência técnica para manipular, tratar e interpretar dados de saúde e séries temporais.
+
+Não obstante, do ponto de vista científico, o trabalho apresentado precisa de ser integralmente
+revisto. Em primeiro lugar, deve ser claramente determinado o objeto de investigação sobre o qual o
+candidato se pretende debruçar. Em segundo lugar, deve ser claramente estabelecido o plano de
+trabalho, especificadas as tarefas, e indicados os resultados esperados de cada uma. Deve ainda ser
+apresentado uma proposta de publicações por forma a garantir os requisitos estipulados pelo ciclo de
+estudos. Finalmente, atendendo à complexidade da temática em causa, o candidato deverá estabelecer
+um conjunto de tarefas cujo expectativa de sucesso de execução seja elevado, para conseguir cumprir
+os requisitos mínimos do programa.
+
+O documento apresentado não permite claramente avaliar nenhum dos pontos previamente mencionados,
+pelo que não é possível determinar com clareza, atendendo ao documento escrito e à entrevista, qual
+o grau de progresso e o trabalho remanescente para cumprir os objetivos do programa doutoral. Por
+esse motivo recomendo que o candidato reformule integralmente o documento apresentado à prova
+entrevista à luz dos pontos indicados.
+
+
+[x]Tiago: - Deve ser claramente estabelecido o plano de trabalho, especificadas as tarefas, e indicados os resultados esperados de cada uma.
+[x]Tiago: - Deve ainda ser apresentado uma proposta de publicações por forma a garantir os requisitos estipulados pelo ciclo de estudos.
+[x]Tiago: - atendendo à complexidade da temática em causa, o candidato deverá estabelecer um conjunto de tarefas cujo expectativa de sucesso de execução seja elevado, para conseguir cumprir os requisitos mínimos do programa.
+[x]Tiago: - Purpose and steps to take: beat SOTA or cheap hardware?
+[x]Tiago: - TSMP- base publication
+[x]Tiago: - Better motivate devices
+
+Eamonn:
+Eamonn: - How "local" is the information in medical telemetry? For example, it is helpful to have the data for the last 20min, or we need only "local" data of the last ten seconds? (speculate)
+Eamonn: - In more general case, do alarms have to be binary? For ex, could you generalize to "no alarm" "minor alarm" "strong alarm". Could we exploit this fact to - reduce cost of error; use less CPU or memory; or something.
+Eamonn: - The algorithm, if tuned for some individual, will it work well in another? There are some input variables that can change the results?
+
+But the train-test prediction task is not representative of everything we might wish to do with
+models. For example, some statisticians prefer to evaluate predictions using a prequential frame-
+work, in which models are judged on their accumulated learning error over the training sample.101
+And once you start using multilevel models, "prediction" is no longer uniquely defined, because the
+test sample can differ from the training sample in ways that forbid use of some the parameter
+estimates. We'll worry about that issue in Chapter 12.
+
+If adding more information you consistently get worse results, that would suggest that the new data
+is wrongly labelled, noisy or that it contradicts the previously seen one for some reason (e.g.,
+some information might have changed over time).
+
+- https://www.cs.waikato.ac.nz/~eibe/pubs/Twitter-crc.pdf
+A common problem is that for unbalanced data streams with, for example, 90% of the instances in one
+class, the simplest classifiers will have high accuracies of at least 90%. To deal with this type of
+data stream, we propose to use the Kappa statistic, based on a sliding window, as a measure for
+classifier performance in unbalanced class streams.
+
+https://moa.cms.waikato.ac.nz/prequential-cross-validation-evaluation/
+
+1. Dawid, A.P.: Present Position and Potential Developments: Some Personal Views: Statistical
+   Theory: The Prequential Approach. Journal of the Royal Statistical Society. Series A (General).
+   147, 2, 278 (1984). https://doi.org/10.2307/2981683.
+
+- Prequential forecasting: Probability forecasting + sequential predictions
+- Means: Predict tomorrow. Tomorrow we confirm and learn about the outcome.
+- Any statistical model can be converted to prequential: replace the unknown parameter in the
+  predictive distribution of the next observation by an estimate based on the data collected so far.
+- A PFS (prequential forecasting system) has, on the known values, a model that may be an assumed
+  time-series structure, or, a Bayesian uncertainty. This model will condition the Probability of
+  the forecasted value.
+- The Prequential Principle: to assess the overall adequacy of the model, such assessment should
+  depend only on the model through the *sequence* of forecasts that it in fact made. Analogously to
+  the Likelihood Principle, hypothetical predictions that the model could have made under
+  circumstances that did not happen are irrelevant.
+- Calibration and Jeffreys' Law: For a binary outcome, there is a criterion of *complete
+  calibration* for comparing the prequential probabilities of the model with the outcomes. It
+  requires that the average of the prequential probabilities of the model, for a suitable subset,
+  should agree asymptotically with the corresponding average of the outcomes. Furthermore, if two
+  models satisfy this criterion for many subsets (thus P(model1) - P(model2) -> 0 as n -> Inf), then
+  all non-rejected PFSs end up making the same forecasts. "When a law has been applied to a large
+  body of data without any systematic discrepancy being detected, it leads to the result that the
+  probability of a further inference from the law approaches certainty whether the law is true or
+  not." Sir H. Jeffreys, 1938
+- For continuous outcomes, we can reduce the "average of the prequential probabilities of the model" to
+  whether a sequence of forecasts "looks like" a random sample of the model.
+
+1. Gama, J. et al.: A survey on concept drift adaptation. ACM Computing Surveys. 46, 4, 1-37 (2014).
+   https://doi.org/10.1145/2523813.
+
+The real concept drift refers to changes in the conditional distribution of the output (i.e.,
+target variable) given the input (input features), while the distribution of the input may stay
+unchanged.
+
+-->
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(
+  echo = FALSE, fig.align = "center", autodep = TRUE,
+  fig.height = 5, fig.width = 10,
+  tidy = "styler",
+  tidy.opts = list(strict = TRUE)
+)
+if (knitr::is_latex_output()) {
+  knitr::opts_chunk$set(dev = "pdf")
+} else {
+  knitr::opts_chunk$set(dev = "svg")
+}
+
+my_graphics <- function(image_name, base_path = here::here("docs", "figure")) {
+  file_path <- glue::glue("{base_path}/{image_name}")
+
+  if (knitr::is_latex_output()) {
+    if (file.exists(glue::glue("{file_path}.pdf"))) {
+      file_path <- glue::glue("{file_path}.pdf")
+    } else if (file.exists(glue::glue("{file_path}.png"))) {
+      file_path <- glue::glue("{file_path}.png")
+    } else {
+      file_path <- glue::glue("{file_path}.jpg")
+    }
+  } else {
+    if (file.exists(glue::glue("{file_path}.svg"))) {
+      file_path <- glue::glue("{file_path}.svg")
+    } else if (file.exists(glue::glue("{file_path}.png"))) {
+      file_path <- glue::glue("{file_path}.png")
+    } else {
+      file_path <- glue::glue("{file_path}.jpg")
+    }
+  }
+
+  knitr::include_graphics(file_path)
+}
+
+my_kable <- function(title, label, content) {
+  res <- glue(r"(<br><table class="tg"><caption>)", "(\\#tab:{label}) {title}", r"(</caption>{content}</table>)")
+  out <- structure(res, format = "html", class = "knitr_kable")
+  attr(out, "format") <- "html"
+  out
+}
+# tinytex::tlmgr_install("tabu")
+library(here)
+library(glue)
+library(visNetwork)
+library(tibble)
+library(kableExtra)
+library(gridExtra)
+library(targets)
+library(ggplot2)
+
+knitr::opts_knit$set(
+  root.dir = here("docs"),
+  base.dir = here("protocol"), verbose = TRUE
+)
+```
+
+Last Updated: 2022-01-31 12:51:54 UTC
+
+# Research title
+
+"Detecting life-threatening patterns in Point-of-care ECG using efficient memory and processor
+power."
+
+## Author
+
+Francisco Bischoff
+
+## Key-words
+
+anomaly detection, ECG, fading factors, matrix profile, time series, point-of-care
+
+# Abstract
+
+Currently, Point-of-Care (POC) ECG monitoring works either as plot devices or alarms for abnormal
+cardiac rhythms using predefined normal trigger ranges and some rhythm analysis, which raises the
+problem of false alarms. In comparison, complex 12-derivation ECG machines are not suitable to use
+as simple monitors and are used with strict techniques for formal diagnostics. Thinking outside the
+ICU setting, where high-end devices are available for patient monitoring, we aim to identify, on
+streaming data, life-threatening hearth electric patterns using low CPU and memory, enabling ward
+monitors, home devices and even wearable devices to be able to identify such events. The study
+design is comparable to a diagnostic study, where high accuracy is essential. Physionet's 2015
+challenge yielded very good algorithms for reducing false alarms. However, none of the authors
+reported benchmarks, memory usage, robustness test, or context invariance that could assure its
+implementation on small devices. We expect to identify the obstacles of detecting life-threatening
+ECG changes within memory, space, and CPU constraints and using the proposed methods, assess the
+feasibility of implementing the algorithm in the real world and other settings than ICU monitors.
+
+# Introduction
+
+Currently, Point-of-Care (POC) ECG monitoring works either as plot devices or alarms for abnormal
+cardiac rhythms using predefined normal trigger ranges. Modern devices also incorporate algorithms
+to analyze arrhythmias improving their specificity. On the other hand, full 12-derivation ECG
+machines are complex, are not suited to use as simple monitors, and are used with strict techniques
+for formal diagnostics of hearth electric conduction pathologies. The automatic diagnostics are
+derived from a complete analysis of the 12-dimension data after it is fully and well collected. Both
+systems do not handle disconnected leads and patient's motions, being strictly necessary to have a
+good and stable signal to allow proper diagnosis. These interferences with the data collection
+frequently originate false alarms increasing both patient and staff's stress; depending on how it is
+measured, the rate of false alarms (overall) in ICU is estimated at 65 to 95% [@donchin2002].
+
+Alarm fatigue is a well-known problem that consists of a sensory overload of nurses and clinicians,
+resulting in desensitization to alarms and missed alarms (the "crying wolf" situation). Patient
+deaths have been attributed to alarm fatigue [@sendelbach2013]. In 1982, the increase in alarms with
+"no end in sight"; studies have demonstrated that most alarm signals have no clinical relevance and
+lead to clinical personnel's delayed response. Ultimately patient deaths were reported related to
+inappropriate responses to alarms [@sendelbach2013].
+
+In April of 2013, The Joint Commission [@the_jc] issued the Sentinel Event Alert
+[@JointCommission2013], establishing alarm system safety as a top hospital priority in the National
+Patient Safety Goal. Nowadays (2021), the subject is still on their list, in fourth place of
+importance [@the_jc2021].
+
+In February of 2015, the CinC/Physionet Challenge 2015 was about "Reducing False Arrhythmia Alarms
+in the ICU [@Clifford2015]. The introduction article stated that it had been reported that up to 86%
+resulting of the alarms are false, and this can lead to decreased staff attention and an increase in
+patients' delirium [@Lawless1994; @Chambrin2001; @Parthasarathy2004].
+
+This subject draws attention to the importance of correctly identify abnormal hearth electric patterns
+in order to avoid the overload of clinical staff. Meanwhile, this opens the opportunity of thinking
+outside the ICU setting, where we still monitoring patients (and ourselves) using devices with
+low processing power, as for example ward monitors, home devices and wearable devices.
+
+# Objectives and the research question
+
+While this research was inspired on the CinC/Physionet Challenge 2015, its purpose is not to beat
+the state of the art on that challenge, but to identify, on streaming data, abnormal hearth electric
+patterns, specifically those which are life-threatening, using low CPU and low memory requirements
+in order to be able to generalize the use of such information on lower-end devices, outside the ICU,
+as ward devices, home devices, and wearable devices.
+
+The main questions is: can we accomplish this objective using a minimalist approach (low CPU, low
+memory) while maintaining robustness?
+
+# Principles
+
+This research is being conducted using the Research Compendium principles [@compendium2019]:
+
+1.  Stick with the convention of your peers;
+2.  Keep data, methods, and output separated;
+3.  Specify your computational environment as clearly as you can.
+
+Data management follows the FAIR principle (findable, accessible, interoperable, reusable)
+[@wilkinson2016]. Concerning these principles, the dataset was converted from Matlab's format to
+CSV format, allowing more interoperability. Additionally, all the project, including the dataset, is
+in conformity with the Codemeta Project [@CodeMeta2017].
+
+# Materials and methods
+
+## Softwares
+
+### Pipeline management
+
+All steps of the process are being managed using the R package `targets` [@landau2021] from data
+extraction to the final report. An example of a pipeline visualization created with `targets` is
+shown in Fig. \@ref(fig:targets). This package helps to keep record of the random seeds (allowing
+reproducibility), changes in some part of the code (or dependencies) and then running only the
+branches that need to be updated, and several other features to keep a reproducible workflow
+avoiding unnecessary repetitions.
+
+```{r targets, echo=FALSE, out.width="100%"}
+#| fig.cap="Example of pipeline visualization using `targets`.
+#|  From left to right we see 'Stems' (steps that do not create branches) and 'Patterns'
+#|  (that contains two or more branches) and the flow of the information.
+#|  The green color means that the step is up to date to the current code and dependencies."
+
+my_graphics("targets")
+```
+
+### Reports management
+
+The report is available on the main webpage [@franz_website], allowing inspection of previous
+versions managed by the R package `workflowr`[@workflowr2021]. This package complements the
+`targets` package by taking care of the versioning of every report. It is like a Log Book that keeps
+track of every important milestone of the project, while summarize the computational environment
+where it was run. Fig. \@ref(fig:workflowr) shows only a fraction of the generated website, where we
+can see that this version passed the required checks (system is up-to-date, no caches, session
+information was recorded, and others) and we see a table of previous versions.
+
+```{r workflowr, echo=FALSE, out.width="100%"}
+#| fig.cap="Fraction of the website generated by `workflowr`.
+#|  On top we see that this version passed all checks, and in the middle we see a table
+#|  referring to the previous versions of the report.."
+my_graphics("workflowr_print")
+```
+
+### Modeling and parameter tuning
+
+The well known package used for data science in R is the `caret` (short for **C**lassification
+**A**nd **RE**gression **T**raining) [@JSSv028i05]. Nevertheless, the author of `caret` recognizes
+several limitations of his (great) package, and is now in charge of the development of the
+`tidymodels` [@tidymodels2020] collection. For sure, there are other available frameworks and
+opinions [@Thompson2020]. Notwithstanding, this project will follow the `tidymodels` road. Three
+significant arguments 1) constantly improving and constantly being re-checked for bugs; large
+community contribution; 2) allows to plug in a custom modeling algorithm that, in this case, will be
+the one needed for developing this work; 3) `caret` is not in active development.
+
+### Continuous integration
+
+Meanwhile, the project pipeline has been set up on GitHub, Inc. [@bischoffrepo2021] leveraging on
+Github Actions [@gitactions2021] for the Continuous Integration lifecycle. The repository is
+available at [@bischoffrepo2021], and the resulting report is available at [@franz_website].
+It is also public available the roadmap and tasks status of this thesis on Zenhub [@zenhub2021].
+
+## Developed software
+
+### Matrix Profile {#matrixprofile}
+
+Matrix Profile (MP) [@Yeh2017a], is a state-of-the-art [@DePaepe2020; @Feremans2020] time series
+analysis technique that once computed, allows us to derive frameworks to all sorts of tasks, as
+motif discovery, anomaly detection, regime change detection and others [@Yeh2017a].
+
+Before MP, time series analysis relied on what is called *distance matrix* (DM), a matrix that stores all
+the distances between two time series (or itself, in case of a Self-Join). This was very power consuming,
+and several methods of pruning and dimensionality reduction were researched [@Lin2007].
+
+For brevity, let's just understand that the MP and the companion Profile Index (PI) are two vectors
+that hold one floating point value and one integer value, respectively, regarding the original time
+series: (1) the similarity distance between that point on time (let's call these points "indexes")
+and its first nearest-neighbor (1-NN), (2) The index where this this 1-NN is located. The original
+paper has more detailed information [@Yeh2017a]. It is computed using a rolling window but instead
+of creating a whole DM, only the minimum values and the index of these minimum are stored (in the
+MP and PI respectively). We can have an idea of the relationship of both on Fig. \@ref(fig:thematrix).
+
+```{r thematrix, echo=FALSE}
+#| fig.cap="A distance matrix (top), and a matrix profile (bottom). The matrix profile stores only
+#|  the minimum values of the distance matrix."
+my_graphics("mp_1")
+```
+
+This research has already yielded two R packages concerning the MP algorithms from UCR [@mpucr]. The
+first package is called `tsmp`, and a paper has also been published in the R Journal [@RJ-2020-021]
+(Journal Impact Factor™, 2020 of 3.984). The second package is called `matrixprofiler` and enhances
+the first one, using low-level language to improve computational speed. The author has also joined
+the Matrix Profile Foundation as co-founder together with contributors from Python and Go languages
+[@mpf2020; @VanBenschoten2020].
+
+This implementation in R is being used for computing the MP and MP-based algorithms of this thesis.
+
+## The data
+
+The current dataset used is the CinC/Physionet Challenge 2015 public dataset, modified to include
+only the actual data and the header files in order to be read by the pipeline and is hosted by
+Zenodo [@bischoff2021] under the same license as Physionet.
+
+The dataset is composed of 750 patients with at least five minutes records. All signals have been
+resampled (using anti-alias filters) to 12 bit, 250 Hz and have had FIR band-pass (0.05 to 40Hz) and
+mains notch filters applied to remove noise. Pacemaker and other artifacts are still present on the
+ECG [@Clifford2015]. Furthermore, this dataset contains at least two ECG derivations and one or more
+variables like arterial blood pressure, photoplethysmograph readings, and respiration movements.
+
+The _events_ we seek to identify are the life-threatening arrhythmias as defined by Physionet in
+Table \@ref(tab:alarms).
+
+```{r alarms, echo=FALSE}
+alarms <- tribble(
+  ~Alarm, ~Definition,
+  "Asystole", "No QRS for at least 4 seconds",
+  "Extreme Bradycardia", "Heart rate lower than 40 bpm for 5 consecutive beats",
+  "Extreme Tachycardia", "Heart rate higher than 140 bpm for 17 consecutive beats",
+  "Ventricular Tachycardia", "5 or more ventricular beats with heart rate higher than 100 bpm",
+  "Ventricular Flutter/Fibrillation", "Fibrillatory, flutter, or oscillatory waveform for at least 4 seconds"
+)
+
+kbl(alarms,
+  booktabs = TRUE,
+  caption = "Definition of the five alarm types used in CinC/Physionet Challenge 2015.",
+  align = "ll",
+  position = "ht",
+  linesep = "\\addlinespace"
+) %>%
+  row_spec(0, bold = TRUE) %>%
+  kable_styling(full_width = TRUE)
+```
+
+The fifth minute is precisely where the alarm has been triggered on the original recording set. To
+meet the ANSI/AAMI EC13 Cardiac Monitor Standards [@AAMI2002], the onset of the event is within 10
+seconds of the alarm (i.e., between 4:50 and 5:00 of the record). That doesn't mean that there are
+no other arrhythmias before.
+
+For comparison, on Table \@ref(tab:challenge) we collected the score of the five best participants
+of the challenge [@plesinger2015; @kalidas2015; @couto2015; @fallet2015; @hoogantink2015].
+
+```{r challenge, echo=FALSE}
+
+challenge <- tribble(
+  ~Score, ~Authors,
+  "81.39", "Filip Plesinger, Petr Klimes, Josef Halamek, Pavel Jurak",
+  "79.44", "Vignesh Kalidas",
+  "79.02", "Paula Couto, Ruben Ramalho, Rui Rodrigues",
+  "76.11", "Sibylle Fallet, Sasan Yazdani, Jean-Marc Vesin",
+  "75.55", "Christoph Hoog Antink, Steffen Leonhardt"
+)
+
+kbl(challenge,
+  booktabs = TRUE,
+  caption = "Challenge Results on real-time data. The scores were multiplied by 100.",
+  align = "cl",
+  position = "ht"
+) %>%
+  row_spec(0, bold = TRUE) %>%
+  # column_spec(1, width = "5em") %>%
+  # column_spec(2, width = "30em") %>%
+  kable_styling(full_width = TRUE)
+```
+
+The equation used on this challenge to compute the score of the algorithms is in the Equation
+\@ref(eq:score). This equation is the accuracy formula, with penalization of the false negatives.
+The reasoning pointed out by the authors [@Clifford2015] is the clinical impact of existing a
+genuine life-threatening event that was considered unimportant. Accuracy is known to be misleading
+when there is a high class imbalance [@Akosa2017].
+
+\
+
+\begin{equation}
+Score = \frac{TP+TN}{TP+TN+FP+5*FN}  (\#eq:score)
+\end{equation}
+
+\
+
+Assuming that this is a finite dataset, the pathologic cases (1) $\lim_{TP \to \infty}$ (whenever
+there is an event, it is positive) or (2) $\lim_{TN \to \infty}$ (whenever there is an event, it is
+false), cannot happen. This dataset has 292 True alarms and 458 False alarms. Experimentally, this
+equation yields:
+
+  - 0.24 if all guesses are on False class
+  - 0.28 if random guesses
+  - 0.39 if all guesses are on True class
+  - 0.45 if no false positives plus random on True class
+  - 0.69 if no false negatives plus random on False class
+
+This small experiment (knowing the data in advance) shows that "a single line of code and a few
+minutes of effort" [@Wu2020] algorithm could achieve at most a score of 0.39 in this challenge (the
+last two lines, the algorithm must to be very good on one class).
+
+Nevertheless, this equation will only be useful to allow us to compare the results of this thesis
+with other algorithms.
+
+## Work structure
+
+### Project start
+
+The project started with a literature survey on the databases Scopus, PubMed, Web of Science, and
+Google Scholar with the following query (the syntax was adapted for each database):
+
+\
+    TITLE-ABS-KEY ( algorithm  OR  'point of care'  OR  'signal processing'  OR  'computer
+    assisted'  OR  'support vector machine'  OR  'decision support system*'  OR  'neural
+    network*'  OR  'automatic interpretation' OR 'machine learning')  AND  TITLE-ABS-KEY
+    ( electrocardiography  OR  cardiography  OR  'electrocardiographic tracing'  OR  ecg
+    OR  electrocardiogram  OR  cardiogram )  AND  TITLE-ABS-KEY ( 'Intensive care unit' OR
+    'cardiologic care unit'  OR  'intensive care center'  OR  'cardiologic care center' )
+\
+
+The inclusion and exclusion criteria were defined as in Table \@ref(tab:criteria).
+
+```{r criteria, echo=FALSE}
+criteria <- tribble(
+  ~"Inclusion criteria", ~"Exclusion criteria",
+  "ECG automatic interpretation", "Manual interpretation",
+  "ECG anomaly detection", "Publication older than ten years",
+  "ECG context change detection", "Do not attempt to identify life-threatening arrhythmias, namely asystole, extreme bradycardia, extreme tachycardia, ventricular tachycardia, and ventricular flutter/fibrillation",
+  "Online Stream ECG analysis", "No performance measurements reported",
+  "Specific diagnosis (like a flutter, hyperkalemia, etc.)", ""
+)
+
+kbl(criteria,
+  booktabs = TRUE,
+  caption = "Literature review criteria.",
+  align = "ll",
+  position = "ht",
+  linesep = "\\addlinespace"
+) %>%
+  row_spec(0, bold = TRUE) %>%
+  kable_styling(full_width = TRUE)
+```
+
+
+The survey is being conducted with peer review, all articles on full-text phase were obtained and
+assessed for the extraction phase, with exception of 5 articles that were not available. The survey
+is currently staled on the Data Extraction phase due to external factors.
+
+Fig. \@ref(fig:prisma) shows the flow diagram of the resulting screening using PRISMA format.
+
+```{r prisma, echo=FALSE, out.width="70%", fig.cap="Flowchart of the literature survey."}
+my_graphics("PRISMA")
+```
+
+The peer review is being conducted by the author of this thesis together with another coleague, Dr.
+Andrew Van Benschoten from the Matrix Profile Foundation [@mpf2020].
+
+Table. \@ref(tab:kappa) shows the Inter-rater Reliability (IRR) of the screening phases, using Cohen's $\kappa$ statistic.
+The bottom line shows the estimated accuracy after corrected for possible confounders [@Bakeman2011].
+
+```{r kappa, echo=FALSE, eval=!knitr::is_latex_output()}
+my_kable(
+  title = "Inter-rater Reliability on the literature survey process.",
+  label = "kappa",
+  content = r"(<thead> <tr> <th class="tg-top" colspan="2"> </th> <th class="tg-top"
+colspan="2"> Title-Abstract<br>(2388 articles) </th> <th class="tg-top"> </th> <th class="tg-top"
+colspan="2"> Full-Review<br>(303 articles) </th> </tr></thead> <tbody> <tr> <td class="tg-73oq"
+colspan="2"> </td><td class="tg-wp8o" colspan="2"> Reviewer #2 </td><td class="tg-73oq"> </td><td
+class="tg-wp8o" colspan="2"> Reviewer #2 </td></tr><tr> <td class="tg-73oq" colspan="2"> </td><td
+class="tg-73oq"> Include </td><td class="tg-73oq"> Exclude </td><td class="tg-73oq"> </td><td
+class="tg-73oq"> Include </td><td class="tg-73oq"> Exclude </td></tr><tr> <td class="tg-wp8o"
+rowspan="2"> Reviewer #1 </td><td class="tg-cross"> Include </td><td class="tg-cross"> 185 </td><td
+class="tg-cross"> 381 </td><td class="tg-cross"> </td><td class="tg-cross"> 63 </td><td
+class="tg-cross"> 58 </td></tr><tr> <td class="tg-crosslow"> Exclude </td><td class="tg-crosslow"> 129
+</td><td class="tg-crosslow"> 1693 </td><td class="tg-crosslow"> </td><td class="tg-crosslow"> 13
+</td><td class="tg-crosslow"> 169 </td></tr><tr> <td class="tg-73oq" colspan="2"> Cohen’s omnibus
+<span class="math inline">\(\kappa\)</span> </td><td class="tg-body" colspan="2"> 0.30 </td><td
+class="tg-body"> </td><td class="tg-body" colspan="2"> 0.48 </td></tr><tr> <td class="tg-73oq"
+colspan="2"> Maximum possible <span class="math inline">\(\kappa\)</span> </td><td class="tg-body"
+colspan="2"> 0.66 </td><td class="tg-body"> </td><td class="tg-body" colspan="2"> 0.67
+</td></tr><tr> <td class="tg-73oq" colspan="2"> Std Err for <span class="math
+inline">\(\kappa\)</span> </td><td class="tg-body" colspan="2"> 0.02 </td><td class="tg-body">
+</td><td class="tg-body" colspan="2"> 0.05 </td></tr><tr> <td class="tg-73oq" colspan="2"> Observed
+Agreement </td><td class="tg-body" colspan="2"> 79% </td><td class="tg-body"> </td><td
+class="tg-body" colspan="2"> 77% </td></tr><tr> <td class="tg-73oq" colspan="2"> Random Agreement
+</td><td class="tg-body" colspan="2"> 69% </td><td class="tg-body"> </td><td class="tg-body"
+colspan="2"> 55% </td></tr><tr> <td class="tg-mcqj" colspan="2"> Agreement corrected with KappaAcc
+</td><td class="tg-mqa1" colspan="2"> 82% </td><td class="tg-mcqj"> </td><td class="tg-mqa1"
+colspan="2"> 85% </td></tr></tbody>)"
+)
+```
+\
+```{r kappaa, echo = FALSE, eval=knitr::is_latex_output(), results="asis"}
+cat(r"(
+\begin{table}[ht]
+\caption{\label{tab:kappa}Inter-rater Reliability on the literature survey process.}
+\centering
+\begin{tabular}{llcclcc}
+\toprule
+                                                  &                             & \multicolumn{2}{c}{\textbf{\begin{tabular}[c]{@{}c@{}}Title-Abstract\\ (2388 articles)\end{tabular}}} & \textbf{} & \multicolumn{2}{c}{\textbf{\begin{tabular}[c]{@{}c@{}}Full-Review\\ (303 articles)\end{tabular}}} \\ \cline{3-4} \cline{6-7}
+                                                  &                             & \multicolumn{2}{c}{Reviewer \#2}                                                                      &           & \multicolumn{2}{c}{Reviewer \#2}                                                                  \\ \cline{3-4} \cline{6-7}
+                                                  &                             & \multicolumn{1}{l}{Include}                       & \multicolumn{1}{l}{Exclude}                       &           & \multicolumn{1}{l}{Include}                     & \multicolumn{1}{l}{Exclude}                     \\ \hline
+\multicolumn{1}{r}{\multirow{2}{*}{Reviewer \#1}} & \multicolumn{1}{r}{Include} & 185                                               & 381                                               &           & 63                                              & 58                                              \\
+\multicolumn{1}{r}{}                              & \multicolumn{1}{r}{Exclude} & 129                                               & 1693                                              &           & 13                                              & 169                                             \\ \hline
+Cohen's omnibus  $\kappa$                         &                             & \multicolumn{2}{c}{0.30}                                                                              &           & \multicolumn{2}{c}{0.48}                                                                          \\
+Maximum possible $\kappa$                         &                             & \multicolumn{2}{c}{0.66}                                                                              &           & \multicolumn{2}{c}{0.67}                                                                          \\
+Std Err for $\kappa$                              &                             & \multicolumn{2}{c}{0.02}                                                                              &           & \multicolumn{2}{c}{0.05}                                                                          \\
+Observed Agreement                                &                             & \multicolumn{2}{c}{79\%}                                                                              &           & \multicolumn{2}{c}{77\%}                                                                          \\
+Random Agreement                                  &                             & \multicolumn{2}{c}{69\%}                                                                              &           & \multicolumn{2}{c}{55\%}                                                                          \\ \hline\addlinespace
+\multicolumn{2}{l}{\textbf{Agreement corrected with KappaAcc}}          & \multicolumn{2}{c}{\textbf{82\%}}                                                                     & \textbf{} & \multicolumn{2}{c}{\textbf{85\%}}                                                                 \\ \bottomrule
+\end{tabular}
+\end{table}
+)")
+```
+
+The purpose of using Cohen's $\kappa$ in such review is to allow us to gauge the agreement of both
+reviewers on the task of selecting the articles according to the goal of the survey. The most naive
+way to verify this would be simply to measure the overall agreement (the number of articles included
+and excluded by both, divided by the total number of articles). Nevertheless, this would not take
+into account the agreement we could expect purely by chance.
+
+However, the $\kappa$ statistic must be assessed carefully. This topic is beyond the scope of this work
+therefore it will be explained briefly.
+
+While it is widely used, the $\kappa$ statistic is also well criticized. The direct interpretation of
+its value depends on several assumptions that are often violated. (1) It is assumed that both
+reviewers have the same level of experience; (2) The "codes" (include, exclude) are identified with
+same accuracy; (3) The "codes" prevalence are the same; (4) There is no reviewer bias towards one of
+the choices [@Sim2005; @Bakeman1997].
+
+In addition, the number of "codes" affects the relation between the value of $\kappa$ and the actual
+agreement between the reviewers. For example, given equiprobable "codes" and reviewers who are 85%
+accurate, the value of $\kappa$ are 0.49, 0.60, 0.66, and 0.69 when number of codes is 2, 3, 5, and 10,
+respectively [@Bakeman1997; @Morgan2019].
+
+In order to take these limitations in account, the agreement between reviewers was calculated using
+the KappaAcc [@Bakeman2011] from Professor Emeritus Roger Bakeman, Georgia State University, which
+computes the estimated accuracy of simulated reviewers.
+
+### RAW data
+
+In order to better understand the data acquisition, it has been acquired a Single Lead Heart Rate
+Monitor breakout from Sparkfun™ [@sparkfun2021] using the AD8232 [@AnalogDevices2020] microchip
+from Analog Devices Inc., compatible with Arduino^®^ [@arduino2021], for an in-house experiment
+(Fig. \@ref(fig:ad8232)).
+
+```{r ad8232, echo=FALSE, out.width="40%", fig.show="hold", fig.cap="Single Lead Heart Rate Monitor"}
+knitr::include_graphics(c(here("docs", "figure/sparkfun.jpg"), here("docs", "figure/FullSetup.jpg")))
+```
+
+The output gives us a RAW signal, as shown in Fig. \@ref(fig:rawsignal).
+
+```{r rawsignal, echo=FALSE, out.width="50%", fig.cap="RAW output from Arduino at ~300hz"}
+my_graphics("arduino_plot")
+```
+
+After applying the same settings as the Physionet database (collecting the data at 500hz, resample
+to 250hz, pass-filter, and notch filter), the signal is much better, as shown in Fig.
+\@ref(fig:filtersignal).
+
+```{r filtersignal, echo=FALSE, out.width="90%", fig.cap="Gray is RAW, Red is filtered"}
+my_graphics("filtered_ecg")
+```
+
+### Preparing the data
+
+Usually, data obtained by sensors needs to be "cleaned" for proper evaluation. That is different
+from the initial filtering process where the purpose is to enhance the signal. Here we are dealing
+with artifacts, disconnected cables, wandering baselines and others.
+
+Several SQIs (Signal Quality Indexes) are used in the literature [@eerikainen2015], some trivial
+measures as _kurtosis_, _skewness_, median local noise level, other more complex as pcaSQI (the
+ratio of the sum of the five largest eigenvalues associated with the principal components over the
+sum of all eigenvalues obtained by principal component analysis applied to the time aligned ECG
+segments in the window). By experimentation (yet to be validated), a simple formula gives us the
+"complexity" of the signal and correlates well with the noisy data is shown in Equation
+\@ref(eq:complex) [@Batista2014].
+
+\
+\begin{equation}
+\sqrt{\sum_{i=1}^w((x_{i+1}-x_i)^2)}, \quad \text{where}\; w \; \text{is the window size} (\#eq:complex)
+\end{equation}
+\
+
+The Fig. \@ref(fig:sqi) shows some SQIs and their relation with the data.
+
+```{r sqi, echo=FALSE, out.width="100%", fig.cap="Green line is the \"complexity\" of the signal"}
+my_graphics("noise")
+```
+
+```{r createfilter, include=FALSE}
+source(here("scripts", "common", "read_ecg.R"))
+source(here("scripts", "common", "sqi.R"))
+filter_w <- 200
+limit <- 8
+file <- "a104s"
+size_w <- 16
+size_h <- 5
+
+if (file.exists(here("output/createfilter.rds"))) {
+  data <- readRDS(here("output/createfilter.rds"))
+} else {
+  data <- read_ecg_csv(here(glue("inst/extdata/physionet/{file}.hea")))
+  data <- data[[file]]$II
+  saveRDS(data, here("output/createfilter.rds"), compress = "xz")
+}
+
+norm_data <- tsmp:::znorm(data)
+filter <- win_complex(norm_data, filter_w)
+filter <- filter > limit
+
+if (knitr::is_latex_output()) {
+  grDevices::pdf(here("docs/figure/regime_filter.pdf"),
+    width = size_w, height = size_h
+  )
+} else {
+  svglite::svglite(here("docs/figure/regime_filter.svg"),
+    width = size_w, height = size_h
+  )
+}
+plot(norm_data, main = "", type = "l", ylab = "", xlab = "index", lwd = 0.2)
+points(cbind(which(filter), 0), col = "blue", pch = 19)
+dev.off()
+```
+
+Fig. \@ref(fig:datafilter) shows that noisy data (probably patient muscle movements) are marked
+with a blue point and thus are ignored by the algorithm.
+
+```{r datafilter, echo=FALSE, out.width="100%", fig.cap="Noisy data marked by the \"complexity\" filter"}
+my_graphics("regime_filter")
+```
+
+Although this step of "cleaning" the data is often used, this step will also be tested if it is
+really necessary and the performance with and without "cleaning" will be reported.
+
+### Detecting regime changes
+
+The regime change approach will be using the _Arc Counts_ concept, used on the FLUSS (Fast Low-cost
+Unipotent Semantic Segmentation) algorithm, as explained by Gharghabi, _et al._,[@gharghabi2018].
+
+The FLUSS (and FLOSS, the on-line version) algorithm is built on top of the Matrix Profile
+(MP)[@Yeh2017a], described on section \@ref(matrixprofile). Recalling that the MP and the companion
+Profile Index (PI) are two vectors holding information about the 1-NN. One can imagine several
+"arcs" starting from one "index" to another. This algorithm is based on the assumption that between
+two regimes, the most similar shape (its nearest neighbor) is located on "the same side", so the
+number of "arcs" decreases when there is a change on the regime, and increases again. As show on
+Fig. \@ref(fig:arcsoriginal). This drop on the _Arc Counts_ is a signal that a change on the shape
+of the signal has happened.
+
+```{r arcsoriginal, echo=FALSE, out.width="100%", fig.cap="FLUSS algorithm, using arc counts."}
+my_graphics("fluss_arcs")
+```
+
+The choice of the FLOSS algorithm (on-line version of FLUSS) is founded on the following arguments:
+
+-  **Domain Agnosticism:** the algorithm makes no assumptions about the data as opposed to most
+   available algorithms to date.
+-  **Streaming:** the algorithm can provide real-time information.
+-  **Real-World Data Suitability:** the objective is not to _explain_ all the data. Therefore, areas
+   marked as "don't know" areas are acceptable.
+-  **FLOSS is not:** a change point detection algorithm [@aminikhanghahi2016]. The interest here is
+   changes in the shapes of a sequence of measurements.
+
+Other algorithms we can cite are based on Hidden Markov Models (HMM) that require at least two
+parameters to be set by domain experts: cardinality and dimensionality reduction. The most
+attractive alternative could be the Autoplait [@Matsubara2014], which is also domain agnostic and
+parameter-free. It segments the time series using Minimum Description Length (MDL) and recursively
+tests if the region is best modeled by one or two HMM. However, Autoplait is designed for batch
+operation, not streaming, and also requires discrete data. FLOSS was demonstrated to be superior in
+several datasets in its original paper. In addition, FLOSS is robust to several changes in data like
+downsampling, bit depth reduction, baseline wandering, noise, smoothing, and even deleting 3% of the
+data and filling with simple interpolation. Finally, the most important, the algorithm is light and
+suitable for low-power devices.
+
+In the MP domain, it is worth also mentioning other possible algorithm: the Time Series Snippets
+[@Imani2018], based on MPdist [@gharghabi2018b]. The latter measures the distance between two
+sequences considering how many similar sub-sequences they share, no matter the order of matching. It
+proved to be a useful measure (not a metric) for meaningfully clustering similar sequences. Time
+Series Snippets exploits MPdist properties to summarize a dataset extracting the $k$ sequences that
+represent most of the data. The final result seems to be an alternative for detecting regime
+changes, but it is not. The purpose of this algorithm is to find which pattern(s) explains most of
+the dataset. Also, it is not suitable for streaming data. Lastly, MPdist is quite expensive compared
+to the trivial Euclidean distance.
+
+The regime change detection will be evaluated following the criterias explained on section
+\@ref(evaluation).
+
+### Classification of the new regime {#classregime}
+
+The next step towards the objective of this work is to verify if the new regime detected by the
+previous step is indeed a life-threatening pattern that we should trigger the alarm.
+
+First let's dismiss some apparent solutions: (1) Clustering. It is well understood that we cannot
+cluster time series subsequences meaningfully with any distance measure, or with any algorithm
+[@Keogh2005]. The main argument is that in a meaningfull algorithm, the output depends on the input,
+and this has been proven to not happen in time series subsequence clustering [@Keogh2005]. (2)
+Anomaly detection. In this work we are not looking for surprises, but for patterns that are known to
+be life-threatening. (3) Forecasting. We may be tempted to make predictions, but clearly this is not
+the idea here.
+
+The method of choice is classification. The simplest algorithm could be a `TRUE`/`FALSE` binary
+classification. Nevertheless, the five life-threatening patterns have well defined characteristics
+that may seem more plausible to classify the new regime using some kind of ensamble of binary
+classifiers or a "six-class" classifier (being the sixth class the `FALSE` class).
+
+Since the model doesn't know which life-threatening pattern will be present in the regime (or if it
+will be a `FALSE` case), the model will need to check for all five `TRUE` cases and if none of these
+cases are identified, it will classify the regime as `FALSE`.
+
+In order to avoid exceeding processor capacity, an initial set of shapelets [@Rakthanmanon2013] can
+be sufficient to build the `TRUE`/`FALSE` classifier. And to build such set of shapelets, leveraging
+on the MP, we will use the Contrast Profile [@Mercer2021].
+
+The Contrast Profile (CP) looks for patterns that are at the same time very *similar* to its
+neighbors in class *A* while is very *different* from the nearest neighbor from class *B*. In other
+words, this means that such pattern represents well class *A* and may be taken as a "signature" of
+that class.
+
+In this case we need to compute two MP, one self-join MP using the *positive* class $MP^{(++)}$ (the
+class that has the signature we want to find) and one AB-join MP using the *positive* and *negative*
+classes $MP^{(+-)}$. Then we subtract the first $MP^{(++)}$ from the last $MP^{(+-)}$, resulting in
+the $CP$. The high values on $CP$ are the locations for the signature candidates we look for (the
+author of CP calls these segments *Plato's*).
+
+Due to the nature of this approach, the MP's (containing values in Euclidean Distance) are truncated
+for values above $\sqrt{2w}$, where $w$ is the window size. This because values above this threshold
+are negatively correlated in the Pearson Correlation space. Finally, we normalize the values by
+$\sqrt{2w}$. The formula \@ref(eq:contrast) synthesizes this computation.
+
+\
+\begin{equation}
+CP_w = \frac{MP_{w}^{(+-)} - MP_{w}^{(++)}}{\sqrt{2w}} \quad \text{where}\; w \; \text{is the window size} (\#eq:contrast)
+\end{equation}
+\
+
+For a more complete understanding of the process, Fig. \@ref(fig:contrast) shows a practical example
+from the original article [@Mercer2021].
+
+\
+```{r contrast, echo=FALSE, out.width="100%"}
+#| fig.cap = "Top to bottom: two weakly-labeled snippets of a larger time series. T(-) contains
+#|  only normal beats. T(+) also contains PVC (premature ventricular contractions).
+#|  Next, two Matrix Profiles with window size 91; AB-join is in red and self-join in blue.
+#|  Bottom, the Contrast Profile showing the highest location."
+
+my_graphics("contrast")
+```
+
+
+After extracting candidates for each class signature, a classification algorithm will be fitted and
+evaluated using the criterias explained on section \@ref(evaluation).
+
+### Summary of the methodology
+
+In order to summarize the steps taken on this thesis to accomplish the main objective, Figs.
+\@ref(fig:regimedetection), \@ref(fig:shapelets) and \@ref(fig:fullmodel) show the overview of the
+processes involved.
+
+First let us introduce the concept of Nested Resampling [@Bischl2012]. It is known that when
+increasing model complexity, overfitting on the training set becomes more likely to happen
+[@Hastie2009]. This is an issue that this work has to countermeasure as there are many steps that
+requires parameter tuning, even for algorithms that are almost parameter-free like the MP.
+
+The rule that must be followed is simple: *do not* evaluate a model on the same resampling split used
+to perform its own parameter tuning. Using simple cross-validation, the information about the test
+set "leaks" into the evaluation, which leads to overfitting/overtuning, and gives us an optimistic
+biased estimative of the performance. Bernd Bischl, 2012 [@Bischl2012] describes more deeply these
+factors, and also gives us a countermeasure for that: (1) from preprocessing the data to model
+selection use the training set; (2) the test set should be touched once, on the evaluation step; (3)
+repeat. This guarantees that a "new" separated data is only used *after* the model is trained/tuned.
+
+Fig. \@ref(fig:nestedresampling) shows us this principle. The steps (1) and (2) described above are
+part of the **Outer resampling**, which in each loop splits the data in two sets: the training set
+and the test set. The training set is then used in the **Inner resampling** where, for example, the
+usual cross-validation may be used (creating an *Analysis set* and an *Assessment set*, to avoid
+conflict of terminology), and the best model/parameters is selected. Then, this best model is
+evaluated against the unseen test set that was created for this resampling.
+
+The resulting (aggregated) performance of all outer samples gives us a more honest estimative
+of the expected performance on new data.
+
+```{r nestedresampling, echo=FALSE, out.width="70%"}
+#| fig.cap = "Nested resampling.
+#|  The full dataset is resampled several times (outer resampling), so each branch has its
+#|  own Test set (yellow). On each branch, the Training set is used as if it were a full dataset,
+#|  being resampled again (inner resampling); here the Assessment set (blue) is used to test the
+#|  learning model and tune parameters. The best model then, is finally evaluated on its own
+#|  Test set."
+
+my_graphics("draw-nested-resampling")
+```
+\
+
+After the understanding of the Nested Resampling [@Bischl2012], the following flowcharts can be
+better interpreted. Fig. \@ref(fig:regimedetection) starts with the "Full Dataset" that contains all
+time series from the dataset described on section \@ref(the-data). Each time series represents one
+file from the database, and represents one patient.
+
+The regime change detection will use subsampling (bootstrapping can lead to substantial bias toward
+more complex models) in the Outer resampling and cross-validation in the Inner resampling. How
+the evaluation will be performed and why the use of cross-validation will be explained on section
+\@ref(evaluation).
+
+```{r regimedetection, echo=FALSE, out.width="90%"}
+#| fig.cap = "Pipeline for regime change detection.
+#|  The full dataset (containing several patients) is divided on a Training set and a Test set.
+#|  The Training set is then resampled in an Analysis set and an Assessment set. The former is
+#|  used for training/parameter tuning and the latter for assessing the result. The best parameters
+#|  are then used for evaluation on the Test set. This may be repeated several times."
+
+my_graphics("draw-regime-model")
+```
+
+Fig. \@ref(fig:shapelets) shows the processes for training the classification model. First, the last
+ten seconds of each time series will be identified (the even occurs in this segment). Then the
+dataset will be grouped by class (type of event) and `TRUE`/`FALSE` (alarm), so the Outer/Inner
+resampling will produce a Training/Analysis set and Test/Assessment set with similar frequency of
+the full dataset.
+
+The next step will be to extract shapelet candidates using the Contrast Profile and train the
+classifier.
+
+This pipeline will use subsampling (for the same reason above) in the Outer resampling and
+cross-validation in the Inner resampling. How the evaluation will be performed and why the use of
+cross-validation will be explained on section \@ref(evaluation).
+
+```{r shapelets, echo=FALSE, out.width="60%"}
+#| fig.cap = "Pipeline for alarm classification.
+#|  The full dataset (containing several patients) is grouped by class and by TRUE/FALSE alarm.
+#|  This grouping allows resampling to keep a similar frequency of classes and TRUE/FALSE of the full dataset.
+#|  Then the full dataset is divided on a Training set and a Test set.
+#|  The Training set is then resampled in an Analysis set and an Assessment set. The former is
+#|  used for extracting shapelets, training the model and parameter tuning; the latter for assessing
+#|  the performance of the model. Finally, the best model is evaluated on the Test set.
+#|  This may be repeated several times."
+
+my_graphics("draw-classif-model")
+```
+
+Finally, Fig. \@ref(fig:fullmodel) shows how the final model will be used on the field. In a
+streaming scenario, the data will be collected and processed in real-time to maintain an up to date
+Matrix Profile. The FLOSS algorithm will be looking for a regime change. When a regime change is
+detected, a sample of this new regime will be presented to the trained classifier that will evaluate
+if this new regime is a life-threatening condition or not.
+
+```{r fullmodel, echo=FALSE, out.width="60%"}
+#| fig.cap = "Pipeline of the final process.
+#|  The streaming data, coming from one patient, is processed to create its Matrix Profile.
+#|  Then, the FLOSS algorithm is computed for detecting a regime change. When a new regime is
+#|  detected, a sample of this new regime is analysed by the model and a decision is made. If
+#|  the new regime is life-threatening, the alarm will be fired."
+
+my_graphics("draw-global-model")
+```
+
+
+## Evaluation of the algorithms {#evaluation}
+
+The subsampling method used on both algorithms, regime change and classification, will be
+the Cross Validation, as the learning task will be in batches.
+
+Other options dismissed [@Bischl2012]:
+
+* Leave-One-Out Cross Validation: has better properties for regression than for classification. It
+  has a high variance as an estimator of the mean loss. It also is asymptotically inconsistent and
+  tends to select too complex models. It is demonstrates empirically that 10-fold CV is often
+  superior.
+
+* Bootstrapping: while it has low variance, it may be optimistic biased on more complex models.
+  Also, its resampling method with replacement can leak information into the assessment set.
+
+* Subsampling: is like bootstrapping, but without replacement. The only argument for not choosing
+  it, is that with Cross Validation we make sure all the data is used for analysis and assessment.
+
+
+### Regime change
+
+A detailed discussion about the evaluation process of segmentation algorithms is made by the
+FLUSS/FLOSS author [@gharghabi2018]. Previous researches have used precision/recall or derived
+measures for performance. The main issue is how to assume that the algorithm was correct? If the
+ground truth says the change occurred at location 10,000, and the algorithm detects a change at
+location 10,001, is this a miss?
+
+As pointed out by the author, several independent researchers have suggested a temporal tolerance,
+that solves one issue, but also has a hard time on penalize any tiny miss beyond this tolerance.
+
+The second issue is a over-penalization of an algorithm in which most of the detections are
+good, but just one (or a few) is poor.
+
+The author proposes the solution depicted in Fig. \@ref(fig:flosseval). It gives 0 as the best score
+and 1 as the worst. The function sums the distances between the ground truth locations and the
+locations suggested by the algorithm. The sum is then divided by
+<!--the product of the number of segments, and then -->
+the length of the time series to normalize the range to [0, 1].
+
+The goal is minimizing this score.
+
+<!--
+TODO: review the problem when there are too many detections
+-->
+
+```{r flosseval, echo=FALSE, out.width="100%"}
+#| fig.cap="Regime change evaluation. The top line illustrates the ground truth, and the
+#|  bottom line the locations reported by the algorithm. Note that multiple proposed locations
+#|  can be mapped to a single ground truth point."
+
+my_graphics("floss_eval")
+```
+
+### Classification
+
+As described on section \@ref(classregime), the model for classification will use a set of shapelets
+to identify if we have a `TRUE` (life-threatening) regime or a `FALSE` (non life-threatening) regime.
+
+Although the implementation of the final process will be using streaming data, the classification
+algorithm will work in batches, because it will not be applied on every single data point, but on
+samples that are extracted when a regime change is detected. During the training phase, the data is
+also analyzed in batches.
+
+One important factor we must consider is that, on real world, the majority of regime changes will be
+`FALSE` (i.e., not life-threatening). Thus, a performance measure that is robust to class imbalance
+is needed if we want to be able to assess the model after it was trained, on the field.
+
+It is well known that the *Accuracy* measure is not reliable for unbalanced data
+[@Akosa2017; @Bekkar2013] as it returns optimistic results for a classifier on the majority class. A
+description of common measures used on classification is available [@Akosa2017; @Chicco2020]. Here
+we will focus on three candidate measures that can be used: F-score (well discussed on
+[@Chicco2020]), Matthew's Correlation Coefficient (MCC) [@Matthews1975] and $\kappa_m$ statistic
+[@Bifet2015].
+
+The F-score (let's abbreviate to F~1~ as this is the more common setting), is widely used on
+*information retrieval*, where the classes are usually classified as "relevant" and "irrelevant",
+and combines the *recall* (also known as sensitivity) and the *precision* (the positive predicted
+value). *Recall* assess how well the algorithm retrieves relevant examples among the (usually few)
+relevant items in dataset, while *precision* assess the proportion of indeed relevant items are
+contained in the retrieved examples. It ranges from [0, 1]. It ignores completely the irrelevant
+items that were not retrieved (usually this set contain lots of items). In classification tasks, its
+main weakness is not evaluate the True Negatives, and if the proportion of a random classifier gets
+towards the `TRUE` class (increasing the False Positives significantly), this score actually gets
+better, thus not suitable to our case. The F~1~ score is defined on equation \@ref(eq:fscore).
+
+\begin{equation}
+F_1 score = \frac{2 \cdot TP}{2 \cdot TP + FP + FN} = 2 \cdot \frac{precision \cdot recall}{precision + recall} (\#eq:fscore)
+\end{equation}
+
+The MCC is a good alternative to the F~1~ when we do care about the True negatives (both were
+considered to "provide more realistic estimates of real-world model performance" [@Dubey2018]). It
+is a method to compute the *Pearson product-moment correlation coefficient* [@Delgado2019] between
+the actual and predicted values. It ranges from [-1, 1]. The MCC is the only binary classification
+rate that only gives a high score if the binary classifier was able to correctly classify the
+majority of the positive and negative instances [@Chicco2020]. One may argue that Cohen's $\kappa$
+has the same behavior, but there are two main differences (1) MCC is *undefined* in the case of a
+*majority voter* while Cohen's $\kappa$ doesn't discriminates this case from the random classifier
+($\kappa$ is zero for both cases) (2) It is proven that in an special case when the classifier is
+increasing the False Negatives, Cohen's $\kappa$ doesn't get worse as spected, MCC
+doesn't have this issue [@Delgado2019]. MCC is defined on equation \@ref(eq:mccval).
+
+\begin{equation}
+MCC = \frac{TP \cdot TN - FP \cdot FN}{\sqrt{(TP + FP) \cdot (TP + FN) \cdot (TN + FP) \cdot (TN + FN)}} (\#eq:mccval)
+\end{equation}
+
+The $\kappa_m$ statistic [@Bifet2015] is a measure that takes in account not the *random classifier*
+but the *majority voter* (a classifier that only votes on the larger class). It was introduced by
+Bifet *et al.* [@Bifet2015] for being used in online settings, where the class balance may change
+over time. It is defined on equation \@ref(eq:kappam), where $p_0$ is the observed accuracy and
+$p_m$ is the accuracy of the majority voter. The score ranges from ($-\infty$, 1], theoretically,
+but in practice you see negative numbers if the classifier is performing worse than the majority voter
+and positive numbers if performing better than the majority number, until the maximum of 1, when the
+classifier is optimal.
+
+\begin{equation}
+\kappa_m = \frac{p_0 - p_m}{1 - p_m} (\#eq:kappam)
+\end{equation}
+
+In the inner resampling (model training/tuning), the classification will be binary, and in our case
+we know that the data is slightly unbalanced (60% false alarms). For this step, the metric for model
+selection will be the MCC. Nevertheless, during the optimization process, the algorithm will seek to
+minimize the False Negative Rate ($FNR = \frac{FN}{TP+FN}$), and between ties, the smaller FNR wins.
+
+In the outer resampling, the MCC and $\kappa_m$ of all winning models will aggregated and reported
+using the median and interquartile range.
+
+For different classifiers, we will use the Wilcoxon's signed-rank test for comparing their performances,
+as this method is known to have low Type I and Type II errors in this kind of comparison [@Bifet2015].
+
+### Full model (streaming setting)
+
+For the final assessment, the best and the average model of the previous pipelines will be assembled
+and tested using the whole original dataset.
+
+The algorithm will be tested in each of the five life-threatening event split individually, in order
+to evaluate its strengths and weakness.
+
+For more transparency, the whole confusion matrix will be reported, as well as the MCC, $\kappa_m$, and
+the FLOSS evaluation.
+
+# Current results
+
+## Regime change detection
+
+The current status on regime change detection pipeline is the implementation of the resampling strategies and evaluation in
+order to start the parameter tuning. An example of the current implementation is shown on Fig. \@ref(fig:flossregime).
+
+```{r flossregime, echo=FALSE, out.height="80%", out.width="80%"}
+#| fig.cap="Regime change detection example.
+#|  The graph on top shows the ECG streaming; the blue line marks the ten seconds
+#|  before the original alarm was fired; the red line marks the time constraint of 1250;
+#|  the dark red line marks the limit for taking a decision in this case of Asystole
+#|  the blue horizontal line represents the size of the sliding window.
+#|  The graph on the middle shows the Arc counts as seen by the algorithm (with the corrected
+#|  distribution); the red line marks the current minimum value and its index; the blue
+#|  horizontal line shows the minimum value seen until then.
+#|  The graph on the bottom shows the computed Arc counts (raw) and the red line is the
+#|  theoretical distribution used for correction."
+my_graphics("floss_regime")
+```
+
+## Classification
+
+The current status on the classification pipeline is the implementation of the shapelets extraction
+using the Contrast Profile.
+
+An example of candidates for ventricular tachycardia is presented on Fig. \@ref(fig:vtachy).
+
+```{r vtachy, echo=FALSE, out.width="90%", fig.cap="Shapelet candidates for Ventricular Tachycardia.", fig.height=9, fig.width=14}
+def_par <- graphics::par(no.readonly = TRUE)
+graphics::layout(matrix(1:6, ncol = 2, byrow = TRUE))
+graphics::par(mai = c(0.8, 0.5, 0.6, 0.5), cex = 1)
+
+data <- readRDS(here("presentations/Report/contrast.rds"))
+
+for (i in (1:6)) {
+  plot(tsmp:::znorm(data[[i]]$plato), type = "l", ylab = "", xlab = "samples (250hz)")
+  for (j in seq_along(data[[i]]$neighbors)) {
+    lines(tsmp:::znorm(data[[i]]$neighbors[[j]]$data), col = j + 1)
+  }
+}
+graphics::par(def_par)
+```
+
+
+## Feasibility trial
+
+A side-project called "false.alarm.io" has been derived from this work (an unfortunate mix of
+"false.alarm" and "PlatformIO" [@PlatformIO], the IDE chosen to interface the panoply of embedded
+systems we can experiment with). The current results of this side-project are very enlightening and
+show that the final algorithm can indeed be used in small hardware. Further data will be available
+in the future.
+
+A brief mentioning, linking back to the objectives of this work, an initial trial was done using an
+ESP32 MCU (Fig. \@ref(fig:esp32)) in order to be sure if such small device can handle the task.
+
+```{r esp32, echo=FALSE, out.width="50%", fig.cap="ESP32 MCU"}
+my_graphics("esp32")
+```
+
+Current results show that such device has enough computation power to handle the task in real-time
+using just one of its two microprocessors. The main limitation seen in advance is the on-chip SRAM
+that must be well managed.
+
+# Scientific contributions
+
+## Matrix Profile
+
+Since the first paper presenting this new concept [@Yeh2017a], lots of investigations were made to
+speed up its computation. It is notable how all computations are not dependent on the _rolling
+window size_ as previous works not using Matrix Profile. Aside from this, we can see that the first
+STAMP [@Yeh2017a] algorithm has the time complexity of $O(n^2log{n})$ while STOMP [@zhu2016]
+$O(n^2)$ (a significant improvement), but STOMP lacks the "any-time" property. Later SCRIMP
+[@zhu2018] solves this problem keeping the same time complexity of $O(n^2)$. Here we are in the
+"exact" algorithms domain and we will not extend the scope for conciseness.
+
+The main issue with the algorithms above is the dependency on a fast Fourier transform (FFT)
+library. FFT has been extensively optimized and architecture/CPU bounded to exploit the most of
+speed. Also, padding data to some power of 2 happens to increase the efficiency of the
+algorithm. We can argue that time complexity doesn't mean "faster" when we can exploit low-level
+instructions. In our case, using FFT in a low-power device is overkilling. For example, a quick
+search over the internet gives us a hint that computing FFT on a 4096 data in an ESP32 takes
+about 21ms (~47 computations in 1 second). This means ~79 seconds for computing all FFT's
+(~3797) required for STAMP using a window of 300. Currently, we can compute a full matrix of 5k
+data in about 9 seconds in an ESP32 MCU (Fig. \@ref(fig:esp32)), and keep updating it as fast as
+1 min of data (at 250hz) in just 6 seconds.
+
+Recent works using _exact_ algorithms are using an unpublished algorithm called **MPX**, which
+computes the Matrix Profile using cross-correlation methods ending up faster and is easily
+portable.
+
+**On computing the Matrix Profile:** the contribution of this work on this area is adding the
+*Online* capability to MPX, which means we can update the Matrix Profile as new data comes in.
+
+**On extending the Matrix Profile:** the contribution of this work on this area is the use of an
+unexplored constraint that we could apply on building the Matrix Profile we are calling _Similarity
+Threshold_ (ST). The original work outputs the similarity values in Euclidean Distance (ED) values,
+while MPX naturally outputs the values in Pearson's correlation coefficients (CC). Both ED and CC
+are interchangeable using the equation \@ref(eq:edcc). However, we may argue that it is easier to
+compare values that do not depend on the window size during an exploratory phase. MPX happens to
+naturally return values in CC, saving a few more computation time. The ST is an interesting factor
+that we can use, especially when detecting pattern changes during time. The FLOSS algorithm relies
+on counting references between indexes in the time series. ST can help remove "noise" from these
+references since only similar patterns above a certain threshold are referenced, and changes have
+more impact on these counts. The best ST threshold is still to be determined.
+
+\
+\begin{equation}
+CC = 1 - \frac{ED}{(2 \times WindowSize)} (\#eq:edcc)
+\end{equation}
+\
+
+## Regime change detection
+
+In the original paper, in chapter 3.5, the authors of FLOSS wisely introduce the **temporal
+constraint**, which improves the sensitivity of regime change detection on situations where
+a regime may alternate in short periods of time.
+
+Nevertheless, the authors declare the correction curve typically used on the algorithm as "simply a
+uniform distribution", but this is not an accurate statement. the _Arc Counts_ of newly incoming
+data are truncated by the same amount of temporal constraint. This prevents completely the detection
+of a regime change in the last 10 seconds as this thesis requires.
+
+The main contribution of this work on this area is overcoming this issue by computing the
+theoretical distribution using the temporal constraint parameters beforehand. as shown in Fig.
+\@ref(fig:distributions). That gives us enough data to evaluate a regime change accurately utilizing
+a minimum of $2 \times WindowSize$ datapoints.
+
+```{r dist-data, message=FALSE, warning=FALSE, cache=TRUE, include=FALSE}
+source(here("scripts", "common", "compute_floss.R"))
+
+get_dist <- function(mp_const = 1250, floss_const = 0) {
+  set.seed(2021)
+  iac <- list()
+  pro_size <- 5000
+  mp_time_constraint <- mp_const
+  floss_time_constraint <- floss_const
+  for (i in 1:100) {
+    iac[[i]] <- get_asym(pro_size, mp_time_constraint, floss_time_constraint)
+  }
+
+  aic_avg <- rowMeans(as.data.frame(iac))
+
+  data.frame(index = 1:5000, counts = aic_avg)
+}
+
+data_5000 <- get_dist(5000)
+data_4250 <- get_dist(4250)
+data_2500 <- get_dist(2500)
+data_1250 <- get_dist(1250)
+
+floss_data_5000 <- get_dist(0, 5000)
+floss_data_4250 <- get_dist(0, 4250)
+floss_data_2500 <- get_dist(0, 2500)
+floss_data_1250 <- get_dist(0, 1250)
+```
+
+```{r distributions, echo=FALSE, fig.cap="1D-IAC distributions for earlier temporal constraint (on Matrix Profile)", message=FALSE, warning=FALSE}
+
+floss_dist <- ggplot(data_5000, aes(index, counts)) +
+  geom_line(size = 0.1) +
+  ggtitle("a) No constraint") +
+  theme_grey(base_size = 7)
+
+floss_4250 <- ggplot(data_4250, aes(index, counts)) +
+  geom_line(size = 0.1) +
+  ggtitle("b) Constraint of 4250") +
+  theme_grey(base_size = 7)
+
+floss_2500 <- ggplot(data_2500, aes(index, counts)) +
+  geom_line(size = 0.1) +
+  annotate("segment", y = 0, yend = max(data_2500$counts), x = 2500, xend = 2500, linetype = 2, size = 0.1) +
+  annotate("text", x = 2500 - 80, y = 40, label = "start", color = "black", size = 2, angle = 90, hjust = 0) +
+  annotate("segment", y = 0, yend = max(data_2500$counts), x = 5000 - 2500 * 0.9, xend = 5000 - 2500 * 0.9, linetype = 2, size = 0.1) +
+  annotate("text", x = 5000 - 2500 * 0.9 - 80, y = 40, label = "end", color = "black", size = 2, angle = 90, hjust = 0) +
+  ggtitle("c) Constraint of 2500") +
+  theme_grey(base_size = 7)
+
+floss_1250 <- ggplot(data_1250, aes(index, counts)) +
+  geom_line(size = 0.1) +
+  annotate("segment", y = 0, yend = max(data_1250$counts), x = 1250, xend = 1250, linetype = 2, size = 0.1) +
+  annotate("text", x = 1250 - 80, y = 40, label = "start", color = "black", size = 2, angle = 90, hjust = 0) +
+  annotate("segment", y = 0, yend = max(data_1250$counts), x = 5000 - 1250 * 0.9, xend = 5000 - 1250 * 0.9, linetype = 2, size = 0.1) +
+  annotate("text", x = 5000 - 1250 * 0.9 - 80, y = 40, label = "end", color = "black", size = 2, angle = 90, hjust = 0) +
+  ggtitle("d) Constraint of 1250") +
+  theme_grey(base_size = 7)
+
+gg <- gridExtra::arrangeGrob(floss_dist, floss_4250, floss_2500, floss_1250,
+  nrow = 2,
+  bottom = grid::textGrob(paste("The plot a) shows the distribution used for the arc count correction when there is no time constraint.", "\n", "b) Shows a constraint of 3/4 of the total. c) 1/2 of the total. d) 1/4 of the total; here we see clearly the flat line.", "\n", "The dashed line marks the start and the end of the uniform zone."), just = "center", gp = grid::gpar(fontsize = 7))
+)
+
+grid::grid.draw(gg)
+```
+
+# Scientific outcomes
+
+This research has already yielded two R packages concerning the MP algorithms from UCR [@mpucr]. The
+first package is called `tsmp`, and a paper has also been published in the R Journal [@RJ-2020-021]
+(Journal Impact Factor™, 2020 of 3.984). The second package is called `matrixprofiler` and enhances
+the first one, using low-level language to improve computational speed. The author has also joined
+the Matrix Profile Foundation as co-founder together with contributors from Python and Go languages
+[@mpf2020; @VanBenschoten2020]. The benchmarks of the R implementation are available online
+[@Bischoff2021a].
+
+Additionally to the above publication and the publication of the ongoing literature survey it is planned
+to be published two articles about this thesis subject. The first regarding the application of the
+FLOSS algorithm on real-time ECG showing its potential on using it on low-power devices. The second
+regarding the use of combined shapelets for relevant ECG patterns identification.
+
+# Expected results and outcomes
+
+At the end, this thesis will provide a framework for identify life-threatening conditions using
+biological streaming data on devices with low CPU and low memory specifications. We expect
+to achieve a high quality model on identifying these pathological conditions, maintaining its
+robustness in presence of noise and artifacts seen on real-world applications.
+
+# Research team
+
+-  Thesis Author: Francisco Bischoff
+-  Supervisor: Professor Pedro Pereira Rodrigues
+-  Co-supervisor: Professor Eamonn Keogh (UCR, Riverside)
+
+# References

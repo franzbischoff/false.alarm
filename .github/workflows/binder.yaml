@@ -8,6 +8,10 @@ on:
   workflow_dispatch:
   repository_dispatch:
 
+concurrency:
+  group: binder
+  cancel-in-progress: true
+
 jobs:
   Create-MyBinderOrg-Cache:
     runs-on: ubuntu-latest

@@ -1,9 +1,10 @@
 skip_on_ci()
+skip_on_cran()
 
-source(here::here("scripts/stompi2.R"), encoding = "UTF-8")
-source(here::here("scripts/stompi2_update.R"), encoding = "UTF-8")
-source(here::here("scripts/stompi3_update.R"), encoding = "UTF-8")
-source(here::here("R/stomp.R"), encoding = "UTF-8")
+source(here("scripts/helpers/stompi2.R"), encoding = "UTF-8")
+source(here("scripts/helpers/stompi2_update.R"), encoding = "UTF-8")
+source(here("scripts/helpers/stompi3_update.R"), encoding = "UTF-8")
+source(here("R/stomp.R"), encoding = "UTF-8")
 
 
 data <- as.numeric(tsmp::mp_fluss_data$tilt_abp$data[1:1000])

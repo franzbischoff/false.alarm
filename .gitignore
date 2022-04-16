@@ -1,6 +1,14 @@
+library/
+local/
+cellar/
+lock/
+python/
+staging/
 .Rhistory
 .Renviron
 .Rapp.history
+Pprof.out
+Rprof.out
 
 # Session Data files
 .RData
@@ -24,7 +32,6 @@
 # produced vignettes
 vignettes/*.html
 vignettes/*.pdf
-vignettes/*.R
 
 # OAuth2 token, see https://github.com/hadley/httr/releases/tag/v0.3
 .httr-oauth
@@ -41,6 +48,9 @@ vignettes/*.R
 # VSCode
 #.vscode/
 .vscode/*.log
+.devcontainer/exts
+.devcontainer/gpg-agent.conf
+.devcontainer/gpg.conf
 
 ### R.Bookdown Stack ###
 # R package: bookdown caching files
@@ -49,37 +59,40 @@ vignettes/*.R
 # End of https://www.gitignore.io/api/r
 
 # Personalized
+/tmp/
+/tmp_*/
+.future
+debugme.log
 
 #Local history plugin
 .history
+.radian_history
 
 # use github-actions to build the webpage
-/pkgdown/
+/.travis.yml
+/R/RcppExports.R
 /code/
-dev/
-LOCAL_APPDATA_FONTCONFIG_CACHE/
-src-*/
-packrat/lib*/
-packrat/src/
 /pdfs/
+/pkgdown/
+/revdep/*.html
+/revdep/checks
+/revdep/checks.noindex
+/revdep/data.sqlite
+/revdep/library
+/revdep/library.noindex
 /review/
-Rplots.pdf
+/src/*.dll
 /src/*.o
 /src/*.so
-/src/*.dll
-/revdep/checks
-/revdep/library
-/revdep/checks.noindex
-/revdep/library.noindex
-/revdep/data.sqlite
-/revdep/*.html
+/src/RcppExports.cpp
+LOCAL_APPDATA_FONTCONFIG_CACHE/
 README.html
+Rplots.pdf
+dev/
+packrat/lib*/
+packrat/src/
+src-*/
 workspace.RData
-
-# Targets
-/_targets/*
-.targets-files
-.targets-runs
 
 # Workflowr
 .DS_Store
@@ -89,12 +102,11 @@ analysis/*html
 analysis/*_cache
 analysis/site_libs
 output/*.svg
-protocol/**/*.pdf
-docs/**/*.svg
+# protocol/**/*.pdf
+# docs/**/*.svg
 protocol/**/*.svg
 mpxtest.RData
-.devcontainer/gpg-agent.conf
-.devcontainer/gpg.conf
-/.travis.yml
-/R/RcppExports.R
-/src/RcppExports.cpp
+.devcontainer/git-hours.tgz
+.devcontainer/mathjax.tgz
+docs/thesis/*.log
+docs/thesis/__*.tex

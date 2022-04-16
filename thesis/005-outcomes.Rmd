@@ -1,0 +1,29 @@
+---
+editor_options:
+  markdown:
+    canonical: true
+    mode: markdown
+    wrap: 120
+---
+
+<!--
+This is for including Chapter 1. Notice that it's also good practice to name your chunk. This will
+help you debug potential issues as you knit. The chunk above is called intro and the one below is
+called chapter1. Feel free to change the name of the Rmd file as you wish, but don't forget to
+change it here from chap1.Rmd.
+-->
+
+# Scientific outcomes
+
+This research has already yielded two R packages concerning the MP algorithms from UCR [@mpucr]. The
+first package is called `tsmp`, and a paper has also been published in the R Journal [@RJ-2020-021]
+(Journal Impact Factor™, 2020 of 3.984). The second package is called `matrixprofiler` and enhances
+the first one, using low-level language to improve computational speed. The author has also joined
+the Matrix Profile Foundation as co-founder together with contributors from Python and Go languages
+[@mpf2020; @VanBenschoten2020]. The benchmarks of the R implementation are available online
+[@Bischoff2021a].
+
+Additionally to the above publication and the publication of the ongoing literature survey it is planned
+to be published two articles about this thesis subject. The first regarding the application of the
+FLOSS algorithm on real-time ECG showing its potential on using it on low-power devices. The second
+regarding the use of combined shapelets for relevant ECG patterns identification.

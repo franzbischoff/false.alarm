@@ -16,7 +16,7 @@
 #' @param window_size an `int`. Size of the sliding window.
 #' @param exclusion_zone a `numeric`. Size of the exclusion zone, based on window size (default is
 #'   `1/2`). See details.
-#' @param time_constraint an `int`. Max distance where to look for the best match in matrix profile.
+#' @param mp_time_constraint an `int`. Max distance where to look for the best match in matrix profile.
 #' (default is NULL).
 #' @param verbose an `int`. See details. (Default is `2`).
 #'
@@ -45,7 +45,7 @@
 #' # join similarity
 #' mp2 <- stomp(ref_data, query_data, window_size = 30)
 #' }
-stomp <- function(..., window_size, exclusion_zone = getOption("tsmp.exclusion_zone", 1 / 2), time_constraint = NULL,
+stomp <- function(..., window_size, exclusion_zone = getOption("tsmp.exclusion_zone", 1 / 2), mp_time_constraint = NULL,
                   verbose = getOption("tsmp.verbose", 2)) {
   argv <- list(...)
   argc <- length(argv)
@@ -179,9 +179,9 @@ stomp <- function(..., window_size, exclusion_zone = getOption("tsmp.exclusion_z
     }
 
     # time constraint:
-    if (!is.null(time_constraint)) {
-      exc_st <- 1:max(1, i - time_constraint)
-      exc_ed <- min(matrix_profile_size, i + time_constraint):matrix_profile_size
+    if (!is.null(mp_time_constraint)) {
+      exc_st <- 1:max(1, i - mp_time_constraint)
+      exc_ed <- min(matrix_profile_size, i + mp_time_constraint):matrix_profile_size
 
       distance_profile[c(exc_st, exc_ed), 1] <- Inf
     }

@@ -361,6 +361,10 @@ movmean_std <- function(data, window_size, rcpp = TRUE) {
 #' @examples
 #' mov <- muinvn(tsmp::motifs_discords_small, 50)
 muinvn <- function(data, window_size, n_workers = 1) {
+  if (!is.numeric(n_workers)) {
+    n_workers <- 1
+  }
+
   if (window_size < 2) {
     stop("'window_size' must be at least 2.")
   }

@@ -3,4 +3,5 @@
 *.out
 *.synctex.gz
 *.aux
-/_bookdown_files/
+*_files/
+thesis.Rmd

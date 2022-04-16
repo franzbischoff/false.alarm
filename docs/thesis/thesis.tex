@@ -1,4 +1,4 @@
-% This is the Reed College LaTeX thesis template. Most of the work
+% This is based on the Reed College LaTeX thesis template. Most of the work
 % for the document class was done by Sam Noble (SN), as well as this
 % template. Later comments etc. by Ben Salzberg (BTS). Additional
 % restructuring and APA support by Jess Youngberg (JY).
@@ -24,12 +24,15 @@
 %% Preamble
 %%
 % \documentclass{<something>} must begin each LaTeX document
-\documentclass[12pt,twoside]{reedthesis}
+\documentclass[12pt,twoside]{fmupthesis}
 % Packages are extensions to the basic LaTeX functions. Whatever you
 % want to typeset, there is probably a package out there for it.
 % Chemistry (chemtex), screenplays, you name it.
 % Check out CTAN to see: https://www.ctan.org/
 %%
+\usepackage{svg}
+\usepackage{flafter}
+\usepackage{subfig}
 \usepackage{graphicx,latexsym}
 \usepackage{amsmath}
 \usepackage{amssymb,amsthm}
@@ -111,32 +114,6 @@
 \makeatother
 
 % From {rticles}
-\newlength{\csllabelwidth}
-\setlength{\csllabelwidth}{3em}
-\newlength{\cslhangindent}
-\setlength{\cslhangindent}{1.5em}
-% for Pandoc 2.8 to 2.10.1
-\newenvironment{cslreferences}%
-  {}%
-  {\par}
-% For Pandoc 2.11+
-% As noted by @mirh [2] is needed instead of [3] for 2.12
-\newenvironment{CSLReferences}[2] % #1 hanging-ident, #2 entry spacing
- {% don't indent paragraphs
-  \setlength{\parindent}{0pt}
-  % turn on hanging indent if param 1 is 1
-  \ifodd #1 \everypar{\setlength{\hangindent}{\cslhangindent}}\ignorespaces\fi
-  % set entry spacing
-  \ifnum #2 > 0
-  \setlength{\parskip}{#2\baselineskip}
-  \fi
- }%
- {}
-\usepackage{calc} % for calculating minipage widths
-\newcommand{\CSLBlock}[1]{#1\hfill\break}
-\newcommand{\CSLLeftMargin}[1]{\parbox[t]{\csllabelwidth}{#1}}
-\newcommand{\CSLRightInline}[1]{\parbox[t]{\linewidth - \csllabelwidth}{#1}}
-\newcommand{\CSLIndent}[1]{\hspace{\cslhangindent}#1}
 
 \renewcommand{\contentsname}{Table of Contents}
 % End of CII addition
@@ -165,19 +142,19 @@
 }
 
 	\usepackage{booktabs}
- \usepackage{longtable}
- \usepackage{array}
- \usepackage{multirow}
- \usepackage{wrapfig}
- \usepackage{float}
- \usepackage{colortbl}
- \usepackage{pdflscape}
- \usepackage{tabu}
- \usepackage{threeparttable}
- \usepackage{threeparttablex}
- \usepackage[normalem]{ulem}
- \usepackage{makecell}
- \usepackage{xcolor}
+\usepackage{longtable}
+\usepackage{array}
+\usepackage{multirow}
+\usepackage{wrapfig}
+\usepackage{float}
+\usepackage{colortbl}
+\usepackage{pdflscape}
+\usepackage{tabu}
+\usepackage{threeparttable}
+\usepackage{threeparttablex}
+\usepackage[normalem]{ulem}
+\usepackage{makecell}
+\usepackage{xcolor}
 % End of CII addition
 %%
 %% End Preamble
@@ -186,137 +163,238 @@
 \begin{document}
 
 % Everything below added by CII
-  \maketitle
+\maketitle
 
 \frontmatter % this stuff will be roman-numbered
 \pagestyle{empty} % this removes page numbers from the frontmatter
 
 
 
-  \hypersetup{linkcolor=black}
-  \setcounter{secnumdepth}{2}
-  \setcounter{tocdepth}{2}
-  \tableofcontents
+\hypersetup{linkcolor=black}
+\setcounter{secnumdepth}{2}
+\setcounter{tocdepth}{2}
+\tableofcontents
 
-  \listoftables
+\listoftables
 
-  \listoffigures
+\listoffigures
 
 
 
 \mainmatter % here the regular arabic numbering starts
 \pagestyle{fancyplain} % turns page numbering back on
 
-\hypertarget{acknowledgements}{%
-\section*{Acknowledgements}\label{acknowledgements}}
-\addcontentsline{toc}{section}{Acknowledgements}
-
-I want to thank a few people.
-
-\hypertarget{preface}{%
-\section*{Preface}\label{preface}}
-\addcontentsline{toc}{section}{Preface}
-
-This is an example of a thesis setup to use the reed thesis document class (for LaTeX) and the R bookdown package, in
-general.
-
-\hypertarget{dedication}{%
-\section*{Dedication}\label{dedication}}
-\addcontentsline{toc}{section}{Dedication}
-
-You can have a dedication here if you wish.
-
-\hypertarget{abstract}{%
-\section*{Abstract}\label{abstract}}
-\addcontentsline{toc}{section}{Abstract}
-
-Currently, Point-of-Care (POC) ECG monitoring works either as plot devices or alarms for abnormal cardiac rhythms using
-predefined normal trigger ranges and some rhythm analysis, which raises the problem of false alarms. In comparison,
-complex 12-derivation ECG machines are not suitable to use as simple monitors and are used with strict techniques for
-formal diagnostics. We aim to identify, on streaming data, life-threatening hearth electric patterns to reduce the
-number of false alarms, using low CPU and memory maintaining robustness. The study design is comparable to a diagnostic
-study, where high accuracy is essential. Physionet's 2015 challenge yielded very good algorithms for reducing false
-alarms. However, none of the authors reported benchmarks, memory usage, robustness test, or context invariance that
-could assure its implementation on real monitors to reduce alarm fatigue indeed. We expect to identify the obstacles of
-detecting life-threatening ECG changes within memory, space, and CPU constraints and to reduce ECG monitor's false
-alarms using the proposed methodology, and assess the feasibility of implementing the algorithm in the real world and
-other settings than ICU monitors.
-
 \hypertarget{introduction}{%
 \chapter*{Introduction}\label{introduction}}
 \addcontentsline{toc}{chapter}{Introduction}
 
-Currently, Point-of-Care (POC) ECG monitoring works either as plot devices or alarms for abnormal cardiac rhythms using
-predefined normal trigger ranges. Modern devices also incorporate algorithms to analyze arrhythmias improving their
-specificity. On the other hand, full 12-derivation ECG machines are complex, are not suited to use as simple monitors
-and are used with strict techniques for formal diagnostics of hearth electric conduction pathologies. The automatic
-diagnostics are derived from a complete analysis of the 12-dimension data after it is fully and well collected. Both
-systems do not handle disconnected leads and patient's motions, being strictly necessary to have a good and stable
-signal to allow proper diagnosis. These interferences with the data collection frequently originate false alarms
-increasing both patient and staff's stress; depending on how it is measured, the rate of false alarms (overall) in ICU
-is estimated at 65 to 95\%\textsuperscript{\protect\hyperlink{ref-donchin2002}{1}}.
+Currently, Point-of-Care (POC) ECG monitoring works either as plot devices or alarms for abnormal
+cardiac rhythms using predefined normal trigger ranges. Modern devices also incorporate algorithms
+to analyze arrhythmias improving their specificity. On the other hand, full 12-derivation ECG
+machines are complex, are not suited to use as simple monitors, and are used with strict techniques
+for formal diagnostics of hearth electric conduction pathologies. The automatic diagnostics are
+derived from a complete analysis of the 12-dimension data after it is fully and well collected. Both
+systems do not handle disconnected leads and patient's motions, being strictly necessary to have a
+good and stable signal to allow proper diagnosis. These interferences with the data collection
+frequently originate false alarms increasing both patient and staff's stress; depending on how it is
+measured, the rate of false alarms (overall) in ICU is estimated at 65 to 95\%.\textsuperscript{\protect\hyperlink{ref-donchin2002}{1}}
 
-Alarm fatigue is a well-known problem that consists of a sensory overload of nurses and clinicians, resulting in
-desensitization to alarms and missed alarms (the ``crying wolf'' situation). Patient deaths have been attributed to alarm
-fatigue\textsuperscript{\protect\hyperlink{ref-sendelbach2013}{2}}. In 1982 it was recognized the increase in alarms with ``no end in sight''; studies have
-demonstrated that most alarm signals have no clinical relevance and lead to clinical personnel's delayed response.
-Ultimately patient deaths were reported related to inappropriate responses to alarms\textsuperscript{\protect\hyperlink{ref-sendelbach2013}{2}}.
+Alarm fatigue is a well-known problem that consists of a sensory overload of nurses and clinicians,
+resulting in desensitization to alarms and missed alarms (the ``crying wolf'' situation). Patient
+deaths have been attributed to alarm fatigue.\textsuperscript{\protect\hyperlink{ref-sendelbach2013}{2}} In 1982, the increase in alarms with
+``no end in sight''; studies have demonstrated that most alarm signals have no clinical relevance and
+lead to clinical personnel's delayed response. Ultimately patient deaths were reported related to
+inappropriate responses to alarms.\textsuperscript{\protect\hyperlink{ref-sendelbach2013}{2}}
 
-In April of 2013, The Joint Commission\textsuperscript{\protect\hyperlink{ref-the_jc}{3}} issued the Sentinel Event Alert\textsuperscript{\protect\hyperlink{ref-JointCommission2013}{4}}, establishing
-alarm system safety as a top hospital priority in the National Patient Safety Goal. Nowadays (2021), this subject still
-on their list, in fourth place of importance\textsuperscript{\protect\hyperlink{ref-the_jc2021}{5}}.
+In April of 2013, The Joint Commission\textsuperscript{\protect\hyperlink{ref-the_jc}{3}} issued the Sentinel Event Alert,\textsuperscript{\protect\hyperlink{ref-JointCommission2013}{4}} establishing alarm system safety as a top hospital priority in the National
+Patient Safety Goal. Nowadays (2021), the subject is still on their list, in fourth place of
+importance.\textsuperscript{\protect\hyperlink{ref-the_jc2021}{5}}
 
-In February of 2015, the CinC/Physionet Challenge 2015 was about "Reducing False Arrhythmia Alarms in the
-ICU\textsuperscript{\protect\hyperlink{ref-Clifford2015}{6}}. The introduction article stated that it had been reported that up to 86\% resulting of the alarms are
-false, and this can lead to decreased staff attention and an increase in patients' delirium\textsuperscript{\protect\hyperlink{ref-Lawless1994}{7}--\protect\hyperlink{ref-Parthasarathy2004}{9}}.
+In February of 2015, the CinC/Physionet Challenge 2015 was about "Reducing False Arrhythmia Alarms
+in the ICU.\textsuperscript{\protect\hyperlink{ref-Clifford2015}{6}} The introduction article stated that it had been reported that up to 86\%
+resulting of the alarms are false, and this can lead to decreased staff attention and an increase in
+patients' delirium.\textsuperscript{\protect\hyperlink{ref-Lawless1994}{7}--\protect\hyperlink{ref-Parthasarathy2004}{9}}
 
-Due to this matter's importance, this research aims to identify abnormal hearth electric patterns using streaming data,
-specifically those who are life-threatening, reducing the false alarms, being a reliable signal for Intensive Care Units
-to respond quickly to those situations.
+This subject draws attention to the importance of correctly identify abnormal hearth electric patterns
+in order to avoid the overload of clinical staff. Meanwhile, this opens the opportunity of thinking
+outside the ICU setting, where we still monitoring patients (and ourselves) using devices with
+low processing power, as for example ward monitors, home devices and wearable devices.
 
 \hypertarget{objectives-and-the-research-question}{%
 \chapter{Objectives and the research question}\label{objectives-and-the-research-question}}
 
-This research aims to identify, on streaming data, abnormal hearth electric patterns, specifically those which are
-life-threatening, to be a reliable signal for Intensive Care Units to respond quickly to those situations. It also may
-be able to continuously analyze new data and correct itself shutting off false alarms.
+While this research was inspired on the CinC/Physionet Challenge 2015, its purpose is not to beat
+the state of the art on that challenge, but to identify, on streaming data, abnormal hearth electric
+patterns, specifically those which are life-threatening, using low CPU and low memory requirements
+in order to be able to generalize the use of such information on lower-end devices, outside the ICU,
+as ward devices, home devices, and wearable devices.
 
-As it is known, this goal is not a new problem, so the main questions to solve are: (1) Can we reduce the number of
-false alarms in the ICU setting? (2) Can we accomplish this objective using a minimalist approach (low CPU, low memory)
-while maintaining robustness? (3) Can this approach be used in other health domains other than ICU or ECG?
+The main questions is: can we accomplish this objective using a minimalist approach (low CPU, low
+memory) while maintaining robustness?
 
-\hypertarget{related-works}{%
-\chapter{Related Works}\label{related-works}}
+\hypertarget{principles}{%
+\chapter{Principles}\label{principles}}
 
-The CinC/Physionet Challenge 2015 produced several papers aiming to reduce false alarms on their dataset. On Table
-\ref{tab:alarms} it is listed the five life-threatening alarms present in their dataset.
-\begin{table}
+This research is being conducted using the Research Compendium principles:\textsuperscript{\protect\hyperlink{ref-compendium2019}{10}}
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\tightlist
+\item
+  Stick with the convention of your peers;
+\item
+  Keep data, methods, and output separated;
+\item
+  Specify your computational environment as clearly as you can.
+\end{enumerate}
+Data management follows the FAIR principle (findable, accessible, interoperable, reusable).\textsuperscript{\protect\hyperlink{ref-wilkinson2016}{11}} Concerning these principles, the dataset was converted from Matlab's format to
+CSV format, allowing more interoperability. Additionally, all the project, including the dataset, is
+in conformity with the Codemeta Project.\textsuperscript{\protect\hyperlink{ref-CodeMeta2017}{12}}
 
-\caption{\label{tab:alarms}Definition of the 5 alarm types used in CinC/Physionet Challenge 2015 challenge.}
+\hypertarget{materials-and-methods}{%
+\chapter{Materials and methods}\label{materials-and-methods}}
+
+\hypertarget{softwares}{%
+\section{Softwares}\label{softwares}}
+
+\hypertarget{pipeline-management}{%
+\subsection{Pipeline management}\label{pipeline-management}}
+
+All steps of the process are being managed using the R package \texttt{targets}\textsuperscript{\protect\hyperlink{ref-landau2021}{13}} from data
+extraction to the final report. An example of a pipeline visualization created with \texttt{targets} is
+shown in Fig. \ref{fig:targets}. This package helps to keep record of the random seeds (allowing
+reproducibility), changes in some part of the code (or dependencies) and then running only the
+branches that need to be updated, and several other features to keep a reproducible workflow
+avoiding unnecessary repetitions.
+\begin{figure}
+
+{\centering \includegraphics[width=1\linewidth]{/home/runner/work/false.alarm/false.alarm/docs/figure/targets} 
+
+}
+
+\caption{Example aof pipeline visualization using `targets`. From left to right we see 'Stems' (steps that do not create branches) and 'Patterns' (that contains two or more branches) and the flow of the information. The green color means that the step is up to date to the current code and dependencies.}\label{fig:targets}
+\end{figure}
+\hypertarget{reports-management}{%
+\subsection{Reports management}\label{reports-management}}
+
+The report is available on the main webpage,\textsuperscript{\protect\hyperlink{ref-franz_website}{14}} allowing inspection of previous
+versions managed by the R package \texttt{workflowr}\textsuperscript{\protect\hyperlink{ref-workflowr2021}{15}}. This package complements the
+\texttt{targets} package by taking care of the versioning of every report. It is like a Log Book that keeps
+track of every important milestone of the project, while summarize the computational environment
+where it was run. Fig. \ref{fig:workflowr} shows only a fraction of the generated website, where we
+can see that this version passed the required checks (system is up-to-date, no caches, session
+information was recorded, and others) and we see a table of previous versions.
+\begin{figure}
+
+{\centering \includegraphics[width=1\linewidth]{/home/runner/work/false.alarm/false.alarm/docs/figure/workflowr_print} 
+
+}
+
+\caption{Fraction of the website generated by `workflowr`. On top we see that this version passed all checks, and in the middle we see a table referring to the previous versions of the report..}\label{fig:workflowr}
+\end{figure}
+\hypertarget{modeling-and-parameter-tuning}{%
+\subsection{Modeling and parameter tuning}\label{modeling-and-parameter-tuning}}
+
+The well known package used for data science in R is the \texttt{caret} (short for \textbf{C}lassification
+\textbf{A}nd \textbf{RE}gression \textbf{T}raining).\textsuperscript{\protect\hyperlink{ref-JSSv028i05}{16}} Nevertheless, the author of \texttt{caret} recognizes
+several limitations of his (great) package, and is now in charge of the development of the
+\texttt{tidymodels}\textsuperscript{\protect\hyperlink{ref-tidymodels2020}{17}} collection. For sure, there are other available frameworks and
+opinions.\textsuperscript{\protect\hyperlink{ref-Thompson2020}{18}} Notwithstanding, this project will follow the \texttt{tidymodels} road. Three
+significant arguments 1) constantly improving and constantly being re-checked for bugs; large
+community contribution; 2) allows to plug in a custom modeling algorithm that, in this case, will be
+the one needed for developing this work; 3) \texttt{caret} is not in active development.
+
+\hypertarget{continuous-integration}{%
+\subsection{Continuous integration}\label{continuous-integration}}
+
+Meanwhile, the project pipeline has been set up on GitHub, Inc.~\textsuperscript{\protect\hyperlink{ref-bischoffrepo2021}{19}} leveraging on
+Github Actions\textsuperscript{\protect\hyperlink{ref-gitactions2021}{20}} for the Continuous Integration lifecycle. The repository is
+available at,\textsuperscript{\protect\hyperlink{ref-bischoffrepo2021}{19}} and the resulting report is available at.\textsuperscript{\protect\hyperlink{ref-franz_website}{14}}
+It is also public available the roadmap and tasks status of this thesis on Zenhub.\textsuperscript{\protect\hyperlink{ref-zenhub2021}{21}}
+
+\hypertarget{developed-software}{%
+\section{Developed software}\label{developed-software}}
+
+\hypertarget{matrixprofile}{%
+\subsection{Matrix Profile}\label{matrixprofile}}
+
+Matrix Profile (MP),\textsuperscript{\protect\hyperlink{ref-Yeh2017a}{22}} is a state-of-the-art\textsuperscript{\protect\hyperlink{ref-DePaepe2020}{23},\protect\hyperlink{ref-Feremans2020}{24}} time series
+analysis technique that once computed, allows us to derive frameworks to all sorts of tasks, as
+motif discovery, anomaly detection, regime change detection and others.\textsuperscript{\protect\hyperlink{ref-Yeh2017a}{22}}
+
+Before MP, time series analysis relied on what is called \emph{distance matrix} (DM), a matrix that stores all
+the distances between two time series (or itself, in case of a Self-Join). This was very power consuming,
+and several methods of pruning and dimensionality reduction were researched.\textsuperscript{\protect\hyperlink{ref-Lin2007}{25}}
+
+For brevity, let's just understand that the MP and the companion Profile Index (PI) are two vectors
+that hold one floating point value and one integer value, respectively, regarding the original time
+series: (1) the similarity distance between that point on time (let's call these points ``indexes'')
+and its first nearest-neighbor (1-NN), (2) The index where this this 1-NN is located. The original
+paper has more detailed information.\textsuperscript{\protect\hyperlink{ref-Yeh2017a}{22}} It is computed using a rolling window but instead
+of creating a whole DM, only the minimum values and the index of these minimum are stored (in the
+MP and PI respectively). We can have an idea of the relationship of both on Fig. \ref{fig:thematrix}.
+\begin{figure}
+
+{\centering \includegraphics[width=4.93in]{/home/runner/work/false.alarm/false.alarm/docs/figure/mp_1} 
+
+}
+
+\caption{A distance matrix (top), and a matrix profile (bottom). The matrix profile stores only the minimum values of the distance matrix.}\label{fig:thematrix}
+\end{figure}
+This research has already yielded two R packages concerning the MP algorithms from UCR.\textsuperscript{\protect\hyperlink{ref-mpucr}{26}} The
+first package is called \texttt{tsmp}, and a paper has also been published in the R Journal\textsuperscript{\protect\hyperlink{ref-RJ-2020-021}{27}}
+(Journal Impact Factor™, 2020 of 3.984). The second package is called \texttt{matrixprofiler} and enhances
+the first one, using low-level language to improve computational speed. The author has also joined
+the Matrix Profile Foundation as co-founder together with contributors from Python and Go languages.\textsuperscript{\protect\hyperlink{ref-mpf2020}{28},\protect\hyperlink{ref-VanBenschoten2020}{29}}
+
+This implementation in R is being used for computing the MP and MP-based algorithms of this thesis.
+
+\hypertarget{the-data}{%
+\section{The data}\label{the-data}}
+
+The current dataset used is the CinC/Physionet Challenge 2015 public dataset, modified to include
+only the actual data and the header files in order to be read by the pipeline and is hosted by
+Zenodo\textsuperscript{\protect\hyperlink{ref-bischoff2021}{30}} under the same license as Physionet.
+
+The dataset is composed of 750 patients with at least five minutes records. All signals have been
+resampled (using anti-alias filters) to 12 bit, 250 Hz and have had FIR band-pass (0.05 to 40Hz) and
+mains notch filters applied to remove noise. Pacemaker and other artifacts are still present on the
+ECG.\textsuperscript{\protect\hyperlink{ref-Clifford2015}{6}} Furthermore, this dataset contains at least two ECG derivations and one or more
+variables like arterial blood pressure, photoplethysmograph readings, and respiration movements.
+
+The \emph{events} we seek to identify are the life-threatening arrhythmias as defined by Physionet in
+Table \ref{tab:alarms}.
+\begin{table}[ht]
+
+\caption{\label{tab:alarms}Definition of the five alarm types used in CinC/Physionet Challenge 2015.}
 \centering
-\begin{tabu} to \linewidth {>{\raggedright\arraybackslash}p{5cm}>{\raggedright}X}
+\begin{tabu} to \linewidth {>{\raggedright}X>{\raggedright}X}
 \toprule
 \textbf{Alarm} & \textbf{Definition}\\
 \midrule
 Asystole & No QRS for at least 4 seconds\\
+\addlinespace
 Extreme Bradycardia & Heart rate lower than 40 bpm for 5 consecutive beats\\
+\addlinespace
 Extreme Tachycardia & Heart rate higher than 140 bpm for 17 consecutive beats\\
+\addlinespace
 Ventricular Tachycardia & 5 or more ventricular beats with heart rate higher than 100 bpm\\
+\addlinespace
 Ventricular Flutter/Fibrillation & Fibrillatory, flutter, or oscillatory waveform for at least 4 seconds\\
 \bottomrule
 \end{tabu}
 \end{table}
-They used as score the following formula, which penalizes five times the false negatives (since we do not want to miss
-any real event):
+The fifth minute is precisely where the alarm has been triggered on the original recording set. To
+meet the ANSI/AAMI EC13 Cardiac Monitor Standards,\textsuperscript{\protect\hyperlink{ref-AAMI2002}{31}} the onset of the event is within 10
+seconds of the alarm (i.e., between 4:50 and 5:00 of the record). That doesn't mean that there are
+no other arrhythmias before.
 
-\[Score=\frac{TP+TN}{TP+TN+FP+5*FN}\]
+For comparison, on Table \ref{tab:challenge} we collected the score of the five best participants
+of the challenge.\textsuperscript{\protect\hyperlink{ref-plesinger2015}{32}--\protect\hyperlink{ref-hoogantink2015}{36}}
+\begin{table}[ht]
 
-The five-best scores in this challenge are presented on Table \ref{tab:scores}\textsuperscript{\protect\hyperlink{ref-plesinger2015}{10}--\protect\hyperlink{ref-hoogantink2015}{14}}.
-\begin{table}
-
-\caption{\label{tab:scores}Challenge Results on Streaming}
+\caption{\label{tab:challenge}Challenge Results on real-time data. The scores were multiplied by 100.}
 \centering
-\begin{tabu} to \linewidth {>{\centering}X>{\raggedright\arraybackslash}p{9cm}}
+\begin{tabu} to \linewidth {>{\centering}X>{\raggedright}X}
 \toprule
 \textbf{Score} & \textbf{Authors}\\
 \midrule
@@ -328,163 +406,684 @@ The five-best scores in this challenge are presented on Table \ref{tab:scores}\t
 \bottomrule
 \end{tabu}
 \end{table}
-Their algorithm did a pretty good job on the Physionet test-set. However, independently of their approach to this
-problem, none of the authors reported benchmarks, memory usage, robustness test, or context invariance that could assure
-its implementation on real monitors to reduce alarm fatigue indeed.
-
-There are other arrhythmias that this challenge did not assess, like atrial standstill (hyperkalemia), third-degree
-atrioventricular block, and others that may be life-threatening in some settings. Pulseless electrical activity is a
-frequent condition in cardiac arrest but cannot be identified without blood pressure information. This information is
-usually present in ICU settings but not in other locations.
-
-\hypertarget{the-planned-approach-and-methods-for-solving-the-problem}{%
-\chapter{The planned approach and methods for solving the problem}\label{the-planned-approach-and-methods-for-solving-the-problem}}
-
-\hypertarget{state-of-the-art}{%
-\section{State of the art}\label{state-of-the-art}}
-
-A literature review of the last ten years is being conducted to assess state of the art for ECG automatic processing
-collecting the following points if available : (1) The memory and space used to perform the primary goal of the
-algorithm (sound an alarm, for ex.). (2) The type of algorithms used to identify ECG anomalies. (3) The type of
-algorithms used to identify specific diagnoses (like a flutter, hyperkalemia, and others). (4) Their performance
-(accuracy, ROC, etc.)
-
-A broad search will be conducted on Pubmed, Scopus, Google Scholar, device manuals, and other specific sources.
-
-Keywords:
+The equation used on this challenge to compute the score of the algorithms is in the Equation
+\eqref{eq:score}. This equation is the accuracy formula, with penalization of the false negatives.
+The reasoning pointed out by the authors\textsuperscript{\protect\hyperlink{ref-Clifford2015}{6}} is the clinical impact of existing a
+genuine life-threatening event that was considered unimportant. Accuracy is known to be misleading
+when there is a high class imbalance.\textsuperscript{\protect\hyperlink{ref-Akosa2017}{37}}
+\begin{equation}
+Score = \frac{TP+TN}{TP+TN+FP+5*FN}  \label{eq:score}
+\end{equation}\\
+Assuming that this is a finite dataset, the pathologic cases (1) \(\lim_{TP \to \infty}\) (whenever
+there is an event, it is positive) or (2) \(\lim_{TN \to \infty}\) (whenever there is an event, it is
+false), cannot happen. This dataset has 292 True alarms and 458 False alarms. Experimentally, this
+equation yields:
 \begin{itemize}
 \tightlist
 \item
-  ECG AND monitoring AND ICU
+  0.24 if all guesses are on False class
 \item
-  ECG AND{[}time series{]}
+  0.28 if random guesses
 \item
-  ECG AND automatic AND interpretation
+  0.39 if all guesses are on True class
+\item
+  0.45 if no false positives plus random on True class
+\item
+  0.69 if no false negatives plus random on False class
 \end{itemize}
-Articles published after ``The PhysioNet/Computing in Cardiology Challenge 2015: Reducing False Arrhythmia Alarms in the
-ICU'' will also be analyzed.
+This small experiment (knowing the data in advance) shows that ``a single line of code and a few
+minutes of effort''\textsuperscript{\protect\hyperlink{ref-Wu2020}{38}} algorithm could achieve at most a score of 0.39 in this challenge (the
+last two lines, the algorithm must to be very good on one class).
 
-\hypertarget{research-plan-and-methods}{%
-\section{Research plan and methods}\label{research-plan-and-methods}}
+Nevertheless, this equation will only be useful to allow us to compare the results of this thesis
+with other algorithms.
 
-This research is being conducted using the Research Compendium principles\textsuperscript{\protect\hyperlink{ref-compendium2019}{15}}:
-\begin{enumerate}
-\def\labelenumi{\arabic{enumi}.}
-\tightlist
-\item
-  Stick with the convention of your peers;
-\item
-  Keep data, methods, and output separated;
-\item
-  Specify your computational environment as clearly as you can.
-\end{enumerate}
-Data management is following the FAIR principle (findable, accessible, interoperable, reusable)\textsuperscript{\protect\hyperlink{ref-wilkinson2016}{16}}.
+\hypertarget{work-structure}{%
+\section{Work structure}\label{work-structure}}
 
-Currently, the dataset used is stored on a public repository\textsuperscript{\protect\hyperlink{ref-franz_dataset}{17}}, the source code is publicly open and
-stored on Github\textsuperscript{\protect\hyperlink{ref-franz_github}{18}}, while the reports and reproducibility information on each step is found on a public
-website\textsuperscript{\protect\hyperlink{ref-franz_website}{19}}.
+\hypertarget{project-start}{%
+\subsection{Project start}\label{project-start}}
 
-\hypertarget{type-of-study}{%
-\subsection{Type of study}\label{type-of-study}}
+The project started with a literature survey on the databases Scopus, PubMed, Web of Science, and
+Google Scholar with the following query (the syntax was adapted for each database):
 
-This thesis will be a diagnostic study as the algorithm must classify the change in pattern as positive or negative for
-life-threatening.
+TITLE-ABS-KEY ( algorithm OR `point of care' OR `signal processing' OR `computer
+assisted' OR `support vector machine' OR `decision support system\emph{' OR 'neural
+network}' OR `automatic interpretation' OR `machine learning') AND TITLE-ABS-KEY
+( electrocardiography OR cardiography OR `electrocardiographic tracing' OR ecg
+OR electrocardiogram OR cardiogram ) AND TITLE-ABS-KEY ( `Intensive care unit' OR
+`cardiologic care unit' OR `intensive care center' OR `cardiologic care center' )\\
 
-\hypertarget{the-data}{%
-\subsection{The data}\label{the-data}}
+The inclusion and exclusion criteria were defined as in Table \ref{tab:criteria}.
+\begin{table}[ht]
 
-Initially we will use the CinC/Physionet Challenge 2015 dataset that is publicly available on Physionet. This dataset is
-a good start for exploring the main goal of reduce false alarms. This dataset was manually selected for this challenge
-and the events were labeled by experts, so it is not RAW data. All signals have been resampled (using anti-alias
-filters) to 12 bit, 250 Hz and have had FIR bandpass {[}0.05 to 40Hz{]} and mains notch filters applied to remove noise.
-Pacemaker and other artifacts may be present on the ECG\textsuperscript{\protect\hyperlink{ref-Clifford2015}{6}}. Furthermore, this dataset contains at least two
-ECG derivations and one or more variables like arterial blood pressure, photoplethysmograph readings, and respiration
-movements.
+\caption{\label{tab:criteria}Literature review criteria.}
+\centering
+\begin{tabu} to \linewidth {>{\raggedright}X>{\raggedright}X}
+\toprule
+\textbf{Inclusion criteria} & \textbf{Exclusion criteria}\\
+\midrule
+ECG automatic interpretation & Manual interpretation\\
+\addlinespace
+ECG anomaly detection & Publication older than ten years\\
+\addlinespace
+ECG context change detection & Do not attempt to identify life-threatening arrhythmias, namely asystole, extreme bradycardia, extreme tachycardia, ventricular tachycardia, and ventricular flutter/fibrillation\\
+\addlinespace
+Online Stream ECG analysis & No performance measurements reported\\
+\addlinespace
+Specific diagnosis (like a flutter, hyperkalemia, etc.) & \\
+\bottomrule
+\end{tabu}
+\end{table}
+The survey is being conducted with peer review, all articles on full-text phase were obtained and
+assessed for the extraction phase, with exception of 5 articles that were not available. The survey
+is currently staled on the Data Extraction phase due to external factors.
 
-These variables may or may not be helpful for increasing the sensitivity or specificity of the algorithm. It is planned
-to use the minimum set of variables as it is known in multi-dimensional analysis that using just two (or some small
-subset) of all the dimensions can be much more accurate than either using all dimensions or a single
-dimension\textsuperscript{\protect\hyperlink{ref-gharghabi2018}{20}}.
+Fig. \ref{fig:prisma} shows the flow diagram of the resulting screening using PRISMA format.
+\begin{figure}
 
-It is desirable that real data extracted from Portuguese ICU could be used in further stage to assess the validity of
-the model in real settings and robustness (using RAW data instead of filtered data). The variables available on
-Physionet's dataset are commonly available on Portuguese ICU's.
+{\centering \includegraphics[width=0.7\linewidth]{/home/runner/work/false.alarm/false.alarm/docs/figure/PRISMA} 
 
-\hypertarget{workflow}{%
-\subsection{Workflow}\label{workflow}}
+}
 
-All steps of the process will be managed using the R package \texttt{targets}\textsuperscript{\protect\hyperlink{ref-landau2021}{21}} from data extraction to the final
-report, as shown in Fig. \ref{fig:targets}.
+\caption{Flowchart of the literature survey.}\label{fig:prisma}
+\end{figure}
+The peer review is being conducted by the author of this thesis together with another coleague, Dr.
+Andrew Van Benschoten from the Matrix Profile Foundation.\textsuperscript{\protect\hyperlink{ref-mpf2020}{28}}
 
-The report will then be available on the main webpage\textsuperscript{\protect\hyperlink{ref-franz_website}{19}}, allowing inspection of previous versions managed
-by the R package \texttt{workflowr}\textsuperscript{\protect\hyperlink{ref-workflowr2021}{22}}, as we can see in Fig. \ref{fig:workflow_workflowr}.
+The purpose of using Cohen's \(\kappa\) in such review is to allow us to gauge the agreement of both
+reviewers on the task of selecting the articles according to the goal of the survey. The most naive
+way to verify this would be simply to measure the overall agreement (the number of articles included
+and excluded by both, divided by the total number of articles). Nevertheless, this would not take
+into account the agreement we could expect purely by chance.
 
-\hypertarget{statistical-analysis}{%
-\subsection{Statistical analysis}\label{statistical-analysis}}
+However, the \(\kappa\) statistic must be assessed carefully. This topic is beyond the scope of this work
+therefore it will be explained briefly.
 
-The Statistical analysis will be performed using R language v4.0.4 or greater and it will be computed the ROC curve for
-the algorithm.
+While it is widely used, the \(\kappa\) statistic is also well criticized. The direct interpretation of
+its value depends on several assumptions that are often violated. (1) It is assumed that both
+reviewers have the same level of experience; (2) The ``codes'' (include, exclude) are identified with
+same accuracy; (3) The ``codes'' prevalence are the same; (4) There is no reviewer bias towards one of
+the choices.\textsuperscript{\protect\hyperlink{ref-Sim2005}{39},\protect\hyperlink{ref-Bakeman1997}{40}}
 
-The experiment will be conducted using the Matrix Profile concept\textsuperscript{\protect\hyperlink{ref-yeh2016}{23}}, the state-of-the-art for time series
-analysis. It will be conducted several experiments to identify the best algorithm for this task. One of such algorithms
-is the online semantic segmentation for multi-dimensional time series\textsuperscript{\protect\hyperlink{ref-gharghabi2018}{20}}.
+In addition, the number of ``codes'' affects the relation between the value of \(\kappa\) and the actual
+agreement between the reviewers. For example, given equiprobable ``codes'' and reviewers who are 85\%
+accurate, the value of \(\kappa\) are 0.49, 0.60, 0.66, and 0.69 when number of codes is 2, 3, 5, and 10,
+respectively.\textsuperscript{\protect\hyperlink{ref-Bakeman1997}{40},\protect\hyperlink{ref-Morgan2019}{41}}
 
-In addition, we will combine the fading factors\textsuperscript{\protect\hyperlink{ref-Gama2013}{24},\protect\hyperlink{ref-Rodrigues2010}{25}} strategy to minimize the memory and space
-consumption lowering the processor power needed, allowing this algorithm to be used in almost any device.
+In order to take these limitations in account, the agreement between reviewers was calculated using
+the KappaAcc\textsuperscript{\protect\hyperlink{ref-Bakeman2011}{42}} from Professor Emeritus Roger Bakeman, Georgia State University, which
+computes the estimated accuracy of simulated reviewers.
 
-\hypertarget{research-team}{%
-\subsection{Research Team}\label{research-team}}
+\hypertarget{raw-data}{%
+\subsection{RAW data}\label{raw-data}}
+
+In order to better understand the data acquisition, it has been acquired a Single Lead Heart Rate
+Monitor breakout from Sparkfun™\textsuperscript{\protect\hyperlink{ref-sparkfun2021}{43}} using the AD8232\textsuperscript{\protect\hyperlink{ref-AnalogDevices2020}{44}} microchip
+from Analog Devices Inc., compatible with Arduino\textsuperscript{®},\textsuperscript{\protect\hyperlink{ref-arduino2021}{45}} for an in-house experiment
+(Fig. \ref{fig:ad8232}).
+\begin{figure}
+
+{\centering \includegraphics[width=0.4\linewidth]{/home/runner/work/false.alarm/false.alarm/docs/figure/sparkfun} \includegraphics[width=0.4\linewidth]{/home/runner/work/false.alarm/false.alarm/docs/figure/FullSetup} 
+
+}
+
+\caption{Single Lead Heart Rate Monitor}\label{fig:ad8232}
+\end{figure}
+The output gives us a RAW signal, as shown in Fig. \ref{fig:rawsignal}.
+\begin{figure}
+
+{\centering \includegraphics[width=0.5\linewidth]{/home/runner/work/false.alarm/false.alarm/docs/figure/arduino_plot} 
+
+}
+
+\caption{RAW output from Arduino at ~300hz}\label{fig:rawsignal}
+\end{figure}
+After applying the same settings as the Physionet database (collecting the data at 500hz, resample
+to 250hz, pass-filter, and notch filter), the signal is much better, as shown in Fig.
+\ref{fig:filtersignal}.
+\begin{figure}
+
+{\centering \includegraphics[width=0.9\linewidth]{/home/runner/work/false.alarm/false.alarm/docs/figure/filtered_ecg} 
+
+}
+
+\caption{Gray is RAW, Red is filtered}\label{fig:filtersignal}
+\end{figure}
+\hypertarget{preparing-the-data}{%
+\subsection{Preparing the data}\label{preparing-the-data}}
+
+Usually, data obtained by sensors needs to be ``cleaned'' for proper evaluation. That is different
+from the initial filtering process where the purpose is to enhance the signal. Here we are dealing
+with artifacts, disconnected cables, wandering baselines and others.
+
+Several SQIs (Signal Quality Indexes) are used in the literature,\textsuperscript{\protect\hyperlink{ref-eerikainen2015}{46}} some trivial
+measures as \emph{kurtosis}, \emph{skewness}, median local noise level, other more complex as pcaSQI (the
+ratio of the sum of the five largest eigenvalues associated with the principal components over the
+sum of all eigenvalues obtained by principal component analysis applied to the time aligned ECG
+segments in the window). An assessment of several different methods to estimate electrocardiogram
+signal quality can was performed by Del Rio, \emph{et al}.\textsuperscript{\protect\hyperlink{ref-DelRio2011}{47}}
+
+By experimentation (yet to be validated), a simple formula gives us the
+``complexity'' of the signal and correlates well with the noisy data is shown in Equation
+\eqref{eq:complex}.\textsuperscript{\protect\hyperlink{ref-Batista2014}{48}}
+\begin{equation}
+\sqrt{\sum_{i=1}^w((x_{i+1}-x_i)^2)}, \quad \text{where}\; w \; \text{is the window size} \label{eq:complex}
+\end{equation}\\
+The Fig. \ref{fig:sqi} shows some SQIs and their relation with the data.
+\begin{figure}
+
+{\centering \includegraphics[width=1\linewidth]{/home/runner/work/false.alarm/false.alarm/docs/figure/noise} 
+
+}
+
+\caption{Green line is the "complexity" of the signal}\label{fig:sqi}
+\end{figure}
+Fig. \ref{fig:datafilter} shows that noisy data (probably patient muscle movements) are marked
+with a blue point and thus are ignored by the algorithm.
+\begin{figure}
+
+{\centering \includegraphics[width=1\linewidth]{/home/runner/work/false.alarm/false.alarm/docs/figure/regime_filter} 
+
+}
+
+\caption{Noisy data marked by the "complexity" filter}\label{fig:datafilter}
+\end{figure}
+Although this step of ``cleaning'' the data is often used, this step will also be tested if it is
+really necessary and the performance with and without ``cleaning'' will be reported.
+
+\hypertarget{detecting-regime-changes}{%
+\subsection{Detecting regime changes}\label{detecting-regime-changes}}
+
+The regime change approach will be using the \emph{Arc Counts} concept, used on the FLUSS (Fast Low-cost
+Unipotent Semantic Segmentation) algorithm, as explained by Gharghabi, \emph{et al.},\textsuperscript{\protect\hyperlink{ref-gharghabi2018}{49}}.
+
+The FLUSS (and FLOSS, the on-line version) algorithm is built on top of the Matrix Profile
+(MP)\textsuperscript{\protect\hyperlink{ref-Yeh2017a}{22}}, described on section \ref{matrixprofile}. Recalling that the MP and the companion
+Profile Index (PI) are two vectors holding information about the 1-NN. One can imagine several
+``arcs'' starting from one ``index'' to another. This algorithm is based on the assumption that between
+two regimes, the most similar shape (its nearest neighbor) is located on ``the same side'', so the
+number of ``arcs'' decreases when there is a change on the regime, and increases again. As show on
+Fig. \ref{fig:arcsoriginal}. This drop on the \emph{Arc Counts} is a signal that a change on the shape
+of the signal has happened.
+\begin{figure}
+
+{\centering \includegraphics[width=1\linewidth]{/home/runner/work/false.alarm/false.alarm/docs/figure/fluss_arcs} 
+
+}
+
+\caption{FLUSS algorithm, using arc counts.}\label{fig:arcsoriginal}
+\end{figure}
+The choice of the FLOSS algorithm (on-line version of FLUSS) is founded on the following arguments:
 \begin{itemize}
 \tightlist
 \item
-  Thesis Author: Francisco Bischoff
+  \textbf{Domain Agnosticism:} the algorithm makes no assumptions about the data as opposed to most
+  available algorithms to date.
 \item
-  Supervisor: Professor Pedro Pereira Rodrigues
+  \textbf{Streaming:} the algorithm can provide real-time information.
 \item
-  Co-supervisor: Professor Eamonn Keogh (UCR, Riverside)
+  \textbf{Real-World Data Suitability:} the objective is not to \emph{explain} all the data. Therefore, areas
+  marked as ``don't know'' areas are acceptable.
+\item
+  \textbf{FLOSS is not:} a change point detection algorithm.\textsuperscript{\protect\hyperlink{ref-aminikhanghahi2016}{50}} The interest here is
+  changes in the shapes of a sequence of measurements.
 \end{itemize}
-\hypertarget{expected-results-and-outcomes}{%
-\section{Expected results and outcomes}\label{expected-results-and-outcomes}}
+Other algorithms we can cite are based on Hidden Markov Models (HMM) that require at least two
+parameters to be set by domain experts: cardinality and dimensionality reduction. The most
+attractive alternative could be the Autoplait,\textsuperscript{\protect\hyperlink{ref-Matsubara2014}{51}} which is also domain agnostic and
+parameter-free. It segments the time series using Minimum Description Length (MDL) and recursively
+tests if the region is best modeled by one or two HMM. However, Autoplait is designed for batch
+operation, not streaming, and also requires discrete data. FLOSS was demonstrated to be superior in
+several datasets in its original paper. In addition, FLOSS is robust to several changes in data like
+downsampling, bit depth reduction, baseline wandering, noise, smoothing, and even deleting 3\% of the
+data and filling with simple interpolation. Finally, the most important, the algorithm is light and
+suitable for low-power devices.
 
-We expect the following results: (1) Identify the obstacles of identifying life-threatening ECG changes within memory,
-space, and CPU constraints. (2) Be able to reduce ECG monitor's false alarms using the proposed methodology. (3) Assess
-the feasibility of implementing the algorithm in the real world and other settings than ICU monitors.
+In the MP domain, it is worth also mentioning other possible algorithm: the Time Series Snippets,\textsuperscript{\protect\hyperlink{ref-Imani2018}{52}} based on MPdist.\textsuperscript{\protect\hyperlink{ref-gharghabi2018b}{53}} The latter measures the distance between two
+sequences considering how many similar sub-sequences they share, no matter the order of matching. It
+proved to be a useful measure (not a metric) for meaningfully clustering similar sequences. Time
+Series Snippets exploits MPdist properties to summarize a dataset extracting the \(k\) sequences that
+represent most of the data. The final result seems to be an alternative for detecting regime
+changes, but it is not. The purpose of this algorithm is to find which pattern(s) explains most of
+the dataset. Also, it is not suitable for streaming data. Lastly, MPdist is quite expensive compared
+to the trivial Euclidean distance.
 
-And outcomes: (1) To achieve a better score of false alarm reduction than the best on Physionet's 2015 challenge. (2) To
-push forward the state-of-the-art technology on false alarms reduction, maybe even being domain agnostic. (3) To draw
-more attention to fading factors as a reliable, fast, and cheap approximation of the true value. (4) To draw more
-attention to the matrix profile concept as an efficient, agnostic, and almost parameter-free way to analyze time series.
-(5) To draw more attention of the Patient Monitorization industry on solving the false alarm problem.
+The regime change detection will be evaluated following the criterias explained on section
+\ref{evaluation}.
 
-\hypertarget{whatever}{%
-\chapter{Whatever}\label{whatever}}
+\hypertarget{classregime}{%
+\subsection{Classification of the new regime}\label{classregime}}
 
-\textbf{Research question and aims}
+The next step towards the objective of this work is to verify if the new regime detected by the
+previous step is indeed a life-threatening pattern that we should trigger the alarm.
 
-This research aims to identify, on streaming data, abnormal hearth electric patterns, specifically those who are
-life-threatening, in order to be a reliable signal for Intensive Care Units to respond quickly to those situations. It
-also may be able to continuously analyze new data and correct itself shutting off false alarms. Primarily an experiment
-will be conducted using 2 main algorithms that use Matrix Profile in detecting context changes: SDTD and FLOSS. One uses
-whole data training and testing, and the other uses a streaming approach that is our main interest. The goal will be
-detecting the transition from normal to flutter/FA to normal condition with special attention to not rely on rhythm
-changes. Being this successful, a more generalistic approach will be attempted: to detect changes from normal to
-abnormal to normal conditions, with special attention to handle with disconnected leads or patient movements. Finally,
-this research can prove to be a good addition to the Matrix Profile method, using fading factors in order to reduce
-memory and space consumption, lowering the processor power needed, allowing this algorithm to be used in almost any
-device.
+First let's dismiss some apparent solutions: (1) Clustering. It is well understood that we cannot
+cluster time series subsequences meaningfully with any distance measure, or with any algorithm.\textsuperscript{\protect\hyperlink{ref-Keogh2005}{54}} The main argument is that in a meaningfull algorithm, the output depends on the input,
+and this has been proven to not happen in time series subsequence clustering.\textsuperscript{\protect\hyperlink{ref-Keogh2005}{54}} (2)
+Anomaly detection. In this work we are not looking for surprises, but for patterns that are known to
+be life-threatening. (3) Forecasting. We may be tempted to make predictions, but clearly this is not
+the idea here.
 
-\textbf{About the ongoing project}
+The method of choice is classification. The simplest algorithm could be a \texttt{TRUE}/\texttt{FALSE} binary
+classification. Nevertheless, the five life-threatening patterns have well defined characteristics
+that may seem more plausible to classify the new regime using some kind of ensamble of binary
+classifiers or a ``six-class'' classifier (being the sixth class the \texttt{FALSE} class).
 
-The document submitted for approval is
-\href{https://github.com/franzbischoff/false.alarm/blob/master/protocol/Protocol.pdf}{here}.
+Since the model doesn't know which life-threatening pattern will be present in the regime (or if it
+will be a \texttt{FALSE} case), the model will need to check for all five \texttt{TRUE} cases and if none of these
+cases are identified, it will classify the regime as \texttt{FALSE}.
 
-The full code is open-sourced and available \href{https://github.com/franzbischoff/false.alarm/}{here}
+In order to avoid exceeding processor capacity, an initial set of shapelets\textsuperscript{\protect\hyperlink{ref-Rakthanmanon2013}{55}} can
+be sufficient to build the \texttt{TRUE}/\texttt{FALSE} classifier. And to build such set of shapelets, leveraging
+on the MP, we will use the Contrast Profile.\textsuperscript{\protect\hyperlink{ref-Mercer2021}{56}}
 
-To follow the thesis timeline you can access the full Gantt chart at Zenhub. Click
-\href{https://app.zenhub.com/workspaces/phd-thesis-5eb2ce34f5f30b3aed0a35af/roadmap}{here} (you need a github account, but
-that's it).
+The Contrast Profile (CP) looks for patterns that are at the same time very \emph{similar} to its
+neighbors in class \emph{A} while is very \emph{different} from the nearest neighbor from class \emph{B}. In other
+words, this means that such pattern represents well class \emph{A} and may be taken as a ``signature'' of
+that class.
 
-PDF, EPUB and WORD versions will be available at the end of this work.
+In this case we need to compute two MP, one self-join MP using the \emph{positive} class \(MP^{(++)}\) (the
+class that has the signature we want to find) and one AB-join MP using the \emph{positive} and \emph{negative}
+classes \(MP^{(+-)}\). Then we subtract the first \(MP^{(++)}\) from the last \(MP^{(+-)}\), resulting in
+the \(CP\). The high values on \(CP\) are the locations for the signature candidates we look for (the
+author of CP calls these segments \emph{Plato's}).
+
+Due to the nature of this approach, the MP's (containing values in Euclidean Distance) are truncated
+for values above \(\sqrt{2w}\), where \(w\) is the window size. This because values above this threshold
+are negatively correlated in the Pearson Correlation space. Finally, we normalize the values by
+\(\sqrt{2w}\). The formula \eqref{eq:contrast} synthesizes this computation.
+\begin{equation}
+CP_w = \frac{MP_{w}^{(+-)} - MP_{w}^{(++)}}{\sqrt{2w}} \quad \text{where}\; w \; \text{is the window size} \label{eq:contrast}
+\end{equation}\\
+For a more complete understanding of the process, Fig. \ref{fig:contrast} shows a practical example
+from the original article.\textsuperscript{\protect\hyperlink{ref-Mercer2021}{56}}
+\begin{figure}
+
+{\centering \includegraphics[width=1\linewidth]{/home/runner/work/false.alarm/false.alarm/docs/figure/contrast} 
+
+}
+
+\caption{Top to bottom: two weakly-labeled snippets of a larger time series. T(-) contains only normal beats. T(+) also contains PVC (premature ventricular contractions). Next, two Matrix Profiles with window size 91; AB-join is in red and self-join in blue. Bottom, the Contrast Profile showing the highest location.}\label{fig:contrast}
+\end{figure}
+After extracting candidates for each class signature, a classification algorithm will be fitted and
+evaluated using the criterias explained on section \ref{evaluation}.
+
+\hypertarget{summary-of-the-methodology}{%
+\subsection{Summary of the methodology}\label{summary-of-the-methodology}}
+
+In order to summarize the steps taken on this thesis to accomplish the main objective, Figs.
+\ref{fig:regimedetection}, \ref{fig:shapelets} and \ref{fig:fullmodel} show the overview of the
+processes involved.
+
+First let us introduce the concept of Nested Resampling.\textsuperscript{\protect\hyperlink{ref-Bischl2012}{57}} It is known that when
+increasing model complexity, overfitting on the training set becomes more likely to happen.\textsuperscript{\protect\hyperlink{ref-Hastie2009}{58}} This is an issue that this work has to countermeasure as there are many steps that
+requires parameter tuning, even for algorithms that are almost parameter-free like the MP.
+
+The rule that must be followed is simple: \emph{do not} evaluate a model on the same resampling split used
+to perform its own parameter tuning. Using simple cross-validation, the information about the test
+set ``leaks'' into the evaluation, which leads to overfitting/overtuning, and gives us an optimistic
+biased estimative of the performance. Bernd Bischl, 2012\textsuperscript{\protect\hyperlink{ref-Bischl2012}{57}} describes more deeply these
+factors, and also gives us a countermeasure for that: (1) from preprocessing the data to model
+selection use the training set; (2) the test set should be touched once, on the evaluation step; (3)
+repeat. This guarantees that a ``new'' separated data is only used \emph{after} the model is trained/tuned.
+
+Fig. \ref{fig:nestedresampling} shows us this principle. The steps (1) and (2) described above are
+part of the \textbf{Outer resampling}, which in each loop splits the data in two sets: the training set
+and the test set. The training set is then used in the \textbf{Inner resampling} where, for example, the
+usual cross-validation may be used (creating an \emph{Analysis set} and an \emph{Assessment set}, to avoid
+conflict of terminology), and the best model/parameters is selected. Then, this best model is
+evaluated against the unseen test set that was created for this resampling.
+
+The resulting (aggregated) performance of all outer samples gives us a more honest estimative
+of the expected performance on new data.
+\begin{figure}
+
+{\centering \includegraphics[width=0.7\linewidth]{/home/runner/work/false.alarm/false.alarm/docs/figure/draw-nested-resampling} 
+
+}
+
+\caption{Nested resampling. The full dataset is resampled several times (outer resampling), so each branch has its own Test set (yellow). On each branch, the Training set is used as if it were a full dataset, being resampled again (inner resampling); here the Assessment set (blue) is used to test the learning model and tune parameters. The best model then, is finally evaluated on its own Test set.}\label{fig:nestedresampling}
+\end{figure}
+After the understanding of the Nested Resampling,\textsuperscript{\protect\hyperlink{ref-Bischl2012}{57}} the following flowcharts can be
+better interpreted. Fig. \ref{fig:regimedetection} starts with the ``Full Dataset'' that contains all
+time series from the dataset described on section \ref{the-data}. Each time series represents one
+file from the database, and represents one patient.
+
+The regime change detection will use subsampling (bootstrapping can lead to substantial bias toward
+more complex models) in the Outer resampling and cross-validation in the Inner resampling. How
+the evaluation will be performed and why the use of cross-validation will be explained on section
+\ref{evaluation}.
+\begin{figure}
+
+{\centering \includegraphics[width=0.9\linewidth]{/home/runner/work/false.alarm/false.alarm/docs/figure/draw-regime-model} 
+
+}
+
+\caption{Pipeline for regime change detection. The full dataset (containing several patients) is divided on a Training set and a Test set. The Training set is then resampled in an Analysis set and an Assessment set. The former is used for training/parameter tuning and the latter for assessing the result. The best parameters are then used for evaluation on the Test set. This may be repeated several times.}\label{fig:regimedetection}
+\end{figure}
+Fig. \ref{fig:shapelets} shows the processes for training the classification model. First, the last
+ten seconds of each time series will be identified (the even occurs in this segment). Then the
+dataset will be grouped by class (type of event) and \texttt{TRUE}/\texttt{FALSE} (alarm), so the Outer/Inner
+resampling will produce a Training/Analysis set and Test/Assessment set with similar frequency of
+the full dataset.
+
+The next step will be to extract shapelet candidates using the Contrast Profile and train the
+classifier.
+
+This pipeline will use subsampling (for the same reason above) in the Outer resampling and
+cross-validation in the Inner resampling. How the evaluation will be performed and why the use of
+cross-validation will be explained on section \ref{evaluation}.
+\begin{figure}
+
+{\centering \includegraphics[width=0.6\linewidth]{/home/runner/work/false.alarm/false.alarm/docs/figure/draw-classif-model} 
+
+}
+
+\caption{Pipeline for alarm classification. The full dataset (containing several patients) is grouped by class and by TRUE/FALSE alarm. This grouping allows resampling to keep a similar frequency of classes and TRUE/FALSE of the full dataset. Then the full dataset is divided on a Training set and a Test set. The Training set is then resampled in an Analysis set and an Assessment set. The former is used for extracting shapelets, training the model and parameter tuning; the latter for assessing the performance of the model. Finally, the best model is evaluated on the Test set. This may be repeated several times.}\label{fig:shapelets}
+\end{figure}
+Finally, Fig. \ref{fig:fullmodel} shows how the final model will be used on the field. In a
+streaming scenario, the data will be collected and processed in real-time to maintain an up to date
+Matrix Profile. The FLOSS algorithm will be looking for a regime change. When a regime change is
+detected, a sample of this new regime will be presented to the trained classifier that will evaluate
+if this new regime is a life-threatening condition or not.
+\begin{figure}
+
+{\centering \includegraphics[width=0.6\linewidth]{/home/runner/work/false.alarm/false.alarm/docs/figure/draw-global-model} 
+
+}
+
+\caption{Pipeline of the final process. The streaming data, coming from one patient, is processed to create its Matrix Profile. Then, the FLOSS algorithm is computed for detecting a regime change. When a new regime is detected, a sample of this new regime is analysed by the model and a decision is made. If the new regime is life-threatening, the alarm will be fired.}\label{fig:fullmodel}
+\end{figure}
+\hypertarget{evaluation}{%
+\section{Evaluation of the algorithms}\label{evaluation}}
+
+The subsampling method used on both algorithms, regime change and classification, will be
+the Cross Validation, as the learning task will be in batches.
+
+Other options dismissed:\textsuperscript{\protect\hyperlink{ref-Bischl2012}{57}}
+\begin{itemize}
+\item
+  Leave-One-Out Cross Validation: has better properties for regression than for classification. It
+  has a high variance as an estimator of the mean loss. It also is asymptotically inconsistent and
+  tends to select too complex models. It is demonstrates empirically that 10-fold CV is often
+  superior.
+\item
+  Bootstrapping: while it has low variance, it may be optimistic biased on more complex models.
+  Also, its resampling method with replacement can leak information into the assessment set.
+\item
+  Subsampling: is like bootstrapping, but without replacement. The only argument for not choosing
+  it, is that with Cross Validation we make sure all the data is used for analysis and assessment.
+\end{itemize}
+\hypertarget{regime-change}{%
+\subsection{Regime change}\label{regime-change}}
+
+A detailed discussion about the evaluation process of segmentation algorithms is made by the
+FLUSS/FLOSS author.\textsuperscript{\protect\hyperlink{ref-gharghabi2018}{49}} Previous researches have used precision/recall or derived
+measures for performance. The main issue is how to assume that the algorithm was correct? If the
+ground truth says the change occurred at location 10,000, and the algorithm detects a change at
+location 10,001, is this a miss?
+
+As pointed out by the author, several independent researchers have suggested a temporal tolerance,
+that solves one issue, but also has a hard time on penalize any tiny miss beyond this tolerance.
+
+The second issue is a over-penalization of an algorithm in which most of the detections are
+good, but just one (or a few) is poor.
+
+The author proposes the solution depicted in Fig. \ref{fig:flosseval}. It gives 0 as the best score
+and 1 as the worst. The function sums the distances between the ground truth locations and the
+locations suggested by the algorithm. The sum is then divided by
+the length of the time series to normalize the range to {[}0, 1{]}.
+
+The goal is minimizing this score.
+\begin{figure}
+
+{\centering \includegraphics[width=1\linewidth]{/home/runner/work/false.alarm/false.alarm/docs/figure/floss_eval} 
+
+}
+
+\caption{Regime change evaluation. The top line illustrates the ground truth, and the bottom line the locations reported by the algorithm. Note that multiple proposed locations can be mapped to a single ground truth point.}\label{fig:flosseval}
+\end{figure}
+\hypertarget{classification}{%
+\subsection{Classification}\label{classification}}
+
+As described on section \ref{classregime}, the model for classification will use a set of shapelets
+to identify if we have a \texttt{TRUE} (life-threatening) regime or a \texttt{FALSE} (non life-threatening) regime.
+
+Although the implementation of the final process will be using streaming data, the classification
+algorithm will work in batches, because it will not be applied on every single data point, but on
+samples that are extracted when a regime change is detected. During the training phase, the data is
+also analyzed in batches.
+
+One important factor we must consider is that, on real world, the majority of regime changes will be
+\texttt{FALSE} (i.e., not life-threatening). Thus, a performance measure that is robust to class imbalance
+is needed if we want to be able to assess the model after it was trained, on the field.
+
+It is well known that the \emph{Accuracy} measure is not reliable for unbalanced data\textsuperscript{\protect\hyperlink{ref-Akosa2017}{37},\protect\hyperlink{ref-Bekkar2013}{59}} as it returns optimistic results for a classifier on the majority class. A
+description of common measures used on classification is available.\textsuperscript{\protect\hyperlink{ref-Akosa2017}{37},\protect\hyperlink{ref-Chicco2020}{60}} Here
+we will focus on three candidate measures that can be used: F-score (well discussed on\textsuperscript{\protect\hyperlink{ref-Chicco2020}{60}}), Matthew's Correlation Coefficient (MCC)\textsuperscript{\protect\hyperlink{ref-Matthews1975}{61}} and \(\kappa_m\) statistic.\textsuperscript{\protect\hyperlink{ref-Bifet2015}{62}}
+
+The F-score (let's abbreviate to F\textsubscript{1} as this is the more common setting), is widely used on
+\emph{information retrieval}, where the classes are usually classified as ``relevant'' and ``irrelevant'',
+and combines the \emph{recall} (also known as sensitivity) and the \emph{precision} (the positive predicted
+value). \emph{Recall} assess how well the algorithm retrieves relevant examples among the (usually few)
+relevant items in dataset, while \emph{precision} assess the proportion of indeed relevant items are
+contained in the retrieved examples. It ranges from {[}0, 1{]}. It ignores completely the irrelevant
+items that were not retrieved (usually this set contain lots of items). In classification tasks, its
+main weakness is not evaluate the True Negatives, and if the proportion of a random classifier gets
+towards the \texttt{TRUE} class (increasing the False Positives significantly), this score actually gets
+better, thus not suitable to our case. The F\textsubscript{1} score is defined on equation \eqref{eq:fscore}.
+\begin{equation}
+F_1 score = \frac{2 \cdot TP}{2 \cdot TP + FP + FN} = 2 \cdot \frac{precision \cdot recall}{precision + recall} \label{eq:fscore}
+\end{equation}
+The MCC is a good alternative to the F\textsubscript{1} when we do care about the True negatives (both were
+considered to ``provide more realistic estimates of real-world model performance''\textsuperscript{\protect\hyperlink{ref-Dubey2018}{63}}). It
+is a method to compute the \emph{Pearson product-moment correlation coefficient}\textsuperscript{\protect\hyperlink{ref-Delgado2019}{64}} between
+the actual and predicted values. It ranges from {[}-1, 1{]}. The MCC is the only binary classification
+rate that only gives a high score if the binary classifier was able to correctly classify the
+majority of the positive and negative instances.\textsuperscript{\protect\hyperlink{ref-Chicco2020}{60}} One may argue that Cohen's \(\kappa\)
+has the same behavior, but there are two main differences (1) MCC is \emph{undefined} in the case of a
+\emph{majority voter} while Cohen's \(\kappa\) doesn't discriminates this case from the random classifier
+(\(\kappa\) is zero for both cases) (2) It is proven that in an special case when the classifier is
+increasing the False Negatives, Cohen's \(\kappa\) doesn't get worse as spected, MCC
+doesn't have this issue.\textsuperscript{\protect\hyperlink{ref-Delgado2019}{64}} MCC is defined on equation \eqref{eq:mccval}.
+\begin{equation}
+MCC = \frac{TP \cdot TN - FP \cdot FN}{\sqrt{(TP + FP) \cdot (TP + FN) \cdot (TN + FP) \cdot (TN + FN)}} \label{eq:mccval}
+\end{equation}
+The \(\kappa_m\) statistic\textsuperscript{\protect\hyperlink{ref-Bifet2015}{62}} is a measure that takes in account not the \emph{random classifier}
+but the \emph{majority voter} (a classifier that only votes on the larger class). It was introduced by
+Bifet \emph{et al.}\textsuperscript{\protect\hyperlink{ref-Bifet2015}{62}} for being used in online settings, where the class balance may change
+over time. It is defined on equation \eqref{eq:kappam}, where \(p_0\) is the observed accuracy and
+\(p_m\) is the accuracy of the majority voter. The score ranges from (\(-\infty\), 1{]}, theoretically,
+but in practice you see negative numbers if the classifier is performing worse than the majority voter
+and positive numbers if performing better than the majority number, until the maximum of 1, when the
+classifier is optimal.
+\begin{equation}
+\kappa_m = \frac{p_0 - p_m}{1 - p_m} \label{eq:kappam}
+\end{equation}
+In the inner resampling (model training/tuning), the classification will be binary, and in our case
+we know that the data is slightly unbalanced (60\% false alarms). For this step, the metric for model
+selection will be the MCC. Nevertheless, during the optimization process, the algorithm will seek to
+minimize the False Negative Rate (\(FNR = \frac{FN}{TP+FN}\)), and between ties, the smaller FNR wins.
+
+In the outer resampling, the MCC and \(\kappa_m\) of all winning models will aggregated and reported
+using the median and interquartile range.
+
+For different classifiers, we will use the Wilcoxon's signed-rank test for comparing their performances,
+as this method is known to have low Type I and Type II errors in this kind of comparison.\textsuperscript{\protect\hyperlink{ref-Bifet2015}{62}}
+
+\hypertarget{full-model-streaming-setting}{%
+\subsection{Full model (streaming setting)}\label{full-model-streaming-setting}}
+
+For the final assessment, the best and the average model of the previous pipelines will be assembled
+and tested using the whole original dataset.
+
+The algorithm will be tested in each of the five life-threatening event split individually, in order
+to evaluate its strengths and weakness.
+
+For more transparency, the whole confusion matrix will be reported, as well as the MCC, \(\kappa_m\), and
+the FLOSS evaluation.
+
+\hypertarget{current-results}{%
+\chapter{Current results}\label{current-results}}
+
+\hypertarget{regime-change-detection}{%
+\section{Regime change detection}\label{regime-change-detection}}
+
+The current status on regime change detection pipeline is the implementation of the resampling strategies and evaluation in
+order to start the parameter tuning. An example of the current implementation is shown on Fig. \ref{fig:flossregime}.
+\begin{figure}
+
+{\centering \includegraphics[width=0.8\linewidth,height=0.8\textheight]{/home/runner/work/false.alarm/false.alarm/docs/figure/floss_regime} 
+
+}
+
+\caption{Regime change detection example. The graph on top shows the ECG streaming; the blue line marks the ten seconds before the original alarm was fired; the red line marks the time constraint of 1250; the dark red line marks the limit for taking a decision in this case of Asystole the blue horizontal line represents the size of the sliding window. The graph on the middle shows the Arc counts as seen by the algorithm (with the corrected distribution); the red line marks the current minimum value and its index; the blue horizontal line shows the minimum value seen until then. The graph on the bottom shows the computed Arc counts (raw) and the red line is the theoretical distribution used for correction.}\label{fig:flossregime}
+\end{figure}
+\hypertarget{classification-1}{%
+\section{Classification}\label{classification-1}}
+
+The current status on the classification pipeline is the implementation of the shapelets extraction
+using the Contrast Profile.
+
+An example of candidates for ventricular tachycardia is presented on Fig. \ref{fig:vtachy}.
+\begin{figure}
+
+{\centering \includegraphics[width=0.9\linewidth]{thesis_files/figure-latex/vtachy-1} 
+
+}
+
+\caption{Shapelet candidates for Ventricular Tachycardia.}\label{fig:vtachy}
+\end{figure}
+\hypertarget{feasibility-trial}{%
+\section{Feasibility trial}\label{feasibility-trial}}
+
+A side-project called ``false.alarm.io'' has been derived from this work (an unfortunate mix of
+``false.alarm'' and ``PlatformIO,''\textsuperscript{\protect\hyperlink{ref-PlatformIO}{65}} the IDE chosen to interface the panoply of embedded
+systems we can experiment with). The current results of this side-project are very enlightening and
+show that the final algorithm can indeed be used in small hardware. Further data will be available
+in the future.
+
+A brief mentioning, linking back to the objectives of this work, an initial trial was done using an
+ESP32 MCU (Fig. \ref{fig:esp32}) in order to be sure if such small device can handle the task.
+\begin{figure}
+
+{\centering \includegraphics[width=0.5\linewidth]{/home/runner/work/false.alarm/false.alarm/docs/figure/esp32} 
+
+}
+
+\caption{ESP32 MCU}\label{fig:esp32}
+\end{figure}
+Current results show that such device has enough computation power to handle the task in real-time
+using just one of its two microprocessors. The main limitation seen in advance is the on-chip SRAM
+that must be well managed.
+
+\hypertarget{scientific-contributions}{%
+\chapter{Scientific contributions}\label{scientific-contributions}}
+
+\hypertarget{matrix-profile}{%
+\section{Matrix Profile}\label{matrix-profile}}
+
+Since the first paper presenting this new concept,\textsuperscript{\protect\hyperlink{ref-Yeh2017a}{22}} lots of investigations were made to
+speed up its computation. It is notable how all computations are not dependent on the \emph{rolling
+window size} as previous works not using Matrix Profile. Aside from this, we can see that the first
+STAMP\textsuperscript{\protect\hyperlink{ref-Yeh2017a}{22}} algorithm has the time complexity of \(O(n^2log{n})\) while STOMP\textsuperscript{\protect\hyperlink{ref-zhu2016}{66}}
+\(O(n^2)\) (a significant improvement), but STOMP lacks the ``any-time'' property. Later SCRIMP\textsuperscript{\protect\hyperlink{ref-zhu2018}{67}} solves this problem keeping the same time complexity of \(O(n^2)\). Here we are in the
+``exact'' algorithms domain and we will not extend the scope for conciseness.
+
+The main issue with the algorithms above is the dependency on a fast Fourier transform (FFT)
+library. FFT has been extensively optimized and architecture/CPU bounded to exploit the most of
+speed. Also, padding data to some power of 2 happens to increase the efficiency of the
+algorithm. We can argue that time complexity doesn't mean ``faster'' when we can exploit low-level
+instructions. In our case, using FFT in a low-power device is overkilling. For example, a quick
+search over the internet gives us a hint that computing FFT on a 4096 data in an ESP32 takes
+about 21ms (\textasciitilde47 computations in 1 second). This means \textasciitilde79 seconds for computing all FFT's
+(\textasciitilde3797) required for STAMP using a window of 300. Currently, we can compute a full matrix of 5k
+data in about 9 seconds in an ESP32 MCU (Fig. \ref{fig:esp32}), and keep updating it as fast as
+1 min of data (at 250hz) in just 6 seconds.
+
+Recent works using \emph{exact} algorithms are using an unpublished algorithm called \textbf{MPX}, which
+computes the Matrix Profile using cross-correlation methods ending up faster and is easily
+portable.
+
+\textbf{On computing the Matrix Profile:} the contribution of this work on this area is adding the
+\emph{Online} capability to MPX, which means we can update the Matrix Profile as new data comes in.
+
+\textbf{On extending the Matrix Profile:} the contribution of this work on this area is the use of an
+unexplored constraint that we could apply on building the Matrix Profile we are calling \emph{Similarity
+Threshold} (ST). The original work outputs the similarity values in Euclidean Distance (ED) values,
+while MPX naturally outputs the values in Pearson's correlation coefficients (CC). Both ED and CC
+are interchangeable using the equation \eqref{eq:edcc}. However, we may argue that it is easier to
+compare values that do not depend on the window size during an exploratory phase. MPX happens to
+naturally return values in CC, saving a few more computation time. The ST is an interesting factor
+that we can use, especially when detecting pattern changes during time. The FLOSS algorithm relies
+on counting references between indexes in the time series. ST can help remove ``noise'' from these
+references since only similar patterns above a certain threshold are referenced, and changes have
+more impact on these counts. The best ST threshold is still to be determined.
+\begin{equation}
+CC = 1 - \frac{ED}{(2 \times WindowSize)} \label{eq:edcc}
+\end{equation}\\
+\hypertarget{regime-change-detection-1}{%
+\section{Regime change detection}\label{regime-change-detection-1}}
+
+In the original paper, in chapter 3.5, the authors of FLOSS wisely introduce the \textbf{temporal
+constraint}, which improves the sensitivity of regime change detection on situations where
+a regime may alternate in short periods of time.
+
+Nevertheless, the authors declare the correction curve typically used on the algorithm as ``simply a
+uniform distribution'', but this is not an accurate statement. the \emph{Arc Counts} of newly incoming
+data are truncated by the same amount of temporal constraint. This prevents completely the detection
+of a regime change in the last 10 seconds as this thesis requires.
+
+The main contribution of this work on this area is overcoming this issue by computing the
+theoretical distribution using the temporal constraint parameters beforehand. as shown in Fig.
+\ref{fig:distributions}. That gives us enough data to evaluate a regime change accurately utilizing
+a minimum of \(2 \times WindowSize\) datapoints.
+\begin{figure}
+
+{\centering \includegraphics{thesis_files/figure-latex/distributions-1} 
+
+}
+
+\caption{1D-IAC distributions for earlier temporal constraint (on Matrix Profile)}\label{fig:distributions}
+\end{figure}
+\hypertarget{scientific-outcomes}{%
+\chapter{Scientific outcomes}\label{scientific-outcomes}}
+
+This research has already yielded two R packages concerning the MP algorithms from UCR.\textsuperscript{\protect\hyperlink{ref-mpucr}{26}} The
+first package is called \texttt{tsmp}, and a paper has also been published in the R Journal\textsuperscript{\protect\hyperlink{ref-RJ-2020-021}{27}}
+(Journal Impact Factor™, 2020 of 3.984). The second package is called \texttt{matrixprofiler} and enhances
+the first one, using low-level language to improve computational speed. The author has also joined
+the Matrix Profile Foundation as co-founder together with contributors from Python and Go languages.\textsuperscript{\protect\hyperlink{ref-mpf2020}{28},\protect\hyperlink{ref-VanBenschoten2020}{29}} The benchmarks of the R implementation are available online.\textsuperscript{\protect\hyperlink{ref-Bischoff2021a}{68}}
+
+Additionally to the above publication and the publication of the ongoing literature survey it is planned
+to be published two articles about this thesis subject. The first regarding the application of the
+FLOSS algorithm on real-time ECG showing its potential on using it on low-power devices. The second
+regarding the use of combined shapelets for relevant ECG patterns identification.
+
+\hypertarget{conclusion}{%
+\chapter*{Conclusion}\label{conclusion}}
+\addcontentsline{toc}{chapter}{Conclusion}
+
+If we don't want Conclusion to have a chapter number next to it, we can add the \texttt{\{-\}} attribute.
+
+\textbf{More info}
+
+And here's some other random info: the first paragraph after a chapter title or section head \emph{shouldn't be} indented, because indents are to tell the reader that you're starting a new paragraph. Since that's obvious after a chapter or section title, proper typesetting doesn't add an indent there.
+
+\appendix
+
+\hypertarget{the-first-appendix}{%
+\chapter{The First Appendix}\label{the-first-appendix}}
+
+This first appendix includes all of the R chunks of code that were hidden throughout the document (using the \texttt{include\ =\ FALSE} chunk tag) to help with readability and/or setup.
+
+\textbf{In the main Rmd file}
+
+\textbf{In Chapter \ref{the-first-appendix}:}
+
+\hypertarget{the-second-appendix-for-fun}{%
+\chapter{The Second Appendix, for Fun}\label{the-second-appendix-for-fun}}
 
 \backmatter
 
@@ -501,108 +1100,210 @@ PDF, EPUB and WORD versions will be available at the end of this work.
 \setlength{\parskip}{8pt}
 
 \hypertarget{refs}{}
-\begin{CSLReferences}{0}{0}
-\leavevmode\vadjust pre{\hypertarget{ref-donchin2002}{}}%
-\CSLLeftMargin{1. }
-\CSLRightInline{Donchin Y, Seagull FJ. The hostile environment of the intensive care unit. \emph{Current Opinion in Critical Care}. 2002;8(4):316-320. doi:\href{https://doi.org/10.1097/00075198-200208000-00008}{10.1097/00075198-200208000-00008}}
+\leavevmode\hypertarget{ref-donchin2002}{}%
+1. Donchin Y, Seagull F. The hostile environment of the intensive care unit. \emph{Current Opinion in Critical Care}. 2002;8(4):316-320. doi:\href{https://doi.org/10.1097/00075198-200208000-00008}{10.1097/00075198-200208000-00008}
 
-\leavevmode\vadjust pre{\hypertarget{ref-sendelbach2013}{}}%
-\CSLLeftMargin{2. }
-\CSLRightInline{Sendelbach S, Funk M. Alarm Fatigue. \emph{AACN Advanced Critical Care}. 2013;24(4):378-386. doi:\href{https://doi.org/10.4037/nci.0b013e3182a903f9}{10.4037/nci.0b013e3182a903f9}}
+\leavevmode\hypertarget{ref-sendelbach2013}{}%
+2. Sendelbach S, Funk M. Alarm fatigue. \emph{AACN Advanced Critical Care}. 2013;24(4):378-386. doi:\href{https://doi.org/10.4037/nci.0b013e3182a903f9}{10.4037/nci.0b013e3182a903f9}
 
-\leavevmode\vadjust pre{\hypertarget{ref-the_jc}{}}%
-\CSLLeftMargin{3. }
-\CSLRightInline{The joint commission. Published 2021. Accessed April 8, 2021. \url{https://www.jointcommission.org}}
+\leavevmode\hypertarget{ref-the_jc}{}%
+3. The joint commission. Published 2021. Accessed April 8, 2021. \url{https://www.jointcommission.org}
 
-\leavevmode\vadjust pre{\hypertarget{ref-JointCommission2013}{}}%
-\CSLLeftMargin{4. }
-\CSLRightInline{Joint Commission. {Sentinel event alert - Medical device alarm safety in hospitals.} 2013;(50):1-3.}
+\leavevmode\hypertarget{ref-JointCommission2013}{}%
+4. Joint Commission. Sentinel event alert - Medical device alarm safety in hospitals. 2013;(50):1-3.
 
-\leavevmode\vadjust pre{\hypertarget{ref-the_jc2021}{}}%
-\CSLLeftMargin{5. }
-\CSLRightInline{The joint commission - national patient safety goals. Published 2021. Accessed April 8, 2021. \url{https://www.jointcommission.org/standards/national-patient-safety-goals/hospital-national-patient-safety-goals/}}
+\leavevmode\hypertarget{ref-the_jc2021}{}%
+5. The joint commission - national patient safety goals. Published 2021. Accessed April 8, 2021. \url{https://www.jointcommission.org/standards/national-patient-safety-goals/hospital-national-patient-safety-goals/}
 
-\leavevmode\vadjust pre{\hypertarget{ref-Clifford2015}{}}%
-\CSLLeftMargin{6. }
-\CSLRightInline{Clifford GD, Silva I, Moody B, et al. The PhysioNet/computing in cardiology challenge 2015: Reducing false arrhythmia alarms in the ICU. In: \emph{Computing in Cardiology}.; 2015. doi:\href{https://doi.org/10.1109/cic.2015.7408639}{10.1109/cic.2015.7408639}}
+\leavevmode\hypertarget{ref-Clifford2015}{}%
+6. Clifford GD, Silva I, Moody B, et al. The physionet/computing in cardiology challenge 2015: Reducing false arrhythmia alarms in the icu. In: \emph{Computing in Cardiology}.; 2015. doi:\href{https://doi.org/10.1109/cic.2015.7408639}{10.1109/cic.2015.7408639}
 
-\leavevmode\vadjust pre{\hypertarget{ref-Lawless1994}{}}%
-\CSLLeftMargin{7. }
-\CSLRightInline{Lawless ST. Crying wolf: False alarms in a pediatric intensive care unit. \emph{Critical care medicine}. 1994;22(6):981-985.}
+\leavevmode\hypertarget{ref-Lawless1994}{}%
+7. Lawless ST. Crying wolf: False alarms in a pediatric intensive care unit. \emph{Critical care medicine}. 1994;22(6):981-985.
 
-\leavevmode\vadjust pre{\hypertarget{ref-Chambrin2001}{}}%
-\CSLLeftMargin{8. }
-\CSLRightInline{Chambrin MC. Alarms in the intensive care unit: How can the number of false alarms be reduced? \emph{Critical care (London, England)}. 2001;5(4):184-188. doi:\href{https://doi.org/10.1186/cc1021}{10.1186/cc1021}}
+\leavevmode\hypertarget{ref-Chambrin2001}{}%
+8. Chambrin MC. Alarms in the intensive care unit: How can the number of false alarms be reduced? \emph{Critical care (London, England)}. 2001;5(4):184-188. doi:\href{https://doi.org/10.1186/cc1021}{10.1186/cc1021}
 
-\leavevmode\vadjust pre{\hypertarget{ref-Parthasarathy2004}{}}%
-\CSLLeftMargin{9. }
-\CSLRightInline{Parthasarathy S, Tobin MJ. Sleep in the intensive care unit. \emph{Intensive Care Medicine}. 2004;30(2):197-206. doi:\href{https://doi.org/10.1007/s00134-003-2030-6}{10.1007/s00134-003-2030-6}}
+\leavevmode\hypertarget{ref-Parthasarathy2004}{}%
+9. Parthasarathy S, Tobin MJ. Sleep in the intensive care unit. \emph{Intensive Care Medicine}. 2004;30(2):197-206. doi:\href{https://doi.org/10.1007/s00134-003-2030-6}{10.1007/s00134-003-2030-6}
 
-\leavevmode\vadjust pre{\hypertarget{ref-plesinger2015}{}}%
-\CSLLeftMargin{10. }
-\CSLRightInline{Plesinger F, Klimes P, Halamek J, Jurak P. 2015 computing in cardiology conference (CinC). In: IEEE; 2015. doi:\href{https://doi.org/10.1109/cic.2015.7408641}{10.1109/cic.2015.7408641}}
+\leavevmode\hypertarget{ref-compendium2019}{}%
+10. Research compendium. Published 2019. Accessed April 8, 2021. \url{https://research-compendium.science}
 
-\leavevmode\vadjust pre{\hypertarget{ref-kalidas2015}{}}%
-\CSLLeftMargin{11. }
-\CSLRightInline{Kalidas V, Tamil LS. 2015 computing in cardiology conference (CinC). In: IEEE; 2015. doi:\href{https://doi.org/10.1109/cic.2015.7411015}{10.1109/cic.2015.7411015}}
+\leavevmode\hypertarget{ref-wilkinson2016}{}%
+11. Wilkinson M, Dumontier M, Aalbersberg I, et al. The fair guiding principles for scientific data management and stewardship. \emph{Scientific Data}. 2016;3(1). doi:\href{https://doi.org/10.1038/sdata.2016.18}{10.1038/sdata.2016.18}
 
-\leavevmode\vadjust pre{\hypertarget{ref-couto2015}{}}%
-\CSLLeftMargin{12. }
-\CSLRightInline{Couto P, Ramalho R, Rodrigues R. 2015 computing in cardiology conference (CinC). In: IEEE; 2015. doi:\href{https://doi.org/10.1109/cic.2015.7411019}{10.1109/cic.2015.7411019}}
+\leavevmode\hypertarget{ref-CodeMeta2017}{}%
+12. The codemeta project. Published 2017. Accessed January 10, 2022. \url{https://codemeta.github.io/}
 
-\leavevmode\vadjust pre{\hypertarget{ref-fallet2015}{}}%
-\CSLLeftMargin{13. }
-\CSLRightInline{Fallet S, Yazdani S, Vesin J-M. 2015 computing in cardiology conference (CinC). In: IEEE; 2015. doi:\href{https://doi.org/10.1109/cic.2015.7408640}{10.1109/cic.2015.7408640}}
+\leavevmode\hypertarget{ref-landau2021}{}%
+13. Landau W, Landau W, Warkentin M, et al. \emph{Ropensci/Targets, Dynamic Function-Oriented 'Make'-Like Declarative Workflows}. Zenodo; 2021. doi:\href{https://doi.org/10.5281/ZENODO.4062936}{10.5281/ZENODO.4062936}
 
-\leavevmode\vadjust pre{\hypertarget{ref-hoogantink2015}{}}%
-\CSLLeftMargin{14. }
-\CSLRightInline{Hoog Antink C, Leonhardt S. 2015 computing in cardiology conference (CinC). In: IEEE; 2015. doi:\href{https://doi.org/10.1109/cic.2015.7408642}{10.1109/cic.2015.7408642}}
+\leavevmode\hypertarget{ref-franz_website}{}%
+14. Franzbischoff/false.alarm: Reproducible reports. Published 2021. Accessed April 8, 2021. \url{https://franzbischoff.github.io/false.alarm}
 
-\leavevmode\vadjust pre{\hypertarget{ref-compendium2019}{}}%
-\CSLLeftMargin{15. }
-\CSLRightInline{Research compendium. Published 2019. Accessed April 8, 2021. \url{https://research-compendium.science}}
+\leavevmode\hypertarget{ref-workflowr2021}{}%
+15. Blischak JD, Carbonetto P, Stephens M. Creating and sharing reproducible research code the workflowr way {[}version 1; peer review: 3 approved{]}. \emph{F1000Research}. 2019;8(1749). doi:\href{https://doi.org/10.12688/f1000research.20843.1}{10.12688/f1000research.20843.1}
 
-\leavevmode\vadjust pre{\hypertarget{ref-wilkinson2016}{}}%
-\CSLLeftMargin{16. }
-\CSLRightInline{Wilkinson MD, Dumontier M, Aalbersberg IjJ, et al. The FAIR Guiding Principles for scientific data management and stewardship. \emph{Scientific Data}. 2016;3(1). doi:\href{https://doi.org/10.1038/sdata.2016.18}{10.1038/sdata.2016.18}}
+\leavevmode\hypertarget{ref-JSSv028i05}{}%
+16. Kuhn M. Building predictive models in r using the caret package. \emph{Journal of Statistical Software, Articles}. 2008;28(5):1-26. doi:\href{https://doi.org/10.18637/jss.v028.i05}{10.18637/jss.v028.i05}
 
-\leavevmode\vadjust pre{\hypertarget{ref-franz_dataset}{}}%
-\CSLLeftMargin{17. }
-\CSLRightInline{The PhysioNet computing in cardiology challenge 2015 - dataset. Published 2021. Accessed April 8, 2021. \url{https://zenodo.org/record/4634014}}
+\leavevmode\hypertarget{ref-tidymodels2020}{}%
+17. Kuhn M, Wickham H. \emph{Tidymodels: A Collection of Packages for Modeling and Machine Learning Using Tidyverse Principles.}; 2020. \url{https://www.tidymodels.org}
 
-\leavevmode\vadjust pre{\hypertarget{ref-franz_github}{}}%
-\CSLLeftMargin{18. }
-\CSLRightInline{Franzbischoff/false.alarm: PhD programme in health data science. Published 2020. Accessed April 8, 2021. \url{https://github.com/franzbischoff/false.alarm}}
+\leavevmode\hypertarget{ref-Thompson2020}{}%
+18. Thompson J. On not using tidymodels. Published October 2020. Accessed January 5, 2022. \url{https://staffblogs.le.ac.uk/teachingr/2020/10/05/on-not-using-tidymodels/}
 
-\leavevmode\vadjust pre{\hypertarget{ref-franz_website}{}}%
-\CSLLeftMargin{19. }
-\CSLRightInline{Franzbischoff/false.alarm: Reproducible reports. Published 2021. Accessed April 8, 2021. \url{https://franzbischoff.github.io/false.alarm}}
+\leavevmode\hypertarget{ref-bischoffrepo2021}{}%
+19. Bischoff F. GitHub false.alarm repository. Accessed July 14, 2021. \url{https://github.com/franzbischoff/false.alarm}
 
-\leavevmode\vadjust pre{\hypertarget{ref-gharghabi2018}{}}%
-\CSLLeftMargin{20. }
-\CSLRightInline{Gharghabi S, Yeh C-CM, Ding Y, et al. Domain agnostic online semantic segmentation for multi-dimensional time series. \emph{Data Mining and Knowledge Discovery}. 2018;33(1):96-130. doi:\href{https://doi.org/10.1007/s10618-018-0589-3}{10.1007/s10618-018-0589-3}}
+\leavevmode\hypertarget{ref-gitactions2021}{}%
+20. GitHub Actions. Accessed July 14, 2021. \url{https://github.com/features/actions}
 
-\leavevmode\vadjust pre{\hypertarget{ref-landau2021}{}}%
-\CSLLeftMargin{21. }
-\CSLRightInline{Landau W, Landau W, Warkentin MT, et al. \emph{Ropensci/Targets, Dynamic Function-Oriented 'Make'-Like Declarative Workflows}. Zenodo; 2021. doi:\href{https://doi.org/10.5281/ZENODO.4062936}{10.5281/ZENODO.4062936}}
+\leavevmode\hypertarget{ref-zenhub2021}{}%
+21. Zenhub roadmap. Accessed January 27, 2022. \url{https://app.zenhub.com/workspaces/phd-thesis-5eb2ce34f5f30b3aed0a35af/roadmap}
 
-\leavevmode\vadjust pre{\hypertarget{ref-workflowr2021}{}}%
-\CSLLeftMargin{22. }
-\CSLRightInline{Blischak JD, Carbonetto P, Stephens M. Creating and sharing reproducible research code the workflowr way {[}version 1; peer review: 3 approved{]}. \emph{F1000Research}. 2019;8(1749). doi:\href{https://doi.org/10.12688/f1000research.20843.1}{10.12688/f1000research.20843.1}}
+\leavevmode\hypertarget{ref-Yeh2017a}{}%
+22. Yeh C-CM, Zhu Y, Ulanova L, et al. Matrix profile i: All pairs similarity joins for time series: A unifying view that includes motifs, discords and shapelets. In: \emph{2016 Ieee 16th International Conference on Data Mining (Icdm)}. IEEE; 2016:1317-1322. doi:\href{https://doi.org/10.1109/ICDM.2016.0179}{10.1109/ICDM.2016.0179}
 
-\leavevmode\vadjust pre{\hypertarget{ref-yeh2016}{}}%
-\CSLLeftMargin{23. }
-\CSLRightInline{Yeh C-CM, Zhu Y, Ulanova L, et al. 2016 IEEE 16th international conference on data mining (ICDM). In: IEEE; 2016. doi:\href{https://doi.org/10.1109/icdm.2016.0179}{10.1109/icdm.2016.0179}}
+\leavevmode\hypertarget{ref-DePaepe2020}{}%
+23. De Paepe D, Vanden Hautte S, Steenwinckel B, et al. A generalized matrix profile framework with support for contextual series analysis. \emph{Engineering Applications of Artificial Intelligence}. 2020;90(January):103487. doi:\href{https://doi.org/10.1016/j.engappai.2020.103487}{10.1016/j.engappai.2020.103487}
 
-\leavevmode\vadjust pre{\hypertarget{ref-Gama2013}{}}%
-\CSLLeftMargin{24. }
-\CSLRightInline{Gama J, Sebastião R, Rodrigues PP. {On evaluating stream learning algorithms}. \emph{Machine Learning}. 2013;90(3):317-346. doi:\href{https://doi.org/10.1007/s10994-012-5320-9}{10.1007/s10994-012-5320-9}}
+\leavevmode\hypertarget{ref-Feremans2020}{}%
+24. Feremans L, Vercruyssen V, Cule B, Meert W, Goethals B. Pattern-Based Anomaly Detection in Mixed-Type Time Series. In: \emph{Lecture Notes in Computer Science (Including Subseries Lecture Notes in Artificial Intelligence and Lecture Notes in Bioinformatics)}. Vol 11906 LNAI.; 2020:240-256. doi:\href{https://doi.org/10.1007/978-3-030-46150-8_15}{10.1007/978-3-030-46150-8\_15}
 
-\leavevmode\vadjust pre{\hypertarget{ref-Rodrigues2010}{}}%
-\CSLLeftMargin{25. }
-\CSLRightInline{Rodrigues PP, Gama J, Sebastião R. {Memoryless Fading Windows in Ubiquitous Settings}. In: \emph{Proceedings of the First Ubiquitous Data Mining Workshop}.; 2010:23-27.}
+\leavevmode\hypertarget{ref-Lin2007}{}%
+25. Lin J, Keogh E, Wei L, Lonardi S. Experiencing SAX: A novel symbolic representation of time series. \emph{Data Mining and Knowledge Discovery}. 2007;15(2):107-144. doi:\href{https://doi.org/10.1007/s10618-007-0064-z}{10.1007/s10618-007-0064-z}
 
-\end{CSLReferences}
+\leavevmode\hypertarget{ref-mpucr}{}%
+26. UCR Matrix Profile Page. Accessed January 27, 2022. \url{https://www.cs.ucr.edu/~eamonn/MatrixProfile.html}
+
+\leavevmode\hypertarget{ref-RJ-2020-021}{}%
+27. Bischoff F, Rodrigues PP. tsmp: An R Package for Time Series with Matrix Profile. \emph{The R Journal}. 2020;12(1):76-86. doi:\href{https://doi.org/10.32614/RJ-2020-021}{10.32614/RJ-2020-021}
+
+\leavevmode\hypertarget{ref-mpf2020}{}%
+28. Matrix Profile Foundation. Accessed January 27, 2022. \url{https://matrixprofile.org/}
+
+\leavevmode\hypertarget{ref-VanBenschoten2020}{}%
+29. Van Benschoten A, Ouyang A, Bischoff F, Marrs T. MPA: A novel cross-language api for time series analysis. \emph{Journal of Open Source Software}. 2020;5(49):2179. doi:\href{https://doi.org/10.21105/joss.02179}{10.21105/joss.02179}
+
+\leavevmode\hypertarget{ref-bischoff2021}{}%
+30. Reducing false arrhythmia alarms in the icu - the physionet computing in cardiology challenge 2015. Published online March 24, 2021. doi:\href{https://doi.org/10.5281/zenodo.4634013}{10.5281/zenodo.4634013}
+
+\leavevmode\hypertarget{ref-AAMI2002}{}%
+31. Association for the Advancement of Medical Instrumentation. \emph{Cardiac monitors, heart rate meters, and alarms}. Association for the Advancement of Medical Instrumentation; 2002.
+
+\leavevmode\hypertarget{ref-plesinger2015}{}%
+32. Plesinger F, Klimes P, Halamek J, Jurak P. False alarms in intensive care unit monitors: Detection of life-threatening arrhythmias using elementary algebra, descriptive statistics and fuzzy logic. In: IEEE; 2015. doi:\href{https://doi.org/10.1109/cic.2015.7408641}{10.1109/cic.2015.7408641}
+
+\leavevmode\hypertarget{ref-kalidas2015}{}%
+33. Kalidas V, Tamil L. Enhancing accuracy of arrhythmia classification by combining logical and machine learning techniques. In: IEEE; 2015. doi:\href{https://doi.org/10.1109/cic.2015.7411015}{10.1109/cic.2015.7411015}
+
+\leavevmode\hypertarget{ref-couto2015}{}%
+34. Couto P, Ramalho R, Rodrigues R. Suppression of false arrhythmia alarms using ecg and pulsatile waveforms. In: IEEE; 2015. doi:\href{https://doi.org/10.1109/cic.2015.7411019}{10.1109/cic.2015.7411019}
+
+\leavevmode\hypertarget{ref-fallet2015}{}%
+35. Fallet S, Yazdani S, Vesin J. A multimodal approach to reduce false arrhythmia alarms in the intensive care unit. In: IEEE; 2015. doi:\href{https://doi.org/10.1109/cic.2015.7408640}{10.1109/cic.2015.7408640}
+
+\leavevmode\hypertarget{ref-hoogantink2015}{}%
+36. Hoog Antink C, Leonhardt S. Reducing false arrhythmia alarms using robust interval estimation and machine learning. In: IEEE; 2015. doi:\href{https://doi.org/10.1109/cic.2015.7408642}{10.1109/cic.2015.7408642}
+
+\leavevmode\hypertarget{ref-Akosa2017}{}%
+37. Akosa JS. Predictive accuracy: A misleading performance measure for highly imbalanced data. \emph{SAS Global Forum}. 2017;942:1-12.
+
+\leavevmode\hypertarget{ref-Wu2020}{}%
+38. Wu R, Keogh E. Current Time Series Anomaly Detection Benchmarks are Flawed and are Creating the Illusion of Progress. \emph{IEEE Transactions on Knowledge and Data Engineering}. Published online September 2021. doi:\href{https://doi.org/10.1109/TKDE.2021.3112126}{10.1109/TKDE.2021.3112126}
+
+\leavevmode\hypertarget{ref-Sim2005}{}%
+39. Sim J, Wright CC. The Kappa Statistic in Reliability Studies: Use, Interpretation, and Sample Size Requirements. \emph{Physical Therapy}. 2005;85(3):257-268. doi:\href{https://doi.org/10.1093/ptj/85.3.257}{10.1093/ptj/85.3.257}
+
+\leavevmode\hypertarget{ref-Bakeman1997}{}%
+40. Bakeman R, McArthur D, Quera V, Robinson BF. Detecting sequential patterns and determining their reliability with fallible observers. \emph{Psychological Methods}. 1997;2(4):357-370. doi:\href{https://doi.org/10.1037/1082-989X.2.4.357}{10.1037/1082-989X.2.4.357}
+
+\leavevmode\hypertarget{ref-Morgan2019}{}%
+41. Morgan S. \emph{Research Methodology and Statistical Methods}.; 2019:300.
+
+\leavevmode\hypertarget{ref-Bakeman2011}{}%
+42. Bakeman R, Quera V. \emph{Sequential Analysis and Observational Methods for the Behavioral Sciences}. Cambridge University Press; 2011:1-183. doi:\href{https://doi.org/10.1017/CBO9781139017343}{10.1017/CBO9781139017343}
+
+\leavevmode\hypertarget{ref-sparkfun2021}{}%
+43. SparkFun Electronics. AD8232 single lead heart rate monitor. Published 2014. Accessed July 14, 2021. \url{https://www.sparkfun.com/products/12650}
+
+\leavevmode\hypertarget{ref-AnalogDevices2020}{}%
+44. Analog Devices. AD8232 Single-Lead, Heart Rate Monitor Front End. Published online 2014. Accessed July 14, 2021. \url{https://www.analog.com/media/en/technical-documentation/data-sheets/ad8232.pdf}
+
+\leavevmode\hypertarget{ref-arduino2021}{}%
+45. Arduino. Arduino. Published 2008. Accessed July 14, 2021. \url{https://www.arduino.cc/}
+
+\leavevmode\hypertarget{ref-eerikainen2015}{}%
+46. Eerikainen L, Vanschoren J, Rooijakkers M, Vullings R, Aarts R. Decreasing the false alarm rate of arrhythmias in intensive care using a machine learning approach. In: IEEE; 2015. doi:\href{https://doi.org/10.1109/cic.2015.7408644}{10.1109/cic.2015.7408644}
+
+\leavevmode\hypertarget{ref-DelRio2011}{}%
+47. Del Rio BAS, Lopetegi T, Romero I. Assessment of different methods to estimate electrocardiogram signal quality. \emph{Computing in Cardiology}. 2011;38:609-612.
+
+\leavevmode\hypertarget{ref-Batista2014}{}%
+48. Batista GEAPA, Keogh EJ, Tataw OM, Souza VMA de. CID: an efficient complexity-invariant distance for time series. \emph{Data Mining and Knowledge Discovery}. 2014;28(3):634-669. doi:\href{https://doi.org/10.1007/s10618-013-0312-3}{10.1007/s10618-013-0312-3}
+
+\leavevmode\hypertarget{ref-gharghabi2018}{}%
+49. Gharghabi S, Yeh C, Ding Y, et al. Domain agnostic online semantic segmentation for multi-dimensional time series. \emph{Data Mining and Knowledge Discovery}. 2018;33(1):96-130. doi:\href{https://doi.org/10.1007/s10618-018-0589-3}{10.1007/s10618-018-0589-3}
+
+\leavevmode\hypertarget{ref-aminikhanghahi2016}{}%
+50. Aminikhanghahi S, Cook DJ. A survey of methods for time series change point detection. \emph{Knowledge and Information Systems}. 2016;51(2):339-367. doi:\href{https://doi.org/10.1007/s10115-016-0987-z}{10.1007/s10115-016-0987-z}
+
+\leavevmode\hypertarget{ref-Matsubara2014}{}%
+51. Matsubara Y, Sakurai Y, Faloutsos C. AutoPlait: Automatic mining of co-evolving time sequences. \emph{Proceedings of the ACM SIGMOD International Conference on Management of Data}. Published online 2014:193-204. doi:\href{https://doi.org/10.1145/2588555.2588556}{10.1145/2588555.2588556}
+
+\leavevmode\hypertarget{ref-Imani2018}{}%
+52. Imani S, Madrid F, Ding W, Crouter S, Keogh E. Matrix profile xiii : Time series snippets : A new primitive for time series data mining. In: \emph{2018 Ieee International Conference on Data Mining (Icdm)}.; 2018.
+
+\leavevmode\hypertarget{ref-gharghabi2018b}{}%
+53. Gharghabi S, Imani S, Bagnall A, Darvishzadeh A, Keogh E. Matrix profile xii: MPdist: A novel time series distance measure to allow data mining in more challenging scenarios. In: IEEE; 2018:965-970. doi:\href{https://doi.org/10.1109/ICDM.2018.00119}{10.1109/ICDM.2018.00119}
+
+\leavevmode\hypertarget{ref-Keogh2005}{}%
+54. Keogh E, Lin J. Clustering of time-series subsequences is meaningless: implications for previous and future research. \emph{Knowledge and Information Systems}. 2005;8(2):154-177. doi:\href{https://doi.org/10.1007/s10115-004-0172-7}{10.1007/s10115-004-0172-7}
+
+\leavevmode\hypertarget{ref-Rakthanmanon2013}{}%
+55. Rakthanmanon T, Keogh E. Fast shapelets: A scalable algorithm for discovering time series shapelets. In: \emph{Proceedings of the 2013 Siam International Conference on Data Mining}. Society for Industrial; Applied Mathematics; 2013:668-676. doi:\href{https://doi.org/10.1137/1.9781611972832.74}{10.1137/1.9781611972832.74}
+
+\leavevmode\hypertarget{ref-Mercer2021}{}%
+56. Mercer R, Alaee S, Abdoli A, Singh S, Murillo A, Keogh E. Matrix profile xxiii: Contrast profile: A novel time series primitive that allows real world classification. In: \emph{ICDM 2021}. IEEE; 2021:10.
+
+\leavevmode\hypertarget{ref-Bischl2012}{}%
+57. Bischl B, Mersmann O, Trautmann H, Weihs C. Resampling Methods for Meta-Model Validation with Recommendations for Evolutionary Computation. \emph{Evolutionary Computation}. 2012;20(2):249-275. doi:\href{https://doi.org/10.1162/EVCO_a_00069}{10.1162/EVCO\_a\_00069}
+
+\leavevmode\hypertarget{ref-Hastie2009}{}%
+58. Hastie T, Tibshirani R, Friedman J. \emph{The Elements of Statistical Learning: Data Mining, Inference, and Prediction}. Springer; 2009. doi:\href{https://doi.org/10.1007/978-0-387-84858-7}{10.1007/978-0-387-84858-7}
+
+\leavevmode\hypertarget{ref-Bekkar2013}{}%
+59. Bekkar M, Djemaa HK, Alitouche TA. Evaluation Measures for Models Assessment over Imbalanced Data Sets. \emph{Journal of Information Engineering and Applications}. 2013;3(10):27-38. \url{http://www.iiste.org/Journals/index.php/JIEA/article/view/7633}
+
+\leavevmode\hypertarget{ref-Chicco2020}{}%
+60. Chicco D, Jurman G. The advantages of the Matthews correlation coefficient (MCC) over F1 score and accuracy in binary classification evaluation. \emph{BMC Genomics}. 2020;21(1):6. doi:\href{https://doi.org/10.1186/s12864-019-6413-7}{10.1186/s12864-019-6413-7}
+
+\leavevmode\hypertarget{ref-Matthews1975}{}%
+61. Matthews BW. Comparison of the predicted and observed secondary structure of T4 phage lysozyme. \emph{Biochimica et Biophysica Acta (BBA) - Protein Structure}. 1975;405(2):442-451. doi:\href{https://doi.org/10.1016/0005-2795(75)90109-9}{10.1016/0005-2795(75)90109-9}
+
+\leavevmode\hypertarget{ref-Bifet2015}{}%
+62. Bifet A, de Francisci Morales G, Read J, Holmes G, Pfahringer B. Efficient Online Evaluation of Big Data Stream Classifiers. In: \emph{Proceedings of the 21th Acm Sigkdd International Conference on Knowledge Discovery and Data Mining}. Vols 2015-Augus. ACM; 2015:59-68. doi:\href{https://doi.org/10.1145/2783258.2783372}{10.1145/2783258.2783372}
+
+\leavevmode\hypertarget{ref-Dubey2018}{}%
+63. Dubey A, Tarar S. Evaluation of approximate rank-order clustering using matthews correlation coefficient. \emph{International Journal of Engineering and Advanced Technology}. 2018;8(2):106-113.
+
+\leavevmode\hypertarget{ref-Delgado2019}{}%
+64. Delgado R, Tibau X-A. Why Cohen's Kappa should be avoided as performance measure in classification. Gu Q, ed. \emph{PLOS ONE}. 2019;14(9):e0222916. doi:\href{https://doi.org/10.1371/journal.pone.0222916}{10.1371/journal.pone.0222916}
+
+\leavevmode\hypertarget{ref-PlatformIO}{}%
+65. PlatformIO, a professional collaborative platform for embedded development. Accessed January 5, 2022. \url{https://platformio.org/}
+
+\leavevmode\hypertarget{ref-zhu2016}{}%
+66. Zhu Y, Zimmerman Z, Senobari NS, et al. 2016 ieee 16th international conference on data mining (icdm). In: IEEE; 2016. doi:\href{https://doi.org/10.1109/icdm.2016.0085}{10.1109/icdm.2016.0085}
+
+\leavevmode\hypertarget{ref-zhu2018}{}%
+67. Zhu Y, Yeh C-CM, Zimmerman Z, Kamgar K, Keogh E. 2018 ieee international conference on data mining (icdm). In: IEEE; 2018. doi:\href{https://doi.org/10.1109/icdm.2018.00099}{10.1109/icdm.2018.00099}
+
+\leavevmode\hypertarget{ref-Bischoff2021a}{}%
+68. Bischoff F. RPubs - matrixprofiler - benchmarks. Published 2021. Accessed January 12, 2022. \url{https://rpubs.com/franzbischoff/matrixprofiler}
+
 
 % Index?
 

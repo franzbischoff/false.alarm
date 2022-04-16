@@ -1,7 +1,8 @@
 Type: Package
 Package: false.alarm
-Title: Detecting life-threatening patterns in Point-of-care ECG using efficient memory and processor power
-Version: 0.0.0.9100
+Title: Detecting life-threatening patterns in Point-of-care ECG using
+    efficient memory and processor power
+Version: 0.0.0.9200
 Authors@R:
     person(given = "Francisco",
            family = "Bischoff",
@@ -9,52 +10,78 @@ Authors@R:
            email = "fbischoff@med.up.pt",
            comment = c(ORCID = "0000-0002-5301-8672"))
 Maintainer: Francisco Bischoff <fbischoff@med.up.pt>
-Description: PhD work about detecting life-threatening patterns in Point-of-care ECG using efficient memory and processor power.
+Description: Ph.D. work about detecting life-threatening patterns in
+    Point-of-care ECG using efficient memory and processor power.
 License: CC BY-NC-SA 4.0
 URL: https://github.com/franzbischoff/false.alarm
-BugReports:
-     https://github.com/franzbischoff/false.alarm/issues
+BugReports: https://github.com/franzbischoff/false.alarm/issues
 Depends:
-    R (>= 4.0)
+    R (>= 4.1)
 Imports:
-    targets (>= 0.2.0),
-    tarchetypes (>= 0.1.0),
     bookdown (>= 0.22),
-    workflowr (>= 1.6.2),
-    R.matlab (>= 3.6.2),
-    visNetwork (>= 2.0.9),
-    thesisdown (>= 0.1.0),
-    plotly (>= 4.9.3),
-    here (>= 0.1.0),
     checkmate (>= 2.0.0),
+    future (>= 1.24.0),
+    ggplot2 (>= 3.3.5),
+    glue (>= 1.6.2),
+    gridExtra (>= 2.3),
+    here (>= 0.1.0),
+    kableExtra (>= 1.3.4),
+    plotly (>= 4.9.3),
+    purrr (>= 0.3.4),
     Rcpp  (>= 1.0.6),
-    RcppParallel (>= 5.1.4)
-Suggests:
-    testthat (>= 3.0.0),
-    debugme (>= 1.0.0),
-    spelling (>= 2.0.0),
-    future (>= 1.21.0),
-    clustermq (>= 0.8.95),
-    lintr (>= 2.0.1),
-    styler (>= 1.5.1),
-    covr (>= 3.5.1),
-    knitr (>= 1.33),
-    progress (>= 1.2.2),
-    tsmp  (>= 0.4.14),
-LinkingTo:
-    Rcpp (>= 1.0.6),
     RcppParallel (>= 5.1.4),
+    rmarkdown (>= 2.12.2),
+    tarchetypes (>= 0.4.1),
+    targets (>= 0.2.0),
+    thesisdown (>= 0.1.9),
+    tibble (>= 3.1.6),
+    tidymodels (>= 0.1.4),
+    visNetwork (>= 2.1.0),
+    workflowr (>= 1.6.2),
+    yardstick (>= 0.0.9)
+Suggests:
+    clustermq (>= 0.8.95),
+    codemetar (>= 0.3.3),
+    covr (>= 3.5.1),
+    debugme (>= 1.0.0),
+    DT (>= 0.18),
+    future (>= 1.21.0),
+    ggnetwork (>= 0.5.10),
+    gittargets (>= 0.0.3),
+    jsonld (>= 2.2),
+    jsonlite (>= 1.8.0),
+    knitr (>= 1.33),
+    languageserver (>= 0.3.12),
+    lintr (>= 2.0.1),
+    matrixprofiler (>= 0.1.7),
+    miniCRAN (>= 0.2.16),
+    progress (>= 1.2.2),
+    rlang (>= 1.0.2),
+    spelling (>= 2.0.0),
+    styler (>= 1.6.2),
+    testthat (>= 3.1.3),
+    tsmp (>= 0.4.14),
+    usethis (>= 2.1.5)
+LinkingTo:
+    Rcpp (>= 1.0.8),
+    RcppParallel (>= 5.1.5),
     RcppProgress (>= 0.4.2),
-    RcppThread (>= 1.0.0)
-VignetteBuilder: knitr
+    RcppThread (>= 2.1.1)
+VignetteBuilder:
+    knitr
+Remotes:
+    ismayc/thesisdown,
+    r-lib/styler,
+    r-lib/testthat,
+    rstudio/bookdown,
+    rstudio/rmarkdown,
+    wlandau/gittargets
+Config/testthat/edition: 3
+Config/testthat/parallel: false
 Encoding: UTF-8
 Language: en-US
 LazyData: true
 NeedsCompilation: yes
 Roxygen: list(markdown = TRUE)
-RoxygenNote: 7.1.1
+RoxygenNote: 7.1.2
 SystemRequirements: GNU make
-Config/testthat/edition: 3
-Config/testthat/parallel: false
-Remotes:
-    ismayc/thesisdown

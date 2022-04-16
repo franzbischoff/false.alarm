@@ -1,14 +1,10 @@
 {
   "recommendations": [
-    "streetsidesoftware.code-spell-checker",
     "gruntfuggly.todo-tree",
     "spmeesseman.vscode-taskexplorer",
     "meakbiyik.vscode-r-test-adapter",
     "ikuyadeu.r",
-    "reditorsupport.r-lsp",
     "hbenl.vscode-test-explorer",
-    "streetsidesoftware.code-spell-checker-portuguese",
-    "streetsidesoftware.code-spell-checker-medical-terms",
     "cschleiden.vscode-github-actions",
     "editorconfig.editorconfig",
     "tht13.html-preview-vscode",
@@ -23,7 +19,6 @@
     "redhat.vscode-yaml",
     "christian-kohler.path-intellisense",
     "pkief.material-icon-theme",
-    "gabrielgrinberg.auto-run-command",
     "gimly81.matlab",
     "affenwiesel.matlab-formatter",
     "apommel.matlab-interactive-terminal",
@@ -31,6 +26,9 @@
     "esbenp.prettier-vscode",
     "alefragnani.project-manager",
     "foxundermoon.shell-format",
-    "alefragnani.bookmarks"
+    "usernamehw.errorlens",
+    "rdebugger.r-debugger",
+    "hediet.vscode-drawio",
+    "PsykoSoldi3r.vscode-git-flow"
   ]
 }

@@ -3,53 +3,90 @@ title: "Research Progress Report"
 author: "Francisco Bischoff"
 link-citations: true
 bibliography: ../papers/references.bib
-csl: https://raw.githubusercontent.com/citation-style-language/styles/master/american-medical-association.csl
+csl: ../thesis/csl/ama.csl
 linestretch: 1.5
 indent: true
+always_allow_html: true
+header-includes:
+    - \usepackage{caption}
+    - \captionsetup{font=footnotesize}
 output:
-  # bookdown::html_document2:
+  bookdown::html_document2:
+    toc: true
+    toc_float: false
+    number_sections: true
+    css: style.css
+    theme: default
+    highlight: tango
   bookdown::pdf_document2:
-    extra_dependencies: ["flafter"]
+    keep_tex: true
+    extra_dependencies: ["svg", "flafter", "subfig"]
     toc: yes
-    # toc_depth: 2
+    toc_depth: 3
     fig_caption: yes
     number_sections: yes
-  # html_notebook:
-  #   toc: yes
-  #   toc_depth: 2
-  #   code_folding: none
-  #   fig_width: 10
-  #   fig_height: 5
-  #   number_sections: yes
-  #   fig_caption: yes
-  # github_document:
-  #   toc: true
-  #   toc_depth: 2
 ---
 
-```{=html}
-<style>
-div.figure {
-  padding: 10px;
-  margin: 20px 0px 20px 0px;
-  background-color: white;
-  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
-}
-p.caption {
-  font-size: 19px;
-}
-</style>
-```
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = FALSE, fig.align = "center")
+knitr::opts_chunk$set(
+  echo = FALSE, fig.align = "center", autodep = TRUE,
+  fig.height = 5, fig.width = 10,
+  tidy = "styler",
+  tidy.opts = list(strict = TRUE)
+)
+if (knitr::is_latex_output()) {
+  knitr::opts_chunk$set(dev = "pdf")
+} else {
+  knitr::opts_chunk$set(dev = "svg")
+}
+
+my_graphics <- function(image_name, base_path = here::here("docs", "figure")) {
+  file_path <- glue::glue("{base_path}/{image_name}")
+
+  if (knitr::is_latex_output()) {
+    if (file.exists(glue::glue("{file_path}.pdf"))) {
+      file_path <- glue::glue("{file_path}.pdf")
+    } else if (file.exists(glue::glue("{file_path}.png"))) {
+      file_path <- glue::glue("{file_path}.png")
+    } else {
+      file_path <- glue::glue("{file_path}.jpg")
+    }
+  } else {
+    if (file.exists(glue::glue("{file_path}.svg"))) {
+      file_path <- glue::glue("{file_path}.svg")
+    } else if (file.exists(glue::glue("{file_path}.png"))) {
+      file_path <- glue::glue("{file_path}.png")
+    } else {
+      file_path <- glue::glue("{file_path}.jpg")
+    }
+  }
+
+  knitr::include_graphics(file_path)
+}
+
+my_kable <- function(title, label, content) {
+  res <- glue(r"(<br><table class="tg"><caption>)", "(\\#tab:{label}) {title}", r"(</caption>{content}</table>)")
+  out <- structure(res, format = "html", class = "knitr_kable")
+  attr(out, "format") <- "html"
+  out
+}
+# tinytex::tlmgr_install("tabu")
 library(here)
+library(glue)
 library(visNetwork)
 library(tibble)
 library(kableExtra)
+library(gridExtra)
 library(targets)
+library(ggplot2)
+
+knitr::opts_knit$set(
+  root.dir = here("docs"),
+  base.dir = here("protocol"), verbose = TRUE
+)
 ```
 
-Last Updated: `r lubridate::now("UTC")` UTC
+Last Updated: 2021-08-12 1:35:04 UTC
 
 # Research Title
 
@@ -102,7 +139,7 @@ inappropriate responses to alarms [@sendelbach2013].
 
 In April of 2013, The Joint Commission [@the_jc] issued the Sentinel Event Alert
 [@JointCommission2013], establishing alarm system safety as a top hospital priority in the National
-Patient Safety Goal. Nowadays (2021), the subject stil on their list, in fourth place of importance
+Patient Safety Goal. Nowadays (2021), the subject still on their list, in fourth place of importance
 [@the_jc2021].
 
 In February of 2015, the CinC/Physionet Challenge 2015 was about "Reducing False Arrhythmia Alarms
@@ -151,7 +188,7 @@ only the actual data and the header files in order to be read by the pipeline an
 Zenodo [@bischoff2021] under the same license as Physionet.
 
 The dataset is composed of 750 patients with at least five minutes records. All signals have been
-resampled (using anti-alias filters) to 12 bit, 250 Hz and have had FIR bandpass (0.05 to 40Hz) and
+resampled (using anti-alias filters) to 12 bit, 250 Hz and have had FIR band-pass (0.05 to 40Hz) and
 mains notch filters applied to remove noise. Pacemaker and other artifacts still present on the ECG
 [@Clifford2015]. Furthermore, this dataset contains at least two ECG derivations and one or more
 variables like arterial blood pressure, photoplethysmograph readings, and respiration movements.
@@ -169,10 +206,15 @@ alarms <- tribble(
   "Ventricular Flutter/Fibrillation", "Fibrillatory, flutter, or oscillatory waveform for at least 4 seconds"
 )
 
-kbl(alarms, booktabs = TRUE, caption = "Definition of the five alarm types used in CinC/Physionet Challenge 2015 challenge.", align = "ll") %>%
-  kable_styling(full_width = TRUE) %>%
-  # column_spec(c(1,2), width = "50px") %>%
-  row_spec(0, bold = TRUE)
+kbl(alarms,
+  booktabs = TRUE,
+  caption = "Definition of the five alarm types used in CinC/Physionet Challenge 2015.",
+  align = "ll",
+  position = "ht",
+  linesep = "\\addlinespace"
+) %>%
+  row_spec(0, bold = TRUE) %>%
+  kable_styling(full_width = TRUE)
 ```
 
 The fifth minute is precisely where the alarm has been triggered on the original recording set. To
@@ -186,7 +228,7 @@ All steps of the process are being managed using the R package `targets` [@landa
 extraction to the final report, as shown in Fig. \@ref(fig:targets).
 
 ```{r targets, echo=FALSE, out.width="100%", fig.cap="Reproducible research workflow using `targets`."}
-knitr::include_graphics("figure/targets.png")
+my_graphics("targets")
 ```
 
 The report is available on the main webpage [@franz_website], allowing inspection of previous
@@ -194,7 +236,7 @@ versions managed by the R package `workflowr`[@workflowr2021], as shown in Fig.
 \@ref(fig:workflowr).
 
 ```{r workflowr, echo=FALSE, out.width="100%", fig.cap="Reproducible reports using `workflowr`."}
-knitr::include_graphics("figure/workflowr_print.png")
+my_graphics("workflowr_print")
 ```
 
 ## Work in Progress
@@ -204,18 +246,15 @@ knitr::include_graphics("figure/workflowr_print.png")
 The project started with a literature survey on the databases Scopus, Pubmed, Web of Science, and
 Google Scholar with the following query (the syntax was adapted for each database):
 
-```{=tex}
-\setstretch{1}
-\begin{verbatim}
-TITLE-ABS-KEY ( algorithm  OR  'point of care'  OR  'signal processing'  OR  'computer
-assisted'  OR  'support vector machine'  OR  'decision support system*'  OR  'neural
-network*'  OR  'automatic interpretation' OR 'machine learning')  AND  TITLE-ABS-KEY
-( electrocardiography  OR  cardiography  OR  'electrocardiographic tracing'  OR  ecg
-OR  electrocardiogram  OR  cardiogram )  AND  TITLE-ABS-KEY ( 'Intensive care unit' OR
-'cardiologic care unit'  OR  'intensive care center'  OR  'cardiologic care center' )
-\end{verbatim}
-\setstretch{1.5}
-```
+\
+    TITLE-ABS-KEY ( algorithm  OR  'point of care'  OR  'signal processing'  OR  'computer
+    assisted'  OR  'support vector machine'  OR  'decision support system*'  OR  'neural
+    network*'  OR  'automatic interpretation' OR 'machine learning')  AND  TITLE-ABS-KEY
+    ( electrocardiography  OR  cardiography  OR  'electrocardiographic tracing'  OR  ecg
+    OR  electrocardiogram  OR  cardiogram )  AND  TITLE-ABS-KEY ( 'Intensive care unit' OR
+    'cardiologic care unit'  OR  'intensive care center'  OR  'cardiologic care center' )
+\
+
 The inclusion and exclusion criteria were defined as in Table \@ref(tab:criteria).
 
 ```{r criteria, echo=FALSE}
@@ -228,17 +267,22 @@ criteria <- tribble(
   "Specific diagnosis (like a flutter, hyperkalemia, etc.)", ""
 )
 
-kbl(criteria, booktabs = TRUE, caption = "Literature review criteria.", align = "ll") %>%
-  kable_styling(full_width = TRUE) %>%
-  column_spec(1, width = "10cm") %>%
-  row_spec(0, bold = TRUE)
+kbl(criteria,
+  booktabs = TRUE,
+  caption = "Literature review criteria.",
+  align = "ll",
+  position = "ht",
+  linesep = "\\addlinespace"
+) %>%
+  row_spec(0, bold = TRUE) %>%
+  kable_styling(full_width = TRUE)
 ```
 
 The current stage of the review is on Data Extraction, from the resulting screening shown in Fig.
 \@ref(fig:prisma).
 
 ```{r prisma, echo=FALSE, out.width="80%", fig.cap="Prisma results"}
-knitr::include_graphics("figure/PRISMA.png")
+my_graphics("PRISMA")
 ```
 
 Meanwhile, the project pipeline has been set up on GitHub, Inc. [@bischoffrepo2021] leveraging on
@@ -251,11 +295,11 @@ Fig. \@ref(fig:zenhub1) it is shown the initial roadmap (as of May 2020) and Fig
 the modified roadmap (as of July 2021).
 
 ```{r zenhub1, echo=FALSE, out.width="100%", fig.cap="Roadmap original"}
-knitr::include_graphics("figure/roadmap_original.png")
+my_graphics("roadmap_original")
 ```
 
 ```{r zenhub2, echo=FALSE, out.width="100%", fig.cap="Roadmap updated"}
-knitr::include_graphics("figure/roadmap_updated.png")
+my_graphics("roadmap_updated")
 ```
 
 ### Preliminary Experimentations
@@ -268,17 +312,17 @@ microchip from Analog Devices Inc., compatible with Arduino^(R)^ [@arduino2021],
 experiment (Figs. \@ref(fig:ad8232) and \@ref(fig:fullsetup)).
 
 ```{r ad8232, echo=FALSE, out.width="50%", fig.cap="Single Lead Heart Rate Monitor"}
-knitr::include_graphics("figure/sparkfun.jpg")
+my_graphics("sparkfun")
 ```
 
 ```{r fullsetup, echo=FALSE, out.width="50%", fig.cap="Single Lead Heart Rate Monitor"}
-knitr::include_graphics("figure/FullSetup.jpg")
+my_graphics("FullSetup")
 ```
 
 The output gives us a RAW signal as shown in Fig. \@ref(fig:rawsignal).
 
 ```{r rawsignal, echo=FALSE, out.width="50%", fig.cap="RAW output from Arduino at ~300hz"}
-knitr::include_graphics("figure/arduino_plot.jpg")
+my_graphics("arduino_plot")
 ```
 
 After applying the same settings as the Physionet database (collecting the data at 500hz, resample
@@ -286,7 +330,7 @@ to 250hz, pass-filter, and notch filter), the signal is much better as shown in 
 \@ref(fig:filtersignal). Note: the leads were not placed on the correct location.
 
 ```{r filtersignal, echo=FALSE, out.width="100%", fig.cap="Gray is RAW, Red is filtered"}
-knitr::include_graphics("figure/filtered_ecg.png")
+my_graphics("filtered_ecg")
 ```
 
 So in this way, we allow us to import RAW data from other devices and build our own test dataset in
@@ -313,17 +357,16 @@ applied to the time aligned ECG segments in the window). By experimentation (yet
 simple formula gives us the "complexity" of the signal and correlates well with the noisy data is
 shown in Equation \@ref(eq:complex).
 
-```{=tex}
 \begin{equation}
 \sqrt{\sum_{i=1}^w((x_{i+1}-x_i)^2)}, \quad \text{where}\; w \; \text{is the window size} (\#eq:complex)
 \end{equation}
-```
+
 \
 \
 The Fig. \@ref(fig:sqi) shows some SQIs.
 
 ```{r sqi, echo=FALSE, out.width="100%", fig.cap="Green line is the \"complexity\" of the signal"}
-knitr::include_graphics("figure/noise.png")
+my_graphics("noise")
 ```
 
 Finally, a sample of the regime change detection is shown in Figs. \@ref(fig:regimefilter) to
@@ -335,14 +378,14 @@ green and red lines on the data mark the 10 seconds window where the "event" tha
 is supposed to happen.
 
 ```{r regimefilter, echo=FALSE, out.width="100%", fig.cap="Regime changes with noisy data - false alarm"}
-knitr::include_graphics("figure/regime_filter.png")
+my_graphics("regime_filtered")
 ```
 
 In Fig. \@ref(fig:regimefalse), the data is clean; thus, nothing is excluded. Interestingly one of
 the detected regime changes is inside the "green-red" window. But it is a false alarm.
 
 ```{r regimefalse, echo=FALSE, out.width="100%", fig.cap="Regime changes with good data - false alarm"}
-knitr::include_graphics("figure/regime_false.png")
+my_graphics("regime_false")
 ```
 
 The last plot (Fig. \@ref(fig:regimetrue)) shows the algorithm's robustness, not excluding good data
@@ -350,12 +393,18 @@ with a wandering baseline, and the last regime change is correctly detected insi
 window.
 
 ```{r regimetrue, echo=FALSE, out.width="100%", fig.cap="Regime changes with good but wandering data - true alarm"}
-knitr::include_graphics("figure/regime_true.png")
+my_graphics("regime_true")
 ```
 
 ## Scientific outcomes
 
-This research has already yielded two R packages concerning the Matrix Profile algorithms from UCR [@mpucr]. The first package is called `tsmp`, and a paper has also been published in the R Journal [@RJ-2020-021]. The journal is indexed in the Science Citation Index Expanded, and according to the Journal Citation Reports, the journal has a 2020 impact factor of 3.984. The second package is called `matrixprofiler` and improves the first one, using low-level language to improve computational speed. The author has also joined the Matrix Profile Foundation as co-founder together with contributors from Python and Go languages  [@mpf2020].
+This research has already yielded two R packages concerning the Matrix Profile algorithms from UCR
+[@mpucr]. The first package is called `tsmp`, and a paper has also been published in the R Journal
+[@RJ-2020-021]. The journal is indexed in the Science Citation Index Expanded, and according to the
+Journal Citation Reports, the journal has a 2020 impact factor of 3.984. The second package is
+called `matrixprofiler` and improves the first one, using low-level language to improve
+computational speed. The author has also joined the Matrix Profile Foundation as co-founder together
+with contributors from Python and Go languages [@mpf2020].
 
 
 # Research Team
