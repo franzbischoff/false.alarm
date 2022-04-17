@@ -6,7 +6,15 @@ navbar:
     - text: Home
       href: index.html
     - text: Blog
-      href: blog.html
+      menu:
+        - text: 2021, August
+          href: blog-202108.html
+        - text: 2021, October
+          href: blog-202110.html
+        - text: 2022, January
+          href: blog-202201.html
+        - text: 2022, April
+          href: blog-202204.html
     - text: Report
       href: report.html
     - text: About

@@ -1,0 +1,125 @@
+---
+title: "2022, January Update"
+author: "Francisco Bischoff"
+date: "on January 16, 2022"
+output:
+  bookdown::html_document2:
+    base_format: workflowr::wflow_html
+    toc: true
+    toc_float: true
+    number_sections: false
+bibliography: ../papers/references.bib
+link-citations: true
+csl: ../thesis/csl/ama.csl
+css: style.css
+editor_options:
+  chunk_output_type: console
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(
+  echo = FALSE, fig.align = "center", dev = "svg", autodep = TRUE,
+  fig.height = 5, fig.width = 10,
+  tidy = "styler",
+  tidy.opts = list(strict = TRUE)
+)
+
+library(here)
+library(ggplot2)
+library(glue)
+library(dplyr)
+library(tibble)
+library(plotly)
+library(kableExtra)
+conflicted::conflict_prefer("filter", "dplyr")
+options(ggplot2.discrete.fill = c("#1b9e77", "#d95f02"))
+# library(visNetwork)
+# library(kableExtra)
+# library(targets)
+my_graphics <- function(image_name, base_path = here::here("docs", "figure")) {
+  file_path <- glue::glue("{base_path}/{image_name}")
+
+  if (knitr::is_latex_output()) {
+    if (file.exists(glue::glue("{file_path}.pdf"))) {
+      file_path <- glue::glue("{file_path}.pdf")
+    } else if (file.exists(glue::glue("{file_path}.png"))) {
+      file_path <- glue::glue("{file_path}.png")
+    } else {
+      file_path <- glue::glue("{file_path}.jpg")
+    }
+  } else {
+    if (file.exists(glue::glue("{file_path}.svg"))) {
+      file_path <- glue::glue("{file_path}.svg")
+    } else if (file.exists(glue::glue("{file_path}.png"))) {
+      file_path <- glue::glue("{file_path}.png")
+    } else {
+      file_path <- glue::glue("{file_path}.jpg")
+    }
+  }
+
+  knitr::include_graphics(file_path)
+}
+
+my_kable <- function(title, label, content) {
+  res <- glue(r"(<br><table class="tg"><caption>)", "(\\#tab:{label}) {title}", r"(</caption>{content}</table>)")
+  out <- structure(res, format = "html", class = "knitr_kable")
+  attr(out, "format") <- "html"
+  out
+}
+```
+
+These last months were dedicated to several important things:
+
+1. Restructuring the roadmap
+2. Refining the main pipeline
+3. Preparing for modeling and parameter tuning
+4. Feasibility trial
+5. And others
+
+## Refining the main pipeline
+
+That can also be thought of as "rethinking" the pipeline. What also leads to the roadmap
+restructuration.
+
+It is essential not only to write a pipeline that can "autoplot" itself for fine-grain inspection
+but also to design a high-level graph that can explain it "in a glance". This exercise was helpful
+both ways: telling the story in a short version also reveals missing things and misleading paths
+that are not so obvious when thinking "low-level".
+
+## Preparing for modeling and parameter tuning
+
+Although this work has its purpose of being finally deployed on small hardware, this prospective
+phase will need several hours of computing, tuning, evaluation, and validation of all findings.
+
+Thus it was necessary to revisit the frameworks we are used to working on R: `caret` and the newest
+`tidymodels` collection. For sure, there are other frameworks and opinions [@Thompson2020].
+Notwithstanding, this project will follow the `tidymodels` road. Two significant arguments 1)
+constantly improving and constantly being re-checked for bugs; 2) allows to plug in a custom
+modeling algorithm that, in this case, will be the one needed for developing this work.
+
+## Feasibility trial
+
+A side-project called "false.alarm.io" has been derived from this work (an unfortunate mix of
+"false.alarm" and "PlatformIO" [@PlatformIO], the IDE chosen to interface the panoply of embedded
+systems we can experiment). The current results of this side-project are very enlightening and show
+that the final algorithm can indeed be used in small hardware. Further data will be available in
+the future.
+
+## And others
+
+After this "step back" to look forward, it was time to define how the regime change algorithm would
+integrate with the actual decision of triggering or not the alarm. Some hypotheses were thought out:
+(1) clustering similar patterns, (2) anomaly detection, (3) classification, and (4) forecasting.
+Among these methods, it was thought to avoid exceeding processor capacity, an initial set of
+shapelets [@Rakthanmanon2013] can be sufficient to rule in or out the `TRUE`/`FALSE` challenge.
+Depending on the accuracy of this approach and the resources available, another method can be
+introduced for both (1) improving the "negative"[^1] samples and (2) learning more shapelets to
+improve the `TRUE`/`FALSE` alarm discrimination.
+
+> Minor update, but also important concerning the _FAIR_ principle "Interoperability": the dataset
+ stored publicly on Zenodo [@bischoff2021] was converted from `.mat` to `.csv`.
+
+[^1]: The term "negative" does not imply that the patient has a "normal" ECG. It means that the
+"negative" section is not a life-threatening condition that needs to trigger an alarm.
+
+## References {-}
