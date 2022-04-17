@@ -12,7 +12,7 @@
 <meta name="author" content="Francisco Bischoff" />
 
 
-<title>Home</title>
+<title>2021, October Update</title>
 
 <script src="site_libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -29,11 +29,10 @@
        h6 {font-size: 12px;}
        code {color: inherit; background-color: rgba(0, 0, 0, 0.04);}
        pre:not([class]) { background-color: white }</style>
+<script src="site_libs/jqueryui-1.11.4/jquery-ui.min.js"></script>
+<link href="site_libs/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
+<script src="site_libs/tocify-1.9.1/jquery.tocify.js"></script>
 <script src="site_libs/navigation-1.1/tabsets.js"></script>
-<script src="site_libs/htmlwidgets-1.5.4/htmlwidgets.js"></script>
-<link href="site_libs/vis-9.1.0/vis-network.min.css" rel="stylesheet" />
-<script src="site_libs/vis-9.1.0/vis-network.min.js"></script>
-<script src="site_libs/visNetwork-binding-2.1.0/visNetwork.js"></script>
 <link href="site_libs/font-awesome-5.1.0/css/all.css" rel="stylesheet" />
 <link href="site_libs/font-awesome-5.1.0/css/v4-shims.css" rel="stylesheet" />
 
@@ -61,6 +60,28 @@ div.section {
 
 
 
+<style type="text/css">
+/* for pandoc --citeproc since 2.11 */
+div.csl-bib-body { }
+div.csl-entry {
+  clear: both;
+}
+.hanging div.csl-entry {
+  margin-left:2em;
+  text-indent:-2em;
+}
+div.csl-left-margin {
+  min-width:2em;
+  float:left;
+}
+div.csl-right-inline {
+  margin-left:2em;
+  padding-left:1em;
+}
+div.csl-indent {
+  margin-left: 2em;
+}
+</style>
 
 <link rel="stylesheet" href="style.css" type="text/css" />
 
@@ -227,6 +248,69 @@ $(document).ready(function () {
 
 
 
+<style type="text/css">
+
+#TOC {
+  margin: 25px 0px 20px 0px;
+}
+@media (max-width: 768px) {
+#TOC {
+  position: relative;
+  width: 100%;
+}
+}
+
+@media print {
+.toc-content {
+  /* see https://github.com/w3c/csswg-drafts/issues/4434 */
+  float: right;
+}
+}
+
+.toc-content {
+  padding-left: 30px;
+  padding-right: 40px;
+}
+
+div.main-container {
+  max-width: 1200px;
+}
+
+div.tocify {
+  width: 20%;
+  max-width: 260px;
+  max-height: 85%;
+}
+
+@media (min-width: 768px) and (max-width: 991px) {
+  div.tocify {
+    width: 25%;
+  }
+}
+
+@media (max-width: 767px) {
+  div.tocify {
+    width: 100%;
+    max-width: none;
+  }
+}
+
+.tocify ul, .tocify li {
+  line-height: 20px;
+}
+
+.tocify-subheader .tocify-item {
+  font-size: 0.90em;
+}
+
+.tocify .list-group-item {
+  border-radius: 0px;
+}
+
+
+</style>
+
+
 
 </head>
 
@@ -234,6 +318,16 @@ $(document).ready(function () {
 
 
 <div class="container-fluid main-container">
+
+
+<!-- setup 3col/9col grid for toc_float and main content  -->
+<div class="row">
+<div class="col-xs-12 col-sm-4 col-md-3">
+<div id="TOC" class="tocify">
+</div>
+</div>
+
+<div class="toc-content col-xs-12 col-sm-8 col-md-9">
 
 
 
@@ -322,9 +416,9 @@ $(document).ready(function () {
 
 
 
-<h1 class="title toc-ignore">Home</h1>
+<h1 class="title toc-ignore">2021, October Update</h1>
 <h4 class="author">Francisco Bischoff</h4>
-<h4 class="date">on April 17, 2022</h4>
+<h4 class="date">on October 12, 2021</h4>
 
 </div>
 
@@ -575,7 +669,7 @@ changes.
 
 <p>
 These are the previous versions of the repository in which changes were made
-to the R Markdown (<code>analysis/index.Rmd</code>) and HTML (<code>docs/index.html</code>)
+to the R Markdown (<code>analysis/blog-202110.Rmd</code>) and HTML (<code>docs/blog-202110.html</code>)
 files. If you’ve configured a remote Git repository (see
 <code>?wflow_git_remote</code>), click on the hyperlinks in the table below to
 view the files as they were in that past version.
@@ -604,546 +698,19 @@ Message
 <tbody>
 <tr>
 <td>
-html
-</td>
-<td>
-<a href="https://rawcdn.githack.com/franzbischoff/false.alarm/96dd52858fbc172c6f6a598fd6f797ec5749a844/docs/index.html" target="_blank">96dd528</a>
-</td>
-<td>
-Francisco Bischoff
-</td>
-<td>
-2022-03-15
-</td>
-<td>
-Build site.
-</td>
-</tr>
-<tr>
-<td>
-html
-</td>
-<td>
-<a href="https://rawcdn.githack.com/franzbischoff/false.alarm/1006f277b6ddde079d0d7caa08ef41e0f564e58f/docs/index.html" target="_blank">1006f27</a>
-</td>
-<td>
-Francisco Bischoff
-</td>
-<td>
-2022-03-15
-</td>
-<td>
-Build site.
-</td>
-</tr>
-<tr>
-<td>
-html
-</td>
-<td>
-<a href="https://rawcdn.githack.com/franzbischoff/false.alarm/c340b46745d043794b746de3bfa936fef718eeae/docs/index.html" target="_blank">c340b46</a>
-</td>
-<td>
-GitHub Actions
-</td>
-<td>
-2022-03-15
-</td>
-<td>
-Build site.
-</td>
-</tr>
-<tr>
-<td>
 Rmd
 </td>
 <td>
-<a href="https://github.com/franzbischoff/false.alarm/blob/c155156fed32f4ec0181e728543d9e4329c70f0c/analysis/index.Rmd" target="_blank">c155156</a>
+<a href="https://github.com/franzbischoff/false.alarm/blob/0c6023c3321a797e532432ab2b82cd1a2deac5a4/analysis/blog-202110.Rmd" target="_blank">0c6023c</a>
 </td>
 <td>
 Francisco Bischoff
 </td>
 <td>
-2022-03-14
+2022-04-17
 </td>
 <td>
-workflowr asd
-</td>
-</tr>
-<tr>
-<td>
-Rmd
-</td>
-<td>
-<a href="https://github.com/franzbischoff/false.alarm/blob/5f35362580d8467b0008a1c8326fc07b67b87d1c/analysis/index.Rmd" target="_blank">5f35362</a>
-</td>
-<td>
-Francisco Bischoff
-</td>
-<td>
-2022-03-14
-</td>
-<td>
-rekniting
-</td>
-</tr>
-<tr>
-<td>
-html
-</td>
-<td>
-<a href="https://rawcdn.githack.com/franzbischoff/false.alarm/0aefdd1e404bb46b581c500c334be2dc6cc6f96c/docs/index.html" target="_blank">0aefdd1</a>
-</td>
-<td>
-Francisco Bischoff
-</td>
-<td>
-2022-03-14
-</td>
-<td>
-workflowr 2
-</td>
-</tr>
-<tr>
-<td>
-html
-</td>
-<td>
-<a href="https://rawcdn.githack.com/franzbischoff/false.alarm/5f35362580d8467b0008a1c8326fc07b67b87d1c/docs/index.html" target="_blank">5f35362</a>
-</td>
-<td>
-Francisco Bischoff
-</td>
-<td>
-2022-03-14
-</td>
-<td>
-rekniting
-</td>
-</tr>
-<tr>
-<td>
-html
-</td>
-<td>
-<a href="https://rawcdn.githack.com/franzbischoff/false.alarm/6004462785c9fce6af7dc2b1d5f7252c152c208d/docs/index.html" target="_blank">6004462</a>
-</td>
-<td>
-Francisco Bischoff
-</td>
-<td>
-2022-03-11
-</td>
-<td>
-workflowr
-</td>
-</tr>
-<tr>
-<td>
-Rmd
-</td>
-<td>
-<a href="https://github.com/franzbischoff/false.alarm/blob/0f2f48725aa19540dc469d9514bad59d9e3b292c/analysis/index.Rmd" target="_blank">0f2f487</a>
-</td>
-<td>
-Francisco Bischoff
-</td>
-<td>
-2022-03-03
-</td>
-<td>
-spellchecking
-</td>
-</tr>
-<tr>
-<td>
-html
-</td>
-<td>
-<a href="https://rawcdn.githack.com/franzbischoff/false.alarm/0f2f48725aa19540dc469d9514bad59d9e3b292c/docs/index.html" target="_blank">0f2f487</a>
-</td>
-<td>
-Francisco Bischoff
-</td>
-<td>
-2022-03-03
-</td>
-<td>
-spellchecking
-</td>
-</tr>
-<tr>
-<td>
-Rmd
-</td>
-<td>
-<a href="https://github.com/franzbischoff/false.alarm/blob/4884ec1db6c0dda7131fe403dd38926ddbf52865/analysis/index.Rmd" target="_blank">4884ec1</a>
-</td>
-<td>
-Francisco Bischoff
-</td>
-<td>
-2022-02-02
-</td>
-<td>
-work
-</td>
-</tr>
-<tr>
-<td>
-html
-</td>
-<td>
-<a href="https://rawcdn.githack.com/franzbischoff/false.alarm/4884ec1db6c0dda7131fe403dd38926ddbf52865/docs/index.html" target="_blank">4884ec1</a>
-</td>
-<td>
-Francisco Bischoff
-</td>
-<td>
-2022-02-02
-</td>
-<td>
-work
-</td>
-</tr>
-<tr>
-<td>
-html
-</td>
-<td>
-<a href="https://rawcdn.githack.com/franzbischoff/false.alarm/867bcf23d22203e3d807fda8a15d9ed6f74b9793/docs/index.html" target="_blank">867bcf2</a>
-</td>
-<td>
-Francisco Bischoff
-</td>
-<td>
-2022-01-16
-</td>
-<td>
-workflowr
-</td>
-</tr>
-<tr>
-<td>
-Rmd
-</td>
-<td>
-<a href="https://github.com/franzbischoff/false.alarm/blob/95ae431bf67c2ba8f58e135de6e1bd06941efd2c/analysis/index.Rmd" target="_blank">95ae431</a>
-</td>
-<td>
-Francisco Bischoff
-</td>
-<td>
-2022-01-05
-</td>
-<td>
-blogdog
-</td>
-</tr>
-<tr>
-<td>
-html
-</td>
-<td>
-<a href="https://rawcdn.githack.com/franzbischoff/false.alarm/95ae431bf67c2ba8f58e135de6e1bd06941efd2c/docs/index.html" target="_blank">95ae431</a>
-</td>
-<td>
-Francisco Bischoff
-</td>
-<td>
-2022-01-05
-</td>
-<td>
-blogdog
-</td>
-</tr>
-<tr>
-<td>
-Rmd
-</td>
-<td>
-<a href="https://github.com/franzbischoff/false.alarm/blob/7278108a889a0bce34c68dfa4f545aa9616a376b/analysis/index.Rmd" target="_blank">7278108</a>
-</td>
-<td>
-Francisco Bischoff
-</td>
-<td>
-2021-12-21
-</td>
-<td>
-update dataset on zenodo
-</td>
-</tr>
-<tr>
-<td>
-html
-</td>
-<td>
-<a href="https://rawcdn.githack.com/franzbischoff/false.alarm/7278108a889a0bce34c68dfa4f545aa9616a376b/docs/index.html" target="_blank">7278108</a>
-</td>
-<td>
-Francisco Bischoff
-</td>
-<td>
-2021-12-21
-</td>
-<td>
-update dataset on zenodo
-</td>
-</tr>
-<tr>
-<td>
-html
-</td>
-<td>
-<a href="https://rawcdn.githack.com/franzbischoff/false.alarm/ca1941e6f9416ba7648c9175367a39e9382044d8/docs/index.html" target="_blank">ca1941e</a>
-</td>
-<td>
-GitHub Actions
-</td>
-<td>
-2021-10-12
-</td>
-<td>
-Build site.
-</td>
-</tr>
-<tr>
-<td>
-Rmd
-</td>
-<td>
-<a href="https://github.com/franzbischoff/false.alarm/blob/6b03f431bca6d1df980893c70577fba8ec23554d/analysis/index.Rmd" target="_blank">6b03f43</a>
-</td>
-<td>
-Francisco Bischoff
-</td>
-<td>
-2021-10-11
-</td>
-<td>
-Squashed commit of the following:
-</td>
-</tr>
-<tr>
-<td>
-html
-</td>
-<td>
-<a href="https://rawcdn.githack.com/franzbischoff/false.alarm/c19ec017e1a0cdd909f673a745546e5f34813afa/docs/index.html" target="_blank">c19ec01</a>
-</td>
-<td>
-Francisco Bischoff
-</td>
-<td>
-2021-08-17
-</td>
-<td>
-Build site.
-</td>
-</tr>
-<tr>
-<td>
-html
-</td>
-<td>
-<a href="https://rawcdn.githack.com/franzbischoff/false.alarm/a5ec160176f456ba8e8f7f2e8650cbf5c68b1e97/docs/index.html" target="_blank">a5ec160</a>
-</td>
-<td>
-Francisco Bischoff
-</td>
-<td>
-2021-08-17
-</td>
-<td>
-Build site.
-</td>
-</tr>
-<tr>
-<td>
-html
-</td>
-<td>
-<a href="https://rawcdn.githack.com/franzbischoff/false.alarm/e7e5d4861f1f3b21e25787e0ed6b6066b57ff857/docs/index.html" target="_blank">e7e5d48</a>
-</td>
-<td>
-GitHub Actions
-</td>
-<td>
-2021-07-15
-</td>
-<td>
-Build site.
-</td>
-</tr>
-<tr>
-<td>
-Rmd
-</td>
-<td>
-<a href="https://github.com/franzbischoff/false.alarm/blob/1473a05723e9d94f18e9fd5f77a616bc669ed973/analysis/index.Rmd" target="_blank">1473a05</a>
-</td>
-<td>
-Francisco Bischoff
-</td>
-<td>
-2021-07-15
-</td>
-<td>
-report
-</td>
-</tr>
-<tr>
-<td>
-html
-</td>
-<td>
-<a href="https://rawcdn.githack.com/franzbischoff/false.alarm/1473a05723e9d94f18e9fd5f77a616bc669ed973/docs/index.html" target="_blank">1473a05</a>
-</td>
-<td>
-Francisco Bischoff
-</td>
-<td>
-2021-07-15
-</td>
-<td>
-report
-</td>
-</tr>
-<tr>
-<td>
-html
-</td>
-<td>
-<a href="https://rawcdn.githack.com/franzbischoff/false.alarm/bf772a580f92cea662153ad342b5d81ab371b05f/docs/index.html" target="_blank">bf772a5</a>
-</td>
-<td>
-GitHub Actions
-</td>
-<td>
-2021-03-24
-</td>
-<td>
-Build site.
-</td>
-</tr>
-<tr>
-<td>
-Rmd
-</td>
-<td>
-<a href="https://github.com/franzbischoff/false.alarm/blob/b869025107e353ad227834e0bdde496db13b5c66/analysis/index.Rmd" target="_blank">b869025</a>
-</td>
-<td>
-Francisco Bischoff
-</td>
-<td>
-2021-03-24
-</td>
-<td>
-targets and workflowr
-</td>
-</tr>
-<tr>
-<td>
-html
-</td>
-<td>
-<a href="https://rawcdn.githack.com/franzbischoff/false.alarm/52e7f0b7b022544dd3dafc2a8f8cdf5951fb0f54/docs/index.html" target="_blank">52e7f0b</a>
-</td>
-<td>
-GitHub Actions
-</td>
-<td>
-2021-03-24
-</td>
-<td>
-Build site.
-</td>
-</tr>
-<tr>
-<td>
-Rmd
-</td>
-<td>
-<a href="https://github.com/franzbischoff/false.alarm/blob/c87e8e17414f2351183a280d73ca30dbb7647603/analysis/index.Rmd" target="_blank">c87e8e1</a>
-</td>
-<td>
-Francisco Bischoff
-</td>
-<td>
-2021-03-24
-</td>
-<td>
-targets and workflowr
-</td>
-</tr>
-<tr>
-<td>
-Rmd
-</td>
-<td>
-<a href="https://github.com/franzbischoff/false.alarm/blob/7c3cc31c693d4bf3a26b42bd43703efde4b2a528/analysis/index.Rmd" target="_blank">7c3cc31</a>
-</td>
-<td>
-Francisco Bischoff
-</td>
-<td>
-2021-03-23
-</td>
-<td>
-Targets
-</td>
-</tr>
-<tr>
-<td>
-html
-</td>
-<td>
-<a href="https://rawcdn.githack.com/franzbischoff/false.alarm/7c3cc31c693d4bf3a26b42bd43703efde4b2a528/docs/index.html" target="_blank">7c3cc31</a>
-</td>
-<td>
-Francisco Bischoff
-</td>
-<td>
-2021-03-23
-</td>
-<td>
-Targets
-</td>
-</tr>
-<tr>
-<td>
-html
-</td>
-<td>
-<a href="https://rawcdn.githack.com/franzbischoff/false.alarm/01a7acec252909a5c93c1c268c121c271723b5f2/docs/index.html" target="_blank">01a7ace</a>
-</td>
-<td>
-Francisco Bischoff
-</td>
-<td>
-2020-07-23
-</td>
-<td>
-Refactor
-</td>
-</tr>
-<tr>
-<td>
-html
-</td>
-<td>
-<a href="https://rawcdn.githack.com/franzbischoff/false.alarm/5f450d2443d1694a8f651fa7d237784ea4b72713/docs/index.html" target="_blank">5f450d2</a>
-</td>
-<td>
-Francisco Bischoff
-</td>
-<td>
-2020-05-05
-</td>
-<td>
-gh-pages placeholder
+refactor blog
 </td>
 </tr>
 </tbody>
@@ -1153,35 +720,257 @@ gh-pages placeholder
 </div>
 </div>
 </div>
-<!-- badges init -->
-<p><a href="https://cran.r-project.org/"><img src="https://img.shields.io/badge/R%3E=-4.0.0-brightgreen.svg" alt="minimal R version" /></a>
-<a href="http://creativecommons.org/licenses/by-nc-sa/4.0/"><img src="https://mirrors.creativecommons.org/presskit/buttons/80x15/svg/by-nc-sa.svg" alt="Licence" /></a></p>
-<p>Dataset hosted by:</p>
-<p><a href="https://doi.org/10.5281/zenodo.4634013"><img src="https://zenodo.org/badge/DOI/10.5281/zenodo.4634013.svg" /></a></p>
-<!-- badges end -->
-<div id="tldr" class="section level2">
-<h2>TLDR;</h2>
-<p>This website contains all the necessary for reproducibility of this Ph.D. It is built joining three frameworks:</p>
+<div id="regime-change-detection" class="section level2">
+<h2>Regime Change Detection</h2>
+<p>While implementing the streaming-like pipeline, some declarations must be made. In 2017, the FLUSS
+(Fast Low-cost Unipotent Semantic Segmentation) and the FLOSS (Fast Low-cost Online Semantic
+Segmentation) algorithms were introduced by Gharghabi <em>et al.</em><span class="citation"><sup><a href="#ref-gharghabi2017" role="doc-biblioref">1</a></sup></span>. In 2018, the same
+group published their findings using multi-dimensional time series<span class="citation"><sup><a href="#ref-gharghabi2018" role="doc-biblioref">2</a></sup></span> using the same
+algorithms.</p>
+<p>Claims about the algorithm:</p>
 <ul>
-<li><a href="https://jdblischak.github.io/workflowr/">workflowr</a>, the main infrastructure that organizes
-every analysis step as Github versions. But instead of showing all commits, it just keeps the
-important ones.</li>
-<li><a href="https://docs.ropensci.org/targets/">targets</a>, a
-<a href="https://www.gnu.org/software/make/">Make</a>-like pipeline toolkit for Statistics and data science
-in R. It supersedes <a href="https://books.ropensci.org/drake/">drake</a> package. This allows to keep
-track of every step of the data science workflow and helps understand what needs to be rebuilt
-and what has not changed since the last iteration. Every complete analysis shall be registered
-by one entry in the previous package (<a href="https://jdblischak.github.io/workflowr/">workflowr</a>)</li>
-<li><a href="https://ismayc.github.io/thesisdown_book/">thesisdown</a>, inspired by the package
-<a href="https://github.com/rstudio/bookdown">bookdown</a> helps write the thesis in rmarkdown that is
-easily compiled in PDF, Doc, EPUB, and allows to change the theme/format for several
-universities/journals.</li>
+<li><strong>Domain Agnosticism:</strong> the algorithm makes no assumptions about the data as opposed to most
+available algorithms to date.</li>
+<li><strong>Streaming:</strong> the algorithm can provide real-time information.</li>
+<li><strong>Real-World Data Suitability:</strong> the objective is not to <em>explain</em> all the data. Therefore, areas
+marked as “don’t know” areas are acceptable.</li>
+<li><strong>FLOSS is not:</strong> a change point detection algorithm<span class="citation"><sup><a href="#ref-aminikhanghahi2016" role="doc-biblioref">3</a></sup></span>. The interest here is
+changes in the shapes of a sequence of measurements.</li>
 </ul>
-<p>Use the big button above <img src="figure/workflowr.png" /> to navigate through the older commits.</p>
-<p>Use the top menu for further information and the thesis itself.</p>
-<p>Last Targets Run network:</p>
-<div id="htmlwidget-24512ae3b9d6a760b942" style="width:960px;height:480px;" class="visNetwork html-widget"></div>
-<script type="application/json" data-for="htmlwidget-24512ae3b9d6a760b942">{"x":{"nodes":{"name":["dataset","ds_stats_200","ds_stats_mps_0_0_0_200","ds_stats_mps_0_1250_0_200","ds_stats_mps_0_2500_0_200","ds_stats_mps_1250_0_0_200","ds_stats_mps_2500_0_0_200","ds_stats_mps_floss_0_0_0_200","ds_stats_mps_floss_0_1250_0_200","ds_stats_mps_floss_0_2500_0_200","ds_stats_mps_floss_1250_0_0_200","ds_stats_mps_floss_2500_0_0_200","file_paths","file_paths_files","regimes_0.3_0_0_0_200","regimes_0.3_0_1250_0_200","regimes_0.3_0_2500_0_200","regimes_0.3_1250_0_0_200","regimes_0.3_2500_0_0_200","regimes_0.4_0_0_0_200","regimes_0.4_0_1250_0_200","regimes_0.4_0_2500_0_200","regimes_0.4_1250_0_0_200","regimes_0.4_2500_0_0_200","regimes_0.5_0_0_0_200","regimes_0.5_0_1250_0_200","regimes_0.5_0_2500_0_200","regimes_0.5_1250_0_0_200","regimes_0.5_2500_0_0_200","regimes_samples_0.3_0_0_0_200","regimes_samples_0.3_0_1250_0_200","regimes_samples_0.3_0_2500_0_200","regimes_samples_0.3_1250_0_0_200","regimes_samples_0.3_2500_0_0_200","regimes_samples_0.4_0_0_0_200","regimes_samples_0.4_0_1250_0_200","regimes_samples_0.4_0_2500_0_200","regimes_samples_0.4_1250_0_0_200","regimes_samples_0.4_2500_0_0_200","regimes_samples_0.5_0_0_0_200","regimes_samples_0.5_0_1250_0_200","regimes_samples_0.5_0_2500_0_200","regimes_samples_0.5_1250_0_0_200","regimes_samples_0.5_2500_0_0_200"],"type":["stem","pattern","pattern","pattern","pattern","pattern","pattern","pattern","pattern","pattern","pattern","pattern","pattern","stem","pattern","pattern","pattern","pattern","pattern","pattern","pattern","pattern","pattern","pattern","pattern","pattern","pattern","pattern","pattern","pattern","pattern","pattern","pattern","pattern","pattern","pattern","pattern","pattern","pattern","pattern","pattern","pattern","pattern","pattern"],"status":["uptodate","uptodate","uptodate","uptodate","uptodate","uptodate","uptodate","uptodate","uptodate","uptodate","uptodate","uptodate","uptodate","uptodate","uptodate","uptodate","uptodate","uptodate","uptodate","uptodate","uptodate","uptodate","uptodate","uptodate","uptodate","uptodate","uptodate","uptodate","uptodate","uptodate","uptodate","uptodate","uptodate","uptodate","uptodate","uptodate","uptodate","uptodate","uptodate","uptodate","uptodate","uptodate","uptodate","uptodate"],"seconds":[2.249,0.057,1.113,0.364,0.605,1.344,1.163,1.66,20.43,20.734,15.917,17.565,0.111,0.003,0.01,0.012,0.01,0.006,0.009,0.014,0.01,0.01,0.042,0.009,0.017,0.012,0.017,0.016,0.015,0.002,0.003,0.002,0.002,0.002,0.002,0.003,0.002,0.021,0.002,0.002,0.004,0.003,0.005,0.003],"bytes":[380317,703540,8376555,8602259,8468870,8376555,8376555,12820273,4331999,8059460,7123324,7888935,26221,460,1141,1107,1128,1024,1127,1225,1109,1151,1108,1147,1263,1131,1237,1255,1232,4288,3442,3905,826,3905,8093,3444,4296,3442,4294,9338,4281,8492,12773,8489],"branches":[null,2,2,2,2,2,2,2,2,2,2,2,122,null,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2],"id":["dataset","ds_stats_200","ds_stats_mps_0_0_0_200","ds_stats_mps_0_1250_0_200","ds_stats_mps_0_2500_0_200","ds_stats_mps_1250_0_0_200","ds_stats_mps_2500_0_0_200","ds_stats_mps_floss_0_0_0_200","ds_stats_mps_floss_0_1250_0_200","ds_stats_mps_floss_0_2500_0_200","ds_stats_mps_floss_1250_0_0_200","ds_stats_mps_floss_2500_0_0_200","file_paths","file_paths_files","regimes_0.3_0_0_0_200","regimes_0.3_0_1250_0_200","regimes_0.3_0_2500_0_200","regimes_0.3_1250_0_0_200","regimes_0.3_2500_0_0_200","regimes_0.4_0_0_0_200","regimes_0.4_0_1250_0_200","regimes_0.4_0_2500_0_200","regimes_0.4_1250_0_0_200","regimes_0.4_2500_0_0_200","regimes_0.5_0_0_0_200","regimes_0.5_0_1250_0_200","regimes_0.5_0_2500_0_200","regimes_0.5_1250_0_0_200","regimes_0.5_2500_0_0_200","regimes_samples_0.3_0_0_0_200","regimes_samples_0.3_0_1250_0_200","regimes_samples_0.3_0_2500_0_200","regimes_samples_0.3_1250_0_0_200","regimes_samples_0.3_2500_0_0_200","regimes_samples_0.4_0_0_0_200","regimes_samples_0.4_0_1250_0_200","regimes_samples_0.4_0_2500_0_200","regimes_samples_0.4_1250_0_0_200","regimes_samples_0.4_2500_0_0_200","regimes_samples_0.5_0_0_0_200","regimes_samples_0.5_0_1250_0_200","regimes_samples_0.5_0_2500_0_200","regimes_samples_0.5_1250_0_0_200","regimes_samples_0.5_2500_0_0_200"],"label":["dataset","ds_stats_200","ds_stats_mps_0_0_0_200","ds_stats_mps_0_1250_0_200","ds_stats_mps_0_2500_0_200","ds_stats_mps_1250_0_0_200","ds_stats_mps_2500_0_0_200","ds_stats_mps_floss_0_0_0_200","ds_stats_mps_floss_0_1250_0_200","ds_stats_mps_floss_0_2500_0_200","ds_stats_mps_floss_1250_0_0_200","ds_stats_mps_floss_2500_0_0_200","file_paths","file_paths_files","regimes_0.3_0_0_0_200","regimes_0.3_0_1250_0_200","regimes_0.3_0_2500_0_200","regimes_0.3_1250_0_0_200","regimes_0.3_2500_0_0_200","regimes_0.4_0_0_0_200","regimes_0.4_0_1250_0_200","regimes_0.4_0_2500_0_200","regimes_0.4_1250_0_0_200","regimes_0.4_2500_0_0_200","regimes_0.5_0_0_0_200","regimes_0.5_0_1250_0_200","regimes_0.5_0_2500_0_200","regimes_0.5_1250_0_0_200","regimes_0.5_2500_0_0_200","regimes_samples_0.3_0_0_0_200","regimes_samples_0.3_0_1250_0_200","regimes_samples_0.3_0_2500_0_200","regimes_samples_0.3_1250_0_0_200","regimes_samples_0.3_2500_0_0_200","regimes_samples_0.4_0_0_0_200","regimes_samples_0.4_0_1250_0_200","regimes_samples_0.4_0_2500_0_200","regimes_samples_0.4_1250_0_0_200","regimes_samples_0.4_2500_0_0_200","regimes_samples_0.5_0_0_0_200","regimes_samples_0.5_0_1250_0_200","regimes_samples_0.5_0_2500_0_200","regimes_samples_0.5_1250_0_0_200","regimes_samples_0.5_2500_0_0_200"],"level":[3,4,5,5,5,5,5,6,6,6,6,6,2,1,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8],"color":["#354823","#354823","#354823","#354823","#354823","#354823","#354823","#354823","#354823","#354823","#354823","#354823","#354823","#354823","#354823","#354823","#354823","#354823","#354823","#354823","#354823","#354823","#354823","#354823","#354823","#354823","#354823","#354823","#354823","#354823","#354823","#354823","#354823","#354823","#354823","#354823","#354823","#354823","#354823","#354823","#354823","#354823","#354823","#354823"],"shape":["dot","square","square","square","square","square","square","square","square","square","square","square","square","dot","square","square","square","square","square","square","square","square","square","square","square","square","square","square","square","square","square","square","square","square","square","square","square","square","square","square","square","square","square","square"],"title":["2.249 seconds<br />380.317 kilobytes<br />","0.057 seconds<br />703.54 kilobytes<br />2 branches","1.113 seconds<br />8.377 megabytes<br />2 branches","0.364 seconds<br />8.602 megabytes<br />2 branches","0.605 seconds<br />8.469 megabytes<br />2 branches","1.344 seconds<br />8.377 megabytes<br />2 branches","1.163 seconds<br />8.377 megabytes<br />2 branches","1.66 seconds<br />12.82 megabytes<br />2 branches","20.43 seconds<br />4.332 megabytes<br />2 branches","20.734 seconds<br />8.059 megabytes<br />2 branches","15.917 seconds<br />7.123 megabytes<br />2 branches","17.565 seconds<br />7.889 megabytes<br />2 branches","0.111 seconds<br />26.221 kilobytes<br />122 branches","0.003 seconds<br />460 bytes<br />","0.01 seconds<br />1.141 kilobytes<br />2 branches","0.012 seconds<br />1.107 kilobytes<br />2 branches","0.01 seconds<br />1.128 kilobytes<br />2 branches","0.006 seconds<br />1.024 kilobytes<br />2 branches","0.009 seconds<br />1.127 kilobytes<br />2 branches","0.014 seconds<br />1.225 kilobytes<br />2 branches","0.01 seconds<br />1.109 kilobytes<br />2 branches","0.01 seconds<br />1.151 kilobytes<br />2 branches","0.042 seconds<br />1.108 kilobytes<br />2 branches","0.009 seconds<br />1.147 kilobytes<br />2 branches","0.017 seconds<br />1.263 kilobytes<br />2 branches","0.012 seconds<br />1.131 kilobytes<br />2 branches","0.017 seconds<br />1.237 kilobytes<br />2 branches","0.016 seconds<br />1.255 kilobytes<br />2 branches","0.015 seconds<br />1.232 kilobytes<br />2 branches","0.002 seconds<br />4.288 kilobytes<br />2 branches","0.003 seconds<br />3.442 kilobytes<br />2 branches","0.002 seconds<br />3.905 kilobytes<br />2 branches","0.002 seconds<br />826 bytes<br />2 branches","0.002 seconds<br />3.905 kilobytes<br />2 branches","0.002 seconds<br />8.093 kilobytes<br />2 branches","0.003 seconds<br />3.444 kilobytes<br />2 branches","0.002 seconds<br />4.296 kilobytes<br />2 branches","0.021 seconds<br />3.442 kilobytes<br />2 branches","0.002 seconds<br />4.294 kilobytes<br />2 branches","0.002 seconds<br />9.338 kilobytes<br />2 branches","0.004 seconds<br />4.281 kilobytes<br />2 branches","0.003 seconds<br />8.492 kilobytes<br />2 branches","0.005 seconds<br />12.773 kilobytes<br />2 branches","0.003 seconds<br />8.489 kilobytes<br />2 branches"]},"edges":{"from":["ds_stats_mps_floss_2500_0_0_200","dataset","regimes_0.5_0_2500_0_200","dataset","regimes_0.4_0_1250_0_200","dataset","regimes_0.4_0_2500_0_200","dataset","regimes_0.5_0_1250_0_200","dataset","regimes_0.3_0_2500_0_200","dataset","ds_stats_mps_floss_0_0_0_200","dataset","regimes_0.4_0_0_0_200","dataset","ds_stats_200","ds_stats_mps_floss_0_0_0_200","dataset","regimes_0.5_0_0_0_200","file_paths","ds_stats_mps_floss_1250_0_0_200","ds_stats_mps_floss_1250_0_0_200","ds_stats_mps_floss_0_1250_0_200","dataset","regimes_0.3_0_1250_0_200","ds_stats_mps_floss_0_1250_0_200","ds_stats_mps_floss_1250_0_0_200","ds_stats_mps_1250_0_0_200","dataset","ds_stats_200","dataset","ds_stats_200","ds_stats_mps_0_0_0_200","ds_stats_mps_2500_0_0_200","ds_stats_mps_0_1250_0_200","ds_stats_mps_floss_0_1250_0_200","dataset","regimes_0.4_1250_0_0_200","ds_stats_mps_floss_0_2500_0_200","dataset","regimes_0.4_2500_0_0_200","dataset","regimes_0.5_1250_0_0_200","ds_stats_mps_0_2500_0_200","file_paths_files","ds_stats_mps_floss_0_2500_0_200","dataset","regimes_0.5_2500_0_0_200","ds_stats_mps_floss_2500_0_0_200","ds_stats_mps_floss_0_2500_0_200","dataset","ds_stats_200","dataset","regimes_0.3_1250_0_0_200","ds_stats_mps_floss_2500_0_0_200","dataset","ds_stats_200","ds_stats_mps_floss_0_0_0_200","dataset","regimes_0.3_2500_0_0_200","dataset","regimes_0.3_0_0_0_200"],"to":["regimes_0.3_2500_0_0_200","regimes_samples_0.5_0_2500_0_200","regimes_samples_0.5_0_2500_0_200","regimes_samples_0.4_0_1250_0_200","regimes_samples_0.4_0_1250_0_200","regimes_samples_0.4_0_2500_0_200","regimes_samples_0.4_0_2500_0_200","regimes_samples_0.5_0_1250_0_200","regimes_samples_0.5_0_1250_0_200","regimes_samples_0.3_0_2500_0_200","regimes_samples_0.3_0_2500_0_200","ds_stats_200","regimes_0.4_0_0_0_200","regimes_samples_0.4_0_0_0_200","regimes_samples_0.4_0_0_0_200","ds_stats_mps_1250_0_0_200","ds_stats_mps_1250_0_0_200","regimes_0.5_0_0_0_200","regimes_samples_0.5_0_0_0_200","regimes_samples_0.5_0_0_0_200","dataset","regimes_0.4_1250_0_0_200","regimes_0.5_1250_0_0_200","regimes_0.4_0_1250_0_200","regimes_samples_0.3_0_1250_0_200","regimes_samples_0.3_0_1250_0_200","regimes_0.5_0_1250_0_200","regimes_0.3_1250_0_0_200","ds_stats_mps_floss_1250_0_0_200","ds_stats_mps_2500_0_0_200","ds_stats_mps_2500_0_0_200","ds_stats_mps_0_1250_0_200","ds_stats_mps_0_1250_0_200","ds_stats_mps_floss_0_0_0_200","ds_stats_mps_floss_2500_0_0_200","ds_stats_mps_floss_0_1250_0_200","regimes_0.3_0_1250_0_200","regimes_samples_0.4_1250_0_0_200","regimes_samples_0.4_1250_0_0_200","regimes_0.5_0_2500_0_200","regimes_samples_0.4_2500_0_0_200","regimes_samples_0.4_2500_0_0_200","regimes_samples_0.5_1250_0_0_200","regimes_samples_0.5_1250_0_0_200","ds_stats_mps_floss_0_2500_0_200","file_paths","regimes_0.4_0_2500_0_200","regimes_samples_0.5_2500_0_0_200","regimes_samples_0.5_2500_0_0_200","regimes_0.4_2500_0_0_200","regimes_0.3_0_2500_0_200","ds_stats_mps_0_0_0_200","ds_stats_mps_0_0_0_200","regimes_samples_0.3_1250_0_0_200","regimes_samples_0.3_1250_0_0_200","regimes_0.5_2500_0_0_200","ds_stats_mps_0_2500_0_200","ds_stats_mps_0_2500_0_200","regimes_0.3_0_0_0_200","regimes_samples_0.3_2500_0_0_200","regimes_samples_0.3_2500_0_0_200","regimes_samples_0.3_0_0_0_200","regimes_samples_0.3_0_0_0_200"],"arrows":["to","to","to","to","to","to","to","to","to","to","to","to","to","to","to","to","to","to","to","to","to","to","to","to","to","to","to","to","to","to","to","to","to","to","to","to","to","to","to","to","to","to","to","to","to","to","to","to","to","to","to","to","to","to","to","to","to","to","to","to","to","to","to"]},"nodesToDataframe":true,"edgesToDataframe":true,"options":{"width":"100%","height":"100%","nodes":{"shape":"dot","physics":false},"manipulation":{"enabled":false},"edges":{"smooth":{"type":"cubicBezier","forceDirection":"horizontal"}},"physics":{"stabilization":false},"layout":{"hierarchical":{"enabled":true,"direction":"LR"}},"interaction":{"hover":true,"multiselect":true,"tooltipDelay":0,"zoomSpeed":1}},"groups":null,"width":null,"height":null,"idselection":{"enabled":false,"style":"width: 150px; height: 26px","useLabels":true,"main":"Select by id"},"byselection":{"enabled":false,"style":"width: 150px; height: 26px","multiple":false,"hideColor":"rgba(200,200,200,0.5)","highlight":false},"main":{"text":"","style":"font-family:Georgia, Times New Roman, Times, serif;font-weight:bold;font-size:20px;text-align:center;"},"submain":null,"footer":null,"background":"rgba(0, 0, 0, 0)","highlight":{"enabled":true,"hoverNearest":false,"degree":{"from":1,"to":1},"algorithm":"hierarchical","hideColor":"rgba(200,200,200,0.5)","labelOnly":true},"collapse":{"enabled":true,"fit":false,"resetHighlight":true,"clusterOptions":null,"keepCoord":true,"labelSuffix":"(cluster)"},"legend":{"width":0.2,"useGroups":false,"position":"right","ncol":1,"stepX":100,"stepY":100,"zoom":true,"nodes":{"label":["Up to date","Stem","Pattern"],"color":["#354823","#899DA4","#899DA4"],"shape":["dot","dot","square"]},"nodesToDataframe":true},"tooltipStay":300,"tooltipStyle":"position: fixed;visibility:hidden;padding: 5px;white-space: nowrap;font-family: verdana;font-size:14px;font-color:#000000;background-color: #f5f4ed;-moz-border-radius: 3px;-webkit-border-radius: 3px;border-radius: 3px;border: 1px solid #808074;box-shadow: 3px 3px 10px rgba(0, 0, 0, 0.2);"},"evals":[],"jsHooks":[]}</script>
+<p>Briefly describing the regime detection algorithm, which can be explored in the original paper<span class="citation"><sup><a href="#ref-gharghabi2018" role="doc-biblioref">2</a></sup></span>, it is based on the assumption that between two regimes, the most similar shape
+(its nearest neighbor) is located on “the same side”. This information is obtained from the Matrix
+Profile computation. More precisely, using only the Profile Index.</p>
+<p>Before talking about the Matrix Profile computation, some findings deserve to be mentioned:</p>
+<p>In chapter 3.5 in the original paper, the authors of FLOSS wisely introduce the <strong>temporal
+constraint</strong>. Nevertheless, some details are not mentioned. 1) As this algorithm only needs the
+Profile Index, should we use the already computed Indexes or recompute the Matrix Profile using this
+constraint (i.e., the constraint is on the Profile Index or the FLOSS algorithm?). That is not an
+issue about the algorithm but a choice we need to make beforehand. One option is to apply the
+constraint on the Profile Index, and we need to have this parameter set from the start. The second
+option is to have the FLOSS algorithm not account for the indexes beyond the constraint, keeping the
+original Profile Index. 2) The authors declare the correction curve typically used on FLUSS and
+FLOSS as “simply a uniform distribution”, but this is not an accurate statement. Empirically, there
+is a helpful pattern to know about the distribution when using <strong>temporal constraints</strong> (at least
+from the start, in the Matrix Profile stage). At first glance, we see that the distribution
+resembles the skewed distribution used in FLOSS but is shorter, while the <span class="math inline">\(constraint \ge MatrixProfileSize/2\)</span>. For lower constraints, the maximum value of this distribution is equal to
+<span class="math inline">\(MatrixProfileSize/2\)</span> between the indexes <span class="math inline">\(constraint\)</span> to the index <span class="math inline">\(MatrixProfileSize - (constraint \times 0.9)\)</span>. This is shown in Fig. <a href="#fig:distributions">1</a>. That is important because the
+output of the FLOSS algorithm should be normalized and constrained between 0 and 1, which allows us
+to compare different trials using different parameters in the process. Finally, the last datapoints
+are <strong>not</strong> irrelevant, opposed to what was stated by the authors, since an <em>Online</em> algorithm needs
+to return an answer as soon as the application domain requires. That is very much relevant to this
+work’s field, as, for example, for asystole detection, we have a window of 4 seconds to fire the
+alarm. If the time constraint is 10 seconds, this would mean (by the original article) that the last
+10 seconds of the incoming data would not be sufficient to detect the regime change.</p>
+<p>As for the first point mentioned above, it seems more appropriate to set the temporal constraint in
+the Matrix Profile algorithm, and indeed this is what the original paper did. That reduces the
+computation time of the online Matrix Profile, and any post-processing done afterward will inherit
+this constraint. The distribution for correcting the FLOSS algorithm is also simpler. On the other
+hand, it is possible to apply the time constraint in the FLOSS algorithm, leaving the online Matrix
+Profile in its original form. See Fig. <a href="#fig:floss-dist">2</a>. The theoretical distribution
+changes significantly according to the constraint value. The upside of this approach, at least
+during the prospective phase, is to allow us to decide the time constraint value later in the
+pipeline, avoiding the recomputation of the Matrix Profile. The results on detecting regime changes
+are very similar to the first approach. See Fig. <a href="#fig:cac-regimes">3</a>.</p>
+<p>Concerning the second point mentioned above, the solution for evaluating the effect of using time
+constraints in this work’s setting was to generate the ideal distribution using the constrained
+parameters beforehand. That gives us enough data to evaluate a regime change accurately utilizing a
+minimum of <span class="math inline">\(2 \times WindowSize\)</span> datapoints. The best index is still to be determined, and current
+tests are using 3 seconds limit.</p>
+<div class="figure" style="text-align: center"><span style="display:block;" id="fig:distributions"></span>
+<img src="figure/blog-202110.Rmd/distributions-1.svg" alt="1D-IAC distributions for earlier temporal constraint (on Matrix Profile)" width="960" />
+<p class="caption">
+Figure 1: 1D-IAC distributions for earlier temporal constraint (on Matrix Profile)
+</p>
+</div>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-distributions-1">
+Past versions of distributions-1.svg
+</button>
+</p>
+<div id="fig-distributions-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/franzbischoff/false.alarm/blob/0c6023c3321a797e532432ab2b82cd1a2deac5a4/docs/figure/blog-202110.Rmd/distributions-1.svg" target="_blank">0c6023c</a>
+</td>
+<td>
+Francisco Bischoff
+</td>
+<td>
+2022-04-17
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="figure" style="text-align: center"><span style="display:block;" id="fig:floss-dist"></span>
+<img src="figure/blog-202110.Rmd/floss-dist-1.svg" alt="1D-IAC distributions for later temporal constraint (on FLOSS)" width="960" />
+<p class="caption">
+Figure 2: 1D-IAC distributions for later temporal constraint (on FLOSS)
+</p>
+</div>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-floss-dist-1">
+Past versions of floss-dist-1.svg
+</button>
+</p>
+<div id="fig-floss-dist-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/franzbischoff/false.alarm/blob/0c6023c3321a797e532432ab2b82cd1a2deac5a4/docs/figure/blog-202110.Rmd/floss-dist-1.svg" target="_blank">0c6023c</a>
+</td>
+<td>
+Francisco Bischoff
+</td>
+<td>
+2022-04-17
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="figure" style="text-align: center"><span style="display:block;" id="fig:cac-regimes"></span>
+<img src="figure/blog-202110.Rmd/cac-regimes-1.svg" alt="CAC and Regime detection using early and later IAC" width="960" />
+<p class="caption">
+Figure 3: CAC and Regime detection using early and later IAC
+</p>
+</div>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-cac-regimes-1">
+Past versions of cac-regimes-1.svg
+</button>
+</p>
+<div id="fig-cac-regimes-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/franzbischoff/false.alarm/blob/0c6023c3321a797e532432ab2b82cd1a2deac5a4/docs/figure/blog-202110.Rmd/cac-regimes-1.svg" target="_blank">0c6023c</a>
+</td>
+<td>
+Francisco Bischoff
+</td>
+<td>
+2022-04-17
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+<div id="the-matrix-profile-algorithm" class="section level2">
+<h2>The Matrix Profile Algorithm</h2>
+<p>Since the first Matrix Profile computation algorithm, the STAMP<span class="citation"><sup><a href="#ref-yeh2016" role="doc-biblioref">4</a></sup></span>, several improvements on
+the algorithm were made<span class="citation"><sup><a href="#ref-zhu2016" role="doc-biblioref">5</a>,<a href="#ref-zhu2018" role="doc-biblioref">6</a></sup></span>. Still, the ability to keep a growing Matrix Profile
+(i.e., <em>Online</em>) relies on the STAMP algorithm. If the problem allows collecting several data points
+(chunks), STOMP<span class="citation"><sup><a href="#ref-zhu2016" role="doc-biblioref">5</a></sup></span> can speed up the computation. Curiously, the main bottleneck of all these
+algorithms is the FFT (Fast Fourier Transform) algorithm that is the core of the MASS algorithm
+published by Mueen <em>et al.</em><span class="citation"><sup><a href="#ref-mueen2010" role="doc-biblioref">7</a></sup></span> in 2010 and later in 2015, having its code released on
+Professor Mueen’s webpage<span class="citation"><sup><a href="#ref-mass2015" role="doc-biblioref">8</a></sup></span>. The FFT libraries available are highly optimized and CPU (or
+GPU) dependent what makes it at the same time fast but brittle and not suitable for MCU’s
+(Microcontroller Unit), for example. More interestingly yet, is the fact that several published
+works using Matrix Profile, MPdist<span class="citation"><sup><a href="#ref-gharghabi2018a" role="doc-biblioref">9</a></sup></span>, for instance, uses an unpublished algorithm
+called ‘MPX’ that computes the Matrix Profile using cross-correlation methods ending up faster and
+is easily portable.</p>
+<p>This work contributes to extending the MPX algorithm to allow the <em>Online</em> computation of the Matrix
+Profile. More precisely, we are interested in the Right Matrix Profile, whose updated indexes refer
+only to the last incoming datapoint since we are looking for future regime changes, not backward.
+This one-directional algorithm is already described in the FLOSS paper<span class="citation"><sup><a href="#ref-gharghabi2018" role="doc-biblioref">2</a></sup></span>.</p>
+<p>Another contribution of this work is an unexplored constraint that we could apply on building the
+Matrix Profile that we will call <em>Similarity Threshold</em> (ST). The original work outputs the
+similarity values in Euclidean Distance (ED) values, while MPX naturally outputs the values in
+Pearson’s correlation (CC) coefficients. Both ED and CC are interchangeable using the equation
+<a href="#eq:correlation">(1)</a>. However, we may argue that it is easier to compare values that do not depend on the
+<span class="math inline">\(WindowSize\)</span> during an exploratory phase. MPX happens to naturally return values in CC, saving a few
+more computation time.</p>
+<p><span class="math display" id="eq:correlation">\[
+CC = 1 - \frac{ED}{(2 \times WindowSize)} \tag{1}
+\]</span></p>
+<p>The ST is an interesting factor that we can use, especially when detecting pattern changes during
+time. The FLUSS/FLOSS algorithms rely on counting references between indexes in the time series. ST
+can help remove “noise” from these references since only similar patterns above a certain threshold
+are referenced, and changes have more impact on these counts. More information and visual content on
+ST will be provided later. The best ST threshold is still to be determined.</p>
+</div>
+<div id="references" class="section level2 unnumbered">
+<h2>References</h2>
+<div id="refs" class="references csl-bib-body">
+<div id="ref-gharghabi2017" class="csl-entry">
+<div class="csl-left-margin">1. </div><div class="csl-right-inline">Gharghabi S, Ding Y, Yeh C-CM, Kamgar K, Ulanova L, Keogh E. 2017 IEEE international conference on data mining (ICDM). In: IEEE; 2017. doi:<a href="https://doi.org/10.1109/icdm.2017.21">10.1109/icdm.2017.21</a></div>
+</div>
+<div id="ref-gharghabi2018" class="csl-entry">
+<div class="csl-left-margin">2. </div><div class="csl-right-inline">Gharghabi S, Yeh C-CM, Ding Y, et al. Domain agnostic online semantic segmentation for multi-dimensional time series. <em>Data Mining and Knowledge Discovery</em>. 2018;33(1):96-130. doi:<a href="https://doi.org/10.1007/s10618-018-0589-3">10.1007/s10618-018-0589-3</a></div>
+</div>
+<div id="ref-aminikhanghahi2016" class="csl-entry">
+<div class="csl-left-margin">3. </div><div class="csl-right-inline">Aminikhanghahi S, Cook DJ. A survey of methods for time series change point detection. <em>Knowledge and Information Systems</em>. 2016;51(2):339-367. doi:<a href="https://doi.org/10.1007/s10115-016-0987-z">10.1007/s10115-016-0987-z</a></div>
+</div>
+<div id="ref-yeh2016" class="csl-entry">
+<div class="csl-left-margin">4. </div><div class="csl-right-inline">Yeh C-CM, Zhu Y, Ulanova L, et al. 2016 IEEE 16th international conference on data mining (ICDM). In: IEEE; 2016. doi:<a href="https://doi.org/10.1109/icdm.2016.0179">10.1109/icdm.2016.0179</a></div>
+</div>
+<div id="ref-zhu2016" class="csl-entry">
+<div class="csl-left-margin">5. </div><div class="csl-right-inline">Zhu Y, Zimmerman Z, Senobari NS, et al. 2016 IEEE 16th international conference on data mining (ICDM). In: IEEE; 2016. doi:<a href="https://doi.org/10.1109/icdm.2016.0085">10.1109/icdm.2016.0085</a></div>
+</div>
+<div id="ref-zhu2018" class="csl-entry">
+<div class="csl-left-margin">6. </div><div class="csl-right-inline">Zhu Y, Yeh C-CM, Zimmerman Z, Kamgar K, Keogh E. 2018 IEEE international conference on data mining (ICDM). In: IEEE; 2018. doi:<a href="https://doi.org/10.1109/icdm.2018.00099">10.1109/icdm.2018.00099</a></div>
+</div>
+<div id="ref-mueen2010" class="csl-entry">
+<div class="csl-left-margin">7. </div><div class="csl-right-inline">Mueen A, Nath S, Liu J. SIGMOD/PODS ’10: International conference on management of data. In: ACM; 2010. doi:<a href="https://doi.org/10.1145/1807167.1807188">10.1145/1807167.1807188</a></div>
+</div>
+<div id="ref-mass2015" class="csl-entry">
+<div class="csl-left-margin">8. </div><div class="csl-right-inline">Mueen A, Zhu Y, Yeh M, et al. The fastest similarity search algorithm for time series subsequences under euclidean distance. Published 2017. Accessed October 2, 2021. <a href="https://www.cs.unm.edu/~mueen/FastestSimilaritySearch.html">https://www.cs.unm.edu/~mueen/FastestSimilaritySearch.html</a></div>
+</div>
+<div id="ref-gharghabi2018a" class="csl-entry">
+<div class="csl-left-margin">9. </div><div class="csl-right-inline">Gharghabi S, Imani S, Bagnall A, Darvishzadeh A, Keogh E. 2018 IEEE international conference on data mining (ICDM). In: IEEE; 2018. doi:<a href="https://doi.org/10.1109/icdm.2018.00119">10.1109/icdm.2018.00119</a></div>
+</div>
+</div>
 <br>
 <p>
 <button type="button" class="btn btn-default btn-workflowr btn-workflowr-sessioninfo" data-toggle="collapse" data-target="#workflowr-sessioninfo" style="display: block;">
@@ -1215,6 +1004,8 @@ Session information
  callr            3.7.0       2021-04-20 [1] CRAN (R 4.1.2)
  cli              3.2.0       2022-02-14 [1] CRAN (R 4.1.2)
  codetools        0.2-18      2020-11-04 [1] CRAN (R 4.1.2)
+ colorspace       2.0-3       2022-02-21 [1] CRAN (R 4.1.2)
+ conflicted       1.1.0       2021-11-26 [1] CRAN (R 4.1.2)
  crayon           1.5.1       2022-03-26 [1] CRAN (R 4.1.3)
  credentials      1.3.2       2021-11-29 [1] CRAN (R 4.1.2)
  data.table       1.14.2      2021-09-27 [1] CRAN (R 4.1.2)
@@ -1222,19 +1013,24 @@ Session information
  desc             1.4.1       2022-03-06 [1] CRAN (R 4.1.2)
  devtools         2.4.3       2021-11-30 [1] CRAN (R 4.1.2)
  digest           0.6.29      2021-12-01 [1] CRAN (R 4.1.2)
- dplyr            1.0.8       2022-02-08 [1] CRAN (R 4.1.2)
+ dplyr          * 1.0.8       2022-02-08 [1] CRAN (R 4.1.2)
  ellipsis         0.3.2       2021-04-29 [1] CRAN (R 4.1.2)
  evaluate         0.15        2022-02-18 [1] CRAN (R 4.1.2)
  fansi            1.0.3       2022-03-24 [1] CRAN (R 4.1.3)
+ farver           2.1.0       2021-02-28 [1] CRAN (R 4.1.2)
  fastmap          1.1.0       2021-01-25 [1] CRAN (R 4.1.2)
  fs               1.5.2       2021-12-08 [1] CRAN (R 4.1.2)
  generics         0.1.2       2022-01-31 [1] CRAN (R 4.1.2)
  gert             1.6.0       2022-03-29 [1] CRAN (R 4.1.3)
  getPass          0.2-2       2017-07-21 [1] CRAN (R 4.1.2)
+ ggplot2        * 3.3.5       2021-06-25 [1] CRAN (R 4.1.2)
  git2r            0.30.1.9000 2022-03-20 [1] Github (ropensci/git2r@80ba185)
  gittargets     * 0.0.3.9000  2022-02-27 [1] Github (wlandau/gittargets@13a9cd8)
- glue             1.6.2       2022-02-24 [1] CRAN (R 4.1.2)
+ glue           * 1.6.2       2022-02-24 [1] CRAN (R 4.1.2)
+ gridExtra        2.3         2017-09-09 [1] CRAN (R 4.1.2)
+ gtable           0.3.0       2019-03-25 [1] CRAN (R 4.1.2)
  here           * 1.0.1       2020-12-13 [1] CRAN (R 4.1.2)
+ highr            0.9         2021-04-16 [1] CRAN (R 4.1.2)
  htmltools        0.5.2       2021-08-25 [1] CRAN (R 4.1.2)
  htmlwidgets      1.5.4       2021-09-08 [1] CRAN (R 4.1.2)
  httpuv           1.6.5       2022-01-05 [1] CRAN (R 4.1.2)
@@ -1242,17 +1038,22 @@ Session information
  igraph           1.3.0       2022-04-01 [1] CRAN (R 4.1.3)
  jquerylib        0.1.4       2021-04-26 [1] CRAN (R 4.1.2)
  jsonlite         1.8.0       2022-02-22 [1] CRAN (R 4.1.2)
+ kableExtra     * 1.3.4       2021-02-20 [1] CRAN (R 4.1.2)
  knitr            1.38        2022-03-25 [1] CRAN (R 4.1.3)
+ labeling         0.4.2       2020-10-20 [1] CRAN (R 4.1.2)
  languageserver   0.3.12      2021-10-19 [1] CRAN (R 4.1.3)
  later            1.3.0       2021-08-18 [1] CRAN (R 4.1.2)
+ lazyeval         0.2.2       2019-03-15 [1] CRAN (R 4.1.2)
  lifecycle        1.0.1       2021-09-24 [1] CRAN (R 4.1.2)
  magrittr         2.0.3       2022-03-30 [1] CRAN (R 4.1.3)
  memoise          2.0.1       2021-11-26 [1] CRAN (R 4.1.2)
+ munsell          0.5.0       2018-06-12 [1] CRAN (R 4.1.2)
  openssl          2.0.0       2022-03-02 [1] CRAN (R 4.1.2)
  pillar           1.7.0       2022-02-01 [1] CRAN (R 4.1.2)
  pkgbuild         1.3.1       2021-12-20 [1] CRAN (R 4.1.2)
  pkgconfig        2.0.3       2019-09-22 [1] CRAN (R 4.1.2)
  pkgload          1.2.4       2021-11-30 [1] CRAN (R 4.1.2)
+ plotly         * 4.10.0      2021-10-09 [1] CRAN (R 4.1.2)
  prettyunits      1.1.1       2020-01-24 [1] CRAN (R 4.1.2)
  processx         3.5.3       2022-03-25 [1] CRAN (R 4.1.3)
  promises         1.2.0.1     2021-02-11 [1] CRAN (R 4.1.2)
@@ -1266,21 +1067,27 @@ Session information
  rmarkdown        2.13.7      2022-04-16 [1] Github (rstudio/rmarkdown@3440bbf)
  rprojroot        2.0.3       2022-04-02 [1] CRAN (R 4.1.3)
  rstudioapi       0.13        2020-11-12 [1] CRAN (R 4.1.2)
+ rvest            1.0.2       2021-10-16 [1] CRAN (R 4.1.2)
  sass             0.4.1       2022-03-23 [1] CRAN (R 4.1.3)
+ scales           1.2.0       2022-04-13 [1] CRAN (R 4.1.3)
  sessioninfo      1.2.2       2021-12-06 [1] CRAN (R 4.1.2)
  stringi          1.7.6       2021-11-29 [1] CRAN (R 4.1.2)
  stringr          1.4.0       2019-02-10 [1] CRAN (R 4.1.2)
+ svglite          2.1.0.9000  2022-03-03 [1] Github (r-lib/svglite@d673908)
  sys              3.4         2020-07-23 [1] CRAN (R 4.1.2)
+ systemfonts      1.0.4       2022-02-11 [1] CRAN (R 4.1.2)
  tarchetypes    * 0.5.0       2022-03-16 [1] CRAN (R 4.1.2)
  targets        * 0.11.0      2022-03-19 [1] CRAN (R 4.1.2)
  testthat         3.1.3.9000  2022-04-02 [1] Github (r-lib/testthat@bb25375)
- tibble           3.1.6       2021-11-07 [1] CRAN (R 4.1.2)
+ tibble         * 3.1.6       2021-11-07 [1] CRAN (R 4.1.2)
+ tidyr            1.2.0       2022-02-01 [1] CRAN (R 4.1.2)
  tidyselect       1.1.2       2022-02-21 [1] CRAN (R 4.1.2)
  usethis          2.1.5       2021-12-09 [1] CRAN (R 4.1.2)
  utf8             1.2.2       2021-07-24 [1] CRAN (R 4.1.2)
  uuid             1.0-4       2022-03-16 [1] CRAN (R 4.1.2)
  vctrs            0.4.1       2022-04-13 [1] CRAN (R 4.1.3)
- visNetwork     * 2.1.0       2021-09-29 [1] CRAN (R 4.1.2)
+ viridisLite      0.4.0       2021-04-13 [1] CRAN (R 4.1.2)
+ webshot          0.5.3       2022-04-14 [1] CRAN (R 4.1.3)
  whisker          0.4         2019-08-28 [1] CRAN (R 4.1.2)
  withr            2.5.0       2022-03-03 [1] CRAN (R 4.1.2)
  workflowr      * 1.7.0       2021-12-21 [1] CRAN (R 4.1.2)
@@ -1311,6 +1118,8 @@ footer is added to webpages before the MathJax javascript. -->
 
 
 
+</div>
+</div>
 
 </div>
 
@@ -1343,6 +1152,35 @@ $(document).ready(function () {
 
 <!-- code folding -->
 
+<script>
+$(document).ready(function ()  {
+
+    // temporarily add toc-ignore selector to headers for the consistency with Pandoc
+    $('.unlisted.unnumbered').addClass('toc-ignore')
+
+    // move toc-ignore selectors from section div to header
+    $('div.section.toc-ignore')
+        .removeClass('toc-ignore')
+        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
+
+    // establish options
+    var options = {
+      selectors: "h1,h2,h3",
+      theme: "bootstrap3",
+      context: '.toc-content',
+      hashGenerator: function (text) {
+        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_');
+      },
+      ignoreSelector: ".toc-ignore",
+      scrollTo: 0
+    };
+    options.showAndHide = true;
+    options.smoothScroll = true;
+
+    // tocify
+    var toc = $("#TOC").tocify(options).data("toc-tocify");
+});
+</script>
 
 <!-- dynamically load mathjax for compatibility with self-contained -->
 <script>

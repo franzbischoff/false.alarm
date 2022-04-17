@@ -12,7 +12,7 @@
 <meta name="author" content="Francisco Bischoff" />
 
 
-<title>License</title>
+<title>2022, January Update</title>
 
 <script src="site_libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -29,6 +29,9 @@
        h6 {font-size: 12px;}
        code {color: inherit; background-color: rgba(0, 0, 0, 0.04);}
        pre:not([class]) { background-color: white }</style>
+<script src="site_libs/jqueryui-1.11.4/jquery-ui.min.js"></script>
+<link href="site_libs/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
+<script src="site_libs/tocify-1.9.1/jquery.tocify.js"></script>
 <script src="site_libs/navigation-1.1/tabsets.js"></script>
 <link href="site_libs/font-awesome-5.1.0/css/all.css" rel="stylesheet" />
 <link href="site_libs/font-awesome-5.1.0/css/v4-shims.css" rel="stylesheet" />
@@ -57,6 +60,28 @@ div.section {
 
 
 
+<style type="text/css">
+/* for pandoc --citeproc since 2.11 */
+div.csl-bib-body { }
+div.csl-entry {
+  clear: both;
+}
+.hanging div.csl-entry {
+  margin-left:2em;
+  text-indent:-2em;
+}
+div.csl-left-margin {
+  min-width:2em;
+  float:left;
+}
+div.csl-right-inline {
+  margin-left:2em;
+  padding-left:1em;
+}
+div.csl-indent {
+  margin-left: 2em;
+}
+</style>
 
 <link rel="stylesheet" href="style.css" type="text/css" />
 
@@ -223,6 +248,69 @@ $(document).ready(function () {
 
 
 
+<style type="text/css">
+
+#TOC {
+  margin: 25px 0px 20px 0px;
+}
+@media (max-width: 768px) {
+#TOC {
+  position: relative;
+  width: 100%;
+}
+}
+
+@media print {
+.toc-content {
+  /* see https://github.com/w3c/csswg-drafts/issues/4434 */
+  float: right;
+}
+}
+
+.toc-content {
+  padding-left: 30px;
+  padding-right: 40px;
+}
+
+div.main-container {
+  max-width: 1200px;
+}
+
+div.tocify {
+  width: 20%;
+  max-width: 260px;
+  max-height: 85%;
+}
+
+@media (min-width: 768px) and (max-width: 991px) {
+  div.tocify {
+    width: 25%;
+  }
+}
+
+@media (max-width: 767px) {
+  div.tocify {
+    width: 100%;
+    max-width: none;
+  }
+}
+
+.tocify ul, .tocify li {
+  line-height: 20px;
+}
+
+.tocify-subheader .tocify-item {
+  font-size: 0.90em;
+}
+
+.tocify .list-group-item {
+  border-radius: 0px;
+}
+
+
+</style>
+
+
 
 </head>
 
@@ -230,6 +318,16 @@ $(document).ready(function () {
 
 
 <div class="container-fluid main-container">
+
+
+<!-- setup 3col/9col grid for toc_float and main content  -->
+<div class="row">
+<div class="col-xs-12 col-sm-4 col-md-3">
+<div id="TOC" class="tocify">
+</div>
+</div>
+
+<div class="toc-content col-xs-12 col-sm-8 col-md-9">
 
 
 
@@ -318,9 +416,9 @@ $(document).ready(function () {
 
 
 
-<h1 class="title toc-ignore">License</h1>
+<h1 class="title toc-ignore">2022, January Update</h1>
 <h4 class="author">Francisco Bischoff</h4>
-<h4 class="date">on July 22, 2020</h4>
+<h4 class="date">on January 16, 2022</h4>
 
 </div>
 
@@ -571,7 +669,7 @@ changes.
 
 <p>
 These are the previous versions of the repository in which changes were made
-to the R Markdown (<code>analysis/license.Rmd</code>) and HTML (<code>docs/license.html</code>)
+to the R Markdown (<code>analysis/blog-202201.Rmd</code>) and HTML (<code>docs/blog-202201.html</code>)
 files. If you’ve configured a remote Git repository (see
 <code>?wflow_git_remote</code>), click on the hyperlinks in the table below to
 view the files as they were in that past version.
@@ -600,274 +698,19 @@ Message
 <tbody>
 <tr>
 <td>
-html
-</td>
-<td>
-<a href="https://rawcdn.githack.com/franzbischoff/false.alarm/96dd52858fbc172c6f6a598fd6f797ec5749a844/docs/license.html" target="_blank">96dd528</a>
-</td>
-<td>
-Francisco Bischoff
-</td>
-<td>
-2022-03-15
-</td>
-<td>
-Build site.
-</td>
-</tr>
-<tr>
-<td>
 Rmd
 </td>
 <td>
-<a href="https://github.com/franzbischoff/false.alarm/blob/c155156fed32f4ec0181e728543d9e4329c70f0c/analysis/license.Rmd" target="_blank">c155156</a>
+<a href="https://github.com/franzbischoff/false.alarm/blob/0c6023c3321a797e532432ab2b82cd1a2deac5a4/analysis/blog-202201.Rmd" target="_blank">0c6023c</a>
 </td>
 <td>
 Francisco Bischoff
 </td>
 <td>
-2022-03-14
+2022-04-17
 </td>
 <td>
-workflowr asd
-</td>
-</tr>
-<tr>
-<td>
-Rmd
-</td>
-<td>
-<a href="https://github.com/franzbischoff/false.alarm/blob/5f35362580d8467b0008a1c8326fc07b67b87d1c/analysis/license.Rmd" target="_blank">5f35362</a>
-</td>
-<td>
-Francisco Bischoff
-</td>
-<td>
-2022-03-14
-</td>
-<td>
-rekniting
-</td>
-</tr>
-<tr>
-<td>
-html
-</td>
-<td>
-<a href="https://rawcdn.githack.com/franzbischoff/false.alarm/0aefdd1e404bb46b581c500c334be2dc6cc6f96c/docs/license.html" target="_blank">0aefdd1</a>
-</td>
-<td>
-Francisco Bischoff
-</td>
-<td>
-2022-03-14
-</td>
-<td>
-workflowr 2
-</td>
-</tr>
-<tr>
-<td>
-html
-</td>
-<td>
-<a href="https://rawcdn.githack.com/franzbischoff/false.alarm/5f35362580d8467b0008a1c8326fc07b67b87d1c/docs/license.html" target="_blank">5f35362</a>
-</td>
-<td>
-Francisco Bischoff
-</td>
-<td>
-2022-03-14
-</td>
-<td>
-rekniting
-</td>
-</tr>
-<tr>
-<td>
-html
-</td>
-<td>
-<a href="https://rawcdn.githack.com/franzbischoff/false.alarm/4884ec1db6c0dda7131fe403dd38926ddbf52865/docs/license.html" target="_blank">4884ec1</a>
-</td>
-<td>
-Francisco Bischoff
-</td>
-<td>
-2022-02-02
-</td>
-<td>
-work
-</td>
-</tr>
-<tr>
-<td>
-html
-</td>
-<td>
-<a href="https://rawcdn.githack.com/franzbischoff/false.alarm/ca1941e6f9416ba7648c9175367a39e9382044d8/docs/license.html" target="_blank">ca1941e</a>
-</td>
-<td>
-GitHub Actions
-</td>
-<td>
-2021-10-12
-</td>
-<td>
-Build site.
-</td>
-</tr>
-<tr>
-<td>
-Rmd
-</td>
-<td>
-<a href="https://github.com/franzbischoff/false.alarm/blob/6b03f431bca6d1df980893c70577fba8ec23554d/analysis/license.Rmd" target="_blank">6b03f43</a>
-</td>
-<td>
-Francisco Bischoff
-</td>
-<td>
-2021-10-11
-</td>
-<td>
-Squashed commit of the following:
-</td>
-</tr>
-<tr>
-<td>
-html
-</td>
-<td>
-<a href="https://rawcdn.githack.com/franzbischoff/false.alarm/c19ec017e1a0cdd909f673a745546e5f34813afa/docs/license.html" target="_blank">c19ec01</a>
-</td>
-<td>
-Francisco Bischoff
-</td>
-<td>
-2021-08-17
-</td>
-<td>
-Build site.
-</td>
-</tr>
-<tr>
-<td>
-html
-</td>
-<td>
-<a href="https://rawcdn.githack.com/franzbischoff/false.alarm/a5ec160176f456ba8e8f7f2e8650cbf5c68b1e97/docs/license.html" target="_blank">a5ec160</a>
-</td>
-<td>
-Francisco Bischoff
-</td>
-<td>
-2021-08-17
-</td>
-<td>
-Build site.
-</td>
-</tr>
-<tr>
-<td>
-html
-</td>
-<td>
-<a href="https://rawcdn.githack.com/franzbischoff/false.alarm/e7e5d4861f1f3b21e25787e0ed6b6066b57ff857/docs/license.html" target="_blank">e7e5d48</a>
-</td>
-<td>
-GitHub Actions
-</td>
-<td>
-2021-07-15
-</td>
-<td>
-Build site.
-</td>
-</tr>
-<tr>
-<td>
-Rmd
-</td>
-<td>
-<a href="https://github.com/franzbischoff/false.alarm/blob/1473a05723e9d94f18e9fd5f77a616bc669ed973/analysis/license.Rmd" target="_blank">1473a05</a>
-</td>
-<td>
-Francisco Bischoff
-</td>
-<td>
-2021-07-15
-</td>
-<td>
-report
-</td>
-</tr>
-<tr>
-<td>
-html
-</td>
-<td>
-<a href="https://rawcdn.githack.com/franzbischoff/false.alarm/1473a05723e9d94f18e9fd5f77a616bc669ed973/docs/license.html" target="_blank">1473a05</a>
-</td>
-<td>
-Francisco Bischoff
-</td>
-<td>
-2021-07-15
-</td>
-<td>
-report
-</td>
-</tr>
-<tr>
-<td>
-html
-</td>
-<td>
-<a href="https://rawcdn.githack.com/franzbischoff/false.alarm/52e7f0b7b022544dd3dafc2a8f8cdf5951fb0f54/docs/license.html" target="_blank">52e7f0b</a>
-</td>
-<td>
-GitHub Actions
-</td>
-<td>
-2021-03-24
-</td>
-<td>
-Build site.
-</td>
-</tr>
-<tr>
-<td>
-Rmd
-</td>
-<td>
-<a href="https://github.com/franzbischoff/false.alarm/blob/7c3cc31c693d4bf3a26b42bd43703efde4b2a528/analysis/license.Rmd" target="_blank">7c3cc31</a>
-</td>
-<td>
-Francisco Bischoff
-</td>
-<td>
-2021-03-23
-</td>
-<td>
-Targets
-</td>
-</tr>
-<tr>
-<td>
-html
-</td>
-<td>
-<a href="https://rawcdn.githack.com/franzbischoff/false.alarm/7c3cc31c693d4bf3a26b42bd43703efde4b2a528/docs/license.html" target="_blank">7c3cc31</a>
-</td>
-<td>
-Francisco Bischoff
-</td>
-<td>
-2021-03-23
-</td>
-<td>
-Targets
+refactor blog
 </td>
 </tr>
 </tbody>
@@ -877,14 +720,72 @@ Targets
 </div>
 </div>
 </div>
-<center>
-<div class="figure">
-<img src="https://i.creativecommons.org/l/by-nc-sa/4.0/88x31.png" alt="" />
-<p class="caption">Creative Commons License</p>
+<p>These last months were dedicated to several important things:</p>
+<ol style="list-style-type: decimal">
+<li>Restructuring the roadmap</li>
+<li>Refining the main pipeline</li>
+<li>Preparing for modeling and parameter tuning</li>
+<li>Feasibility trial</li>
+<li>And others</li>
+</ol>
+<div id="refining-the-main-pipeline" class="section level2">
+<h2>Refining the main pipeline</h2>
+<p>That can also be thought of as “rethinking” the pipeline. What also leads to the roadmap
+restructuration.</p>
+<p>It is essential not only to write a pipeline that can “autoplot” itself for fine-grain inspection
+but also to design a high-level graph that can explain it “in a glance”. This exercise was helpful
+both ways: telling the story in a short version also reveals missing things and misleading paths
+that are not so obvious when thinking “low-level”.</p>
 </div>
-</center>
-<p>This work is licensed under the Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International License.</p>
-<p>To view a copy of this license, visit <a href="http://creativecommons.org/licenses/by-nc-sa/4.0/" class="uri">http://creativecommons.org/licenses/by-nc-sa/4.0/</a>.</p>
+<div id="preparing-for-modeling-and-parameter-tuning" class="section level2">
+<h2>Preparing for modeling and parameter tuning</h2>
+<p>Although this work has its purpose of being finally deployed on small hardware, this prospective
+phase will need several hours of computing, tuning, evaluation, and validation of all findings.</p>
+<p>Thus it was necessary to revisit the frameworks we are used to working on R: <code>caret</code> and the newest
+<code>tidymodels</code> collection. For sure, there are other frameworks and opinions<span class="citation"><sup><a href="#ref-Thompson2020" role="doc-biblioref">1</a></sup></span>.
+Notwithstanding, this project will follow the <code>tidymodels</code> road. Two significant arguments 1)
+constantly improving and constantly being re-checked for bugs; 2) allows to plug in a custom
+modeling algorithm that, in this case, will be the one needed for developing this work.</p>
+</div>
+<div id="feasibility-trial" class="section level2">
+<h2>Feasibility trial</h2>
+<p>A side-project called “false.alarm.io” has been derived from this work (an unfortunate mix of
+“false.alarm” and “PlatformIO”<span class="citation"><sup><a href="#ref-PlatformIO" role="doc-biblioref">2</a></sup></span>, the IDE chosen to interface the panoply of embedded
+systems we can experiment). The current results of this side-project are very enlightening and show
+that the final algorithm can indeed be used in small hardware. Further data will be available in
+the future.</p>
+</div>
+<div id="and-others" class="section level2">
+<h2>And others</h2>
+<p>After this “step back” to look forward, it was time to define how the regime change algorithm would
+integrate with the actual decision of triggering or not the alarm. Some hypotheses were thought out:
+(1) clustering similar patterns, (2) anomaly detection, (3) classification, and (4) forecasting.
+Among these methods, it was thought to avoid exceeding processor capacity, an initial set of
+shapelets<span class="citation"><sup><a href="#ref-Rakthanmanon2013" role="doc-biblioref">3</a></sup></span> can be sufficient to rule in or out the <code>TRUE</code>/<code>FALSE</code> challenge.
+Depending on the accuracy of this approach and the resources available, another method can be
+introduced for both (1) improving the “negative”<a href="#fn1" class="footnote-ref" id="fnref1"><sup>1</sup></a> samples and (2) learning more shapelets to
+improve the <code>TRUE</code>/<code>FALSE</code> alarm discrimination.</p>
+<blockquote>
+<p>Minor update, but also important concerning the <em>FAIR</em> principle “Interoperability”: the dataset
+stored publicly on Zenodo<span class="citation"><sup><a href="#ref-bischoff2021" role="doc-biblioref">4</a></sup></span> was converted from <code>.mat</code> to <code>.csv</code>.</p>
+</blockquote>
+</div>
+<div id="references" class="section level2 unnumbered">
+<h2>References</h2>
+<div id="refs" class="references csl-bib-body">
+<div id="ref-Thompson2020" class="csl-entry">
+<div class="csl-left-margin">1. </div><div class="csl-right-inline">Thompson J. On not using tidymodels. Published October 2020. Accessed January 5, 2022. <a href="https://staffblogs.le.ac.uk/teachingr/2020/10/05/on-not-using-tidymodels/">https://staffblogs.le.ac.uk/teachingr/2020/10/05/on-not-using-tidymodels/</a></div>
+</div>
+<div id="ref-PlatformIO" class="csl-entry">
+<div class="csl-left-margin">2. </div><div class="csl-right-inline">PlatformIO, a professional collaborative platform for embedded development. Accessed January 5, 2022. <a href="https://platformio.org/">https://platformio.org/</a></div>
+</div>
+<div id="ref-Rakthanmanon2013" class="csl-entry">
+<div class="csl-left-margin">3. </div><div class="csl-right-inline">Rakthanmanon T, Keogh E. Fast shapelets: A scalable algorithm for discovering time series shapelets. In: <em>Proceedings of the 2013 SIAM International Conference on Data Mining</em>. Society for Industrial; Applied Mathematics; 2013:668-676. doi:<a href="https://doi.org/10.1137/1.9781611972832.74">10.1137/1.9781611972832.74</a></div>
+</div>
+<div id="ref-bischoff2021" class="csl-entry">
+<div class="csl-left-margin">4. </div><div class="csl-right-inline">Reducing False Arrhythmia Alarms in the ICU - The PhysioNet Computing in Cardiology Challenge 2015. Published online March 24, 2021. doi:<a href="https://doi.org/10.5281/zenodo.4634013">10.5281/zenodo.4634013</a></div>
+</div>
+</div>
 <br>
 <p>
 <button type="button" class="btn btn-default btn-workflowr btn-workflowr-sessioninfo" data-toggle="collapse" data-target="#workflowr-sessioninfo" style="display: block;">
@@ -918,6 +819,8 @@ Session information
  callr            3.7.0       2021-04-20 [1] CRAN (R 4.1.2)
  cli              3.2.0       2022-02-14 [1] CRAN (R 4.1.2)
  codetools        0.2-18      2020-11-04 [1] CRAN (R 4.1.2)
+ colorspace       2.0-3       2022-02-21 [1] CRAN (R 4.1.2)
+ conflicted       1.1.0       2021-11-26 [1] CRAN (R 4.1.2)
  crayon           1.5.1       2022-03-26 [1] CRAN (R 4.1.3)
  credentials      1.3.2       2021-11-29 [1] CRAN (R 4.1.2)
  data.table       1.14.2      2021-09-27 [1] CRAN (R 4.1.2)
@@ -925,7 +828,7 @@ Session information
  desc             1.4.1       2022-03-06 [1] CRAN (R 4.1.2)
  devtools         2.4.3       2021-11-30 [1] CRAN (R 4.1.2)
  digest           0.6.29      2021-12-01 [1] CRAN (R 4.1.2)
- dplyr            1.0.8       2022-02-08 [1] CRAN (R 4.1.2)
+ dplyr          * 1.0.8       2022-02-08 [1] CRAN (R 4.1.2)
  ellipsis         0.3.2       2021-04-29 [1] CRAN (R 4.1.2)
  evaluate         0.15        2022-02-18 [1] CRAN (R 4.1.2)
  fansi            1.0.3       2022-03-24 [1] CRAN (R 4.1.3)
@@ -934,27 +837,34 @@ Session information
  generics         0.1.2       2022-01-31 [1] CRAN (R 4.1.2)
  gert             1.6.0       2022-03-29 [1] CRAN (R 4.1.3)
  getPass          0.2-2       2017-07-21 [1] CRAN (R 4.1.2)
+ ggplot2        * 3.3.5       2021-06-25 [1] CRAN (R 4.1.2)
  git2r            0.30.1.9000 2022-03-20 [1] Github (ropensci/git2r@80ba185)
  gittargets     * 0.0.3.9000  2022-02-27 [1] Github (wlandau/gittargets@13a9cd8)
- glue             1.6.2       2022-02-24 [1] CRAN (R 4.1.2)
+ glue           * 1.6.2       2022-02-24 [1] CRAN (R 4.1.2)
+ gtable           0.3.0       2019-03-25 [1] CRAN (R 4.1.2)
  here           * 1.0.1       2020-12-13 [1] CRAN (R 4.1.2)
  htmltools        0.5.2       2021-08-25 [1] CRAN (R 4.1.2)
+ htmlwidgets      1.5.4       2021-09-08 [1] CRAN (R 4.1.2)
  httpuv           1.6.5       2022-01-05 [1] CRAN (R 4.1.2)
  httr             1.4.2       2020-07-20 [1] CRAN (R 4.1.2)
  igraph           1.3.0       2022-04-01 [1] CRAN (R 4.1.3)
  jquerylib        0.1.4       2021-04-26 [1] CRAN (R 4.1.2)
  jsonlite         1.8.0       2022-02-22 [1] CRAN (R 4.1.2)
+ kableExtra     * 1.3.4       2021-02-20 [1] CRAN (R 4.1.2)
  knitr            1.38        2022-03-25 [1] CRAN (R 4.1.3)
  languageserver   0.3.12      2021-10-19 [1] CRAN (R 4.1.3)
  later            1.3.0       2021-08-18 [1] CRAN (R 4.1.2)
+ lazyeval         0.2.2       2019-03-15 [1] CRAN (R 4.1.2)
  lifecycle        1.0.1       2021-09-24 [1] CRAN (R 4.1.2)
  magrittr         2.0.3       2022-03-30 [1] CRAN (R 4.1.3)
  memoise          2.0.1       2021-11-26 [1] CRAN (R 4.1.2)
+ munsell          0.5.0       2018-06-12 [1] CRAN (R 4.1.2)
  openssl          2.0.0       2022-03-02 [1] CRAN (R 4.1.2)
  pillar           1.7.0       2022-02-01 [1] CRAN (R 4.1.2)
  pkgbuild         1.3.1       2021-12-20 [1] CRAN (R 4.1.2)
  pkgconfig        2.0.3       2019-09-22 [1] CRAN (R 4.1.2)
  pkgload          1.2.4       2021-11-30 [1] CRAN (R 4.1.2)
+ plotly         * 4.10.0      2021-10-09 [1] CRAN (R 4.1.2)
  prettyunits      1.1.1       2020-01-24 [1] CRAN (R 4.1.2)
  processx         3.5.3       2022-03-25 [1] CRAN (R 4.1.3)
  promises         1.2.0.1     2021-02-11 [1] CRAN (R 4.1.2)
@@ -968,20 +878,27 @@ Session information
  rmarkdown        2.13.7      2022-04-16 [1] Github (rstudio/rmarkdown@3440bbf)
  rprojroot        2.0.3       2022-04-02 [1] CRAN (R 4.1.3)
  rstudioapi       0.13        2020-11-12 [1] CRAN (R 4.1.2)
+ rvest            1.0.2       2021-10-16 [1] CRAN (R 4.1.2)
  sass             0.4.1       2022-03-23 [1] CRAN (R 4.1.3)
+ scales           1.2.0       2022-04-13 [1] CRAN (R 4.1.3)
  sessioninfo      1.2.2       2021-12-06 [1] CRAN (R 4.1.2)
  stringi          1.7.6       2021-11-29 [1] CRAN (R 4.1.2)
  stringr          1.4.0       2019-02-10 [1] CRAN (R 4.1.2)
+ svglite          2.1.0.9000  2022-03-03 [1] Github (r-lib/svglite@d673908)
  sys              3.4         2020-07-23 [1] CRAN (R 4.1.2)
+ systemfonts      1.0.4       2022-02-11 [1] CRAN (R 4.1.2)
  tarchetypes    * 0.5.0       2022-03-16 [1] CRAN (R 4.1.2)
  targets        * 0.11.0      2022-03-19 [1] CRAN (R 4.1.2)
  testthat         3.1.3.9000  2022-04-02 [1] Github (r-lib/testthat@bb25375)
- tibble           3.1.6       2021-11-07 [1] CRAN (R 4.1.2)
+ tibble         * 3.1.6       2021-11-07 [1] CRAN (R 4.1.2)
+ tidyr            1.2.0       2022-02-01 [1] CRAN (R 4.1.2)
  tidyselect       1.1.2       2022-02-21 [1] CRAN (R 4.1.2)
  usethis          2.1.5       2021-12-09 [1] CRAN (R 4.1.2)
  utf8             1.2.2       2021-07-24 [1] CRAN (R 4.1.2)
  uuid             1.0-4       2022-03-16 [1] CRAN (R 4.1.2)
  vctrs            0.4.1       2022-04-13 [1] CRAN (R 4.1.3)
+ viridisLite      0.4.0       2021-04-13 [1] CRAN (R 4.1.2)
+ webshot          0.5.3       2022-04-14 [1] CRAN (R 4.1.3)
  whisker          0.4         2019-08-28 [1] CRAN (R 4.1.2)
  withr            2.5.0       2022-03-03 [1] CRAN (R 4.1.2)
  workflowr      * 1.7.0       2021-12-21 [1] CRAN (R 4.1.2)
@@ -993,6 +910,14 @@ Session information
  [2] /usr/lib/R/library
 
 ──────────────────────────────────────────────────────────────────────────────</code></pre>
+</div>
+</div>
+<div class="footnotes footnotes-end-of-document">
+<hr />
+<ol>
+<li id="fn1"><p>The term “negative” does not imply that the patient has a “normal” ECG. It means that the
+“negative” section is not a life-threatening condition that needs to trigger an alarm.<a href="#fnref1" class="footnote-back">↩︎</a></p></li>
+</ol>
 </div>
 
 
@@ -1011,6 +936,8 @@ footer is added to webpages before the MathJax javascript. -->
 
 
 
+</div>
+</div>
 
 </div>
 
@@ -1043,6 +970,35 @@ $(document).ready(function () {
 
 <!-- code folding -->
 
+<script>
+$(document).ready(function ()  {
+
+    // temporarily add toc-ignore selector to headers for the consistency with Pandoc
+    $('.unlisted.unnumbered').addClass('toc-ignore')
+
+    // move toc-ignore selectors from section div to header
+    $('div.section.toc-ignore')
+        .removeClass('toc-ignore')
+        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
+
+    // establish options
+    var options = {
+      selectors: "h1,h2,h3",
+      theme: "bootstrap3",
+      context: '.toc-content',
+      hashGenerator: function (text) {
+        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_');
+      },
+      ignoreSelector: ".toc-ignore",
+      scrollTo: 0
+    };
+    options.showAndHide = true;
+    options.smoothScroll = true;
+
+    // tocify
+    var toc = $("#TOC").tocify(options).data("toc-tocify");
+});
+</script>
 
 <!-- dynamically load mathjax for compatibility with self-contained -->
 <script>
