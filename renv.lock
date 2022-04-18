@@ -2529,9 +2529,9 @@
       "RemoteUsername": "r-lib",
       "RemoteRepo": "styler",
       "RemoteRef": "main",
-      "RemoteSha": "54b16827b955e988d1056910b14ce617ba552092",
+      "RemoteSha": "3edbae817eb3e60f195f41f00e9a3b6dffd56666",
       "RemoteHost": "api.github.com",
-      "Hash": "8104e64fcda137f88533dd3f4bb21542",
+      "Hash": "d2ad361c3cf9e87c2a44dcbb1640f796",
       "Requirements": [
         "R.cache",
         "cli",
