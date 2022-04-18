@@ -270,27 +270,6 @@
         "backports"
       ]
     },
-    "batchtools": {
-      "Package": "batchtools",
-      "Version": "0.9.15",
-      "Source": "Repository",
-      "Repository": "CRAN",
-      "Hash": "1f8105b6e7c01c37b58559fbf91425e3",
-      "Requirements": [
-        "R6",
-        "backports",
-        "base64url",
-        "brew",
-        "checkmate",
-        "data.table",
-        "digest",
-        "fs",
-        "progress",
-        "rappdirs",
-        "stringi",
-        "withr"
-      ]
-    },
     "bit": {
       "Package": "bit",
       "Version": "4.0.4",
@@ -943,17 +922,6 @@
       "Requirements": [
         "future",
         "globals"
-      ]
-    },
-    "future.batchtools": {
-      "Package": "future.batchtools",
-      "Version": "0.10.0",
-      "Source": "Repository",
-      "Repository": "CRAN",
-      "Hash": "ed6d40f78a5761934d6d3ba77d7ddac2",
-      "Requirements": [
-        "batchtools",
-        "future"
       ]
     },
     "future.callr": {

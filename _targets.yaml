@@ -4,7 +4,7 @@ main:
   store: _targets
   shortcut: no
   script: scripts/_targets.R
-  workers: 2
+  workers: 20
 
 classifier:
   inherits: main

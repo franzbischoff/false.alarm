@@ -660,8 +660,6 @@ read_ecg_with_atr <- function(filename, subset = NULL, classes = c("all", "persi
       newsignal <- signal::resample(csv_content[[i]], resample_to, resample_from)
       csv_content[[i]] <- newsignal
       freq_signal <- resample_to
-
-      csv_annotations$sample <- csv_annotations$sample * prop
     }
 
     name <- siginfo[[i]]$description
@@ -673,7 +671,7 @@ read_ecg_with_atr <- function(filename, subset = NULL, classes = c("all", "persi
       signals[[name]] <- csv_content[[i]]
       # signals[[name]] <- (csv_content[[i]] - siginfo[[i]]$baseline) / siginfo[[i]]$gain
     } else {
-      signals[[name]] <- ((csv_content[[i]] - 5)* siginfo[[i]]$gain)# + siginfo[[i]]$baseline
+      signals[[name]] <- ((csv_content[[i]] - 5) * siginfo[[i]]$gain) # + siginfo[[i]]$baseline
       # if not normalizing, set all NA to wfdb_nan
       signals[[name]][is.na(signals[[name]])] <- wfdb_nan
     }
@@ -685,6 +683,13 @@ read_ecg_with_atr <- function(filename, subset = NULL, classes = c("all", "persi
     attr(signals[[name]], "info") <- list(signal = name, baseline = siginfo[[i]]$baseline, gain = siginfo[[i]]$gain, unit = siginfo[[i]]$unit, subset = subset_minmax)
   }
 
+  if (resample_from > 0) {
+    prop <- resample_to / resample_from
+    csv_annotations$sample <- csv_annotations$sample * prop
+  }
+
+  regime_changes <- which(csv_annotations$label_store == 28)
+
   length_signal <- length(signals[[1]])
 
   # Generate time vector
@@ -694,6 +699,13 @@ read_ecg_with_atr <- function(filename, subset = NULL, classes = c("all", "persi
 
   attr(output[[basename]], "info") <- list(regime = comment, filename = basename, frequency = freq_signal, id = "base", ids = "base")
   attr(output[[basename]], "annotations") <- csv_annotations
+
+  if (length(regime_changes) > 0) {
+    sample_changes <- round(csv_annotations$sample[regime_changes])
+    attr(output[[basename]], "regimes") <- sample_changes
+  } else {
+    attr(output[[basename]], "regimes") <- 0
+  }
 
   return(output)
 }

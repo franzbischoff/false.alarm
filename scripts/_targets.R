@@ -2,6 +2,96 @@
 
 source(here("scripts", "_globals.R"))
 
+#### Targets: Setup engine ----
+
+cluster <- FALSE
+backend <- "FUTURE"
+workers <- 20
+
+# if (isFALSE(cluster)) { ## Locally
+#   if (backend == "FUTURE") {
+#     library(future)
+#     library(future.callr)
+#     # list(plan(callr), plan(callr))
+#   } else {
+#     options(
+#       clustermq.scheduler = "multiprocess",
+#       clustermq.ssh.host = NULL,
+#       clustermq.ssh.log = NULL
+#     )
+#     library(clustermq)
+#   }
+# } else {
+#   if (backend == "FUTURE") { ## cluster # tar_make_future(workers = 4)
+#     # *** If using future for multithreading / clustering ***
+#     library(future)
+#     library(future.batchtools)
+
+#     future::plan(
+#       strategy = future.batchtools::batchtools_custom,
+#       cluster.functions = batchtools::makeClusterFunctionsSSH(
+#         list(
+#           # batchtools::Worker$new("franz@192.168.1.237", ncpus = 4)
+#           batchtools::Worker$new("localhost", ncpus = workers)
+#         ),
+#         # fs.latency = 1000
+#       )
+#     )
+#   } else { # tar_make_clustermq(workers = 3)
+#     options(
+#       clustermq.scheduler = "ssh",
+#       clustermq.ssh.host = "franz@192.168.1.237", # use your user and host, obviously
+#       clustermq.ssh.log = "~/cmq_ssh.log" # log for easier debugging # nolint
+#     )
+#     library(clustermq)
+#   }
+# }
+
+#### Targets: Define targets options ----
+
+# use renv::install(".") to update the rcpp functions
+tar_option_set(
+  packages = c("dplyr", "false.alarm"),
+  format = "rds",
+  # resources = tar_resources(
+  #   #   #   #   # *** If using clustermq for multithreading / clustering ***
+  #   clustermq = tar_resources_clustermq(
+  #     template = list(num_cores = workers)
+  #   ) # or n_jobs??
+  #   #   #   #   # *** If using future for multithreading / clustering ***
+  #   # future = tar_resources_future(
+  #   #   # plan = future::plan(future.callr::callr),
+  #   #   resources = list(n_cores = workers)
+  #   # )
+  # ),
+  # garbage_collection = TRUE,
+  # workspace_on_error = TRUE,
+  memory = "transient",
+  # storage = "main",
+  # envir = globalenv(),
+  # iteration = "list",
+  # debug = "ds_stats_mps_floss2_0_1250_0_200_fa978ffc",
+  # cue = tar_cue(
+  #   mode = "thorough",
+  #   command = TRUE,
+  #   depend = TRUE,
+  #   format = TRUE,
+  #   iteration = TRUE,
+  #   file = FALSE
+  # ),
+  imports = "false.alarm" # TODO: remove when there is no change on package functions. Clears the graph.
+)
+
+# start debugme after loading all functions
+if (dev_mode) {
+  debugme::debugme()
+}
+
+library(future)
+library(future.callr)
+plan(multicore)
+
+
 #### Pipeline: Start ----
 
 r_input <- tar_files_input(
