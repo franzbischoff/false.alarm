@@ -111,7 +111,7 @@ render_floss_video <- function(video_file = here::here("dev", "floss_default.mp4
 
     if (isTRUE(sample)) {
       ggplot2::ggsave(
-        plot = gg, filename = here::here("dev", sprintf("%s_%d.png", fs::path_file(video_file), d)),
+        plot = gg, filename = here::here("dev", glue::glue("{fs::path_file(video_file)}_{d}.png")),
         device = "png", width = 5, height = 7, scale = 0.8
       )
 
@@ -121,7 +121,7 @@ render_floss_video <- function(video_file = here::here("dev", "floss_default.mp4
 
 
     ggplot2::ggsave(
-      plot = gg, filename = here::here("tmp", temp_dir, sprintf("plot%03d.png", d)),
+      plot = gg, filename = here::here("tmp", temp_dir, glue_fmt("plot{d:03d}.png")),
       device = "png", width = 5, height = 7, scale = 0.8
     )
     if (!(d %% 10)) {
@@ -201,7 +201,7 @@ plot_ecg_streaming <- function(ecg_data, data_constraint, window_size, mp_time_c
     ggplot2::ylim(ylim[1], ylim[2]) +
     ggplot2::ggtitle("ECG") +
     ggplot2::ylab("value") +
-    ggplot2::xlab(sprintf("time %4.1fs", offset / rate)) # 2.5 is 250hz/batch_size
+    ggplot2::xlab(glue_fmt("time {offset/rate:4.1f}s")) # 2.5 is 250hz/batch_size
 
   return(aa)
 }
@@ -251,17 +251,17 @@ plot_cac_streaming <- function(arcs, data_constraint, window_size, mp_time_const
     )
 
   bb <- bb + ggplot2::geom_vline(xintercept = cac_min_idx, color = "red", size = 0.1) +
-    ggplot2::annotate("text", x = cac_min_idx + 125, y = cac_min + 0.05, label = sprintf("%.2f", cac_min), color = "red", size = 1.5) +
-    ggplot2::annotate("text", x = cac_min_idx + 125, y = 0.05, label = sprintf("%d", cac_min_idx), color = "red", size = 1.5) +
+    ggplot2::annotate("text", x = cac_min_idx + 125, y = cac_min + 0.05, label = glue_fmt("{cac_min:.2f}"), color = "red", size = 1.5) +
+    ggplot2::annotate("text", x = cac_min_idx + 125, y = 0.05, label = glue::glue("{cac_min_idx}"), color = "red", size = 1.5) +
     ggplot2::annotate("segment", y = curr_cac_min, yend = curr_cac_min, x = mid_idx - 2 * window_size, xend = mid_idx + 2 * window_size, color = "blue", size = 0.1) +
-    ggplot2::annotate("text", x = mid_idx, y = curr_cac_min + 0.05, label = sprintf("%.2f", curr_cac_min), color = "blue", size = 1.5)
+    ggplot2::annotate("text", x = mid_idx, y = curr_cac_min + 0.05, label = glue_fmt("{curr_cac_min:.2f}"), color = "blue", size = 1.5)
 
 
   bb <- bb + ggplot2::xlim(0, (data_constraint + batch_size)) +
     ggplot2::ylim(0, cac_max) +
     ggplot2::ggtitle("FLOSS") +
     ggplot2::ylab("cac/similarity") +
-    ggplot2::xlab(sprintf("time %4.1fs", offset / rate))
+    ggplot2::xlab(glue_fmt("time {offset/rate:4.1f}s"))
 
   bb$curr_cac_min <- curr_cac_min
 
@@ -291,7 +291,7 @@ plot_raw_arcs <- function(arcs, iac, data_constraint, mp_time_constraint, floss_
     ggplot2::ylim(0, ymax) +
     ggplot2::ggtitle("FLOSS - ARCS") +
     ggplot2::ylab("cac/similarity") +
-    ggplot2::xlab(sprintf("time %4.1fs", offset / rate))
+    ggplot2::xlab(glue_fmt("time {offset/rate:4.1f}s"))
 
   return(cc)
 }

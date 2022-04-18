@@ -145,7 +145,7 @@ stompi2 <- function(data, window_size, exclusion_zone = 0.5, verbose = 2) {
   tictac <- Sys.time() - tictac
 
   if (verbose > 0) {
-    message(sprintf("Finished in %.2f %s", tictac, units(tictac)))
+    message(glue::glue("Finished in {glue_fmt('{tictac:.2f}')} {units(tictac)}"))
   }
 
   return({
