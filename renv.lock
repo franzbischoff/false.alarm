@@ -2151,9 +2151,9 @@
       "RemoteUsername": "r-lib",
       "RemoteRepo": "rlang",
       "RemoteRef": "main",
-      "RemoteSha": "21ccd827f2b8cd09f2468b8478e325f0ecd40b7f",
+      "RemoteSha": "3739e89e44792a17140cb37f1f7a7de8bbe8f4a1",
       "RemoteHost": "api.github.com",
-      "Hash": "71a46098f9a1276574b9faf0a87b6c12",
+      "Hash": "1238e4c2847c36626ce5c223771156d0",
       "Requirements": []
     },
     "rlist": {
@@ -2497,9 +2497,9 @@
       "RemoteUsername": "r-lib",
       "RemoteRepo": "styler",
       "RemoteRef": "main",
-      "RemoteSha": "3edbae817eb3e60f195f41f00e9a3b6dffd56666",
+      "RemoteSha": "81393baea750e74307df855ac36519010c7bfa96",
       "RemoteHost": "api.github.com",
-      "Hash": "d2ad361c3cf9e87c2a44dcbb1640f796",
+      "Hash": "3ac7b847f99c049e706ed415c4312b34",
       "Requirements": [
         "R.cache",
         "cli",
@@ -2558,10 +2558,10 @@
     },
     "tarchetypes": {
       "Package": "tarchetypes",
-      "Version": "0.5.0",
+      "Version": "0.6.0",
       "Source": "Repository",
       "Repository": "CRAN",
-      "Hash": "69e05d6f7e98f843b1a94266cfd2d2ed",
+      "Hash": "4d76a20b57bc46b0be7ef6ca3cb68e2f",
       "Requirements": [
         "digest",
         "dplyr",
@@ -2576,10 +2576,10 @@
     },
     "targets": {
       "Package": "targets",
-      "Version": "0.11.0",
+      "Version": "0.12.0",
       "Source": "Repository",
       "Repository": "CRAN",
-      "Hash": "bcb5125b621b728d8dc23e39f2f07428",
+      "Hash": "197fd95f9f9c6ac7e0be2d0ffbdd932f",
       "Requirements": [
         "R6",
         "base64url",
@@ -2867,10 +2867,10 @@
     },
     "uuid": {
       "Package": "uuid",
-      "Version": "1.0-4",
+      "Version": "1.1-0",
       "Source": "Repository",
       "Repository": "CRAN",
-      "Hash": "99c959c7424be995ddca19b5736c8dd0",
+      "Hash": "f1cb46c157d080b729159d407be83496",
       "Requirements": []
     },
     "vctrs": {

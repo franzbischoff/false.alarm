@@ -114,6 +114,7 @@ b_window_sizes <- tar_map(
       ),
       exclude = var_signals_exclude
     ),
+    priority = 0.6,
     pattern = map(dataset)
   ),
   tar_map(
