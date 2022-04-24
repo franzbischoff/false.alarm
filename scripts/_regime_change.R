@@ -114,7 +114,7 @@ b_window_sizes <- tar_map(
       ),
       exclude = var_signals_exclude
     ),
-    priority = 0.6,
+    priority = 0.4,
     pattern = map(dataset)
   ),
   tar_map(
@@ -167,7 +167,7 @@ b_window_sizes <- tar_map(
             sample_freq = const_sample_freq
           )
         ),
-        priority = 0.4,
+        priority = 0.6,
         pattern = map(ds_stats_mps)
       ),
       tar_map(
@@ -192,6 +192,7 @@ b_window_sizes <- tar_map(
             ),
             exclude = var_signals_exclude
           ),
+          priority = 1,
           pattern = map(ds_stats_mps_floss)
         )
       )
