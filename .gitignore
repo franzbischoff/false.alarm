@@ -4,7 +4,7 @@ cellar/
 lock/
 python/
 staging/
-.Rhistory
+.Rhistory*
 .Renviron
 .Rapp.history
 Pprof.out

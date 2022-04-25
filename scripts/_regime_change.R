@@ -194,6 +194,29 @@ b_window_sizes <- tar_map(
           ),
           priority = 1,
           pattern = map(ds_stats_mps_floss)
+        ),
+        tar_target(
+          ##### Pipeline: > NoFilters > WindowSize > MP Threshold > MP/FLOSS Constraints > Regime Threshold > Extract regime changes ----
+          regimes_score,
+          process_ts_in_file(c(dataset, regimes),
+            id = "regimes_score",
+            fun = compute_score_regimes,
+            params = list(
+              window_size = map_window_size,
+              ez = var_ez,
+              regime_threshold = map_regime_threshold,
+              regime_landmark = var_regime_landmark, # 3 sec from the end
+              gold_truth = get_file_regimes(dataset),
+              # progress = FALSE,
+              # batch = var_mp_batch,
+              history = var_mp_history,
+              mp_time_constraint = map_mp_time_constraint,
+              floss_time_constraint = map_floss_time_constraint
+            ),
+            exclude = var_signals_exclude
+          ),
+          priority = 1,
+          pattern = map(dataset, regimes)
         )
       )
     )
