@@ -53,6 +53,8 @@ var_regime_landmark <- 3 * const_sample_freq # 3 seconds from the end
 ## threshold below the regime change algorithm will trigger
 var_regime_threshold <- c(0.3, 0.4, 0.5) # c(0.1, 0.2, 0.3, 0.4, 0.5)
 
+# regime_threshold, floss_time_constraint, mp_time_constraint, mp_threshold, window_size
+
 #### Targets: Define targets options ----
 
 # use renv::install(".") to update the rcpp functions
@@ -60,6 +62,7 @@ tar_option_set(
   tidy_eval = TRUE,
   packages = c("here", "glue", "dplyr", "tidyr", "false.alarm"),
   format = "rds",
+  memory = "transient",
   garbage_collection = TRUE
 )
 
@@ -168,6 +171,8 @@ b_window_sizes <- tar_map(
           )
         ),
         priority = 0.6,
+        memory = "transient",
+        garbage_collection = TRUE,
         pattern = map(ds_stats_mps)
       ),
       tar_map(
@@ -208,7 +213,7 @@ b_window_sizes <- tar_map(
               regime_landmark = var_regime_landmark, # 3 sec from the end
               gold_truth = get_file_regimes(dataset),
               # progress = FALSE,
-              # batch = var_mp_batch,
+              batch = var_mp_batch,
               history = var_mp_history,
               mp_time_constraint = map_mp_time_constraint,
               floss_time_constraint = map_floss_time_constraint

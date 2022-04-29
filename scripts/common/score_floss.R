@@ -48,6 +48,8 @@ compute_score_regimes <- function(data_regimes, params, infos) {
   "!DEBUG Score regime truth `params$gold_truth`, predicted `regime$idxs`"
 
   if (!isFALSE(regime)) {
+    idxs <- sort(regime$idxs)
+    idxs <- idxs[diff(idxs) > params$batch] # this removes the redundant regime changes
     score <- score_regimes(params$gold_truth, regime$idxs, length(data))
     "!DEBUG Finished Score."
     regime$score <- score
