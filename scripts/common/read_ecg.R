@@ -25,7 +25,7 @@
 #'  check by comparing the output with RDSAMP.
 #'
 #'  if(sum(abs(signal-signal2)) !=0);
-#'    stop('Record not compatible with RDMAT');
+#'    rlang::abort('Record not compatible with RDMAT');
 #'  end
 #'
 #' These tools are available at: https://archive.physionet.org/physiotools/binaries/
@@ -75,7 +75,7 @@ read_ecg <- function(filename, plot = FALSE, subset = NULL,
     }
 
     if (rlang::is_empty(filtered)) {
-      message("File skipped: ", filename)
+      rlang::inform("File skipped: ", filename)
       return(NULL)
     }
   }
@@ -93,7 +93,7 @@ read_ecg <- function(filename, plot = FALSE, subset = NULL,
   basename <- basename(filename)
 
   if (!file.exists(header) | !file.exists(content)) {
-    stop("File ", filename, "does not exist.")
+    rlang::abort("File ", filename, "does not exist.")
   }
 
   # Following the documentation described in :
@@ -114,7 +114,7 @@ read_ecg <- function(filename, plot = FALSE, subset = NULL,
   }
 
   if (i == length(hea_content)) {
-    stop("The file only contains comments.")
+    rlang::abort("The file only contains comments.")
   }
 
   nlines <- length(hea_content)
@@ -182,7 +182,7 @@ read_ecg <- function(filename, plot = FALSE, subset = NULL,
 
   if (!is.null(true_alarm)) {
     if (true_alarm != as.logical(true_false)) {
-      message("File skipped: ", filename)
+      rlang::inform("File skipped: ", filename)
       return(NULL)
     }
   }
@@ -273,7 +273,7 @@ read_ecg <- function(filename, plot = FALSE, subset = NULL,
 #'  check by comparing the output with RDSAMP.
 #'
 #'  if(sum(abs(signal-signal2)) !=0);
-#'    stop('Record not compatible with RDMAT');
+#'    rlang::abort('Record not compatible with RDMAT');
 #'  end
 #'
 #' These tools are available at: https://archive.physionet.org/physiotools/binaries/
@@ -325,7 +325,7 @@ read_ecg_csv <- function(filename, plot = FALSE, subset = NULL,
     }
 
     if (rlang::is_empty(filtered)) {
-      message("File skipped (not in class): ", filename)
+      rlang::inform("File skipped (not in class): ", filename)
       return(NULL)
     }
   }
@@ -343,7 +343,7 @@ read_ecg_csv <- function(filename, plot = FALSE, subset = NULL,
   basename <- basename(filename)
 
   if (any(!file.exists(c(header, content)))) {
-    stop("File ", filename, "does not exist.")
+    rlang::abort("File ", filename, "does not exist.")
   }
 
   # Following the documentation described in :
@@ -364,7 +364,7 @@ read_ecg_csv <- function(filename, plot = FALSE, subset = NULL,
   }
 
   if (i == length(hea_content)) {
-    stop("The file only contains comments.")
+    rlang::abort("The file only contains comments.")
   }
 
   nlines <- length(hea_content)
@@ -432,7 +432,7 @@ read_ecg_csv <- function(filename, plot = FALSE, subset = NULL,
 
   if (!is.null(true_alarm)) {
     if (true_alarm != as.logical(true_false)) {
-      message("File skipped (alarm is ", !true_alarm, "): ", filename)
+      rlang::inform("File skipped (alarm is ", !true_alarm, "): ", filename)
       return(NULL)
     }
   }
@@ -534,7 +534,7 @@ read_ecg_with_atr <- function(filename, subset = NULL, classes = c("all", "persi
     }
 
     if (rlang::is_empty(filtered)) {
-      message("File skipped (not in class): ", filename)
+      rlang::inform("File skipped (not in class): ", filename)
       return(NULL)
     }
   }
@@ -549,7 +549,7 @@ read_ecg_with_atr <- function(filename, subset = NULL, classes = c("all", "persi
   basename <- basename(filename)
 
   if (any(!file.exists(c(header, content, annotation)))) {
-    stop("File ", filename, "does not exist.")
+    rlang::abort("File ", filename, "does not exist.")
   }
 
   hea <- file(header, "r")
@@ -566,7 +566,7 @@ read_ecg_with_atr <- function(filename, subset = NULL, classes = c("all", "persi
   }
 
   if (i == length(hea_content)) {
-    stop("The file only contains comments.")
+    rlang::abort("The file only contains comments.")
   }
 
   nlines <- length(hea_content)

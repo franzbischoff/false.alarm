@@ -34,7 +34,7 @@ compute_floss <- function(mp_data, params, infos) {
   checkmate::qassert(ez, c("0", "N"))
 
   if (mp_time_constraint > 0 & floss_time_constraint > 0) {
-    stop("You cannot set `mp_time_constraint` and `floss_time_constraint` at the same time.")
+    rlang::abort("You cannot set `mp_time_constraint` and `floss_time_constraint` at the same time.")
   }
 
   constraint <- FALSE

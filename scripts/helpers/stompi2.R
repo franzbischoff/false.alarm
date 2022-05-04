@@ -50,10 +50,10 @@ stompi2 <- function(data, window_size, exclusion_zone = 0.5, verbose = 2) {
   num_queries <- matrix_profile_size
 
   if (window_size > ceiling(data_size / 2)) {
-    stop("Time series is too short relative to desired window size.", call. = FALSE)
+    rlang::abort("Time series is too short relative to desired window size.")
   }
   if (window_size < 4) {
-    stop("`window_size` must be at least 4.", call. = FALSE)
+    rlang::abort("`window_size` must be at least 4.")
   }
 
   # check skip position
@@ -145,7 +145,7 @@ stompi2 <- function(data, window_size, exclusion_zone = 0.5, verbose = 2) {
   tictac <- Sys.time() - tictac
 
   if (verbose > 0) {
-    message(glue::glue("Finished in {glue_fmt('{tictac:.2f}')} {units(tictac)}"))
+    rlang::inform(glue::glue("Finished in {glue_fmt('{tictac:.2f}')} {units(tictac)}"))
   }
 
   return({

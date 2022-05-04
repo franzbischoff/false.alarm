@@ -18,7 +18,7 @@ create_animation <- function(ds_objects_names, floss_objects_names, include = c(
   e <- suppressWarnings(tryCatch(
     source(here::here("scripts", "render_floss_video.R"), encoding = "UTF-8"),
     error = function(e) {
-      message("Error: Could not load render script.")
+      rlang::inform("Error: Could not load render script.")
       return(FALSE)
     }
   ))
@@ -111,11 +111,11 @@ create_animation <- function(ds_objects_names, floss_objects_names, include = c(
             , c: {mp_time_constraint}, fc: {floss_time_constraint}, {alarm}-{alarm_true}"
           )
 
-          message("Rendering file: ", file)
-          message("With title: ", title)
+          rlang::inform("Rendering file: ", file)
+          rlang::inform("With title: ", title)
 
           if (file.exists(here::here("dev", "videos", file))) {
-            message("Video file already exists: ", file)
+            rlang::inform("Video file already exists: ", file)
           } else {
             a <- render_floss_video(here::here("dev", "videos", file),
               ecg_data = dataset[[s]][[signal]], arc_counts = floss_data[[s]][[k]],

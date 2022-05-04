@@ -298,15 +298,15 @@
     },
     "bookdown": {
       "Package": "bookdown",
-      "Version": "0.26.2",
+      "Version": "0.26.3",
       "Source": "GitHub",
       "RemoteType": "github",
       "RemoteUsername": "rstudio",
       "RemoteRepo": "bookdown",
       "RemoteRef": "main",
-      "RemoteSha": "6adacc3363315a9a49eb4fac370125a3d37ecaa5",
+      "RemoteSha": "3ff62bd86af7054a6d302b5a8dc7d5d88af1ddfc",
       "RemoteHost": "api.github.com",
-      "Hash": "771ab154f0939f4712d70a9cf4a36f1e",
+      "Hash": "76aa42629078b49a60139ddb9921e013",
       "Requirements": [
         "htmltools",
         "jquerylib",
@@ -991,10 +991,10 @@
     },
     "ggplot2": {
       "Package": "ggplot2",
-      "Version": "3.3.5",
+      "Version": "3.3.6",
       "Source": "Repository",
       "Repository": "CRAN",
-      "Hash": "d7566c471c7b17e095dd023b9ef155ad",
+      "Hash": "0fb26d0674c82705c6b701d1a61e02ea",
       "Requirements": [
         "MASS",
         "digest",
@@ -1965,16 +1965,6 @@
         "rlang"
       ]
     },
-    "prompt": {
-      "Package": "prompt",
-      "Version": "1.0.1",
-      "Source": "Repository",
-      "Repository": "CRAN",
-      "Hash": "f848531dd8aef16dcf52702aa1af5b1c",
-      "Requirements": [
-        "cli"
-      ]
-    },
     "proxy": {
       "Package": "proxy",
       "Version": "0.4-26",
@@ -2460,10 +2450,10 @@
     },
     "statnet.common": {
       "Package": "statnet.common",
-      "Version": "4.5.0",
+      "Version": "4.6.0",
       "Source": "Repository",
       "Repository": "CRAN",
-      "Hash": "caf9dc2f33cc6ea4b1930cd71ee29d10",
+      "Hash": "4c1387839f4770332fe1ce2f79ba982e",
       "Requirements": [
         "coda"
       ]
@@ -2652,10 +2642,10 @@
     },
     "tibble": {
       "Package": "tibble",
-      "Version": "3.1.6",
+      "Version": "3.1.7",
       "Source": "Repository",
       "Repository": "CRAN",
-      "Hash": "8a8f02d1934dfd6431c671361510dd0b",
+      "Hash": "08415af406e3dd75049afef9552e7355",
       "Requirements": [
         "ellipsis",
         "fansi",

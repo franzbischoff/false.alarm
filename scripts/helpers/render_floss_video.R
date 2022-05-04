@@ -17,7 +17,7 @@ render_floss_video <- function(video_file = here::here("dev", "floss_default.mp4
         return(invisible(done))
       }
     } else {
-      warning("Something went wrong. Anything produced is at ", here::here("tmp", temp_dir), "/")
+      rlang::warn("Something went wrong. Anything produced is at ", here::here("tmp", temp_dir), "/")
       return(invisible(FALSE))
     }
   })
@@ -50,7 +50,7 @@ render_floss_video <- function(video_file = here::here("dev", "floss_default.mp4
 
   dir.create(here::here("tmp", temp_dir), recursive = TRUE, showWarnings = FALSE)
 
-  message("This will take a while:")
+  rlang::inform("This will take a while:")
   cat("Plotting frames.")
 
 
@@ -131,29 +131,29 @@ render_floss_video <- function(video_file = here::here("dev", "floss_default.mp4
 
   cat("\n")
 
-  message("Starting Magick.")
+  rlang::inform("Starting Magick.")
 
   library(magick)
   ## list file names and read in
   imgs <- list.files(here::here("tmp", temp_dir), pattern = "*.png", full.names = TRUE)
 
-  message("This will take a while:")
+  rlang::inform("This will take a while:")
 
-  message("- Loading plots.")
+  rlang::inform("- Loading plots.")
   img_list <- lapply(imgs, magick::image_read)
 
-  message("- Merging frames.")
+  rlang::inform("- Merging frames.")
   ## join the images together
   img_joined <- magick::image_join(img_list)
 
-  message("- Encoding the video.")
+  rlang::inform("- Encoding the video.")
   magick::image_write_video(img_joined, path = video_file, framerate = framerate)
 
-  message("- Removing temporary files.")
+  rlang::inform("- Removing temporary files.")
   file.remove(imgs)
 
   done <- TRUE
-  message("Done.")
+  rlang::inform("Done.")
 }
 
 plot_ecg_streaming <- function(ecg_data, data_constraint, window_size, mp_time_constraint, floss_time_constraint,
