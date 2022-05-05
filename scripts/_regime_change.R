@@ -35,7 +35,7 @@ var_mp_batch <- 100
 ## size of the online MP buffer to keep memory footprint low (multiply by the freq to have it in seconds)
 var_mp_history <- 20 * const_sample_freq # 20 secs
 ## Threshold used on computing the MP. This concept is described elsewhere. Values above 10 use another formula
-var_mp_threshold <- c(0, 0.5) # c(0, 0.5, 0.6, 0.9, 50, 60, 90)
+var_mp_threshold <- c(0, 0.5, 50) # c(0, 0.5, 0.6, 0.9, 50, 60, 90)
 ## the window size for the MP algorithm
 var_window_size <- c(200, 250)
 ## Multiplier for the size of the Exclusion Zone (e.g., window_size * ez == exclusion_zone)

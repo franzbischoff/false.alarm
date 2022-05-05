@@ -16,3 +16,9 @@ regime_change:
   store: _regime_change
   script: scripts/_regime_change.R
   workers: 10
+
+regimetest:
+  inherits: main
+  store: _regimetest
+  script: scripts/_regimetest.R
+  workers: 10
