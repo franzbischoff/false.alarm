@@ -65,6 +65,9 @@ compute_score_regimes <- function(data_regimes, params, infos) {
 
 
 score_regimes <- function(gtruth, reported, data_size) {
+  gtruth <- gtruth[gtruth > 0]
+  reported <- reported[reported > 0]
+
   m <- length(gtruth)
   n <- length(reported)
 

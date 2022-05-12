@@ -89,19 +89,39 @@ floss_regime_model <- function(mode = "regression",
 
 ## Training interface
 
-train_regime_model <- function(formula, data, ..., window_size, regime_threshold, mp_threshold, time_constraint, verbose = FALSE) {
+train_regime_model <- function(truth, ts, ..., window_size, regime_threshold, mp_threshold, time_constraint, verbose = FALSE) {
   other_args <- list(...)
-  # rlang::inform(glue::glue("f: {formula}, d:{names(data)}, w: {window_size}, t: {time_constraint}, m: {mp_threshold}, r: {regime_threshold}"))
-  res <- 1:10
-  # model_classes <- class(res)
-  # class(res) <- c(paste0("_", model_classes[1]), "model_fit")
+  # rlang::inform(glue::glue("names: {names(ts)}"))
+
+  n <- nrow(ts)
+  if (n == 0) {
+    rlang::abort("There are zero rows in the predictor set.")
+  }
+
+  if (ncol(ts) > 1) {
+    id <- ts[[1]]
+    ts <- ts[[2]]
+  } else {
+    id <- seq.int(1, n)
+  }
+
+  res <- list(truth = truth, id = id, ts = ts)
+
+  return(list(
+    fitted.values = res,
+    terms = c(
+      window_size = window_size,
+      regime_threshold = regime_threshold,
+      mp_threshold = mp_threshold,
+      time_constraint = time_constraint
+    )
+  ))
+}
+
+# Predictor interface
+pred_regime_model <- function(obj, new_data, type) {
+  res <- tibble::tibble(.pred = obj$fit$fitted.values$truth, .sizes = purrr::map(new_data$ts, length))
   res
-  # n <- nrow(x)
-  # if (n == 0) {
-  #   rlang::abort("There are zero rows in the predictor set.")
-  # }
-  # matrixprofiler::mov_mean(x[[1]], window_size)
-  # eval_tidy(fit_call)
 }
 
 ## Register parsnip model
@@ -168,25 +188,32 @@ parsnip::set_encoding(
 
 ### Fitting parameters
 
+# parsnip::set_fit(
+#   model = "floss_regime_model",
+#   eng = "floss",
+#   mode = "regression",
+#   value = list(
+#     interface = "formula",
+#     protect = c("formula", "data"),
+#     func = c(fun = "train_regime_model"),
+#     defaults = list(verbose = FALSE)
+#   )
+# )
+
 parsnip::set_fit(
   model = "floss_regime_model",
   eng = "floss",
   mode = "regression",
   value = list(
-    interface = "formula",
-    protect = c("formula", "data"),
+    interface = "data.frame",
+    data = c(x = "ts", y = "truth", id = "id"), # ts$x[[2]][1:10] regimes[[2]]
+    protect = c("ts", "truth"),
     func = c(fun = "train_regime_model"),
     defaults = list(verbose = FALSE)
   )
 )
 
 ### Prediction parameters
-
-pred_regime_model <- function(obj, new_data, type) {
-  res <- tibble::tibble(.pred = seq_along(new_data$x))
-  # browser()
-  res
-}
 
 parsnip::set_pred(
   model = "floss_regime_model",
@@ -205,28 +232,6 @@ parsnip::set_pred(
 )
 
 
-
-# parsnip::set_pred(
-#   model = "floss_regime_model",
-#   eng = "floss",
-#   mode = "regression",
-#   type = "prob",
-# value = parsnip::pred_value_template(
-#   post = function(x, object) {
-#     tibble::as_tibble(x)
-#   },
-#   func = c(fun = "predict"),
-#   # Now everything else is put into the `args` slot
-#   object = rlang::expr(object$fit),
-#   newdata = rlang::expr(new_data),
-#   type = "posterior"
-#   )
-# )
-
-
-# print
-# summary
-
 ## Yardstick custom metric
 
 floss_error <- function(data, ...) {
@@ -235,7 +240,7 @@ floss_error <- function(data, ...) {
 
 floss_error <- yardstick::new_numeric_metric(floss_error, direction = "minimize")
 
-floss_error.data.frame <- function(data, truth, estimate, na_rm = TRUE, ...) { # nolint
+floss_error.data.frame <- function(data, truth, estimate, na_rm = TRUE, estimator = "binary", ...) { # nolint
   yardstick::metric_summarizer(
     metric_nm = "floss_error",
     metric_fn = floss_error_vec,
@@ -243,25 +248,62 @@ floss_error.data.frame <- function(data, truth, estimate, na_rm = TRUE, ...) { #
     truth = !!rlang::enquo(truth),
     estimate = !!rlang::enquo(estimate),
     na_rm = na_rm,
-    ...,
-    metric_fn_options = list(data_size = nrow(data))
+    estimator = estimator,
+    list(...),
+    metric_fn_options = list(data_size = data$.sizes) # purrr::map(data$ts, length))
   )
 }
 
-floss_error_vec <- function(truth, estimate, data_size, na_rm = TRUE, ...) {
-  floss_error_impl <- function(truth, estimate, data_size) {
-    res <- score_regimes(truth, estimate, data_size) * runif(1)
-    rlang::inform(glue::glue("{res}"))
-    res
+floss_error_vec <- function(truth, estimate, data_size, na_rm = TRUE, estimator = "binary", ...) {
+  floss_error_impl <- function(truth, estimate, data_size, ...) {
+    res <- score_regimes(truth, estimate, data_size)
+    return(res)
   }
 
-  yardstick::metric_vec_template(
-    metric_impl = floss_error_impl,
-    truth = truth,
-    estimate = estimate,
-    na_rm = na_rm,
-    cls = "numeric",
-    data_size = data_size,
-    ...
-  )
+  est <- estimate %>% purrr::map(~ .x * runif(1))
+  for (i in seq.int(1, length(estimate))) {
+    lt <- length(truth[[i]])
+    le <- length(estimate[[i]])
+    if (lt > le) {
+      est[[i]] <- c(est[[i]], rep(-1, lt - le))
+    } else {
+      truth[[i]] <- c(truth[[i]], rep(-1, le - lt))
+    }
+  }
+
+  if (estimator == "micro") {
+    res <- purrr::map2_dbl(
+      truth, est,
+      ~ yardstick::metric_vec_template(
+        metric_impl = floss_error_impl,
+        truth = ..1,
+        estimate = ..2,
+        na_rm = na_rm,
+        cls = "numeric",
+        data_size = 1,
+        ...
+      )
+    )
+
+    res <- sum(res)
+    div <- purrr::reduce(data_size, sum) + 1
+    return(res / div) # micro is the sum of the scores / length(all_data_set)
+  } else {
+    res <- purrr::pmap_dbl(
+      list(truth, est, data_size),
+      ~ yardstick::metric_vec_template(
+        metric_impl = floss_error_impl,
+        truth = ..1,
+        estimate = ..2,
+        na_rm = na_rm,
+        cls = "numeric",
+        data_size = ..3,
+        ...
+      )
+    )
+    return(mean(res)) # macro;
+    # res
+  }
 }
+
+# floss_error(tidy_dataset, truth = truth, estimate = truth, estimator = "micro")$.estimate

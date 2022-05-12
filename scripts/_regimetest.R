@@ -1,10 +1,10 @@
 # Sys.setenv(TAR_PROJECT = "regime_change")
 
 source(here("scripts", "_globals.R"))
-source(here("helpers", "parsnip_model.R"))
-source(here("helpers", "utils_targets.R"))
-source(here("regimes", "tar_inner_resample.R"))
-source(here("regimes", "tar_outer_resample.R"))
+# source(here("helpers", "parsnip_model.R"))
+# source(here("helpers", "utils_targets.R"))
+# source(here("regimes", "tar_inner_resample.R"))
+# source(here("regimes", "tar_outer_resample.R"))
 
 
 options(target_ds_path = here("inst/extdata/afib_regimes"))
@@ -119,6 +119,15 @@ list(
       resample_to = var_resample_to,
       normalize = TRUE
     )
+  ),
+  tar_target(
+    tidy_dataset,
+    {
+      purrr::map_dfr(dataset, function(x) {
+        regimes <- attr(x, "regimes")
+        tibble::tibble(truth = list(regimes), ts = list(x$II))
+      }, .id = "id")
+    }
   ),
   tar_target(
     resamples,
