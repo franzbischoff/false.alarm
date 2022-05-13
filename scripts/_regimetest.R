@@ -1,13 +1,13 @@
 # Sys.setenv(TAR_PROJECT = "regime_change")
 
-source(here("scripts", "_globals.R"))
-# source(here("helpers", "parsnip_model.R"))
-# source(here("helpers", "utils_targets.R"))
+source(here::here("scripts", "_globals.R"), local = .GlobalEnv, encoding = "UTF-8")
+
 # source(here("regimes", "tar_inner_resample.R"))
 # source(here("regimes", "tar_outer_resample.R"))
 
 
 options(target_ds_path = here("inst/extdata/afib_regimes"))
+options(tidymodels.dark = TRUE)
 
 #### Pipeline: variable definitions ----
 # signal sample frequency, this is a constant
@@ -23,7 +23,7 @@ var_resample_to <- const_sample_freq
 # The subset that will be keep from the dataset (seq.int(240 * const_sample_freq + 1, 300 * const_sample_freq) means the last 60 seconds)
 # var_subset <- seq.int(240 * const_sample_freq + 1, 300 * const_sample_freq) # last 60 secs
 var_subset <- 1:10000
-var_limit_per_class <- 10
+var_limit_per_class <- 20
 
 var_classes_include <- "paroxysmal_afib"
 var_classes_exclude <- setdiff(const_classes, var_classes_include)
@@ -63,29 +63,42 @@ tune_var_regime_threshold <- c(0.4, 0.5) # c(0.1, 0.2, 0.3, 0.4, 0.5)
 # use renv::install(".") to update the rcpp functions
 tar_option_set(
   tidy_eval = TRUE,
-  packages = c("here", "glue", "dplyr", "rlang", "rsample", "tidyr", "false.alarm"),
+  packages = c(
+    "here", "glue", "dplyr", "rlang", "rsample", "tidyr", "false.alarm",
+    "dials", "scales", "tibble", "parsnip", "yardstick", "purrr", "hardhat"
+  ),
   format = "rds",
   garbage_collection = TRUE
 )
 
-# start debugme after loading all functions
-# if (dev_mode) {
-debugme::debugme()
-# }
+
+############
+# tuning variables
+var_vfolds <- 10
+var_vfolds_repeats <- 1
+var_vfolds_groups <- 2 # for target branches
+var_dopar_cores <- 4
+var_window_size_tune <- c(150L, 350L)
+var_mp_threshold_tune <- c(0, 0.9)
+var_time_constraint_tune <- c(0L, 2500L)
+var_regime_threshold_tune <- c(0.2, 0.6)
+var_tune_bayes_iter <- 4
+var_tune_bayes_initial <- 2
+var_tune_bayes_no_improve <- 10
+var_initial_split_prop <- 3 / 4
+
 
 # # All configurations used different CPUs while running the code.
-# library(future)
-# library(future.callr)
+library(future)
+library(future.callr)
 # plan(multisession) # create top-level processes
 # plan(multicore) # create child processes
-# plan(future.callr::callr) # create child processes with a child process
+plan(future.callr::callr) # create child processes with a child process
 
-library(rsample)
+suppressPackageStartupMessages(library(tidymodels))
+tidymodels::tidymodels_prefer(quiet = TRUE)
 
 #### Pipeline: Start ----
-
-
-
 # tune_var_mp_threshold <- c(0, 0.5)
 # tune_var_window_size <- c(200, 250)
 # tune_var_mp_time_constraint <- c(0, 5 * const_sample_freq)
@@ -93,9 +106,10 @@ library(rsample)
 # tune_var_regime_landmark <- c(2.5 * const_sample_freq, 3 * const_sample_freq)
 # tune_var_regime_threshold <- c(0.4, 0.5)
 
-
-
-
+# start debugme after loading all functions
+# if (dev_mode) {
+debugme::debugme()
+# }
 
 
 list(
@@ -121,69 +135,220 @@ list(
     )
   ),
   tar_target(
-    tidy_dataset,
+    #### Pipeline: Tidy dataset and create the initial resample ----
+    initial_resample,
     {
-      purrr::map_dfr(dataset, function(x) {
+      tidy_dataset <- purrr::map_dfr(dataset, function(x) {
         regimes <- attr(x, "regimes")
         tibble::tibble(truth = list(regimes), ts = list(x$II))
       }, .id = "id")
+      rsample::initial_split(tidy_dataset, prop = var_initial_split_prop)
     }
   ),
   tar_target(
-    resamples,
+    #### Pipeline: Create the final testing split for the outer loop ----
+    testing_split,
+    { # outer loop, this will be evaluated last
+      rsample::testing(initial_resample) # 5
+    }
+  ),
+  tar_target(
+    #### Pipeline: Create the training split for the inner loop ----
+    training_split,
+    { # outer-inner loop, this will be cross-validated
+      rsample::training(initial_resample) # 15
+    }
+  ),
+  tar_target(
+    #### Pipeline: Subset the training split into analysis split (training) ----
+    analysis_split,
     {
-      nested_cv(as_tibble(names(dataset)),
-        outside = vfold_cv(v = 5, repeats = 1),
-        inside = vfold_cv(v = 5, repeats = 1)
+      # use the same seed for analysis and assessment to avoid the creation of
+      # an intermediate redundant split
+      my_seed <- tar_meta(training_split, seed)$seed
+      set.seed(my_seed)
+      validation_split <- rsample::vfold_cv(training_split, var_vfolds, var_vfolds_repeats)
+      this_split <- NULL
+      for (i in seq_along(validation_split$splits)) {
+        this_split <- rsample::analysis(validation_split$splits[[i]]) %>%
+          rsample::apparent() %>%
+          dplyr::bind_rows(this_split)
+      }
+
+      res <- rsample::manual_rset(this_split$splits, id = glue_fmt("Fold{seq_len(var_vfolds):02d}")) %>%
+        dplyr::mutate(group = rep(seq_len(var_vfolds_groups),
+          each = ceiling(var_vfolds / var_vfolds_groups),
+          length.out = var_vfolds
+        )) %>%
+        dplyr::group_by(group) %>%
+        tar_group()
+      res
+    },
+    iteration = "group"
+  ),
+  tar_target(
+    #### Pipeline: Subset the training split into assessment split (test) ----
+    assessment_split,
+    {
+      # use the same seed for analysis and assessment to avoid the creation of
+      # an intermediate redundant split
+      my_seed <- tar_meta(training_split, seed)$seed
+      set.seed(my_seed)
+      validation_split <- rsample::vfold_cv(training_split, var_vfolds, var_vfolds_repeats)
+      this_split <- NULL
+      for (i in seq_along(validation_split$splits)) {
+        this_split <- rsample::assessment(validation_split$splits[[i]]) %>%
+          rsample::apparent() %>%
+          dplyr::bind_rows(this_split)
+      }
+
+      res <- rsample::manual_rset(this_split$splits, id = glue_fmt("Fold{seq_len(var_vfolds):02d}")) %>%
+        dplyr::mutate(group = rep(seq_len(var_vfolds_groups),
+          each = ceiling(var_vfolds / var_vfolds_groups),
+          length.out = var_vfolds
+        )) %>%
+        dplyr::group_by(group) %>%
+        tar_group()
+      res
+    },
+    iteration = "group"
+  ),
+  tar_target(
+    #### Pipeline: Here we will conduct the parameter optimizations ----
+    analysis_fitted,
+    {
+      source(here::here("scripts", "regimes", "parsnip_model.R"), encoding = "UTF-8")
+
+      # Fix for targets branches that wipes off these classes
+      class(analysis_split) <- c("manual_rset", "rset", class(analysis_split))
+
+      floss_mod <-
+        floss_regime_model(
+          window_size = tune::tune(),
+          time_constraint = tune::tune(),
+          mp_threshold = tune::tune(),
+          regime_threshold = tune::tune()
+        ) %>%
+        parsnip::set_engine("floss") %>%
+        parsnip::set_mode("regression")
+
+      floss_set <- hardhat::extract_parameter_set_dials(floss_mod)
+      floss_set <- floss_set %>% stats::update(
+        window_size = window_size_par(var_window_size_tune),
+        mp_threshold = mp_threshold_par(var_mp_threshold_tune),
+        time_constraint = time_constraint_par(var_time_constraint_tune),
+        regime_threshold = dials::threshold(var_regime_threshold_tune)
       )
+
+      floss_rec <- recipes::recipe(x = head(analysis_split$splits[[1]]$data, 1)) %>%
+        recipes::update_role(truth, new_role = "outcome") %>%
+        recipes::update_role(id, new_role = "predictor") %>%
+        recipes::update_role(ts, new_role = "predictor")
+
+      # doMC::registerDoMC(cores = 8)
+      doParallel::registerDoParallel(cores = var_dopar_cores)
+      # tune bayes applies the same parameters to all resamples
+      # if we want to tune the parameters for each resample, we need to
+      # use the targets branches
+      floss_search_res <- floss_mod %>%
+        tune::tune_bayes(
+          preprocessor = floss_rec,
+          resamples = analysis_split,
+          # To use non-default parameter ranges
+          param_info = floss_set,
+          # Generate five at semi-random to start
+          initial = var_tune_bayes_initial,
+          iter = var_tune_bayes_iter,
+          # How to measure performance?
+          metrics = yardstick::metric_set(floss_error), # help has the function signature
+          control = tune::control_bayes(
+            no_improve = var_tune_bayes_no_improve,
+            verbose = TRUE, save_pred = TRUE, parallel_over = "resamples"
+          )
+        )
+      floss_search_res <- clean_splits_data(floss_search_res)
+      # doParallel::stopImplicitCluster()
+      # class(analysis_fitted) <- c("iteration_results", "tune_results", "tbl_df", "tbl", "data.frame")
+      floss_search_res
+      # }
+    },
+    pattern = map(analysis_split),
+    iteration = "list" # thus the objects keep their attributes
+  ),
+  tar_target(
+    #### Pipeline: Here we select the best from each optimization split and test in a separate split ----
+    analysis_evaluation,
+    {
+      all_fits <- lst_to_df(analysis_fitted)
+
+      # default: For space-filling or random grids, a marginal effect plot is created.
+      autoplot(all_fits, type = "marginals") + labs(title = "Marginal plot", x = "Parameter value", y = "Performance") +
+        theme_bw()
+
+      autoplot(all_fits, type = "parameters") + labs(title = "Parameter search", x = "Iterations", y = "Parameter value") +
+        theme_bw()
+
+      autoplot(all_fits, type = "performance", width = 0.1) + labs(title = "Performance - CI", x = "Iterations", y = "Performance") +
+        theme_bw()
+
+      best_model <- select_best(all_fits, metric = "floss_error")
+      best_by_one_std_err <- select_by_one_std_err(all_fits, metric = "floss_error")
+      best_by_pct_loss <- select_by_pct_loss(all_fits, metric = "floss_error", limit = 5)
+      collect_metrics(all_fits, summarize = FALSE) %>%
+        group_by(id) %>%
+        summarise(mean = mean(.estimate), n = n(), std_err = sd(.estimate))
+
+      fits_by_fold <- all_fits %>%
+        select(id, .metrics) %>%
+        unnest(.metrics) %>%
+        select(-.estimator) %>%
+        group_by(id) %>%
+        arrange(.estimate) %>%
+        group_map(~ head(.x, 3L), .keep = TRUE)
+    },
+    # pattern = map(analysis_fitted),
+    iteration = "list" # thus the objects keep their attributes
+  ),
+  tar_target(
+    #### Pipeline: In the end, get the best from the inner resample and test with the testing split ----
+    testing_evaluation,
+    {
+      analysis_evaluation
+      testing_split
     }
-  ),
-  tar_target(
-    outer_resample,
-    {
-      as.numeric(unlist(training(resamples$splits[[1]])))
-    },
-    iteration = "list",
-    map(resamples)
-  ),
-  tar_target(
-    #### Pipeline: Import Files to R and Select Datasets ----
-    training_set,
-    {
-      dataset[outer_resample]
-    },
-    pattern = map(outer_resample)
-  ),
+  )
+
+
   #### Pipeline: > NoFilters Branch ----
 
-  tar_map(
-    ##### Pipeline: > NoFilters > WindowSize Branch ----
-    values = list(map_window_size = tune_var_window_size),
-    tar_target(
-      ##### Pipeline: > NoFilters > WindowSize > Compute Stats ----
-      ds_stats,
-      {
-        process_ts_in_file(dataset,
-          id = "comp_stats",
-          fun = compute_companion_stats,
-          params = list(
-            window_size = map_window_size,
-            n_workers = 1
-          ),
-          exclude = var_signals_exclude
-        )
-      },
-      pattern = map(dataset)
-    ),
-    tar_map(
-      values = list(map_test = c(1, 2)),
-      tar_target(
-        test,
-        list(sd = ds_stats, te = map_test),
-        pattern = map(ds_stats)
-      )
-    )
-  )
+  # tar_map(
+  #   ##### Pipeline: > NoFilters > WindowSize Branch ----
+  #   values = list(map_window_size = tune_var_window_size),
+  #   tar_target(
+  #     ##### Pipeline: > NoFilters > WindowSize > Compute Stats ----
+  #     ds_stats,
+  #     {
+  #       process_ts_in_file(dataset,
+  #         id = "comp_stats",
+  #         fun = compute_companion_stats,
+  #         params = list(
+  #           window_size = map_window_size,
+  #           n_workers = 1
+  #         ),
+  #         exclude = var_signals_exclude
+  #       )
+  #     },
+  #     pattern = map(dataset)
+  #   ),
+  #   tar_map(
+  #     values = list(map_test = c(1, 2)),
+  #     tar_target(
+  #       test,
+  #       list(sd = ds_stats, te = map_test),
+  #       pattern = map(ds_stats)
+  #     )
+  #   )
+  # )
 )
 
 # targets::tar_dir({ # tar_dir() runs code from a temporary directory.

@@ -1,4 +1,4 @@
-source(here("scripts/helpers", "parsnip_model.R"))
+source(here("scripts/regimes", "parsnip_model.R"))
 
 ##################################### Testing #####################################
 
@@ -15,17 +15,17 @@ floss_mod <-
   parsnip::set_engine("floss") %>%
   parsnip::set_mode("regression")
 
-# floss_mod <-
-#   floss_regime_model(
-#     window_size = 200,
-#     time_constraint = 1250,
-#     mp_threshold = 0,
-#     regime_threshold = 0.3
-#   ) %>%
-#   parsnip::set_engine("floss") %>%
-#   parsnip::set_mode("regression")
+floss_mod <-
+  floss_regime_model(
+    window_size = 200,
+    time_constraint = 1250,
+    mp_threshold = 0,
+    regime_threshold = 0.3
+  ) %>%
+  parsnip::set_engine("floss") %>%
+  parsnip::set_mode("regression")
 
-# flofit <- floss_mod %>% fit(y ~ x, data = tidy_dataset)
+# flofit <- floss_mod %>% fit(y ~ x, data = df_test)
 
 
 # summary(floss_rec)
@@ -59,7 +59,7 @@ for (i in seq.int(1, length(folds$splits))) {
 
 # split <- initial_split(df_test, prop = 3 / 4)
 
-floss_rec <- recipes::recipe(x = tidy_dataset) %>%
+floss_rec <- recipes::recipe(x = head(analysis_split$splits[[1]]$data, 1)) %>%
   recipes::update_role(truth, new_role = "outcome") %>%
   recipes::update_role(id, new_role = "predictor") %>%
   recipes::update_role(ts, new_role = "predictor")
@@ -119,7 +119,7 @@ floss_search_res <- floss_mod %>%
   # )
   tune::tune_bayes(
     preprocessor = floss_rec,
-    resamples = folds,
+    resamples = analysis_split,
     # To use non-default parameter ranges
     param_info = floss_set,
     # Generate five at semi-random to start
@@ -165,6 +165,7 @@ final_model %>%
 library(vip)
 
 final_model %>%
+  flofit() %>%
   extract_fit_parsnip() %>%
   vip()
 

@@ -1,7 +1,5 @@
-source(here("scripts/common", "score_floss.R"))
-library(tidymodels)
-tidymodels_prefer(quiet = TRUE)
-options(tidymodels.dark = TRUE)
+source(here::here("scripts", "common", "score_floss.R"), local = .GlobalEnv, encoding = "UTF-8")
+
 
 ## Tuning parameters
 
@@ -68,6 +66,8 @@ floss_regime_model <- function(mode = "regression",
     rlang::abort("`mode` should be 'regression'")
   }
 
+  "!DEBUG registering model."
+
   # Capture the arguments in quosures
   args <- list(
     window_size = rlang::enquo(window_size),
@@ -91,12 +91,13 @@ floss_regime_model <- function(mode = "regression",
 
 train_regime_model <- function(truth, ts, ..., window_size, regime_threshold, mp_threshold, time_constraint, verbose = FALSE) {
   other_args <- list(...)
-  # rlang::inform(glue::glue("names: {names(ts)}"))
 
   n <- nrow(ts)
   if (n == 0) {
     rlang::abort("There are zero rows in the predictor set.")
   }
+
+  "!DEBUG fitting model."
 
   if (ncol(ts) > 1) {
     id <- ts[[1]]
@@ -241,6 +242,7 @@ floss_error <- function(data, ...) {
 floss_error <- yardstick::new_numeric_metric(floss_error, direction = "minimize")
 
 floss_error.data.frame <- function(data, truth, estimate, na_rm = TRUE, estimator = "binary", ...) { # nolint
+  "!DEBUG evaluating model."
   yardstick::metric_summarizer(
     metric_nm = "floss_error",
     metric_fn = floss_error_vec,
@@ -304,6 +306,16 @@ floss_error_vec <- function(truth, estimate, data_size, na_rm = TRUE, estimator 
     return(mean(res)) # macro;
     # res
   }
+}
+
+clean_splits_data <- function(object) {
+  tidy_splits <- object$splits
+  tidy_splits <- purrr::map(tidy_splits, function(x) {
+    x$data$ts <- NA
+    x
+  })
+  object$splits <- tidy_splits
+  object
 }
 
 # floss_error(tidy_dataset, truth = truth, estimate = truth, estimator = "micro")$.estimate

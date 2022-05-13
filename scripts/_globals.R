@@ -42,6 +42,7 @@ options(crayon.enabled = TRUE)
 script_files <- list.files(here::here("scripts", "common"), pattern = "*.R")
 sapply(here::here("scripts", "common", script_files), source, local = .GlobalEnv, encoding = "UTF-8")
 rm(script_files)
+source(here::here("scripts", "helpers", "glue_fmt.R"), local = .GlobalEnv, encoding = "UTF-8")
 
 #### Pipeline: variable definitions ----
 # signal sample frequency, this is a constant

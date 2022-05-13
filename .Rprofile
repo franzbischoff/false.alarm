@@ -76,6 +76,7 @@ if (Sys.getenv("CI") == "") { # not CI
         require("usethis", quietly = TRUE)
         require("conflicted", quietly = TRUE)
         require("here", quietly = TRUE)
+        require("glue", quietly = TRUE)
         require("workflowr", quietly = TRUE)
         require("targets", quietly = TRUE)
         require("gittargets", quietly = TRUE)
