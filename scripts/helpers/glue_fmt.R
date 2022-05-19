@@ -11,5 +11,5 @@ sprintf_transformer <- function(text, envir) {
 }
 
 glue_fmt <- function(..., .envir = parent.frame()) {
-  glue::glue(..., .transformer = sprintf_transformer, .envir = .envir)
+  as.character(glue::glue(..., .transformer = sprintf_transformer, .envir = .envir))
 }
