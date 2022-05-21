@@ -1,67 +1,28 @@
-source(here("scripts/regimes", "parsnip_model.R"))
 library(tidymodels)
 options(tidymodels.dark = TRUE)
 ##################################### Testing #####################################
-
+source(here("scripts/regimes", "parsnip_model.R"))
 tar_load(analysis_split)
 class(analysis_split) <- c("manual_rset", "rset", class(analysis_split))
-# df_test <- data.frame(y = as.numeric(tsmp::mp_toy_data$data[, 1]), x = as.numeric(tsmp::mp_toy_data$data[, 2])) # , z = as.numeric(tsmp::mp_toy_data$data[, 3]))
+the_data <- analysis_split$splits[[1]]$data
 
-floss_mod <-
+floss_spec <-
   floss_regime_model(
-    window_size = 200,
-    time_constraint = 1250, # tune(),
-    mp_threshold = 0.5, # tune(),
+    window_size = tune(),
+    time_constraint = tune(),
+    mp_threshold = tune(),
     regime_threshold = tune()
   ) %>%
   parsnip::set_engine("floss") %>%
   parsnip::set_mode("regression")
 
-# floss_mod <-
-#   floss_regime_model(
-#     window_size = 150,
-#     time_constraint = 1000,
-#     mp_threshold = 0.5,
-#     regime_threshold = 0.3
-#   ) %>%
-#   parsnip::set_engine("floss") %>%
-#   parsnip::set_mode("regression")
-
-# flofit <- floss_mod %>% fit(y ~ x, data = df_test)
-
-
-# summary(floss_rec)
-
-floss_set <- tune::extract_parameter_set_dials(floss_mod)
+floss_set <- tune::extract_parameter_set_dials(floss_spec)
 floss_set <- floss_set %>% stats::update(
-  # window_size = window_size_par(c(99, 100)),
-  # mp_threshold = mp_threshold_par(c(0, 0.9), trans = multidiscr(1)),
-  # time_constraint = time_constraint_par(c(750L, 2500L)),
-  regime_threshold = dials::threshold(c(0.1, 0.6))
+  window_size = window_size_par(c(100, 150)),
+  mp_threshold = mp_threshold_par(c(0.3, 0.6)),
+  time_constraint = time_constraint_par(c(700L, 900L)),
+  regime_threshold = dials::threshold(c(0.1, 0.9))
 )
-
-# floss_grid <- floss_set %>% grid_regular(levels = 6)
-# min_grid(floss_mod, floss_grid)
-# set.seed(456)
-# folds <- vfold_cv(tidy_dataset, v = 2, repeats = 5)
-# folds <- apparent(tidy_dataset) # train and test are the same
-# fold <- folds[1, ]
-# folds <- manual_rset(list(
-#   fold$splits[[1]],
-#   fold$splits[[1]],
-#   fold$splits[[1]],
-#   fold$splits[[1]],
-#   fold$splits[[1]],
-#   fold$splits[[1]]
-# ), ids = as.character(1:6))
-
-# for (i in seq.int(1, length(folds$splits))) {
-#   folds$splits[[i]]$in_id <- sample(1:5)
-#   folds$splits[[i]]$out_id <- sample(6:10)
-#   class(folds$splits[[i]]) <- c("mc_split", "rsplit")
-# }
-
-# split <- initial_split(df_test, prop = 3 / 4)
 
 floss_rec <- recipes::recipe(x = head(analysis_split$splits[[1]]$data, 1)) %>%
   recipes::update_role(truth, new_role = "outcome") %>%
@@ -75,28 +36,225 @@ floss_rec <- recipes::recipe(x = head(analysis_split$splits[[1]]$data, 1)) %>%
 #
 floss_wflow <-
   workflows::workflow() %>%
-  workflows::add_model(floss_mod) %>%
+  workflows::add_model(floss_spec) %>%
   workflows::add_recipe(floss_rec)
 
+# fitted_wflow <- floss_wflow %>% parsnip::fit(the_data)
+# sp <- fitted_wflow$fit$fit %>% predict(new_data = the_data)
+# mp <- fitted_wflow$fit$fit %>% multi_predict(new_data = the_data, regime_threshold = c(0.3, 0.5))
 
-the_data <- analysis_split$splits[[1]]$data
+# has_multi_predict(fitted_wflow$fit$fit) # TRUE
+# has_multi_predict(floss_spec) # FALSE
+# multi_predict_args(fitted_wflow$fit$fit) # regime_threshold
 
-fitted_wflow <- floss_wflow %>%
-  parsnip::fit(the_data)
+# options(vsc.dev.args = list(width = 1000, height = 500))
 
 
-fit_par <- fitted_wflow %>% extract_fit_parsnip()
-fit_par %>% predict(the_data, regime_threshold = 0.3)
+# doParallel::registerDoParallel(cores = 1)
 
-fit_par %>% multi_predict(the_data, regime_threshold = c(0.3, 0.6))
-# lin_spec <- linear_reg(penalty = 0.5) %>%
-#   set_engine("glmnet", nlambda = 4)
-# lin_rec <- recipes::recipe(mpg ~ ., data = mtcars)
+control_parsnip(verbosity = 2L)
+trade_off_decay <- function(iter) {
+  expo_decay(iter, start_val = .01, limit_val = 0, slope = 1 / 4)
+}
+start_time <- Sys.time()
+floss_search_res <- floss_spec %>%
+  # tune::fit_resamples(
+  #   preprocessor = floss_rec,
+  #   resamples = analysis_split,
+  #   metrics = yardstick::metric_set(floss_error_macro)
+  # )
+  tune::tune_grid( # 100 54s
+    preprocessor = floss_rec,
+    resamples = analysis_split,
+    param_info = floss_set,
+    grid = 500,
+    metrics = yardstick::metric_set(floss_error_macro),
+    control = tune::control_grid(
+      verbose = TRUE,
+      allow_par = FALSE,
+      save_pred = TRUE,
+      parallel_over = "resamples"
+    )
+  )
+
+
+# Stack:
+
+# training:
+# min_grid.floss_regime_model
+# check_args.floss_regime_model
+# translate.floss_regime_model
+# > .check_floss_regime_threshold_fit
+# train_regime_model
+
+# predict:
+# predict.floss_regime_model
+# multi_predict._floss_regime_model
+# > predict.floss_regime_model
+
+# evaluate:
+# floss_error
+# floss_error.data.frame
+# floss_error_vec
+
+
+# m <- collect_metrics(floss_search_res, summarize = T)
+# tune::tune_bayes( # 48 5.633692 mins
+#   preprocessor = floss_rec,
+#   resamples = analysis_split,
+#   param_info = floss_set,
+#   initial = 10,
+#   iter = 10,
+#   metrics = yardstick::metric_set(floss_error_micro, floss_error_macro),
+#   objective = tune::exp_improve(trade_off_decay),
+#   control = tune::control_bayes(
+#     no_improve = 50,
+#     verbose = TRUE,
+#     save_pred = TRUE,
+#     parallel_over = "everything"
+#   )
+# )
+
+end_time <- Sys.time()
+end_time - start_time
+
+# finetune::tune_race_win_loss( # 100; 52 sec
+#           preprocessor = floss_rec,
+#           resamples = analysis_split,
+#           param_info = floss_set,
+#           grid = 100,
+#           metrics = yardstick::metric_set(floss_error),
+#           control = finetune::control_race(
+#             verbose_elim = TRUE,
+#             verbose = TRUE,
+#             allow_par = FALSE,
+#             save_pred = TRUE,
+#             parallel_over = "everything"
+#           )
+#         )
+# finetune::tune_race_anova( # 100; 43 sec
+#             preprocessor = floss_rec,
+#             resamples = analysis_split,
+#             param_info = floss_set,
+#             grid = 100,
+#             metrics = yardstick::metric_set(floss_error),
+#             control = finetune::control_race(
+#               verbose_elim = TRUE,
+#               verbose = TRUE,
+#               allow_par = TRUE,
+#               save_pred = TRUE,
+#               parallel_over = "resamples"
+#             )
+#           )
+
+# finetune::tune_sim_anneal( # 46 models, 26min
+#   preprocessor = floss_rec,
+#   resamples = analysis_split,
+#   iter = 50,
+#   initial = 10,
+#   param_info = floss_set,
+#   metrics = yardstick::metric_set(floss_error),
+#   control = finetune::control_sim_anneal(
+#     verbose = TRUE,
+#     save_pred = TRUE,
+#     no_improve = 10,
+#     parallel_over = "resamples"
+#   )
+# )
+
+
+
+
+#############
+#############
+#############
+#############
+#############
+# tar_load(analysis_split)
+# class(analysis_split) <- c("manual_rset", "rset", class(analysis_split))
+# the_data <- analysis_split$splits[[1]]$data
+
+# floss_spec <-
+#   floss_regime_model(
+#     window_size = 200,
+#     time_constraint = 1250, # tune(),
+#     mp_threshold = 0.5, # tune(),
+#     regime_threshold = 0.2
+#   ) %>%
+#   parsnip::set_engine("floss") %>%
+#   parsnip::set_mode("regression")
+
+# floss_rec <- recipes::recipe(x = head(analysis_split$splits[[1]]$data, 1)) %>%
+#   recipes::update_role(truth, new_role = "outcome") %>%
+#   recipes::update_role(id, new_role = "predictor") %>%
+#   recipes::update_role(ts, new_role = "predictor")
+
+# floss_wflow <-
+#   workflows::workflow() %>%
+#   workflows::add_model(floss_spec) %>%
+#   workflows::add_recipe(floss_rec)
+
+# floss_fit <- floss_wflow %>% fit(data = the_data)
+
+# a <- floss_fit %>% predict(the_data, regime_threshold = 0.1)
+
+#### lin fit
+#### lin fit
+#### lin fit
+#### lin fit
+#### lin fit
+
+# lin_spec <- linear_reg(penalty = tune()) %>%
+#   parsnip::set_engine("glmnet") %>%
+#   parsnip::set_mode("regression")
+
+# lin_set <- tune::extract_parameter_set_dials(lin_spec)
+# # lin_set <- lin_set %>% stats::update(
+# #   # window_size = window_size_par(c(99, 100)),
+# #   # mp_threshold = mp_threshold_par(c(0, 0.9), trans = multidiscr(1)),
+# #   # time_constraint = time_constraint_par(c(750L, 2500L)),
+# #   penalty = dials::penalty(c(0.1, 0.4, 0.6, 0.9))
+# # )
+
+
+# lin_rec <- recipes::recipe(x = head(mtcars, 1)) %>%
+#   recipes::update_role(mpg, new_role = "outcome") %>%
+#   recipes::update_role(cyl, new_role = "predictor") %>%
+#   recipes::update_role(disp, new_role = "predictor") %>%
+#   recipes::update_role(hp, new_role = "predictor") %>%
+#   recipes::update_role(drat, new_role = "predictor") %>%
+#   recipes::update_role(wt, new_role = "predictor") %>%
+#   recipes::update_role(qsec, new_role = "predictor") %>%
+#   recipes::update_role(vs, new_role = "predictor") %>%
+#   recipes::update_role(am, new_role = "predictor") %>%
+#   recipes::update_role(gear, new_role = "predictor") %>%
+#   recipes::update_role(carb, new_role = "predictor")
+
 # lin_wflow <-
 #   workflows::workflow() %>%
 #   workflows::add_model(lin_spec) %>%
 #   workflows::add_recipe(lin_rec)
 # lin_fit <- lin_wflow %>% fit(data = mtcars)
+
+# lin_fit$fit$fit %>% predict(mtcars[, -1], penalty = 0.1)
+# lin_fit$fit$fit %>% multi_predict(mtcars[, -1], penalty = c(0.1, 0.5, 0.9))
+# a$predict_model <- predict_model
+
+# lin_spec_res <- lin_spec %>%
+#   tune::tune_grid(
+#     preprocessor = lin_rec,
+#     resamples = apparent(mtcars),
+#     param_info = lin_set,
+#     grid = 30,
+#     # metrics = yardstick::metric_set(floss_error),
+#     control = tune::control_grid(verbose = TRUE, allow_par = FALSE, parallel_over = "resamples")
+#   )
+
+# A tibble: 32 × 1
+#    .pred
+#    <list>
+#  1 <tibble [3 × 2]>
+#  2 <tibble [3 × 2]>
 
 
 # predicted <- fitted_mod %>%
@@ -111,7 +269,7 @@ fit_par %>% multi_predict(the_data, regime_threshold = c(0.3, 0.6))
 
 # str(predicted$.pred, 1)
 
-# wflw_set <- workflow_set(preproc = list(simple = floss_rec), models = list(floss = floss_mod), cross = FALSE)
+# wflw_set <- workflow_set(preproc = list(simple = floss_rec), models = list(floss = floss_spec), cross = FALSE)
 
 # nobel_models <- wflw_set %>%
 #   workflow_map("tune_grid", # função do pacote {{tune}}
@@ -151,50 +309,45 @@ fit_par %>% multi_predict(the_data, regime_threshold = c(0.3, 0.6))
 
 # library(doMC)
 # doMC::registerDoMC(cores = parallel::detectCores())
-doParallel::registerDoParallel(cores = 4)
 
-control_parsnip(verbosity = 2L)
 
-floss_search_res <- floss_mod %>%
-  # tune::fit_resamples(
-  #   preprocessor = floss_rec,
-  #   resamples = folds,
-  #   metrics = yardstick::metric_set(floss_error)
-  # )
-  tune::tune_grid(
-    preprocessor = floss_rec,
-    resamples = analysis_split,
-    param_info = floss_set,
-    grid = 30,
-    metrics = yardstick::metric_set(floss_error),
-    control = tune::control_grid(verbose = TRUE, allow_par = TRUE, parallel_over = "resamples")
-  )
+# param_key <- tibble(group = colnames(a), regime_threshold = c(0.3, 0.6))
+# pred$.row <- seq_len(nrow(pred))
+# pred <- gather(pred, group, .pred, -.row)
+# pred <- full_join(param_key, pred, by = "group")
+# pred$group <- NULL
+# pred <- arrange(pred, .row, regime_threshold)
+# .row <- pred$.row
+# pred$.row <- NULL
+# pred <- split(pred, .row)
+# names(pred) <- NULL
 
-library(tidymodels)
-data(cells)
-cells <- cells %>% select(-case)
 
-set.seed(1304)
-cell_folds <- vfold_cv(cells, v = 4)
-unifold <- initial_split(cells)
+# library(tidymodels)
+# data(cells)
+# cells <- cells %>% select(-case)
 
-c5_spec <-
-  boost_tree(trees = 5) %>%
-  set_engine("C5.0") %>%
-  set_mode("classification")
+# set.seed(1304)
+# cell_folds <- vfold_cv(cells, v = 4)
+# unifold <- initial_split(cells)
 
-roc_res <- metric_set(roc_auc)
-doParallel::registerDoParallel(cores = 4)
-control_parsnip(verbosity = 2L)
-set.seed(1307)
-c5_spec %>%
-  tune_grid(
-    class ~ .,
-    resamples = cell_folds,
-    grid = data.frame(trees = 1:100),
-    metrics = roc_res,
-    control = tune::control_grid(verbose = TRUE, allow_par = TRUE, parallel_over = "resamples")
-  )
+# c5_spec <-
+#   boost_tree(trees = 5) %>%
+#   set_engine("C5.0") %>%
+#   set_mode("classification")
+
+# roc_res <- metric_set(roc_auc)
+# doParallel::registerDoParallel(cores = 4)
+# control_parsnip(verbosity = 2L)
+# set.seed(1307)
+# c5_spec %>%
+#   tune_grid(
+#     class ~ .,
+#     resamples = cell_folds,
+#     grid = data.frame(trees = 1:100),
+#     metrics = roc_res,
+#     control = tune::control_grid(verbose = TRUE, allow_par = TRUE, parallel_over = "resamples")
+#   )
 
 
 
@@ -226,42 +379,42 @@ c5_spec %>%
 
 # doParallel::stopImplicitCluster()
 
-estimates <-
-  collect_metrics(floss_search_res) %>%
-  arrange(.iter)
+# estimates <-
+#   collect_metrics(floss_search_res) %>%
+#   arrange(.iter)
 
-estimates
+# estimates
 
-show_best(floss_search_res, metric = "floss_error")
-autoplot(floss_search_res, type = "performance")
-autoplot(floss_search_res, type = "parameters") +
-  labs(x = "Iterations", y = NULL)
+# show_best(floss_search_res, metric = "floss_error")
+# autoplot(floss_search_res, type = "performance")
+# autoplot(floss_search_res, type = "parameters") +
+#   labs(x = "Iterations", y = NULL)
 
-best_model <- select_best(floss_search_res, metric = "floss_error")
+# best_model <- select_best(floss_search_res, metric = "floss_error")
 
-final_wflow <-
-  floss_wflow %>%
-  finalize_workflow(best_model)
+# final_wflow <-
+#   floss_wflow %>%
+#   finalize_workflow(best_model)
 
-final_fit <-
-  final_wflow %>%
-  last_fit(cell_split)
+# final_fit <-
+#   final_wflow %>%
+#   last_fit(cell_split)
 
-final_model <- extract_workflow(final_fit)
+# final_model <- extract_workflow(final_fit)
 
-final_fit %>%
-  collect_metrics()
+# final_fit %>%
+#   collect_metrics()
 
-final_model %>%
-  extract_fit_engine() %>%
-  rpart.plot(roundint = FALSE)
+# final_model %>%
+#   extract_fit_engine() %>%
+#   rpart.plot(roundint = FALSE)
 
-library(vip)
+# library(vip)
 
-final_model %>%
-  flofit() %>%
-  extract_fit_parsnip() %>%
-  vip()
+# final_model %>%
+#   flofit() %>%
+#   extract_fit_parsnip() %>%
+#   vip()
 
 # > str(test$spec)
 # List of 5
@@ -309,3 +462,14 @@ final_model %>%
 #   ..$ composition     : chr "data.frame"
 #   ..$ remove_intercept: logi FALSE
 #  $ y_var  : chr "data"
+
+
+# library(kknn)
+# knn_spec <- nearest_neighbor(mode = "regression", neighbors = 5) %>%
+#   set_engine("kknn")
+# knn_fit <- knn_spec  %>% fit(mpg ~ ., mtcars)
+
+# has_multi_predict(knn_fit) # TRUE
+# has_multi_predict(knn_spec) # FALSE
+# multi_predict_args(knn_fit) # neighbors
+# multi_predict(knn_fit, mtcars[1, -1], neighbors = 1:4)$.pred

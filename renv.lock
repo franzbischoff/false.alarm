@@ -1419,6 +1419,17 @@
         "xml2"
       ]
     },
+    "kknn": {
+      "Package": "kknn",
+      "Version": "1.3.1",
+      "Source": "Repository",
+      "Repository": "CRAN",
+      "Hash": "caf9351c33fcb5209928dbfab053c43a",
+      "Requirements": [
+        "Matrix",
+        "igraph"
+      ]
+    },
     "knitr": {
       "Package": "knitr",
       "Version": "1.39",
@@ -2906,20 +2917,6 @@
         "cli",
         "glue",
         "rlang"
-      ]
-    },
-    "vip": {
-      "Package": "vip",
-      "Version": "0.3.2",
-      "Source": "Repository",
-      "Repository": "CRAN",
-      "Hash": "70e6da4dbf60a40e80c57901ffef043d",
-      "Requirements": [
-        "ggplot2",
-        "gridExtra",
-        "magrittr",
-        "plyr",
-        "tibble"
       ]
     },
     "viridisLite": {

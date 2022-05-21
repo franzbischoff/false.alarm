@@ -250,7 +250,7 @@ list(
             resamples = analysis_split,
             param_info = floss_set,
             grid = var_grid_size,
-            metrics = yardstick::metric_set(floss_error),
+            metrics = yardstick::metric_set(floss_error_micro, floss_error_macro),
             control = tune::control_grid(
               verbose = TRUE,
               allow_par = TRUE,
@@ -259,6 +259,10 @@ list(
             )
           )
       } else if (var_grid_search == "tune_bayes") {
+        trade_off_decay <- function(iter) {
+          expo_decay(iter, start_val = .01, limit_val = 0, slope = 1 / 4)
+        }
+
         floss_search_res <- floss_mod %>%
           tune::tune_bayes(
             preprocessor = floss_rec,
@@ -266,7 +270,8 @@ list(
             param_info = floss_set,
             initial = var_tune_bayes_initial,
             iter = var_tune_bayes_iter,
-            metrics = yardstick::metric_set(floss_error),
+            metrics = yardstick::metric_set(floss_error_micro, floss_error_macro),
+            objective = tune::exp_improve(trade_off_decay),
             control = tune::control_bayes(
               no_improve = var_tune_bayes_no_improve,
               verbose = TRUE,
@@ -281,7 +286,7 @@ list(
             resamples = analysis_split,
             param_info = floss_set,
             grid = var_grid_size,
-            metrics = yardstick::metric_set(floss_error),
+            metrics = yardstick::metric_set(floss_error_micro, floss_error_macro),
             control = finetune::control_race(
               verbose_elim = TRUE,
               verbose = TRUE,
@@ -298,7 +303,7 @@ list(
             resamples = analysis_split,
             param_info = floss_set,
             grid = var_grid_size,
-            metrics = yardstick::metric_set(floss_error),
+            metrics = yardstick::metric_set(floss_error_micro, floss_error_macro),
             control = finetune::control_race(
               verbose_elim = TRUE,
               verbose = TRUE,
@@ -316,7 +321,7 @@ list(
             iter = var_tune_sim_anneal_iter,
             initial = var_tune_sim_anneal_initial,
             param_info = floss_set,
-            metrics = yardstick::metric_set(floss_error),
+            metrics = yardstick::metric_set(floss_error_micro, floss_error_macro),
             control = finetune::control_sim_anneal(
               verbose = TRUE,
               save_pred = TRUE,
@@ -348,7 +353,7 @@ list(
       # autoplot(all_fits, type = "parameters") + labs(title = "Parameter search", x = "Iterations", y = "Parameter value") +
       #   theme_bw()
 
-      #  autoplot(all_fits, type = "performance", width = 0.1) + labs(title = "Performance - CI", x = "Iterations", y = "Performance") +
+      #  autoplot(all_fits, type = "performance", width = 0) + labs(title = "Performance", x = "Iterations", y = "Performance") +
       #   theme_bw()
 
       # best_model <- select_best(all_fits, metric = "floss_error")
@@ -357,6 +362,11 @@ list(
       # collect_metrics(all_fits, summarize = FALSE) %>%
       #   group_by(id) %>%
       #   summarise(mean = mean(.estimate), n = n(), std_err = sd(.estimate))
+
+      # best_param <- select_best(ames_iter_search, metric = "rmse")
+      # ames_iter_search %>%
+      #   filter_parameters(parameters = best_param) %>%
+      #   collect_metrics()
 
       fits_by_fold <- all_fits %>%
         dplyr::select(id, rep, .metrics) %>%

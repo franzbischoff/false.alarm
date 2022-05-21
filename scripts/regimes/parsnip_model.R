@@ -11,7 +11,7 @@ source(here::here("scripts", "common", "score_floss.R"), local = .GlobalEnv, enc
 
 ## Tuning parameters
 
-time_constraint_par <- function(range = c(750L, 5000L), trans = scales::identity_trans()) {
+time_constraint_par <- function(range = c(750L, 5000L), trans = trans_round(-2)) {
   dials::new_quant_param(
     type = "integer",
     range = range,
@@ -23,7 +23,7 @@ time_constraint_par <- function(range = c(750L, 5000L), trans = scales::identity
   )
 }
 
-window_size_par <- function(range = c(150L, 250L), trans = NULL) {
+window_size_par <- function(range = c(150L, 250L), trans = trans_round(-1)) {
   dials::new_quant_param(
     type = "integer",
     range = range,
@@ -35,33 +35,32 @@ window_size_par <- function(range = c(150L, 250L), trans = NULL) {
     finalize = NULL
   )
 }
+trans_round <- function(d = 1) {
+  force(d)
 
-multidiscr <- function(mult = 1) {
-  force(mult)
-
-  mult_trans <- function(x) {
-    x * mult
+  roundi_trans <- function(x) {
+    round(x, d)
   }
 
-  div_trans <- function(x) {
-    x / mult
+  round_trans <- function(x) {
+    round(x, d)
   }
 
   scales::trans_new(
-    "discrmult",
-    transform = "div_trans",
-    inverse = "mult_trans",
+    "trans_round",
+    transform = "round_trans",
+    inverse = "roundi_trans",
     domain = c(0, Inf)
   )
 }
 
-mp_threshold_par <- function(range = c(0, 1), trans = multidiscr()) {
+mp_threshold_par <- function(range = c(0, 1), trans = trans_round()) {
   dials::new_quant_param(
     type = "double",
     range = range,
     inclusive = c(TRUE, TRUE),
     trans = trans,
-    default = 0.5,
+    default = 0.2,
     label = c(threshold = "MP Threshold"),
     finalize = NULL
   )
@@ -100,9 +99,14 @@ floss_regime_model <- function(mode = "regression",
 
 ## Training interface
 
-train_regime_model <- function(truth, ts, ..., window_size, regime_threshold, mp_threshold, time_constraint, verbose = FALSE) {
-  cli::cli_inform(c("*" = "train_regime_model"))
-  other_args <- list(...)
+# verbose
+train_regime_model <- function(truth, ts, ..., window_size, regime_threshold, mp_threshold, time_constraint) {
+  cli::cli_alert(c("!" = "train_regime_model <<- work here"))
+  cli::cli_inform(c("*" = "train_regime_model: dots_n {rlang::dots_n(...)}"))
+  if (rlang::dots_n(...) > 0) { # 0
+    cli::cli_inform(c("*" = "train_regime_model: dots_names {names(rlang::dots_list(..., .preserve_empty = TRUE))}"))
+  }
+  dots <- rlang::dots_list(...)
 
   n <- nrow(ts)
   if (n == 0) {
@@ -119,10 +123,6 @@ train_regime_model <- function(truth, ts, ..., window_size, regime_threshold, mp
   }
 
   res <- list(truth = truth, id = id, ts = ts)
-
-  # if (verbose) {
-  # cli::cli_inform(c("i" = "Training on {n} time series. Params: {window_size}, {regime_threshold}, {mp_threshold}, {time_constraint}"))
-  # }
 
   trained <- list(
     fitted.values = res,
@@ -141,136 +141,263 @@ train_regime_model <- function(truth, ts, ..., window_size, regime_threshold, mp
 
 # Predictor interface
 
+# object = object$fit
+# new_data = new_data
+# type = "numeric"
+# regime_threshold = object$spec$args$regime_threshold
+# verbose = FALSE
+predict.floss_regime_model <- function(object, new_data, type = NULL, regime_threshold = NULL, ...) { # nolint
+  cli::cli_inform(c("*" = "predict.floss_regime_model <<- work here"))
+  cli::cli_inform(c("*" = "predict.floss_regime_model: dots_n {rlang::dots_n(...)}"))
+  if (rlang::dots_n(...) > 0) { # 0
+    cli::cli_inform(c("*" = "predict.floss_regime_model: dots_names {names(rlang::dots_list(..., .preserve_empty = TRUE))}"))
+  }
+  cli::cli_inform(c("!" = "type is {type}.")) # "raw"
+  cli::cli_inform(c("!" = "regime_threshold is {regime_threshold}.")) # "NULL"
 
-predict.floss_regime_model <- function(object, new_data, ...) { # nolint
-  cli::cli_inform(c("*" = "predict.floss_regime_model"))
-
-  # # function(object, new_data, type, verbose = FALSE) {
   n <- nrow(new_data)
   if (n == 0) {
     rlang::abort("There are zero rows in the new_data set.")
   }
 
-  opts <- list(...)
+  dots <- rlang::dots_list(...)
 
-  estimates <- object$fitted.values$truth
+  new_data <- tibble::tibble(new_data)
+  obj_fit <- tibble::as_tibble(object$fitted.values) %>% dplyr::mutate(id = as.character(id))
   terms <- object$terms
 
-  rt <- terms$regime_threshold
-  rt2 <- opts$regime_threshold
+  # for now, compare:
+  checkmate::assert_true(all(new_data$id %in% obj_fit$id))
 
-  # cli::cli_inform(c("i" = "RT is {opts$regime_threshold} and terms is {rt}."))
+  if (length(regime_threshold) == 0) { # are we predicting with the old fit?
+    regime_threshold <- terms$regime_threshold
+  }
 
-  res <- NULL
-  for (i in seq_len(length(rt2))) {
+  # TODO: create real estimates
+  estimates <- obj_fit$truth
+
+  if (length(regime_threshold) == 1) { # new predict with single value
+    cli::cli_inform(c("*" = "predict.floss_regime_model <<- single prediction"))
     debug <- abs((100 - terms$window_size) / 10)
-    debug <- debug + abs(0.3 - rt2[i]) * 10
+    debug <- debug + abs(0.3 - regime_threshold) * 10
     debug <- debug + abs(0.5 - terms$mp_threshold) * 10
     debug <- debug + abs((1000 - terms$time_constraint) / 100)
+    res <- tibble::tibble(
+      .sizes = purrr::map_int(new_data$ts, length),
+      .id = as.character(new_data$id),
+      # regime_threshold = regime_threshold,
+      .pred = purrr::map(estimates, ~ .x + debug),
+    )
+  } else { # new multiple values
+    cli::cli_inform(c("*" = "predict.floss_regime_model <<- multi prediction"))
+    res <- NULL
+    for (i in seq_len(length(new_data$ts))) {
+      new_res <- NULL
+      for (rt in regime_threshold) {
+        debug <- abs((100 - terms$window_size) / 10)
+        debug <- debug + abs(0.3 - rt) * 10
+        debug <- debug + abs(0.5 - terms$mp_threshold) * 10
+        debug <- debug + abs((1000 - terms$time_constraint) / 100)
+        new_res <- dplyr::bind_rows(
+          new_res,
+          tibble::tibble(
+            .pred = list(estimates[[i]] + debug),
+            .sizes = length(new_data$ts[[i]]),
+            .id = as.character(new_data$id[i]),
+            regime_threshold = rt
+          )
+        )
+      }
 
-
-    # if (verbose) {
-    # cli::cli_inform(c("i" = "Predicting on {n} time series. Params: {terms['window_size']}, {terms['regime_threshold']}, {terms['mp_threshold']}, {terms['time_constraint']}"))
-    # }
-
-    res <- dplyr::bind_rows(res, tibble::tibble(.pred = purrr::map(estimates, ~ .x + debug), .sizes = purrr::map(new_data$ts, length)))
-  }
-  res
-}
-
-predict._floss_regime_model <- function(object, new_data, type = NULL, opts = list(), regime_threshold = NULL, multi = FALSE, ...) { # nolint
-  cli::cli_inform(c("*" = "predict._floss_regime_model"))
-
-  if (any(names(rlang::enquos(...)) == "newdata")) {
-    rlang::abort("Did you mean to use `new_data` instead of `newdata`?")
-  }
-
-  # browser()
-
-  # See discussion in https://github.com/tidymodels/parsnip/issues/195
-  if (is.null(regime_threshold) && !is.null(object$spec$args$regime_threshold)) {
-    # cli::cli_inform(c("!" = "github._floss_regime_model"))
-    regime_threshold <- object$spec$args$regime_threshold
-  }
-
-  # cli::cli_inform(c("!" = "regime_threshold is {regime_threshold}."))
-  # cli::cli_inform(c("!" = "RT$args$regime_threshold is {object$spec$args$regime_threshold}."))
-
-  object$spec$args$regime_threshold <- .check_floss_regime_threshold_predict(regime_threshold, object, multi)
-
-  # cli::cli_inform(c("!" = "RT$args$regime_threshold is {object$spec$args$regime_threshold}."))
-
-  object$spec <- eval_args(object$spec)
-  predict.model_fit(object, new_data = new_data, type = type, opts = opts, ...)
-}
-
-
-predict_numeric._floss_regime_model <- function(object, new_data, ...) { # nolint
-  cli::cli_inform(c("*" = "predict_numeric._floss_regime_model"))
-
-  if (any(names(rlang::enquos(...)) == "newdata")) {
-    rlang::abort("Did you mean to use `new_data` instead of `newdata`?")
-  }
-
-
-
-  object$spec <- eval_args(object$spec)
-  predict_numeric.model_fit(object, new_data = new_data, ...)
-}
-
-predict_raw._floss_regime_model <- function(object, new_data, opts = list(), ...) { # nolint
-  cli::cli_inform(c("*" = "predict_raw._floss_regime_model"))
-
-  if (any(names(rlang::enquos(...)) == "newdata")) {
-    rlang::abort("Did you mean to use `new_data` instead of `newdata`?")
-  }
-
-  object$spec <- eval_args(object$spec)
-  opts$regime_threshold <- object$spec$args$regime_threshold
-  predict_raw.model_fit(object, new_data = new_data, opts = opts, ...)
-}
-
-## Multipredict
-
-multi_predict._floss_regime_model <- function(object, new_data, type = NULL, regime_threshold = NULL, verbose = FALSE, ...) { # nolint
-  cli::cli_inform(c("*" = "multi_predict._floss_regime_model"))
-  if (any(names(rlang::enquos(...)) == "newdata")) {
-    rlang::abort("Did you mean to use `new_data` instead of `newdata`?")
-  }
-
-  # cli::cli_inform(c("!" = "regime_threshold is {regime_threshold}."))
-
-  dots <- list(...)
-  object$spec <- eval_args(object$spec)
-  if (is.null(regime_threshold)) {
-    # See discussion in https://github.com/tidymodels/parsnip/issues/195
-    if (!is.null(object$spec$args$regime_threshold)) {
-      # cli::cli_inform(c("!" = "github.object$spec$args$regime_threshold"))
-      regime_threshold <- object$spec$args$regime_threshold
-    } else {
-      # cli::cli_inform(c("!" = "github.object$fit$terms$regime_threshold"))
-      regime_threshold <- object$fit$terms$regime_threshold
+      res <- dplyr::bind_rows(res, tidyr::nest(new_res, .pred = tidyr::everything()))
     }
   }
 
-  pred <- predict._floss_regime_model(object,
-    new_data = new_data, type = "raw",
-    opts = dots, regime_threshold = regime_threshold, multi = TRUE
-  )
+  res
+}
 
-  param_key <- tibble(group = colnames(pred), regime_threshold = regime_threshold)
-  pred <- as_tibble(pred)
-  pred$.row <- seq_len(nrow(pred))
-  pred <- gather(pred, group, .pred, -.row)
-  pred <- full_join(param_key, pred, by = "group")
-  pred$group <- NULL
-  pred <- arrange(pred, .row, regime_threshold)
-  .row <- pred$.row
-  pred$.row <- NULL
-  pred <- split(pred, .row)
-  names(pred) <- NULL
-  cli::cli_inform(c("!" = "RAW result"))
-  tibble(.pred = pred)
+# predict._floss_regime_model <- function(object, new_data, type = NULL, opts = list(),
+#                                         regime_threshold = NULL, multi = FALSE, ...) { # nolint
+#   cli::cli_inform(c("*" = "predict._floss_regime_model"))
+#   cli::cli_inform(c("*" = "predict._floss_regime_model: dots_n {rlang::dots_n(...)}"))
+#   if (rlang::dots_n(...) > 0) {
+#     cli::cli_inform(c("*" = "predict._floss_regime_model: dots_names {names(rlang::dots_list(..., .preserve_empty = TRUE))}"))
+#   }
+
+#   if (any(names(rlang::enquos(...)) == "newdata")) {
+#     rlang::abort("Did you mean to use `new_data` instead of `newdata`?")
+#   }
+
+#   # See discussion in https://github.com/tidymodels/parsnip/issues/195
+#   if (is.null(regime_threshold) && !is.null(object$spec$args$regime_threshold)) {
+#     cli::cli_inform(c("!" = "github._floss_regime_model"))
+#     regime_threshold <- object$spec$args$regime_threshold
+#   }
+
+#   cli::cli_inform(c("!" = "type is {type}."))
+#   cli::cli_inform(c("!" = "length(opts) is {length(opts)}."))
+#   cli::cli_inform(c("!" = "regime_threshold is {regime_threshold}."))
+#   cli::cli_inform(c("!" = "multi is {multi}."))
+
+#   cli::cli_inform(c("!" = "object$spec$args$regime_threshold is {object$spec$args$regime_threshold}."))
+#   cli::cli_inform(c("!" = "object$fit$terms$regime_threshold is {object$fit$terms$regime_threshold}."))
+#   # opts$multi <- multi
+
+
+#   object$spec$args$regime_threshold <- .check_floss_regime_threshold_predict(regime_threshold, object, multi)
+
+#   cli::cli_inform(c("!" = "new object$spec$args$regime_threshold is {object$spec$args$regime_threshold}."))
+
+#   object$spec <- eval_args(object$spec)
+#   # check_args.floss_regime_model(object$spec)
+#   predict.model_fit(object, new_data = new_data, type = type, ...) # , opts = opts
+# }
+
+
+# predict_numeric._floss_regime_model <- function(object, new_data, ...) { # nolint
+#   cli::cli_inform(c("*" = "predict_numeric._floss_regime_model"))
+#   cli::cli_inform(c("*" = "predict_numeric._floss_regime_model: dots_n {rlang::dots_n(...)}"))
+#   if (rlang::dots_n(...) > 0) {
+#     cli::cli_inform(c("*" = "predict_numeric._floss_regime_model: dots_names {names(rlang::dots_list(..., .preserve_empty = TRUE))}"))
+#   }
+
+#   if (any(names(rlang::enquos(...)) == "newdata")) {
+#     rlang::abort("Did you mean to use `new_data` instead of `newdata`?")
+#   }
+
+#   object$spec <- eval_args(object$spec)
+#   predict_numeric.model_fit(object, new_data = new_data, ...)
+# }
+
+# predict_raw._floss_regime_model <- function(object, new_data, opts = list(), ...) { # nolint
+#   cli::cli_inform(c("*" = "predict_raw._floss_regime_model"))
+#   cli::cli_inform(c("*" = "predict_raw._floss_regime_model: dots_n {rlang::dots_n(...)}"))
+#   if (rlang::dots_n(...) > 0) {
+#     cli::cli_inform(c("*" = "predict_raw._floss_regime_model: dots_names {names(rlang::dots_list(..., .preserve_empty = TRUE))}"))
+#   }
+#   cli::cli_inform(c("!" = "length(opts) is {length(opts)}."))
+
+#   # browser()
+
+#   if (any(names(rlang::enquos(...)) == "newdata")) {
+#     rlang::abort("Did you mean to use `new_data` instead of `newdata`?")
+#   }
+
+#   object$spec <- eval_args(object$spec)
+#   opts$regime_threshold <- object$spec$args$regime_threshold
+#   predict_raw.model_fit(object, new_data = new_data, opts = opts, ...)
+# }
+
+## Multipredict
+
+#' Model predictions across many sub-models
+#'
+#' For some models, predictions can be made on sub-models in the model object.
+#' @param object A `model_fit` object.
+#' @param new_data A rectangular data object, such as a data frame.
+#' @param type A single character value or `NULL`. Possible values are
+#' `"numeric"`, `"class"`, `"prob"`, `"conf_int"`, `"pred_int"`, `"quantile"`,
+#' or `"raw"`. When `NULL`, `predict()` will choose an appropriate value
+#' based on the model's mode.
+#' @param ... Optional arguments to pass to `predict.model_fit(type = "raw")`
+#'  such as `type`.
+#' @return A tibble with the same number of rows as the data being predicted.
+#'  There is a list-column named `.pred` that contains tibbles with
+#'  multiple rows per sub-model. Note that, within the tibbles, the column names
+#'  follow the usual standard based on prediction `type` (i.e. `.pred_class` for
+#'  `type = "class"` and so on).
+
+multi_predict._floss_regime_model <- function(object, new_data, type = NULL, regime_threshold = NULL, ...) { # nolint
+  cli::cli_inform(c("*" = "multi_predict._floss_regime_model"))
+  cli::cli_inform(c("*" = "multi_predict._floss_regime_model: dots_n {rlang::dots_n(...)}"))
+  if (rlang::dots_n(...) > 0) { # 0
+    cli::cli_inform(c("*" = "multi_predict._floss_regime_model: dots_names {names(rlang::dots_list(..., .preserve_empty = TRUE))}"))
+  }
+
+  if (any(names(rlang::enquos(...)) == "newdata")) {
+    rlang::abort("Did you mean to use `new_data` instead of `newdata`?")
+  }
+
+  if (is.null(regime_threshold)) {
+    regime_threshold <- rlang::eval_tidy(object$fit$terms$regime_threshold)
+  }
+  regime_threshold <- sort(regime_threshold)
+
+  if (is.null(type)) {
+    if (object$spec$mode == "regression") {
+      type <- "numeric"
+    } else {
+      type <- "class"
+    }
+  }
+
+  floss_by_regime_threshold <- function(regime_threshold, object, new_data, type, ...) {
+    object$fit$best.parameters$regime_threshold <- regime_threshold
+
+    predict(object, new_data = new_data, type = type, ...) %>%
+      dplyr::mutate(regime_threshold = regime_threshold, .row = dplyr::row_number()) %>%
+      dplyr::select(.row, .sizes, .id, regime_threshold, dplyr::starts_with(".pred"))
+  }
+
+  res <- purrr::map_df(regime_threshold,
+    floss_by_regime_threshold,
+    object = object,
+    new_data = new_data,
+    type = type,
+    ...
+  )
+  res <- dplyr::arrange(res, .row, regime_threshold)
+  res <- split(res[, -1], res$.row)
+  names(res) <- NULL
+  dplyr::tibble(.pred = res)
+
+  # dots <- rlang::dots_list(...)
+
+  # if (length(dots) > 0) {
+  #   bad_args <- names(dots)
+  #   bad_args <- paste0("`", bad_args, "`", collapse = ", ")
+  #   rlang::abort(
+  #     glue::glue(
+  #       "These arguments cannot be used: {bad_args}. The ellipses are not ",
+  #       "used to pass args to the model function's predict function.",
+  #     )
+  #   )
+  # }
+
+  # object$spec <- eval_args(object$spec)
+  # if (is.null(regime_threshold)) {
+  #   # See discussion in https://github.com/tidymodels/parsnip/issues/195
+  #   if (!is.null(object$spec$args$regime_threshold)) {
+  #     cli::cli_inform(c("!" = "github.object$spec$args$regime_threshold"))
+  #     regime_threshold <- object$spec$args$regime_threshold
+  #   } else {
+  #     cli::cli_inform(c("!" = "github.object$fit$terms$regime_threshold"))
+  #     regime_threshold <- object$fit$terms$regime_threshold
+  #   }
+  # }
+
+  # pred <- predict._floss_regime_model(object,
+  #   new_data = new_data, type = "raw",
+  #   opts = dots, regime_threshold = regime_threshold,
+  #   multi = TRUE
+  # )
+
+  # browser()
+
+  # param_key <- tibble(group = colnames(pred), regime_threshold = regime_threshold)
+  # pred <- as_tibble(pred)
+  # pred$.row <- seq_len(nrow(pred))
+  # pred <- gather(pred, group, .pred, -.row)
+  # pred <- full_join(param_key, pred, by = "group")
+  # pred$group <- NULL
+  # pred <- arrange(pred, .row, regime_threshold)
+  # .row <- pred$.row
+  # pred$.row <- NULL
+  # pred <- split(pred, .row)
+  # names(pred) <- NULL
+  # cli::cli_inform(c("!" = "RAW result"))
+  # tibble(.pred = pred)
+  # pred
 }
 
 # multi_predict.floss_regime_model <- multi_predict._floss_regime_model
@@ -287,33 +414,19 @@ print.floss_regime_model <- function(x, ...) { # nolint
   invisible(x)
 }
 
-translate.floss_regime_model <- function(x, engine = x$engine, ...) { # nolint
-  cli::cli_inform(c("*" = "translate.floss_regime_model"))
-  x <- translate.default(x, engine, ...)
 
-  if (engine == "floss") {
-    .check_floss_regime_threshold_fit(x)
-
-    if (any(names(x$eng_args) == "regime_values")) {
-      # https://github.com/tidymodels/parsnip/issues/431
-      x$method$fit$args$regime_threshold <- x$eng_args$regime_values
-      x$eng_args$regime_values <- NULL
-      x$method$fit$args$regime_values <- NULL
-    }
-    # else {
-    #   # See discussion in https://github.com/tidymodels/parsnip/issues/195
-    #   x$method$fit$args$regime_threshold <- NULL
-    # }
-    # Since the `fit` information is gone for the regime_threshold, we need to have an
-    # evaluated value for the parameter.
-    x$args$regime_threshold <- rlang::eval_tidy(x$args$regime_threshold)
-  }
-  x
-}
-
-update.floss_regime_model <- function(object, parameters = NULL, window_size = NULL, time_constraint = NULL,
-                                      mp_threshold = NULL, regime_threshold = NULL, fresh = FALSE, ...) { # nolint
+update.floss_regime_model <- function(object,
+                                      parameters = NULL,
+                                      window_size = NULL,
+                                      time_constraint = NULL,
+                                      mp_threshold = NULL,
+                                      regime_threshold = NULL,
+                                      fresh = FALSE, ...) { # nolint
   cli::cli_inform(c("*" = "update.floss_regime_model"))
+  cli::cli_inform(c("*" = "update.floss_regime_model: dots_n {rlang::dots_n(...)}"))
+  if (rlang::dots_n(...) > 0) {
+    cli::cli_inform(c("*" = "update.floss_regime_model: dots_names {names(rlang::dots_list(..., .preserve_empty = TRUE))}"))
+  }
 
   args <- list(
     window_size = rlang::enquo(window_size),
@@ -322,7 +435,8 @@ update.floss_regime_model <- function(object, parameters = NULL, window_size = N
     regime_threshold = rlang::enquo(regime_threshold)
   )
 
-  update_floss_spec <- function(object, parameters, args_enquo_list, fresh, cls, ...) {
+  # function currently not exported by parsnip
+  update_spec <- function(object, parameters, args_enquo_list, fresh, cls, ...) {
     eng_args <- parsnip::update_engine_parameters(object$eng_args, fresh, ...)
 
     if (!is.null(parameters)) {
@@ -357,7 +471,7 @@ update.floss_regime_model <- function(object, parameters = NULL, window_size = N
     )
   }
 
-  update_floss_spec(
+  update_spec(
     object = object,
     parameters = parameters,
     args_enquo_list = args,
@@ -369,6 +483,11 @@ update.floss_regime_model <- function(object, parameters = NULL, window_size = N
 
 min_grid.floss_regime_model <- function(x, grid, ...) { # nolint
   cli::cli_inform(c("*" = "min_grid.floss_regime_model "))
+  cli::cli_inform(c("*" = "min_grid.floss_regime_model: dots_n {rlang::dots_n(...)}"))
+  if (rlang::dots_n(...) > 0) { # 0
+    cli::cli_inform(c("*" = "min_grid.floss_regime_model: dots_names {names(rlang::dots_list(..., .preserve_empty = TRUE))}"))
+  }
+
   # This is basically `fit_max_value()` with an extra error trap
   gr_nms <- names(grid)
   param_info <- tune:::get_submodel_info(x)
@@ -390,14 +509,85 @@ min_grid.floss_regime_model <- function(x, grid, ...) { # nolint
 
 check_args.floss_regime_model <- function(object) { # nolint
 
+  "!DEBUG This runs in fit()"
+  cli::cli_inform(c("*" = "check_args.floss_regime_model"))
+
   args <- lapply(object$args, rlang::eval_tidy)
 
-  if (all(is.numeric(args$regime_threshold)) && any(args$regime_threshold < 0 | args$regime_threshold > 1)) {
-    rlang::abort("The regime_threshold should be within [0,1].")
+  if (length(args$window_size) > 1) {
+    rlang::abort("`window_size` must be a single value")
   }
+  if (length(args$mp_threshold) > 1) {
+    rlang::abort("`mp_threshold` must be a single value")
+  }
+  if (length(args$time_constraint) > 1) {
+    rlang::abort("`time_constraint` must be a single value")
+  }
+  if (length(args$regime_threshold) > 1) {
+    rlang::abort("`regime_threshold` must be a single value")
+  }
+
+  # if (all(is.numeric(args$regime_threshold)) && any(args$regime_threshold < 0 | args$regime_threshold > 1)) {
+  #   rlang::abort("The regime_threshold should be within [0,1].")
+  # }
+  # if (all(is.numeric(args$window_size)) && any(args$window_size <= 0)) {
+  #   rlang::abort("The window_size should be a positive integer value.")
+  # }
+  # if (all(is.numeric(args$mp_threshold)) && any(args$mp_threshold < 0 | args$mp_threshold > 1)) {
+  #   rlang::abort("The mp_threshold should be within [0,1].")
+  # }
+  # if (all(is.numeric(args$time_constraint)) && any(args$time_constraint <= 0)) {
+  #   rlang::abort("The time_constraint should be a positive integer value.")
+  # }
 
   invisible(object)
 }
+
+
+translate.floss_regime_model <- function(x, engine = x$engine, ...) { # nolint
+  cli::cli_inform(c("*" = "translate.floss_regime_model"))
+  cli::cli_inform(c("*" = "translate.floss_regime_model: dots_n {rlang::dots_n(...)}"))
+  if (rlang::dots_n(...) > 0) { # 0
+    cli::cli_inform(c("*" = "translate.floss_regime_model: dots_names {names(rlang::dots_list(..., .preserve_empty = TRUE))}"))
+  }
+
+  if (is.null(engine)) {
+    message("Used `engine = 'floss'` for translation.")
+    engine <- "floss"
+  }
+
+  x <- translate.default(x, engine, ...)
+
+  if (engine == "floss") {
+    .check_floss_regime_threshold_fit(x)
+  }
+  x
+}
+
+# ------------------------------------------------------------------------------
+# glmnet call stack for linear regression using `predict` when object has
+# classes "_elnet" and "model_fit":
+#
+#  predict()
+# 	predict._elnet(penalty = NULL)   <-- checks and sets penalty
+#    predict.model_fit()             <-- checks for extra vars in ...
+#     predict_numeric()
+#      predict_numeric._elnet()
+#       predict_numeric.model_fit()
+#        predict.elnet()
+
+
+# glmnet call stack for linear regression using `multi_predict` when object has
+# classes "_elnet" and "model_fit":
+#
+# 	multi_predict()
+#    multi_predict._elnet(penalty = NULL)
+#      predict._elnet(multi = TRUE)          <-- checks and sets penalty
+#       predict.model_fit()                  <-- checks for extra vars in ...
+#        predict_raw()
+#         predict_raw._elnet()
+#          predict_raw.model_fit(opts = list(s = penalty))
+#           predict.elnet()
 
 #' Organize FLOSS predictions
 #'
@@ -466,10 +656,18 @@ check_args.floss_regime_model <- function(object) { # nolint
 #' @keywords internal
 #' @export
 .check_floss_regime_threshold_predict <- function(regime_threshold = NULL, object, multi = FALSE) { # nolint
-  cli::cli_inform(c("*" = ".check_floss_regime_threshold_predict."))
-  # cli::cli_inform(c("*" = "regime_threshold is {regime_threshold}."))
   if (is.null(regime_threshold)) {
     regime_threshold <- object$fit$terms$regime_threshold
+  }
+
+  if (length(object$fit$terms$window_size) > 1) {
+    rlang::abort("window_size must be a single value")
+  }
+  if (length(object$fit$terms$mp_threshold) > 1) {
+    rlang::abort("mp_threshold must be a single value")
+  }
+  if (length(object$fit$terms$time_constraint) > 1) {
+    rlang::abort("time_constraint must be a single value")
   }
 
   # when using `predict()`, allow for a single regime_threshold
@@ -479,16 +677,6 @@ check_args.floss_regime_model <- function(object) { # nolint
         glue::glue(
           "`regime_threshold` should be a single numeric value. `multi_predict()` ",
           "can be used to get multiple predictions per row of data.",
-        )
-      )
-    }
-
-    if (length(object$fit$terms$regime_threshold) == 1 && object$fit$terms$regime_threshold != regime_threshold) {
-      rlang::abort(
-        glue::glue(
-          "The model was fit with a single regime_threshold value of ",
-          "{object$fit$terms$regime_threshold}. Predicting with ",
-          "a value of {regime_threshold} will give incorrect results."
         )
       )
     }
@@ -543,23 +731,9 @@ parsnip::set_model_arg(
   eng = "floss",
   parsnip = "regime_threshold",
   original = "regime_threshold",
-  func = list(pkg = "dials", fun = "threshold"),
+  func = list(pkg = "dials", fun = "threshold", range = c(0, 1)),
   has_submodel = TRUE
 )
-
-parsnip::set_encoding(
-  model = "floss_regime_model",
-  eng = "floss",
-  mode = "regression",
-  options = list(
-    predictor_indicators = "none",
-    compute_intercept = FALSE,
-    remove_intercept = FALSE,
-    allow_sparse_x = FALSE
-  )
-)
-
-### Fitting parameters
 
 # parsnip::set_fit(
 #   model = "floss_regime_model",
@@ -582,9 +756,22 @@ parsnip::set_fit(
     data = c(x = "ts", y = "truth", id = "id"), # ts$x[[2]][1:10] regimes[[2]]
     protect = c("ts", "truth"),
     func = c(fun = "train_regime_model"),
-    defaults = list(verbose = FALSE)
+    defaults = list() # verbose = FALSE
   )
 )
+
+parsnip::set_encoding(
+  model = "floss_regime_model",
+  eng = "floss",
+  mode = "regression",
+  options = list(
+    predictor_indicators = "none",
+    compute_intercept = FALSE,
+    remove_intercept = FALSE,
+    allow_sparse_x = FALSE
+  )
+)
+
 
 ### Prediction parameters
 
@@ -595,14 +782,15 @@ parsnip::set_pred(
   type = "numeric",
   value = parsnip::pred_value_template(
     pre = NULL,
-    post = .organize_floss_regime_pred,
+    post = NULL,
     func = c(fun = "predict"),
     # Now everything else is put into the `args` slot
-    object = rlang::expr(object$fit),
-    new_data = rlang::expr(new_data),
-    type = "numeric",
-    regime_threshold = rlang::expr(object$spec$args$regime_threshold),
-    verbose = FALSE
+    object = rlang::expr(object$fit), # or quote()?
+    new_data = rlang::expr(new_data), # or quote()?
+    type = "raw"
+    # type = "numeric",
+    # regime_threshold = rlang::expr(object$spec$args$regime_threshold),
+    # verbose = FALSE
   )
 )
 
@@ -616,21 +804,32 @@ parsnip::set_pred(
     post = NULL,
     func = c(fun = "predict"),
     # Now everything else is put into the `args` slot
-    object = rlang::expr(object$fit),
-    new_data = rlang::expr(new_data)
+    object = rlang::expr(object$fit), # or quote()?
+    new_data = rlang::expr(new_data) # or quote()?
   )
 )
 
 ## Yardstick custom metric
 
 floss_error <- function(data, ...) {
+  cli::cli_inform(c("*" = "floss_error <<- work here"))
   UseMethod("floss_error")
 }
 
 floss_error <- yardstick::new_numeric_metric(floss_error, direction = "minimize")
 
+floss_error_micro <- yardstick::metric_tweak("floss_error_micro", floss_error, estimator = "micro")
+floss_error_macro <- yardstick::metric_tweak("floss_error_macro", floss_error, estimator = "macro")
+
 floss_error.data.frame <- function(data, truth, estimate, na_rm = TRUE, estimator = "binary", ...) { # nolint
+  cli::cli_inform(c("*" = "floss_error.data.frame <<- work here"))
+  cli::cli_inform(c("*" = "floss_error.data.frame: dots_n {rlang::dots_n(...)}"))
+  if (rlang::dots_n(...) > 0) { # 0
+    cli::cli_inform(c("*" = "floss_error.data.frame: dots_names {names(rlang::dots_list(..., .preserve_empty = TRUE))}"))
+  }
+
   "!DEBUG evaluating model."
+  sizes <- rlang::expr(.sizes)
   yardstick::metric_summarizer(
     metric_nm = "floss_error",
     metric_fn = floss_error_vec,
@@ -639,16 +838,27 @@ floss_error.data.frame <- function(data, truth, estimate, na_rm = TRUE, estimato
     estimate = !!rlang::enquo(estimate),
     na_rm = na_rm,
     estimator = estimator,
-    list(...),
-    metric_fn_options = list(data_size = data$.sizes) # purrr::map(data$ts, length))
+    metric_fn_options = list(data_size = rlang::enquo(sizes)) # purrr::map(data$ts, length))
   )
 }
 
 floss_error_vec <- function(truth, estimate, data_size, na_rm = TRUE, estimator = "binary", ...) {
+  cli::cli_inform(c("*" = "floss_error_vec <<- work here"))
+  cli::cli_inform(c("*" = "floss_error_vec: dots_n {rlang::dots_n(...)}"))
+  if (rlang::dots_n(...) > 0) {
+    cli::cli_inform(c("*" = "floss_error_vec: dots_names {names(rlang::dots_list(..., .preserve_empty = TRUE))}"))
+  }
+
   floss_error_impl <- function(truth, estimate, data_size, ...) {
     res <- score_regimes(truth, estimate, data_size)
     return(res)
   }
+
+  cli::cli_inform(c("*" = "data_size len: {length(data_size)}"))
+
+  # if (length(data_size) <= 2) {
+  #   cli::cli_abort(c("x" = "data_size len: {length(data_size)}"))
+  # }
 
   for (i in seq.int(1, length(estimate))) {
     lt <- length(truth[[i]])
@@ -661,6 +871,7 @@ floss_error_vec <- function(truth, estimate, data_size, na_rm = TRUE, estimator 
   }
 
   if (estimator == "micro") {
+    cli::cli_inform(c("*" = "floss_error_vec <<- micro"))
     res <- purrr::map2_dbl(
       truth, estimate,
       ~ yardstick::metric_vec_template(
@@ -678,6 +889,7 @@ floss_error_vec <- function(truth, estimate, data_size, na_rm = TRUE, estimator 
     div <- purrr::reduce(data_size, sum) + 1
     return(res / div) # micro is the sum of the scores / length(all_data_set)
   } else {
+    cli::cli_inform(c("*" = "floss_error_vec <<- macro"))
     res <- purrr::pmap_dbl(
       list(truth, estimate, data_size),
       ~ yardstick::metric_vec_template(
