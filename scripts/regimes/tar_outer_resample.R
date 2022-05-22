@@ -6,22 +6,35 @@ tar_load(analysis_split)
 class(analysis_split) <- c("manual_rset", "rset", class(analysis_split))
 the_data <- analysis_split$splits[[1]]$data
 
+# floss_spec <-
+#   floss_regime_model(
+#     window_size = tune(),
+#     time_constraint = tune(),
+#     mp_threshold = tune(),
+#     regime_threshold = tune(),
+#     regime_landmark = tune()
+#   ) %>%
+#   parsnip::set_engine("floss") %>%
+#   parsnip::set_mode("regression")
+
 floss_spec <-
   floss_regime_model(
-    window_size = tune(),
-    time_constraint = tune(),
-    mp_threshold = tune(),
-    regime_threshold = tune()
+    window_size = 200,
+    time_constraint = 1250,
+    mp_threshold = 0.3,
+    regime_threshold = 0.3,
+    regime_landmark = tune()
   ) %>%
   parsnip::set_engine("floss") %>%
   parsnip::set_mode("regression")
 
 floss_set <- tune::extract_parameter_set_dials(floss_spec)
 floss_set <- floss_set %>% stats::update(
-  window_size = window_size_par(c(100, 150)),
-  mp_threshold = mp_threshold_par(c(0.3, 0.6)),
-  time_constraint = time_constraint_par(c(700L, 900L)),
-  regime_threshold = dials::threshold(c(0.1, 0.9))
+  # window_size = window_size_par(c(100, 150)),
+  # mp_threshold = mp_threshold_par(c(0.3, 0.6)),
+  # time_constraint = time_constraint_par(c(700L, 900L)),
+  # regime_threshold = regime_threshold_par(c(0.1, 0.9), trans_round(0.1)),
+  regime_landmark = regime_landmark_par(c(3, 6), trans_round(0.5))
 )
 
 floss_rec <- recipes::recipe(x = head(analysis_split$splits[[1]]$data, 1)) %>%
@@ -41,18 +54,18 @@ floss_wflow <-
 
 # fitted_wflow <- floss_wflow %>% parsnip::fit(the_data)
 # sp <- fitted_wflow$fit$fit %>% predict(new_data = the_data)
-# mp <- fitted_wflow$fit$fit %>% multi_predict(new_data = the_data, regime_threshold = c(0.3, 0.5))
+# mp <- fitted_wflow$fit$fit %>% multi_predict(new_data = the_data, regime_threshold = c(0.1, 0.2, 0.3, 0.4), regime_landmark = c(3, 4, 5, 6))
 
-# has_multi_predict(fitted_wflow$fit$fit) # TRUE
+# has_multi_predict(fitted_wflow$fit$fit) # TRUEls()sss
 # has_multi_predict(floss_spec) # FALSE
 # multi_predict_args(fitted_wflow$fit$fit) # regime_threshold
 
 # options(vsc.dev.args = list(width = 1000, height = 500))
 
 
-# doParallel::registerDoParallel(cores = 1)
+# doParallel::registerDoParallel(cores = 4)
 
-control_parsnip(verbosity = 2L)
+control_parsnip(verbosity = 0L)
 trade_off_decay <- function(iter) {
   expo_decay(iter, start_val = .01, limit_val = 0, slope = 1 / 4)
 }
@@ -61,41 +74,26 @@ floss_search_res <- floss_spec %>%
   # tune::fit_resamples(
   #   preprocessor = floss_rec,
   #   resamples = analysis_split,
+
   #   metrics = yardstick::metric_set(floss_error_macro)
   # )
   tune::tune_grid( # 100 54s
     preprocessor = floss_rec,
     resamples = analysis_split,
     param_info = floss_set,
-    grid = 500,
+    grid = 200,
     metrics = yardstick::metric_set(floss_error_macro),
     control = tune::control_grid(
-      verbose = TRUE,
+      verbose = FALSE,
       allow_par = FALSE,
+      # save_workflow = TRUE,
       save_pred = TRUE,
       parallel_over = "resamples"
     )
   )
 
 
-# Stack:
 
-# training:
-# min_grid.floss_regime_model
-# check_args.floss_regime_model
-# translate.floss_regime_model
-# > .check_floss_regime_threshold_fit
-# train_regime_model
-
-# predict:
-# predict.floss_regime_model
-# multi_predict._floss_regime_model
-# > predict.floss_regime_model
-
-# evaluate:
-# floss_error
-# floss_error.data.frame
-# floss_error_vec
 
 
 # m <- collect_metrics(floss_search_res, summarize = T)
@@ -153,6 +151,7 @@ end_time - start_time
 #   iter = 50,
 #   initial = 10,
 #   param_info = floss_set,
+
 #   metrics = yardstick::metric_set(floss_error),
 #   control = finetune::control_sim_anneal(
 #     verbose = TRUE,
@@ -165,9 +164,11 @@ end_time - start_time
 
 
 
+
 #############
 #############
 #############
+
 #############
 #############
 # tar_load(analysis_split)

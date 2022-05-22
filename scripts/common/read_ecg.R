@@ -702,6 +702,12 @@ read_ecg_with_atr <- function(filename, subset = NULL, classes = c("all", "persi
 
   if (length(regime_changes) > 0) {
     sample_changes <- round(csv_annotations$sample[regime_changes])
+
+    if (!is.null(subset)) {
+      mask <- sample_changes %in% subset
+      sample_changes <- sample_changes[mask]
+    }
+
     attr(output[[basename]], "regimes") <- sample_changes
   } else {
     attr(output[[basename]], "regimes") <- 0
@@ -750,14 +756,12 @@ read_and_prepare_ecgs <- function(file_paths, subset = NULL, true_alarm = NULL, 
   checkmate::qassert(resample_from, "X>=0")
   checkmate::qassert(resample_to, "X>=0")
 
-
   result <- list()
   classes <- list()
 
   for (file in file_paths) {
     # get the filename without the extension
     filename <- tools::file_path_sans_ext(basename(file))
-
 
     it <- NULL
 
