@@ -509,8 +509,6 @@ update.floss_regime_model <- function(object,
 
 # hack tune
 
-mytune <- rlang::ns_env("tune")
-
 tune_grid_loop_iter <- function(split,
                                 grid_info,
                                 workflow,
@@ -734,7 +732,7 @@ tune_grid_loop_iter <- function(split,
         next
       }
       # browser() # BINGO
-      out_metrics <- append_metrics(
+      out_metrics <- tune:::append_metrics(
         collection = out_metrics,
         predictions = iter_predictions,
         metrics = metrics,
@@ -791,7 +789,7 @@ append_metrics <- function(collection,
 
   if (!rlang::is_null(.config)) {
     if (nrow(tmp_est) != length(.config)) {
-      browser()
+      cli::cli_warn("nrow(tmp_est) = {tmp_est}, length(.config) = {length(.config)}.")
     }
 
     tmp_est <- cbind(tmp_est, .config) # fix here , 7 rows for 2 config values
@@ -939,14 +937,15 @@ make_rename_arg <- function(grid, model, submodels) {
   names(res) <- names(submodels)
   res
 }
+mytune <- rlang::ns_env("tune")
 unlockBinding(rlang::sym("make_submod_arg"), mytune)
 unlockBinding(rlang::sym("make_rename_arg"), mytune)
-unlockBinding(rlang::sym("predict_model"), mytune)
-unlockBinding(rlang::sym("tune_grid_loop_iter"), mytune)
+# unlockBinding(rlang::sym("predict_model"), mytune)
+# unlockBinding(rlang::sym("tune_grid_loop_iter"), mytune)
 mytune$make_rename_arg <- make_rename_arg
 mytune$make_submod_arg <- make_submod_arg
-mytune$predict_model <- predict_model
-mytune$tune_grid_loop_iter <- tune_grid_loop_iter
+# mytune$predict_model <- predict_model
+# mytune$tune_grid_loop_iter <- tune_grid_loop_iter
 
 min_grid.floss_regime_model <- function(x, grid, ...) { # nolint
   # cli::cli_inform(c("*" = "min_grid.floss_regime_model "))
@@ -955,7 +954,7 @@ min_grid.floss_regime_model <- function(x, grid, ...) { # nolint
     cli::cli_alert(c("*" = "min_grid.floss_regime_model: dots_names {names(rlang::dots_list(..., .preserve_empty = TRUE))}"))
   }
 
-  submod_and_others <- function(grid, fixed_args) {
+  submod_and_othersx <- function(grid, fixed_args) {
     orig_names <- names(grid)
     subm_nm <- orig_names[!(orig_names %in% fixed_args)]
     grid <- grid %>% dplyr::rename(..val = !!subm_nm)
@@ -984,6 +983,35 @@ min_grid.floss_regime_model <- function(x, grid, ...) { # nolint
       dplyr::mutate_if(is.factor, as.character)
   }
 
+  submod_and_others1 <- function(grid, fixed_args) {
+    orig_names <- names(grid)
+    subm_nm <- orig_names[!(orig_names %in% fixed_args)]
+    grid <- grid %>% dplyr::rename(..val = !!subm_nm)
+    fit_only <- grid %>%
+      dplyr::group_by(!!!rlang::syms(fixed_args)) %>%
+      dplyr::summarize(max_val = max(..val, na.rm = TRUE)) %>%
+      dplyr::ungroup()
+
+    min_grid_df <- dplyr::full_join(fit_only, grid, by = fixed_args) %>%
+      dplyr::filter(..val != max_val) %>%
+      dplyr::group_by(!!!rlang::syms(fixed_args)) %>%
+      dplyr::summarize(.submodels = list(tibble::lst(!!subm_nm[1] := ..val))) %>%
+      dplyr::ungroup() %>%
+      dplyr::full_join(fit_only,
+        by = fixed_args
+      ) %>%
+      dplyr::rename(!!subm_nm[1] := max_val)
+    min_grid_df$.submodels <- dplyr::if_else(!purrr::map_lgl(
+      min_grid_df$.submodels,
+      rlang::is_null
+    ), min_grid_df$.submodels, purrr::map(
+      seq_len(nrow(min_grid_df)),
+      ~ list()
+    ))
+    dplyr::select(min_grid_df, dplyr::one_of(orig_names), .submodels) %>%
+      dplyr::mutate_if(is.factor, as.character)
+  }
+
   gr_nms <- names(grid)
   param_info <- tune:::get_submodel_info(x)
   sub_nm <- param_info$id[param_info$has_submodel]
@@ -994,7 +1022,7 @@ min_grid.floss_regime_model <- function(x, grid, ...) { # nolint
   if (length(fixed_args) == 0) {
     res <- tune:::submod_only(grid)
   } else {
-    res <- submod_and_others(grid, fixed_args)
+    res <- submod_and_others1(grid, fixed_args)
   }
   res
 

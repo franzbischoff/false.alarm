@@ -22,20 +22,20 @@ floss_spec <-
     window_size = 200,
     time_constraint = 1250,
     mp_threshold = 0.3,
-    regime_threshold = 0.3,
-    regime_landmark = tune()
+    regime_threshold = tune(),
+    regime_landmark = 3
   ) %>%
   parsnip::set_engine("floss") %>%
   parsnip::set_mode("regression")
 
 floss_set <- tune::extract_parameter_set_dials(floss_spec)
-floss_set <- floss_set %>% stats::update(
-  # window_size = window_size_par(c(100, 150)),
-  # mp_threshold = mp_threshold_par(c(0.3, 0.6)),
-  # time_constraint = time_constraint_par(c(700L, 900L)),
-  # regime_threshold = regime_threshold_par(c(0.1, 0.9), trans_round(0.1)),
-  regime_landmark = regime_landmark_par(c(3, 6), trans_round(0.5))
-)
+# floss_set <- floss_set %>% stats::update(
+#   # window_size = window_size_par(c(100, 150)),
+#   # mp_threshold = mp_threshold_par(c(0.3, 0.6)),
+#   # time_constraint = time_constraint_par(c(700L, 900L)),
+#   regime_threshold = regime_threshold_par(c(0.1, 0.9), trans_round(0.1)),
+#   regime_landmark = regime_landmark_par(c(3, 6), trans_round(0.5))
+# )
 
 floss_rec <- recipes::recipe(x = head(analysis_split$splits[[1]]$data, 1)) %>%
   recipes::update_role(truth, new_role = "outcome") %>%

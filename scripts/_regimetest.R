@@ -229,7 +229,7 @@ list(
           time_constraint = tune::tune(),
           mp_threshold = tune::tune(),
           regime_threshold = tune::tune(),
-          regime_landmark = tune::tune()
+          regime_landmark = 3
         ) %>%
         parsnip::set_engine("floss") %>%
         parsnip::set_mode("regression")
@@ -239,8 +239,8 @@ list(
         window_size = window_size_par(var_window_size_tune),
         mp_threshold = mp_threshold_par(var_mp_threshold_tune),
         time_constraint = time_constraint_par(var_time_constraint_tune),
-        regime_threshold = regime_threshold_par(var_regime_threshold_tune),
-        regime_landmark = regime_landmark_par(var_regime_landmark_tune)
+        regime_threshold = regime_threshold_par(var_regime_threshold_tune)
+        # regime_landmark = regime_landmark_par(var_regime_landmark_tune)
       )
 
       floss_rec <- recipes::recipe(x = head(analysis_split$splits[[1]]$data, 1)) %>%
