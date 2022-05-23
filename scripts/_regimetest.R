@@ -55,9 +55,9 @@ source(here::here("scripts", "regimes", "predict_regimes.R"), encoding = "UTF-8"
 ############
 # tuning variables
 # var_window_size_tune <- c(150L, 350L)
-var_window_size_tune <- c(100L, 350L)
-var_mp_threshold_tune <- c(0, 0.9)
-var_time_constraint_tune <- c(750L, 5000L)
+var_window_size_tune <- c(100L, 101L)
+var_mp_threshold_tune <- c(0.5, 0.6)
+var_time_constraint_tune <- c(750L, 1000L)
 var_regime_threshold_tune <- c(0.2, 0.8)
 var_regime_landmark_tune <- c(2, 6)
 var_regime_landmark <- 3
@@ -75,7 +75,7 @@ var_tune_sim_anneal_no_improve <- var_tune_bayes_no_improve # anneal
 # initial split, 3/4 will hold 25% of the data for final, independent, performance.
 var_initial_split_prop <- 3 / 4
 var_vfolds <- 4 # for the inner resample
-var_vfolds_repeats <- 2 # for the inner resample
+var_vfolds_repeats <- 1 # for the inner resample
 # parallel
 var_dopar_cores <- 4 # number of cores to use on tuning (inner resample)
 

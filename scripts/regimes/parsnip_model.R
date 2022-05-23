@@ -286,7 +286,7 @@ predict.floss_regime_model <- function(object, new_data, type = NULL, regime_thr
 #'  `type = "class"` and so on).
 
 multi_predict._floss_regime_model <- function(object, new_data, type = NULL, regime_threshold = NULL, regime_landmark = NULL, ...) { # nolint
-  cli::cli_warn(c("x" = "multi_predict._floss_regime_model"))
+  # cli::cli_warn(c("x" = "multi_predict._floss_regime_model"))
   # cli::cli_inform(c("*" = "multi_predict._floss_regime_model: dots_n {rlang::dots_n(...)}"))
   if (rlang::dots_n(...) > 0) { # 0
     cli::cli_alert(c("*" = "multi_predict._floss_regime_model: dots_names {names(rlang::dots_list(..., .preserve_empty = TRUE))}"))
@@ -295,6 +295,9 @@ multi_predict._floss_regime_model <- function(object, new_data, type = NULL, reg
   if (any(names(rlang::enquos(...)) == "newdata")) {
     rlang::abort("Did you mean to use `new_data` instead of `newdata`?")
   }
+
+  cli::cli_inform(c("i" = "Multi predicting: <<- This will save us a lot of time!!!"))
+
 
   if (is.null(regime_threshold)) {
     regime_threshold <- rlang::eval_tidy(object$fit$terms$regime_threshold)
@@ -823,9 +826,9 @@ make_submod_arg <- function(grid, model, submodels) {
     dplyr::filter(has_submodel & engine == model$spec$engine) %>%
     dplyr::pull(parsnip)
 
-  cli::cli_inform("real_name: {real_name}")
-  cli::cli_inform("names(submodels): {names(submodels)}")
-  cli::cli_inform("submodels: {submodels}")
+  # cli::cli_inform("real_name: {real_name}")
+  # cli::cli_inform("names(submodels): {names(submodels)}")
+  # cli::cli_inform("submodels: {submodels}")
 
   # FIXME: here I'll comment this line, but this need to be checked when the names are different
   # from parsnip and the original model pkg
