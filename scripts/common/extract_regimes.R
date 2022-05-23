@@ -50,12 +50,14 @@ extract_regimes <- function(floss_list, params, infos) {
     )
   )
 
+  # browser()
+
   regime_threshold <- params$regime_threshold
   window_size <- params$window_size
   history <- params$history
   landmark <- history - params$regime_landmark # here is where we look for the minimum value
 
-  if (params$mp_time_constraint > 0) {
+  if (params$mp_time_constraint > 0 && params$mp_time_constraint <= floor(params$history * 3 / 4)) {
     floss_constraint <- params$mp_time_constraint
   } else {
     floss_constraint <- floor(history / 2)
@@ -84,7 +86,7 @@ extract_regimes <- function(floss_list, params, infos) {
     if (cac[landmark] < regime_threshold) {
       abs_min_idx <- x$offset - history + landmark + 1
       if ((abs_min_idx - current_abs_min_idx) > floss_constraint) { # IMPROVE: tweak floss_constraint
-        rlang::inform("abs_min_idx at ", abs_min_idx, " value ", cac[landmark], ".")
+        # cli::cli_inform("abs_min_idx at {abs_min_idx}, value {cac[landmark]}.")
         current_abs_min_idx <<- abs_min_idx
         current_abs_min_value <<- cac[landmark]
         all_regimes_idxs <<- c(all_regimes_idxs, current_abs_min_idx)
@@ -92,7 +94,7 @@ extract_regimes <- function(floss_list, params, infos) {
       }
       if (cac[landmark] < current_abs_min_value) {
         if ((abs_min_idx - current_abs_min_idx) < floor(history / 2)) { # IMPROVE: tweak floor(history / 2)
-          rlang::inform("abs_min_idx2 at ", abs_min_idx, " value ", cac[landmark], ".")
+          # cli::cli_inform("abs_min_idx2 at {abs_min_idx}, value {cac[landmark]}.")
           current_abs_min_idx <<- abs_min_idx
           current_abs_min_value <<- cac[landmark]
           all_regimes_idxs <<- c(all_regimes_idxs, current_abs_min_idx)

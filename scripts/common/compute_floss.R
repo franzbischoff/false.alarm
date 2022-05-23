@@ -29,6 +29,9 @@ compute_floss <- function(mp_data, params, infos) {
   ez <- params$ez
   mp_time_constraint <- ifelse(is.null(params$mp_time_constraint), 0, params$mp_time_constraint)
   floss_time_constraint <- ifelse(is.null(params$floss_time_constraint), 0, params$floss_time_constraint)
+  if (mp_time_constraint > floor(params$history * 3 / 4)) {
+    mp_time_constraint <- 0
+  }
   sample_freq <- params$sample_freq
 
   checkmate::qassert(ez, c("0", "N"))
@@ -69,7 +72,12 @@ compute_floss <- function(mp_data, params, infos) {
       sample_freq,
       floss_time_constraint
     )
-    list(cac = cac$cac, iac = cac$iac, arcs = cac$arcs, w = x$w, ez = curr_ez, offset = x$offset)
+
+    if (isTRUE(params$cac_only)) {
+      list(cac = cac$cac, w = x$w, ez = curr_ez, offset = x$offset)
+    } else {
+      list(cac = cac$cac, iac = cac$iac, arcs = cac$arcs, w = x$w, ez = curr_ez, offset = x$offset)
+    }
   })
 
   "!DEBUG Finished `length(result_floss)` profiles."

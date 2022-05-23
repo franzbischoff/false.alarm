@@ -19,9 +19,9 @@ the_data <- analysis_split$splits[[1]]$data
 
 floss_spec <-
   floss_regime_model(
-    window_size = 200,
-    time_constraint = 1250,
-    mp_threshold = 0.3,
+    window_size = tune(),
+    time_constraint = tune(),
+    mp_threshold = tune(),
     regime_threshold = tune(),
     regime_landmark = 3
   ) %>%
@@ -65,7 +65,7 @@ floss_wflow <-
 
 # doParallel::registerDoParallel(cores = 4)
 
-control_parsnip(verbosity = 0L)
+control_parsnip(verbosity = 1L)
 trade_off_decay <- function(iter) {
   expo_decay(iter, start_val = .01, limit_val = 0, slope = 1 / 4)
 }

@@ -59,6 +59,7 @@ vignettes/*.pdf
 # End of https://www.gitignore.io/api/r
 
 # Personalized
+tmp
 /tmp/
 /tmp_*/
 .future
@@ -88,6 +89,7 @@ debugme.log
 LOCAL_APPDATA_FONTCONFIG_CACHE/
 README.html
 Rplots.pdf
+dev
 dev/
 packrat/lib*/
 packrat/src/

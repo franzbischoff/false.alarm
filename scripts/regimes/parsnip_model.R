@@ -1,4 +1,5 @@
 source(here::here("scripts", "common", "score_floss.R"), local = .GlobalEnv, encoding = "UTF-8")
+options(dplyr.summarise.inform = FALSE)
 
 # rlang::local_use_cli(format = TRUE, inline = TRUE, frame = caller_env())
 
@@ -133,7 +134,7 @@ floss_regime_model <- function(mode = "regression",
 
 # verbose
 train_regime_model <- function(truth, ts, ..., window_size, regime_threshold, regime_landmark, mp_threshold, time_constraint) {
-  cli::cli_alert(c("!" = "train_regime_model <<- work here"))
+  cli::cli_alert(c("!" = "Training the model: <<- this takes time"))
   # cli::cli_inform(c("*" = "train_regime_model: dots_n {rlang::dots_n(...)}"))
   if (rlang::dots_n(...) > 0) { # 0
     cli::cli_alert(c("*" = "train_regime_model: dots_names {names(rlang::dots_list(..., .preserve_empty = TRUE))}"))
@@ -145,6 +146,9 @@ train_regime_model <- function(truth, ts, ..., window_size, regime_threshold, re
     rlang::abort("There are zero rows in the predictor set.")
   }
 
+  cli::cli_inform(c("*" = "Training the model: window {window_size}, threshold {mp_threshold}, time constraint {time_constraint}."))
+  cli::cli_inform(c("*" = "Training the model: number of recordings {n}."))
+
   "!DEBUG fitting model."
 
   if (ncol(ts) > 1) {
@@ -154,10 +158,27 @@ train_regime_model <- function(truth, ts, ..., window_size, regime_threshold, re
     id <- seq.int(1, n)
   }
 
-  res <- list(truth = truth, id = id, ts = ts)
+  res <- list(truth = truth, id = as.character(id), ts = ts)
+
+  cli::cli_inform(c("*" = "Training the model: using `furrr`."))
+  floss <- furrr::future_map(ts,
+    training_regimes,
+    window_size,
+    mp_threshold,
+    time_constraint,
+    .options = furrr::furrr_options(seed = TRUE, scheduling = 1)
+  )
+  # floss <- purrr::map(
+  #   ts,
+  #   training_regimes,
+  #   window_size,
+  #   mp_threshold,
+  #   time_constraint
+  # )
+  res$floss <- floss
 
   trained <- list(
-    fitted.values = res,
+    fitted.values = as_tibble(res),
     terms = list(
       window_size = window_size,
       mp_threshold = mp_threshold,
@@ -180,15 +201,15 @@ train_regime_model <- function(truth, ts, ..., window_size, regime_threshold, re
 # regime_threshold = object$spec$args$regime_threshold
 # verbose = FALSE
 predict.floss_regime_model <- function(object, new_data, type = NULL, regime_threshold = NULL, regime_landmark = NULL, ...) { # nolint
-  cli::cli_alert(c("*" = "predict.floss_regime_model <<- work here"))
+  # cli::cli_alert(c("*" = "predict.floss_regime_model <<- work here"))
   # cli::cli_inform(c("*" = "predict.floss_regime_model: dots_n {rlang::dots_n(...)}"))
   if (rlang::dots_n(...) > 0) { # 0
     cli::cli_alert(c("*" = "predict.floss_regime_model: dots_names {names(rlang::dots_list(..., .preserve_empty = TRUE))}"))
   }
   # type raw came from "numeric", type NULL came from raw directly
-  cli::cli_inform(c("!" = "type is {type}.")) # "raw"
-  cli::cli_inform(c("!" = "regime_threshold is {regime_threshold}.")) # "NULL"
-  cli::cli_inform(c("!" = "regime_landmark is {regime_landmark}.")) # "NULL"
+  # cli::cli_inform(c("!" = "type is {type}.")) # "raw"
+  # cli::cli_inform(c("!" = "regime_threshold is {regime_threshold}.")) # "NULL"
+  # cli::cli_inform(c("!" = "regime_landmark is {regime_landmark}.")) # "NULL"
 
   n <- nrow(new_data)
   if (n == 0) {
@@ -198,7 +219,8 @@ predict.floss_regime_model <- function(object, new_data, type = NULL, regime_thr
   dots <- rlang::dots_list(...)
 
   new_data <- tibble::tibble(new_data)
-  obj_fit <- tibble::as_tibble(object$fitted.values) %>% dplyr::mutate(id = as.character(id))
+  # obj_fit <- tibble::as_tibble(object$fitted.values) %>% dplyr::mutate(id = as.character(id))
+  obj_fit <- object$fitted.values
   terms <- object$terms
 
   # for now, compare:
@@ -212,95 +234,37 @@ predict.floss_regime_model <- function(object, new_data, type = NULL, regime_thr
     regime_landmark <- terms$regime_landmark
   }
 
-  # TODO: create real estimates
-  estimates <- obj_fit$truth
+  cli::cli_inform(c("*" = "Predicting regime changes: <<- This is usually fast."))
+  cli::cli_inform(c("*" = "Predicting regime changes: threshold {regime_threshold}, landmark {regime_landmark} seconds."))
+  cli::cli_inform(c("*" = "Training the model: number of recordings {length(obj_fit$floss)}."))
 
+  "!DEBUG predicting."
 
-  debug <- abs((100 - terms$window_size) / 10)
-  debug <- debug + abs(0.3 - regime_threshold) * 10
-  debug <- debug + abs(3 - regime_landmark) * 10
-  debug <- debug + abs(0.5 - terms$mp_threshold) * 10
-  debug <- debug + abs((1000 - terms$time_constraint) / 100)
+  # estimates <- furrr::future_map(obj_fit$floss, predict_regimes,
+  #   terms$window_size,
+  #   terms$time_constraint,
+  #   regime_threshold,
+  #   regime_landmark,
+  #   .options = furrr::furrr_options(seed = TRUE, scheduling = 1)
+  # )
+
+  cli::cli_inform(c("*" = "Predicting regime changes: using `purrr`."))
+  estimates <- purrr::map(
+    obj_fit$floss, predict_regimes,
+    terms$window_size,
+    terms$time_constraint,
+    regime_threshold,
+    regime_landmark
+  )
+
   res <- tibble::tibble(
     .sizes = purrr::map_int(new_data$ts, length),
     .id = as.character(new_data$id),
-    .pred = purrr::map(estimates, ~ .x + debug),
+    .pred = estimates,
   )
 
   res
 }
-
-# predict._floss_regime_model <- function(object, new_data, type = NULL, opts = list(),
-#                                         regime_threshold = NULL, multi = FALSE, ...) { # nolint
-#   # cli::cli_inform(c("*" = "predict._floss_regime_model"))
-#   # cli::cli_inform(c("*" = "predict._floss_regime_model: dots_n {rlang::dots_n(...)}"))
-#   if (rlang::dots_n(...) > 0) {
-#     # cli::cli_inform(c("*" = "predict._floss_regime_model: dots_names {names(rlang::dots_list(..., .preserve_empty = TRUE))}"))
-#   }
-
-#   if (any(names(rlang::enquos(...)) == "newdata")) {
-#     rlang::abort("Did you mean to use `new_data` instead of `newdata`?")
-#   }
-
-#   # See discussion in https://github.com/tidymodels/parsnip/issues/195
-#   if (is.null(regime_threshold) && !is.null(object$spec$args$regime_threshold)) {
-#     # cli::cli_inform(c("!" = "github._floss_regime_model"))
-#     regime_threshold <- object$spec$args$regime_threshold
-#   }
-
-#   # cli::cli_inform(c("!" = "type is {type}."))
-#   # cli::cli_inform(c("!" = "length(opts) is {length(opts)}."))
-#   # cli::cli_inform(c("!" = "regime_threshold is {regime_threshold}."))
-#   # cli::cli_inform(c("!" = "multi is {multi}."))
-
-#   # cli::cli_inform(c("!" = "object$spec$args$regime_threshold is {object$spec$args$regime_threshold}."))
-#   # cli::cli_inform(c("!" = "object$fit$terms$regime_threshold is {object$fit$terms$regime_threshold}."))
-#   # opts$multi <- multi
-
-
-#   object$spec$args$regime_threshold <- .check_floss_regime_threshold_predict(regime_threshold, object, multi)
-
-#   # cli::cli_inform(c("!" = "new object$spec$args$regime_threshold is {object$spec$args$regime_threshold}."))
-
-#   object$spec <- eval_args(object$spec)
-#   # check_args.floss_regime_model(object$spec)
-#   predict.model_fit(object, new_data = new_data, type = type, ...) # , opts = opts
-# }
-
-
-# predict_numeric._floss_regime_model <- function(object, new_data, ...) { # nolint
-#   # cli::cli_inform(c("*" = "predict_numeric._floss_regime_model"))
-#   # cli::cli_inform(c("*" = "predict_numeric._floss_regime_model: dots_n {rlang::dots_n(...)}"))
-#   if (rlang::dots_n(...) > 0) {
-#     # cli::cli_inform(c("*" = "predict_numeric._floss_regime_model: dots_names {names(rlang::dots_list(..., .preserve_empty = TRUE))}"))
-#   }
-
-#   if (any(names(rlang::enquos(...)) == "newdata")) {
-#     rlang::abort("Did you mean to use `new_data` instead of `newdata`?")
-#   }
-
-#   object$spec <- eval_args(object$spec)
-#   predict_numeric.model_fit(object, new_data = new_data, ...)
-# }
-
-# predict_raw._floss_regime_model <- function(object, new_data, opts = list(), ...) { # nolint
-#   # cli::cli_inform(c("*" = "predict_raw._floss_regime_model"))
-#   # cli::cli_inform(c("*" = "predict_raw._floss_regime_model: dots_n {rlang::dots_n(...)}"))
-#   if (rlang::dots_n(...) > 0) {
-#     # cli::cli_inform(c("*" = "predict_raw._floss_regime_model: dots_names {names(rlang::dots_list(..., .preserve_empty = TRUE))}"))
-#   }
-#   # cli::cli_inform(c("!" = "length(opts) is {length(opts)}."))
-
-#   # browser()
-
-#   if (any(names(rlang::enquos(...)) == "newdata")) {
-#     rlang::abort("Did you mean to use `new_data` instead of `newdata`?")
-#   }
-
-#   object$spec <- eval_args(object$spec)
-#   opts$regime_threshold <- object$spec$args$regime_threshold
-#   predict_raw.model_fit(object, new_data = new_data, opts = opts, ...)
-# }
 
 ## Multipredict
 
@@ -374,54 +338,6 @@ multi_predict._floss_regime_model <- function(object, new_data, type = NULL, reg
   res <- split(res[, -1], res$.row)
   names(res) <- NULL
   dplyr::tibble(.pred = res)
-
-  # dots <- rlang::dots_list(...)
-
-  # if (length(dots) > 0) {
-  #   bad_args <- names(dots)
-  #   bad_args <- paste0("`", bad_args, "`", collapse = ", ")
-  #   rlang::abort(
-  #     glue::glue(
-  #       "These arguments cannot be used: {bad_args}. The ellipses are not ",
-  #       "used to pass args to the model function's predict function.",
-  #     )
-  #   )
-  # }
-
-  # object$spec <- eval_args(object$spec)
-  # if (is.null(regime_threshold)) {
-  #   # See discussion in https://github.com/tidymodels/parsnip/issues/195
-  #   if (!is.null(object$spec$args$regime_threshold)) {
-  #     # cli::cli_inform(c("!" = "github.object$spec$args$regime_threshold"))
-  #     regime_threshold <- object$spec$args$regime_threshold
-  #   } else {
-  #     # cli::cli_inform(c("!" = "github.object$fit$terms$regime_threshold"))
-  #     regime_threshold <- object$fit$terms$regime_threshold
-  #   }
-  # }
-
-  # pred <- predict._floss_regime_model(object,
-  #   new_data = new_data, type = "raw",
-  #   opts = dots, regime_threshold = regime_threshold,
-  #   multi = TRUE
-  # )
-
-  # browser()
-
-  # param_key <- tibble(group = colnames(pred), regime_threshold = regime_threshold)
-  # pred <- as_tibble(pred)
-  # pred$.row <- seq_len(nrow(pred))
-  # pred <- gather(pred, group, .pred, -.row)
-  # pred <- full_join(param_key, pred, by = "group")
-  # pred$group <- NULL
-  # pred <- arrange(pred, .row, regime_threshold)
-  # .row <- pred$.row
-  # pred$.row <- NULL
-  # pred <- split(pred, .row)
-  # names(pred) <- NULL
-  # # cli::cli_inform(c("!" = "RAW result"))
-  # tibble(.pred = pred)
-  # pred
 }
 
 # multi_predict.floss_regime_model <- multi_predict._floss_regime_model
@@ -548,8 +464,6 @@ tune_grid_loop_iter <- function(split,
   }
   load_namespace(control$pkgs)
 
-  # browser()
-
   # After package loading to avoid potential package RNG manipulation
   if (!is.null(seed)) {
     # `assign()`-ing the random seed alters the `kind` type to L'Ecuyer-CMRG,
@@ -628,7 +542,7 @@ tune_grid_loop_iter <- function(split,
       workflow = workflow,
       grid_preprocessor = iter_grid_preprocessor
     )
-    # browser()
+
     workflow <- tune:::catch_and_log(
       .expr = .fit_pre(workflow, training),
       control,
@@ -651,7 +565,7 @@ tune_grid_loop_iter <- function(split,
 
     for (iter_model in iter_models) {
       workflow <- workflow_preprocessed
-      # browser()
+
       iter_grid_info_model <- dplyr::filter(
         .data = iter_grid_info_models,
         .iter_model == iter_model
@@ -873,7 +787,7 @@ predict_model <- function(split, workflow, grid, metrics, submodels = NULL) {
           dplyr::bind_rows(tmp_res)
       }
     }
-    # browser()
+
     if (!is.null(res)) {
       res <- dplyr::full_join(res, tmp_res, by = merge_vars)
     } else {
@@ -903,7 +817,6 @@ predict_model <- function(split, workflow, grid, metrics, submodels = NULL) {
 
 make_submod_arg <- function(grid, model, submodels) {
   # Assumes only one submodel parameter per model
-  # browser()
   ## all possible submodels, but not all actually used
   real_name <-
     parsnip::get_from_env(paste(class(model$spec)[1], "args", sep = "_")) %>%
@@ -921,7 +834,6 @@ make_submod_arg <- function(grid, model, submodels) {
 }
 
 make_rename_arg <- function(grid, model, submodels) {
-  # browser()
   # Assumes only one submodel parameter per model
   ## all possible submodels, but not all actually used
   real_name <-
@@ -1392,7 +1304,7 @@ parsnip::set_pred(
 ## Yardstick custom metric
 
 floss_error <- function(data, ...) {
-  cli::cli_alert(c("*" = "floss_error <<- work here"))
+  # cli::cli_alert(c("*" = "floss_error <<- work here"))
   UseMethod("floss_error")
 }
 
@@ -1402,7 +1314,7 @@ floss_error_micro <- yardstick::metric_tweak("floss_error_micro", floss_error, e
 floss_error_macro <- yardstick::metric_tweak("floss_error_macro", floss_error, estimator = "macro")
 
 floss_error.data.frame <- function(data, truth, estimate, na_rm = TRUE, estimator = "binary", ...) { # nolint
-  cli::cli_alert(c("*" = "floss_error.data.frame <<- work here"))
+  # cli::cli_alert(c("*" = "floss_error.data.frame <<- work here"))
   # cli::cli_inform(c("*" = "floss_error.data.frame: dots_n {rlang::dots_n(...)}"))
   if (rlang::dots_n(...) > 0) { # 0
     cli::cli_alert(c("*" = "floss_error.data.frame: dots_names {names(rlang::dots_list(..., .preserve_empty = TRUE))}"))
@@ -1423,18 +1335,20 @@ floss_error.data.frame <- function(data, truth, estimate, na_rm = TRUE, estimato
 }
 
 floss_error_vec <- function(truth, estimate, data_size, na_rm = TRUE, estimator = "binary", ...) {
-  cli::cli_alert(c("*" = "floss_error_vec <<- work here"))
+  # cli::cli_alert(c("*" = "floss_error_vec <<- work here"))
   # cli::cli_inform(c("*" = "floss_error_vec: dots_n {rlang::dots_n(...)}"))
   if (rlang::dots_n(...) > 0) {
     cli::cli_alert(c("*" = "floss_error_vec: dots_names {names(rlang::dots_list(..., .preserve_empty = TRUE))}"))
   }
 
+  cli::cli_inform(c("*" = "Evaluating model: <<- This is usually fast."))
+  cli::cli_inform(c("*" = "Evaluating model: estimator {estimator}."))
+  cli::cli_inform(c("*" = "Evaluating model: number of recordings {length(estimate)}."))
+
   floss_error_impl <- function(truth, estimate, data_size, ...) {
     res <- score_regimes(truth, estimate, data_size)
     return(res)
   }
-
-  # cli::cli_inform(c("*" = "data_size len: {length(data_size)}"))
 
   # if (length(data_size) <= 2) {
   #   cli::cli_abort(c("x" = "data_size len: {length(data_size)}"))

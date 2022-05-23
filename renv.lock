@@ -1419,17 +1419,6 @@
         "xml2"
       ]
     },
-    "kknn": {
-      "Package": "kknn",
-      "Version": "1.3.1",
-      "Source": "Repository",
-      "Repository": "CRAN",
-      "Hash": "caf9351c33fcb5209928dbfab053c43a",
-      "Requirements": [
-        "Matrix",
-        "igraph"
-      ]
-    },
     "knitr": {
       "Package": "knitr",
       "Version": "1.39",
@@ -1692,10 +1681,10 @@
     },
     "network": {
       "Package": "network",
-      "Version": "1.17.1",
+      "Version": "1.17.2",
       "Source": "Repository",
       "Repository": "CRAN",
-      "Hash": "a3a94709afe998d2745847ce69c6c5d9",
+      "Hash": "4fbe774d3585cae91fe87a942268612a",
       "Requirements": [
         "magrittr",
         "statnet.common",
@@ -2182,9 +2171,9 @@
       "RemoteUsername": "r-lib",
       "RemoteRepo": "rlang",
       "RemoteRef": "main",
-      "RemoteSha": "f527d0cf78322ce6aeed9f9521f409c5f8c01298",
+      "RemoteSha": "887cbe3e24e83a393c95005a6dec18df41eccf4d",
       "RemoteHost": "api.github.com",
-      "Hash": "247c38d5efec2e62b615b590147b4083",
+      "Hash": "a7c7f96f3a56b08e01f7a6537a316a21",
       "Requirements": []
     },
     "rlist": {
@@ -2531,9 +2520,9 @@
       "RemoteUsername": "r-lib",
       "RemoteRepo": "styler",
       "RemoteRef": "main",
-      "RemoteSha": "459a03f8221b647b37f8ebd3b848058ce37c647f",
+      "RemoteSha": "08301c0385607966253219e50031e570b06f588d",
       "RemoteHost": "api.github.com",
-      "Hash": "e1d3ce89aaeb0f9249db5eb2868e3c2a",
+      "Hash": "2da5ee91134218782d462d039f89bcbc",
       "Requirements": [
         "R.cache",
         "cli",

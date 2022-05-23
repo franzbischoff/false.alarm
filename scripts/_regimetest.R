@@ -46,17 +46,21 @@ tar_option_set(
   garbage_collection = TRUE
 )
 
+source(here::here("scripts", "regimes", "training_regimes.R"), encoding = "UTF-8")
+source(here::here("scripts", "regimes", "predict_regimes.R"), encoding = "UTF-8")
+
 
 # The solutions for detecting when a model is overemphasizing the training set is using out-of-sample data.
 
 ############
 # tuning variables
 # var_window_size_tune <- c(150L, 350L)
-var_window_size_tune <- c(99L, 101L)
+var_window_size_tune <- c(100L, 350L)
 var_mp_threshold_tune <- c(0, 0.9)
 var_time_constraint_tune <- c(750L, 5000L)
-var_regime_threshold_tune <- c(0.2, 0.6)
+var_regime_threshold_tune <- c(0.2, 0.8)
 var_regime_landmark_tune <- c(2, 6)
+var_regime_landmark <- 3
 # which tune algorithm?
 # tune_grid, tune_bayes, tune_sim_anneal, tune_race_anova, tune_race_win_loss
 var_grid_search <- "tune_grid"
@@ -71,9 +75,9 @@ var_tune_sim_anneal_no_improve <- var_tune_bayes_no_improve # anneal
 # initial split, 3/4 will hold 25% of the data for final, independent, performance.
 var_initial_split_prop <- 3 / 4
 var_vfolds <- 4 # for the inner resample
-var_vfolds_repeats <- 1 # for the inner resample
+var_vfolds_repeats <- 2 # for the inner resample
 # parallel
-var_dopar_cores <- 1 # number of cores to use on tuning (inner resample)
+var_dopar_cores <- 4 # number of cores to use on tuning (inner resample)
 
 var_verbose <- TRUE
 var_save_workflow <- TRUE
@@ -93,7 +97,7 @@ tidymodels::tidymodels_prefer(quiet = TRUE)
 
 # start debugme after loading all functions
 # if (dev_mode) {
-debugme::debugme()
+# debugme::debugme()
 # }
 
 
@@ -223,18 +227,18 @@ list(
       # A fix for targets branches that wipes off these classes
       class(analysis_split) <- c("manual_rset", "rset", class(analysis_split))
 
-      floss_mod <-
+      floss_spec <-
         floss_regime_model(
           window_size = tune::tune(),
           time_constraint = tune::tune(),
           mp_threshold = tune::tune(),
           regime_threshold = tune::tune(),
-          regime_landmark = 3
+          regime_landmark = var_regime_landmark
         ) %>%
         parsnip::set_engine("floss") %>%
         parsnip::set_mode("regression")
 
-      floss_set <- tune::extract_parameter_set_dials(floss_mod)
+      floss_set <- tune::extract_parameter_set_dials(floss_spec)
       floss_set <- floss_set %>% stats::update(
         window_size = window_size_par(var_window_size_tune),
         mp_threshold = mp_threshold_par(var_mp_threshold_tune),
@@ -254,13 +258,13 @@ list(
       }
 
       if (var_grid_search == "tune_grid") {
-        floss_search_res <- floss_mod %>%
+        floss_search_res <- floss_spec %>%
           tune::tune_grid(
             preprocessor = floss_rec,
             resamples = analysis_split,
             param_info = floss_set,
             grid = var_grid_size,
-            metrics = yardstick::metric_set(floss_error_micro, floss_error_macro),
+            metrics = yardstick::metric_set(floss_error_macro),
             control = tune::control_grid(
               verbose = var_verbose,
               allow_par = TRUE,
@@ -274,7 +278,7 @@ list(
           expo_decay(iter, start_val = .01, limit_val = 0, slope = 1 / 4)
         }
 
-        floss_search_res <- floss_mod %>%
+        floss_search_res <- floss_spec %>%
           tune::tune_bayes(
             preprocessor = floss_rec,
             resamples = analysis_split,
@@ -292,7 +296,7 @@ list(
             )
           )
       } else if (var_grid_search == "tune_race_win_loss") {
-        floss_search_res <- floss_mod %>%
+        floss_search_res <- floss_spec %>%
           finetune::tune_race_win_loss(
             preprocessor = floss_rec,
             resamples = analysis_split,
@@ -310,7 +314,7 @@ list(
           )
         # TODO: finetune::plot_race(floss_search_res)
       } else if (var_grid_search == "tune_race_anova") {
-        floss_search_res <- floss_mod %>%
+        floss_search_res <- floss_spec %>%
           finetune::tune_race_anova(
             preprocessor = floss_rec,
             resamples = analysis_split,
@@ -328,7 +332,7 @@ list(
           )
         # TODO: finetune::plot_race(floss_search_res)
       } else if (var_grid_search == "tune_sim_anneal") {
-        floss_search_res <- floss_mod %>%
+        floss_search_res <- floss_spec %>%
           finetune::tune_sim_anneal(
             preprocessor = floss_rec,
             resamples = analysis_split,
@@ -351,135 +355,140 @@ list(
     },
     pattern = map(analysis_split),
     iteration = "list" # thus the objects keep their attributes
+  ),
+  tar_target(
+    #### Pipeline: analysis_evaluation - Here we select the best from each optimization split and test in a separate split ----
+    analysis_evaluation,
+    {
+      source(here::here("scripts", "regimes", "parsnip_model.R"), encoding = "UTF-8")
+
+      # all_fits <- lst_to_df(analysis_fitted)
+      all_fits <- analysis_fitted
+
+      fits_by_fold <- all_fits %>%
+        dplyr::select(id, rep, .metrics) %>%
+        tidyr::unnest(.metrics) %>%
+        dplyr::filter(.estimator == "macro") %>%
+        dplyr::select(-.estimator) %>%
+        dplyr::group_by(id) %>%
+        dplyr::arrange(.estimate) %>%
+        dplyr::group_map(~ head(.x, 3L), .keep = TRUE)
+      # fits_by_fold
+
+      result <- NULL
+      for (i in seq_len(length(fits_by_fold))) {
+        fold <- fits_by_fold[[i]]$id[1]
+
+        resample <- assessment_split %>% dplyr::filter(id == fold)
+        class(resample) <- class(assessment_split) # fix for fit_resamples
+        model <- fits_by_fold[[i]][1, ]
+
+        floss_spec <-
+          floss_regime_model(
+            window_size = model$window_size,
+            time_constraint = model$time_constraint,
+            mp_threshold = model$mp_threshold,
+            regime_threshold = model$regime_threshold,
+            regime_landmark = var_regime_landmark
+          ) %>%
+          parsnip::set_engine("floss") %>%
+          parsnip::set_mode("regression")
+
+        assessment_data <- resample$splits[[1]]$data
+
+        floss_rec <- recipes::recipe(x = head(assessment_data, 1)) %>%
+          recipes::update_role(truth, new_role = "outcome") %>%
+          recipes::update_role(id, new_role = "predictor") %>%
+          recipes::update_role(ts, new_role = "predictor")
+
+        floss_wflow <-
+          workflows::workflow() %>%
+          workflows::add_model(floss_spec) %>%
+          workflows::add_recipe(floss_rec)
+
+        model_fit <- floss_wflow %>%
+          parsnip::fit(assessment_data)
+        model_predicted <- model_fit %>%
+          predict(assessment_data) %>%
+          dplyr::bind_cols(assessment_data)
+        eval <- floss_error_macro(model_predicted, truth = model_predicted$truth, estimate = model_predicted$.pred)
+        eval <- model %>%
+          dplyr::select(id, rep, window_size, time_constraint, mp_threshold, regime_threshold, .config) %>%
+          dplyr::bind_cols(eval)
+        result <- dplyr::bind_rows(result, eval)
+      }
+
+      result <- result %>% dplyr::arrange(.estimate)
+    },
+    pattern = map(analysis_fitted),
+    iteration = "list" # thus the objects keep their attributes
+  ),
+  tar_target(
+    #### Pipeline: testing_evaluation - In the end, get the best from the inner resample and test with the testing split ----
+    testing_evaluation,
+    {
+      source(here::here("scripts", "regimes", "parsnip_model.R"), encoding = "UTF-8")
+      best_parameters <- purrr::map_dfr(analysis_evaluation, ~ .x %>% dplyr::top_n(n = 3, wt = .estimate))
+
+      result <- NULL
+      for (i in seq_len(nrow(best_parameters))) {
+        floss_spec <-
+          floss_regime_model(
+            window_size = best_parameters$window_size[i],
+            time_constraint = best_parameters$time_constraint[i],
+            mp_threshold = best_parameters$mp_threshold[i],
+            regime_threshold = best_parameters$regime_threshold[i],
+            regime_landmark = var_regime_landmark
+          ) %>%
+          parsnip::set_engine("floss") %>%
+          parsnip::set_mode("regression")
+
+        floss_rec <- recipes::recipe(x = head(testing_split, 1)) %>%
+          recipes::update_role(truth, new_role = "outcome") %>%
+          recipes::update_role(id, new_role = "predictor") %>%
+          recipes::update_role(ts, new_role = "predictor")
+
+        floss_wflow <-
+          workflows::workflow() %>%
+          workflows::add_model(floss_spec) %>%
+          workflows::add_recipe(floss_rec)
+
+        model_fit <- floss_wflow %>%
+          parsnip::fit(testing_split)
+        model_predicted <- model_fit %>%
+          predict(testing_split) %>%
+          dplyr::bind_cols(testing_split)
+        eval <- floss_error(model_predicted, truth = model_predicted$truth, estimate = model_predicted$.pred, estimator = "macro")
+        eval <- best_parameters[i, ] %>%
+          dplyr::select(id, window_size, time_constraint, mp_threshold, regime_threshold, .config) %>%
+          dplyr::bind_cols(eval)
+
+        result <- result %>% dplyr::bind_rows(eval)
+      }
+      result
+    }
   )
-  # tar_target(
-  #   #### Pipeline: analysis_evaluation - Here we select the best from each optimization split and test in a separate split ----
-  #   analysis_evaluation,
-  #   {
-  #     source(here::here("scripts", "regimes", "parsnip_model.R"), encoding = "UTF-8")
-
-  #     # all_fits <- lst_to_df(analysis_fitted)
-  #     all_fits <- analysis_fitted
-
-  #     # default: For space-filling or random grids, a marginal effect plot is created.
-  #     # autoplot(all_fits, type = "marginals") + labs(title = "Marginal plot", x = "Parameter value", y = "Performance") +
-  #     #   theme_bw()
-
-  #     # autoplot(all_fits, type = "parameters") + labs(title = "Parameter search", x = "Iterations", y = "Parameter value") +
-  #     #   theme_bw()
-
-  #     #  autoplot(all_fits, type = "performance", width = 0) + labs(title = "Performance", x = "Iterations", y = "Performance") +
-  #     #   theme_bw()
-
-  #     # best_model <- select_best(all_fits, metric = "floss_error")
-  #     # best_by_one_std_err <- select_by_one_std_err(all_fits, metric = "floss_error")
-  #     # best_by_pct_loss <- select_by_pct_loss(all_fits, metric = "floss_error", limit = 5)
-  #     # collect_metrics(all_fits, summarize = FALSE) %>%
-  #     #   group_by(id) %>%
-  #     #   summarise(mean = mean(.estimate), n = n(), std_err = sd(.estimate))
-
-  #     # best_param <- select_best(ames_iter_search, metric = "rmse")
-  #     # ames_iter_search %>%
-  #     #   filter_parameters(parameters = best_param) %>%
-  #     #   collect_metrics()
-
-  #     fits_by_fold <- all_fits %>%
-  #       dplyr::select(id, rep, .metrics) %>%
-  #       tidyr::unnest(.metrics) %>%
-  #       dplyr::select(-.estimator) %>%
-  #       dplyr::group_by(id) %>%
-  #       dplyr::arrange(.estimate) %>%
-  #       dplyr::group_map(~ head(.x, 3L), .keep = TRUE)
-  #     fits_by_fold
-
-  #     result <- NULL
-  #     for (i in seq_len(length(fits_by_fold))) {
-  #       fold <- fits_by_fold[[i]]$id[1]
-
-  #       resample <- assessment_split %>% dplyr::filter(id == fold)
-  #       class(resample) <- class(assessment_split) # fix for fit_resamples
-  #       model <- fits_by_fold[[i]][1, ]
-
-  #       floss_mod <-
-  #         floss_regime_model(
-  #           window_size = !!model$window_size,
-  #           time_constraint = !!model$time_constraint,
-  #           mp_threshold = !!model$mp_threshold,
-  #           regime_threshold = !!model$regime_threshold
-  #         ) %>%
-  #         parsnip::set_engine("floss") %>%
-  #         parsnip::set_mode("regression")
-
-  #       assessment_data <- resample$splits[[1]]$data
-
-  #       floss_rec <- recipes::recipe(x = head(assessment_data, 1)) %>%
-  #         recipes::update_role(truth, new_role = "outcome") %>%
-  #         recipes::update_role(id, new_role = "predictor") %>%
-  #         recipes::update_role(ts, new_role = "predictor")
-
-  #       floss_wflow <-
-  #         workflows::workflow() %>%
-  #         workflows::add_model(floss_mod) %>%
-  #         workflows::add_recipe(floss_rec)
-
-  #       model_fit <- floss_wflow %>%
-  #         parsnip::fit(assessment_data)
-  #       model_predicted <- model_fit %>%
-  #         predict(assessment_data) %>%
-  #         dplyr::bind_cols(assessment_data)
-  #       eval <- floss_error(model_predicted, truth = model_predicted$truth, estimate = model_predicted$.pred, estimator = "macro")
-  #       eval <- model %>%
-  #         dplyr::select(id, rep, window_size, time_constraint, mp_threshold, regime_threshold, .config) %>%
-  #         dplyr::bind_cols(eval)
-  #       result <- dplyr::bind_rows(result, eval)
-  #     }
-
-  #     result <- result %>% dplyr::arrange(.estimate)
-  #   },
-  #   pattern = map(analysis_fitted),
-  #   iteration = "list" # thus the objects keep their attributes
-  # ),
-  # tar_target(
-  #   #### Pipeline: testing_evaluation - In the end, get the best from the inner resample and test with the testing split ----
-  #   testing_evaluation,
-  #   {
-  #     source(here::here("scripts", "regimes", "parsnip_model.R"), encoding = "UTF-8")
-  #     best_parameters <- purrr::map_dfr(analysis_evaluation, ~ .x %>% dplyr::top_n(n = 3, wt = .estimate))
-
-  #     result <- NULL
-  #     for (i in seq_len(nrow(best_parameters))) {
-  #       floss_mod <-
-  #         floss_regime_model(
-  #           window_size = !!best_parameters$window_size[i],
-  #           time_constraint = !!best_parameters$time_constraint[i],
-  #           mp_threshold = !!best_parameters$mp_threshold[i],
-  #           regime_threshold = !!best_parameters$regime_threshold[i]
-  #         ) %>%
-  #         parsnip::set_engine("floss") %>%
-  #         parsnip::set_mode("regression")
-
-  #       floss_rec <- recipes::recipe(x = head(testing_split, 1)) %>%
-  #         recipes::update_role(truth, new_role = "outcome") %>%
-  #         recipes::update_role(id, new_role = "predictor") %>%
-  #         recipes::update_role(ts, new_role = "predictor")
-
-  #       floss_wflow <-
-  #         workflows::workflow() %>%
-  #         workflows::add_model(floss_mod) %>%
-  #         workflows::add_recipe(floss_rec)
-
-  #       model_fit <- floss_wflow %>%
-  #         parsnip::fit(testing_split)
-  #       model_predicted <- model_fit %>%
-  #         predict(testing_split) %>%
-  #         dplyr::bind_cols(testing_split)
-  #       eval <- floss_error(model_predicted, truth = model_predicted$truth, estimate = model_predicted$.pred, estimator = "macro")
-  #       eval <- best_parameters[i, ] %>%
-  #         dplyr::select(id, window_size, time_constraint, mp_threshold, regime_threshold, .config) %>%
-  #         dplyr::bind_cols(eval)
-
-  #       result <- result %>% dplyr::bind_rows(eval)
-  #     }
-  #   }
-  # )
 )
+
+
+# default: For space-filling or random grids, a marginal effect plot is created.
+# autoplot(all_fits, type = "marginals") + labs(title = "Marginal plot", x = "Parameter value", y = "Performance") +
+#   theme_bw()
+
+# autoplot(all_fits, type = "parameters") + labs(title = "Parameter search", x = "Iterations", y = "Parameter value") +
+#   theme_bw()
+
+#  autoplot(all_fits, type = "performance", width = 0) + labs(title = "Performance", x = "Iterations", y = "Performance") +
+#   theme_bw()
+
+# best_model <- select_best(all_fits, metric = "floss_error")
+# best_by_one_std_err <- select_by_one_std_err(all_fits, metric = "floss_error")
+# best_by_pct_loss <- select_by_pct_loss(all_fits, metric = "floss_error", limit = 5)
+# collect_metrics(all_fits, summarize = FALSE) %>%
+#   group_by(id) %>%
+#   summarise(mean = mean(.estimate), n = n(), std_err = sd(.estimate))
+
+# best_param <- select_best(ames_iter_search, metric = "rmse")
+# ames_iter_search %>%
+#   filter_parameters(parameters = best_param) %>%
+#   collect_metrics()
