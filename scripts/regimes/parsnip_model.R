@@ -1,4 +1,6 @@
-source(here::here("scripts", "common", "score_floss.R"), local = .GlobalEnv, encoding = "UTF-8")
+source(here::here("scripts", "common", "score_floss.R"), encoding = "UTF-8")
+source(here::here("scripts", "regimes", "training_regimes.R"), encoding = "UTF-8")
+source(here::here("scripts", "regimes", "predict_regimes.R"), encoding = "UTF-8")
 options(dplyr.summarise.inform = FALSE)
 
 # rlang::local_use_cli(format = TRUE, inline = TRUE, frame = caller_env())
@@ -161,23 +163,26 @@ train_regime_model <- function(truth, ts, ..., window_size, regime_threshold, re
 
   res <- list(truth = truth, id = as.character(id))
 
-  cli::cli_inform(c("*" = "Training the model: using `furrr`."))
-  floss <- furrr::future_map(ts,
-    training_regimes,
-    window_size,
-    mp_threshold,
-    time_constraint,
-    .options = furrr::furrr_options(seed = TRUE, scheduling = 1)
-  )
-
-  gc(verbose = FALSE)
-  # floss <- purrr::map(
-  #   ts,
+  # cli::cli_inform(c("*" = "Training the model: using `furrr`."))
+  # floss <- furrr::future_map(ts,
   #   training_regimes,
   #   window_size,
   #   mp_threshold,
-  #   time_constraint
+  #   time_constraint,
+  #   .options = furrr::furrr_options(seed = TRUE, scheduling = 1)
   # )
+
+  cli::cli_inform(c("*" = "Training the model: using `purrr`."))
+  floss <- purrr::map(
+    ts,
+    training_regimes,
+    window_size,
+    mp_threshold,
+    time_constraint
+  )
+
+  gc(verbose = FALSE)
+
   res$floss <- floss
 
   trained <- list(
@@ -243,10 +248,11 @@ predict.floss_regime_model <- function(object, new_data, type = NULL, regime_thr
 
   cli::cli_inform(c("*" = "Predicting regime changes: <<- This is usually fast."))
   cli::cli_inform(c("*" = "Predicting regime changes: threshold {regime_threshold}, landmark {regime_landmark} seconds."))
-  cli::cli_inform(c("*" = "Training the model: number of recordings {length(obj_fit$floss)}."))
+  cli::cli_inform(c("*" = "Predicting regime changes: number of recordings {length(obj_fit$floss)}."))
 
   "!DEBUG predicting."
 
+  # cli::cli_inform(c("*" = "Predicting regime changes: using `furrr`."))
   # estimates <- furrr::future_map(obj_fit$floss, predict_regimes,
   #   terms$window_size,
   #   terms$time_constraint,
@@ -437,448 +443,10 @@ update.floss_regime_model <- function(object,
   )
 }
 
-# hack tune
-
-tune_grid_loop_iter <- function(split,
-                                grid_info,
-                                workflow,
-                                metrics,
-                                control,
-                                seed) {
-  tune::load_pkgs(workflow)
-
-  load_namespace <- function(x) {
-    if (length(x) == 0) {
-      return(invisible(TRUE))
-    }
-
-    x_full <- x[x %in% full_load]
-    x <- x[!(x %in% full_load)]
-
-    loaded <- purrr::map_lgl(x, isNamespaceLoaded)
-    x <- x[!loaded]
-
-    if (length(x) > 0) {
-      did_load <- purrr::map_lgl(x, requireNamespace, quietly = TRUE)
-      if (any(!did_load)) {
-        bad <- x[!did_load]
-        msg <- paste0("'", bad, "'", collapse = ", ")
-        rlang::abort(paste("These packages could not be loaded:", msg))
-      }
-    }
-
-    if (length(x_full) > 0) {
-      purrr::map(
-        x_full,
-        ~ try(suppressPackageStartupMessages(attachNamespace(.x)), silent = TRUE)
-      )
-    }
-
-    invisible(TRUE)
-  }
-  load_namespace(control$pkgs)
-
-  # After package loading to avoid potential package RNG manipulation
-  if (!is.null(seed)) {
-    # `assign()`-ing the random seed alters the `kind` type to L'Ecuyer-CMRG,
-    # so we have to ensure it is restored on exit
-    old_kind <- RNGkind()[[1]]
-    assign(".Random.seed", seed, envir = globalenv())
-    on.exit(RNGkind(kind = old_kind), add = TRUE)
-  }
-
-  control_parsnip <- parsnip::control_parsnip(verbosity = 0, catch = TRUE)
-  control_workflow <- workflows::control_workflow(control_parsnip = control_parsnip)
-
-  event_level <- control$event_level
-
-  out_metrics <- NULL
-  out_extracts <- NULL
-  out_predictions <- NULL
-  out_all_outcome_names <- list()
-  out_notes <-
-    tibble::tibble(location = character(0), type = character(0), note = character(0))
-
-  params <- hardhat::extract_parameter_set_dials(workflow)
-  model_params <- dplyr::filter(params, source == "model_spec")
-  preprocessor_params <- dplyr::filter(params, source == "recipe")
-
-  param_names <- dplyr::pull(params, "id")
-  model_param_names <- dplyr::pull(model_params, "id")
-  preprocessor_param_names <- dplyr::pull(preprocessor_params, "id")
-
-  # Model related grid-info columns
-  cols <- rlang::expr(
-    c(
-      .iter_model,
-      .iter_config,
-      .msg_model,
-      dplyr::all_of(model_param_names),
-      .submodels
-    )
-  )
-
-  # Nest grid_info:
-  # - Preprocessor info in the outer level
-  # - Model info in the inner level
-  if (tune:::tidyr_new_interface()) {
-    grid_info <- tidyr::nest(grid_info, data = !!cols)
-  } else {
-    grid_info <- tidyr::nest(grid_info, !!cols)
-  }
-
-  training <- rsample::analysis(split)
-
-  # ----------------------------------------------------------------------------
-  # Preprocessor loop
-
-  iter_preprocessors <- grid_info[[".iter_preprocessor"]]
-
-  workflow_original <- workflow
-
-  for (iter_preprocessor in iter_preprocessors) {
-    workflow <- workflow_original
-
-    iter_grid_info <- dplyr::filter(
-      .data = grid_info,
-      .iter_preprocessor == iter_preprocessor
-    )
-
-    iter_grid_preprocessor <- dplyr::select(
-      .data = iter_grid_info,
-      dplyr::all_of(preprocessor_param_names)
-    )
-
-    iter_msg_preprocessor <- iter_grid_info[[".msg_preprocessor"]]
-
-
-    workflow <- tune:::finalize_workflow_preprocessor(
-      workflow = workflow,
-      grid_preprocessor = iter_grid_preprocessor
-    )
-
-    workflow <- tune:::catch_and_log(
-      .expr = .fit_pre(workflow, training),
-      control,
-      split,
-      iter_msg_preprocessor,
-      notes = out_notes
-    )
-
-    if (tune:::is_failure(workflow)) {
-      next
-    }
-
-    # --------------------------------------------------------------------------
-    # Model loop
-
-    iter_grid_info_models <- iter_grid_info[["data"]][[1L]]
-    iter_models <- iter_grid_info_models[[".iter_model"]]
-
-    workflow_preprocessed <- workflow
-
-    for (iter_model in iter_models) {
-      workflow <- workflow_preprocessed
-
-      iter_grid_info_model <- dplyr::filter(
-        .data = iter_grid_info_models,
-        .iter_model == iter_model
-      )
-
-      iter_grid_model <- dplyr::select(
-        .data = iter_grid_info_model,
-        dplyr::all_of(model_param_names)
-      )
-
-      iter_submodels <- iter_grid_info_model[[".submodels"]][[1L]]
-      iter_msg_model <- iter_grid_info_model[[".msg_model"]]
-      iter_config <- iter_grid_info_model[[".iter_config"]][[1L]]
-
-      workflow <- tune:::finalize_workflow_spec(workflow, iter_grid_model)
-
-      workflow <- tune:::catch_and_log_fit(
-        expr = .fit_model(workflow, control_workflow),
-        control,
-        split,
-        iter_msg_model,
-        notes = out_notes
-      )
-
-      # Check for parsnip level and model level failure
-      if (tune:::is_failure(workflow) || tune:::is_failure(workflow$fit$fit$fit)) {
-        next
-      }
-
-      workflow <- .fit_finalize(workflow)
-
-      # Extract outcome names from the hardhat mold
-      outcome_names <- tune:::outcome_names(workflow)
-
-      out_all_outcome_names <- tune:::append_outcome_names(
-        all_outcome_names = out_all_outcome_names,
-        outcome_names = outcome_names
-      )
-
-
-      # FIXME: I think this might be wrong? Doesn't use submodel parameters,
-      # so `extracts` column doesn't list the correct parameters.
-      iter_grid <- dplyr::bind_cols(
-        iter_grid_preprocessor,
-        iter_grid_model
-      )
-
-      # FIXME: bind_cols() drops number of rows with zero col data frames
-      # because of a bug with vec_cbind()
-      # https://github.com/r-lib/vctrs/issues/1281
-      if (ncol(iter_grid_preprocessor) == 0L && ncol(iter_grid_model) == 0L) {
-        nrow <- nrow(iter_grid_model)
-        iter_grid <- tibble::new_tibble(x = list(), nrow = nrow)
-      }
-
-      out_extracts <- tune:::append_extracts(
-        collection = out_extracts,
-        workflow = workflow,
-        grid = iter_grid,
-        split = split,
-        ctrl = control,
-        .config = iter_config
-      )
-
-      iter_msg_predictions <- paste(iter_msg_model, "(predictions)")
-
-      iter_predictions <- tune:::catch_and_log(
-        predict_model(split, workflow, iter_grid, metrics, iter_submodels),
-        control,
-        split,
-        iter_msg_predictions,
-        bad_only = TRUE,
-        notes = out_notes
-      )
-
-      # Check for prediction level failure
-      if (tune:::is_failure(iter_predictions)) {
-        next
-      }
-      # browser() # BINGO
-      out_metrics <- tune:::append_metrics(
-        collection = out_metrics,
-        predictions = iter_predictions,
-        metrics = metrics,
-        param_names = param_names,
-        outcome_name = outcome_names,
-        event_level = event_level,
-        split = split,
-        .config = iter_config
-      )
-
-      iter_config_metrics <- tune:::extract_metrics_config(param_names, out_metrics)
-
-      out_predictions <- tune:::append_predictions(
-        collection = out_predictions,
-        predictions = iter_predictions,
-        split = split,
-        control = control,
-        .config = iter_config_metrics
-      )
-    } # model loop
-  } # preprocessor loop
-
-  list(
-    .metrics = out_metrics,
-    .extracts = out_extracts,
-    .predictions = out_predictions,
-    .all_outcome_names = out_all_outcome_names,
-    .notes = out_notes
-  )
-}
-
-
-append_metrics <- function(collection,
-                           predictions,
-                           metrics,
-                           param_names,
-                           outcome_name,
-                           event_level,
-                           split,
-                           .config = NULL) {
-  if (inherits(predictions, "try-error")) {
-    return(collection)
-  }
-
-  tmp_est <- tune:::estimate_metrics(
-    dat = predictions,
-    metric = metrics,
-    param_names = param_names,
-    outcome_name = outcome_name,
-    event_level = event_level
-  )
-
-  tmp_est <- cbind(tmp_est, labels(split))
-
-  if (!rlang::is_null(.config)) {
-    if (nrow(tmp_est) != length(.config)) {
-      cli::cli_warn("nrow(tmp_est) = {tmp_est}, length(.config) = {length(.config)}.")
-    }
-
-    tmp_est <- cbind(tmp_est, .config) # fix here , 7 rows for 2 config values
-  }
-
-  dplyr::bind_rows(collection, tmp_est)
-}
-
-
-predict_model <- function(split, workflow, grid, metrics, submodels = NULL) {
-  model <- extract_fit_parsnip(workflow)
-
-  # new_data <- rsample::assessment(split)
-  forged <- tune:::forge_from_workflow(split, workflow)
-  x_vals <- forged$predictors
-  y_vals <- forged$outcomes
-
-  orig_rows <- as.integer(split, data = "assessment")
-
-  if (length(orig_rows) != nrow(x_vals)) {
-    msg <- paste0(
-      "Some assessment set rows are not available at ",
-      "prediction time. "
-    )
-
-    if (tune:::has_preprocessor_recipe(workflow)) {
-      msg <- paste0(
-        msg,
-        "Consider using `skip = TRUE` on any recipe steps that remove rows ",
-        "to avoid calling them on the assessment set."
-      )
-    } else {
-      msg <- paste0(
-        msg,
-        "Did your preprocessing steps filter or remove rows?"
-      )
-    }
-
-    rlang::abort(msg)
-  }
-
-  # Determine the type of prediction that is required
-  type_info <- metrics_info(metrics)
-  types <- unique(type_info$type)
-
-  res <- NULL
-  merge_vars <- c(".row", names(grid))
-
-  for (type_iter in types) {
-    # Regular predictions
-    tmp_res <-
-      predict(model, x_vals, type = type_iter) %>%
-      mutate(.row = orig_rows) %>%
-      cbind(grid, row.names = NULL) %>%
-      tibble::as_tibble()
-
-    if (!is.null(submodels)) {
-      submod_length <- lengths(submodels)
-      has_submodels <- any(submod_length > 0)
-
-      if (has_submodels) {
-        submod_param <- names(submodels)
-        mp_call <-
-          rlang::call2(
-            "multi_predict",
-            .ns = "parsnip",
-            object = expr(model),
-            new_data = expr(x_vals),
-            type = "raw",
-            !!!make_submod_arg(grid, model, submodels)
-          )
-        tmp_res <-
-          rlang::eval_tidy(mp_call) %>%
-          mutate(.row = orig_rows) %>%
-          unnest(cols = dplyr::starts_with(".pred")) %>%
-          cbind(dplyr::select(grid, -dplyr::all_of(submod_param)), row.names = NULL) %>%
-          tibble::as_tibble() %>%
-          # go back to user-defined name
-          dplyr::rename(!!!make_rename_arg(grid, model, submodels)) %>%
-          dplyr::select(dplyr::one_of(names(tmp_res))) %>%
-          dplyr::bind_rows(tmp_res)
-      }
-    }
-
-    if (!is.null(res)) {
-      res <- dplyr::full_join(res, tmp_res, by = merge_vars)
-    } else {
-      res <- tmp_res
-    }
-
-    rm(tmp_res)
-  } # end type loop
-
-  # Add outcome data
-  y_vals <- dplyr::mutate(y_vals, .row = orig_rows)
-  res <- dplyr::full_join(res, y_vals, by = ".row")
-
-  # # Add case weights (if needed)
-  # if (tune::has_case_weights(workflow)) {
-  #   case_weights <- tune::extract_case_weights(new_data, workflow)
-
-  #   if (tune::.use_case_weights_with_yardstick(case_weights)) {
-  #     case_weights <- rlang::list2(!!case_weights_column_name() := case_weights)
-  #     case_weights <- vctrs::new_data_frame(case_weights)
-  #     case_weights <- dplyr::mutate(case_weights, .row = orig_rows)
-  #     res <- dplyr::full_join(res, case_weights, by = ".row")
-  #   }
-  # }
-  tibble::as_tibble(res)
-}
-
-make_submod_arg <- function(grid, model, submodels) {
-  # Assumes only one submodel parameter per model
-  ## all possible submodels, but not all actually used
-  real_name <-
-    parsnip::get_from_env(paste(class(model$spec)[1], "args", sep = "_")) %>%
-    dplyr::filter(has_submodel & engine == model$spec$engine) %>%
-    dplyr::pull(parsnip)
-
-  # cli::cli_inform("real_name: {real_name}")
-  # cli::cli_inform("names(submodels): {names(submodels)}")
-  # cli::cli_inform("submodels: {submodels}")
-
-  # FIXME: here I'll comment this line, but this need to be checked when the names are different
-  # from parsnip and the original model pkg
-  # names(submodels) <- real_name
-  submodels
-}
-
-make_rename_arg <- function(grid, model, submodels) {
-  # Assumes only one submodel parameter per model
-  ## all possible submodels, but not all actually used
-  real_name <-
-    parsnip::get_from_env(paste(class(model$spec)[1], "args", sep = "_")) %>%
-    dplyr::filter(has_submodel & engine == model$spec$engine) %>%
-    dplyr::pull(parsnip)
-
-  # FIXME: his need to be checked when the names are different
-  # from parsnip and the original model pkg
-
-  res <- split(real_name, real_name) # list(real_name)   # this allows multiple parameters
-  res <- purrr::keep(res, names(res) %in% names(submodels)) # this hack keeps only the ones that are in the submodels
-  names(res) <- names(submodels)
-  res
-}
-mytune <- rlang::ns_env("tune")
-unlockBinding(rlang::sym("make_submod_arg"), mytune)
-unlockBinding(rlang::sym("make_rename_arg"), mytune)
-# unlockBinding(rlang::sym("predict_model"), mytune)
-# unlockBinding(rlang::sym("tune_grid_loop_iter"), mytune)
-mytune$make_rename_arg <- make_rename_arg
-mytune$make_submod_arg <- make_submod_arg
-# mytune$predict_model <- predict_model
-# mytune$tune_grid_loop_iter <- tune_grid_loop_iter
-
-min_grid.floss_regime_model <- function(x, grid, ...) {
-  # nolint
+min_grid.floss_regime_model <- function(x, grid, ...) { # nolint
   # cli::cli_inform(c("*" = "min_grid.floss_regime_model "))
   # cli::cli_inform(c("*" = "min_grid.floss_regime_model: dots_n {rlang::dots_n(...)}"))
-  if (rlang::dots_n(...) > 0) {
-    # 0
+  if (rlang::dots_n(...) > 0) { # 0
     cli::cli_alert(c("*" = "min_grid.floss_regime_model: dots_names {names(rlang::dots_list(..., .preserve_empty = TRUE))}"))
   }
 
@@ -973,8 +541,7 @@ min_grid.floss_regime_model <- function(x, grid, ...) {
   # res
 }
 
-check_args.floss_regime_model <- function(object) {
-  # nolint
+check_args.floss_regime_model <- function(object) { # nolint
 
   "!DEBUG This runs in fit()"
   # cli::cli_inform(c("*" = "check_args.floss_regime_model"))
@@ -1014,12 +581,10 @@ check_args.floss_regime_model <- function(object) {
 }
 
 
-translate.floss_regime_model <- function(x, engine = x$engine, ...) {
-  # nolint
+translate.floss_regime_model <- function(x, engine = x$engine, ...) { # nolint
   # cli::cli_inform(c("*" = "translate.floss_regime_model"))
   # cli::cli_inform(c("*" = "translate.floss_regime_model: dots_n {rlang::dots_n(...)}"))
-  if (rlang::dots_n(...) > 0) {
-    # 0
+  if (rlang::dots_n(...) > 0) { # 0
     cli::cli_alert(c("*" = "translate.floss_regime_model: dots_names {names(rlang::dots_list(..., .preserve_empty = TRUE))}"))
   }
 
@@ -1126,8 +691,7 @@ translate.floss_regime_model <- function(x, engine = x$engine, ...) {
 #' @rdname floss_helpers
 #' @keywords internal
 #' @export
-.check_floss_regime_threshold_fit <- function(x) {
-  # nolint
+.check_floss_regime_threshold_fit <- function(x) { # nolint
   # cli::cli_inform(c("*" = ".check_floss_regime_threshold_fit"))
   regime_threshold <- rlang::eval_tidy(x$args$regime_threshold)
   regime_landmark <- rlang::eval_tidy(x$args$regime_landmark)
@@ -1333,6 +897,436 @@ floss_error <- yardstick::new_numeric_metric(floss_error, direction = "minimize"
 floss_error_micro <- yardstick::metric_tweak("floss_error_micro", floss_error, estimator = "micro")
 floss_error_macro <- yardstick::metric_tweak("floss_error_macro", floss_error, estimator = "macro")
 
+floss_error.data.frame <- function(data, truth, estimate, na_rm = TRUE, estimator = "binary", ...) { # nolint
+  # cli::cli_alert(c("*" = "floss_error.data.frame <<- work here"))
+  # cli::cli_inform(c("*" = "floss_error.data.frame: dots_n {rlang::dots_n(...)}"))
+  if (rlang::dots_n(...) > 0) { # 0
+    cli::cli_alert(c("*" = "floss_error.data.frame: dots_names {names(rlang::dots_list(..., .preserve_empty = TRUE))}"))
+  }
+
+  "!DEBUG evaluating model."
+  sizes <- rlang::expr(.sizes)
+  yardstick::metric_summarizer(
+    metric_nm = "floss_error",
+    metric_fn = floss_error_vec,
+    data = data,
+    truth = !!rlang::enquo(truth),
+    estimate = !!rlang::enquo(estimate),
+    na_rm = na_rm,
+    estimator = estimator,
+    metric_fn_options = list(data_size = rlang::enquo(sizes)) # purrr::map(data$ts, length))
+  )
+}
+
+floss_error_vec <- function(truth, estimate, data_size, na_rm = TRUE, estimator = "binary", ...) {
+  # cli::cli_alert(c("*" = "floss_error_vec <<- work here"))
+  # cli::cli_inform(c("*" = "floss_error_vec: dots_n {rlang::dots_n(...)}"))
+  if (rlang::dots_n(...) > 0) {
+    cli::cli_alert(c("*" = "floss_error_vec: dots_names {names(rlang::dots_list(..., .preserve_empty = TRUE))}"))
+  }
+
+  cli::cli_inform(c("*" = "Evaluating model: <<- This is usually fast."))
+  cli::cli_inform(c("*" = "Evaluating model: estimator {estimator}."))
+  cli::cli_inform(c("*" = "Evaluating model: number of recordings {length(estimate)}."))
+
+  floss_error_impl <- function(truth, estimate, data_size, ...) {
+    res <- score_regimes(truth, estimate, data_size)
+    return(res)
+  }
+
+  # if (length(data_size) <= 2) {
+  #   cli::cli_abort(c("x" = "data_size len: {length(data_size)}"))
+  # }
+
+  for (i in seq.int(1, length(estimate))) {
+    lt <- length(truth[[i]])
+    le <- length(estimate[[i]])
+    if (lt > le) {
+      estimate[[i]] <- c(estimate[[i]], rep(-1, lt - le))
+    } else {
+      truth[[i]] <- c(truth[[i]], rep(-1, le - lt))
+    }
+  }
+
+  if (estimator == "micro") {
+    # cli::cli_inform(c("*" = "floss_error_vec <<- micro"))
+    res <- purrr::map2_dbl(
+      truth, estimate,
+      ~ yardstick::metric_vec_template(
+        metric_impl = floss_error_impl,
+        truth = ..1,
+        estimate = ..2,
+        na_rm = na_rm,
+        cls = "numeric",
+        data_size = 1,
+        ...
+      )
+    )
+
+    res <- sum(res)
+    div <- purrr::reduce(data_size, sum) + 1
+    return(res / div) # micro is the sum of the scores / length(all_data_set)
+  } else {
+    # cli::cli_inform(c("*" = "floss_error_vec <<- macro"))
+    res <- purrr::pmap_dbl(
+      list(truth, estimate, data_size),
+      ~ yardstick::metric_vec_template(
+        metric_impl = floss_error_impl,
+        truth = ..1,
+        estimate = ..2,
+        na_rm = na_rm,
+        cls = "numeric",
+        data_size = ..3,
+        ...
+      )
+    )
+    return(mean(res)) # macro;
+    # res
+  }
+}
+
+clean_splits_data <- function(object) {
+  tidy_splits <- object$splits
+  tidy_splits <- purrr::map(tidy_splits, function(x) {
+    x$data$ts <- NA
+    x
+  })
+  object$splits <- tidy_splits
+  object
+}
+
+# floss_error(tidy_dataset, truth = truth, estimate = truth, estimator = "micro")$.estimate
+
+
+
+
+# hack tune
+
+min_grid.floss_regime_model <- function(x, grid, ...) {
+  # nolint
+  # cli::cli_inform(c("*" = "min_grid.floss_regime_model "))
+  # cli::cli_inform(c("*" = "min_grid.floss_regime_model: dots_n {rlang::dots_n(...)}"))
+  if (rlang::dots_n(...) > 0) {
+    # 0
+    cli::cli_alert(c("*" = "min_grid.floss_regime_model: dots_names {names(rlang::dots_list(..., .preserve_empty = TRUE))}"))
+  }
+
+  load_namespace <- function(x) {
+    if (length(x) == 0) {
+      return(invisible(TRUE))
+    }
+
+    x_full <- x[x %in% full_load]
+    x <- x[!(x %in% full_load)]
+
+    loaded <- purrr::map_lgl(x, isNamespaceLoaded)
+    x <- x[!loaded]
+
+    if (length(x) > 0) {
+      did_load <- purrr::map_lgl(x, requireNamespace, quietly = TRUE)
+      if (any(!did_load)) {
+        bad <- x[!did_load]
+        msg <- paste0("'", bad, "'", collapse = ", ")
+        rlang::abort(paste("These packages could not be loaded:", msg))
+      }
+    }
+
+    if (length(x_full) > 0) {
+      purrr::map(
+        x_full,
+        ~ try(suppressPackageStartupMessages(attachNamespace(.x)), silent = TRUE)
+      )
+    }
+
+    invisible(TRUE)
+  }
+  load_namespace(control$pkgs)
+
+  # After package loading to avoid potential package RNG manipulation
+  if (!is.null(seed)) {
+    # `assign()`-ing the random seed alters the `kind` type to L'Ecuyer-CMRG,
+    # so we have to ensure it is restored on exit
+    old_kind <- RNGkind()[[1]]
+    assign(".Random.seed", seed, envir = globalenv())
+    on.exit(RNGkind(kind = old_kind), add = TRUE)
+  }
+
+  control_parsnip <- parsnip::control_parsnip(verbosity = 0, catch = TRUE)
+  control_workflow <- workflows::control_workflow(control_parsnip = control_parsnip)
+
+  event_level <- control$event_level
+
+  out_metrics <- NULL
+  out_extracts <- NULL
+  out_predictions <- NULL
+  out_all_outcome_names <- list()
+  out_notes <-
+    tibble::tibble(location = character(0), type = character(0), note = character(0))
+
+  params <- hardhat::extract_parameter_set_dials(workflow)
+  model_params <- dplyr::filter(params, source == "model_spec")
+  preprocessor_params <- dplyr::filter(params, source == "recipe")
+
+  param_names <- dplyr::pull(params, "id")
+  model_param_names <- dplyr::pull(model_params, "id")
+  preprocessor_param_names <- dplyr::pull(preprocessor_params, "id")
+
+  # Model related grid-info columns
+  cols <- rlang::expr(
+    c(
+      .iter_model,
+      .iter_config,
+      .msg_model,
+      dplyr::all_of(model_param_names),
+      .submodels
+    )
+  )
+
+  # Nest grid_info:
+  # - Preprocessor info in the outer level
+  # - Model info in the inner level
+  if (tune:::tidyr_new_interface()) {
+    grid_info <- tidyr::nest(grid_info, data = !!cols)
+  } else {
+    grid_info <- tidyr::nest(grid_info, !!cols)
+  }
+
+  training <- rsample::analysis(split)
+
+  # ----------------------------------------------------------------------------
+  # Preprocessor loop
+
+  iter_preprocessors <- grid_info[[".iter_preprocessor"]]
+
+  workflow_original <- workflow
+
+check_args.floss_regime_model <- function(object) {
+  # nolint
+
+    iter_grid_info <- dplyr::filter(
+      .data = grid_info,
+      .iter_preprocessor == iter_preprocessor
+    )
+
+    iter_grid_preprocessor <- dplyr::select(
+      .data = iter_grid_info,
+      dplyr::all_of(preprocessor_param_names)
+    )
+
+    iter_msg_preprocessor <- iter_grid_info[[".msg_preprocessor"]]
+
+
+    workflow <- tune:::finalize_workflow_preprocessor(
+      workflow = workflow,
+      grid_preprocessor = iter_grid_preprocessor
+    )
+
+translate.floss_regime_model <- function(x, engine = x$engine, ...) {
+  # nolint
+  # cli::cli_inform(c("*" = "translate.floss_regime_model"))
+  # cli::cli_inform(c("*" = "translate.floss_regime_model: dots_n {rlang::dots_n(...)}"))
+  if (rlang::dots_n(...) > 0) {
+    # 0
+    cli::cli_alert(c("*" = "translate.floss_regime_model: dots_names {names(rlang::dots_list(..., .preserve_empty = TRUE))}"))
+  }
+
+    if (tune:::is_failure(workflow)) {
+      next
+    }
+
+    # --------------------------------------------------------------------------
+    # Model loop
+
+    iter_grid_info_models <- iter_grid_info[["data"]][[1L]]
+    iter_models <- iter_grid_info_models[[".iter_model"]]
+
+    workflow_preprocessed <- workflow
+
+    for (iter_model in iter_models) {
+      workflow <- workflow_preprocessed
+
+      iter_grid_info_model <- dplyr::filter(
+        .data = iter_grid_info_models,
+        .iter_model == iter_model
+      )
+
+      iter_grid_model <- dplyr::select(
+        .data = iter_grid_info_model,
+        dplyr::all_of(model_param_names)
+      )
+
+      iter_submodels <- iter_grid_info_model[[".submodels"]][[1L]]
+      iter_msg_model <- iter_grid_info_model[[".msg_model"]]
+      iter_config <- iter_grid_info_model[[".iter_config"]][[1L]]
+
+      workflow <- tune:::finalize_workflow_spec(workflow, iter_grid_model)
+
+      workflow <- tune:::catch_and_log_fit(
+        expr = .fit_model(workflow, control_workflow),
+        control,
+        split,
+        iter_msg_model,
+        notes = out_notes
+      )
+
+      # Check for parsnip level and model level failure
+      if (tune:::is_failure(workflow) || tune:::is_failure(workflow$fit$fit$fit)) {
+        next
+      }
+
+      workflow <- .fit_finalize(workflow)
+
+      # Extract outcome names from the hardhat mold
+      outcome_names <- tune:::outcome_names(workflow)
+
+      out_all_outcome_names <- tune:::append_outcome_names(
+        all_outcome_names = out_all_outcome_names,
+        outcome_names = outcome_names
+      )
+
+
+#' Helper functions for checking the regime_threshold of FLOSS models
+#'
+#' @description
+#' These functions are for developer use.
+#'
+#' `.check_floss_regime_threshold_fit()` checks that the model specification for fitting a
+#' floss model contains a single value.
+#'
+#' `.check_floss_regime_threshold_predict()` checks that the regime_threshold value used for prediction is valid.
+#' If called by `predict()`, it needs to be a single value. Multiple values are
+#' allowed for `multi_predict()`.
+#'
+#' @param x An object of class `model_spec`.
+#' @rdname floss_helpers
+#' @keywords internal
+#' @export
+.check_floss_regime_threshold_fit <- function(x) {
+  # nolint
+  # cli::cli_inform(c("*" = ".check_floss_regime_threshold_fit"))
+  regime_threshold <- rlang::eval_tidy(x$args$regime_threshold)
+  regime_landmark <- rlang::eval_tidy(x$args$regime_landmark)
+
+      # FIXME: bind_cols() drops number of rows with zero col data frames
+      # because of a bug with vec_cbind()
+      # https://github.com/r-lib/vctrs/issues/1281
+      if (ncol(iter_grid_preprocessor) == 0L && ncol(iter_grid_model) == 0L) {
+        nrow <- nrow(iter_grid_model)
+        iter_grid <- tibble::new_tibble(x = list(), nrow = nrow)
+      }
+
+      out_extracts <- tune:::append_extracts(
+        collection = out_extracts,
+        workflow = workflow,
+        grid = iter_grid,
+        split = split,
+        ctrl = control,
+        .config = iter_config
+      )
+
+      iter_msg_predictions <- paste(iter_msg_model, "(predictions)")
+
+      iter_predictions <- tune:::catch_and_log(
+        predict_model(split, workflow, iter_grid, metrics, iter_submodels),
+        control,
+        split,
+        iter_msg_predictions,
+        bad_only = TRUE,
+        notes = out_notes
+      )
+
+      # Check for prediction level failure
+      if (tune:::is_failure(iter_predictions)) {
+        next
+      }
+      # browser() # BINGO
+      out_metrics <- tune:::append_metrics(
+        collection = out_metrics,
+        predictions = iter_predictions,
+        metrics = metrics,
+        param_names = param_names,
+        outcome_name = outcome_names,
+        event_level = event_level,
+        split = split,
+        .config = iter_config
+      )
+
+      iter_config_metrics <- tune:::extract_metrics_config(param_names, out_metrics)
+
+      out_predictions <- tune:::append_predictions(
+        collection = out_predictions,
+        predictions = iter_predictions,
+        split = split,
+        control = control,
+        .config = iter_config_metrics
+      )
+    } # model loop
+  } # preprocessor loop
+
+  list(
+    .metrics = out_metrics,
+    .extracts = out_extracts,
+    .predictions = out_predictions,
+    .all_outcome_names = out_all_outcome_names,
+    .notes = out_notes
+  )
+}
+
+
+append_metrics <- function(collection,
+                           predictions,
+                           metrics,
+                           param_names,
+                           outcome_name,
+                           event_level,
+                           split,
+                           .config = NULL) {
+  cli::cli_warn(c("!" = "Hacking append_metrics()."))
+
+
+  if (inherits(predictions, "try-error")) {
+    return(collection)
+  }
+
+  tmp_est <- tune:::estimate_metrics(
+    dat = predictions,
+    metric = metrics,
+    param_names = param_names,
+    outcome_name = outcome_name,
+    event_level = event_level
+  )
+
+  tmp_est <- cbind(tmp_est, labels(split))
+
+  if (!rlang::is_null(.config)) {
+    if (nrow(tmp_est) != length(.config)) {
+      cli::cli_warn("nrow(tmp_est) = {tmp_est}, length(.config) = {length(.config)}.")
+    }
+
+    tmp_est <- cbind(tmp_est, .config) # fix here , 7 rows for 2 config values
+  }
+
+  dplyr::bind_rows(collection, tmp_est)
+}
+
+
+predict_model <- function(split, workflow, grid, metrics, submodels = NULL) {
+  cli::cli_warn(c("!" = "Hacking predict_model()."))
+  model <- extract_fit_parsnip(workflow)
+
+  # new_data <- rsample::assessment(split)
+  forged <- tune:::forge_from_workflow(split, workflow)
+  x_vals <- forged$predictors
+  y_vals <- forged$outcomes
+
+  orig_rows <- as.integer(split, data = "assessment")
+
+  if (length(orig_rows) != nrow(x_vals)) {
+    msg <- paste0(
+      "Some assessment set rows are not available at ",
+      "prediction time. "
+    )
+
 floss_error.data.frame <- function(data, truth, estimate, na_rm = TRUE, estimator = "binary", ...) {
   # nolint
   # cli::cli_alert(c("*" = "floss_error.data.frame <<- work here"))
@@ -1356,21 +1350,16 @@ floss_error.data.frame <- function(data, truth, estimate, na_rm = TRUE, estimato
   )
 }
 
-floss_error_vec <- function(truth, estimate, data_size, na_rm = TRUE, estimator = "binary", ...) {
-  # cli::cli_alert(c("*" = "floss_error_vec <<- work here"))
-  # cli::cli_inform(c("*" = "floss_error_vec: dots_n {rlang::dots_n(...)}"))
-  if (rlang::dots_n(...) > 0) {
-    cli::cli_alert(c("*" = "floss_error_vec: dots_names {names(rlang::dots_list(..., .preserve_empty = TRUE))}"))
-  }
+  res <- NULL
+  merge_vars <- c(".row", names(grid))
 
   # cli::cli_inform(c("*" = "Evaluating model: <<- This is usually fast."))
   # cli::cli_inform(c("*" = "Evaluating model: estimator {estimator}."))
   # cli::cli_inform(c("*" = "Evaluating model: number of recordings {length(estimate)}."))
 
-  floss_error_impl <- function(truth, estimate, data_size, ...) {
-    res <- score_regimes(truth, estimate, data_size)
-    return(res)
-  }
+    if (!is.null(submodels)) {
+      submod_length <- lengths(submodels)
+      has_submodels <- any(submod_length > 0)
 
   # if (length(data_size) <= 2) {
   #   cli::cli_abort(c("x" = "data_size len: {length(data_size)}"))
@@ -1379,15 +1368,11 @@ floss_error_vec <- function(truth, estimate, data_size, na_rm = TRUE, estimator 
   estimate <- clean_pred(estimate)
   # 100 is the batch size, this removes the redundant regime changes
 
-  for (i in seq.int(1, length(estimate))) {
-    lt <- length(truth[[i]])
-    le <- length(estimate[[i]])
-    if (lt > le) {
-      estimate[[i]] <- c(estimate[[i]], rep(-1, lt - le))
+    if (!is.null(res)) {
+      res <- dplyr::full_join(res, tmp_res, by = merge_vars)
     } else {
-      truth[[i]] <- c(truth[[i]], rep(-1, le - lt))
+      res <- tmp_res
     }
-  }
 
   if (estimator == "micro") {
     # current micro method (sum of errors / dataset length)
@@ -1540,14 +1525,48 @@ floss_error_vec <- function(truth, estimate, data_size, na_rm = TRUE, estimator 
   }
 }
 
-clean_splits_data <- function(object) {
-  tidy_splits <- object$splits
-  tidy_splits <- purrr::map(tidy_splits, function(x) {
-    x$data$ts <- NA
-    x
-  })
-  object$splits <- tidy_splits
-  object
+make_submod_arg <- function(grid, model, submodels) {
+  cli::cli_warn(c("!" = "Hacking make_submod_arg()."))
+  # Assumes only one submodel parameter per model
+  ## all possible submodels, but not all actually used
+  real_name <-
+    parsnip::get_from_env(paste(class(model$spec)[1], "args", sep = "_")) %>%
+    dplyr::filter(has_submodel & engine == model$spec$engine) %>%
+    dplyr::pull(parsnip)
+
+  # cli::cli_inform("real_name: {real_name}")
+  # cli::cli_inform("names(submodels): {names(submodels)}")
+  # cli::cli_inform("submodels: {submodels}")
+
+  # FIXME: here I'll comment this line, but this need to be checked when the names are different
+  # from parsnip and the original model pkg
+  # names(submodels) <- real_name
+  submodels
 }
 
-# floss_error(tidy_dataset, truth = truth, estimate = truth, estimator = "micro")$.estimate
+make_rename_arg <- function(grid, model, submodels) {
+  cli::cli_warn(c("!" = "Hacking make_rename_arg()."))
+  # Assumes only one submodel parameter per model
+  ## all possible submodels, but not all actually used
+  real_name <-
+    parsnip::get_from_env(paste(class(model$spec)[1], "args", sep = "_")) %>%
+    dplyr::filter(has_submodel & engine == model$spec$engine) %>%
+    dplyr::pull(parsnip)
+
+  # FIXME: his need to be checked when the names are different
+  # from parsnip and the original model pkg
+
+  res <- split(real_name, real_name) # list(real_name)   # this allows multiple parameters
+  res <- purrr::keep(res, names(res) %in% names(submodels)) # this hack keeps only the ones that are in the submodels
+  names(res) <- names(submodels)
+  res
+}
+mytune <- rlang::ns_env("tune")
+unlockBinding(rlang::sym("make_submod_arg"), mytune)
+unlockBinding(rlang::sym("make_rename_arg"), mytune)
+unlockBinding(rlang::sym("predict_model"), mytune)
+unlockBinding(rlang::sym("tune_grid_loop_iter"), mytune)
+mytune$make_rename_arg <- make_rename_arg
+mytune$make_submod_arg <- make_submod_arg
+mytune$predict_model <- predict_model
+mytune$tune_grid_loop_iter <- tune_grid_loop_iter

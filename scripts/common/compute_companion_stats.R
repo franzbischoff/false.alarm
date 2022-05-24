@@ -29,7 +29,7 @@ compute_companion_stats <- function(ecg_data, params, infos) {
   checkmate::qassert(infos, "L+")
 
   data_len <- length(ecg_data)
-  msd <- muinvn(ecg_data, params$window_size, params$n_workers)
+  msd <- false.alarm::muinvn(ecg_data, params$window_size, params$n_workers)
   avg <- msd$avg
   sig <- msd$sig
   ddf <- -1 * diff(ecg_data, lag = params$window_size) / 2

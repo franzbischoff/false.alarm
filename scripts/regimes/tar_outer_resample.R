@@ -1,10 +1,14 @@
 library(tidymodels)
 options(tidymodels.dark = TRUE)
 ##################################### Testing #####################################
-source(here("scripts/regimes", "parsnip_model.R"))
+source(here::here("scripts", "regimes", "parsnip_model.R"), encoding = "UTF-8")
 tar_load(analysis_split)
 class(analysis_split) <- c("manual_rset", "rset", class(analysis_split))
 the_data <- analysis_split$splits[[1]]$data
+
+the_data <- the_data[1:2, ]
+# the_data$ts[[1]] <- the_data$ts[[1]][1:5000]
+# the_data$ts[[2]] <- the_data$ts[[2]][1:5000]
 
 # floss_spec <-
 #   floss_regime_model(
@@ -23,7 +27,7 @@ floss_spec <-
     time_constraint = tune(),
     mp_threshold = tune(),
     regime_threshold = tune(),
-    regime_landmark = 3
+    regime_landmark = tune()
   ) %>%
   parsnip::set_engine("floss") %>%
   parsnip::set_mode("regression")
@@ -52,11 +56,22 @@ floss_wflow <-
   workflows::add_model(floss_spec) %>%
   workflows::add_recipe(floss_rec)
 
+# future::plan(future.callr::callr, workers = 4)
+# future::plan(future::sequential)
 # fitted_wflow <- floss_wflow %>% parsnip::fit(the_data)
 # sp <- fitted_wflow$fit$fit %>% predict(new_data = the_data)
 # mp <- fitted_wflow$fit$fit %>% multi_predict(new_data = the_data, regime_threshold = c(0.1, 0.2, 0.3, 0.4), regime_landmark = c(3, 4, 5, 6))
 
-# has_multi_predict(fitted_wflow$fit$fit) # TRUEls()sss
+# eval <- NULL
+# for (i in seq_len(nrow(mp$.pred[[1]]))) {
+#   p <- NULL
+#   for (j in seq_len(length(the_data$truth))) {
+#     p <- bind_rows(p, mp$.pred[[j]][i, ])
+#   }
+
+#   eval <- bind_rows(eval, floss_error(p, truth = the_data$truth, estimate = p$.pred, estimator = "macro"))
+# }
+# has_multi_predict(fitted_wflow$fit$fit) # TRUEls()
 # has_multi_predict(floss_spec) # FALSE
 # multi_predict_args(fitted_wflow$fit$fit) # regime_threshold
 
@@ -84,7 +99,7 @@ floss_search_res <- floss_spec %>%
     grid = 200,
     metrics = yardstick::metric_set(floss_error_macro),
     control = tune::control_grid(
-      verbose = FALSE,
+      verbose = TRUE,
       allow_par = FALSE,
       # save_workflow = TRUE,
       save_pred = TRUE,

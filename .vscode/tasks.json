@@ -74,7 +74,7 @@
     {
       "type": "process",
       "label": "R: misc: knit and view",
-      "command": "C:/Program Files/R/R-4.1.2/bin/x64/Rscript.exe",
+      "command": "C:/Program Files/R/R-4.2.0/bin/x64/Rscript.exe",
       "linux": {
         "command": "/bin/Rscript"
       },
@@ -100,7 +100,7 @@
     {
       "type": "process",
       "label": "R: routine: Style project",
-      "command": "C:/Program Files/R/R-4.1.2/bin/x64/Rscript.exe",
+      "command": "C:/Program Files/R/R-4.2.0/bin/x64/Rscript.exe",
       "linux": {
         "command": "/bin/Rscript"
       },
@@ -122,7 +122,7 @@
     {
       "type": "process",
       "label": "R: targets: gittargets",
-      "command": "C:/Program Files/R/R-4.1.2/bin/x64/Rscript.exe",
+      "command": "C:/Program Files/R/R-4.2.0/bin/x64/Rscript.exe",
       "linux": {
         "command": "/bin/Rscript"
       },
@@ -143,7 +143,7 @@
     {
       "type": "process",
       "label": "R: routine: Update codemeta",
-      "command": "C:/Program Files/R/R-4.1.2/bin/x64/Rscript.exe",
+      "command": "C:/Program Files/R/R-4.2.0/bin/x64/Rscript.exe",
       "linux": {
         "command": "/bin/Rscript"
       },
@@ -166,7 +166,7 @@
     {
       "type": "process",
       "label": "R: routine: Update docs and self install",
-      "command": "C:/Program Files/R/R-4.1.2/bin/x64/Rscript.exe",
+      "command": "C:/Program Files/R/R-4.2.0/bin/x64/Rscript.exe",
       "linux": {
         "command": "/bin/Rscript"
       },
@@ -210,7 +210,7 @@
     {
       "type": "process",
       "label": "R: routine: Lint project",
-      "command": "C:/Program Files/R/R-4.1.2/bin/x64/Rscript.exe",
+      "command": "C:/Program Files/R/R-4.2.0/bin/x64/Rscript.exe",
       "linux": {
         "command": "/bin/Rscript"
       },
@@ -235,7 +235,7 @@
     {
       "type": "process",
       "label": "R: routine: Test units",
-      "command": "C:/Program Files/R/R-4.1.2/bin/x64/Rscript.exe",
+      "command": "C:/Program Files/R/R-4.2.0/bin/x64/Rscript.exe",
       "linux": {
         "command": "/bin/Rscript"
       },
@@ -260,7 +260,7 @@
     {
       "type": "process",
       "label": "R: routine: Update renv and isolate",
-      "command": "C:/Program Files/R/R-4.1.2/bin/x64/Rscript.exe",
+      "command": "C:/Program Files/R/R-4.2.0/bin/x64/Rscript.exe",
       "linux": {
         "command": "/bin/Rscript"
       },
@@ -286,7 +286,7 @@
       "type": "process",
       "label": "R: misc: test coverage",
       "dependsOn": "R: routine: test units",
-      "command": "C:/Program Files/R/R-4.1.2/bin/x64/Rscript.exe",
+      "command": "C:/Program Files/R/R-4.2.0/bin/x64/Rscript.exe",
       "linux": {
         "command": "/bin/Rscript"
       },
@@ -308,7 +308,7 @@
     {
       "type": "process",
       "label": "R: targets: Start watch page",
-      "command": "C:/Program Files/R/R-4.1.2/bin/x64/Rscript.exe",
+      "command": "C:/Program Files/R/R-4.2.0/bin/x64/Rscript.exe",
       "linux": {
         "command": "/bin/Rscript"
       },
@@ -330,7 +330,7 @@
     {
       "type": "process",
       "label": "R: targets: zDESTROY targets",
-      "command": "C:/Program Files/R/R-4.1.2/bin/x64/Rscript.exe",
+      "command": "C:/Program Files/R/R-4.2.0/bin/x64/Rscript.exe",
       "linux": {
         "command": "/bin/Rscript"
       },
@@ -355,7 +355,7 @@
     {
       "type": "process",
       "label": "R: targets: zPRUNE targets",
-      "command": "C:/Program Files/R/R-4.1.2/bin/x64/Rscript.exe",
+      "command": "C:/Program Files/R/R-4.2.0/bin/x64/Rscript.exe",
       "linux": {
         "command": "/bin/Rscript"
       },
@@ -380,7 +380,7 @@
     {
       "type": "process",
       "label": "R: targets: zPROFILE targets",
-      "command": "C:/Program Files/R/R-4.1.2/bin/x64/Rscript.exe",
+      "command": "C:/Program Files/R/R-4.2.0/bin/x64/Rscript.exe",
       "linux": {
         "command": "/bin/Rscript"
       },
@@ -453,7 +453,7 @@
       // config file is stored on ./index/_bookdown.yml
       "type": "process",
       "label": "R: workflowr: Render thesisdown",
-      "command": "C:/Program Files/R/R-4.1.2/bin/x64/Rscript.exe",
+      "command": "C:/Program Files/R/R-4.2.0/bin/x64/Rscript.exe",
       "linux": {
         "command": "/bin/Rscript"
       },
@@ -478,7 +478,7 @@
     {
       "type": "process",
       "label": "R: workflowr: Live-preview thesisdown",
-      "command": "C:/Program Files/R/R-4.1.2/bin/x64/Rscript.exe",
+      "command": "C:/Program Files/R/R-4.2.0/bin/x64/Rscript.exe",
       "linux": {
         "command": "/bin/Rscript"
       },
@@ -503,7 +503,7 @@
     {
       "type": "process",
       "label": "R: workflowr: Live-preview workflowr",
-      "command": "C:/Program Files/R/R-4.1.2/bin/x64/Rscript.exe",
+      "command": "C:/Program Files/R/R-4.2.0/bin/x64/Rscript.exe",
       "linux": {
         "command": "/bin/Rscript"
       },
@@ -529,7 +529,7 @@
       // config file is stored on ./analysis/_site.yml
       "type": "process",
       "label": "R: workflowr: Pre-build workflowr", // Used while editing. Only project .Rprofile is used.
-      "command": "C:/Program Files/R/R-4.1.2/bin/x64/Rscript.exe",
+      "command": "C:/Program Files/R/R-4.2.0/bin/x64/Rscript.exe",
       "linux": {
         "command": "/bin/Rscript"
       },
@@ -550,7 +550,7 @@
     {
       "type": "process",
       "label": "R: targets: Run main pipeline",
-      "command": "C:/Program Files/R/R-4.1.2/bin/x64/Rscript.exe",
+      "command": "C:/Program Files/R/R-4.2.0/bin/x64/Rscript.exe",
       "linux": {
         "command": "/bin/Rscript"
       },
@@ -575,7 +575,7 @@
     {
       "type": "process",
       "label": "R: targets: Run classifier pipeline",
-      "command": "C:/Program Files/R/R-4.1.2/bin/x64/Rscript.exe",
+      "command": "C:/Program Files/R/R-4.2.0/bin/x64/Rscript.exe",
       "linux": {
         "command": "/bin/Rscript"
       },
@@ -600,7 +600,7 @@
     {
       "type": "process",
       "label": "R: targets: Run regime pipeline",
-      "command": "C:/Program Files/R/R-4.1.2/bin/x64/Rscript.exe",
+      "command": "C:/Program Files/R/R-4.2.0/bin/x64/Rscript.exe",
       "linux": {
         "command": "/bin/Rscript"
       },

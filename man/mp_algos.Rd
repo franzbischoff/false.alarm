@@ -190,10 +190,10 @@ Website: \url{http://www.cs.ucr.edu/~eamonn/MatrixProfile.html}
 
 \code{mpxab()} for the forward and reverse join-similarity.
 
-Other matrix profile computations: 
+Other matrix profile computations:
 \code{\link{stomp}()}
 
-Other matrix profile computations: 
+Other matrix profile computations:
 \code{\link{stomp}()}
 }
 \concept{matrix profile computations}
