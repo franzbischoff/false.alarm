@@ -22,8 +22,8 @@ var_resample_to <- const_sample_freq
 # var_head <- 10
 # The subset that will be keep from the dataset (seq.int(240 * const_sample_freq + 1, 300 * const_sample_freq) means the last 60 seconds)
 # var_subset <- seq.int(240 * const_sample_freq + 1, 300 * const_sample_freq) # last 60 secs
-var_subset <- 1:10000
-var_limit_per_class <- 20
+var_subset <- NULL # 1:10000
+var_limit_per_class <- NULL # 20
 
 var_classes_include <- "paroxysmal_afib"
 var_classes_exclude <- setdiff(const_classes, var_classes_include)
@@ -55,32 +55,32 @@ source(here::here("scripts", "regimes", "predict_regimes.R"), encoding = "UTF-8"
 ############
 # tuning variables
 # var_window_size_tune <- c(150L, 350L)
-var_window_size_tune <- c(100L, 101L)
-var_mp_threshold_tune <- c(0.5, 0.6)
-var_time_constraint_tune <- c(750L, 1000L)
+var_window_size_tune <- c(100L, 350L)
+var_mp_threshold_tune <- c(0, 1)
+var_time_constraint_tune <- c(750L, 2000L)
 var_regime_threshold_tune <- c(0.2, 0.8)
 var_regime_landmark_tune <- c(2, 6)
 var_regime_landmark <- 3
 # which tune algorithm?
 # tune_grid, tune_bayes, tune_sim_anneal, tune_race_anova, tune_race_win_loss
-var_grid_search <- "tune_grid"
+var_grid_search <- "tune_bayes"
 var_grid_size <- 10 # grid and race_* / can be a previous search result
-var_tune_bayes_iter <- 10 # bayes
-var_tune_bayes_initial <- 10 # bayes / can be a previous search result
-var_tune_bayes_no_improve <- 20 # bayes
+var_tune_bayes_iter <- 200 # bayes
+var_tune_bayes_initial <- 100 # bayes / can be a previous search result
+var_tune_bayes_no_improve <- 30 # bayes
 var_tune_sim_anneal_iter <- var_tune_bayes_iter # anneal
 var_tune_sim_anneal_initial <- var_tune_bayes_initial # anneal / can be a previous search result
 var_tune_sim_anneal_no_improve <- var_tune_bayes_no_improve # anneal
 # splits
 # initial split, 3/4 will hold 25% of the data for final, independent, performance.
 var_initial_split_prop <- 3 / 4
-var_vfolds <- 4 # for the inner resample
-var_vfolds_repeats <- 1 # for the inner resample
+var_vfolds <- 5 # for the inner resample
+var_vfolds_repeats <- 2 # for the inner resample
 # parallel
-var_dopar_cores <- 4 # number of cores to use on tuning (inner resample)
+var_dopar_cores <- 20 # number of cores to use on tuning (inner resample)
 
 var_verbose <- TRUE
-var_save_workflow <- TRUE
+var_save_workflow <- FALSE
 var_save_pred <- TRUE
 
 
@@ -89,7 +89,7 @@ library(future)
 library(future.callr)
 # plan(multisession) # create top-level processes
 # plan(multicore) # create child processes
-plan(future.callr::callr) # create child processes with a child process
+future::plan(future.callr::callr, workers = 10) # create child processes with a child process
 
 suppressPackageStartupMessages(library(tidymodels))
 tidymodels::tidymodels_prefer(quiet = TRUE)
@@ -223,6 +223,7 @@ list(
     #### Pipeline: analysis_fitted - Here we will conduct the parameter optimizations ----
     analysis_fitted,
     {
+      future::plan(future.callr::callr, workers = 10)
       source(here::here("scripts", "regimes", "parsnip_model.R"), encoding = "UTF-8")
       # A fix for targets branches that wipes off these classes
       class(analysis_split) <- c("manual_rset", "rset", class(analysis_split))
@@ -285,7 +286,7 @@ list(
             param_info = floss_set,
             initial = var_tune_bayes_initial,
             iter = var_tune_bayes_iter,
-            metrics = yardstick::metric_set(floss_error_micro, floss_error_macro),
+            metrics = yardstick::metric_set(floss_error_macro, floss_error_micro),
             objective = tune::exp_improve(trade_off_decay),
             control = tune::control_bayes(
               no_improve = var_tune_bayes_no_improve,
@@ -302,7 +303,7 @@ list(
             resamples = analysis_split,
             param_info = floss_set,
             grid = var_grid_size,
-            metrics = yardstick::metric_set(floss_error_micro, floss_error_macro),
+            metrics = yardstick::metric_set(floss_error_macro, floss_error_micro),
             control = finetune::control_race(
               verbose_elim = TRUE,
               verbose = var_verbose,
@@ -320,7 +321,7 @@ list(
             resamples = analysis_split,
             param_info = floss_set,
             grid = var_grid_size,
-            metrics = yardstick::metric_set(floss_error_micro, floss_error_macro),
+            metrics = yardstick::metric_set(floss_error_macro, floss_error_micro),
             control = finetune::control_race(
               verbose_elim = TRUE,
               verbose = var_verbose,
@@ -339,7 +340,7 @@ list(
             iter = var_tune_sim_anneal_iter,
             initial = var_tune_sim_anneal_initial,
             param_info = floss_set,
-            metrics = yardstick::metric_set(floss_error_micro, floss_error_macro),
+            metrics = yardstick::metric_set(floss_error_macro, floss_error_micro),
             control = finetune::control_sim_anneal(
               verbose = var_verbose,
               save_workflow = var_save_workflow,

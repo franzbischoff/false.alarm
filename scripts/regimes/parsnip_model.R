@@ -158,7 +158,7 @@ train_regime_model <- function(truth, ts, ..., window_size, regime_threshold, re
     id <- seq.int(1, n)
   }
 
-  res <- list(truth = truth, id = as.character(id), ts = ts)
+  res <- list(truth = truth, id = as.character(id))
 
   cli::cli_inform(c("*" = "Training the model: using `furrr`."))
   floss <- furrr::future_map(ts,
@@ -168,6 +168,8 @@ train_regime_model <- function(truth, ts, ..., window_size, regime_threshold, re
     time_constraint,
     .options = furrr::furrr_options(seed = TRUE, scheduling = 1)
   )
+
+  gc(verbose = FALSE)
   # floss <- purrr::map(
   #   ts,
   #   training_regimes,
