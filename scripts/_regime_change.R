@@ -139,14 +139,16 @@ list(
   tar_target(
     #### Pipeline: testing_split - Create the final testing split for the outer loop ----
     testing_split,
-    { # outer loop, this will be evaluated last
+    {
+      # outer loop, this will be evaluated last
       rsample::testing(initial_resample) # 5
     }
   ),
   tar_target(
     #### Pipeline: training_split - Create the training split for the inner loop ----
     training_split,
-    { # outer-inner loop, this will be cross-validated
+    {
+      # outer-inner loop, this will be cross-validated
       rsample::training(initial_resample) # 15
     }
   ),
