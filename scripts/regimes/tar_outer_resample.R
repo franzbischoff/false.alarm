@@ -1,14 +1,34 @@
-library(tidymodels)
-options(tidymodels.dark = TRUE)
+# devtools::load_all()
+# library(tidymodels)
+# library(magrittr)
+# options(tidymodels.dark = TRUE)
 ##################################### Testing #####################################
-source(here::here("scripts", "regimes", "parsnip_model.R"), encoding = "UTF-8")
-tar_load(analysis_split)
+# source(here::here("dev", "testing_model.R"), encoding = "UTF-8")
+source(here::here("dev", "floss_model.R"), encoding = "UTF-8")
+analysis_split <- readRDS(here::here("dev", "analysis_split.rds"))
 class(analysis_split) <- c("manual_rset", "rset", class(analysis_split))
 the_data <- analysis_split$splits[[1]]$data
-
 the_data <- the_data[1:2, ]
 # the_data$ts[[1]] <- the_data$ts[[1]][1:5000]
 # the_data$ts[[2]] <- the_data$ts[[2]][1:5000]
+
+
+# # # A tibble: 13 × 3
+# #    window_size regime_threshold regime_landmark
+#          <int>            <dbl>           <dbl>
+#  1         175              0.6             7
+#  2         175              0.5             6
+#  3         175              0.7             3.5
+#  4         175              0.4             9
+#  5         175              0.3             8.5
+# #  6         175              0.1             2.5
+#  7         175              0.7             7.5
+#  8         175              0.6             4
+# #  9         175              0.9             4.5
+# 10         175              0.7             8
+# 11         175              0.2             5.5
+# 12         175              0.2            10
+# # 13         175              0.2             3.5
 
 # floss_spec <-
 #   floss_regime_model(
@@ -32,14 +52,14 @@ floss_spec <-
   parsnip::set_engine("floss") %>%
   parsnip::set_mode("regression")
 
-floss_set <- tune::extract_parameter_set_dials(floss_spec)
-# floss_set <- floss_set %>% stats::update(
-#   # window_size = window_size_par(c(100, 150)),
-#   # mp_threshold = mp_threshold_par(c(0.3, 0.6)),
-#   # time_constraint = time_constraint_par(c(700L, 900L)),
-#   regime_threshold = regime_threshold_par(c(0.1, 0.9), trans_round(0.1)),
-#   regime_landmark = regime_landmark_par(c(3, 6), trans_round(0.5))
-# )
+floss_set <- extract_parameter_set_dials(floss_spec)
+floss_set <- floss_set %>% stats::update(
+  window_size = window_size_par(c(100, 125)),
+  # mp_threshold = mp_threshold_par(c(0.5, 0.6)),
+  time_constraint = time_constraint_par(c(700L, 750L))
+  #   regime_threshold = regime_threshold_par(c(0.0, 1), trans_round(0.5))
+  # #   regime_landmark = regime_landmark_par(c(3, 6), trans_round(0.5))
+)
 
 floss_rec <- recipes::recipe(x = head(analysis_split$splits[[1]]$data, 1)) %>%
   recipes::update_role(truth, new_role = "outcome") %>%
@@ -92,13 +112,13 @@ floss_search_res <- floss_spec %>%
 
   #   metrics = yardstick::metric_set(floss_error_macro)
   # )
-  tune::tune_grid( # 100 54s
+  tune_grid( # 100 54s
     preprocessor = floss_rec,
     resamples = analysis_split,
     param_info = floss_set,
     grid = 200,
     metrics = yardstick::metric_set(floss_error_macro),
-    control = tune::control_grid(
+    control = control_grid(
       verbose = TRUE,
       allow_par = FALSE,
       # save_workflow = TRUE,
@@ -108,8 +128,8 @@ floss_search_res <- floss_spec %>%
   )
 
 
-
-
+print(floss_search_res)
+print(collect_metrics(floss_search_res))
 
 # m <- collect_metrics(floss_search_res, summarize = T)
 # tune::tune_bayes( # 48 5.633692 mins
@@ -128,8 +148,8 @@ floss_search_res <- floss_spec %>%
 #   )
 # )
 
-end_time <- Sys.time()
-end_time - start_time
+# end_time <- Sys.time()
+# end_time - start_time
 
 # finetune::tune_race_win_loss( # 100; 52 sec
 #           preprocessor = floss_rec,

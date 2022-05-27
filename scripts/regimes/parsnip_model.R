@@ -1,6 +1,6 @@
-source(here::here("scripts", "common", "score_floss.R"), encoding = "UTF-8")
-source(here::here("scripts", "regimes", "training_regimes.R"), encoding = "UTF-8")
-source(here::here("scripts", "regimes", "predict_regimes.R"), encoding = "UTF-8")
+source(here::here("dev", "score_floss.R"), encoding = "UTF-8")
+source(here::here("dev", "training_regimes.R"), encoding = "UTF-8")
+source(here::here("dev", "predict_regimes.R"), encoding = "UTF-8")
 options(dplyr.summarise.inform = FALSE)
 
 # rlang::local_use_cli(format = TRUE, inline = TRUE, frame = caller_env())
@@ -12,19 +12,7 @@ options(dplyr.summarise.inform = FALSE)
 #   )
 # ))
 
-## Tuning parameters
 
-time_constraint_par <- function(range = c(750L, 5000L), trans = trans_round(50)) {
-  dials::new_quant_param(
-    type = "integer",
-    range = range,
-    inclusive = c(TRUE, TRUE),
-    trans = trans,
-    default = 5000L,
-    label = c(time_constraint = "Time Constraint"),
-    finalize = NULL
-  )
-}
 
 window_size_par <- function(range = c(150L, 250L), trans = trans_round(25)) {
   dials::new_quant_param(
@@ -850,40 +838,6 @@ parsnip::set_encoding(
 
 
 ### Prediction parameters
-
-parsnip::set_pred(
-  model = "floss_regime_model",
-  eng = "floss",
-  mode = "regression",
-  type = "numeric",
-  value = parsnip::pred_value_template(
-    pre = NULL,
-    post = NULL,
-    func = c(fun = "predict"),
-    # Now everything else is put into the `args` slot
-    object = rlang::expr(object$fit), # or quote()?
-    new_data = rlang::expr(new_data), # or quote()?
-    type = "raw"
-    # type = "numeric",
-    # regime_threshold = rlang::expr(object$spec$args$regime_threshold),
-    # verbose = FALSE
-  )
-)
-
-parsnip::set_pred(
-  model = "floss_regime_model",
-  eng = "floss",
-  mode = "regression",
-  type = "raw",
-  value = parsnip::pred_value_template(
-    pre = NULL,
-    post = NULL,
-    func = c(fun = "predict"),
-    # Now everything else is put into the `args` slot
-    object = rlang::expr(object$fit), # or quote()?
-    new_data = rlang::expr(new_data) # or quote()?
-  )
-)
 
 ## Yardstick custom metric
 

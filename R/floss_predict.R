@@ -1,39 +1,30 @@
-#' Extract the changepoints of detected regimes.
-#'
-#' This function is used inside the pipeline. It receives several parameters for establishing the changepoints.
-#' More on details.
-#'
-#' @param floss_list a `list` of each computed 'CAC' (Corrected Arc Counts) in one signal.
-#' @param params a `list` of parameters. More on details.
-#' @param infos a `list` containing the attributes of the imported file and attributes added later
-#'              in the pipeline. More on details.
-#'
-#' @details
-#' This function simulates the streaming scenario by jumping from each element on the `floss_list` that was created
-#' in batches. This allows us to have small snapshots of the ongoing process for inspection, debugging, or stop/resume/update
-#' the pipeline without having to re-simulate the full streaming.
-#'
-#' Some parameters may look redundant but serves as assertation of the pipeline, assuring that the
-#' branches are not being mixed
-#'
-#' The `params` for this function currently are:
-#'
-#' From mapped values (branches):
-#' - window_size (integer)
-#' - regime_threshold (numeric)
-#' - mp_time_constraint (integer)
-#' - floss_time_constraint (integer)
-#'
-#' Common values:
-#' - regime_landmark (integer), currently 3 seconds from the end.
-#' - history (integer), the size of the history buffer
-#'
-#' The `infos` is made available in case there is a need to access the attributes of the file that
-#' contains the signal that is being processed
-#'
-#' @family process_ts_in_file
+floss_predict <- function(floss_list, window_size, time_constraint, regime_threshold,
+                            regime_landmark,
+                            ez = 0.5, history = 5000,
+                            sample_freq = 250, batch = 100) {
+  regimes <- floss_extract(floss_list,
+    params = list(
+      window_size = window_size,
+      ez = ez,
+      regime_threshold = regime_threshold,
+      regime_landmark = floor(regime_landmark * sample_freq), # 3 sec from the end
+      batch = batch,
+      history = history,
+      mp_time_constraint = time_constraint,
+      floss_time_constraint = 0
+    ),
+    infos = list(foo = "bar")
+  )
 
-extract_regimes <- function(floss_list, params, infos) {
+  if (isFALSE(regimes)) {
+    return(1)
+  } else {
+    return(regimes$idxs)
+  }
+}
+
+
+floss_extract <- function(floss_list, params, infos) {
   checkmate::qassert(floss_list, "L+")
   checkmate::qassert(params, "L+")
 
@@ -48,8 +39,6 @@ extract_regimes <- function(floss_list, params, infos) {
       pars$history == params$history
     )
   )
-
-  # browser()
 
   regime_threshold <- params$regime_threshold
   window_size <- params$window_size
@@ -84,8 +73,7 @@ extract_regimes <- function(floss_list, params, infos) {
 
     if (cac[landmark] < regime_threshold) {
       abs_min_idx <- x$offset - history + landmark + 1
-      if ((abs_min_idx - current_abs_min_idx) > floss_constraint) {
-        # IMPROVE: tweak floss_constraint
+      if ((abs_min_idx - current_abs_min_idx) > floss_constraint) { # IMPROVE: tweak floss_constraint
         # cli::cli_inform("abs_min_idx at {abs_min_idx}, value {cac[landmark]}.")
         current_abs_min_idx <<- abs_min_idx
         current_abs_min_value <<- cac[landmark]
@@ -93,8 +81,7 @@ extract_regimes <- function(floss_list, params, infos) {
         all_regimes_values <<- c(all_regimes_values, current_abs_min_value)
       }
       if (cac[landmark] < current_abs_min_value) {
-        if ((abs_min_idx - current_abs_min_idx) < floor(history / 2)) {
-          # IMPROVE: tweak floor(history / 2)
+        if ((abs_min_idx - current_abs_min_idx) < floor(history / 2)) { # IMPROVE: tweak floor(history / 2)
           # cli::cli_inform("abs_min_idx2 at {abs_min_idx}, value {cac[landmark]}.")
           current_abs_min_idx <<- abs_min_idx
           current_abs_min_value <<- cac[landmark]

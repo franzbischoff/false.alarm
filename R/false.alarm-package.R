@@ -28,6 +28,10 @@
 #'
 #' @name false.alarm
 #' @rdname false.alarm
+#' @keywords internal
+"_PACKAGE"
+
+# nocov start
 
 ## usethis namespace: start
 #' @useDynLib false.alarm, .registration = TRUE
@@ -39,3 +43,5 @@ NULL
 ## usethis namespace: end
 #' @importFrom RcppParallel RcppParallelLibs
 NULL
+
+# nocov end

@@ -28,3 +28,13 @@ lst_to_df <- function(lst, keep_attributes = TRUE) {
 
   return(new_df)
 }
+
+clean_splits_data <- function(object) {
+  tidy_splits <- object$splits
+  tidy_splits <- purrr::map(tidy_splits, function(x) {
+    x$data$ts <- NA
+    x
+  })
+  object$splits <- tidy_splits
+  object
+}

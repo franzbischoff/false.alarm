@@ -1,4 +1,6 @@
 # nolint start
+# nocov start
+
 .onLoad <- function(libname, pkgname) {
   tryCatch(debugme::debugme(), error = identity)
 
@@ -52,3 +54,5 @@ mp_dep <- function(version, msg) {
 
   invisible()
 }
+
+# nocov end
