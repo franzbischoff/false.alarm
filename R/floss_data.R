@@ -1,6 +1,7 @@
-parsnip::set_new_model("floss_regime_model")
-
-parsnip::set_model_mode(model = "floss_regime_model", mode = "regression")
+if (!any(parsnip::get_model_env()$models == "floss_regime_model")) {
+  parsnip::set_new_model("floss_regime_model")
+  parsnip::set_model_mode(model = "floss_regime_model", mode = "regression")
+}
 
 # ------------------------------------------------------------------------------
 
@@ -21,7 +22,7 @@ parsnip::set_fit(
     interface = "data.frame",
     data = c(x = "ts", y = "truth", id = "id"), # ts$x[[2]][1:10] regimes[[2]]
     protect = c("ts", "truth"),
-    func = c(fun = "train_regime_model"),
+    func = c(fun = "floss_train_model", pkg = "false.alarm"),
     defaults = list() # verbose = FALSE
   )
 )

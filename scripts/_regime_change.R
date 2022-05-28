@@ -46,10 +46,6 @@ tar_option_set(
   garbage_collection = TRUE
 )
 
-# source(here::here("scripts", "regimes", "training_regimes.R"), encoding = "UTF-8")
-# source(here::here("scripts", "regimes", "predict_regimes.R"), encoding = "UTF-8")
-
-
 # The solutions for detecting when a model is overemphasizing the training set is using out-of-sample data.
 
 ############

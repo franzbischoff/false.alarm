@@ -134,7 +134,7 @@ compute_arcs <- function(right_profile_index, window_size, exclusion_zone, aic_a
     cac[cac < 0 | is.na(cac)] <- 1.0
   } else {
     x <- seq(0, 1, length.out = cac_size)
-    mode <- 0.6311142 # best point to analyze the segment change
+    # mode <- 0.6311142 # best point to analyze the segment change
     a <- 1.939274
     b <- 1.69815
     iac <- a * b * x^(a - 1) * (1 - x^a)^(b - 1) * cac_size / 4.035477 # nolint # kumaraswamy distribution

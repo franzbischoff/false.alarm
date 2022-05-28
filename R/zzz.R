@@ -3,7 +3,12 @@
 
 .onLoad <- function(libname, pkgname) {
   tryCatch(debugme::debugme(), error = identity)
-
+  vctrs::s3_register("stats::predict", "floss_regime_model")
+  vctrs::s3_register("false.alarm::print", "floss_regime_model")
+  vctrs::s3_register("parsnip::update", "floss_regime_model")
+  vctrs::s3_register("parsnip::translate", "floss_regime_model")
+  vctrs::s3_register("parsnip::multi_predict", "_floss_regime_model")
+  vctrs::s3_register("false.alarm::floss_error", "data.frame")
   invisible()
 }
 

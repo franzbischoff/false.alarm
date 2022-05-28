@@ -216,7 +216,7 @@ mov_max <- function(data, window_size) {
   "!DEBUG Computation"
   tryCatch(
     {
-      result <- movmax_rcpp(data, window_size)
+      result <- movmax_rcpp(data, window_size) # nolint
     },
     error = print
   )
@@ -256,7 +256,7 @@ mov_min <- function(data, window_size) {
   "!DEBUG Computation"
   tryCatch(
     {
-      result <- movmin_rcpp(data, window_size)
+      result <- movmin_rcpp(data, window_size) # nolint
     },
     error = print
   )
@@ -289,7 +289,7 @@ mov_std <- function(data, window_size, rcpp = TRUE) {
   tryCatch(
     {
       if (rcpp) {
-        data_sd <- movstd_rcpp(data, window_size)
+        data_sd <- movstd_rcpp(data, window_size) # nolint
       } else {
         # Improve the numerical analysis by subtracting off the series mean
         # this has no effect on the standard deviation.
@@ -324,7 +324,7 @@ movmean_std <- function(data, window_size, rcpp = TRUE) {
   }
 
   if (rcpp) {
-    result <- movmean_std_rcpp(data, window_size)
+    result <- movmean_std_rcpp(data, window_size) # nolint
   } else {
     mov_sum <- cumsum(c(sum(data[1:window_size]), diff(data, window_size)))
     data2 <- data^2
@@ -372,9 +372,9 @@ muinvn <- function(data, window_size, n_workers = 1) {
     p <- RcppParallel::defaultNumThreads()
     n_workers <- min(n_workers, p)
     RcppParallel::setThreadOptions(numThreads = n_workers)
-    result <- muinvn_rcpp_parallel(data, window_size)
+    result <- muinvn_rcpp_parallel(data, window_size) # nolint
   } else {
-    result <- muinvn_rcpp(data, window_size)
+    result <- muinvn_rcpp(data, window_size) # nolint
   }
 
   return(result)
@@ -391,6 +391,6 @@ muinvn <- function(data, window_size, n_workers = 1) {
 zero_crossing <- function(data, window_size) {
   checkmate::qassert(data, "N+")
   window_size <- as.integer(checkmate::qassert(window_size, "X+"))
-  result <- zero_crossing_rcpp(data, window_size)
+  result <- zero_crossing_rcpp(data, window_size) # nolint
   return(result)
 }

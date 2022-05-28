@@ -35,9 +35,9 @@ Imports:
     targets (>= 0.2.0),
     thesisdown (>= 0.1.9),
     tibble (>= 3.1.6),
-    tidymodels (>= 0.1.4),
     visNetwork (>= 2.1.0),
     workflowr (>= 1.6.2),
+    tune (>= 0.2.0.9002),
     yardstick (>= 0.0.9)
 Suggests:
     clustermq (>= 0.8.95),
@@ -75,7 +75,8 @@ Remotes:
     r-lib/testthat,
     rstudio/bookdown,
     rstudio/rmarkdown,
-    wlandau/gittargets
+    wlandau/gittargets,
+    franzbischoff/tune
 Config/testthat/edition: 3
 Config/testthat/parallel: false
 Encoding: UTF-8

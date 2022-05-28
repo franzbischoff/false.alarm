@@ -19,7 +19,8 @@ if (dev_mode) {
 # CONCEPT: Concept: in Euclidean space, values above sqrt(2*w) are negatively correlated on Pearson's
 # Contrast Profile: CPm = ( MPm(+−) − MPm(++))/ sqrt(2 * m)
 # CONCEPT: how near to consider to update the MP
-# CONCEPT: density of similarity changes a little bit from the size of constraint, but a lot due to the window size. but, the sum of the density from 50-100 doesn't change in any case
+# CONCEPT: density of similarity changes a little bit from the size of constraint,
+#    but a lot due to the window size. but, the sum of the density from 50-100 doesn't change in any case
 
 # CONCEPT: https://www.wikiwand.com/en/Platt_scaling for classification
 
@@ -35,6 +36,7 @@ if (dev_mode) {
 #### General: Config variables ----
 
 options(tidyverse.quiet = TRUE)
+options(dplyr.summarise.inform = FALSE)
 options(target_ds_path = "inst/extdata/physionet")
 options(crayon.enabled = TRUE)
 

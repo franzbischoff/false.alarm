@@ -8,7 +8,7 @@
 floss_regime_model <- function(mode = "regression",
                                window_size = NULL, time_constraint = NULL,
                                mp_threshold = NULL, regime_threshold = NULL,
-                                regime_landmark = NULL, engine = "floss") {
+                               regime_landmark = NULL, engine = "floss") {
   # Check for correct mode
   if (mode != "regression") {
     rlang::abort("`mode` should be 'regression'")
@@ -87,7 +87,7 @@ update.floss_regime_model <- function(object,
       object$args <- args
       object$eng_args <- eng_args
     } else {
-      null_args <- purrr::map_lgl(args, null_value)
+      null_args <- purrr::map_lgl(args, parsnip::null_value)
       if (any(null_args)) {
         args <- args[!null_args]
       }
@@ -140,7 +140,6 @@ translate.floss_regime_model <- function(x, engine = x$engine, ...) { # nolint
   }
   x
 }
-
 
 check_args.floss_regime_model <- function(object) { # nolint
 
@@ -223,12 +222,6 @@ check_args.floss_regime_model <- function(object) { # nolint
 }
 
 
-
-# object = object$fit
-# new_data = new_data
-# type = "numeric"
-# regime_threshold = object$spec$args$regime_threshold
-# verbose = FALSE
 #' @export
 predict.floss_regime_model <- function(object, new_data, type = NULL, regime_threshold = NULL, regime_landmark = NULL, ...) { # nolint
   # cli::cli_alert(c("*" = "predict.floss_regime_model <<- work here"))
@@ -245,8 +238,6 @@ predict.floss_regime_model <- function(object, new_data, type = NULL, regime_thr
   if (n == 0) {
     rlang::abort("There are zero rows in the new_data set.")
   }
-
-  dots <- rlang::dots_list(...)
 
   new_data <- tibble::tibble(new_data)
   obj_fit <- object$fitted.values

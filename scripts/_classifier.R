@@ -306,6 +306,7 @@ list(
 # rolling_origin {rsample}
 
 #### Pipeline: Join targets ----
-# list(r_input, r_dataset, b_initial_split, b_data_pos_neg, b_find_shapelets, b_find_neg_shapelets, b_data_pos_neg, b_find_val_shapelets, b_find_neg_val_shapelets)
+# list(r_input, r_dataset, b_initial_split, b_data_pos_neg, b_find_shapelets,
+#   b_find_neg_shapelets, b_data_pos_neg, b_find_val_shapelets, b_find_neg_val_shapelets)
 
 #### Pipeline: End ----

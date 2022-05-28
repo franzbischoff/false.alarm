@@ -52,7 +52,7 @@ extract_regimes <- function(floss_list, params, infos) {
   # browser()
 
   regime_threshold <- params$regime_threshold
-  window_size <- params$window_size
+  # window_size <- params$window_size
   history <- params$history
   landmark <- history - params$regime_landmark # here is where we look for the minimum value
 
@@ -77,7 +77,7 @@ extract_regimes <- function(floss_list, params, infos) {
     # cac[cac > regime_threshold] <- 1
     # cac[seq.int(1, history - (4 * 250))] <- 1
     cac[seq.int(1, history - floss_constraint)] <- 1
-    min_trigger_idx <- which.min(cac)
+    # min_trigger_idx <- which.min(cac)
     # if (min_trigger_idx > landmark) {
     #   rlang::inform("min_trigger at ", min_trigger_idx, " for landmark ", landmark, ".")
     # }

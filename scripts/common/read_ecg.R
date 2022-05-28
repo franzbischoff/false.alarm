@@ -200,8 +200,8 @@ read_ecg <- function(filename, plot = FALSE, subset = NULL,
   # Mapping should be similar to that of rdsamp.c:
   # http://www.physionet.org/physiotools/wfdb/app/rdsamp.c
   for (i in seq_len(n_signals)) {
-    checkmate::assert_true(csv_content[[i]][1] == siginfo[[i]]$first)
-    chksum <- (sum(csv_content[[i]]) %% 2^16)
+    checkmate::assert_true(mat_content$val[i, 1] == siginfo[[i]]$first)
+    chksum <- (sum(mat_content$val[i, ]) %% 2^16)
     if (chksum >= 2^15) {
       chksum <- chksum - 2^16
     }
@@ -223,7 +223,11 @@ read_ecg <- function(filename, plot = FALSE, subset = NULL,
       signals[[signal]] <- signals[[signal]][subset]
     }
 
-    attr(signals[[signal]], "info") <- list(signal = signal, baseline = siginfo[[i]]$baseline, gain = siginfo[[i]]$gain, unit = siginfo[[i]]$unit, subset = subset_minmax)
+    attr(signals[[signal]], "info") <- list(
+      signal = signal, baseline = siginfo[[i]]$baseline,
+      gain = siginfo[[i]]$gain,
+      unit = siginfo[[i]]$unit, subset = subset_minmax
+    )
   }
 
   length_signal <- length(signals[[1]])
@@ -233,7 +237,10 @@ read_ecg <- function(filename, plot = FALSE, subset = NULL,
   output <- list()
   output[[basename]] <- c(list(time = tm), signals)
 
-  attr(output[[basename]], "info") <- list(alarm = alarm, true = as.logical(true_false), filename = basename, frequency = freq_signal, id = "base", ids = "base")
+  attr(output[[basename]], "info") <- list(
+    alarm = alarm, true = as.logical(true_false), filename = basename,
+    frequency = freq_signal, id = "base", ids = "base"
+  )
 
   if (plot) {
     plot_ecg(output[[basename]])
@@ -475,7 +482,10 @@ read_ecg_csv <- function(filename, plot = FALSE, subset = NULL,
       signals[[signal]] <- signals[[signal]][subset]
     }
 
-    attr(signals[[signal]], "info") <- list(signal = signal, baseline = siginfo[[i]]$baseline, gain = siginfo[[i]]$gain, unit = siginfo[[i]]$unit, subset = subset_minmax)
+    attr(signals[[signal]], "info") <- list(
+      signal = signal, baseline = siginfo[[i]]$baseline,
+      gain = siginfo[[i]]$gain, unit = siginfo[[i]]$unit, subset = subset_minmax
+    )
   }
 
   length_signal <- length(signals[[1]])
@@ -485,7 +495,10 @@ read_ecg_csv <- function(filename, plot = FALSE, subset = NULL,
   output <- list()
   output[[basename]] <- c(list(time = tm), signals)
 
-  attr(output[[basename]], "info") <- list(alarm = alarm, true = as.logical(true_false), filename = basename, frequency = freq_signal, id = "base", ids = "base")
+  attr(output[[basename]], "info") <- list(
+    alarm = alarm, true = as.logical(true_false),
+    filename = basename, frequency = freq_signal, id = "base", ids = "base"
+  )
 
   if (plot) {
     plot_ecg(output[[basename]])
@@ -513,7 +526,8 @@ read_ecg_csv <- function(filename, plot = FALSE, subset = NULL,
 #' @param resample_to integer. If not zero, sets the new frequency of the signal. E.g.: 250. Only used if `resample_from` is not zero. Default is 0.
 #'
 
-read_ecg_with_atr <- function(filename, subset = NULL, classes = c("all", "persistent_afib", "paroxysmal_afib", "non_afib"), resample_from = 0, resample_to = 0,
+read_ecg_with_atr <- function(filename, subset = NULL, classes = c("all", "persistent_afib", "paroxysmal_afib", "non_afib"),
+                              resample_from = 0, resample_to = 0,
                               normalize = TRUE) {
   checkmate::assert_string(filename, min.chars = 3)
   classes <- match.arg(classes, several.ok = TRUE)
@@ -680,7 +694,10 @@ read_ecg_with_atr <- function(filename, subset = NULL, classes = c("all", "persi
       signals[[name]] <- signals[[name]][subset]
     }
 
-    attr(signals[[name]], "info") <- list(signal = name, baseline = siginfo[[i]]$baseline, gain = siginfo[[i]]$gain, unit = siginfo[[i]]$unit, subset = subset_minmax)
+    attr(signals[[name]], "info") <- list(
+      signal = name, baseline = siginfo[[i]]$baseline,
+      gain = siginfo[[i]]$gain, unit = siginfo[[i]]$unit, subset = subset_minmax
+    )
   }
 
   if (resample_from > 0) {
@@ -748,7 +765,8 @@ read_ecg_with_atr <- function(filename, subset = NULL, classes = c("all", "persi
 #'   - frequency: the frequency of the observations, in Hz.
 #'
 
-read_and_prepare_ecgs <- function(file_paths, subset = NULL, true_alarm = NULL, limit_per_class = NULL, data_type = NULL, resample_from = 0, resample_to = 0, normalize = FALSE) {
+read_and_prepare_ecgs <- function(file_paths, subset = NULL, true_alarm = NULL,
+                                  limit_per_class = NULL, data_type = NULL, resample_from = 0, resample_to = 0, normalize = FALSE) {
   checkmate::qassert(file_paths, "S+")
   checkmate::qassert(subset, c("0", "X"))
   checkmate::qassert(true_alarm, c("0", "B"))

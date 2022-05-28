@@ -1,7 +1,7 @@
 floss_predict <- function(floss_list, window_size, time_constraint, regime_threshold,
-                            regime_landmark,
-                            ez = 0.5, history = 5000,
-                            sample_freq = 250, batch = 100) {
+                          regime_landmark,
+                          ez = 0.5, history = 5000,
+                          sample_freq = 250, batch = 100) {
   regimes <- floss_extract(floss_list,
     params = list(
       window_size = window_size,
@@ -41,7 +41,7 @@ floss_extract <- function(floss_list, params, infos) {
   )
 
   regime_threshold <- params$regime_threshold
-  window_size <- params$window_size
+  # window_size <- params$window_size
   history <- params$history
   landmark <- history - params$regime_landmark # here is where we look for the minimum value
 
@@ -66,7 +66,7 @@ floss_extract <- function(floss_list, params, infos) {
     # cac[cac > regime_threshold] <- 1
     # cac[seq.int(1, history - (4 * 250))] <- 1
     cac[seq.int(1, history - floss_constraint)] <- 1
-    min_trigger_idx <- which.min(cac)
+    # min_trigger_idx <- which.min(cac)
     # if (min_trigger_idx > landmark) {
     #   rlang::inform("min_trigger at ", min_trigger_idx, " for landmark ", landmark, ".")
     # }

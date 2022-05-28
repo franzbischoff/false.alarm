@@ -19,7 +19,7 @@
 znorm <- function(data, rcpp = TRUE) {
   # Rcpp is faster
   if (rcpp) {
-    return(znorm_rcpp(data))
+    return(znorm_rcpp(data)) #nolint
   }
 
   data_mean <- mean(data)
@@ -50,7 +50,7 @@ znorm <- function(data, rcpp = TRUE) {
 #' correlation <- ed_corr(fake_data, 50)
 ed_corr <- function(data, w, rcpp = TRUE) {
   if (rcpp) {
-    return(ed_corr_rcpp(data, w))
+    return(ed_corr_rcpp(data, w)) #nolint
   } else {
     return((2 * w - data^2) / (2 * w))
   }
@@ -69,7 +69,7 @@ ed_corr <- function(data, w, rcpp = TRUE) {
 #' euclidean <- corr_ed(fake_data, 50)
 corr_ed <- function(data, w, rcpp = TRUE) {
   if (rcpp) {
-    return(corr_ed_rcpp(data, w))
+    return(corr_ed_rcpp(data, w)) #nolint
   } else {
     sqrt(2 * w * (1 - ifelse(data > 1, 1, data)))
   }
@@ -93,7 +93,7 @@ mode <- function(x, rcpp = FALSE) {
 
   # Rcpp is not faster
   if (rcpp) {
-    return(mode_rcpp(x))
+    return(mode_rcpp(x)) #nolint
   }
 
   ux <- unique(x)
@@ -116,7 +116,7 @@ std <- function(data, na.rm = FALSE, rcpp = TRUE) { # nolint
 
   # Rcpp is faster
   if (rcpp) {
-    return(std_rcpp(data, na.rm))
+    return(std_rcpp(data, na.rm)) #nolint
   }
 
   sdx <- stats::sd(data, na.rm)
@@ -145,7 +145,7 @@ normalize <- function(data, min_lim = 0, max_lim = 1, rcpp = FALSE) {
   if (rcpp) {
     na <- sort(which(is.na(data)))
     data <- data[!is.na(data)]
-    data <- normalize_rcpp(data, min_lim, max_lim)
+    data <- normalize_rcpp(data, min_lim, max_lim) #nolint
     for (n in na) {
       data <- append(data, NA, n - 1)
     }
@@ -195,7 +195,7 @@ complexity <- function(data) {
 #' res <- binary_split(fake_data)
 binary_split <- function(n, rcpp = TRUE) {
   if (rcpp) {
-    res <- binary_split_rcpp(as.integer(n))
+    res <- binary_split_rcpp(as.integer(n)) #nolint
     return(as.integer(res))
   }
 
