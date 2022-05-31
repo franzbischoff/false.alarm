@@ -932,10 +932,10 @@
     },
     "future": {
       "Package": "future",
-      "Version": "1.25.0",
+      "Version": "1.26.1",
       "Source": "Repository",
       "Repository": "CRAN",
-      "Hash": "877024e372cf61e41f5d13eafd8d4bac",
+      "Hash": "cd20396d5395828de2e12d60467f6a53",
       "Requirements": [
         "digest",
         "globals",
@@ -1146,10 +1146,10 @@
     },
     "gt": {
       "Package": "gt",
-      "Version": "0.5.0",
+      "Version": "0.6.0",
       "Source": "Repository",
       "Repository": "CRAN",
-      "Hash": "f2640b730afa504e9a62755041b598c3",
+      "Hash": "842059d3f71b14e812500b23eeea765e",
       "Requirements": [
         "base64enc",
         "bitops",
@@ -1443,10 +1443,10 @@
     },
     "languageserver": {
       "Package": "languageserver",
-      "Version": "0.3.12",
+      "Version": "0.3.13",
       "Source": "Repository",
       "Repository": "CRAN",
-      "Hash": "f62ed8b09fd56cd70291bd077bc52c4b",
+      "Hash": "ee396ad16694fbb3fca42646c6349dd3",
       "Requirements": [
         "R6",
         "callr",
@@ -1719,10 +1719,10 @@
     },
     "openssl": {
       "Package": "openssl",
-      "Version": "2.0.1",
+      "Version": "2.0.2",
       "Source": "Repository",
       "Repository": "CRAN",
-      "Hash": "edde731e84cf3d42aa9b7f04b8de5941",
+      "Hash": "6d3bef2e305f55c705c674653c7d7d3d",
       "Requirements": [
         "askpass"
       ]
@@ -2120,10 +2120,10 @@
     },
     "renv": {
       "Package": "renv",
-      "Version": "0.15.4",
+      "Version": "0.15.5",
       "Source": "Repository",
       "Repository": "CRAN",
-      "Hash": "c1078316e1d4f70275fc1ea60c0bc431",
+      "Hash": "6a38294e7d12f5d8e656b08c5bd8ae34",
       "Requirements": []
     },
     "reticulate": {
@@ -2171,9 +2171,9 @@
       "RemoteUsername": "r-lib",
       "RemoteRepo": "rlang",
       "RemoteRef": "main",
-      "RemoteSha": "887cbe3e24e83a393c95005a6dec18df41eccf4d",
+      "RemoteSha": "9239d113c456d4845f37f09e7af5767b557558f5",
       "RemoteHost": "api.github.com",
-      "Hash": "a7c7f96f3a56b08e01f7a6537a316a21",
+      "Hash": "22c5508d499d98d3a671f641179c172e",
       "Requirements": []
     },
     "rlist": {
@@ -2191,15 +2191,15 @@
     },
     "rmarkdown": {
       "Package": "rmarkdown",
-      "Version": "2.14.1",
+      "Version": "2.14.2",
       "Source": "GitHub",
       "RemoteType": "github",
       "RemoteUsername": "rstudio",
       "RemoteRepo": "rmarkdown",
       "RemoteRef": "main",
-      "RemoteSha": "84dfc6674083f355d4f8c87dca8d85f85ca53bad",
+      "RemoteSha": "f2bfeec501441abfa17b64fce12de7157bd75940",
       "RemoteHost": "api.github.com",
-      "Hash": "c167abff0286aa41ad13537ccd4f4a81",
+      "Hash": "e61845eae0f07620dcade42e8b1e5d22",
       "Requirements": [
         "bslib",
         "evaluate",
@@ -2629,9 +2629,9 @@
       "RemoteUsername": "r-lib",
       "RemoteRepo": "testthat",
       "RemoteRef": "main",
-      "RemoteSha": "56d0ad0481c52b86b115cb05971891c04115ff12",
+      "RemoteSha": "2f48ca6c86fe205cd9283cd6cc8eb0e2a07031b5",
       "RemoteHost": "api.github.com",
-      "Hash": "e15216ac2d24af4d9ab72067d179798d",
+      "Hash": "d39c20f35cf02c2319d349986fe34ab4",
       "Requirements": [
         "R6",
         "brio",
@@ -2854,10 +2854,10 @@
     },
     "usethis": {
       "Package": "usethis",
-      "Version": "2.1.5",
+      "Version": "2.1.6",
       "Source": "Repository",
       "Repository": "CRAN",
-      "Hash": "c499f488e6dd7718accffaee5bc5a79b",
+      "Hash": "a67a22c201832b12c036cc059f1d137d",
       "Requirements": [
         "cli",
         "clipr",
