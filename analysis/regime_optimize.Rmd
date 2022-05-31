@@ -1,0 +1,194 @@
+---
+title: "Regime changes"
+author: "Francisco Bischoff"
+date: "on `r format(Sys.time(), '%B %d, %Y')`"
+output:
+  bookdown::html_document2:
+    base_format: workflowr::wflow_html
+    toc: true
+    fig_caption: yes
+    number_sections: yes
+bibliography: ../papers/references.bib
+link-citations: true
+csl: ../thesis/csl/ama.csl
+css: style.css
+editor_options:
+  chunk_output_type: console
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(
+  echo = FALSE, fig.align = "center", autodep = TRUE,
+  fig.height = 5, fig.width = 10,
+  tidy = "styler",
+  tidy.opts = list(strict = TRUE)
+)
+
+if (knitr::is_latex_output()) {
+  knitr::opts_chunk$set(dev = "pdf")
+} else {
+  knitr::opts_chunk$set(dev = "svg")
+}
+library(here)
+library(glue)
+library(visNetwork)
+library(tibble)
+library(kableExtra)
+library(gridExtra)
+# library(targets)
+library(ggplot2)
+
+my_graphics <- function(image_name, base_path = here::here("docs", "figure")) {
+  file_path <- glue::glue("{base_path}/{image_name}")
+
+  if (knitr::is_latex_output()) {
+    if (file.exists(glue::glue("{file_path}.pdf"))) {
+      file_path <- glue::glue("{file_path}.pdf")
+    } else if (file.exists(glue::glue("{file_path}.png"))) {
+      file_path <- glue::glue("{file_path}.png")
+    } else {
+      file_path <- glue::glue("{file_path}.jpg")
+    }
+  } else {
+    if (file.exists(glue::glue("{file_path}.svg"))) {
+      file_path <- glue::glue("{file_path}.svg")
+    } else if (file.exists(glue::glue("{file_path}.png"))) {
+      file_path <- glue::glue("{file_path}.png")
+    } else {
+      file_path <- glue::glue("{file_path}.jpg")
+    }
+  }
+
+  knitr::include_graphics(file_path)
+}
+
+my_kable <- function(title, label, content) {
+  res <- glue(r"(<br><table class="tg"><caption>)", "(\\#tab:{label}) {title}", r"(</caption>{content}</table>)")
+  out <- structure(res, format = "html", class = "knitr_kable")
+  attr(out, "format") <- "html"
+  out
+}
+```
+
+
+# Objectives and the research question
+
+### Detecting regime changes
+
+The regime change approach will be using the _Arc Counts_ concept, used on the FLUSS (Fast Low-cost
+Unipotent Semantic Segmentation) algorithm, as explained by Gharghabi, _et al._,[@gharghabi2018].
+
+The FLUSS (and FLOSS, the online version) algorithm is built on top of the Matrix Profile
+(MP)[@Yeh2017a], described on section \@ref(matrixprofile). Recalling that the MP and the
+companion Profile Index (PI) are two vectors holding information about the 1-NN. One can imagine
+several "arcs" starting from one "index" to another. This algorithm is based on the assumption that
+between two regimes, the most similar shape (its nearest neighbor) is located on "the same side", so
+the number of "arcs" decreases when there is a change in the regime and increases again. As show on
+Fig. \@ref(fig:arcsoriginal). This drop on the _Arc Counts_ is a signal that a change in the
+shape of the signal has happened.
+
+```{r arcsoriginal, echo=FALSE, out.width="100%", fig.cap="FLUSS algorithm, using arc counts."}
+my_graphics("fluss_arcs", "figure")
+```
+
+The choice of the FLOSS algorithm (the online version of FLUSS) is founded on the following arguments:
+
+-  **Domain Agnosticism:** the algorithm makes no assumptions about the data as opposed to most
+   available algorithms to date.
+-  **Streaming:** the algorithm can provide real-time information.
+-  **Real-World Data Suitability:** the objective is not to _explain_ all the data. Therefore, areas
+   marked as "don't know" areas are acceptable.
+-  **FLOSS is not:** a change point detection algorithm [@aminikhanghahi2016]. The interest here is
+   changes in the shapes of a sequence of measurements.
+
+Other algorithms we can cite are based on Hidden Markov Models (HMM) that require at least two
+parameters to be set by domain experts: cardinality and dimensionality reduction. The most
+attractive alternative could be the Autoplait [@Matsubara2014], which is also domain agnostic and
+parameter-free. It segments the time series using Minimum Description Length (MDL) and recursively
+tests if the region is best modeled by one or two HMM. However, Autoplait is designed for batch
+operation, not streaming, and also requires discrete data. FLOSS was demonstrated to be superior in
+several datasets in its original paper. In addition, FLOSS is robust to several changes in data like
+downsampling, bit depth reduction, baseline wandering, noise, smoothing, and even deleting 3% of the
+data and filling with simple interpolation. Finally, the most important, the algorithm is light and
+suitable for low-power devices.
+
+In the MP domain, it is worth also mentioning another possible algorithm: the Time Series Snippets
+[@Imani2018], based on MPdist [@gharghabi2018b]. The MPdist measures the distance between two
+sequences, considering how many similar sub-sequences they share, no matter the matching order. It
+proved to be a useful measure (not a metric) for meaningfully clustering similar sequences. Time
+Series Snippets exploits MPdist properties to summarize a dataset extracting the $k$ sequences
+representing most of the data. The final result seems to be an alternative for detecting regime
+changes, but it is not. The purpose of this algorithm is to find which pattern(s) explains most of
+the dataset. Also, it is not suitable for streaming data. Lastly, MPdist is quite expensive compared
+to the trivial Euclidean distance.
+
+The regime change detection will be evaluated following the criteria explained in section
+\@ref(evaluation).
+
+## Evaluation of the algorithms {#evaluation}
+
+The subsampling method used on both algorithms, regime change, and classification, will be
+the Cross-Validation, as the learning task will be in batches.
+
+Other options dismissed [@Bischl2012]:
+
+* Leave-One-Out Cross-Validation: has better properties for regression than for classification. It
+  has a high variance as an estimator of the mean loss. It also is asymptotically inconsistent and
+  tends to select too complex models. It is demonstrated empirically that 10-fold CV is often
+  superior.
+
+* Bootstrapping: while it has low variance, it may be optimistic-biased on more complex models.
+  Also, its resampling method with replacement can leak information into the assessment set.
+
+* Subsampling: is like bootstrapping, but without replacement. The only argument for not choosing it
+  is that we make sure all the data is used for analysis and assessment with Cross-Validation.
+
+
+### Regime change
+
+The regime change detection will use subsampling (bootstrapping can lead to substantial bias toward
+more complex models) in the Outer resampling and cross-validation in the Inner resampling. How the
+evaluation will be performed and why the use of cross-validation will be explained in section
+\@ref(evaluation).
+
+```{r regimedetection, echo=FALSE, out.width="90%"}
+#| fig.cap = "Pipeline for regime change detection.
+#|  The full dataset (containing several patients) is divided into a Training set and a Test set.
+#|  The Training set is then resampled in an Analysis set and an Assessment set. The former is
+#|  used for training/parameter tuning and the latter for assessing the result. The best parameters
+#|  are then used for evaluation on the Test set. This may be repeated several times."
+
+my_graphics("draw-regime-model", "figure")
+```
+
+
+A detailed discussion about the evaluation process of segmentation algorithms is made by the
+FLUSS/FLOSS author [@gharghabi2018]. Previous researches have used precision/recall or derived
+measures for performance. The main issue is how to assume that the algorithm was correct? Is this a
+miss if the ground truth says the change occurred at location 10,000, and the algorithm detects a
+change at location 10,001?
+
+As pointed out by the author, several independent researchers have suggested a temporal tolerance,
+that solves one issue but has a hard time penalizing any tiny miss beyond this tolerance.
+
+The second issue is an over-penalization of an algorithm in which most of the detections are good,
+but just one (or a few) is poor.
+
+The author proposes the solution depicted in Fig. \@ref(fig:flosseval). It gives 0 as the best
+score and 1 as the worst. The function sums the distances between the ground truth locations and the
+locations suggested by the algorithm. The sum is then divided by
+<!--the product of the number of segments, and then -->
+the length of the time series to normalize the range to [0, 1].
+
+The goal is to minimize this score.
+
+<!--
+TODO: review the problem when there are too many detections
+-->
+
+```{r flosseval, echo=FALSE, out.width="100%"}
+#| fig.cap="Regime change evaluation. The top line illustrates the ground truth, and the
+#|  bottom line the locations reported by the algorithm. Note that multiple proposed locations
+#|  can be mapped to a single ground truth point."
+my_graphics("floss_eval", "figure")
+```

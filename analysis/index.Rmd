@@ -15,8 +15,6 @@ editor_options:
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = FALSE, fig.align = "center", dev = "svg")
 library(here)
-library(visNetwork)
-
 # knitr::opts_knit$set(root.dir = here("docs"), base.dir = here("docs"))
 ```
 
@@ -57,5 +55,11 @@ Last Targets Run network:
 
 ```{r network, echo=FALSE, fig.width=10}
 network <- readRDS(here("output/network.rds"))
-visInteraction(network, hover = TRUE, multiselect = TRUE, tooltipDelay = 0)
+network <- network %>%
+  visNetwork::visPhysics(hierarchicalRepulsion = list(
+    springLength = 1,
+    avoidOverlap = 0.5,
+    nodeDistance = 120
+  ))
+visNetwork::visInteraction(network, hover = TRUE, multiselect = TRUE, tooltipDelay = 100)
 ```
