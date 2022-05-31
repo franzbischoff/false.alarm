@@ -1,4 +1,4 @@
-# Sys.setenv(TAR_PROJECT = "regimetest")
+# Sys.setenv(TAR_PROJECT = "regime_optimize")
 
 source(here::here("scripts", "_globals.R"), local = .GlobalEnv, encoding = "UTF-8")
 

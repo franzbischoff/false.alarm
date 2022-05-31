@@ -17,8 +17,8 @@ regime_change:
   script: scripts/_regime_change.R
   workers: 10
 
-regimetest:
+regime_optimize:
   inherits: main
-  store: _regimetest
-  script: scripts/_regimetest.R
+  store: _regime_optimize
+  script: scripts/_regime_optimize.R
   workers: 10
