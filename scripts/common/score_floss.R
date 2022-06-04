@@ -65,6 +65,66 @@ compute_score_regimes <- function(data_regimes, params, infos) {
 
 
 score_regimes <- function(gtruth, reported, data_size) {
+  gtruth <- sort(gtruth[gtruth > 0])
+  reported <- sort(reported[reported > 0])
+
+  truth_len <- length(gtruth)
+  reported_len <- length(reported)
+
+  min_points <- min(truth_len, reported_len)
+
+  minv <- rep(Inf, reported_len)
+
+  k <- 1
+  l <- NULL
+
+  for (j in seq.int(1, reported_len)) {
+    for (i in seq.int(k, truth_len)) {
+      if (abs(gtruth[i] - reported[j]) <= minv[j]) {
+        minv[j] <- abs(gtruth[i] - reported[j])
+        k <- i # pruning, truth and reported must be sorted
+      } else {
+        l <- c(l, k)
+        break # pruning, truth and reported must be sorted
+      }
+    }
+  }
+
+  if (truth_len > reported_len) {
+    lefties <- seq_len(truth_len)
+    lefties <- lefties[!(lefties %in% l)]
+    minv_left <- rep(Inf, truth_len)
+    k <- 1
+    for (j in lefties) {
+      for (i in seq.int(k, reported_len)) {
+        if (abs(gtruth[j] - reported[i]) <= minv_left[j]) {
+          minv_left[j] <- abs(gtruth[j] - reported[i])
+          k <- i # pruning, truth and reported must be sorted
+        } else {
+          break # pruning, truth and reported must be sorted
+        }
+      }
+    }
+
+    minv_left <- minv_left[is.finite(minv_left)]
+    minv <- c(minv, minv_left)
+  }
+
+  score <- sum(minv) / (min_points * data_size)
+  score
+}
+
+
+score_regimes_old <- function(gtruth, reported, data_size) {
+
+  # FIXME: Fix this on regime_test
+  # idxs <- sort(regime$idxs)
+  # idxs <- idxs[diff(idxs) > params$batch] # this removes the redundant regime changes
+  # score <- score_regimes(params$gold_truth, regime$idxs, length(data))
+  # "!DEBUG Finished Score."
+  # regime$score <- score
+
+
   gtruth <- gtruth[gtruth > 0]
   reported <- reported[reported > 0]
 
@@ -74,6 +134,7 @@ score_regimes <- function(gtruth, reported, data_size) {
   out <- max(m, n)
   inn <- min(m, n)
 
+  # FIXME: by default, outer should be the reported (paper!); swaping this gives different results.
   if (out == m) {
     outer <- sort(gtruth)
     inner <- sort(reported)

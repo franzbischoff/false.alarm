@@ -1346,9 +1346,9 @@ floss_error_vec <- function(truth, estimate, data_size, na_rm = TRUE, estimator 
     cli::cli_alert(c("*" = "floss_error_vec: dots_names {names(rlang::dots_list(..., .preserve_empty = TRUE))}"))
   }
 
-  cli::cli_inform(c("*" = "Evaluating model: <<- This is usually fast."))
-  cli::cli_inform(c("*" = "Evaluating model: estimator {estimator}."))
-  cli::cli_inform(c("*" = "Evaluating model: number of recordings {length(estimate)}."))
+  # cli::cli_inform(c("*" = "Evaluating model: <<- This is usually fast."))
+  # cli::cli_inform(c("*" = "Evaluating model: estimator {estimator}."))
+  # cli::cli_inform(c("*" = "Evaluating model: number of recordings {length(estimate)}."))
 
   floss_error_impl <- function(truth, estimate, data_size, ...) {
     res <- score_regimes(truth, estimate, data_size)
@@ -1358,6 +1358,13 @@ floss_error_vec <- function(truth, estimate, data_size, na_rm = TRUE, estimator 
   # if (length(data_size) <= 2) {
   #   cli::cli_abort(c("x" = "data_size len: {length(data_size)}"))
   # }
+  estimate <- purrr::map(estimate, function(x) {
+    x <- sort(x)
+    mask <- c(diff(x) > 100, TRUE)
+    x <- x[mask]
+    x
+  })
+  # 100 is the batch size, this removes the redundant regime changes
 
   for (i in seq.int(1, length(estimate))) {
     lt <- length(truth[[i]])
@@ -1385,8 +1392,25 @@ floss_error_vec <- function(truth, estimate, data_size, na_rm = TRUE, estimator 
     )
 
     res <- sum(res)
+
     div <- purrr::reduce(data_size, sum) + 1
     return(res / div) # micro is the sum of the scores / length(all_data_set)
+  } else if (estimator == "macro_median") {
+    # cli::cli_inform(c("*" = "floss_error_vec <<- macro"))
+    res <- purrr::pmap_dbl(
+      list(truth, estimate, data_size),
+      ~ yardstick::metric_vec_template(
+        metric_impl = floss_error_impl,
+        truth = ..1,
+        estimate = ..2,
+        na_rm = na_rm,
+        cls = "numeric",
+        data_size = ..3,
+        ...
+      )
+    )
+    return(median(res)) # macro;
+    # res
   } else {
     # cli::cli_inform(c("*" = "floss_error_vec <<- macro"))
     res <- purrr::pmap_dbl(

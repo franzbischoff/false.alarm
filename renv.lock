@@ -1179,10 +1179,10 @@
     },
     "hardhat": {
       "Package": "hardhat",
-      "Version": "0.2.0",
+      "Version": "1.0.0",
       "Source": "Repository",
       "Repository": "CRAN",
-      "Hash": "726bc6915fd4533da5d49f4dfe6df1a6",
+      "Hash": "73742a53bdbc1911bfbb2b67ac5518a1",
       "Requirements": [
         "glue",
         "rlang",
@@ -1337,10 +1337,10 @@
     },
     "ipred": {
       "Package": "ipred",
-      "Version": "0.9-12",
+      "Version": "0.9-13",
       "Source": "Repository",
       "Repository": "CRAN",
-      "Hash": "8312ebd8121ad2eca1c76441040bee5d",
+      "Hash": "83aed0b881998c125aac48cab08141e4",
       "Requirements": [
         "MASS",
         "class",
@@ -1783,10 +1783,15 @@
     },
     "patchwork": {
       "Package": "patchwork",
-      "Version": "1.1.1",
-      "Source": "Repository",
-      "Repository": "CRAN",
-      "Hash": "c446b30cb33ec125ff02588b60660ccb",
+      "Version": "1.1.0.9000",
+      "Source": "GitHub",
+      "RemoteType": "github",
+      "RemoteHost": "api.github.com",
+      "RemoteRepo": "patchwork",
+      "RemoteUsername": "thomasp85",
+      "RemoteRef": "HEAD",
+      "RemoteSha": "79223d3002e7bd7e715a270685c6507d684b2622",
+      "Hash": "295a56e2fb4b3a9a58919e015fa20905",
       "Requirements": [
         "ggplot2",
         "gtable"
@@ -2171,9 +2176,9 @@
       "RemoteUsername": "r-lib",
       "RemoteRepo": "rlang",
       "RemoteRef": "main",
-      "RemoteSha": "9239d113c456d4845f37f09e7af5767b557558f5",
+      "RemoteSha": "cce2a4b228335d5963ebfda7c0f86087610624d1",
       "RemoteHost": "api.github.com",
-      "Hash": "22c5508d499d98d3a671f641179c172e",
+      "Hash": "7d714d7f083f76ff808ae68597ea3e01",
       "Requirements": []
     },
     "rlist": {
@@ -2444,10 +2449,10 @@
     },
     "sna": {
       "Package": "sna",
-      "Version": "2.6",
+      "Version": "2.7",
       "Source": "Repository",
       "Repository": "CRAN",
-      "Hash": "a2a44d327eeca6d2550b4c6dcef22e68",
+      "Hash": "a9b2631787118cebee94654c0850f2e6",
       "Requirements": [
         "network",
         "statnet.common"
@@ -2520,9 +2525,9 @@
       "RemoteUsername": "r-lib",
       "RemoteRepo": "styler",
       "RemoteRef": "main",
-      "RemoteSha": "08301c0385607966253219e50031e570b06f588d",
+      "RemoteSha": "76a7421011f1968ea6129836ac61d68f1b7bbd36",
       "RemoteHost": "api.github.com",
-      "Hash": "2da5ee91134218782d462d039f89bcbc",
+      "Hash": "cfef60def2bfc1050bd847d8b3dd82d6",
       "Requirements": [
         "R.cache",
         "cli",
