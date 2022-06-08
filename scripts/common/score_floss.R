@@ -110,7 +110,14 @@ score_regimes <- function(gtruth, reported, data_size) {
     minv <- c(minv, minv_left)
   }
 
-  score <- sum(minv) / (min_points * data_size)
+  if (data_size <= 0) {
+    # computes the mean error during a period of time, not bounded to the data size
+    range <- max(gtruth, reported) - min(gtruth, reported)
+    score <- sum(minv) / (min_points * range)
+  } else {
+    score <- sum(minv) / (min_points * data_size)
+  }
+
   score
 }
 

@@ -1737,17 +1737,6 @@
         "getopt"
       ]
     },
-    "pROC": {
-      "Package": "pROC",
-      "Version": "1.18.0",
-      "Source": "Repository",
-      "Repository": "CRAN",
-      "Hash": "417fd0d40479932c19faf2747817c473",
-      "Requirements": [
-        "Rcpp",
-        "plyr"
-      ]
-    },
     "parallelly": {
       "Package": "parallelly",
       "Version": "1.31.1",
@@ -1979,10 +1968,10 @@
     },
     "progressr": {
       "Package": "progressr",
-      "Version": "0.10.0",
+      "Version": "0.10.1",
       "Source": "Repository",
       "Repository": "CRAN",
-      "Hash": "7df448f5ae46ab0a1af0fb619349d3fd",
+      "Hash": "f785c20b96fae12a810c66717c0137a6",
       "Requirements": [
         "digest"
       ]
@@ -2525,9 +2514,9 @@
       "RemoteUsername": "r-lib",
       "RemoteRepo": "styler",
       "RemoteRef": "main",
-      "RemoteSha": "76a7421011f1968ea6129836ac61d68f1b7bbd36",
+      "RemoteSha": "cffab1eeef147c7ce5672092b61c60cba761aa38",
       "RemoteHost": "api.github.com",
-      "Hash": "cfef60def2bfc1050bd847d8b3dd82d6",
+      "Hash": "058920431252180485541b1d121193a3",
       "Requirements": [
         "R.cache",
         "cli",
@@ -2604,10 +2593,10 @@
     },
     "targets": {
       "Package": "targets",
-      "Version": "0.12.0",
+      "Version": "0.12.1",
       "Source": "Repository",
       "Repository": "CRAN",
-      "Hash": "197fd95f9f9c6ac7e0be2d0ffbdd932f",
+      "Hash": "e3c201e69f4ca0e4e50fde1cd0aa3137",
       "Requirements": [
         "R6",
         "base64url",
@@ -2634,9 +2623,9 @@
       "RemoteUsername": "r-lib",
       "RemoteRepo": "testthat",
       "RemoteRef": "main",
-      "RemoteSha": "2f48ca6c86fe205cd9283cd6cc8eb0e2a07031b5",
+      "RemoteSha": "426eb523f6772c76175d6e8d7ca04355b1ee7ad5",
       "RemoteHost": "api.github.com",
-      "Hash": "d39c20f35cf02c2319d349986fe34ab4",
+      "Hash": "686a44252e131b6df0a094aae85af671",
       "Requirements": [
         "R6",
         "brio",
@@ -2913,6 +2902,20 @@
         "rlang"
       ]
     },
+    "vip": {
+      "Package": "vip",
+      "Version": "0.3.2",
+      "Source": "Repository",
+      "Repository": "CRAN",
+      "Hash": "70e6da4dbf60a40e80c57901ffef043d",
+      "Requirements": [
+        "ggplot2",
+        "gridExtra",
+        "magrittr",
+        "plyr",
+        "tibble"
+      ]
+    },
     "viridisLite": {
       "Package": "viridisLite",
       "Version": "0.4.0",
@@ -3140,14 +3143,14 @@
     },
     "yardstick": {
       "Package": "yardstick",
-      "Version": "0.0.9",
+      "Version": "1.0.0",
       "Source": "Repository",
       "Repository": "CRAN",
-      "Hash": "fd1588dbcbb85aacd0d9b9009351c79d",
+      "Hash": "c244cb8e43c5e53504b81eb159fbbde6",
       "Requirements": [
         "dplyr",
         "generics",
-        "pROC",
+        "hardhat",
         "rlang",
         "tidyselect",
         "vctrs"

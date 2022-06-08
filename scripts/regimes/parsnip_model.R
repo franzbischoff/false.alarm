@@ -1411,7 +1411,7 @@ floss_error_vec <- function(truth, estimate, data_size, na_rm = TRUE, estimator 
     )
     return(median(res)) # macro;
     # res
-  } else {
+  } else if (estimator == "macro") {
     # cli::cli_inform(c("*" = "floss_error_vec <<- macro"))
     res <- purrr::pmap_dbl(
       list(truth, estimate, data_size),
@@ -1427,6 +1427,85 @@ floss_error_vec <- function(truth, estimate, data_size, na_rm = TRUE, estimator 
     )
     return(mean(res)) # macro;
     # res
+  } else if (estimator == "macro_fixed") {
+    # cli::cli_inform(c("*" = "floss_error_vec <<- macro"))
+    res <- purrr::pmap_dbl(
+      list(truth, estimate, data_size),
+      ~ yardstick::metric_vec_template(
+        metric_impl = floss_error_impl,
+        truth = ..1,
+        estimate = ..2,
+        na_rm = na_rm,
+        cls = "numeric",
+        data_size = floor(..3 / 15000),
+        ...
+      )
+    )
+    return(mean(res)) # macro;
+    # res
+  } else if (estimator == "macro_median_fixed") {
+    # cli::cli_inform(c("*" = "floss_error_vec <<- macro"))
+    res <- purrr::pmap_dbl(
+      list(truth, estimate, data_size),
+      ~ yardstick::metric_vec_template(
+        metric_impl = floss_error_impl,
+        truth = ..1,
+        estimate = ..2,
+        na_rm = na_rm,
+        cls = "numeric",
+        data_size = floor(..3 / 15000),
+        ...
+      )
+    )
+    return(median(res)) # macro;
+    # res
+  } else if (estimator == "fixed") {
+    # cli::cli_inform(c("*" = "floss_error_vec <<- macro"))
+    res <- purrr::pmap_dbl(
+      list(truth, estimate, data_size),
+      ~ yardstick::metric_vec_template(
+        metric_impl = floss_error_impl,
+        truth = ..1,
+        estimate = ..2,
+        na_rm = na_rm,
+        cls = "numeric",
+        data_size = floor(..3 / 15000),
+        ...
+      )
+    )
+    return(list(res)) # macro;
+    # res
+  } else if (estimator == "nosize") {
+    # cli::cli_inform(c("*" = "floss_error_vec <<- micro"))
+    res <- purrr::map2_dbl(
+      truth, estimate,
+      ~ yardstick::metric_vec_template(
+        metric_impl = floss_error_impl,
+        truth = ..1,
+        estimate = ..2,
+        na_rm = na_rm,
+        cls = "numeric",
+        data_size = 0,
+        ...
+      )
+    )
+
+    return(list(res))
+  } else {
+    # cli::cli_inform(c("*" = "floss_error_vec <<- macro"))
+    res <- purrr::pmap_dbl(
+      list(truth, estimate, data_size),
+      ~ yardstick::metric_vec_template(
+        metric_impl = floss_error_impl,
+        truth = ..1,
+        estimate = ..2,
+        na_rm = na_rm,
+        cls = "numeric",
+        data_size = ..3,
+        ...
+      )
+    )
+    return(list(res))
   }
 }
 
