@@ -585,7 +585,7 @@ pdp::plotPartial(partials$pdp_w_tc_mp, train = tree_data, levelplot = FALSE)
 #    shap: mp regime time window
 #  glmnet: rmse: 4.48 ?? 1 regime_threshold*window_size        1.81e-16
 #    model: mp regime window time
-#   shpa: time constraint
+#   shap: time constraint
 #    firm: mp, regime (big), win time
 #    perm: mp regime window time
 #  keras reg: rmse 5.836752  no interactions

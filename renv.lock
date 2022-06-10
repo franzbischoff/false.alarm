@@ -212,10 +212,10 @@
     },
     "XML": {
       "Package": "XML",
-      "Version": "3.99-0.9",
+      "Version": "3.99-0.10",
       "Source": "Repository",
       "Repository": "CRAN",
-      "Hash": "6e75b3884423e21eda89b424a98e091d",
+      "Hash": "f140675d766cf765bf06a5f14afb149d",
       "Requirements": []
     },
     "askpass": {
@@ -304,9 +304,9 @@
       "RemoteUsername": "rstudio",
       "RemoteRepo": "bookdown",
       "RemoteRef": "main",
-      "RemoteSha": "169c43b6bb95213f2af63a95acd4e977a58a3e1f",
+      "RemoteSha": "4cdf9c6ea9bfde1d46db03ff6c88a2d549b58e8a",
       "RemoteHost": "api.github.com",
-      "Hash": "c7da7b837c058ef8eba7f64070954eeb",
+      "Hash": "dc432abd71570d79fef8ea1ce9a8bed4",
       "Requirements": [
         "htmltools",
         "jquerylib",
@@ -800,10 +800,10 @@
     },
     "e1071": {
       "Package": "e1071",
-      "Version": "1.7-9",
+      "Version": "1.7-11",
       "Source": "Repository",
       "Repository": "CRAN",
-      "Hash": "32885be243a29301c90d33db37c3aad8",
+      "Hash": "fc02aa712f8600f7da17f44989646a21",
       "Requirements": [
         "class",
         "proxy"
@@ -1739,10 +1739,10 @@
     },
     "parallelly": {
       "Package": "parallelly",
-      "Version": "1.31.1",
+      "Version": "1.32.0",
       "Source": "Repository",
       "Repository": "CRAN",
-      "Hash": "115faaa1a50897c3e2339d1cb7d3d493",
+      "Hash": "022489ebce2ef2438db4583fae118240",
       "Requirements": []
     },
     "parsnip": {
@@ -1992,10 +1992,10 @@
     },
     "proxy": {
       "Package": "proxy",
-      "Version": "0.4-26",
+      "Version": "0.4-27",
       "Source": "Repository",
       "Repository": "CRAN",
-      "Hash": "50b405c6419e921b9e9360cc9ebbcf2d",
+      "Hash": "e0ef355c12942cf7a6b91a6cfaea8b3e",
       "Requirements": []
     },
     "ps": {
@@ -2159,15 +2159,15 @@
     },
     "rlang": {
       "Package": "rlang",
-      "Version": "1.0.2.9000",
+      "Version": "1.0.2.9003",
       "Source": "GitHub",
       "RemoteType": "github",
       "RemoteUsername": "r-lib",
       "RemoteRepo": "rlang",
       "RemoteRef": "main",
-      "RemoteSha": "cce2a4b228335d5963ebfda7c0f86087610624d1",
+      "RemoteSha": "ef61a0a9df87a546c9d3259c22d052aa38d03837",
       "RemoteHost": "api.github.com",
-      "Hash": "7d714d7f083f76ff808ae68597ea3e01",
+      "Hash": "cee2fa164d21b62ab0669c57e9bdbca5",
       "Requirements": []
     },
     "rlist": {
