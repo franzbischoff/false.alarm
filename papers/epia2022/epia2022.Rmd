@@ -204,53 +204,24 @@ Matrix Profile (MP) [@Yeh2017a], is a state-of-the-art [@DePaepe2020; @Feremans2
 analysis technique that once computed, allows us to derive frameworks to all sorts of tasks, as
 motif discovery, anomaly detection, regime change detection and others [@Yeh2017a].
 
-Before MP, time series analysis relied on what is called *distance matrix* (DM), a matrix that stores all
-the distances between two time series (or itself, in case of a Self-Join). This was very power consuming,
-and several methods of pruning and dimensionality reduction were researched [@Lin2007].
-
 For brevity, let's just understand that the MP and the companion Profile Index (PI) are two vectors
 that hold one floating point value and one integer value, respectively, regarding the original time
 series: (1) the similarity distance between that point on time (let's call these points "indexes")
-and its first nearest-neighbor (1-NN), (2) The index where this this 1-NN is located. The original
-paper has more detailed information [@Yeh2017a]. It is computed using a rolling window but instead
-of creating a whole DM, only the minimum values and the index of these minimum are stored (in the
-MP and PI respectively). We can have an idea of the relationship of both on Fig. \@ref(fig:thematrix).
+and its first nearest-neighbor (1-NN), (2) The index where this this 1-NN is located.  The original
+paper has more detailed information [@Yeh2017a].  It is computed using a rolling window but instead
+of creating a whole distance matrix, only the minimum values and the index of these minimum are
+stored (in the MP and PI respectively).
 
-```{r thematrix, echo=FALSE}
-#| fig.cap="A distance matrix (top), and a matrix profile (bottom). The matrix profile stores only
-#|  the minimum values of the distance matrix."
-my_graphics("mp_1")
-```
-
-This research has already yielded two R packages concerning the MP algorithms from UCR [@mpucr]. The
-first package is called `tsmp`, and a paper has also been published in the R Journal [@RJ-2020-021]
-(Journal Impact Factor™, 2020 of 3.984). The second package is called `matrixprofiler` and enhances
-the first one, using low-level language to improve computational speed. The author has also joined
-the Matrix Profile Foundation as co-founder together with contributors from Python and Go languages
-[@mpf2020; @VanBenschoten2020].
-
-This implementation in R is being used for computing the MP and MP-based algorithms of this thesis.
-
-
-### Type of study
-
-This thesis will be a diagnostic study as the algorithm must classify the change in pattern as positive or negative for
-life-threatening.
+The MP implementation in R is being used on this thesis.
 
 ### The data
 
-The current dataset used is the CinC/Physionet Challenge 2015 public dataset, modified to include
-only the actual data and the header files in order to be read by the pipeline and is hosted by
-Zenodo [@bischoff2021] under the same license as Physionet.
+The dataset used is the CinC/Physionet Challenge 2015 public dataset [@Clifford2015], modified to
+include only the actual data and the header files in order to be read by the pipeline and is hosted
+by Zenodo [@bischoff2021] under the same license as Physionet.
 
-The dataset is composed of 750 patients with at least five minutes records. All signals have been
-resampled (using anti-alias filters) to 12 bit, 250 Hz and have had FIR band-pass (0.05 to 40Hz) and
-mains notch filters applied to remove noise. Pacemaker and other artifacts are still present on the
-ECG [@Clifford2015]. Furthermore, this dataset contains at least two ECG derivations and one or more
-variables like arterial blood pressure, photoplethysmograph readings, and respiration movements.
-
-The _events_ we seek to identify are the life-threatening arrhythmias as defined by Physionet in
-Table \@ref(tab:alarms).
+The dataset is composed of 750 patients with at least five minutes records.  The _events_ we seek to
+identify are the life-threatening arrhythmias as defined by Physionet in Table \@ref(tab:alarms).
 
 ```{r alarms, echo=FALSE}
 alarms <- tribble(
@@ -266,8 +237,7 @@ kbl(alarms,
   booktabs = TRUE,
   caption = "Definition of the five alarm types used in CinC/Physionet Challenge 2015.",
   align = "ll",
-  position = "ht",
-  linesep = "\\addlinespace"
+  position = "ht"
 ) %>%
   row_spec(0, bold = TRUE) %>%
   kable_styling(full_width = TRUE)
@@ -278,80 +248,13 @@ meet the ANSI/AAMI EC13 Cardiac Monitor Standards [@AAMI2002], the onset of the 
 seconds of the alarm (i.e., between 4:50 and 5:00 of the record). That doesn't mean that there are
 no other arrhythmias before.
 
-For comparison, on Table \@ref(tab:challenge) we collected the score of the five best participants
-of the challenge [@plesinger2015; @kalidas2015; @couto2015; @fallet2015; @hoogantink2015].
-
-```{r challenge, echo=FALSE}
-
-challenge <- tribble(
-  ~Score, ~Authors,
-  "81.39", "Filip Plesinger, Petr Klimes, Josef Halamek, Pavel Jurak",
-  "79.44", "Vignesh Kalidas",
-  "79.02", "Paula Couto, Ruben Ramalho, Rui Rodrigues",
-  "76.11", "Sibylle Fallet, Sasan Yazdani, Jean-Marc Vesin",
-  "75.55", "Christoph Hoog Antink, Steffen Leonhardt"
-)
-
-kbl(challenge,
-  booktabs = TRUE,
-  caption = "Challenge Results on real-time data. The scores were multiplied by 100.",
-  align = "cl",
-  position = "ht"
-) %>%
-  row_spec(0, bold = TRUE) %>%
-  # column_spec(1, width = "5em") %>%
-  # column_spec(2, width = "30em") %>%
-  kable_styling(full_width = TRUE)
-```
-
-The equation used on this challenge to compute the score of the algorithms is in the Equation
-\@ref(eq:score). This equation is the accuracy formula, with penalization of the false negatives.
-The reasoning pointed out by the authors [@Clifford2015] is the clinical impact of existing a
-genuine life-threatening event that was considered unimportant. Accuracy is known to be misleading
-when there is a high class imbalance [@Akosa2017].
-
-\
-
-\begin{equation}
-Score = \frac{TP+TN}{TP+TN+FP+5*FN}  (\#eq:score)
-\end{equation}
-
-\
-
-Assuming that this is a finite dataset, the pathologic cases (1) $\lim_{TP \to \infty}$ (whenever
-there is an event, it is positive) or (2) $\lim_{TN \to \infty}$ (whenever there is an event, it is
-false), cannot happen. This dataset has 292 True alarms and 458 False alarms. Experimentally, this
-equation yields:
-
-  - 0.24 if all guesses are on False class
-  - 0.28 if random guesses
-  - 0.39 if all guesses are on True class
-  - 0.45 if no false positives plus random on True class
-  - 0.69 if no false negatives plus random on False class
-
-This small experiment (knowing the data in advance) shows that "a single line of code and a few
-minutes of effort" [@Wu2020] algorithm could achieve at most a score of 0.39 in this challenge (the
-last two lines, the algorithm must to be very good on one class).
-
-Nevertheless, this equation will only be useful to allow us to compare the results of this thesis
-with other algorithms.
-
 ### Proposed approach
 
-The proposed approach is depicted in Fig. \ref{fig:fullmodel}. That is only a draft of the final workflow. The
-algorithm for the classification of the regime changes is still to be defined. However, the main innovation resides in
-the correct regime detection. Also, to achieve the goal of low CPU and memory usage, the strategy will be to combine
-fading factors[@Gama2013; @Rodrigues2010] to reduce computation in online settings like in this research.
+The streaming data, coming from one patient, is processed to create its Matrix Profile.  Then, the
+FLOSS algorithm is computed for detecting a regime change.  When a new regime is detected, a sample
+of this new regime is analysed by the model and a decision is made.  If the new regime is
+life-threatening, the alarm will be fired.
 
-```{r fullmodel, echo=FALSE, out.width="60%"}
-#| fig.cap = "Pipeline of the final process.
-#|  The streaming data, coming from one patient, is processed to create its Matrix Profile.
-#|  Then, the FLOSS algorithm is computed for detecting a regime change. When a new regime is
-#|  detected, a sample of this new regime is analysed by the model and a decision is made. If
-#|  the new regime is life-threatening, the alarm will be fired."
-
-my_graphics("draw-global-model")
-```
 
 ### Detecting regime changes
 
@@ -359,17 +262,13 @@ The regime change approach will be using the _Arc Counts_ concept, used on the F
 Unipotent Semantic Segmentation) algorithm, as explained by Gharghabi, _et al._,[@gharghabi2018].
 
 The FLUSS (and FLOSS, the on-line version) algorithm is built on top of the Matrix Profile
-(MP)[@Yeh2017a], described on section \@ref(matrixprofile). Recalling that the MP and the companion
-Profile Index (PI) are two vectors holding information about the 1-NN. One can imagine several
-"arcs" starting from one "index" to another. This algorithm is based on the assumption that between
-two regimes, the most similar shape (its nearest neighbor) is located on "the same side", so the
-number of "arcs" decreases when there is a change on the regime, and increases again. As show on
-Fig. \@ref(fig:arcsoriginal). This drop on the _Arc Counts_ is a signal that a change on the shape
-of the signal has happened.
-
-```{r arcsoriginal, echo=FALSE, out.width="100%", fig.cap="FLUSS algorithm, using arc counts."}
-my_graphics("fluss_arcs")
-```
+(MP)[@Yeh2017a].  Recalling that the MP and the companion Profile Index (PI) are two vectors holding
+information about the 1-NN.  One can imagine several "arcs" starting from one "index" to another.
+This algorithm is based on the assumption that between two regimes, the most similar shape (its
+nearest neighbor) is located on "the same side", so the number of "arcs" decreases when there is a
+change on the regime, and increases again.  As shown on the original article, figures 2 and 3
+[@gharghabi2018], this drop on the _Arc Counts_ is a signal that a change on the shape of the signal
+has happened.
 
 The choice of the FLOSS algorithm (on-line version of FLUSS) is founded on the following arguments:
 
@@ -381,31 +280,7 @@ The choice of the FLOSS algorithm (on-line version of FLUSS) is founded on the f
 -  **FLOSS is not:** a change point detection algorithm [@aminikhanghahi2016]. The interest here is
    changes in the shapes of a sequence of measurements.
 
-Other algorithms we can cite are based on Hidden Markov Models (HMM) that require at least two
-parameters to be set by domain experts: cardinality and dimensionality reduction. The most
-attractive alternative could be the Autoplait [@Matsubara2014], which is also domain agnostic and
-parameter-free. It segments the time series using Minimum Description Length (MDL) and recursively
-tests if the region is best modeled by one or two HMM. However, Autoplait is designed for batch
-operation, not streaming, and also requires discrete data. FLOSS was demonstrated to be superior in
-several datasets in its original paper. In addition, FLOSS is robust to several changes in data like
-downsampling, bit depth reduction, baseline wandering, noise, smoothing, and even deleting 3% of the
-data and filling with simple interpolation. Finally, the most important, the algorithm is light and
-suitable for low-power devices.
-
-In the MP domain, it is worth also mentioning other possible algorithm: the Time Series Snippets
-[@Imani2018], based on MPdist [@gharghabi2018b]. The latter measures the distance between two
-sequences considering how many similar sub-sequences they share, no matter the order of matching. It
-proved to be a useful measure (not a metric) for meaningfully clustering similar sequences. Time
-Series Snippets exploits MPdist properties to summarize a dataset extracting the $k$ sequences that
-represent most of the data. The final result seems to be an alternative for detecting regime
-changes, but it is not. The purpose of this algorithm is to find which pattern(s) explains most of
-the dataset. Also, it is not suitable for streaming data. Lastly, MPdist is quite expensive compared
-to the trivial Euclidean distance.
-
-The regime change detection will be evaluated following the criterias explained on section
-\@ref(evaluation).
-
-```{r flossregime, echo=FALSE, out.height="80%", out.width="80%"}
+```{r flossregime, echo=FALSE, out.width="100%"}
 #| fig.cap="Regime change detection example.
 #|  The graph on top shows the ECG streaming; the blue line marks the ten seconds
 #|  before the original alarm was fired; the red line marks the time constraint of 1250;
@@ -416,21 +291,13 @@ The regime change detection will be evaluated following the criterias explained 
 #|  horizontal line shows the minimum value seen until then.
 #|  The graph on the bottom shows the computed Arc counts (raw) and the red line is the
 #|  theoretical distribution used for correction."
-my_graphics("floss_regime")
+my_graphics("graph_regime_floss")
 ```
 
 ### Classification of the new regime {#classregime}
 
 The next step towards the objective of this work is to verify if the new regime detected by the
 previous step is indeed a life-threatening pattern that we should trigger the alarm.
-
-First let's dismiss some apparent solutions: (1) Clustering. It is well understood that we cannot
-cluster time series subsequences meaningfully with any distance measure, or with any algorithm
-[@Keogh2005]. The main argument is that in a meaningfull algorithm, the output depends on the input,
-and this has been proven to not happen in time series subsequence clustering [@Keogh2005]. (2)
-Anomaly detection. In this work we are not looking for surprises, but for patterns that are known to
-be life-threatening. (3) Forecasting. We may be tempted to make predictions, but clearly this is not
-the idea here.
 
 The method of choice is classification. The simplest algorithm could be a `TRUE`/`FALSE` binary
 classification. Nevertheless, the five life-threatening patterns have well defined characteristics
@@ -450,41 +317,10 @@ neighbors in class *A* while is very *different* from the nearest neighbor from 
 words, this means that such pattern represents well class *A* and may be taken as a "signature" of
 that class.
 
-In this case we need to compute two MP, one self-join MP using the *positive* class $MP^{(++)}$ (the
-class that has the signature we want to find) and one AB-join MP using the *positive* and *negative*
-classes $MP^{(+-)}$. Then we subtract the first $MP^{(++)}$ from the last $MP^{(+-)}$, resulting in
-the $CP$. The high values on $CP$ are the locations for the signature candidates we look for (the
-author of CP calls these segments *Plato's*).
+For a more complete understanding of the process, in the original article, the figure 6 shows a
+practical example [@Mercer2021].
 
-Due to the nature of this approach, the MP's (containing values in Euclidean Distance) are truncated
-for values above $\sqrt{2w}$, where $w$ is the window size. This because values above this threshold
-are negatively correlated in the Pearson Correlation space. Finally, we normalize the values by
-$\sqrt{2w}$. The formula \@ref(eq:contrast) synthesizes this computation.
-
-\
-\begin{equation}
-CP_w = \frac{MP_{w}^{(+-)} - MP_{w}^{(++)}}{\sqrt{2w}} \quad \text{where}\; w \; \text{is the window size} (\#eq:contrast)
-\end{equation}
-\
-
-For a more complete understanding of the process, Fig. \@ref(fig:contrast) shows a practical example
-from the original article [@Mercer2021].
-
-\
-```{r contrast, echo=FALSE, out.width="100%"}
-#| fig.cap = "Top to bottom: two weakly-labeled snippets of a larger time series. T(-) contains
-#|  only normal beats. T(+) also contains PVC (premature ventricular contractions).
-#|  Next, two Matrix Profiles with window size 91; AB-join is in red and self-join in blue.
-#|  Bottom, the Contrast Profile showing the highest location."
-
-my_graphics("contrast")
-```
-
-
-After extracting candidates for each class signature, a classification algorithm will be fitted and
-evaluated using the criterias explained on section \@ref(evaluation).
-
-An example of candidates for ventricular tachycardia is presented on Fig. \@ref(fig:vtachy).
+In this work, an example of candidates for ventricular tachycardia is presented on Fig. \@ref(fig:vtachy).
 
 ```{r vtachy, echo=FALSE, out.width="90%", fig.cap="Shapelet candidates for Ventricular Tachycardia.", fig.height=9, fig.width=14}
 def_par <- graphics::par(no.readonly = TRUE)
@@ -501,7 +337,6 @@ for (i in (1:6)) {
 }
 graphics::par(def_par)
 ```
-
 
 ## Feasibility trial
 
