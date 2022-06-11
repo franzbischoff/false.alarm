@@ -74,6 +74,7 @@ debugme.log
 /R/RcppExports.R
 /code/
 /pdfs/
+/docs/reference
 /pkgdown/
 /revdep/*.html
 /revdep/checks

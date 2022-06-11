@@ -45,8 +45,8 @@ if (Sys.getenv("CI") == "") { # not CI
       # error = recover
     )
     options(
-      # vsc.rstudioapi = TRUE,
-      width = 200
+      vsc.rstudioapi = TRUE,
+      width = 200,
       # vsc.browser = "Two",
       # vsc.viewer = "Two",
       # vsc.page_viewer = "Two",
@@ -54,10 +54,15 @@ if (Sys.getenv("CI") == "") { # not CI
       # vsc.plot = "Two",
       # vsc.helpPanel = "Two",
       # vsc.str.max.level = 2,
-      # vsc.show_object_size = TRUE,
-      # vsc.globalenv = TRUE,
+      vsc.show_object_size = TRUE,
+      vsc.globalenv = TRUE
       # vsc.dev.args = list(width = 1000, height = 1000)
     )
+
+    options(languageserver.formatting_style = function(options) {
+      style <- styler::tidyverse_style(scope = "tokens", indent_by = 2)
+      style
+    })
 
     # if httpgd is installed, let's use it
     # This breaks rendering video

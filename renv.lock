@@ -1179,10 +1179,10 @@
     },
     "hardhat": {
       "Package": "hardhat",
-      "Version": "1.0.0",
+      "Version": "1.1.0",
       "Source": "Repository",
       "Repository": "CRAN",
-      "Hash": "73742a53bdbc1911bfbb2b67ac5518a1",
+      "Hash": "b513a8bb3985a2367a0f8014962c6c34",
       "Requirements": [
         "glue",
         "rlang",
@@ -1309,10 +1309,10 @@
     },
     "infer": {
       "Package": "infer",
-      "Version": "1.0.0",
+      "Version": "1.0.2",
       "Source": "Repository",
       "Repository": "CRAN",
-      "Hash": "74128662081cedb158fc98d6dae73c0e",
+      "Hash": "ec3a41e963bc24f53ff06f3137742ed7",
       "Requirements": [
         "broom",
         "dplyr",
@@ -1931,10 +1931,10 @@
     },
     "processx": {
       "Package": "processx",
-      "Version": "3.5.3",
+      "Version": "3.6.0",
       "Source": "Repository",
       "Repository": "CRAN",
-      "Hash": "8bbae1a548d0d3fdf6647bdd9d35bf6d",
+      "Hash": "4acae60adac4791e8c8833d8494f270d",
       "Requirements": [
         "R6",
         "ps"

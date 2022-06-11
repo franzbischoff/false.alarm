@@ -1339,6 +1339,17 @@ floss_error.data.frame <- function(data, truth, estimate, na_rm = TRUE, estimato
   )
 }
 
+clean_pred <- function(data, threshold = 100) {
+  if (is.list(data)) {
+    data <- purrr::map(data, clean_pred, threshold)
+    return(data)
+  }
+
+  data <- sort(data)
+  mask <- c(diff(data) > threshold, TRUE)
+  data[mask]
+}
+
 floss_error_vec <- function(truth, estimate, data_size, na_rm = TRUE, estimator = "binary", ...) {
   # cli::cli_alert(c("*" = "floss_error_vec <<- work here"))
   # cli::cli_inform(c("*" = "floss_error_vec: dots_n {rlang::dots_n(...)}"))
@@ -1358,12 +1369,7 @@ floss_error_vec <- function(truth, estimate, data_size, na_rm = TRUE, estimator 
   # if (length(data_size) <= 2) {
   #   cli::cli_abort(c("x" = "data_size len: {length(data_size)}"))
   # }
-  estimate <- purrr::map(estimate, function(x) {
-    x <- sort(x)
-    mask <- c(diff(x) > 100, TRUE)
-    x <- x[mask]
-    x
-  })
+  estimate <- clean_pred(estimate)
   # 100 is the batch size, this removes the redundant regime changes
 
   for (i in seq.int(1, length(estimate))) {
@@ -1376,7 +1382,7 @@ floss_error_vec <- function(truth, estimate, data_size, na_rm = TRUE, estimator 
     }
   }
 
-  if (estimator == "micro") {
+  if (estimator == "micro") { # current micro method (sum of errors / dataset length)
     # cli::cli_inform(c("*" = "floss_error_vec <<- micro"))
     res <- purrr::map2_dbl(
       truth, estimate,
@@ -1395,23 +1401,39 @@ floss_error_vec <- function(truth, estimate, data_size, na_rm = TRUE, estimator 
 
     div <- purrr::reduce(data_size, sum) + 1
     return(res / div) # micro is the sum of the scores / length(all_data_set)
-  } else if (estimator == "macro_median") {
+  } else if (estimator == "macro") { # current macro method (average of the sum of errors / sample range)
     # cli::cli_inform(c("*" = "floss_error_vec <<- macro"))
-    res <- purrr::pmap_dbl(
-      list(truth, estimate, data_size),
+    res <- purrr::map2_dbl(
+      truth, estimate,
       ~ yardstick::metric_vec_template(
         metric_impl = floss_error_impl,
         truth = ..1,
         estimate = ..2,
         na_rm = na_rm,
         cls = "numeric",
-        data_size = ..3,
+        data_size = 0,
+        ...
+      )
+    )
+
+    return(mean(res))
+  } else if (estimator == "macro_median") {
+    # cli::cli_inform(c("*" = "floss_error_vec <<- macro"))
+    res <- purrr::map2_dbl(
+      truth, estimate,
+      ~ yardstick::metric_vec_template(
+        metric_impl = floss_error_impl,
+        truth = ..1,
+        estimate = ..2,
+        na_rm = na_rm,
+        cls = "numeric",
+        data_size = 0,
         ...
       )
     )
     return(median(res)) # macro;
     # res
-  } else if (estimator == "macro") {
+  } else if (estimator == "macro_mean") {
     # cli::cli_inform(c("*" = "floss_error_vec <<- macro"))
     res <- purrr::pmap_dbl(
       list(truth, estimate, data_size),
@@ -1475,7 +1497,7 @@ floss_error_vec <- function(truth, estimate, data_size, na_rm = TRUE, estimator 
     )
     return(list(res)) # macro;
     # res
-  } else if (estimator == "nosize") {
+  } else if (estimator == "range") {
     # cli::cli_inform(c("*" = "floss_error_vec <<- micro"))
     res <- purrr::map2_dbl(
       truth, estimate,
