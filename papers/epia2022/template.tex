@@ -71,6 +71,9 @@ $endif$
 %\titlerunning{Abbreviated paper title}
 % If the paper title is too long for the running head, you can set
 % an abbreviated paper title here
+$if(titlerunning)$
+\titlerunning{ $titlerunning$ }
+$endif$
 %
 %
 \author{ $for(authors)$ $authors.name$\inst{$authors.inst$}\orcidID{$authors.orcid$}$sep$\\ $endfor$ }
