@@ -22,7 +22,7 @@ stompi2_update <- function(.mp, new_data, history_size = FALSE) {
   }
 
   if (new_data_size == 0) {
-    warning("No new data", immediate = TRUE)
+    rlang::warn("No new data", immediate = TRUE)
     return(.mp)
   }
 

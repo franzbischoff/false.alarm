@@ -556,7 +556,7 @@
       },
       "args": [
         "-e",
-        "targets::tar_make_future(workers = 4L, reporter = 'summary', script = 'scripts/_targets.R', store = '_targets')"
+        "targets::tar_make_future(reporter = 'summary', script = 'scripts/_targets.R', store = '_targets')"
       ],
       "options": {
         "cwd": "${workspaceFolder}"
@@ -581,7 +581,7 @@
       },
       "args": [
         "-e",
-        "targets::tar_make_future(workers = 4L, reporter = 'summary', script = 'scripts/_classifier.R', store = '_classifier')"
+        "targets::tar_make_future(reporter = 'summary', script = 'scripts/_classifier.R', store = '_classifier')"
       ],
       "options": {
         "cwd": "${workspaceFolder}"
@@ -606,7 +606,7 @@
       },
       "args": [
         "-e",
-        "targets::tar_make_future(workers = 4L, reporter = 'summary', script = 'scripts/_regime_change.R', store = '_regime_change')"
+        "targets::tar_make_future(reporter = 'summary', script = 'scripts/_regime_change.R', store = '_regime_change')"
       ],
       "options": {
         "cwd": "${workspaceFolder}"

@@ -18,7 +18,7 @@ create_animation <- function(ds_objects_names, floss_objects_names, include = c(
   e <- suppressWarnings(tryCatch(
     source(here::here("scripts", "render_floss_video.R"), encoding = "UTF-8"),
     error = function(e) {
-      message("Error: Could not load render script.")
+      rlang::inform("Error: Could not load render script.")
       return(FALSE)
     }
   ))
@@ -40,7 +40,7 @@ create_animation <- function(ds_objects_names, floss_objects_names, include = c(
 
     filter_w_size <- attr(dataset[[1]], "params")$filter_w_size
     if (!is.null(filter_w_size)) {
-      floss_names <- grep(sprintf(".*%d$", filter_w_size), floss_objects_names, value = TRUE)
+      floss_names <- grep(glue::glue(".*{filter_w_size}$"), floss_objects_names, value = TRUE)
     } else {
       floss_names <- floss_objects_names
     }
@@ -91,31 +91,31 @@ create_animation <- function(ds_objects_names, floss_objects_names, include = c(
           signal <- t_info$signal
 
           if (!is.null(filter_w_size) && filter_w_size != 0) {
-            filter_size <- sprintf("filter_%d", filter_w_size)
+            filter_size <- glue::glue("filter_{filter_w_size}")
           } else {
             filter_w_size <- 0 # TODO: add filter_w_size on ecg_data attributes
             filter_size <- "raw"
           }
 
-          temp_dir <- sprintf("tmp_%s_%s_%s", filename, signal, filter_size)
+          temp_dir <- glue::glue("tmp_{filename}_{signal}_{filter_size}")
 
-          file <- sprintf(
-            "%s_%s_%d_%.1f_%d_%d_%s.mp4", filename, signal, window_size, threshold,
-            ifelse(mp_time_constraint == 0, history, mp_time_constraint), ifelse(floss_time_constraint == 0,
-              history, floss_time_constraint
-            ),
-            filter_size
+          file <- glue::glue(
+            "{filename}_{signal}_{window_size}_
+            {glue_fmt('{threshold:.1f}')}_
+            {ifelse(mp_time_constraint == 0, history, mp_time_constraint)}_
+            {ifelse(floss_time_constraint == 0, history, floss_time_constraint)}_
+            {filter_size}.mp4",
           )
-          title <- sprintf(
-            "FLOSS - %s-%s, w: %d, t: %.1f, c: %d, fc: %d, %s-%s", filename, signal,
-            window_size, threshold, mp_time_constraint, floss_time_constraint, alarm, alarm_true
+          title <- glue::glue(
+            "FLOSS - {filename}-{signal}, w: {window_size}, t: {glue_fmt('{threshold:.1f}')}
+            , c: {mp_time_constraint}, fc: {floss_time_constraint}, {alarm}-{alarm_true}"
           )
 
-          message("Rendering file: ", file)
-          message("With title: ", title)
+          rlang::inform("Rendering file: ", file)
+          rlang::inform("With title: ", title)
 
           if (file.exists(here::here("dev", "videos", file))) {
-            message("Video file already exists: ", file)
+            rlang::inform("Video file already exists: ", file)
           } else {
             a <- render_floss_video(here::here("dev", "videos", file),
               ecg_data = dataset[[s]][[signal]], arc_counts = floss_data[[s]][[k]],

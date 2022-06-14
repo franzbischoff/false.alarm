@@ -1,0 +1,261 @@
+---
+title: "Detecting life-threatening patterns in Point-of-care ECG using efficient memory and processor power"
+titlerunning:  ECG using efficient memory and processor power
+authorrunning: Bischoff F.
+editor_options:
+  markdown:
+    doctype: pandoc
+    mode: markdown
+    wrap: 120
+  chunk_output_type: inline
+output:
+  # bookdown::html_document2:
+  #   toc: false
+  #   toc_float: false
+  #   fig_caption: yes
+  #   keep_tex: yes
+  #   keep_md: yes
+  #   css: style.css
+  #   number_sections: true
+  #   theme: default
+  #   highlight: tango
+  #   md_extensions: -tex_math_single_backslash-tex_math_double_backslash
+  # pdf_document:
+  #   keep_tex: yes
+  #   keep_md: yes
+  #   fig_caption: yes
+  #   citation_package: default
+  #   latex_engine: pdflatex
+  #   template: template.tex
+  #   md_extensions: -tex_math_single_backslash-tex_math_double_backslash
+  bookdown::pdf_document2:
+    extra_dependencies: ["svg", "flafter", "subfig"]
+    keep_tex: yes
+    keep_md: yes
+    fig_caption: yes
+    citation_package: default
+    latex_engine: pdflatex
+    template: template.tex
+    md_extensions: -tex_math_single_backslash-tex_math_double_backslash
+authors:
+- name: Francisco Bischoff
+  inst: 1
+  orcid: 0000-0002-5301-8672
+institutes:
+- num: 1
+  dept: |
+    Department of Community Medicine, Information and Health Decision Sciences (MEDCIDS), Faculty of
+    Medicine, University of Porto, Porto, Portugal
+# - num: 2
+#   dept: |
+#     Center for Health Technology and Services Research (CINTESIS), Faculty of Medicine, University of
+#     Porto, Porto, Portugal
+keywords:
+- anomaly detection
+- ECG
+- matrix profile
+- time series
+- point-of-care
+abstract: |
+  Currently, Point-of-Care (POC) ECG monitoring works either as plot devices or alarms for abnormal
+  cardiac rhythms using predefined normal trigger ranges.  Great effort has been made to improve the
+  accuracy of such monitoring, but in the ICU setting.  Thinking outside the ICU setting, where
+  high-end devices are available, we aim to identify, on streaming data, life-threatening hearth
+  electric patterns using low CPU and memory, enabling ward monitors, home devices and even wearable
+  devices to be able to identify such events.
+bibliography: '`r here::here("papers", "references.bib")`'
+link-citations: true
+csl: llncs-alpha.csl
+thanks: |
+  Supervisor: Professor Pedro Pereira Rodrigues (MEDCIDS, Porto), co-supervisor: Professor Eamonn Keogh (UCR, Riverside)
+---
+
+```{r setup, include=FALSE, message = FALSE, warning = FALSE}
+library(here)
+library(glue)
+library(tibble)
+library(kableExtra)
+
+knitr::opts_chunk$set(
+  echo = FALSE, fig.align = "center", autodep = TRUE
+)
+knitr::opts_knit$set(
+  progress = TRUE, verbose = TRUE
+)
+if (knitr::is_latex_output()) {
+  knitr::opts_chunk$set(dev = "pdf")
+} else {
+  knitr::opts_chunk$set(dev = "svg")
+}
+
+my_graphics <- function(image_name, base_path = here::here("docs", "figure")) {
+  file_path <- glue::glue("{base_path}/{image_name}")
+
+  if (knitr::is_latex_output()) {
+    if (file.exists(glue::glue("{file_path}.pdf"))) {
+      file_path <- glue::glue("{file_path}.pdf")
+    } else if (file.exists(glue::glue("{file_path}.png"))) {
+      file_path <- glue::glue("{file_path}.png")
+    } else {
+      file_path <- glue::glue("{file_path}.jpg")
+    }
+  } else {
+    if (file.exists(glue::glue("{file_path}.svg"))) {
+      file_path <- glue::glue("{file_path}.svg")
+    } else if (file.exists(glue::glue("{file_path}.png"))) {
+      file_path <- glue::glue("{file_path}.png")
+    } else {
+      file_path <- glue::glue("{file_path}.jpg")
+    }
+  }
+
+  knitr::include_graphics(file_path)
+}
+```
+
+<!-- Papers should be submitted in PDF format through the
+[EPIA 2022 EasyChair submission page](https://easychair.org/conferences/?conf=epia2022), and they
+should be prepared according to the
+[Springer LNCS](http://www.springer.com/gp/computer-science/lncs/conference-proceedings-guidelines)
+format.  Submissions to the Doctoral Symposium have a maximum of 3 pages + references, and will be
+compiled in a separate informal PDF volume.  Submissions must be authored by the PhD candidate, and
+should include information regarding the advisor(s) as a footnote in the first page, anchored in the
+author's name.  Submissions should also include a short abstract, keywords, introduction to the
+topic being addressed in the project and relevant research questions, a brief state of the art in
+the field, and the methodology to be pursued. -->
+
+# Introduction
+
+Currently, Point-of-Care (POC) ECG monitoring works either as plot devices or alarms for abnormal
+cardiac rhythms using predefined normal trigger ranges. Modern devices also incorporate algorithms
+to analyze arrhythmias improving their specificity. On the other hand, full 12-derivation ECG
+machines are complex, are not suited to use as simple monitors, and are used with strict techniques
+for formal diagnostics of hearth electric conduction pathologies. The automatic diagnostics are
+derived from a complete analysis of the 12-dimension data after it is fully and well collected.
+
+In February of 2015, the CinC/Physionet Challenge 2015 was about "Reducing False Arrhythmia Alarms
+in the ICU" [@Clifford2015]. The introduction article stated that it had been reported that up to 86%
+resulting of the alarms are false, and this can lead to decreased staff attention and an increase in
+patients' delirium [@Lawless1994; @Chambrin2001; @Parthasarathy2004].
+
+This subject draws attention to the importance of correctly identify abnormal hearth electric
+patterns.  Meanwhile, this opens the opportunity of thinking outside the ICU setting, where we still
+monitoring patients (and ourselves) using devices with low processing power, as for example ward
+monitors, home devices and wearable devices.
+
+# Objectives and research question
+
+While this research was inspired on the Physionet's challenge, its purpose is not to beat the state
+of the art on that challenge, but to identify, on streaming data, abnormal hearth electric patterns,
+specifically those which are life-threatening, using low CPU and low memory requirements.
+
+The main questions is: can we accomplish this objective using a minimalist approach (low CPU, low
+memory) while maintaining robustness?
+
+# Related Works
+
+The Physionet's challenge yielded several papers on the subject
+[@plesinger2015; @kalidas2015; @couto2015; @fallet2015; @hoogantink2015].  However, independently of
+their approach to this problem, none of the authors reported benchmarks, memory usage, robustness
+test, or context invariance that could assure its implementation smaller devices.
+
+# Planned approach
+
+## The data
+
+The dataset used is the CinC/Physionet Challenge 2015 public dataset [@Clifford2015], composed of
+750 patients with at least five minutes records.  The _events_ we seek to identify are the
+life-threatening arrhythmias as defined by Physionet's challenge [@Clifford2015].
+
+```{r alarms, eval=FALSE, echo=FALSE}
+alarms <- tribble(
+  ~Alarm, ~Definition,
+  "Asystole", "No QRS for at least 4 seconds",
+  "Extreme Bradycardia", "Heart rate lower than 40 bpm for 5 consecutive beats",
+  "Extreme Tachycardia", "Heart rate higher than 140 bpm for 17 consecutive beats",
+  "Ventricular Tachycardia", "5 or more ventricular beats with heart rate higher than 100 bpm",
+  "Ventricular Flutter/Fibrillation", "Fibrillatory, flutter, or oscillatory waveform for at least 4 seconds"
+)
+
+kbl(alarms,
+  booktabs = TRUE,
+  caption = "Definition of the five alarm types used in CinC/Physionet Challenge 2015.",
+  align = "ll",
+  position = "ht"
+) %>%
+  row_spec(0, bold = TRUE) %>%
+  kable_styling(full_width = TRUE)
+```
+
+## Matrix Profile
+
+This work will use the state-of-the-art [@DePaepe2020; @Feremans2020] time series analysis technique
+called Matrix Profile (MP) that once computed, allows us to derive frameworks to all sorts of tasks,
+as motif discovery, anomaly detection, regime change detection and others [@Yeh2017a].  The MP is
+known to be an incredible fast algorithm [@gharghabi2018; @Madrid2019], thus viewing on the other
+side (not to process billions of data points using a desktop), it has a great potential to be used
+on small devices.
+
+The streaming data, coming from one patient, is processed to create its MP in real-time.  Then, the
+FLOSS algorithm [@gharghabi2018] is computed for detecting a regime change.  When a new regime is
+detected, a sample of this new regime is analysed by a model and a decision is made.  If the new
+regime is life-threatening, the alarm will be fired.
+
+## Detecting regime changes
+
+The regime change detection will be using the FLOSS algorithm [@gharghabi2018] which is an on-line
+algorithm built on top of the computed MP.  The algorithm is based on the assumption that between
+two regimes, the most similar shape (its nearest neighbor, 1-NN) is located on "the same side".  The
+details of the algorithm are described in the original paper [@gharghabi2018].  In short, the
+algorithm keeps track of the number of 1-NN references (called _Arc Counts_) that crosses a point in
+time.  As shown on the original article, figures 2 and 3 [@gharghabi2018], a drop in the Arc Counts
+indicates a regime change.
+
+```{r flossregime, eval=FALSE, echo=FALSE, out.width="100%"}
+#| fig.cap="Regime change detection example.
+#|  The graph on top shows the ECG streaming; the  green line marks the ten seconds
+#|  before the original alarm was fired; the red line marks the minimum amount of
+#|  time for asystole criteria; the blue horizontal line represents the size of the sliding window.
+#|  The graph on the bottom shows the Corrected Arc Counts as seen by the algorithm;
+#|  the red line marks the detection point."
+my_graphics("graph_regime_floss")
+```
+
+## Classification of the new regime
+
+The next step is to verify if the new regime detected is indeed a life-threatening pattern.  The
+method of choice is a classification model using shapelets as signatures of such patterns.  The aim is
+not to identify the exact type of the new regime, but if it is life-threatening or not. This allows
+us to use a set of shapelet candidates which maximize the classification performance.
+
+Leveraging on the MP concept, we can use the Contrast Profile (CP) [@Mercer2021] to derive a set of
+shapelets candidates.  The CP looks for patterns that are at the same time very *similar* to its
+neighbors in class *A* while is very *different* from the nearest neighbor from class *B*.
+
+For a more complete understanding of the process, in the original article, the figure 6 shows a
+practical example [@Mercer2021].
+
+<!-- In this work, an example of candidates for ventricular tachycardia is presented on Fig. \@ref(fig:vtachy). -->
+
+```{r vtachy, eval=FALSE, echo=FALSE, out.width="90%", fig.cap="Shapelet candidates for Ventricular Tachycardia.", fig.height=9, fig.width=14}
+def_par <- graphics::par(no.readonly = TRUE)
+graphics::layout(matrix(1:6, ncol = 2, byrow = TRUE))
+graphics::par(mai = c(0.8, 0.5, 0.6, 0.5), cex = 1)
+
+data <- readRDS(here("presentations/Report/contrast.rds"))
+
+for (i in (1:6)) {
+  plot(tsmp:::znorm(data[[i]]$plato), type = "l", ylab = "", xlab = "samples (250hz)")
+  for (j in seq_along(data[[i]]$neighbors)) {
+    lines(tsmp:::znorm(data[[i]]$neighbors[[j]]$data), col = j + 1)
+  }
+}
+graphics::par(def_par)
+```
+
+## Implementation
+
+Ultimately, this workflow will be experimented on a low power device, such as an ESP32 microcontroller [@esp32]
+in order to validate the concept and measure the performance and benchmarks.
+
+# References

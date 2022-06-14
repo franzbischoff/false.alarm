@@ -33,8 +33,9 @@
 ^\.radian_history$
 ^\.vscode$
 ^\.whitesource$
-^_classifier$
 ^_regime_change$
+^_classifier$
+^_regimetest$
 ^_targets$
 ^_targets\.R$
 ^_targets\.yaml$

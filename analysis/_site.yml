@@ -17,6 +17,8 @@ navbar:
           href: blog-202204.html
     - text: Report
       href: report.html
+    - text: Regime Change
+      href: regime_optimize.html
     - text: About
       href: about.html
     - text: License

@@ -3,7 +3,6 @@
     "gruntfuggly.todo-tree",
     "spmeesseman.vscode-taskexplorer",
     "meakbiyik.vscode-r-test-adapter",
-    "ikuyadeu.r",
     "hbenl.vscode-test-explorer",
     "cschleiden.vscode-github-actions",
     "editorconfig.editorconfig",
@@ -29,6 +28,7 @@
     "usernamehw.errorlens",
     "rdebugger.r-debugger",
     "hediet.vscode-drawio",
-    "PsykoSoldi3r.vscode-git-flow"
+    "serhioromano.vscode-gitflow",
+    "REditorSupport.r"
   ]
 }

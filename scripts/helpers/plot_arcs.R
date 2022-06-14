@@ -1,7 +1,7 @@
 plot_arcs <- function(pairs, alpha = NULL, quality = 30, lwd = 15, col = c("blue", "orange"),
                       main = "Arc Plot", ylab = "", xlab = "Profile Index", xmin = NULL, xmax = NULL, ...) {
   if (length(pairs) == 0) {
-    warning("No arc to plot.")
+    rlang::warn("No arc to plot.")
     return(NULL)
   }
 

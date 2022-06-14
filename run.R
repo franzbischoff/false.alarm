@@ -94,12 +94,13 @@ if (dir.exists(here::here("inst/extdata"))) {
         tips <- stringr::str_replace_all(tips, "\n", "<br />")
         network$x$nodes$title <- tips
         network$x$nodes$label <- network$x$nodes$name
+        network$x$options$nodes$physics <- TRUE
         saveRDS(network, file = here::here("output/network.rds"))
         rm(network)
         rm(tips)
 
-        source(here::here("scripts/common/create_output.R"), encoding = "UTF-8")
-        create_output(file = here::here("output/work_output.rds"))
+        source(here::here("scripts/helpers/create_output.R"), encoding = "UTF-8")
+        create_output(file = here::here("output/work_output.rds"), "regime_optimize")
         rm(create_output)
       },
       error = function(e) {

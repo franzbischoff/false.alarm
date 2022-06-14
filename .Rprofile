@@ -1,4 +1,6 @@
 # nolint start
+options(repos = c(CRAN = "https://cran.rstudio.org"))
+
 if (.Platform$OS.type == "windows") {
   Sys.setenv(LC_CTYPE = "C")
 }
@@ -7,31 +9,31 @@ source("renv/activate.R")
 
 if (Sys.getenv("CI") == "") { # not CI
 
-  a <- NULL
-  suppressMessages(if (requireNamespace("languageserver", quietly = TRUE)) {
-    a <- try(suppressWarnings(source(file.path(
-      Sys.getenv(if (.Platform$OS.type == "windows") {
-        "USERPROFILE"
-      } else {
-        "HOME"
-      }),
-      ".vscode-R",
-      "init.R"
-    ))),
-    silent = TRUE
-    ) # if this fails we (probably) are in Binder
-  })
+  # a <- NULL
+  # suppressMessages(if (requireNamespace("languageserver", quietly = TRUE)) {
+  #   a <- try(suppressWarnings(source(file.path(
+  #     Sys.getenv(if (.Platform$OS.type == "windows") {
+  #       "USERPROFILE"
+  #     } else {
+  #       "HOME"
+  #     }),
+  #     ".vscode-R",
+  #     "init.R"
+  #   ))),
+  #   silent = TRUE
+  #   ) # if this fails we (probably) are in Binder
+  # })
 
-  if (class(a) == "try-error") { # we are in Binder session (hopefully)
-    message("Starting Binder Session")
-    setHook("rstudio.sessionInit", function(newSession) {
-      if (newSession & is.null(rstudioapi::getActiveProject())) {
-        rstudioapi::openProject("false.alarm.Rproj")
-      }
-    }, action = "append")
-  }
+  # if (class(a) == "try-error") { # we are in Binder session (hopefully)
+  #   message("Starting Binder Session")
+  #   setHook("rstudio.sessionInit", function(newSession) {
+  #     if (newSession & is.null(rstudioapi::getActiveProject())) {
+  #       rstudioapi::openProject("false.alarm.Rproj")
+  #     }
+  #   }, action = "append")
+  # }
 
-  rm(a)
+  # rm(a)
 
   if (interactive() && Sys.getenv("RSTUDIO") == "") {
     options(
@@ -44,17 +46,23 @@ if (Sys.getenv("CI") == "") { # not CI
     )
     options(
       vsc.rstudioapi = TRUE,
+      width = 200,
       # vsc.browser = "Two",
       # vsc.viewer = "Two",
       # vsc.page_viewer = "Two",
       # vsc.view = "Two",
       # vsc.plot = "Two",
       # vsc.helpPanel = "Two",
-      vsc.str.max.level = 2,
+      # vsc.str.max.level = 2,
       vsc.show_object_size = TRUE,
-      vsc.globalenv = TRUE,
-      vsc.dev.args = list(width = 1000, height = 1000)
+      vsc.globalenv = TRUE
+      # vsc.dev.args = list(width = 1000, height = 1000)
     )
+
+    options(languageserver.formatting_style = function(options) {
+      style <- styler::tidyverse_style(scope = "tokens", indent_by = 2)
+      style
+    })
 
     # if httpgd is installed, let's use it
     # This breaks rendering video
@@ -73,6 +81,7 @@ if (Sys.getenv("CI") == "") { # not CI
         require("usethis", quietly = TRUE)
         require("conflicted", quietly = TRUE)
         require("here", quietly = TRUE)
+        require("glue", quietly = TRUE)
         require("workflowr", quietly = TRUE)
         require("targets", quietly = TRUE)
         require("gittargets", quietly = TRUE)
@@ -86,18 +95,18 @@ if (Sys.getenv("CI") == "") { # not CI
       }
     }
 
-    if (suppressMessages(requireNamespace("prompt", quietly = TRUE))) {
-      prompt::set_prompt(function(...) {
-        paste0(
-          "[",
-          prompt::git_branch(),
-          prompt::git_dirty(),
-          prompt::git_arrows(),
-          "] ",
-          prompt::prompt_runtime()
-        )
-      })
-    }
+    # if (suppressMessages(requireNamespace("prompt", quietly = TRUE))) {
+    # prompt::set_prompt(function(...) {
+    #   paste0(
+    #     "[",
+    #     prompt::git_branch(),
+    #     prompt::git_dirty(),
+    #     prompt::git_arrows(),
+    #     "] ",
+    #     prompt::prompt_runtime()
+    #   )
+    # })
+    # }
 
     if (Sys.getenv("RADIAN_VERSION") == "") {
       loadhistory() # if no file, no problem.

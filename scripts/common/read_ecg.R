@@ -25,7 +25,7 @@
 #'  check by comparing the output with RDSAMP.
 #'
 #'  if(sum(abs(signal-signal2)) !=0);
-#'    stop('Record not compatible with RDMAT');
+#'    rlang::abort('Record not compatible with RDMAT');
 #'  end
 #'
 #' These tools are available at: https://archive.physionet.org/physiotools/binaries/
@@ -75,7 +75,7 @@ read_ecg <- function(filename, plot = FALSE, subset = NULL,
     }
 
     if (rlang::is_empty(filtered)) {
-      message("File skipped: ", filename)
+      rlang::inform("File skipped: ", filename)
       return(NULL)
     }
   }
@@ -93,7 +93,7 @@ read_ecg <- function(filename, plot = FALSE, subset = NULL,
   basename <- basename(filename)
 
   if (!file.exists(header) | !file.exists(content)) {
-    stop("File ", filename, "does not exist.")
+    rlang::abort("File ", filename, "does not exist.")
   }
 
   # Following the documentation described in :
@@ -114,7 +114,7 @@ read_ecg <- function(filename, plot = FALSE, subset = NULL,
   }
 
   if (i == length(hea_content)) {
-    stop("The file only contains comments.")
+    rlang::abort("The file only contains comments.")
   }
 
   nlines <- length(hea_content)
@@ -182,7 +182,7 @@ read_ecg <- function(filename, plot = FALSE, subset = NULL,
 
   if (!is.null(true_alarm)) {
     if (true_alarm != as.logical(true_false)) {
-      message("File skipped: ", filename)
+      rlang::inform("File skipped: ", filename)
       return(NULL)
     }
   }
@@ -273,7 +273,7 @@ read_ecg <- function(filename, plot = FALSE, subset = NULL,
 #'  check by comparing the output with RDSAMP.
 #'
 #'  if(sum(abs(signal-signal2)) !=0);
-#'    stop('Record not compatible with RDMAT');
+#'    rlang::abort('Record not compatible with RDMAT');
 #'  end
 #'
 #' These tools are available at: https://archive.physionet.org/physiotools/binaries/
@@ -325,7 +325,7 @@ read_ecg_csv <- function(filename, plot = FALSE, subset = NULL,
     }
 
     if (rlang::is_empty(filtered)) {
-      message("File skipped (not in class): ", filename)
+      rlang::inform("File skipped (not in class): ", filename)
       return(NULL)
     }
   }
@@ -343,7 +343,7 @@ read_ecg_csv <- function(filename, plot = FALSE, subset = NULL,
   basename <- basename(filename)
 
   if (any(!file.exists(c(header, content)))) {
-    stop("File ", filename, "does not exist.")
+    rlang::abort("File ", filename, "does not exist.")
   }
 
   # Following the documentation described in :
@@ -364,7 +364,7 @@ read_ecg_csv <- function(filename, plot = FALSE, subset = NULL,
   }
 
   if (i == length(hea_content)) {
-    stop("The file only contains comments.")
+    rlang::abort("The file only contains comments.")
   }
 
   nlines <- length(hea_content)
@@ -432,7 +432,7 @@ read_ecg_csv <- function(filename, plot = FALSE, subset = NULL,
 
   if (!is.null(true_alarm)) {
     if (true_alarm != as.logical(true_false)) {
-      message("File skipped (alarm is ", !true_alarm, "): ", filename)
+      rlang::inform("File skipped (alarm is ", !true_alarm, "): ", filename)
       return(NULL)
     }
   }
@@ -534,7 +534,7 @@ read_ecg_with_atr <- function(filename, subset = NULL, classes = c("all", "persi
     }
 
     if (rlang::is_empty(filtered)) {
-      message("File skipped (not in class): ", filename)
+      rlang::inform("File skipped (not in class): ", filename)
       return(NULL)
     }
   }
@@ -549,7 +549,7 @@ read_ecg_with_atr <- function(filename, subset = NULL, classes = c("all", "persi
   basename <- basename(filename)
 
   if (any(!file.exists(c(header, content, annotation)))) {
-    stop("File ", filename, "does not exist.")
+    rlang::abort("File ", filename, "does not exist.")
   }
 
   hea <- file(header, "r")
@@ -566,7 +566,7 @@ read_ecg_with_atr <- function(filename, subset = NULL, classes = c("all", "persi
   }
 
   if (i == length(hea_content)) {
-    stop("The file only contains comments.")
+    rlang::abort("The file only contains comments.")
   }
 
   nlines <- length(hea_content)
@@ -660,8 +660,6 @@ read_ecg_with_atr <- function(filename, subset = NULL, classes = c("all", "persi
       newsignal <- signal::resample(csv_content[[i]], resample_to, resample_from)
       csv_content[[i]] <- newsignal
       freq_signal <- resample_to
-
-      csv_annotations$sample <- csv_annotations$sample * prop
     }
 
     name <- siginfo[[i]]$description
@@ -673,7 +671,7 @@ read_ecg_with_atr <- function(filename, subset = NULL, classes = c("all", "persi
       signals[[name]] <- csv_content[[i]]
       # signals[[name]] <- (csv_content[[i]] - siginfo[[i]]$baseline) / siginfo[[i]]$gain
     } else {
-      signals[[name]] <- ((csv_content[[i]] - 5)* siginfo[[i]]$gain)# + siginfo[[i]]$baseline
+      signals[[name]] <- ((csv_content[[i]] - 5) * siginfo[[i]]$gain) # + siginfo[[i]]$baseline
       # if not normalizing, set all NA to wfdb_nan
       signals[[name]][is.na(signals[[name]])] <- wfdb_nan
     }
@@ -685,6 +683,13 @@ read_ecg_with_atr <- function(filename, subset = NULL, classes = c("all", "persi
     attr(signals[[name]], "info") <- list(signal = name, baseline = siginfo[[i]]$baseline, gain = siginfo[[i]]$gain, unit = siginfo[[i]]$unit, subset = subset_minmax)
   }
 
+  if (resample_from > 0) {
+    prop <- resample_to / resample_from
+    csv_annotations$sample <- csv_annotations$sample * prop
+  }
+
+  regime_changes <- which(csv_annotations$label_store == 28)
+
   length_signal <- length(signals[[1]])
 
   # Generate time vector
@@ -694,6 +699,19 @@ read_ecg_with_atr <- function(filename, subset = NULL, classes = c("all", "persi
 
   attr(output[[basename]], "info") <- list(regime = comment, filename = basename, frequency = freq_signal, id = "base", ids = "base")
   attr(output[[basename]], "annotations") <- csv_annotations
+
+  if (length(regime_changes) > 0) {
+    sample_changes <- round(csv_annotations$sample[regime_changes])
+
+    if (!is.null(subset)) {
+      mask <- sample_changes %in% subset
+      sample_changes <- sample_changes[mask]
+    }
+
+    attr(output[[basename]], "regimes") <- sample_changes
+  } else {
+    attr(output[[basename]], "regimes") <- 0
+  }
 
   return(output)
 }
@@ -738,14 +756,12 @@ read_and_prepare_ecgs <- function(file_paths, subset = NULL, true_alarm = NULL, 
   checkmate::qassert(resample_from, "X>=0")
   checkmate::qassert(resample_to, "X>=0")
 
-
   result <- list()
   classes <- list()
 
   for (file in file_paths) {
     # get the filename without the extension
     filename <- tools::file_path_sans_ext(basename(file))
-
 
     it <- NULL
 

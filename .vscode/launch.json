@@ -26,7 +26,7 @@
       "debugMode": "function",
       "workingDirectory": "${workspaceFolder}",
       "file": "${file}",
-      "mainFunction": "stompi",
+      "mainFunction": "score_regimes",
       "allowGlobalDebugging": false
     },
     {

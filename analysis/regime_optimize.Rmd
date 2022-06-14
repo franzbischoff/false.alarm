@@ -1,0 +1,1454 @@
+---
+title: "Regime changes"
+author: "Francisco Bischoff"
+date: "on `r format(Sys.time(), '%B %d, %Y')`"
+output:
+  bookdown::html_document2:
+    base_format: workflowr::wflow_html
+    toc: true
+    fig_caption: yes
+    number_sections: yes
+bibliography: ../papers/references.bib
+link-citations: true
+csl: ../thesis/csl/ama.csl
+css: style.css
+editor_options:
+  chunk_output_type: console
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(
+  echo = FALSE, fig.align = "center", autodep = TRUE,
+  fig.height = 5, fig.width = 10,
+  tidy = "styler",
+  tidy.opts = list(strict = TRUE)
+)
+
+if (knitr::is_latex_output()) {
+  knitr::opts_chunk$set(dev = "pdf")
+} else {
+  knitr::opts_chunk$set(dev = "svg")
+}
+
+rlang::check_installed(c(
+  "here", "glue", "visNetwork", "tibble", "kableExtra", "gridExtra",
+  "ggplot2", "dplyr", "dbarts", "vip", "pdp", "patchwork", "fastshap"
+))
+
+library(here)
+library(glue)
+library(visNetwork)
+library(tibble)
+library(kableExtra)
+library(gridExtra)
+library(tidymodels)
+library(patchwork)
+library(ggplot2)
+
+my_graphics <- function(image_name, base_path = here::here("docs", "figure")) {
+  file_path <- glue::glue("{base_path}/{image_name}")
+
+  if (knitr::is_latex_output()) {
+    if (file.exists(glue::glue("{file_path}.pdf"))) {
+      file_path <- glue::glue("{file_path}.pdf")
+    } else if (file.exists(glue::glue("{file_path}.png"))) {
+      file_path <- glue::glue("{file_path}.png")
+    } else {
+      file_path <- glue::glue("{file_path}.jpg")
+    }
+  } else {
+    if (file.exists(glue::glue("{file_path}.svg"))) {
+      file_path <- glue::glue("{file_path}.svg")
+    } else if (file.exists(glue::glue("{file_path}.png"))) {
+      file_path <- glue::glue("{file_path}.png")
+    } else {
+      file_path <- glue::glue("{file_path}.jpg")
+    }
+  }
+
+  knitr::include_graphics(file_path)
+}
+
+my_kable <- function(title, label, content) {
+  res <- glue(r"(<br><table class="tg"><caption>)", "(\\#tab:{label}) {title}", r"(</caption>{content}</table>)")
+  out <- structure(res, format = "html", class = "knitr_kable")
+  attr(out, "format") <- "html"
+  out
+}
+
+surf_plot <- function() {
+  # library(rsm)
+  fit <- lm(mean ~ poly(window_size, mp_threshold, degree = 5), data = tree_data)
+  persp(fit, mp_threshold ~ window_size, zlab = "mean", zlim = c(0, 30))
+}
+
+lst_to_df <- function(lst, keep_attributes = TRUE) {
+  new_df <- dplyr::bind_rows(lst)
+
+  if (keep_attributes) {
+    nc <- nrow(new_df)
+    attributes(new_df) <- attributes(lst[[1]])
+    attr(new_df, "row.names") <- seq.int(1, nc)
+  }
+
+  new_df$tar_group <- NULL
+
+  return(new_df)
+}
+
+train_models <- function(data, parallel = FALSE) {
+  set.seed(616)
+  initial_sampling <- rsample::initial_split(data, prop = 3 / 4)
+  training_split <- rsample::training(initial_sampling)
+  testing_split <- rsample::testing(initial_sampling)
+
+  set.seed(616)
+  folds <- rsample::vfold_cv(training_split, v = 5, rep = 2)
+
+  model_spec <- parsnip::bart(trees = parsnip::tune()) %>%
+    parsnip::set_mode("regression") %>%
+    parsnip::set_engine("dbarts")
+
+  model_set <- hardhat::extract_parameter_set_dials(model_spec)
+
+  wflw <- workflows::workflow() %>%
+    workflows::add_model(model_spec) %>%
+    workflows::add_formula(mean ~ .)
+
+  if (parallel) {
+    doParallel::registerDoParallel(cores = parallelly::availableCores())
+  }
+
+  set.seed(2022)
+  tune_search <- wflw %>%
+    tune::tune_grid(
+      resamples = folds,
+      param_info = model_set,
+      grid = 10,
+      metrics = yardstick::metric_set(yardstick::rmse, yardstick::rsq),
+      control = tune::control_grid(
+        verbose = TRUE,
+        allow_par = parallel,
+        save_workflow = FALSE,
+        save_pred = TRUE,
+        parallel_over = "resamples"
+      )
+    )
+
+  # uses the "one-standard error rule" (Breiman _el at, 1984) that selects the most simple
+  #  model that is within one standard error of the numerically optimal results.
+  tune_best <- tune_search %>% tune::select_by_one_std_err(trees, metric = "rsq")
+
+  final_flow <- wflw %>% tune::finalize_workflow(tune_best)
+  set.seed(102) # for reproducibility
+  best_fit <- final_flow %>% parsnip::fit(data = training_split)
+  set.seed(102) # for reproducibility
+  pred <- best_fit %>% predict(testing_split)
+  best_rmse <- yardstick::rmse_vec(testing_split$mean, pred$.pred)
+  best_rsq <- yardstick::rsq_vec(testing_split$mean, pred$.pred)
+  cli::cli_inform(glue::glue("Best RMSE: {best_rmse}"))
+  cli::cli_inform(glue::glue("Best R^2: {best_rsq}"))
+
+  if (parallel) {
+    doParallel::stopImplicitCluster()
+  }
+
+  return(list(model = final_flow, training_data = training_split, testing_data = testing_split))
+}
+
+check_interactions <- function(model, train_data, features, parallel = FALSE) {
+  if (parallel) {
+    doParallel::registerDoParallel(cores = parallelly::availableCores())
+  }
+  # Quantify relative interaction strength
+  set.seed(2022)
+  interact <- suppressWarnings(vip::vint(model$fit$fit,
+    type = "regression", parallel = parallel,
+    feature_names = features,
+    train = train_data
+  ))
+  if (parallel) {
+    doParallel::stopImplicitCluster()
+  }
+  return(interact)
+}
+
+check_importance <- function(model, train_data, features, type = c("firm", "permute", "shap"), nsim = 20, parallel = FALSE) {
+  type <- match.arg(type)
+
+  if (parallel) {
+    doParallel::registerDoParallel(cores = parallelly::availableCores())
+  }
+  importances <- NULL
+  set.seed(2022)
+  if (type == "firm") {
+    importances <- vip::vip(
+      object = model, # fitted model
+      method = "firm",
+      feature_names = features, # names of features
+      pred.fun = function(object, newdata) {
+        pred <- predict(object, newdata)
+        return(pred$.pred)
+      },
+      type = "regression",
+      parallel = parallel,
+      ice = TRUE,
+      train = train_data,
+      mapping = aes_string(fill = "Variable"),
+      aesthetics = list(color = "grey35", size = 0.8)
+    )
+  } else if (type == "permute") {
+    importances <- vip::vip(
+      object = model, # fitted model
+      method = "permute",
+      target = "mean",
+      feature_names = features, # names of features
+      type = "ratio",
+      pred_wrapper = function(object, newdata) {
+        pred <- predict(object, newdata)
+        pred$.pred
+      },
+      nsim = nsim,
+      metric = "rmse",
+      parallel = parallel,
+      keep = TRUE,
+      geom = "boxplot",
+      train = train_data,
+      mapping = aes_string(fill = "Variable"),
+      aesthetics = list(color = "grey35", size = 0.5)
+    )
+    importances$layers[[1]]$data <- importances$layers[[1]]$data %>%
+      dplyr::filter(!grepl("int_.*", Variable))
+  } else if (type == "shap") {
+    importances <- vip::vip(
+      object = model, # fitted model
+      method = "shap",
+      feature_names = features, # names of features
+      pred_wrapper = function(object, newdata) {
+        pred <- predict(object, newdata)
+        pred$.pred
+      },
+      nsim = nsim,
+      train = as.data.frame(train_data),
+      mapping = aes_string(fill = "Variable"),
+      aesthetics = list(color = "grey35", size = 0.8)
+    )
+  }
+
+  importances$data <- importances$data %>%
+    dplyr::filter(!grepl("int_.*", Variable))
+
+  if (parallel) {
+    doParallel::stopImplicitCluster()
+  }
+  return(importances)
+}
+```
+
+```{r cached, echo=FALSE, cache=FALSE}
+network <- readRDS(here::here("output", "regime_network.rds"))
+outputs <- readRDS(here::here("output", "regime_outputs_new.rds"))
+grid0 <- readRDS(here::here("dev", "grid_0_clean.rds"))
+grid4000 <- readRDS(here::here("dev", "grid_4000_clean.rds"))
+net <- network %>%
+  visNetwork::visPhysics(hierarchicalRepulsion = list(
+    springLength = 1,
+    avoidOverlap = 0.5,
+    nodeDistance = 120
+  ))
+fitted1 <- outputs$fitted_models[[1]]
+fitted2 <- outputs$fitted_models[[2]]
+all_fitted <- lst_to_df(outputs$fitted_models)
+```
+
+
+
+```{r tests, eval = FALSE, echo=FALSE, out.width="80%", fig.cap="FLOSS pipeline."}
+
+tree_data <- all_fitted %>%
+  tune::collect_metrics() %>%
+  dplyr::filter(.estimator == "macro") %>%
+  dplyr::select(
+    time_constraint,
+    regime_threshold,
+    mp_threshold, window_size,
+    mean
+  )
+
+
+
+# tree_data <- tree_data %>%
+#   group_by(mp_threshold, window_size) %>%
+#   summarize(mean = mean(mean)) %>%
+#   ungroup()
+
+
+######
+#  Score: sum all distances, divice by the inner, divide by the TS size (or by a constant amount!!!)
+#
+#
+
+###
+# model_spec <- parsnip::decision_tree(tree_depth = tune()) %>%
+#   parsnip::set_mode("regression") %>%
+#   set_engine("rpart")
+# model_spec <- parsnip::bag_tree(tree_depth = tune()) %>%
+#   parsnip::set_mode("regression") %>%
+#   set_engine("rpart")
+# model_spec <- parsnip::nearest_neighbor(neighbors = tune()) %>%
+#   parsnip::set_mode("regression") %>%
+#   set_engine("kknn")
+# model_spec <- parsnip::mlp(penalty = tune(), dropout = tune(), epochs = tune(), hidden_units = tune(), activation = tune(), learn_rate = tune()) %>%
+#   parsnip::set_mode("regression") %>%
+#   set_engine("nnet")
+# model_spec <- parsnip::mlp(dropout = tune(), epochs = 200, hidden_units = 8, activation = "relu") %>%
+#   parsnip::set_mode("regression") %>%
+#   set_engine("keras")
+# model_spec <- parsnip::mlp(dropout = tune(), epochs = tune(), hidden_units = tune(), activation = "tanh", learn_rate = tune()) %>%
+#   parsnip::set_mode("regression") %>%
+#   set_engine("brulee")
+# model_spec <- parsnip::mars(num_terms = tune(), prod_degree = tune(), prune_method = tune()) %>%
+#   # This model can be used for classification or regression, so set mode
+#   set_mode("regression") %>%
+#   set_engine("earth")
+# model_spec <- parsnip::svm_rbf(
+#   cost = tune(),
+#   rbf_sigma = tune(),
+#   margin = tune()
+# ) %>%
+#   # This model can be used for classification or regression, so set mode
+#   set_mode("regression") %>%
+#   set_engine("kernlab")
+# model_spec <- parsnip::linear_reg(penalty = tune(), mixture = 0) %>%
+#   # This model can be used for classification or regression, so set mode
+#   set_mode("regression") %>%
+#   set_engine("glmnet")
+# model_spec <- boost_tree(trees = tune()) %>%
+#   # This model can be used for classification or regression, so set mode
+#   set_mode("classification") %>%
+#   set_engine("C5.0")
+# model_spec <- linear_reg() %>%
+#   # This model can be used for classification or regression, so set mode
+#   set_mode("regression") %>%
+#   set_engine("glm")
+###
+
+ppp_mp <- pdp::partial(best_fit$fit$fit,
+  type = "regression",
+  grid.resolution = 51,
+  parallel = TRUE,
+  pred.var = "mp_threshold",
+  train = tree_data
+)
+
+ppp_w <- pdp::partial(best_fit$fit$fit,
+  type = "regression",
+  grid.resolution = 51,
+  parallel = TRUE,
+  pred.var = "window_size",
+  train = tree_data
+)
+
+ppp_rt <- pdp::partial(best_fit$fit$fit,
+  type = "regression",
+  grid.resolution = 51,
+  parallel = TRUE,
+  pred.var = "regime_threshold",
+  train = tree_data
+)
+
+ppp_tc <- pdp::partial(best_fit$fit$fit,
+  type = "regression",
+  grid.resolution = 51,
+  parallel = TRUE,
+  pred.var = "time_constraint",
+  train = tree_data
+)
+
+ppp_mp_w <- pdp::partial(best_fit$fit$fit,
+  type = "regression",
+  # grid.resolution = 51,
+  parallel = TRUE,
+  pred.var = c("mp_threshold", "window_size"),
+  train = tree_data
+)
+
+pdp::plotPartial(ppp_mp_w, levelplot = FALSE, zlim = c(0, 15))
+
+ppp_mp_rt <- pdp::partial(best_fit$fit$fit,
+  type = "regression",
+  # grid.resolution = 51,
+  parallel = TRUE,
+  pred.var = c("mp_threshold", "regime_threshold"),
+  train = tree_data
+)
+
+ppp_mp_tc <- pdp::partial(best_fit$fit$fit,
+  type = "regression",
+  # grid.resolution = 51,
+  parallel = TRUE,
+  pred.var = c("mp_threshold", "time_constraint"),
+  train = tree_data
+)
+ppp_rt_w <- pdp::partial(best_fit$fit$fit,
+  type = "regression",
+  # grid.resolution = 51,
+  parallel = TRUE,
+  pred.var = c("regime_threshold", "window_size"),
+  train = tree_data
+)
+
+ppp_rt_tc <- pdp::partial(best_fit$fit$fit,
+  type = "regression",
+  # grid.resolution = 51,
+  parallel = TRUE,
+  pred.var = c("regime_threshold", "time_constraint"),
+  train = tree_data
+)
+
+ppp_tc_w <- pdp::partial(best_fit$fit$fit,
+  type = "regression",
+  # grid.resolution = 51,
+  parallel = TRUE,
+  pred.var = c("time_constraint", "window_size"),
+  train = tree_data
+)
+
+ppp_mp_w_tc <- pdp::partial(best_fit$fit$fit,
+  type = "regression",
+  # grid.resolution = 51,
+  parallel = TRUE,
+  pred.var = c("mp_threshold", "window_size", "time_constraint"),
+  train = tree_data
+)
+
+ppp_mp_rt_tc <- pdp::partial(best_fit$fit$fit,
+  type = "regression",
+  # grid.resolution = 51,
+  parallel = TRUE,
+  pred.var = c("mp_threshold", "regime_threshold", "time_constraint"),
+  train = tree_data
+)
+
+ppp_w_rt_tc <- pdp::partial(best_fit$fit$fit,
+  type = "regression",
+  # grid.resolution = 51,
+  parallel = TRUE,
+  pred.var = c("window_size", "regime_threshold", "time_constraint"),
+  train = tree_data
+)
+
+ppp_mp_w_rt <- pdp::partial(best_fit$fit$fit,
+  type = "regression",
+  # grid.resolution = 51,
+  parallel = TRUE,
+  pred.var = c("mp_threshold", "window_size", "regime_threshold"),
+  train = tree_data
+)
+
+ppp_mp_tc_rt <- pdp::partial(best_fit$fit$fit,
+  type = "regression",
+  # grid.resolution = 51,
+  parallel = TRUE,
+  pred.var = c("mp_threshold", "time_constraint", "regime_threshold"),
+  train = tree_data
+)
+
+ppp_tc_w_rt <- pdp::partial(best_fit$fit$fit,
+  type = "regression",
+  # grid.resolution = 51,
+  parallel = TRUE,
+  pred.var = c("time_constraint", "window_size", "regime_threshold"),
+  train = tree_data
+)
+
+ppp_w_tc_mp <- pdp::partial(best_fit$fit$fit,
+  type = "regression",
+  # grid.resolution = 51,
+  parallel = TRUE,
+  pred.var = c("window_size", "time_constraint", "mp_threshold"),
+  train = tree_data
+)
+
+ppp_w_rt_mp <- pdp::partial(best_fit$fit$fit,
+  type = "regression",
+  # grid.resolution = 51,
+  parallel = TRUE,
+  pred.var = c("window_size", "regime_threshold", "mp_threshold"),
+  train = tree_data
+)
+
+ppp_tc_rt_mp <- pdp::partial(best_fit$fit$fit,
+  type = "regression",
+  # grid.resolution = 51,
+  parallel = TRUE,
+  pred.var = c("time_constraint", "regime_threshold", "mp_threshold"),
+  train = tree_data
+)
+
+ppp_tc_mp_w <- pdp::partial(best_fit$fit$fit,
+  type = "regression",
+  # grid.resolution = 51,
+  parallel = TRUE,
+  pred.var = c("time_constraint", "mp_threshold", "window_size"),
+  train = tree_data
+)
+
+ppp_rt_mp_w <- pdp::partial(best_fit$fit$fit,
+  type = "regression",
+  # grid.resolution = 51,
+  parallel = TRUE,
+  pred.var = c("regime_threshold", "mp_threshold", "window_size"),
+  train = tree_data
+)
+
+ppp_tc_rt_w <- pdp::partial(best_fit$fit$fit,
+  type = "regression",
+  # grid.resolution = 51,
+  parallel = TRUE,
+  pred.var = c("time_constraint", "regime_threshold", "window_size"),
+  train = tree_data
+)
+
+partials <- list(
+  pdp_mp = ppp_mp,
+  pdp_w = ppp_w,
+  pdp_rt = ppp_rt,
+  pdp_tc = ppp_tc,
+  pdp_mp_w = ppp_mp_w,
+  pdp_mp_rt = ppp_mp_rt,
+  pdp_mp_tc = ppp_mp_tc,
+  pdp_rt_w = ppp_rt_w,
+  pdp_rt_tc = ppp_rt_tc,
+  pdp_tc_w = ppp_tc_w,
+  pdp_mp_w_tc = ppp_mp_w_tc,
+  pdp_mp_rt_tc = ppp_mp_rt_tc,
+  pdp_w_rt_tc = ppp_w_rt_tc,
+  pdp_mp_w_rt = ppp_mp_w_rt,
+  pdp_mp_tc_rt = ppp_mp_tc_rt,
+  pdp_tc_w_rt = ppp_tc_w_rt,
+  pdp_w_tc_mp = ppp_w_tc_mp,
+  pdp_w_rt_mp = ppp_w_rt_mp,
+  pdp_tc_rt_mp = ppp_tc_rt_mp,
+  pdp_tc_mp_w = ppp_tc_mp_w,
+  pdp_rt_mp_w = ppp_rt_mp_w,
+  pdp_tc_rt_w = ppp_tc_rt_w
+)
+
+# saveRDS(partials, file = here::here("dev", "partials.rds"))
+partials <- readRDS(file = here::here("dev", "partials.rds"))
+
+pdp::plotPartial(partials$pdp_rt, train = tree_data, rug = TRUE)
+pdp::plotPartial(partials$pdp_tc, train = tree_data, rug = TRUE)
+pdp::plotPartial(partials$pdp_mp, train = tree_data, rug = TRUE)
+pdp::plotPartial(partials$pdp_w, train = tree_data, rug = TRUE)
+pdp::plotPartial(partials$pdp_mp_w, train = tree_data, levelplot = FALSE)
+pdp::plotPartial(partials$pdp_mp_rt, train = tree_data, levelplot = FALSE)
+pdp::plotPartial(partials$pdp_mp_tc, train = tree_data, levelplot = FALSE)
+pdp::plotPartial(partials$pdp_rt_w, train = tree_data, levelplot = TRUE, rug = TRUE)
+pdp::plotPartial(partials$pdp_rt_tc, train = tree_data, levelplot = FALSE)
+pdp::plotPartial(partials$pdp_tc_w, train = tree_data, levelplot = FALSE)
+pdp::plotPartial(partials$pdp_mp_w_tc, train = tree_data, levelplot = FALSE)
+pdp::plotPartial(partials$pdp_tc_mp_w, train = tree_data, levelplot = FALSE)
+pdp::plotPartial(partials$pdp_w_tc_mp, train = tree_data, levelplot = FALSE)
+
+#  dbarts:rmse: 0.3191 mp_threshold and window_size interact strongly
+#   shap: regime mp window time
+#   firm: mp regime window time
+#   perm: mp time regime window
+#  bag_tree rpart: rmse: 1.273935;  mp_threshold and window_size interact medium
+#    shap: regime, mp (big), win time
+#    firm: mp, regime (big), win time
+#    perm: mp regime window time
+#  kknn reg: rmse 1.344419?  mp_threshold and window_size interact strongly
+#    shap: mp, regime (big), win time
+#    firm: mp, regime (big), win time
+#    perm: mp, (big), win/regime (mid) time
+#  mlp reg: rmse 1.689  mp x win, mp x reg, reg x win, mp x time ~ 1.77,1.63,1.55,1.25
+#    model: regime!!! mp, time, win (smalls)
+#    shap: mp, regime (big), win time
+#    firm: mp, regime (big), win time
+#    perm: mp, regime (big), win time
+#  kernlab reg: rmse 1.9033 mp_threshold and window_size interact +- as others
+#    shap: mp, regime, win (big), time
+#    firm: mp, regime, win (big), time
+#    perm: mp, win/regime (big), time
+#  mars reg: rmse 3.42  mp_threshold and window_size interact strongly
+#    model: w mp reg -time
+#    shap: mp reg w  -time
+#    firm: reg mp w  -time
+#    perm: mp reg w  -time
+#  decision_tree rpart: rmse: 3.600 regime_threshold and window_size interact strongly
+#    model: mp regime window time importance
+#    firm: mp regime window time
+#    perm: mp time regime window
+#    shap: mp regime time window
+#  glmnet: rmse: 4.48 ?? 1 regime_threshold*window_size        1.81e-16
+#    model: mp regime window time
+#   shap: time constraint
+#    firm: mp, regime (big), win time
+#    perm: mp regime window time
+#  keras reg: rmse 5.836752  no interactions
+#    shap: window(big), time, mp, regime
+#    firm: window(big), mp, time, regime
+#    perm: window(big), mp, regime, time
+#  brulee reg: rmse 7.40 fail interactions
+#    shap:fail interactions
+
+# interact
+
+# library(rsm)
+
+# fit1 <- lm(mean ~ poly(window_size, mp_threshold, degree = 10), data = tree_data)
+# image(fit1, mp_threshold ~ window_size)
+# contour(fit1, mp_threshold ~ window_size)
+# persp(fit1, mp_threshold ~ window_size, zlab = "mean", zlim = c(0, 30))
+
+# fit3 <- lm(mean ~ poly(mp_threshold, regime_threshold, degree = 5), data = tree_data)
+# persp(fit3, regime_threshold ~ mp_threshold, zlab = "mean", zlim = c(0, 30))
+
+# fit4 <- lm(mean ~ poly(mp_threshold, time_constraint, degree = 5), data = tree_data)
+# persp(fit4, time_constraint ~ mp_threshold, zlab = "mean", zlim = c(0, 30))
+
+# fit2 <- lm(mean ~ poly(window_size, regime_threshold, degree = 5), data = tree_data)
+# persp(fit2, regime_threshold ~ window_size, zlab = "mean", zlim = c(0, 30))
+
+# fit6 <- lm(mean ~ poly(window_size, time_constraint, degree = 5), data = tree_data)
+# persp(fit6, time_constraint ~ window_size, zlab = "mean", zlim = c(0, 30))
+
+# fit5 <- lm(mean ~ poly(regime_threshold, time_constraint, degree = 5), data = tree_data)
+# persp(fit5, time_constraint ~ regime_threshold, zlab = "mean", zlim = c(0, 30))
+
+
+
+
+
+
+# tree_data %>% ggplot(aes(x = window_size, y = mp_threshold)) +
+#   # geom_tile(color = "black") +
+#   geom_jitter(aes(size = mean, color = mean)) +
+#   scale_color_gradient(low = "#ffffff", high = "#222222") +
+#   theme_grey()
+
+
+# tree_data %>% ggplot(aes(x = window_size, y = regime_threshold)) +
+#   # geom_tile(color = "black") +
+#   geom_jitter(aes(size = mean, color = mean)) +
+#   scale_color_gradient(low = "#ffffff", high = "#222222") +
+#   theme_grey()
+
+
+# tree_data %>% ggplot(aes(x = regime_threshold, y = mp_threshold)) +
+#   # geom_tile(color = "black") +
+#   geom_jitter(aes(size = 4, color = mean)) +
+#   scale_color_gradient(low = "#ffffff", high = "#222222") +
+#   theme_grey()
+
+
+
+# tree_data %>% ggplot(aes(x = time_constraint, y = mp_threshold)) +
+#   # geom_tile(color = "black") +
+#   geom_jitter(aes(size = 4, color = mean)) +
+#   scale_color_gradient(low = "#ffffff", high = "#222222") +
+#   theme_grey()
+
+
+
+# tree_data %>% ggplot(aes(x = time_constraint, y = regime_threshold)) +
+#   # geom_tile(color = "black") +
+#   geom_jitter(aes(size = 4, color = mean)) +
+#   scale_color_gradient(low = "#ffffff", high = "#222222") +
+#   theme_grey()
+
+
+
+# tree_data %>% ggplot(aes(x = time_constraint, y = window_size)) +
+#   # geom_tile(color = "black") +
+#   geom_jitter(aes(size = 4, color = mean)) +
+#   scale_color_gradient(low = "#ffffff", high = "#222222") +
+#   theme_grey()
+
+
+
+# library(ggplot2)
+# # Plot top 20 results
+# top_20 <- res[1L:20L, ]
+# ggplot(top_20, aes(x = reorder(Variables, Interaction), y = Interaction)) +
+#   geom_col() +
+#   coord_flip() +
+#   xlab("") +
+#   ylab("Interaction strength")
+
+# set.seed(102) # for reproducibility
+# p0 <- best_fit %>%
+#   extract_fit_parsnip() %>%
+#   vip::vip()
+# p0
+# p0 + ggplot2::labs(title = "Variable importance - Model", y = "Importance")
+
+# predictor_names <- c("time_constraint", "regime_threshold", "mp_threshold", "window_size", "mp_thr_w")
+
+# set.seed(102) # for reproducibility
+# p1 <- vip::vip(
+#   object = best_fit, # fitted model
+#   method = "shap",
+#   feature_names = predictor_names, # names of features
+#   pred_wrapper = function(object, newdata) {
+#     pred <- predict(object, newdata)
+#     # browser()
+#     # if (is.null(pred$.pred)) {
+#     # return(colMeans(pred))
+#     # } else {
+#     return(pred$.pred)
+#     # }
+#   },
+#   nsim = 20,
+#   # exact = TRUE,
+#   include_type = TRUE,
+#   train = as.data.frame(training_split) # training data
+# )
+# p1 + ggplot2::labs(title = "Variable importance - Shap", y = "Importance (20 simulations)")
+
+# set.seed(102) # for reproducibility
+# p1 <- vip::vip(
+#   object = best_fit, # fitted model
+#   method = "firm",
+#   feature_names = predictors_names, # names of features
+#   pred.fun = function(object, newdata) {
+#     pred <- predict(object, newdata)
+#     # browser()
+#     if (is.null(pred$.pred)) {
+#       return(pred)
+#     } else {
+#       return(pred$.pred)
+#     }
+#   },
+#   type = "regression",
+#   nsim = 20,
+#   ice = TRUE,
+#   # keep = TRUE,
+#   # geom = "boxplot",
+#   include_type = TRUE,
+#   train = training_split # training data
+# )
+# p1 + ggplot2::labs(title = "Variable importance - Firm", y = "Importance (20 simulations)")
+
+# set.seed(102) # for reproducibility
+# p1 <- vip::vip(
+#   object = best_fit, # fitted model
+#   method = "permute",
+#   target = "mean",
+#   feature_names = predictors_names, # names of features
+#   pred_wrapper = function(object, newdata) {
+#     pred <- predict(object, newdata)
+#     if (is.null(pred$.pred)) {
+#       return(pred)
+#     } else {
+#       return(pred$.pred)
+#     }
+#   },
+#   nsim = 20,
+#   metric = "rmse",
+#   keep = TRUE,
+#   geom = "boxplot",
+#   include_type = TRUE,
+#   train = as.data.frame(training_split) # training data
+# )
+# p1 + ggplot2::labs(title = "Variable importance - Perm", y = "Importance (20 simulations)")
+
+ice <- vip::vi_firm(best_model$fit,
+  feature_names = c("mp_threshold", "regime_threshold", "time_constraint", "window_size"), # names of features)
+  train = as.data.frame(tree_data),
+  ice = TRUE
+)
+
+x <- tree_data %>% select(-mean)
+y <- tree_data %>% select(mean)
+y <- y$mean
+imp_fun <- function(object, newdata) { # for permutation-based VI scores
+  # browser()
+  pred <- predict(object, newdata)
+  pred
+}
+par_fun <- function(object, newdata) { # for PDPs
+  mean(predict(object, newdata))
+}
+
+fit <- best_model$fit
+
+var_imp <- vip::vi(fit,
+  method = "permute", train = x, target = y, metric = "rmse",
+  pred_wrapper = imp_fun, nsim = 100
+)
+
+vip::add_sparklines(var_imp,
+  fit = fit, pred.fun = par_fun, train = x, digits = 3,
+  verbose = TRUE, trim.outliers = TRUE,
+  grid.resolution = 100
+)
+
+ic <- attr(ice, which = "effects")
+
+ggplot2::ggplot(ic$window_size, aes(x = window_size, y = yhat, group = yhat.id)) +
+  geom_line()
+ggplot2::ggplot(ic$mp_threshold, aes(x = mp_threshold, y = yhat, group = yhat.id)) +
+  geom_line()
+ggplot2::ggplot(ic$regime_threshold, aes(x = regime_threshold, y = yhat, group = yhat.id)) +
+  geom_line()
+ggplot2::ggplot(ic$time_constraint, aes(x = time_constraint, y = yhat, group = yhat.id)) +
+  geom_line()
+
+
+
+
+# outputs$fitted_models[[1]] %>% tune::collect_metrics()
+# outputs$fitted_models[[2]] %>% tune::collect_metrics()
+# outputs$evaluated_models[[1]]
+# outputs$evaluated_models[[2]]
+# outputs$final_evaluation
+# grid0 %>% tune::collect_metrics()
+# grid4000 %>% tune::collect_metrics()
+
+# preds <- fitted2$.predictions[[2]] %>% dplyr::filter(.config == "Preprocessor1_Model005")
+
+# res_macro <- purrr::pmap_dbl(
+#   list(preds$truth, preds$.pred, preds$.sizes),
+#   ~ floss_error_impl(
+#     truth = ..1,
+#     estimate = ..2,
+#     data_size = ..3
+#   )
+# )
+
+# res_micro <- purrr::map2_dbl(
+#   preds$truth, preds$.pred,
+#   ~ floss_error_impl(
+#     truth = ..1,
+#     estimate = ..2,
+#     data_size = 1,
+#   )
+# ) / sum(preds$.sizes)
+
+# ds <- sum(preds$.sizes)
+
+# sum(res_micro2 < 0.2)
+# mean(res_micro2[res_micro2 < 0.1])
+# aa <- max(res_macro, res_macro2)
+# plot(res_macro2 / aa, ylim = c(0, 0.2), type = "l")
+# lines(res_macro / aa, col = 2)
+# plot.ts(cbind(res_micro / ds, res_micro2 / ds))
+
+
+
+
+## TODO:
+## preds$.id[c(8, 96, 127)]
+## preds$.id[c(41, 99, 100, 111, 128)]
+##  41  99 100 111 128
+## "data_104_20.par" "data_40_1.par"*   "data_3_1.par"    "data_31_10.par"  "data_68_2.par"*
+#     idxs <- sort(regime$idxs)
+#    idxs <- idxs[diff(idxs) > params$batch] # this removes the redundant regime changes
+#    score <- score_regimes(params$gold_truth, regime$idxs, length(data))
+#
+
+# fitted2$.metrics[[1]] 9 and 10
+# preds <- fitted2$.predictions[[1]] %>% dplyr::filter(.config == "Preprocessor1_Model004")
+#  100            1750          0.1              0.4 floss_error_macro macro           1.06 Preprocessor1_Model005
+#  100            1750          0.1              0.4 floss_error_micro micro           2.73 Preprocessor1_Model005
+```
+
+
+
+# Regime changes optimization
+
+## Current pipeline
+
+```{r thepipeline, out.width="100%", fig.cap="FLOSS pipeline."}
+visNetwork::visInteraction(net, hover = TRUE, multiselect = TRUE, tooltipDelay = 100)
+```
+
+## Tuning process
+
+```{r marginalplot, out.width="100%", fig.cap="Marginal plot of all fitted values."}
+gg <- tune:::plot_marginals(all_fitted, metric = c("floss_error_macro", "floss_error_micro")) +
+  ggplot2::labs(title = "Marginal plot", x = "Parameter value", y = "Performance") +
+  ggplot2::theme_bw()
+gg$layers <- NULL
+aa <- gg + ggplot2::geom_boxplot(ggplot2::aes(x = value, y = mean, group = value),
+  outlier.alpha = 0.2
+)
+hack <- rlang::env_get(aa$layers[[1]]$stat, "compute_group")
+body(hack)[[16]][[3]] <- quote(dplyr::if_else(data$x[1] <= 10, 0.02021286,
+  dplyr::if_else(data$x[1] <= 500, 5, 20)
+))
+rlang::env_poke(aa$layers[[1]]$stat, "compute_group", hack)
+aa
+body(hack)[[16]][[3]] <- quote(width) # unhack
+rlang::env_poke(aa$layers[[1]]$stat, "compute_group", hack) # unhack
+```
+
+```{r parametersplot, out.width="100%", fig.cap="Parameters exploration using bayes."}
+fit1 <- tune::autoplot(fitted1, type = "parameters") + ggplot2::facet_wrap(~name, ncol = 4, scales = "free_y") +
+  ggplot2::labs(title = "Parameter search - Repetition 1", x = "Iterations", y = "Parameter value") + ggplot2::theme_bw()
+
+fit2 <- tune::autoplot(fitted2, type = "parameters") + ggplot2::facet_wrap(~name, ncol = 4, scales = "free_y") +
+  ggplot2::labs(title = "Parameter search - Repetition 2", x = "Iterations", y = "Parameter value") + ggplot2::theme_bw()
+
+fit1 / fit2
+```
+
+```{r performanceplot, fig.height = 7, out.width="100%", fig.cap="Parameters exploration using bayes."}
+fit1 <- tune::autoplot(fitted1, type = "performance", width = 1) +
+  ggplot2::labs(title = "Performances - Repetition 1", x = "Iterations", y = "Performance") + ggplot2::theme_bw()
+
+fit2 <- tune::autoplot(fitted2, type = "performance", width = 1) +
+  ggplot2::labs(title = "Performances - Repetition 2", x = "Iterations", y = "Performance") + ggplot2::theme_bw()
+
+fit1 / fit2
+```
+
+```{r signifbetween, eval = FALSE, echo=FALSE, warning=FALSE, out.width="100%", fig.cap="wilcox.test."}
+library(ggsignif)
+
+# collect metrics
+data1 <- fitted1 %>%
+  tune::collect_metrics() %>%
+  dplyr::filter(.estimator == "macro") %>%
+  dplyr::select(window_size:regime_threshold, mean)
+data2 <- fitted2 %>%
+  tune::collect_metrics() %>%
+  dplyr::filter(.estimator == "macro") %>%
+  dplyr::select(window_size:regime_threshold, mean)
+
+mydata <- dplyr::bind_rows(data1, data2)
+ll <- seq(0, 1, by = 0.1)
+mydata$regime_threshold <- factor(mydata$regime_threshold, levels = ll, labels = ll, ordered = TRUE)
+mydata$mp_threshold <- factor(mydata$mp_threshold, levels = ll, labels = ll, ordered = TRUE)
+ll <- seq(100, 350, by = 25)
+mydata$window_size <- factor(mydata$window_size, levels = ll, labels = ll, ordered = TRUE)
+ll <- seq(750, 2000, by = 50)
+mydata$time_constraint <- factor(mydata$time_constraint, levels = ll, labels = ll, ordered = TRUE)
+p1 <- ggplot2::ggplot(mydata, ggplot2::aes(window_size, mean, group = window_size)) +
+  ggplot2::geom_boxplot(outlier.alpha = 0.2) +
+  ggsignif::geom_signif(
+    comparisons = list(
+      c("100", "225"),
+      c("125", "225"),
+      c("125", "250"),
+      c("150", "300"),
+      c("175", "325")
+    ),
+    step_increase = 0.07,
+    size = 0.5, extend_line = 0, tip_length = 0.03,
+    map_signif_level = TRUE, textsize = 3, vjust = 0.3,
+    y_position = 20,
+  )
+p2 <- ggplot2::ggplot(mydata, ggplot2::aes(regime_threshold, mean, group = regime_threshold)) +
+  ggplot2::geom_boxplot(outlier.alpha = 0.2) +
+  ggsignif::geom_signif(
+    comparisons = list(
+      c("0.2", "0.3"),
+      c("0.3", "0.4"),
+      c("0.4", "0.5"),
+      c("0.2", "0.4"),
+      c("0.5", "0.6"),
+      c("0.2", "0.5"),
+      c("0.4", "0.6"),
+      c("0.6", "0.7"),
+      c("0.3", "0.5"),
+      c("0.7", "0.8"),
+      c("0.3", "0.6")
+    ),
+    step_increase = 0.07,
+    size = 0.5, extend_line = 0.01, tip_length = 0.03,
+    map_signif_level = TRUE, textsize = 3, vjust = 0.3,
+    y_position = 20,
+  )
+p3 <- ggplot2::ggplot(mydata, ggplot2::aes(mp_threshold, mean, group = mp_threshold)) +
+  ggplot2::geom_boxplot(outlier.alpha = 0.2) +
+  ggsignif::geom_signif(
+    comparisons = list(
+      c("0", "0.1"),
+      c("0.1", "0.2"),
+      c("0.2", "0.3"),
+      c("0.3", "0.4"),
+      c("0.4", "0.5"),
+      c("0.5", "0.6"),
+      c("0.6", "0.7"),
+      c("0.7", "0.8"),
+      c("0.8", "0.9"),
+      c("0.9", "1"),
+      c("0.7", "0.9"),
+      c("0.8", "1"),
+      c("0.1", "0.9"),
+      c("0.2", "0.9"),
+      c("0.3", "0.9"),
+      c("0.4", "0.9"),
+      c("0.5", "0.9"),
+      c("0.6", "1"),
+      c("0", "1")
+    ),
+    step_increase = 0.07,
+    size = 0.5, extend_line = 0.01, tip_length = 0.03,
+    map_signif_level = TRUE, textsize = 3, vjust = 0.3,
+    y_position = 20,
+  )
+p4 <- ggplot2::ggplot(mydata, ggplot2::aes(time_constraint, mean, group = time_constraint)) +
+  ggplot2::geom_boxplot(outlier.alpha = 0.2) +
+  ggsignif::geom_signif(
+    comparisons = list(
+      c("1650", "1850"),
+      c("1550", "1850"),
+      c("1300", "1850"),
+      c("1200", "1850"),
+      c("1200", "1800"),
+      c("1100", "1850"),
+      c("1050", "1850"),
+      c("950", "1850"),
+      c("750", "1550")
+    ),
+    step_increase = 0.07,
+    size = 0.5, extend_line = 0, tip_length = 0.03,
+    map_signif_level = TRUE, textsize = 3, vjust = 0.3,
+    y_position = 20,
+  )
+#  +  ggplot2::facet_grid(ggplot2::cut_interval(regime_threshold, 5) ~ ggplot2::cut_interval(mp_threshold, 5))
+p1
+p2
+p3
+p4
+
+tree_data %>%
+  mutate(mp_threshold = abs(jitter(mp_threshold, amount = 0.01)), window_size = jitter(window_size, amount = 1)) %>%
+  ggplot(aes(x = mp_threshold, y = window_size, z = mean)) +
+  geom_point() +
+  geom_contour()
+
+
+tree_data %>% ggplot(aes(x = window_size, y = mp_threshold)) +
+  # geom_tile(color = "black") +
+  geom_jitter(aes(size = 4, color = mean)) +
+  scale_color_gradient(low = "#ffffff", high = "#222222") +
+  theme_grey()
+
+
+tree_data %>% ggplot(aes(x = window_size, y = regime_threshold)) +
+  # geom_tile(color = "black") +
+  geom_jitter(aes(size = 4, color = mean)) +
+  scale_color_gradient(low = "#ffffff", high = "#222222") +
+  theme_grey()
+
+
+tree_data %>% ggplot(aes(x = regime_threshold, y = mp_threshold)) +
+  # geom_tile(color = "black") +
+  geom_jitter(aes(size = 4, color = mean)) +
+  scale_color_gradient(low = "#ffffff", high = "#222222") +
+  theme_grey()
+
+tree_data %>% ggplot(aes(x = time_constraint, y = mp_threshold)) +
+  # geom_tile(color = "black") +
+  geom_jitter(aes(size = 4, color = mean)) +
+  scale_color_gradient(low = "#ffffff", high = "#222222") +
+  theme_grey()
+
+tree_data %>% ggplot(aes(x = time_constraint, y = regime_threshold)) +
+  # geom_tile(color = "black") +
+  geom_jitter(aes(size = 4, color = mean)) +
+  scale_color_gradient(low = "#ffffff", high = "#222222") +
+  theme_grey()
+
+tree_data %>% ggplot(aes(x = time_constraint, y = window_size)) +
+  # geom_tile(color = "black") +
+  geom_jitter(aes(size = 4, color = mean)) +
+  scale_color_gradient(low = "#ffffff", high = "#222222") +
+  theme_grey()
+
+tree_data %>% ggplot(aes(x = mp_threshold, y = mean, group = window_size, color = window_size)) +
+  geom_point(alpha = 0.3) +
+  geom_smooth(
+    method = "nls", formula = y ~ a * x + b, se = FALSE,
+    method.args = list(start = list(a = 0.1, b = 0.1))
+  )
+#  facet_wrap(~window_size)
+
+tree_data %>% ggplot(aes(x = regime_threshold, y = mean, group = window_size, color = window_size)) +
+  geom_point(alpha = 0.3) +
+  geom_smooth(
+    method = "nls", formula = y ~ a * x + b, se = FALSE,
+    method.args = list(start = list(a = 0.1, b = 0.1))
+  )
+#  facet_wrap(~window_size)
+
+tree_data %>% ggplot(aes(x = time_constraint, y = mean, group = window_size, color = window_size)) +
+  geom_point(alpha = 0.3) +
+  geom_smooth(
+    method = "nls", formula = y ~ a * x + b, se = FALSE,
+    method.args = list(start = list(a = 0.1, b = 0.1))
+  )
+#  facet_wrap(~window_size)
+
+tree_data %>% ggplot(aes(x = time_constraint, y = mean, group = mp_threshold, color = mp_threshold)) +
+  geom_point(alpha = 0.3) +
+  geom_smooth(
+    method = "nls", formula = y ~ a * x + b, se = FALSE,
+    method.args = list(start = list(a = 0.1, b = 0.1))
+  )
+#  facet_wrap(~mp_threshold)
+
+tree_data %>% ggplot(aes(x = regime_threshold, y = mean, group = mp_threshold, color = mp_threshold)) +
+  geom_point(alpha = 0.3) +
+  geom_smooth(method = "glm", method.args = list(family = "binomial"), se = F)
+#  facet_wrap(~mp_threshold)
+```
+
+
+## Importance
+
+In order to check the effect of the parameters on the model, we need to compute the importance of each parameter.
+
+For this matter, a Discrete Bayesian Additive Regression Trees Sampler (DBARTS) model was fitted to the
+parameter search results, where the FLOSS performance is the "outcome", and the parameters are the
+"predictors".
+
+The DBARTS was chosen after an experimental trial with a set of regression models (including glmnet, gbm, mlp) and
+the results using 5 fold cross-validation repeated 2 times had a great predictive power with a RMSE of 0.18 and a
+R^2 of 0.998. With this fitted model we could then evaluate the importance of each parameter.
+
+```{r modelbart}
+tree_data <- all_fitted %>%
+  tune::collect_metrics() %>%
+  dplyr::filter(.estimator == "macro") %>%
+  dplyr::select(
+    time_constraint,
+    regime_threshold,
+    mp_threshold, window_size,
+    mean
+  )
+
+trained_model <- NULL
+if (file.exists(here("output", "dbarts_fitted.rds"))) {
+  trained_model <- readRDS(here("output", "dbarts_fitted.rds"))
+} else {
+  trained_model <- train_models(tree_data, parallel = TRUE)
+  saveRDS(trained_model, file = here("output", "dbarts_fitted.rds"))
+}
+
+train_data <- trained_model$training_data
+testing_data <- trained_model$testing_data
+set.seed(102)
+best_fit <- fit(trained_model$model, train_data)
+predictors_names <- c("time_constraint", "regime_threshold", "mp_threshold", "window_size")
+
+if (file.exists(here("output", "importances.rds"))) {
+  interactions <- readRDS(here("output", "importances.rds"))
+  importance_firm <- interactions$importance_firm
+  importance_perm <- interactions$importance_perm
+  importance_shap <- interactions$importance_shap
+  interactions <- interactions$interactions
+} else {
+  interactions <- check_interactions(best_fit, train_data, predictors_names, parallel = TRUE)
+  importance_firm <- check_importance(best_fit, testing_data, predictors_names, type = "firm", parallel = TRUE)
+  importance_perm <- check_importance(best_fit, testing_data, predictors_names, type = "permute", nsim = 100, parallel = TRUE)
+  importance_shap <- check_importance(best_fit, testing_data, predictors_names, type = "shap", nsim = 20)
+  saveRDS(list(
+    interactions = interactions,
+    importance_firm = importance_firm,
+    importance_perm = importance_perm,
+    importance_shap = importance_shap
+  ), file = here("output", "importances.rds"))
+}
+
+tree_data2 <- all_fitted %>%
+  tune::collect_metrics() %>%
+  dplyr::filter(.estimator == "macro") %>%
+  dplyr::mutate(
+    int_mp_w = mp_threshold * window_size,
+    # int_mp_rt = mp_threshold * regime_threshold,
+    int_mp_tc = mp_threshold * time_constraint
+  ) %>%
+  dplyr::select(
+    time_constraint,
+    regime_threshold,
+    mp_threshold,
+    window_size,
+    int_mp_w,
+    # int_mp_rt,
+    int_mp_tc,
+    mean
+  )
+
+trained_model2 <- NULL
+if (file.exists(here("output", "dbarts_fitted2.rds"))) {
+  trained_model2 <- readRDS(here("output", "dbarts_fitted2.rds"))
+} else {
+  trained_model2 <- train_models(tree_data2, parallel = TRUE)
+  saveRDS(trained_model2, file = here("output", "dbarts_fitted2.rds"))
+}
+
+train_data2 <- trained_model2$training_data
+testing_data2 <- trained_model2$testing_data
+set.seed(102)
+best_fit2 <- fit(trained_model2$model, train_data2)
+
+if (file.exists(here("output", "importances2.rds"))) {
+  interactions2 <- readRDS(here("output", "importances2.rds"))
+  importance_firm2 <- interactions2$importance_firm2
+  importance_perm2 <- interactions2$importance_perm2
+  importance_shap2 <- interactions2$importance_shap2
+  interactions2 <- interactions2$interactions2
+} else {
+  interactions2 <- check_interactions(best_fit2, train_data2, predictors_names, parallel = TRUE)
+  importance_firm2 <- check_importance(best_fit2, testing_data2, predictors_names, type = "firm", parallel = TRUE)
+  importance_perm2 <- check_importance(best_fit2, testing_data2, c(predictors_names, "int_mp_w", "int_mp_tc"), type = "permute", nsim = 100, parallel = TRUE)
+  importance_shap2 <- check_importance(best_fit2, testing_data2, c(predictors_names, "int_mp_w", "int_mp_tc"), type = "shap", nsim = 20)
+  saveRDS(list(
+    interactions2 = interactions2,
+    importance_firm2 = importance_firm2,
+    importance_perm2 = importance_perm2,
+    importance_shap2 = importance_shap2
+  ), file = here("output", "importances2.rds"))
+}
+```
+```{r interaction, fig.height = 10, fig.width= 15, out.width="100%", fig.cap="Variables interactions."}
+interactions_plot <- ggplot2::ggplot(interactions, ggplot2::aes(
+  x = reorder(Variables, Interaction),
+  y = Interaction, fill = Variables
+)) +
+  ggplot2::geom_col(color = "grey35", size = 0.8) +
+  ggplot2::coord_flip() +
+  ggplot2::labs(
+    title = "Normal fit",
+    y = ggplot2::element_blank(),
+    x = ggplot2::element_blank()
+  ) +
+  ggplot2::ylim(0, 1.2) +
+  ggplot2::theme_bw() +
+  ggplot2::theme(legend.position = "none")
+
+interactions2_plot <- ggplot2::ggplot(interactions2, ggplot2::aes(
+  x = reorder(Variables, Interaction),
+  y = Interaction, fill = Variables
+)) +
+  ggplot2::geom_col(color = "grey35", size = 0.8) +
+  ggplot2::coord_flip() +
+  ggplot2::labs(
+    title = "Taking into account the interactions",
+    y = "Interaction strength",
+    x = ggplot2::element_blank()
+  ) +
+  ggplot2::ylim(0, 1.2) +
+  ggplot2::theme_bw() +
+  ggplot2::theme(legend.position = "none")
+
+inter <- interactions_plot / interactions2_plot
+inter + plot_annotation(
+  title = "Variable Interaction Strength (WIP)",
+  tag_levels = c("A", "1"),
+  theme = ggplot2::theme_bw() + ggplot2::theme(plot.title = ggplot2::element_text(size = 20))
+)
+```
+```{r importance, fig.height = 7, fig.width= 15, out.width="100%", fig.cap="Variables importances."}
+importance_firm_plot <- importance_firm +
+  ggplot2::labs(
+    title = "Feature Importance Ranking Measure\nIndividual Conditional Expectation",
+    y = ggplot2::element_blank()
+  ) +
+  ggplot2::ylim(0, 6) +
+  ggplot2::theme_bw() +
+  ggplot2::theme(
+    legend.position = "none",
+    plot.margin = margin(0, 0, 0, 10)
+  )
+
+importance_perm_plot <- importance_perm +
+  ggplot2::labs(
+    title = "Permutation-based (100x)",
+    y = ggplot2::element_blank()
+  ) +
+  ggplot2::ylim(0, 6) +
+  ggplot2::theme_bw() +
+  ggplot2::theme(
+    legend.position = "none",
+    plot.margin = margin(0, 0, 0, 10)
+  )
+
+importance_shap_plot <- importance_shap +
+  ggplot2::labs(
+    title = "Shapley (20 iterations)",
+    y = ggplot2::element_blank()
+  ) +
+  ggplot2::ylim(0, 6) +
+  ggplot2::theme_bw() +
+  ggplot2::theme(
+    legend.position = "none",
+    plot.margin = margin(0, 0, 0, 10)
+  )
+
+
+importance_firm2_plot <- importance_firm2 +
+  ggplot2::labs(
+    y = "Importance"
+  ) +
+  ggplot2::ylim(0, 6) +
+  ggplot2::theme_bw() +
+  ggplot2::theme(
+    legend.position = "none",
+    plot.margin = margin(0, 0, 0, 10)
+  )
+
+importance_perm2_plot <- importance_perm2 +
+  ggplot2::labs(
+    y = "Importance"
+  ) +
+  ggplot2::ylim(0, 6) +
+  ggplot2::theme_bw() +
+  ggplot2::theme(
+    legend.position = "none",
+    plot.margin = margin(0, 0, 0, 10)
+  )
+
+importance_shap2_plot <- importance_shap2 +
+  ggplot2::labs(
+    y = "Importance"
+  ) +
+  ggplot2::ylim(0, 6) +
+  ggplot2::theme_bw() +
+  ggplot2::theme(
+    legend.position = "none",
+    plot.margin = margin(0, 0, 0, 10)
+  )
+
+# options(vsc.dev.args = list(width = 1000, height = 700))
+
+all <- (importance_firm_plot + importance_perm_plot + importance_shap_plot + plot_layout(tag_level = "new")) /
+  (importance_firm2_plot + importance_perm2_plot + importance_shap2_plot + plot_layout(tag_level = "new")) +
+  plot_layout(guides = "collect")
+all + plot_annotation(
+  title = "Variable importance (WIP)",
+  tag_levels = c("A", "1"),
+  theme = ggplot2::theme_bw() + ggplot2::theme(
+    plot.title = ggplot2::element_text(size = 20)
+  )
+)
+```
+### Detecting regime changes
+
+The regime change approach will be using the _Arc Counts_ concept, used on the FLUSS (Fast Low-cost
+Unipotent Semantic Segmentation) algorithm, as explained by Gharghabi, _et al._,[@gharghabi2018].
+
+The FLUSS (and FLOSS, the online version) algorithm is built on top of the Matrix Profile
+(MP)[@Yeh2017a], described on section \@ref(matrixprofile). Recalling that the MP and the
+companion Profile Index (PI) are two vectors holding information about the 1-NN. One can imagine
+several "arcs" starting from one "index" to another. This algorithm is based on the assumption that
+between two regimes, the most similar shape (its nearest neighbor) is located on "the same side", so
+the number of "arcs" decreases when there is a change in the regime and increases again. As show on
+Fig. \@ref(fig:arcsoriginal). This drop on the _Arc Counts_ is a signal that a change in the
+shape of the signal has happened.
+
+```{r arcsoriginal, echo=FALSE, out.width="100%", fig.cap="FLUSS algorithm, using arc counts."}
+knitr::include_graphics("figure/fluss_arcs.svg")
+```
+
+The choice of the FLOSS algorithm (the online version of FLUSS) is founded on the following arguments:
+
+-  **Domain Agnosticism:** the algorithm makes no assumptions about the data as opposed to most
+   available algorithms to date.
+-  **Streaming:** the algorithm can provide real-time information.
+-  **Real-World Data Suitability:** the objective is not to _explain_ all the data. Therefore, areas
+   marked as "don't know" areas are acceptable.
+-  **FLOSS is not:** a change point detection algorithm [@aminikhanghahi2016]. The interest here is
+   changes in the shapes of a sequence of measurements.
+
+Other algorithms we can cite are based on Hidden Markov Models (HMM) that require at least two
+parameters to be set by domain experts: cardinality and dimensionality reduction. The most
+attractive alternative could be the Autoplait [@Matsubara2014], which is also domain agnostic and
+parameter-free. It segments the time series using Minimum Description Length (MDL) and recursively
+tests if the region is best modeled by one or two HMM. However, Autoplait is designed for batch
+operation, not streaming, and also requires discrete data. FLOSS was demonstrated to be superior in
+several datasets in its original paper. In addition, FLOSS is robust to several changes in data like
+downsampling, bit depth reduction, baseline wandering, noise, smoothing, and even deleting 3% of the
+data and filling with simple interpolation. Finally, the most important, the algorithm is light and
+suitable for low-power devices.
+
+In the MP domain, it is worth also mentioning another possible algorithm: the Time Series Snippets
+[@Imani2018], based on MPdist [@gharghabi2018b]. The MPdist measures the distance between two
+sequences, considering how many similar sub-sequences they share, no matter the matching order. It
+proved to be a useful measure (not a metric) for meaningfully clustering similar sequences. Time
+Series Snippets exploits MPdist properties to summarize a dataset extracting the $k$ sequences
+representing most of the data. The final result seems to be an alternative for detecting regime
+changes, but it is not. The purpose of this algorithm is to find which pattern(s) explains most of
+the dataset. Also, it is not suitable for streaming data. Lastly, MPdist is quite expensive compared
+to the trivial Euclidean distance.
+
+The regime change detection will be evaluated following the criteria explained in section
+\@ref(evaluation).
+
+## Evaluation of the algorithms {#evaluation}
+
+The subsampling method used on both algorithms, regime change, and classification, will be
+the Cross-Validation, as the learning task will be in batches.
+
+Other options dismissed [@Bischl2012]:
+
+* Leave-One-Out Cross-Validation: has better properties for regression than for classification. It
+  has a high variance as an estimator of the mean loss. It also is asymptotically inconsistent and
+  tends to select too complex models. It is demonstrated empirically that 10-fold CV is often
+  superior.
+
+* Bootstrapping: while it has low variance, it may be optimistic-biased on more complex models.
+  Also, its resampling method with replacement can leak information into the assessment set.
+
+* Subsampling: is like bootstrapping, but without replacement. The only argument for not choosing it
+  is that we make sure all the data is used for analysis and assessment with Cross-Validation.
+
+
+### Regime change
+
+The regime change detection will use subsampling (bootstrapping can lead to substantial bias toward
+more complex models) in the Outer resampling and cross-validation in the Inner resampling. How the
+evaluation will be performed and why the use of cross-validation will be explained in section
+\@ref(evaluation).
+
+```{r regimedetection, echo=FALSE, out.width="90%"}
+#| fig.cap = "Pipeline for regime change detection.
+#|  The full dataset (containing several patients) is divided into a Training set and a Test set.
+#|  The Training set is then resampled in an Analysis set and an Assessment set. The former is
+#|  used for training/parameter tuning and the latter for assessing the result. The best parameters
+#|  are then used for evaluation on the Test set. This may be repeated several times."
+
+knitr::include_graphics("figure/draw-regime-model.svg")
+```
+
+
+A detailed discussion about the evaluation process of segmentation algorithms is made by the
+FLUSS/FLOSS author [@gharghabi2018]. Previous researches have used precision/recall or derived
+measures for performance. The main issue is how to assume that the algorithm was correct? Is this a
+miss if the ground truth says the change occurred at location 10,000, and the algorithm detects a
+change at location 10,001?
+
+As pointed out by the author, several independent researchers have suggested a temporal tolerance,
+that solves one issue but has a hard time penalizing any tiny miss beyond this tolerance.
+
+The second issue is an over-penalization of an algorithm in which most of the detections are good,
+but just one (or a few) is poor.
+
+The author proposes the solution depicted in Fig. \@ref(fig:flosseval). It gives 0 as the best
+score and 1 as the worst. The function sums the distances between the ground truth locations and the
+locations suggested by the algorithm. The sum is then divided by
+<!--the product of the number of segments, and then -->
+the length of the time series to normalize the range to [0, 1].
+
+The goal is to minimize this score.
+
+<!--
+TODO: review the problem when there are too many detections
+-->
+
+```{r flosseval, echo=FALSE, out.width="100%"}
+#| fig.cap="Regime change evaluation. The top line illustrates the ground truth, and the
+#|  bottom line the locations reported by the algorithm. Note that multiple proposed locations
+#|  can be mapped to a single ground truth point."
+knitr::include_graphics("figure/floss_eval.svg")
+```
+
+# References
