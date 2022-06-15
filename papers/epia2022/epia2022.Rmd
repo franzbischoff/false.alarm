@@ -60,9 +60,10 @@ abstract: |
   Currently, Point-of-Care (POC) ECG monitoring works either as plot devices or alarms for abnormal
   cardiac rhythms using predefined normal trigger ranges.  Great effort has been made to improve the
   accuracy of such monitoring, but in the ICU setting.  Thinking outside the ICU setting, where
-  high-end devices are available, we aim to identify, on streaming data, life-threatening hearth
-  electric patterns using low CPU and memory, enabling ward monitors, home devices and even wearable
+  high-end devices are available, we aim to identify, on streaming data, life-threatening heart
+  electric patterns using low CPU and memory, enabling ward monitors, home devices, and even wearable
   devices to be able to identify such events.
+
 bibliography: '`r here::here("papers", "references.bib")`'
 link-citations: true
 csl: llncs-alpha.csl
@@ -127,29 +128,29 @@ the field, and the methodology to be pursued. -->
 # Introduction
 
 Currently, Point-of-Care (POC) ECG monitoring works either as plot devices or alarms for abnormal
-cardiac rhythms using predefined normal trigger ranges. Modern devices also incorporate algorithms
-to analyze arrhythmias improving their specificity. On the other hand, full 12-derivation ECG
-machines are complex, are not suited to use as simple monitors, and are used with strict techniques
-for formal diagnostics of hearth electric conduction pathologies. The automatic diagnostics are
+cardiac rhythms using predefined normal trigger ranges.  Modern devices also incorporate algorithms
+to analyze arrhythmias improving their specificity.  On the other hand, full 12-derivation ECG
+machines are complex, are not suited to use as simple monitors and are used with strict techniques
+for formal diagnostics of hearth electric conduction pathologies.  The automatic diagnostics are
 derived from a complete analysis of the 12-dimension data after it is fully and well collected.
 
-In February of 2015, the CinC/Physionet Challenge 2015 was about "Reducing False Arrhythmia Alarms
-in the ICU" [@Clifford2015]. The introduction article stated that it had been reported that up to 86%
-resulting of the alarms are false, and this can lead to decreased staff attention and an increase in
-patients' delirium [@Lawless1994; @Chambrin2001; @Parthasarathy2004].
+In February 2015, the CinC/Physionet Challenge 2015 was about "Reducing False Arrhythmia Alarms in
+the ICU" [@Clifford2015].  The introduction article stated that it had been reported that up to 86%
+of the alarms are false, which can lead to decreased staff attention and an increase in patients'
+delirium [@Lawless1994; @Chambrin2001; @Parthasarathy2004].
 
-This subject draws attention to the importance of correctly identify abnormal hearth electric
-patterns.  Meanwhile, this opens the opportunity of thinking outside the ICU setting, where we still
-monitoring patients (and ourselves) using devices with low processing power, as for example ward
-monitors, home devices and wearable devices.
+This subject highlights the importance of correctly identifying abnormal hearth electric patterns.
+Meanwhile, this opens the opportunity of thinking outside the ICU setting, where we still monitor
+patients (and ourselves) using devices with low processing power, such as ward monitors, home
+devices, and wearable devices.
 
 # Objectives and research question
 
-While this research was inspired on the Physionet's challenge, its purpose is not to beat the state
-of the art on that challenge, but to identify, on streaming data, abnormal hearth electric patterns,
-specifically those which are life-threatening, using low CPU and low memory requirements.
+While this research was inspired by the Physionet's challenge, its purpose is not to beat the
+state-of-the-art on that challenge but to identify, on streaming data, abnormal heart electric
+patterns, specifically those which are life-threatening, using low CPU and low memory requirements.
 
-The main questions is: can we accomplish this objective using a minimalist approach (low CPU, low
+The main question is: can we accomplish this objective using a minimalist approach (low CPU, low
 memory) while maintaining robustness?
 
 # Related Works
@@ -157,11 +158,11 @@ memory) while maintaining robustness?
 The Physionet's challenge yielded several papers on the subject
 [@plesinger2015; @kalidas2015; @couto2015; @fallet2015; @hoogantink2015].  However, independently of
 their approach to this problem, none of the authors reported benchmarks, memory usage, robustness
-test, or context invariance that could assure its implementation smaller devices.
+test, or context invariance that could assure its implementation in smaller devices.
 
 # Planned approach
 
-## The data
+## Dataset
 
 The dataset used is the CinC/Physionet Challenge 2015 public dataset [@Clifford2015], composed of
 750 patients with at least five minutes records.  The _events_ we seek to identify are the
@@ -190,26 +191,26 @@ kbl(alarms,
 ## Matrix Profile
 
 This work will use the state-of-the-art [@DePaepe2020; @Feremans2020] time series analysis technique
-called Matrix Profile (MP) that once computed, allows us to derive frameworks to all sorts of tasks,
-as motif discovery, anomaly detection, regime change detection and others [@Yeh2017a].  The MP is
-known to be an incredible fast algorithm [@gharghabi2018; @Madrid2019], thus viewing on the other
-side (not to process billions of data points using a desktop), it has a great potential to be used
-on small devices.
+called Matrix Profile (MP) that, once computed, allows us to derive frameworks for all sorts of
+tasks, such as motif discovery, anomaly detection, regime change detection, and others [@Yeh2017a].
+The MP is known to be an incredible fast algorithm [@gharghabi2018; @Madrid2019], thus viewing on
+the other side (not to process billions of data points using a desktop), it has a great potential to
+be used on small devices.
 
-The streaming data, coming from one patient, is processed to create its MP in real-time.  Then, the
-FLOSS algorithm [@gharghabi2018] is computed for detecting a regime change.  When a new regime is
-detected, a sample of this new regime is analysed by a model and a decision is made.  If the new
+The streaming data coming from a patient is processed to create its MP in real-time.  Then, the
+FLOSS algorithm [@gharghabi2018] is computed to detect a regime change.  When a new regime is
+detected, a sample of this new regime is analyzed by a model, and a decision is made.  If the new
 regime is life-threatening, the alarm will be fired.
 
 ## Detecting regime changes
 
-The regime change detection will be using the FLOSS algorithm [@gharghabi2018] which is an on-line
-algorithm built on top of the computed MP.  The algorithm is based on the assumption that between
-two regimes, the most similar shape (its nearest neighbor, 1-NN) is located on "the same side".  The
-details of the algorithm are described in the original paper [@gharghabi2018].  In short, the
-algorithm keeps track of the number of 1-NN references (called _Arc Counts_) that crosses a point in
-time.  As shown on the original article, figures 2 and 3 [@gharghabi2018], a drop in the Arc Counts
-indicates a regime change.
+The regime change detection will use the FLOSS algorithm [@gharghabi2018], an online algorithm built
+on top of the computed MP.  The algorithm is based on the assumption that between two regimes, the
+most similar shape (its nearest neighbor, 1-NN) is located on "the same side".  The details of the
+algorithm are described in the original paper [@gharghabi2018].  In short, the algorithm keeps track
+of the number of 1-NN references (called _Arc Counts_) that crosses a point in time.  As shown in
+the original article, figures 2 and 3 [@gharghabi2018], a drop in the Arc Counts indicates a regime
+change.
 
 ```{r flossregime, eval=FALSE, echo=FALSE, out.width="100%"}
 #| fig.cap="Regime change detection example.
@@ -223,39 +224,44 @@ my_graphics("graph_regime_floss")
 
 ## Classification of the new regime
 
-The next step is to verify if the new regime detected is indeed a life-threatening pattern.  The
-method of choice is a classification model using shapelets as signatures of such patterns.  The aim is
-not to identify the exact type of the new regime, but if it is life-threatening or not. This allows
-us to use a set of shapelet candidates which maximize the classification performance.
+The next step is verifying if the new regime detected is a life-threatening pattern.  The aim is not
+to identify the exact type of the new regime but if it is life-threatening or not.  The method of
+choice is a classification model using shapelets as signatures of such patterns.  In this case, we
+will need to use a set of shapelet candidates, which maximize the classification performance.
 
 Leveraging on the MP concept, we can use the Contrast Profile (CP) [@Mercer2021] to derive a set of
-shapelets candidates.  The CP looks for patterns that are at the same time very *similar* to its
-neighbors in class *A* while is very *different* from the nearest neighbor from class *B*.
+shapelets candidates.  The CP looks for patterns simultaneously very *similar* to its neighbors in
+class *A* while being very *different* from the nearest neighbor in class *B*.
 
-For a more complete understanding of the process, in the original article, the figure 6 shows a
-practical example [@Mercer2021].
+For a complete understanding of the process, in the original article, figure 6 shows a practical
+example [@Mercer2021].
 
-<!-- In this work, an example of candidates for ventricular tachycardia is presented on Fig. \@ref(fig:vtachy). -->
+<!-- In this work, an example of candidates for ventricular tachycardia is presented in Fig. \@ref(fig:vtachy). -->
 
 ```{r vtachy, eval=FALSE, echo=FALSE, out.width="90%", fig.cap="Shapelet candidates for Ventricular Tachycardia.", fig.height=9, fig.width=14}
-def_par <- graphics::par(no.readonly = TRUE)
-graphics::layout(matrix(1:6, ncol = 2, byrow = TRUE))
-graphics::par(mai = c(0.8, 0.5, 0.6, 0.5), cex = 1)
+withr::with_par(list(mai = c(0.8, 0.5, 0.6, 0.5), cex = 1), {
+  graphics::layout(matrix(1:6, ncol = 2, byrow = TRUE))
+  data <- readRDS(here("presentations/Report/contrast.rds"))
 
-data <- readRDS(here("presentations/Report/contrast.rds"))
-
-for (i in (1:6)) {
-  plot(tsmp:::znorm(data[[i]]$plato), type = "l", ylab = "", xlab = "samples (250hz)")
-  for (j in seq_along(data[[i]]$neighbors)) {
-    lines(tsmp:::znorm(data[[i]]$neighbors[[j]]$data), col = j + 1)
+  for (i in (1:6)) {
+    plot(tsmp:::znorm(data[[i]]$plato), type = "l", ylab = "", xlab = "samples (250hz)") # nolint
+    for (j in seq_along(data[[i]]$neighbors)) {
+      lines(tsmp:::znorm(data[[i]]$neighbors[[j]]$data), col = j + 1) # nolint
+    }
   }
-}
-graphics::par(def_par)
+})
 ```
 
 ## Implementation
 
-Ultimately, this workflow will be experimented on a low power device, such as an ESP32 microcontroller [@esp32]
-in order to validate the concept and measure the performance and benchmarks.
+Later, this workflow will be experimented on a low-power device, such as an ESP32 microcontroller
+[@esp32], to validate the concept and measure the performance and benchmarks.
+
+# Expected results and outcomes
+
+Ultimately, this thesis will provide a framework for identifying life-threatening conditions using
+biological streaming data on devices with low CPU and memory specifications.  We expect to achieve a
+high-quality model for identifying these pathological conditions while maintaining their robustness
+in the presence of noise and artifacts seen in real-world applications.
 
 # References
