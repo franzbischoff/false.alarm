@@ -1,14 +1,27 @@
 # nolint start
 # nocov start
 
+#' @importFrom rlang enquo
+#' @importFrom purrr map_lgl
+#' @importFrom tibble is_tibble as_tibble
+#' @importFrom parsnip set_new_model
+#' @importFrom parsnip multi_predict
+#' @importFrom parsnip translate
+#' @importFrom stats update
+#' @importFrom withr with_options
+#' @importFrom stats predict
+#' @importFrom dials new_quant_param
+
 .onLoad <- function(libname, pkgname) {
   tryCatch(debugme::debugme(), error = identity)
   vctrs::s3_register("stats::predict", "floss_regime_model")
   vctrs::s3_register("false.alarm::print", "floss_regime_model")
-  vctrs::s3_register("parsnip::update", "floss_regime_model")
+  vctrs::s3_register("generics::min_grid", "floss_regime_model")
+  vctrs::s3_register("stats::update", "floss_regime_model")
   vctrs::s3_register("parsnip::translate", "floss_regime_model")
   vctrs::s3_register("parsnip::multi_predict", "_floss_regime_model")
   vctrs::s3_register("false.alarm::floss_error", "data.frame")
+  register_floss_regime_model()
   invisible()
 }
 

@@ -12,8 +12,8 @@ call_function|function|cc4e0da425b42567|||||||||||||||
 call_ns|function|365e9c2cbbe1e444|||||||||||||||
 compl|function|1cc0810c2c8fe26b|||||||||||||||
 complexity|function|5fe702a01cef2a6e|||||||||||||||
-compute_arcs|function|2962bc21299f85b5|||||||||||||||
-compute_companion_stats|function|4be69ce143164163|||||||||||||||
+compute_arcs|function|7d4b7a859f7a899b|||||||||||||||
+compute_companion_stats|function|76613610273412a9|||||||||||||||
 compute_filters|function|7329a063b58bdd91|||||||||||||||
 compute_floss|function|6c7001ea8391306e|||||||||||||||
 compute_s_profile_with_stats|function|9eff55289a1b93b0|||||||||||||||
@@ -375,7 +375,7 @@ sprintf_transformer|function|2199f7feeee38815|||||||||||||||
 training_regimes|function|673d267b573ce1a4|||||||||||||||
 training_split|stem|99d9d737db0e4874|74d47449a574137b|ff0ec0dc5970baef|708679313||t19158.1456491606s|4413bf7ebe1c3ed3|2368410|rds|local|vector|||0.001||
 turning_points|function|9903884c923a3261|||||||||||||||
-validate_data|function|50b6ebb680cf72b2|||||||||||||||
+validate_data|function|202375c7b051b783|||||||||||||||
 var_classes_exclude|object|8bba6e8869ccd25c|||||||||||||||
 var_classes_include|object|c09353a39f424410|||||||||||||||
 var_dopar_cores|object|034a656f55683244|||||||||||||||

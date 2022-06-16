@@ -418,11 +418,10 @@ score_regimes_old <- function(gtruth, reported, data_size) {
   gtruth <- gtruth[gtruth > 0]
   reported <- reported[reported > 0]
 
-  m <- length(gtruth)
-  n <- length(reported)
+  truth_len <- length(gtruth)
+  reported_len <- length(reported)
 
-  out <- max(m, n)
-  inn <- min(m, n)
+  min_points <- min(truth_len, reported_len)
 
   # FIXME: by default, outer should be the reported (paper!); swaping this gives different results.
   if (out == m) {
@@ -446,19 +445,48 @@ score_regimes_old <- function(gtruth, reported, data_size) {
   minv <- rep(Inf, out)
 
   k <- 1
+  l <- NULL
 
-  for (j in seq.int(1, out)) {
-    for (i in seq.int(k, inn)) {
-      if (abs(inner[i] - outer[j]) <= minv[j]) {
-        minv[j] <- abs(inner[i] - outer[j])
+  for (j in seq.int(1, reported_len)) {
+    for (i in seq.int(k, truth_len)) {
+      if (abs(gtruth[i] - reported[j]) <= minv[j]) {
+        minv[j] <- abs(gtruth[i] - reported[j])
         k <- i # pruning, truth and reported must be sorted
       } else {
+        l <- c(l, k)
         break # pruning, truth and reported must be sorted
       }
     }
   }
 
-  score <- sum(minv) / (inn * data_size)
+  if (truth_len > reported_len) {
+    lefties <- seq_len(truth_len)
+    lefties <- lefties[!(lefties %in% l)]
+    minv_left <- rep(Inf, truth_len)
+    k <- 1
+    for (j in lefties) {
+      for (i in seq.int(k, reported_len)) {
+        if (abs(gtruth[j] - reported[i]) <= minv_left[j]) {
+          minv_left[j] <- abs(gtruth[j] - reported[i])
+          k <- i # pruning, truth and reported must be sorted
+        } else {
+          break # pruning, truth and reported must be sorted
+        }
+      }
+    }
+
+    minv_left <- minv_left[is.finite(minv_left)]
+    minv <- c(minv, minv_left)
+  }
+
+  if (data_size <= 0) {
+    # computes the mean error during a period of time, not bounded to the data size
+    range <- max(gtruth, reported) - min(gtruth, reported)
+    score <- sum(minv) / (min_points * range)
+  } else {
+    score <- sum(minv) / (min_points * data_size)
+  }
+
   score
 }
 

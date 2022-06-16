@@ -1,5 +1,6 @@
 ## Tuning parameters
 
+#' @export
 trans_round <- function(d = 1) {
   force(d)
 
@@ -26,6 +27,7 @@ trans_round <- function(d = 1) {
   )
 }
 
+#' @export
 time_constraint_par <- function(range = c(750L, 5000L), trans = trans_round(50)) {
   dials::new_quant_param(
     type = "integer",
@@ -38,6 +40,7 @@ time_constraint_par <- function(range = c(750L, 5000L), trans = trans_round(50))
   )
 }
 
+#' @export
 window_size_par <- function(range = c(150L, 250L), trans = trans_round(25)) {
   dials::new_quant_param(
     type = "integer",
@@ -51,6 +54,7 @@ window_size_par <- function(range = c(150L, 250L), trans = trans_round(25)) {
   )
 }
 
+#' @export
 mp_threshold_par <- function(range = c(0, 1), trans = trans_round(0.1)) {
   dials::new_quant_param(
     type = "double",
@@ -63,6 +67,7 @@ mp_threshold_par <- function(range = c(0, 1), trans = trans_round(0.1)) {
   )
 }
 
+#' @export
 regime_threshold_par <- function(range = c(0, 1), trans = trans_round(0.1)) {
   dials::new_quant_param(
     type = "double",
@@ -75,6 +80,7 @@ regime_threshold_par <- function(range = c(0, 1), trans = trans_round(0.1)) {
   )
 }
 
+#' @export
 regime_landmark_par <- function(range = c(1, 10), trans = trans_round(0.5)) {
   dials::new_quant_param(
     type = "double",
@@ -87,9 +93,9 @@ regime_landmark_par <- function(range = c(1, 10), trans = trans_round(0.5)) {
   )
 }
 
-
+#' @export
 min_grid.floss_regime_model <- function(x, grid, ...) { # nolint
-  # cli::cli_inform(c("*" = "min_grid.floss_regime_model "))
+  cli::cli_inform(c("*" = "min_grid.floss_regime_model "))
   # cli::cli_inform(c("*" = "min_grid.floss_regime_model: dots_n {rlang::dots_n(...)}"))
   if (rlang::dots_n(...) > 0) { # 0
     cli::cli_alert(c("*" = "min_grid.floss_regime_model: dots_names {names(rlang::dots_list(..., .preserve_empty = TRUE))}"))

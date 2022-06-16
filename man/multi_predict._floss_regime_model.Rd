@@ -4,7 +4,7 @@
 \alias{multi_predict._floss_regime_model}
 \title{Model predictions across many sub-models}
 \usage{
-multi_predict._floss_regime_model(
+\method{multi_predict}{`_floss_regime_model`}(
   object,
   new_data,
   type = NULL,

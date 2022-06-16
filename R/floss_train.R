@@ -30,32 +30,29 @@ floss_train_model <- function(truth, ts, ..., window_size, regime_threshold, reg
 
   res <- list(truth = truth, id = as.character(id))
 
-  cli::cli_inform(c("*" = "Training the model: using `furrr`."))
-
-  options(progressr.enable = TRUE)
-
-  f_train <- function(ts, window_size, mp_threshold, time_constraint) {
-    p <- progressr::progressor(steps = length(ts))
-    furrr::future_map(ts,
-      function(ts, window_size, mp_threshold, time_constraint) {
-        p(glue::glue("Starting."))
-        floss_train_regimes(ts, window_size, mp_threshold, time_constraint)
-      }, window_size, mp_threshold, time_constraint,
-      .options = furrr::furrr_options(seed = TRUE, scheduling = 1, packages = "false.alarm")
+  if (foreach::getDoParRegistered()) {
+    cli::cli_inform(c("*" = "Training the model: using `furrr`."))
+    f_train <- function(ts, window_size, mp_threshold, time_constraint) {
+      p <- progressr::progressor(steps = length(ts))
+      furrr::future_map(ts,
+        function(ts, window_size, mp_threshold, time_constraint) {
+          p(glue::glue("Starting."))
+          floss_train_regimes(ts, window_size, mp_threshold, time_constraint)
+        }, window_size, mp_threshold, time_constraint,
+        .options = furrr::furrr_options(seed = TRUE, scheduling = 1, packages = "false.alarm")
+      )
+    }
+    floss <- f_train(ts, window_size, mp_threshold, time_constraint)
+  } else {
+    cli::cli_inform(c("*" = "Training the model: using `purrr`."))
+    floss <- purrr::map(
+      ts,
+      floss_train_regimes,
+      window_size,
+      mp_threshold,
+      time_constraint
     )
   }
-
-
-  floss <- f_train(ts, window_size, mp_threshold, time_constraint)
-
-  # cli::cli_inform(c("*" = "Training the model: using `purrr`."))
-  # floss <- purrr::map(
-  #   ts,
-  #   floss_train_regimes,
-  #   window_size,
-  #   mp_threshold,
-  #   time_constraint
-  # )
 
   res$floss <- floss
 

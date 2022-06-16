@@ -7,11 +7,14 @@ floss_error <- function(data, ...) {
 
 floss_error <- yardstick::new_numeric_metric(floss_error, direction = "minimize")
 
+#' @export
 floss_error_micro <- yardstick::metric_tweak("floss_error_micro", floss_error, estimator = "micro")
+
+#' @export
 floss_error_macro <- yardstick::metric_tweak("floss_error_macro", floss_error, estimator = "macro")
 
 #' @export
-floss_error.data.frame <- function(data, truth, estimate, na_rm = TRUE, estimator = "binary", ...) { # nolint
+floss_error.data.frame <- function(data, truth, estimate, na_rm = TRUE, estimator = "binary", case_weights = NULL, ...) { # nolint
   # cli::cli_alert(c("*" = "floss_error.data.frame <<- work here"))
   # cli::cli_inform(c("*" = "floss_error.data.frame: dots_n {rlang::dots_n(...)}"))
   if (rlang::dots_n(...) > 0) { # 0
@@ -110,7 +113,7 @@ floss_error_vec <- function(truth, estimate, data_size, na_rm = TRUE, estimator 
     )
 
     return(mean(res))
-  } else if (estimator == "macro_median") { # current method (median of the sum of errors / sample range)
+  } else if (estimator == "macro_median") {
     # cli::cli_inform(c("*" = "floss_error_vec <<- macro"))
     res <- purrr::map2_dbl(
       truth, estimate,
@@ -124,11 +127,105 @@ floss_error_vec <- function(truth, estimate, data_size, na_rm = TRUE, estimator 
         ...
       )
     )
+    return(median(res)) # macro;
+    # res
+  } else if (estimator == "macro_mean") {
+    # cli::cli_inform(c("*" = "floss_error_vec <<- macro"))
+    res <- purrr::pmap_dbl(
+      list(truth, estimate, data_size),
+      ~ yardstick::metric_vec_template(
+        metric_impl = floss_error_impl,
+        truth = ..1,
+        estimate = ..2,
+        na_rm = na_rm,
+        cls = "numeric",
+        data_size = ..3,
+        ...
+      )
+    )
+    return(mean(res)) # macro;
+    # res
+  } else if (estimator == "macro_fixed") {
+    # cli::cli_inform(c("*" = "floss_error_vec <<- macro"))
+    res <- purrr::pmap_dbl(
+      list(truth, estimate, data_size),
+      ~ yardstick::metric_vec_template(
+        metric_impl = floss_error_impl,
+        truth = ..1,
+        estimate = ..2,
+        na_rm = na_rm,
+        cls = "numeric",
+        data_size = floor(..3 / 15000),
+        ...
+      )
+    )
+    return(mean(res)) # macro;
+    # res
+  } else if (estimator == "macro_median_fixed") {
+    # cli::cli_inform(c("*" = "floss_error_vec <<- macro"))
+    res <- purrr::pmap_dbl(
+      list(truth, estimate, data_size),
+      ~ yardstick::metric_vec_template(
+        metric_impl = floss_error_impl,
+        truth = ..1,
+        estimate = ..2,
+        na_rm = na_rm,
+        cls = "numeric",
+        data_size = floor(..3 / 15000),
+        ...
+      )
+    )
+    return(median(res)) # macro;
+    # res
+  } else if (estimator == "fixed") {
+    # cli::cli_inform(c("*" = "floss_error_vec <<- macro"))
+    res <- purrr::pmap_dbl(
+      list(truth, estimate, data_size),
+      ~ yardstick::metric_vec_template(
+        metric_impl = floss_error_impl,
+        truth = ..1,
+        estimate = ..2,
+        na_rm = na_rm,
+        cls = "numeric",
+        data_size = floor(..3 / 15000),
+        ...
+      )
+    )
+    return(list(res)) # macro;
+    # res
+  } else if (estimator == "range") {
+    # cli::cli_inform(c("*" = "floss_error_vec <<- micro"))
+    res <- purrr::map2_dbl(
+      truth, estimate,
+      ~ yardstick::metric_vec_template(
+        metric_impl = floss_error_impl,
+        truth = ..1,
+        estimate = ..2,
+        na_rm = na_rm,
+        cls = "numeric",
+        data_size = 0,
+        ...
+      )
+    )
 
-    return(median(res))
+    return(list(res))
+  } else {
+    # cli::cli_inform(c("*" = "floss_error_vec <<- macro"))
+    res <- purrr::pmap_dbl(
+      list(truth, estimate, data_size),
+      ~ yardstick::metric_vec_template(
+        metric_impl = floss_error_impl,
+        truth = ..1,
+        estimate = ..2,
+        na_rm = na_rm,
+        cls = "numeric",
+        data_size = ..3,
+        ...
+      )
+    )
+    return(list(res))
   }
 }
-
 
 
 floss_score <- function(gtruth, reported, data_size) {

@@ -16,7 +16,8 @@ License: CC BY-NC-SA 4.0
 URL: https://github.com/franzbischoff/false.alarm
 BugReports: https://github.com/franzbischoff/false.alarm/issues
 Depends:
-    R (>= 4.2)
+    R (>= 4.2),
+    parsnip (>= 0.2.1)
 Imports:
     bookdown (>= 0.22),
     checkmate (>= 2.0.0),
@@ -38,7 +39,8 @@ Imports:
     visNetwork (>= 2.1.0),
     workflowr (>= 1.6.2),
     tune (>= 0.2.0.9002),
-    yardstick (>= 0.0.9)
+    yardstick (>= 0.0.9),
+    magrittr
 Suggests:
     clustermq (>= 0.8.95),
     codemetar (>= 0.3.3),
@@ -76,7 +78,7 @@ Remotes:
     rstudio/bookdown,
     rstudio/rmarkdown,
     wlandau/gittargets,
-    franzbischoff/tune
+    franzbischoff/tune@feature/multiple_arguments
 Config/testthat/edition: 3
 Config/testthat/parallel: false
 Encoding: UTF-8

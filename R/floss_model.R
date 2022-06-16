@@ -260,28 +260,33 @@ predict.floss_regime_model <- function(object, new_data, type = NULL, regime_thr
 
   "!DEBUG predicting."
 
-  # cli::cli_inform(c("*" = "Predicting regime changes: using `furrr`."))
-  # estimates <- furrr::future_map(obj_fit$floss, floss_predict,
-  #   terms$window_size,
-  #   terms$time_constraint,
-  #   regime_threshold,
-  #   regime_landmark,
-  #   .options = furrr::furrr_options(seed = TRUE, scheduling = 1)
-  # )
-
+  # if (foreach::getDoParRegistered()) {
+  #   cli::cli_inform(c("*" = "Predicting regime changes: using `furrr`."))
+  #   estimates <- furrr::future_map(
+  #     obj_fit$floss,
+  #     floss_predict,
+  #     terms$window_size,
+  #     terms$time_constraint,
+  #     regime_threshold,
+  #     regime_landmark,
+  #     .options = furrr::furrr_options(seed = TRUE, scheduling = 1, packages = "false.alarm")
+  #   )
+  # } else {
   cli::cli_inform(c("*" = "Predicting regime changes: using `purrr`."))
   estimates <- purrr::map(
-    obj_fit$floss, floss_predict,
+    obj_fit$floss,
+    floss_predict,
     terms$window_size,
     terms$time_constraint,
     regime_threshold,
     regime_landmark
   )
+  # }
 
   res <- tibble::tibble(
     .sizes = purrr::map_int(new_data$ts, length),
     .id = as.character(new_data$id),
-    .pred = estimates,
+    .pred = estimates
   )
 
   res
