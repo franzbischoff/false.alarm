@@ -7,12 +7,13 @@
 floss_train_model <- function(truth, ts, ..., window_size, regime_threshold, regime_landmark, mp_threshold, time_constraint) {
   cli::cli_alert(c("!" = "Training the model: <<- this takes time"))
   # cli::cli_inform(c("*" = "floss_train_model: dots_n {rlang::dots_n(...)}"))
-  if (rlang::dots_n(...) > 0) { # 0
+  if (rlang::dots_n(...) > 0L) {
+    # 0L
     cli::cli_alert(c("*" = "floss_train_model: dots_names {names(rlang::dots_list(..., .preserve_empty = TRUE))}"))
   }
 
   n <- nrow(ts)
-  if (n == 0) {
+  if (n == 0L) {
     rlang::abort("There are zero rows in the predictor set.")
   }
 
@@ -21,11 +22,11 @@ floss_train_model <- function(truth, ts, ..., window_size, regime_threshold, reg
 
   "!DEBUG fitting model."
 
-  if (ncol(ts) > 1) {
-    id <- ts[[1]]
-    ts <- ts[[2]]
+  if (ncol(ts) > 1L) {
+    id <- ts[[1L]]
+    ts <- ts[[2L]]
   } else {
-    id <- seq.int(1, n)
+    id <- seq.int(1L, n)
   }
 
   res <- list(truth = truth, id = as.character(id))
@@ -39,7 +40,7 @@ floss_train_model <- function(truth, ts, ..., window_size, regime_threshold, reg
           p(glue::glue("Starting."))
           floss_train_regimes(ts, window_size, mp_threshold, time_constraint)
         }, window_size, mp_threshold, time_constraint,
-        .options = furrr::furrr_options(seed = TRUE, scheduling = 1, packages = "false.alarm")
+        .options = furrr::furrr_options(seed = TRUE, scheduling = 1L, packages = "false.alarm")
       )
     }
     floss <- f_train(ts, window_size, mp_threshold, time_constraint)
@@ -77,12 +78,12 @@ floss_train_model <- function(truth, ts, ..., window_size, regime_threshold, reg
 
 #' @export
 floss_train_regimes <- function(ecg_data, window_size, mp_threshold, time_constraint,
-                                ez = 0.5, history = 5000, sample_freq = 250, batch = 100) {
+                                ez = 0.5, history = 5000L, sample_freq = 250L, batch = 100L) {
   # cli::cli_inform(c("*" = "Training.\n\n"))
   "!DEBUG processing Stats"
 
   stats <- compute_companion_stats(ecg_data,
-    list(window_size = window_size, n_workers = 1),
+    list(window_size = window_size, n_workers = 1L),
     infos = list(foo = "bar")
   )
 
@@ -108,7 +109,7 @@ floss_train_regimes <- function(ecg_data, window_size, mp_threshold, time_constr
       window_size = window_size,
       ez = round(ez * window_size + .Machine$double.eps^0.5),
       mp_time_constraint = time_constraint,
-      floss_time_constraint = 0,
+      floss_time_constraint = 0L,
       cac_only = TRUE,
       history = history,
       sample_freq = sample_freq
@@ -130,9 +131,9 @@ compute_companion_stats <- function(ecg_data, params, infos) {
   msd <- false.alarm::muinvn(ecg_data, params$window_size, params$n_workers)
   avg <- msd$avg
   sig <- msd$sig
-  ddf <- -1 * diff(ecg_data, lag = params$window_size) / 2
-  ddg <- (ecg_data[seq.int(params$window_size + 1, data_len)] - avg[seq.int(2, data_len - params$window_size + 1)]) +
-    (ecg_data[seq.int(1, data_len - params$window_size)] - avg[seq.int(1, data_len - params$window_size)])
+  ddf <- -1.0 * diff(ecg_data, lag = params$window_size) / 2.0
+  ddg <- (ecg_data[seq.int(params$window_size + 1L, data_len)] - avg[seq.int(2L, data_len - params$window_size + 1L)]) +
+    (ecg_data[seq.int(1L, data_len - params$window_size)] - avg[seq.int(1L, data_len - params$window_size)])
 
   result <- list(avg = avg, sig = sig, ddf = ddf, ddg = ddg)
 
@@ -147,15 +148,15 @@ compute_companion_stats <- function(ecg_data, params, infos) {
 compute_s_profile_with_stats <- function(data_with_stats, params, infos) {
   checkmate::qassert(data_with_stats, "L2")
   checkmate::assert_true(identical(
-    attr(data_with_stats[[1]], "info"),
-    attr(data_with_stats[[2]], "info")
+    attr(data_with_stats[[1L]], "info"),
+    attr(data_with_stats[[2L]], "info")
   ))
   checkmate::qassert(infos, "L+")
 
-  data <- data_with_stats[[1]]
+  data <- data_with_stats[[1L]]
   data_info <- attr(data, "info")
-  subset_start <- ifelse(isFALSE(data_info$subset), 0, data_info$subset[1] - 1)
-  stats <- data_with_stats[[2]]
+  subset_start <- dplyr::if_else(isFALSE(data_info$subset), 0L, data_info$subset[1L] - 1L)
+  stats <- data_with_stats[[2L]]
 
   # don't compute if the stats are not compatible
   checkmate::assert_true(
@@ -164,23 +165,23 @@ compute_s_profile_with_stats <- function(data_with_stats, params, infos) {
 
   "!DEBUG History `params$history`, batch size `params$batch`"
 
-  profile_len <- params$history - params$window_size + 1
+  profile_len <- params$history - params$window_size + 1L
 
-  initial_data_vector <- seq.int(1, params$history)
-  initial_stats_vector <- seq.int(1, profile_len)
+  initial_data_vector <- seq.int(1L, params$history)
+  initial_stats_vector <- seq.int(1L, profile_len)
 
   initial_stats <- purrr::map(stats, function(x) x[initial_stats_vector])
-  initial_stats$ddf[profile_len] <- 0
-  initial_stats$ddg[profile_len] <- 0
+  initial_stats$ddf[profile_len] <- 0.0
+  initial_stats$ddg[profile_len] <- 0.0
 
   initial_mp <- list(w = params$window_size, ez = params$ez, offset = subset_start)
   current_mp <- false.alarm::mpx_stream_s_right(data[initial_data_vector],
     batch_size = params$history, initial_mp,
-    initial_stats, history = 0, mp_time_constraint = params$mp_time_constraint, progress = params$progress,
+    initial_stats, history = 0L, mp_time_constraint = params$mp_time_constraint, progress = params$progress,
     threshold = params$threshold
   )
 
-  new_data_vector <- seq.int(params$history + 1, length(data))
+  new_data_vector <- seq.int(params$history + 1L, length(data))
 
   "!DEBUG Data Size `length(data)`."
 
@@ -189,22 +190,22 @@ compute_s_profile_with_stats <- function(data_with_stats, params, infos) {
   "!DEBUG Data List Size `length(new_data_list)`."
 
   profiles <- list()
-  profiles[[1]] <- current_mp
-  profiles[[1]]$motif_quality <- false.alarm::motif_quality(current_mp$right_matrix_profile,
+  profiles[[1L]] <- current_mp
+  profiles[[1L]]$motif_quality <- false.alarm::motif_quality(current_mp$right_matrix_profile,
     input_format = "pearson", window_size = params$window_size
   )
-  i <- 2
+  i <- 2L
 
   for (n in new_data_list) {
     batch <- length(n)
-    start <- (current_mp$offset - subset_start) - params$history + 1
+    start <- (current_mp$offset - subset_start) - params$history + 1L
     end <- (current_mp$offset - subset_start) + batch
     data_vector <- seq.int(start, end)
-    profile_len <- length(data_vector) - params$window_size + 1
-    stats_vector <- seq.int(start, start + profile_len - 1)
+    profile_len <- length(data_vector) - params$window_size + 1L
+    stats_vector <- seq.int(start, start + profile_len - 1L)
     current_stats <- purrr::map(stats, function(x) x[stats_vector])
-    current_stats$ddf[profile_len] <- 0
-    current_stats$ddg[profile_len] <- 0
+    current_stats$ddf[profile_len] <- 0.0
+    current_stats$ddg[profile_len] <- 0.0
     current_mp <- false.alarm::mpx_stream_s_right(data[data_vector],
       batch_size = batch, current_mp,
       current_stats, history = params$history,
@@ -217,7 +218,7 @@ compute_s_profile_with_stats <- function(data_with_stats, params, infos) {
     profiles[[i]]$motif_quality <- false.alarm::motif_quality(current_mp$right_matrix_profile,
       input_format = "pearson", window_size = params$window_size
     )
-    i <- i + 1
+    i <- i + 1L
     "!!DEBUG batch size `batch`"
   }
 
@@ -240,41 +241,44 @@ compute_floss <- function(mp_data, params, infos) {
   checkmate::qassert(infos, "L+")
 
   ez <- params$ez
-  mp_time_constraint <- ifelse(is.null(params$mp_time_constraint), 0, params$mp_time_constraint)
-  floss_time_constraint <- ifelse(is.null(params$floss_time_constraint), 0, params$floss_time_constraint)
+  mp_time_constraint <- dplyr::if_else(is.null(params$mp_time_constraint), 0L, params$mp_time_constraint)
+  floss_time_constraint <- dplyr::if_else(is.null(params$floss_time_constraint), 0L, params$floss_time_constraint)
+  if (mp_time_constraint > floor(params$history * 3.0 / 4.0)) {
+    mp_time_constraint <- 0L
+  }
   sample_freq <- params$sample_freq
 
   checkmate::qassert(ez, c("0", "N"))
 
-  if (mp_time_constraint > 0 & floss_time_constraint > 0) {
+  if (mp_time_constraint > 0L && floss_time_constraint > 0L) {
     rlang::abort("You cannot set `mp_time_constraint` and `floss_time_constraint` at the same time.")
   }
 
   constraint <- FALSE
 
-  if (mp_time_constraint > 0 || floss_time_constraint > 0) {
+  if (mp_time_constraint > 0L || floss_time_constraint > 0L) {
     constraint <- TRUE
   }
 
   info <- attr(mp_data, "info")
 
   if (constraint) {
-    iac <- vector("list", 500)
-    pro_size <- length(mp_data[[1]]$right_profile_index)
-    for (i in 1:500) {
+    iac <- vector("list", 500L)
+    pro_size <- length(mp_data[[1L]]$right_profile_index)
+    for (i in 1L:500L) {
       iac[[i]] <- get_asym(pro_size, mp_time_constraint, floss_time_constraint)
     }
 
     aic_avg <- rowMeans(as.data.frame(iac))
-    if (mp_time_constraint > 0 & mp_time_constraint < (pro_size / 2)) {
-      aic_avg[seq.int(mp_time_constraint, pro_size - mp_time_constraint * 0.9)] <- mp_time_constraint / 2
+    if (mp_time_constraint > 0L && mp_time_constraint < (pro_size / 2.0)) {
+      aic_avg[seq.int(mp_time_constraint, pro_size - mp_time_constraint * 0.9)] <- mp_time_constraint / 2.0
     }
   } else {
     aic_avg <- NULL
   }
 
   result_floss <- purrr::map(mp_data, function(x) {
-    curr_ez <- ifelse(!is.null(ez), ez, x$ez * 10)
+    curr_ez <- dplyr::if_else(!is.null(ez), ez, x$ez * 10.0)
     cac <- compute_arcs(
       x$right_profile_index, x$w,
       curr_ez,
@@ -282,7 +286,12 @@ compute_floss <- function(mp_data, params, infos) {
       sample_freq,
       floss_time_constraint
     )
-    list(cac = cac$cac, iac = cac$iac, arcs = cac$arcs, w = x$w, ez = curr_ez, offset = x$offset)
+
+    if (isTRUE(params$cac_only)) {
+      list(cac = cac$cac, w = x$w, ez = curr_ez, offset = x$offset)
+    } else {
+      list(cac = cac$cac, iac = cac$iac, arcs = cac$arcs, w = x$w, ez = curr_ez, offset = x$offset)
+    }
   })
 
   "!DEBUG Finished `length(result_floss)` profiles."
@@ -296,7 +305,7 @@ compute_floss <- function(mp_data, params, infos) {
 compute_arcs <- function(right_profile_index, window_size, exclusion_zone, aic_avg, sample_freq, floss_time_constraint) {
   checkmate::qassert(right_profile_index, "N")
   checkmate::qassert(exclusion_zone, "N")
-  checkmate::assert_true(sample_freq > 50)
+  checkmate::assert_true(sample_freq > 50L)
 
   "!!DEBUG Compute ARCS"
 
@@ -305,13 +314,13 @@ compute_arcs <- function(right_profile_index, window_size, exclusion_zone, aic_a
   cac_size <- length(right_profile_index)
   nnmark <- vector(mode = "numeric", cac_size)
 
-  if (floss_time_constraint > 0) {
+  if (floss_time_constraint > 0L) {
     constraint <- floss_time_constraint
   } else {
     constraint <- cac_size
   }
 
-  for (i in seq.int(1, (cac_size - ez - 1))) {
+  for (i in seq.int(1L, (cac_size - ez - 1L))) {
     j <- right_profile_index[i]
 
     if (abs(j - i) <= constraint) {
@@ -319,12 +328,12 @@ compute_arcs <- function(right_profile_index, window_size, exclusion_zone, aic_a
         next
       }
 
-      if (j < 0 || j > cac_size) {
+      if (j < 0L || j > cac_size) {
         next
       }
 
-      nnmark[min(i, j)] <- nnmark[min(i, j)] + 1
-      nnmark[max(i, j)] <- nnmark[max(i, j)] - 1
+      nnmark[min(i, j)] <- nnmark[min(i, j)] + 1L
+      nnmark[max(i, j)] <- nnmark[max(i, j)] - 1L
     }
   }
 
@@ -333,46 +342,46 @@ compute_arcs <- function(right_profile_index, window_size, exclusion_zone, aic_a
 
   if (!is.null(aic_avg)) {
     iac <- aic_avg
-    cac <- pmin(arc_counts / iac, 1) # below 1 or 1
-    cac[seq.int(1, (window_size / 2))] <- 1.0
+    cac <- pmin(arc_counts / iac, 1.0) # below 1 or 1
+    cac[seq.int(1L, (window_size / 2.0))] <- 1.0
     cac[seq.int((cac_size - window_size), cac_size)] <- 1.0
-    cac[cac < 0 | is.na(cac)] <- 1.0
+    cac[cac < 0.0 | is.na(cac)] <- 1.0
   } else {
-    x <- seq(0, 1, length.out = cac_size)
+    x <- seq(0.0, 1.0, length.out = cac_size)
     # mode <- 0.6311142 # best point to analyze the segment change
     a <- 1.939274
     b <- 1.69815
-    iac <- a * b * x^(a - 1) * (1 - x^a)^(b - 1) * cac_size / 4.035477 # nolint # kumaraswamy distribution
+    iac <- a * b * x^(a - 1.0) * (1.0 - x^a)^(b - 1.0) * cac_size / 4.035477 # nolint # kumaraswamy distribution
 
-    cac <- pmin(arc_counts / iac, 1) # below 1 or 1
-    cac[seq.int(1, (window_size / 2))] <- 1.0
+    cac <- pmin(arc_counts / iac, 1.0) # below 1 or 1
+    cac[seq.int(1L, (window_size / 2.0))] <- 1.0
     cac[seq.int((cac_size - window_size), cac_size)] <- 1.0
-    cac[cac < 0 | is.na(cac)] <- 1.0
+    cac[cac < 0.0 | is.na(cac)] <- 1.0
   }
 
   return(list(arcs = arc_counts, iac = iac, cac = cac))
 }
 
 
-get_asym <- function(pro_len = 50000, mp_tc = 0, floss_tc = 0) {
-  mpi <- rep(0, pro_len)
+get_asym <- function(pro_len = 50000L, mp_tc = 0L, floss_tc = 0L) {
+  mpi <- rep(0L, pro_len)
   tc <- pro_len
 
-  if (mp_tc > 0) {
-    for (i in (1:(pro_len - 1))) {
-      mpi[i] <- runif(1, i + 1, min(pro_len, i + mp_tc))
+  if (mp_tc > 0L) {
+    for (i in (1L:(pro_len - 1L))) {
+      mpi[i] <- runif(1L, i + 1.0, min(pro_len, i + mp_tc))
     }
   } else {
     # the same as for pure FLOSS without constraint. The constraint will be done later
-    for (i in (1:(pro_len - 1))) {
-      mpi[i] <- runif(1, i + 1, pro_len)
+    for (i in (1L:(pro_len - 1L))) {
+      mpi[i] <- runif(1L, i + 1.0, pro_len)
     }
     tc <- floss_tc
   }
 
-  nnmark <- rep(0, pro_len)
+  nnmark <- rep(0L, pro_len)
 
-  for (i in seq.int(1, pro_len - 1)) {
+  for (i in seq.int(1L, pro_len - 1L)) {
     j <- mpi[i]
 
     if (abs(j - i) <= tc) {
@@ -380,17 +389,17 @@ get_asym <- function(pro_len = 50000, mp_tc = 0, floss_tc = 0) {
         next
       }
 
-      if (j < 0 || j > pro_len) {
+      if (j < 0L || j > pro_len) {
         next
       }
 
-      nnmark[min(i, j)] <- nnmark[min(i, j)] + 1
-      nnmark[max(i, j)] <- nnmark[max(i, j)] - 1
+      nnmark[min(i, j)] <- nnmark[min(i, j)] + 1L
+      nnmark[max(i, j)] <- nnmark[max(i, j)] - 1L
     }
   }
 
   arc_counts <- cumsum(nnmark)
-  arc_counts[pro_len] <- 0
+  arc_counts[pro_len] <- 0.0
 
   return(arc_counts)
 }

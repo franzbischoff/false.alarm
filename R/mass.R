@@ -68,7 +68,7 @@ mass_pre <- function(data, window_size, query = NULL, type = c("normalized", "no
     {
       result <- switch(type,
         normalized = mass_pre_rcpp(data, query, window_size),
-        non_normalized = mass_pre_weighted_rcpp(data, query, window_size, rep(1, window_size)),
+        non_normalized = mass_pre_weighted_rcpp(data, query, window_size, rep(1.0, window_size)),
         absolute = mass_pre_abs_rcpp(data, query, window_size),
         weighted = mass_pre_weighted_rcpp(data, query, window_size, weights)
       )
@@ -102,7 +102,7 @@ mass_pre <- function(data, window_size, query = NULL, type = c("normalized", "no
 #' @examples
 #' pre <- mass_pre(tsmp::motifs_discords_small, 50)
 #' dist_profile <- mass(pre, tsmp::motifs_discords_small)
-mass <- function(pre_obj, data, query = data, index = 1, version = c("v3", "v2"), n_workers = 1) {
+mass <- function(pre_obj, data, query = data, index = 1L, version = c("v3", "v2"), n_workers = 1L) {
   checkmate::qassert(pre_obj, "L+")
   type <- match.arg(pre_obj$type, c("normalized", "non_normalized", "absolute", "weighted"))
   version <- match.arg(version)
@@ -117,8 +117,8 @@ mass <- function(pre_obj, data, query = data, index = 1, version = c("v3", "v2")
   }
 
   if (length(query) != (
-    ifelse(pre_obj$type == "absolute", length(pre_obj$sumy2), length(pre_obj$query_mean)) +
-      pre_obj$window_size - 1)) {
+    dplyr::if_else(pre_obj$type == "absolute", length(pre_obj$sumy2), length(pre_obj$query_mean)) +
+      pre_obj$window_size - 1L)) {
     stop("Argument `query` is not the same as computed in `pre_obj`.", call. = FALSE)
   }
 
@@ -142,23 +142,23 @@ mass <- function(pre_obj, data, query = data, index = 1, version = c("v3", "v2")
   "!DEBUG Computation"
   tryCatch(
     {
-      query_window <- query[index:(index + pre_obj$window_size - 1)]
+      query_window <- query[index:(index + pre_obj$window_size - 1L)]
 
       result <- switch(type,
         normalized = if (version == "v3") {
-          if (n_workers > 1) {
+          if (n_workers > 1L) {
             n_workers <- min(n_workers, RcppParallel::defaultNumThreads())
             RcppParallel::setThreadOptions(numThreads = n_workers)
             mass3_rcpp_parallel(query_window, data, as.integer(pre_obj$data_size),
               as.integer(pre_obj$window_size), pre_obj$data_mean, pre_obj$data_sd, pre_obj$query_mean[index],
               pre_obj$query_sd[index],
-              k = 4096
+              k = 4096L
             )
           } else {
             mass3_rcpp(query_window, data, as.integer(pre_obj$data_size),
               as.integer(pre_obj$window_size), pre_obj$data_mean, pre_obj$data_sd, pre_obj$query_mean[index],
               pre_obj$query_sd[index],
-              k = 4096
+              k = 4096L
             )
           }
         } else {
@@ -171,7 +171,7 @@ mass <- function(pre_obj, data, query = data, index = 1, version = c("v3", "v2")
         non_normalized = mass_weighted_rcpp(
           pre_obj$data_fft, query_window, as.integer(pre_obj$data_size),
           as.integer(pre_obj$window_size), pre_obj$data_mean, pre_obj$data_sd,
-          pre_obj$query_mean[index], pre_obj$query_sd[index], pre_obj$data_pre, rep(1, pre_obj$window_size), FALSE
+          pre_obj$query_mean[index], pre_obj$query_sd[index], pre_obj$data_pre, rep(1.0, pre_obj$window_size), FALSE
         ),
         absolute = mass_absolute_rcpp(
           pre_obj$data_fft, query_window, as.integer(pre_obj$data_size),

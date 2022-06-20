@@ -51,7 +51,7 @@ tar_option_set(
 ############
 # tuning variables
 # var_window_size_tune <- c(150L, 350L)
-var_window_size_tune <- c(50L, 150L)
+var_window_size_tune <- c(25L, 26L)
 var_mp_threshold_tune <- c(0, 1)
 var_time_constraint_tune <- c(750L, 2000L)
 var_regime_threshold_tune <- c(0.05, 0.6)
@@ -276,83 +276,112 @@ list(
           tune::expo_decay(iter, start_val = .01, limit_val = 0, slope = 1 / 4)
         }
 
-        floss_search_res <- floss_spec %>%
-          tune::tune_bayes(
-            preprocessor = floss_rec,
-            resamples = analysis_split,
-            param_info = floss_set,
-            initial = var_tune_bayes_initial,
-            iter = var_tune_bayes_iter,
-            metrics = yardstick::metric_set(floss_error_macro, floss_error_micro),
-            objective = tune::exp_improve(trade_off_decay),
-            control = tune::control_bayes(
-              no_improve = var_tune_bayes_no_improve,
-              verbose = var_verbose,
-              save_workflow = var_save_workflow,
-              save_pred = var_save_pred,
-              parallel_over = "resamples"
-            )
-          )
-      } else if (var_grid_search == "tune_race_win_loss") {
-        floss_search_res <- floss_spec %>%
-          finetune::tune_race_win_loss(
-            preprocessor = floss_rec,
-            resamples = analysis_split,
-            param_info = floss_set,
-            grid = var_grid_size,
-            metrics = yardstick::metric_set(floss_error_macro, floss_error_micro),
-            control = finetune::control_race(
-              verbose_elim = TRUE,
-              verbose = var_verbose,
-              save_workflow = var_save_workflow,
-              save_pred = var_save_pred,
-              allow_par = TRUE,
-              parallel_over = "resamples"
-            )
-          )
-        # TODO: finetune::plot_race(floss_search_res)
-      } else if (var_grid_search == "tune_race_anova") {
-        floss_search_res <- floss_spec %>%
-          finetune::tune_race_anova(
-            preprocessor = floss_rec,
-            resamples = analysis_split,
-            param_info = floss_set,
-            grid = var_grid_size,
-            metrics = yardstick::metric_set(floss_error_macro, floss_error_micro),
-            control = finetune::control_race(
-              verbose_elim = TRUE,
-              verbose = var_verbose,
-              save_workflow = var_save_workflow,
-              save_pred = var_save_pred,
-              allow_par = TRUE,
-              parallel_over = "resamples"
-            )
-          )
-        # TODO: finetune::plot_race(floss_search_res)
-      } else if (var_grid_search == "tune_sim_anneal") {
-        floss_search_res <- floss_spec %>%
-          finetune::tune_sim_anneal(
-            preprocessor = floss_rec,
-            resamples = analysis_split,
-            iter = var_tune_sim_anneal_iter,
-            initial = var_tune_sim_anneal_initial,
-            param_info = floss_set,
-            metrics = yardstick::metric_set(floss_error_macro, floss_error_micro),
-            control = finetune::control_sim_anneal(
-              verbose = var_verbose,
-              save_workflow = var_save_workflow,
-              save_pred = var_save_pred,
-              no_improve = var_tune_sim_anneal_no_improve,
-              parallel_over = "resamples"
-            )
-          )
-      }
+        # floss_wflow <-
+        #   workflows::workflow() %>%
+        #   workflows::add_model(floss_spec) %>%
+        #   workflows::add_recipe(floss_rec)
 
-      floss_search_res <- clean_splits_data(floss_search_res)
-      floss_search_res
-    },
-    pattern = map(analysis_split),
-    iteration = "list" # thus the objects keep their attributes
+        # fitted_wflow <- floss_wflow %>% parsnip::fit(analysis_split$splits[[1]]$data)
+
+        if (var_grid_search == "tune_grid") {
+          floss_search_res <- floss_spec %>%
+            tune::tune_grid(
+              preprocessor = floss_rec,
+              resamples = analysis_split,
+              param_info = floss_set,
+              grid = var_grid_size,
+              metrics = yardstick::metric_set(floss_error_macro),
+              control = tune::control_grid(
+                verbose = var_verbose,
+                allow_par = TRUE,
+                save_workflow = var_save_workflow,
+                save_pred = var_save_pred,
+                parallel_over = "resamples"
+              )
+            )
+        } else if (var_grid_search == "tune_bayes") {
+          trade_off_decay <- function(iter) {
+            tune::expo_decay(iter, start_val = 0.01, limit_val = 0, slope = 0.25)
+          }
+
+          floss_search_res <- floss_spec %>%
+            tune::tune_bayes(
+              preprocessor = floss_rec,
+              resamples = analysis_split,
+              param_info = floss_set,
+              initial = var_tune_bayes_initial,
+              iter = var_tune_bayes_iter,
+              metrics = yardstick::metric_set(floss_error_macro, floss_error_micro),
+              objective = tune::exp_improve(trade_off_decay),
+              control = tune::control_bayes(
+                no_improve = var_tune_bayes_no_improve,
+                verbose = var_verbose,
+                save_workflow = var_save_workflow,
+                save_pred = var_save_pred,
+                parallel_over = "resamples"
+              )
+            )
+        } else if (var_grid_search == "tune_race_win_loss") {
+          floss_search_res <- floss_spec %>%
+            finetune::tune_race_win_loss(
+              preprocessor = floss_rec,
+              resamples = analysis_split,
+              param_info = floss_set,
+              grid = var_grid_size,
+              metrics = yardstick::metric_set(floss_error_macro, floss_error_micro),
+              control = finetune::control_race(
+                verbose_elim = TRUE,
+                verbose = var_verbose,
+                save_workflow = var_save_workflow,
+                save_pred = var_save_pred,
+                allow_par = TRUE,
+                parallel_over = "resamples"
+              )
+            )
+          # TODO: finetune::plot_race(floss_search_res)
+        } else if (var_grid_search == "tune_race_anova") {
+          floss_search_res <- floss_spec %>%
+            finetune::tune_race_anova(
+              preprocessor = floss_rec,
+              resamples = analysis_split,
+              param_info = floss_set,
+              grid = var_grid_size,
+              metrics = yardstick::metric_set(floss_error_macro, floss_error_micro),
+              control = finetune::control_race(
+                verbose_elim = TRUE,
+                verbose = var_verbose,
+                save_workflow = var_save_workflow,
+                save_pred = var_save_pred,
+                allow_par = TRUE,
+                parallel_over = "resamples"
+              )
+            )
+          # TODO: finetune::plot_race(floss_search_res)
+        } else if (var_grid_search == "tune_sim_anneal") {
+          floss_search_res <- floss_spec %>%
+            finetune::tune_sim_anneal(
+              preprocessor = floss_rec,
+              resamples = analysis_split,
+              iter = var_tune_sim_anneal_iter,
+              initial = var_tune_sim_anneal_initial,
+              param_info = floss_set,
+              metrics = yardstick::metric_set(floss_error_macro, floss_error_micro),
+              control = finetune::control_sim_anneal(
+                verbose = var_verbose,
+                save_workflow = var_save_workflow,
+                save_pred = var_save_pred,
+                no_improve = var_tune_sim_anneal_no_improve,
+                parallel_over = "resamples"
+              )
+            )
+        }
+
+        floss_search_res <- clean_splits_data(floss_search_res)
+        floss_search_res
+      },
+      pattern = map(analysis_split),
+      iteration = "list" # thus the objects keep their attributes
+    )
   ),
   tar_target(
     #### Pipeline: analysis_evaluation - Here we select the best from each optimization split and test in a separate split ----

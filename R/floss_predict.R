@@ -1,23 +1,23 @@
 floss_predict <- function(floss_list, window_size, time_constraint, regime_threshold,
                           regime_landmark,
-                          ez = 0.5, history = 5000,
-                          sample_freq = 250, batch = 100) {
+                          ez = 0.5, history = 5000L,
+                          sample_freq = 250L, batch = 100L) {
   regimes <- floss_extract(floss_list,
     params = list(
       window_size = window_size,
       ez = ez,
       regime_threshold = regime_threshold,
-      regime_landmark = floor(regime_landmark * sample_freq), # 3 sec from the end
+      regime_landmark = floor(regime_landmark * sample_freq), # 3L sec from the end
       batch = batch,
       history = history,
       mp_time_constraint = time_constraint,
-      floss_time_constraint = 0
+      floss_time_constraint = 0L
     ),
     infos = list(foo = "bar")
   )
 
   if (isFALSE(regimes)) {
-    return(1)
+    return(1L)
   } else {
     return(regimes$idxs)
   }
@@ -30,7 +30,7 @@ floss_extract <- function(floss_list, params, infos) {
 
   info <- attr(floss_list, "info")
   pars <- attr(floss_list, "params")
-  # subset_start <- ifelse(isFALSE(info$subset), 0, info$subset[1] - 1)
+  # subset_start <- ifelse(isFALSE(info$subset), 0L, info$subset[1L] - 1L)
 
   checkmate::assert_true(
     all(
@@ -45,15 +45,15 @@ floss_extract <- function(floss_list, params, infos) {
   history <- params$history
   landmark <- history - params$regime_landmark # here is where we look for the minimum value
 
-  if (params$mp_time_constraint > 0 && params$mp_time_constraint <= floor(params$history * 3 / 4)) {
+  if (params$mp_time_constraint > 0L && params$mp_time_constraint <= floor(params$history * 3.0 / 4.0)) {
     floss_constraint <- params$mp_time_constraint
   } else {
-    floss_constraint <- floor(history / 2)
+    floss_constraint <- floor(history / 2.0)
   }
 
   "!DEBUG extract regimes."
-  current_abs_min_idx <- 0
-  current_abs_min_value <- 1
+  current_abs_min_idx <- 0L
+  current_abs_min_value <- 1.0
 
   all_regimes_idxs <- NULL
   all_regimes_values <- NULL
@@ -63,17 +63,18 @@ floss_extract <- function(floss_list, params, infos) {
   # iterates over all cacs of this time series
   purrr::map(floss_list, function(x) {
     cac <- x$cac
-    # cac[cac > regime_threshold] <- 1
-    # cac[seq.int(1, history - (4 * 250))] <- 1
-    cac[seq.int(1, history - floss_constraint)] <- 1
+    # cac[cac > regime_threshold] <- 1.0
+    # cac[seq.int(1L, history - (4L * 250L))] <- 1.0
+    cac[seq.int(1L, history - floss_constraint)] <- 1.0
     # min_trigger_idx <- which.min(cac)
     # if (min_trigger_idx > landmark) {
     #   rlang::inform("min_trigger at ", min_trigger_idx, " for landmark ", landmark, ".")
     # }
 
     if (cac[landmark] < regime_threshold) {
-      abs_min_idx <- x$offset - history + landmark + 1
-      if ((abs_min_idx - current_abs_min_idx) > floss_constraint) { # IMPROVE: tweak floss_constraint
+      abs_min_idx <- x$offset - history + landmark + 1L
+      if ((abs_min_idx - current_abs_min_idx) > floss_constraint) {
+        # IMPROVE: tweak floss_constraint
         # cli::cli_inform("abs_min_idx at {abs_min_idx}, value {cac[landmark]}.")
         current_abs_min_idx <<- abs_min_idx
         current_abs_min_value <<- cac[landmark]
@@ -81,7 +82,8 @@ floss_extract <- function(floss_list, params, infos) {
         all_regimes_values <<- c(all_regimes_values, current_abs_min_value)
       }
       if (cac[landmark] < current_abs_min_value) {
-        if ((abs_min_idx - current_abs_min_idx) < floor(history / 2)) { # IMPROVE: tweak floor(history / 2)
+        if ((abs_min_idx - current_abs_min_idx) < floor(history / 2.0)) {
+          # IMPROVE: tweak floor(history / 2)
           # cli::cli_inform("abs_min_idx2 at {abs_min_idx}, value {cac[landmark]}.")
           current_abs_min_idx <<- abs_min_idx
           current_abs_min_value <<- cac[landmark]

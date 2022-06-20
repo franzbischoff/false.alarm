@@ -58,10 +58,11 @@ update.floss_regime_model <- function(object,
                                       mp_threshold = NULL,
                                       regime_threshold = NULL,
                                       regime_landmark = NULL,
-                                      fresh = FALSE, ...) { # nolint
+                                      fresh = FALSE, ...) {
+  # nolint
   # cli::cli_inform(c("*" = "update.floss_regime_model"))
   # cli::cli_inform(c("*" = "update.floss_regime_model: dots_n {rlang::dots_n(...)}"))
-  if (rlang::dots_n(...) > 0) {
+  if (rlang::dots_n(...) > 0L) {
     cli::cli_alert(c("*" = "update.floss_regime_model: dots_names {names(rlang::dots_list(..., .preserve_empty = TRUE))}"))
   }
 
@@ -91,10 +92,10 @@ update.floss_regime_model <- function(object,
       if (any(null_args)) {
         args <- args[!null_args]
       }
-      if (length(args) > 0) {
+      if (length(args) > 0L) {
         object$args[names(args)] <- args
       }
-      if (length(eng_args) > 0) {
+      if (length(eng_args) > 0L) {
         object$eng_args[names(eng_args)] <- eng_args
       }
     }
@@ -121,10 +122,12 @@ update.floss_regime_model <- function(object,
 
 
 #' @export
-translate.floss_regime_model <- function(x, engine = x$engine, ...) { # nolint
+translate.floss_regime_model <- function(x, engine = x$engine, ...) {
+  # nolint
   # cli::cli_inform(c("*" = "translate.floss_regime_model"))
   # cli::cli_inform(c("*" = "translate.floss_regime_model: dots_n {rlang::dots_n(...)}"))
-  if (rlang::dots_n(...) > 0) { # 0
+  if (rlang::dots_n(...) > 0L) {
+    # 0L
     cli::cli_alert(c("*" = "translate.floss_regime_model: dots_names {names(rlang::dots_list(..., .preserve_empty = TRUE))}"))
   }
 
@@ -141,26 +144,25 @@ translate.floss_regime_model <- function(x, engine = x$engine, ...) { # nolint
   x
 }
 
-check_args.floss_regime_model <- function(object) { # nolint
-
+check_args.floss_regime_model <- function(object) {
   "!DEBUG This runs in fit()"
   # cli::cli_inform(c("*" = "check_args.floss_regime_model"))
 
   args <- lapply(object$args, rlang::eval_tidy)
 
-  if (length(args$window_size) > 1) {
+  if (length(args$window_size) > 1L) {
     rlang::abort("`window_size` must be a single value")
   }
-  if (length(args$mp_threshold) > 1) {
+  if (length(args$mp_threshold) > 1L) {
     rlang::abort("`mp_threshold` must be a single value")
   }
-  if (length(args$time_constraint) > 1) {
+  if (length(args$time_constraint) > 1L) {
     rlang::abort("`time_constraint` must be a single value")
   }
-  if (length(args$regime_threshold) > 1) {
+  if (length(args$regime_threshold) > 1L) {
     rlang::abort("`regime_threshold` must be a single value")
   }
-  if (length(args$regime_landmark) > 1) {
+  if (length(args$regime_landmark) > 1L) {
     rlang::abort("`regime_landmark` must be a single value")
   }
 
@@ -197,12 +199,13 @@ check_args.floss_regime_model <- function(object) { # nolint
 #' @rdname floss_helpers
 #' @keywords internal
 #' @export
-.check_floss_regime_threshold_fit <- function(x) { # nolint
+
+.check_floss_regime_threshold_fit <- function(x) {
   # cli::cli_inform(c("*" = ".check_floss_regime_threshold_fit"))
   regime_threshold <- rlang::eval_tidy(x$args$regime_threshold)
   regime_landmark <- rlang::eval_tidy(x$args$regime_landmark)
 
-  if (length(regime_threshold) != 1) {
+  if (length(regime_threshold) != 1L) {
     rlang::abort(c(
       "For the floss engine, `regime_threshold` must be a single number (or a value of `tune()`).",
       glue::glue("There are {length(regime_threshold)} values for `regime_threshold`."),
@@ -211,7 +214,7 @@ check_args.floss_regime_model <- function(object) { # nolint
     ))
   }
 
-  if (length(regime_landmark) != 1) {
+  if (length(regime_landmark) != 1L) {
     rlang::abort(c(
       "For the floss engine, `regime_landmark` must be a single number (or a value of `tune()`).",
       glue::glue("There are {length(regime_landmark)} values for `regime_landmark`."),
@@ -223,10 +226,12 @@ check_args.floss_regime_model <- function(object) { # nolint
 
 
 #' @export
-predict.floss_regime_model <- function(object, new_data, type = NULL, regime_threshold = NULL, regime_landmark = NULL, ...) { # nolint
+predict.floss_regime_model <- function(object, new_data, type = NULL, regime_threshold = NULL, regime_landmark = NULL, ...) {
+  # nolint
   # cli::cli_alert(c("*" = "predict.floss_regime_model <<- work here"))
   # cli::cli_inform(c("*" = "predict.floss_regime_model: dots_n {rlang::dots_n(...)}"))
-  if (rlang::dots_n(...) > 0) { # 0
+  if (rlang::dots_n(...) > 0L) {
+    # 0L
     cli::cli_alert(c("*" = "predict.floss_regime_model: dots_names {names(rlang::dots_list(..., .preserve_empty = TRUE))}"))
   }
   # type raw came from "numeric", type NULL came from raw directly
@@ -235,7 +240,7 @@ predict.floss_regime_model <- function(object, new_data, type = NULL, regime_thr
   # cli::cli_inform(c("!" = "regime_landmark is {regime_landmark}.")) # "NULL"
 
   n <- nrow(new_data)
-  if (n == 0) {
+  if (n == 0L) {
     rlang::abort("There are zero rows in the new_data set.")
   }
 
@@ -246,11 +251,13 @@ predict.floss_regime_model <- function(object, new_data, type = NULL, regime_thr
   # for now, compare:
   checkmate::assert_true(all(new_data$id %in% obj_fit$id))
 
-  if (length(regime_threshold) == 0) { # are we predicting with the old fit?
+  if (length(regime_threshold) == 0L) {
+    # are we predicting with the old fit?
     regime_threshold <- terms$regime_threshold
   }
 
-  if (length(regime_landmark) == 0) { # are we predicting with the old fit?
+  if (length(regime_landmark) == 0L) {
+    # are we predicting with the old fit?
     regime_landmark <- terms$regime_landmark
   }
 
@@ -311,10 +318,12 @@ predict.floss_regime_model <- function(object, new_data, type = NULL, regime_thr
 #'  follow the usual standard based on prediction `type` (i.e. `.pred_class` for
 #'  `type = "class"` and so on).
 #' @export
-multi_predict._floss_regime_model <- function(object, new_data, type = NULL, regime_threshold = NULL, regime_landmark = NULL, ...) { # nolint
+multi_predict._floss_regime_model <- function(object, new_data, type = NULL, regime_threshold = NULL, regime_landmark = NULL, ...) {
+  # nolint
   cli::cli_inform(c("!" = "multi_predict._floss_regime_model"))
   # cli::cli_inform(c("*" = "multi_predict._floss_regime_model: dots_n {rlang::dots_n(...)}"))
-  if (rlang::dots_n(...) > 0) { # 0
+  if (rlang::dots_n(...) > 0L) {
+    # 0L
     cli::cli_alert(c("*" = "multi_predict._floss_regime_model: dots_names {names(rlang::dots_list(..., .preserve_empty = TRUE))}"))
   }
 
@@ -369,7 +378,7 @@ multi_predict._floss_regime_model <- function(object, new_data, type = NULL, reg
     ...
   )
   res <- dplyr::arrange(res, .row, regime_threshold, regime_landmark)
-  res <- split(res[, -1], res$.row)
+  res <- split(res[, -1L], res$.row)
   names(res) <- NULL
   dplyr::tibble(.pred = res)
 }

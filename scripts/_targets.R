@@ -319,7 +319,7 @@ b_window_sizes <- tar_map(
       )
     )
   ),
-  combined_var <- tar_combine(combined_samples, b_mp_threshold[grepl("regimes_samples", names(b_mp_threshold))], command = list(!!!.x))
+  combined_var <- tar_combine(combined_samples, b_mp_threshold[grepl("regimes_samples", names(b_mp_threshold), fixed = TRUE)], command = list(!!!.x))
 )
 
 # #### Pipeline: > Filters Branch ----

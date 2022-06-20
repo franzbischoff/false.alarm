@@ -14,10 +14,12 @@ floss_error_micro <- yardstick::metric_tweak("floss_error_micro", floss_error, e
 floss_error_macro <- yardstick::metric_tweak("floss_error_macro", floss_error, estimator = "macro")
 
 #' @export
-floss_error.data.frame <- function(data, truth, estimate, na_rm = TRUE, estimator = "binary", case_weights = NULL, ...) { # nolint
+floss_error.data.frame <- function(data, truth, estimate, na_rm = TRUE, estimator = "binary", case_weights = NULL, ...) {
+  # nolint
   # cli::cli_alert(c("*" = "floss_error.data.frame <<- work here"))
   # cli::cli_inform(c("*" = "floss_error.data.frame: dots_n {rlang::dots_n(...)}"))
-  if (rlang::dots_n(...) > 0) { # 0
+  if (rlang::dots_n(...) > 0L) {
+    # 0L
     cli::cli_alert(c("*" = "floss_error.data.frame: dots_names {names(rlang::dots_list(..., .preserve_empty = TRUE))}"))
   }
 
@@ -35,7 +37,7 @@ floss_error.data.frame <- function(data, truth, estimate, na_rm = TRUE, estimato
   )
 }
 
-clean_pred <- function(data, threshold = 100) {
+clean_pred <- function(data, threshold = 100L) {
   if (is.list(data)) {
     data <- purrr::map(data, clean_pred, threshold)
     return(data)
@@ -49,7 +51,7 @@ clean_pred <- function(data, threshold = 100) {
 floss_error_vec <- function(truth, estimate, data_size, na_rm = TRUE, estimator = "binary", ...) {
   # cli::cli_alert(c("*" = "floss_error_vec <<- work here"))
   # cli::cli_inform(c("*" = "floss_error_vec: dots_n {rlang::dots_n(...)}"))
-  if (rlang::dots_n(...) > 0) {
+  if (rlang::dots_n(...) > 0L) {
     cli::cli_alert(c("*" = "floss_error_vec: dots_names {names(rlang::dots_list(..., .preserve_empty = TRUE))}"))
   }
 
@@ -62,23 +64,24 @@ floss_error_vec <- function(truth, estimate, data_size, na_rm = TRUE, estimator 
     return(res)
   }
 
-  # if (length(data_size) <= 2) {
+  # if (length(data_size) <= 2L) {
   #   cli::cli_abort(c("x" = "data_size len: {length(data_size)}"))
   # }
   estimate <- clean_pred(estimate)
-  # 100 is the batch size, this removes the redundant regime changes
+  # 100L is the batch size, this removes the redundant regime changes
 
-  for (i in seq.int(1, length(estimate))) {
+  for (i in seq.int(1L, length(estimate))) {
     lt <- length(truth[[i]])
     le <- length(estimate[[i]])
     if (lt > le) {
-      estimate[[i]] <- c(estimate[[i]], rep(-1, lt - le))
+      estimate[[i]] <- c(estimate[[i]], rep(-1L, lt - le))
     } else {
-      truth[[i]] <- c(truth[[i]], rep(-1, le - lt))
+      truth[[i]] <- c(truth[[i]], rep(-1L, le - lt))
     }
   }
 
-  if (estimator == "micro") { # current micro method (sum of errors / dataset length)
+  if (estimator == "micro") {
+    # current micro method (sum of errors / dataset length)
     # cli::cli_inform(c("*" = "floss_error_vec <<- micro"))
     res <- purrr::map2_dbl(
       truth, estimate,
@@ -88,16 +91,17 @@ floss_error_vec <- function(truth, estimate, data_size, na_rm = TRUE, estimator 
         estimate = ..2,
         na_rm = na_rm,
         cls = "numeric",
-        data_size = 1,
+        data_size = 1L,
         ...
       )
     )
 
     res <- sum(res)
 
-    div <- purrr::reduce(data_size, sum) + 1
+    div <- purrr::reduce(data_size, sum) + 1L
     return(res / div) # micro is the sum of the scores / length(all_data_set)
-  } else if (estimator == "macro") { # current macro method (average of the sum of errors / sample range)
+  } else if (estimator == "macro") {
+    # current macro method (average of the sum of errors / sample range)
     # cli::cli_inform(c("*" = "floss_error_vec <<- macro"))
     res <- purrr::map2_dbl(
       truth, estimate,
@@ -107,7 +111,7 @@ floss_error_vec <- function(truth, estimate, data_size, na_rm = TRUE, estimator 
         estimate = ..2,
         na_rm = na_rm,
         cls = "numeric",
-        data_size = 0,
+        data_size = 0L,
         ...
       )
     )
@@ -123,7 +127,7 @@ floss_error_vec <- function(truth, estimate, data_size, na_rm = TRUE, estimator 
         estimate = ..2,
         na_rm = na_rm,
         cls = "numeric",
-        data_size = 0,
+        data_size = 0L,
         ...
       )
     )
@@ -155,7 +159,7 @@ floss_error_vec <- function(truth, estimate, data_size, na_rm = TRUE, estimator 
         estimate = ..2,
         na_rm = na_rm,
         cls = "numeric",
-        data_size = floor(..3 / 15000),
+        data_size = floor(..3 / 15000.0),
         ...
       )
     )
@@ -171,7 +175,7 @@ floss_error_vec <- function(truth, estimate, data_size, na_rm = TRUE, estimator 
         estimate = ..2,
         na_rm = na_rm,
         cls = "numeric",
-        data_size = floor(..3 / 15000),
+        data_size = floor(..3 / 15000.0),
         ...
       )
     )
@@ -187,7 +191,7 @@ floss_error_vec <- function(truth, estimate, data_size, na_rm = TRUE, estimator 
         estimate = ..2,
         na_rm = na_rm,
         cls = "numeric",
-        data_size = floor(..3 / 15000),
+        data_size = floor(..3 / 15000.0),
         ...
       )
     )
@@ -203,7 +207,7 @@ floss_error_vec <- function(truth, estimate, data_size, na_rm = TRUE, estimator 
         estimate = ..2,
         na_rm = na_rm,
         cls = "numeric",
-        data_size = 0,
+        data_size = 0L,
         ...
       )
     )
@@ -229,8 +233,8 @@ floss_error_vec <- function(truth, estimate, data_size, na_rm = TRUE, estimator 
 
 
 floss_score <- function(gtruth, reported, data_size) {
-  gtruth <- sort(gtruth[gtruth > 0])
-  reported <- sort(reported[reported > 0])
+  gtruth <- sort(gtruth[gtruth > 0L])
+  reported <- sort(reported[reported > 0L])
 
   truth_len <- length(gtruth)
   reported_len <- length(reported)
@@ -239,10 +243,10 @@ floss_score <- function(gtruth, reported, data_size) {
 
   minv <- rep(Inf, reported_len)
 
-  k <- 1
+  k <- 1L
   l <- NULL
 
-  for (j in seq.int(1, reported_len)) {
+  for (j in seq.int(1L, reported_len)) {
     for (i in seq.int(k, truth_len)) {
       if (abs(gtruth[i] - reported[j]) <= minv[j]) {
         minv[j] <- abs(gtruth[i] - reported[j])
@@ -258,7 +262,7 @@ floss_score <- function(gtruth, reported, data_size) {
     lefties <- seq_len(truth_len)
     lefties <- lefties[!(lefties %in% l)]
     minv_left <- rep(Inf, truth_len)
-    k <- 1
+    k <- 1L
     for (j in lefties) {
       for (i in seq.int(k, reported_len)) {
         if (abs(gtruth[j] - reported[i]) <= minv_left[j]) {
@@ -274,7 +278,7 @@ floss_score <- function(gtruth, reported, data_size) {
     minv <- c(minv, minv_left)
   }
 
-  if (data_size <= 0) {
+  if (data_size <= 0L) {
     # computes the mean error during a period of time, not bounded to the data size
     range <- max(gtruth, reported) - min(gtruth, reported)
     score <- sum(minv) / (min_points * range)

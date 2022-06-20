@@ -61,8 +61,7 @@
 #'
 #' @examples
 #' mp <- stamp(tsmp::motifs_discords_small, 50)
-stamp <- function(data, window_size, query = NULL, exclusion_zone = 0.5, s_size = 1.0, n_workers = 1, progress = TRUE) {
-
+stamp <- function(data, window_size, query = NULL, exclusion_zone = 0.5, s_size = 1.0, n_workers = 1L, progress = TRUE) {
   # Parse arguments ---------------------------------
   "!!!DEBUG Parsing Arguments"
 
@@ -80,13 +79,11 @@ stamp <- function(data, window_size, query = NULL, exclusion_zone = 0.5, s_size 
   ez <- exclusion_zone
   result <- NULL
 
-  query_size <- ifelse(is.null(query), length(data),
-    ifelse(length(data) > length(query), length(query),
-      length(data)
-    )
+  query_size <- dplyr::if_else(is.null(query), length(data),
+    pmin(length(data), length(query))
   )
 
-  if (window_size > ceiling(query_size / 2)) {
+  if (window_size > ceiling(query_size / 2.0)) {
     stop("Time series is too short relative to desired window size.", call. = FALSE)
   }
 
@@ -110,7 +107,7 @@ stamp <- function(data, window_size, query = NULL, exclusion_zone = 0.5, s_size 
     tryCatch(
       {
         "!DEBUG n_workers = `n_workers`"
-        if (n_workers > 1) {
+        if (n_workers > 1L) {
           p <- RcppParallel::defaultNumThreads()
           n_workers <- min(n_workers, p)
           RcppParallel::setThreadOptions(numThreads = n_workers)
@@ -140,12 +137,12 @@ stamp <- function(data, window_size, query = NULL, exclusion_zone = 0.5, s_size 
   } else {
     ## AB-Join ====================================
     "!DEBUG AB-Join"
-    ez <- 0
+    ez <- 0.0
 
     tryCatch(
       {
         "!DEBUG n_workers = `n_workers`"
-        if (n_workers > 1) {
+        if (n_workers > 1L) {
           p <- RcppParallel::defaultNumThreads()
           n_workers <- min(n_workers, p)
           RcppParallel::setThreadOptions(numThreads = n_workers)

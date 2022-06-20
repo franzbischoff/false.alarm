@@ -395,7 +395,7 @@ var_mp_time_constraint|object|3767b7a207648d79|||||||||||||||
 var_regime_landmark|object|d62de3d7487789a8|||||||||||||||
 var_regime_landmark_tune|object|a2e82737ef57b57c|||||||||||||||
 var_regime_threshold|object|3f31db0a285bd7a0|||||||||||||||
-var_regime_threshold_tune|object|42bc9c4a2ab93453|||||||||||||||
+var_regime_threshold_tune|object|14e65ccba7a92e01|||||||||||||||
 var_resample_from|object|0eb7ad5ce87b6af8|||||||||||||||
 var_resample_to|object|71e695e858e0833c|||||||||||||||
 var_save_pred|object|909013909b1f03d4|||||||||||||||
@@ -414,7 +414,7 @@ var_verbose|object|909013909b1f03d4|||||||||||||||
 var_vfolds|object|703a354a3d076f23|||||||||||||||
 var_vfolds_repeats|object|a2a52dfe4e065e93|||||||||||||||
 var_window_size|object|762e507151ccadf5|||||||||||||||
-var_window_size_tune|object|18da8ab3794077c9|||||||||||||||
+var_window_size_tune|object|b20f912242862d88|||||||||||||||
 win_complex|function|b8c72aa4c85a0679|||||||||||||||
 zero_cross_rate|function|135d3ba35c769dc1|||||||||||||||
 var_initial_split_prop|object|67615ff121ff99c8

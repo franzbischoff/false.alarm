@@ -36,7 +36,7 @@ compute_floss <- function(mp_data, params, infos) {
 
   checkmate::qassert(ez, c("0", "N"))
 
-  if (mp_time_constraint > 0 & floss_time_constraint > 0) {
+  if (mp_time_constraint > 0 && floss_time_constraint > 0) {
     rlang::abort("You cannot set `mp_time_constraint` and `floss_time_constraint` at the same time.")
   }
 
@@ -56,7 +56,7 @@ compute_floss <- function(mp_data, params, infos) {
     }
 
     aic_avg <- rowMeans(as.data.frame(iac))
-    if (mp_time_constraint > 0 & mp_time_constraint < (pro_size / 2)) {
+    if (mp_time_constraint > 0 && mp_time_constraint < (pro_size / 2)) {
       aic_avg[seq.int(mp_time_constraint, pro_size - mp_time_constraint * 0.9)] <- mp_time_constraint / 2
     }
   } else {
@@ -64,7 +64,7 @@ compute_floss <- function(mp_data, params, infos) {
   }
 
   result_floss <- purrr::map(mp_data, function(x) {
-    curr_ez <- ifelse(!is.null(ez), ez, x$ez * 10)
+    curr_ez <- dplyr::if_else(!is.null(ez), ez, x$ez * 10)
     cac <- compute_arcs(
       x$right_profile_index, x$w,
       curr_ez,

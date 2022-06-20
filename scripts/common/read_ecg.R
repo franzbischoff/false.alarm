@@ -92,7 +92,7 @@ read_ecg <- function(filename, plot = FALSE, subset = NULL,
   content <- paste0(filename, ".mat.bz2")
   basename <- basename(filename)
 
-  if (!file.exists(header) | !file.exists(content)) {
+  if (!file.exists(header) || !file.exists(content)) {
     rlang::abort("File ", filename, "does not exist.")
   }
 
@@ -106,7 +106,7 @@ read_ecg <- function(filename, plot = FALSE, subset = NULL,
 
   # Skip any comment lines
   for (i in seq_along(hea_content)) {
-    if (substr(hea_content[i], 1, 1) == "#") {
+    if (startsWith(hea_content[i], "#")) {
       next
     } else {
       break
@@ -119,7 +119,7 @@ read_ecg <- function(filename, plot = FALSE, subset = NULL,
 
   nlines <- length(hea_content)
 
-  hea_content <- strsplit(hea_content[i:length(hea_content)], " ")
+  hea_content <- strsplit(hea_content[i:length(hea_content)], " ", fixed = TRUE)
 
   n_signals <- as.numeric(hea_content[[1]][2]) # Number of signals present
   freq_signal <- as.numeric(hea_content[[1]][3]) # Frequency of the signal
@@ -131,13 +131,13 @@ read_ecg <- function(filename, plot = FALSE, subset = NULL,
     format <- hea_content[[i]][2]
     gain <- hea_content[[i]][3]
     # Get Signal Units if present
-    gain <- unlist(strsplit(gain, "/"))
+    gain <- unlist(strsplit(gain, "/", fixed = TRUE))
     unit <- NULL
 
     # gain_baseline?
-    gain_baseline <- unlist(strsplit(gain[1], "\\("))
+    gain_baseline <- unlist(strsplit(gain[1], "(", fixed = TRUE))
     if (length(gain_baseline) == 2) {
-      gain_baseline <- unlist(strsplit(gain_baseline, "\\)"))
+      gain_baseline <- unlist(strsplit(gain_baseline, ")", fixed = TRUE))
       gain[1] <- gain_baseline[1]
       gain_baseline <- as.numeric(gain_baseline[2])
     } else {
@@ -175,9 +175,9 @@ read_ecg <- function(filename, plot = FALSE, subset = NULL,
 
   if (nlines != n_signals) {
     alarm <- hea_content[[nlines - 1]][1]
-    alarm <- ifelse(substr(alarm, 1, 1) == "#", substring(alarm, 2), alarm)
+    alarm <- dplyr::if_else(startsWith(alarm, "#"), substr(alarm, 2L, 1000000L), alarm)
     true_false <- hea_content[[nlines]][1]
-    true_false <- ifelse(substr(true_false, 1, 1) == "#", substring(true_false, 2), true_false)
+    true_false <- dplyr::if_else(startsWith(true_false, "#"), substr(true_false, 2L, 1000000L), true_false)
   }
 
   if (!is.null(true_alarm)) {
@@ -349,7 +349,7 @@ read_ecg_csv <- function(filename, plot = FALSE, subset = NULL,
   content <- paste0(filename, ".csv.bz2")
   basename <- basename(filename)
 
-  if (any(!file.exists(c(header, content)))) {
+  if (!all(file.exists(c(header, content)))) {
     rlang::abort("File ", filename, "does not exist.")
   }
 
@@ -363,7 +363,7 @@ read_ecg_csv <- function(filename, plot = FALSE, subset = NULL,
 
   # Skip any comment lines
   for (i in seq_along(hea_content)) {
-    if (substr(hea_content[i], 1, 1) == "#") {
+    if (startsWith(hea_content[i], "#")) {
       next
     } else {
       break
@@ -376,7 +376,7 @@ read_ecg_csv <- function(filename, plot = FALSE, subset = NULL,
 
   nlines <- length(hea_content)
 
-  hea_content <- strsplit(hea_content[i:length(hea_content)], " ")
+  hea_content <- strsplit(hea_content[i:length(hea_content)], " ", fixed = TRUE)
 
   n_signals <- as.numeric(hea_content[[1]][2]) # Number of signals present
   freq_signal <- as.numeric(hea_content[[1]][3]) # Frequency of the signal
@@ -388,13 +388,13 @@ read_ecg_csv <- function(filename, plot = FALSE, subset = NULL,
     format <- hea_content[[i]][2]
     gain <- hea_content[[i]][3]
     # Get Signal Units if present
-    gain <- unlist(strsplit(gain, "/"))
+    gain <- unlist(strsplit(gain, "/", fixed = TRUE))
     unit <- NULL
 
     # gain_baseline?
-    gain_baseline <- unlist(strsplit(gain[1], "\\("))
+    gain_baseline <- unlist(strsplit(gain[1], "(", fixed = TRUE))
     if (length(gain_baseline) == 2) {
-      gain_baseline <- unlist(strsplit(gain_baseline, "\\)"))
+      gain_baseline <- unlist(strsplit(gain_baseline, ")", fixed = TRUE))
       gain[1] <- gain_baseline[1]
       gain_baseline <- as.numeric(gain_baseline[2])
     } else {
@@ -432,9 +432,9 @@ read_ecg_csv <- function(filename, plot = FALSE, subset = NULL,
 
   if (nlines != n_signals) {
     alarm <- hea_content[[nlines - 1]][1]
-    alarm <- ifelse(substr(alarm, 1, 1) == "#", substring(alarm, 2), alarm)
+    alarm <- dplyr::if_else(startsWith(alarm, "#"), substr(alarm, 2L, 1000000L), alarm)
     true_false <- hea_content[[nlines]][1]
-    true_false <- ifelse(substr(true_false, 1, 1) == "#", substring(true_false, 2), true_false)
+    true_false <- dplyr::if_else(startsWith(true_false, "#"), substr(true_false, 2L, 1000000L), true_false)
   }
 
   if (!is.null(true_alarm)) {
@@ -562,7 +562,7 @@ read_ecg_with_atr <- function(filename, subset = NULL, classes = c("all", "persi
   annotation <- paste0(filename, ".atr.csv.bz2")
   basename <- basename(filename)
 
-  if (any(!file.exists(c(header, content, annotation)))) {
+  if (!all(file.exists(c(header, content, annotation)))) {
     rlang::abort("File ", filename, "does not exist.")
   }
 
@@ -572,7 +572,7 @@ read_ecg_with_atr <- function(filename, subset = NULL, classes = c("all", "persi
 
   # Skip any comment lines
   for (i in seq_along(hea_content)) {
-    if (substr(hea_content[i], 1, 1) == "#") {
+    if (startsWith(hea_content[i], "#")) {
       next
     } else {
       break
@@ -585,7 +585,7 @@ read_ecg_with_atr <- function(filename, subset = NULL, classes = c("all", "persi
 
   nlines <- length(hea_content)
 
-  hea_content <- strsplit(hea_content[i:length(hea_content)], " ")
+  hea_content <- strsplit(hea_content[i:length(hea_content)], " ", fixed = TRUE)
 
   n_signals <- as.numeric(hea_content[[1]][2]) # Number of signals present
   freq_signal <- as.numeric(hea_content[[1]][3]) # Frequency of the signal
@@ -602,13 +602,13 @@ read_ecg_with_atr <- function(filename, subset = NULL, classes = c("all", "persi
     format <- hea_content[[i]][2]
     gain <- hea_content[[i]][3]
     # Get Signal Units if present
-    gain <- unlist(strsplit(gain, "/"))
+    gain <- unlist(strsplit(gain, "/", fixed = TRUE))
     unit <- NULL
 
     # gain_baseline?
-    gain_baseline <- unlist(strsplit(gain[1], "\\("))
+    gain_baseline <- unlist(strsplit(gain[1], "(", fixed = TRUE))
     if (length(gain_baseline) == 2) {
-      gain_baseline <- unlist(strsplit(gain_baseline, "\\)"))
+      gain_baseline <- unlist(strsplit(gain_baseline, ")", fixed = TRUE))
       gain[1] <- gain_baseline[1]
       gain_baseline <- as.numeric(gain_baseline[2])
     } else {
@@ -646,7 +646,7 @@ read_ecg_with_atr <- function(filename, subset = NULL, classes = c("all", "persi
 
   if (nlines != n_signals) {
     comment <- paste(hea_content[[nlines]], collapse = " ")
-    comment <- stringr::str_trim(ifelse(substr(comment, 1, 1) == "#", substring(comment, 2), comment))
+    comment <- stringr::str_trim(dplyr::if_else(startsWith(comment, "#"), substr(comment, 2L, 1000000L), comment))
   }
 
   csv_content <- readr::read_csv(content, show_col_types = FALSE, col_types = "nnnnnnn")

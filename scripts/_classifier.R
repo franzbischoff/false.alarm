@@ -10,7 +10,7 @@
 source(here("scripts", "_globals.R"))
 # Load all scripts
 script_files <- list.files(here::here("scripts", "classification"), pattern = "*.R")
-sapply(here::here("scripts", "classification", script_files), source, local = .GlobalEnv, encoding = "UTF-8")
+purrr::walk(here::here("scripts", "classification", script_files), source, local = .GlobalEnv, encoding = "UTF-8")
 rm(script_files)
 
 # Overwrite some configs

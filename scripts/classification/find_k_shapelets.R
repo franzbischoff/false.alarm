@@ -30,7 +30,7 @@ find_k_shapelets <- function(data_pos_neg, signal = "II", shapelet_size, num_sha
     clip <- sqrt(2 * shapelet_size)
     self_mp[self_mp > clip] <- clip
 
-    if (any(!is.finite(self_mp))) {
+    if (!all(is.finite(self_mp))) {
       cli::cli_warn("self_mp contains non finite values.")
     }
 
@@ -51,7 +51,7 @@ find_k_shapelets <- function(data_pos_neg, signal = "II", shapelet_size, num_sha
       # clip values above sqrt(2 * shapelet_size) as they are anti-correlated
       join_mp[join_mp > clip] <- clip
 
-      if (any(!is.finite(join_mp))) {
+      if (!all(is.finite(join_mp))) {
         cli::cli_warn("join_mp {k} contains non finite values.")
       }
 
@@ -66,7 +66,8 @@ find_k_shapelets <- function(data_pos_neg, signal = "II", shapelet_size, num_sha
       plato_idx <- which.max(contrast)
       plato_val <- contrast[plato_idx]
 
-      if (plato_val == 0) { # there is no more plato's
+      if (plato_val == 0) {
+        # there is no more plato's
         cli::cli_inform("There is no more shapelets here. Stopping on {k}.")
         break
       }

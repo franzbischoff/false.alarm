@@ -11,6 +11,7 @@
 #' @importFrom withr with_options
 #' @importFrom stats predict
 #' @importFrom dials new_quant_param
+#' @importFrom tune get_submodel_info submod_only submod_only_multi submod_and_others submod_and_others_multi
 
 .onLoad <- function(libname, pkgname) {
   tryCatch(debugme::debugme(), error = identity)
@@ -54,19 +55,19 @@ mp_dep <- function(version, msg) {
   # If current major number is greater than last-good major number, or if
   # current minor number is more than 1 greater than last-good minor number,
   # return an error.
-  if (cv[[1, 1]] > v[[1, 1]] || cv[[1, 2]] > v[[1, 2]] + 1) {
+  if (cv[[1L, 1L]] > v[[1L, 1L]] || cv[[1L, 2L]] > v[[1L, 2L]] + 1L) {
     stop(msg, " (Defunct; last used in version ", version, ")",
       call. = FALSE
     )
 
     # If minor number differs by one, give a warning
-  } else if (cv[[1, 2]] > v[[1, 2]]) {
+  } else if (cv[[1L, 2L]] > v[[1L, 2L]]) {
     warning(msg, " (Deprecated; last used in version ", version, ")",
       call. = FALSE
     )
 
     # If only subminor number is greater, provide a message
-  } else if (cv[[1, 3]] > v[[1, 3]]) {
+  } else if (cv[[1L, 3L]] > v[[1L, 3L]]) {
     message(msg, " (Deprecated; last used in version ", version, ")")
   }
 

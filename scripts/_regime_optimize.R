@@ -277,7 +277,7 @@ list(
           )
       } else if (var_grid_search == "tune_bayes") {
         trade_off_decay <- function(iter) {
-          expo_decay(iter, start_val = .01, limit_val = 0, slope = 1 / 4)
+          expo_decay(iter, start_val = 0.01, limit_val = 0, slope = 0.25)
         }
 
         floss_search_res <- floss_spec %>%

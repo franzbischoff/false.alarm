@@ -16,8 +16,7 @@
 #' @examples
 #' mp <- scrimp(tsmp::motifs_discords_small, 50)
 scrimp <- function(data, window_size, query = NULL, exclusion_zone = 0.5, s_size = 1.0, pre_scrimp = 0.25,
-                   n_workers = 1, progress = TRUE) {
-
+                   n_workers = 1L, progress = TRUE) {
   # Parse arguments ---------------------------------
   "!!!DEBUG Parsing Arguments"
 
@@ -35,7 +34,7 @@ scrimp <- function(data, window_size, query = NULL, exclusion_zone = 0.5, s_size
       stop("Data and query must have the same size using the `scrimp` algorithm. (for now)")
     }
 
-    if (window_size > ceiling(query_size / 2)) {
+    if (window_size > ceiling(query_size / 2.0)) {
       stop("Time series is too short relative to desired window size.", call. = FALSE)
     }
   }
@@ -66,7 +65,7 @@ scrimp <- function(data, window_size, query = NULL, exclusion_zone = 0.5, s_size
     tryCatch(
       {
         "!DEBUG n_workers = `n_workers`"
-        if (n_workers > 1) {
+        if (n_workers > 1L) {
           p <- RcppParallel::defaultNumThreads()
           n_workers <- min(n_workers, p)
           RcppParallel::setThreadOptions(numThreads = n_workers)
@@ -97,12 +96,12 @@ scrimp <- function(data, window_size, query = NULL, exclusion_zone = 0.5, s_size
   } else {
     ## AB-Join ====================================
     "!DEBUG AB-Join"
-    ez <- 0
+    ez <- 0.0
 
     tryCatch(
       {
         "!DEBUG n_workers = `n_workers`"
-        if (n_workers > 1) {
+        if (n_workers > 1L) {
           warnings("Parallel `scrimp` AB-join not implemented yet. Using 1 thread.")
           # p <- RcppParallel::defaultNumThreads()
           # n_workers <- min(n_workers, p)
