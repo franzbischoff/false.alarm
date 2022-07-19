@@ -943,7 +943,7 @@ A preliminary result of the ongoing tuning (with `regime_landmark`) is depicted 
 
 ```{r preliminar,fig.height=10, fig.width=15, out.width="100%", results="asis", cache=FALSE}
 #| fig.cap="Multioutput decision plot."
-my_graphics("shapfurr")
+my_graphics("shapfurr", "figure")
 ```
 
 ## Visualizing the predictions

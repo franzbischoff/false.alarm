@@ -1,0 +1,1854 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+
+<meta name="author" content="Francisco Bischoff" />
+
+
+<title>Regime changes</title>
+
+<script src="site_libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="site_libs/bootstrap-3.3.5/css/bootstrap.min.css" rel="stylesheet" />
+<script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<style>h1 {font-size: 34px;}
+       h1.title {font-size: 38px;}
+       h2 {font-size: 30px;}
+       h3 {font-size: 24px;}
+       h4 {font-size: 18px;}
+       h5 {font-size: 16px;}
+       h6 {font-size: 12px;}
+       code {color: inherit; background-color: rgba(0, 0, 0, 0.04);}
+       pre:not([class]) { background-color: white }</style>
+<script src="site_libs/navigation-1.1/tabsets.js"></script>
+<script src="site_libs/htmlwidgets-1.5.4/htmlwidgets.js"></script>
+<link href="site_libs/vis-9.1.0/vis-network.min.css" rel="stylesheet" />
+<script src="site_libs/vis-9.1.0/vis-network.min.js"></script>
+<script src="site_libs/visNetwork-binding-2.1.0/visNetwork.js"></script>
+<script src="site_libs/kePrint-0.0.1/kePrint.js"></script>
+<link href="site_libs/lightable-0.0.1/lightable.css" rel="stylesheet" />
+<link href="site_libs/font-awesome-5.1.0/css/all.css" rel="stylesheet" />
+<link href="site_libs/font-awesome-5.1.0/css/v4-shims.css" rel="stylesheet" />
+
+<link rel="icon" href="https://github.com/workflowr/workflowr-assets/raw/main/img/reproducible.png">
+<!-- Add a small amount of space between sections. -->
+<style type="text/css">
+div.section {
+  padding-top: 12px;
+}
+</style>
+
+
+
+<style type="text/css">
+  code{white-space: pre-wrap;}
+  span.smallcaps{font-variant: small-caps;}
+  span.underline{text-decoration: underline;}
+  div.column{display: inline-block; vertical-align: top; width: 50%;}
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+  ul.task-list{list-style: none;}
+    </style>
+
+
+
+
+
+
+<style type="text/css">
+/* for pandoc --citeproc since 2.11 */
+div.csl-bib-body { }
+div.csl-entry {
+  clear: both;
+}
+.hanging div.csl-entry {
+  margin-left:2em;
+  text-indent:-2em;
+}
+div.csl-left-margin {
+  min-width:2em;
+  float:left;
+}
+div.csl-right-inline {
+  margin-left:2em;
+  padding-left:1em;
+}
+div.csl-indent {
+  margin-left: 2em;
+}
+</style>
+
+<link rel="stylesheet" href="style.css" type="text/css" />
+
+
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+img {
+  max-width:100%;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+.html-widget {
+  margin-bottom: 20px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+summary {
+  display: list-item;
+}
+details > summary > p:only-child {
+  display: inline;
+}
+pre code {
+  padding: 0;
+}
+</style>
+
+
+<style type="text/css">
+.dropdown-submenu {
+  position: relative;
+}
+.dropdown-submenu>.dropdown-menu {
+  top: 0;
+  left: 100%;
+  margin-top: -6px;
+  margin-left: -1px;
+  border-radius: 0 6px 6px 6px;
+}
+.dropdown-submenu:hover>.dropdown-menu {
+  display: block;
+}
+.dropdown-submenu>a:after {
+  display: block;
+  content: " ";
+  float: right;
+  width: 0;
+  height: 0;
+  border-color: transparent;
+  border-style: solid;
+  border-width: 5px 0 5px 5px;
+  border-left-color: #cccccc;
+  margin-top: 5px;
+  margin-right: -10px;
+}
+.dropdown-submenu:hover>a:after {
+  border-left-color: #adb5bd;
+}
+.dropdown-submenu.pull-left {
+  float: none;
+}
+.dropdown-submenu.pull-left>.dropdown-menu {
+  left: -100%;
+  margin-left: 10px;
+  border-radius: 6px 0 6px 6px;
+}
+</style>
+
+<script type="text/javascript">
+// manage active state of menu based on current page
+$(document).ready(function () {
+  // active menu anchor
+  href = window.location.pathname
+  href = href.substr(href.lastIndexOf('/') + 1)
+  if (href === "")
+    href = "index.html";
+  var menuAnchor = $('a[href="' + href + '"]');
+
+  // mark the anchor link active (and if it's in a dropdown, also mark that active)
+  var dropdown = menuAnchor.closest('li.dropdown');
+  if (window.bootstrap) { // Bootstrap 4+
+    menuAnchor.addClass('active');
+    dropdown.find('> .dropdown-toggle').addClass('active');
+  } else { // Bootstrap 3
+    menuAnchor.parent().addClass('active');
+    dropdown.addClass('active');
+  }
+
+  // Navbar adjustments
+  var navHeight = $(".navbar").first().height() + 15;
+  var style = document.createElement('style');
+  var pt = "padding-top: " + navHeight + "px; ";
+  var mt = "margin-top: -" + navHeight + "px; ";
+  var css = "";
+  // offset scroll position for anchor links (for fixed navbar)
+  for (var i = 1; i <= 6; i++) {
+    css += ".section h" + i + "{ " + pt + mt + "}\n";
+  }
+  style.innerHTML = "body {" + pt + "padding-bottom: 40px; }\n" + css;
+  document.head.appendChild(style);
+});
+</script>
+
+<!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "&#xe258;";
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+  background-color: transparent;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
+<!-- code folding -->
+
+
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
+
+
+
+
+<div class="navbar navbar-default  navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-bs-toggle="collapse" data-target="#navbar" data-bs-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="index.html">false.alarm</a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        <li>
+  <a href="index.html">Home</a>
+</li>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+    Blog
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+    <li>
+      <a href="blog-202108.html">2021, August</a>
+    </li>
+    <li>
+      <a href="blog-202110.html">2021, October</a>
+    </li>
+    <li>
+      <a href="blog-202201.html">2022, January</a>
+    </li>
+    <li>
+      <a href="blog-202204.html">2022, April</a>
+    </li>
+  </ul>
+</li>
+<li>
+  <a href="report.html">Report</a>
+</li>
+<li>
+  <a href="regime_optimize.html">Regime Change</a>
+</li>
+<li>
+  <a href="about.html">About</a>
+</li>
+<li>
+  <a href="license.html">License</a>
+</li>
+<li>
+  <a href="thesis/introduction.html">Thesis</a>
+</li>
+<li>
+  <a href="https://github.com/franzbischoff/false.alarm">
+    <span class="fa fa-github"></span>
+     
+    Source
+  </a>
+</li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        <li>
+  <a href="https://twitter.com/intent/tweet?text=Detecting%20life-threatening%20patterns%20in%20Point-of-care%20ECG%20using%20efficient%20memory%20and%20processor%20power&amp;url=https%3A%2F%2Ffranzbischoff.github.io%2Ffalse.alarm%2F&amp;hashtags=rmarkdown,bookdown">
+    <span class="fab fa-twitter"></span>
+     
+  </a>
+</li>
+<li>
+  <a href="https://www.facebook.com/sharer/sharer.php?u=https%3A%2F%2Ffranzbischoff.github.io%2Ffalse.alarm%2F">
+    <span class="fa fa-facebook"></span>
+     
+  </a>
+</li>
+<li>
+  <a href="https://www.facebook.com/sharer/sharer.php?u=https%3A%2F%2Ffranzbischoff.github.io%2Ffalse.alarm%2F">
+    <span class="fa fa-share-alt"></span>
+     
+  </a>
+</li>
+      </ul>
+    </div><!--/.nav-collapse -->
+  </div><!--/.container -->
+</div><!--/.navbar -->
+
+<div id="header">
+
+
+
+<h1 class="title toc-ignore">Regime changes</h1>
+<h4 class="author">Francisco Bischoff</h4>
+<h4 class="date">on July 21, 2022</h4>
+
+</div>
+
+<div id="TOC">
+<ul>
+<li><a href="#regime-changes-optimization"><span class="toc-section-number">1</span> Regime changes optimization</a>
+<ul>
+<li><a href="#current-pipeline"><span class="toc-section-number">1.1</span> Current pipeline</a></li>
+<li><a href="#tuning-process"><span class="toc-section-number">1.2</span> Tuning process</a></li>
+<li><a href="#parameters-analysis"><span class="toc-section-number">1.3</span> Parameters analysis</a>
+<ul>
+<li><a href="#interactions"><span class="toc-section-number">1.3.1</span> Interactions</a></li>
+<li><a href="#importance"><span class="toc-section-number">1.3.2</span> Importance</a></li>
+<li><a href="#importance-analysis"><span class="toc-section-number">1.3.3</span> Importance analysis</a></li>
+</ul></li>
+<li><a href="#visualizing-the-predictions"><span class="toc-section-number">1.4</span> Visualizing the predictions</a>
+<ul>
+<li><a href="#by-recording"><span class="toc-section-number">1.4.1</span> By recording</a></li>
+<li><a href="#by-model"><span class="toc-section-number">1.4.2</span> By model</a></li>
+</ul></li>
+</ul></li>
+<li><a href="#current-status"><span class="toc-section-number">2</span> Current status</a></li>
+<li><a href="#references">References</a></li>
+</ul>
+</div>
+
+<p>
+<button type="button" class="btn btn-default btn-workflowr btn-workflowr-report" data-toggle="collapse" data-target="#workflowr-report">
+<span class="glyphicon glyphicon-list" aria-hidden="true"></span>
+workflowr
+<span class="glyphicon glyphicon-exclamation-sign text-danger" aria-hidden="true"></span>
+</button>
+</p>
+<div id="workflowr-report" class="collapse">
+<ul class="nav nav-tabs">
+<li class="active">
+<a data-toggle="tab" href="#summary">Summary</a>
+</li>
+<li>
+<a data-toggle="tab" href="#checks">
+Checks <span class="glyphicon glyphicon-exclamation-sign text-danger" aria-hidden="true"></span>
+</a>
+</li>
+<li>
+<a data-toggle="tab" href="#versions">Past versions</a>
+</li>
+</ul>
+<div class="tab-content">
+<div id="summary" class="tab-pane fade in active">
+<p>
+<strong>Last updated:</strong> 2022-07-21
+</p>
+<p>
+<strong>Checks:</strong>
+<span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span>
+6
+<span class="glyphicon glyphicon-exclamation-sign text-danger" aria-hidden="true"></span>
+1
+</p>
+<p>
+<strong>Knit directory:</strong>
+<code>false.alarm/docs/</code>
+<span class="glyphicon glyphicon-question-sign" aria-hidden="true" title="This is the local directory in which the code in this file was executed.">
+</span>
+</p>
+<p>
+This reproducible <a href="https://rmarkdown.rstudio.com">R Markdown</a>
+analysis was created with <a
+  href="https://github.com/workflowr/workflowr">workflowr</a> (version
+1.7.0). The <em>Checks</em> tab describes the
+reproducibility checks that were applied when the results were created.
+The <em>Past versions</em> tab lists the development history.
+</p>
+<hr>
+</div>
+<div id="checks" class="tab-pane fade">
+<div id="workflowr-checks" class="panel-group">
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRMarkdownfilestronguncommittedchanges">
+<span class="glyphicon glyphicon-exclamation-sign text-danger" aria-hidden="true"></span>
+<strong>R Markdown file:</strong> uncommitted changes
+</a>
+</p>
+</div>
+<div id="strongRMarkdownfilestronguncommittedchanges" class="panel-collapse collapse">
+<div class="panel-body">
+<p>The R Markdown file has unstaged changes.
+To know which version of the R Markdown file created these
+results, you’ll want to first commit it to the Git repo. If
+you’re still working on the analysis, you can ignore this
+warning. When you’re finished, you can run
+<code>wflow_publish</code> to commit the R Markdown file and
+build the HTML.</p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongEnvironmentstrongempty">
+<span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span>
+<strong>Environment:</strong> empty
+</a>
+</p>
+</div>
+<div id="strongEnvironmentstrongempty" class="panel-collapse collapse">
+<div class="panel-body">
+<p>Great job! The global environment was empty. Objects defined in the global
+environment can affect the analysis in your R Markdown file in unknown ways.
+For reproduciblity it’s best to always run the code in an empty environment.</p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongSeedstrongcodesetseed20201020code">
+<span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span>
+<strong>Seed:</strong> <code>set.seed(20201020)</code>
+</a>
+</p>
+</div>
+<div id="strongSeedstrongcodesetseed20201020code" class="panel-collapse collapse">
+<div class="panel-body">
+<p>The command <code>set.seed(20201020)</code> was run prior to running the code in the R Markdown file.
+Setting a seed ensures that any results that rely on randomness, e.g.
+subsampling or permutations, are reproducible.</p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongSessioninformationstrongrecorded">
+<span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span>
+<strong>Session information:</strong> recorded
+</a>
+</p>
+</div>
+<div id="strongSessioninformationstrongrecorded" class="panel-collapse collapse">
+<div class="panel-body">
+<p>Great job! Recording the operating system, R version, and package versions is
+critical for reproducibility.</p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongCachestrongnone">
+<span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span>
+<strong>Cache:</strong> none
+</a>
+</p>
+</div>
+<div id="strongCachestrongnone" class="panel-collapse collapse">
+<div class="panel-body">
+<p>Nice! There were no cached chunks for this analysis, so you can be confident
+that you successfully produced the results during this run.</p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongFilepathsstrongrelative">
+<span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span>
+<strong>File paths:</strong> relative
+</a>
+</p>
+</div>
+<div id="strongFilepathsstrongrelative" class="panel-collapse collapse">
+<div class="panel-body">
+<p>Great job! Using relative paths to the files within your workflowr project
+makes it easier to run your code on other machines.</p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomfranzbischofffalsealarmtreea8ef1d1a1eaebc8db4d7d8148c6b707eafec76d0targetblanka8ef1d1a">
+<span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span>
+<strong>Repository version:</strong> <a href="https://github.com/franzbischoff/false.alarm/tree/a8ef1d1a1eaebc8db4d7d8148c6b707eafec76d0" target="_blank">a8ef1d1</a>
+</a>
+</p>
+</div>
+<div id="strongRepositoryversionstrongahrefhttpsgithubcomfranzbischofffalsealarmtreea8ef1d1a1eaebc8db4d7d8148c6b707eafec76d0targetblanka8ef1d1a" class="panel-collapse collapse">
+<div class="panel-body">
+<p>
+Great! You are using Git for version control. Tracking code development and
+connecting the code version to the results is critical for reproducibility.
+</p>
+<p>
+The results in this page were generated with repository version <a href="https://github.com/franzbischoff/false.alarm/tree/a8ef1d1a1eaebc8db4d7d8148c6b707eafec76d0" target="_blank">a8ef1d1</a>.
+See the <em>Past versions</em> tab to see a history of the changes made to the
+R Markdown and HTML files.
+</p>
+<p>
+Note that you need to be careful to ensure that all relevant files for the
+analysis have been committed to Git prior to generating the results (you can
+use <code>wflow_publish</code> or <code>wflow_git_commit</code>). workflowr only
+checks the R Markdown file, but you know if there are other scripts or data
+files that it depends on. Below is the status of the Git repository when the
+results were generated:
+</p>
+<pre><code>
+Ignored files:
+    Ignored:    .Renviron
+    Ignored:    .Rhistory
+    Ignored:    .Rproj.user/
+    Ignored:    .devcontainer/exts/
+    Ignored:    .docker/
+    Ignored:    .github/ISSUE_TEMPLATE/
+    Ignored:    .httr-oauth
+    Ignored:    R/RcppExports.R
+    Ignored:    _regime_change/meta/process
+    Ignored:    _regime_change/meta/progress
+    Ignored:    _regime_change/objects/
+    Ignored:    _regime_change/scratch/
+    Ignored:    _regime_change/user/
+    Ignored:    _regime_optimize/meta/meta2
+    Ignored:    _regime_optimize/meta/process
+    Ignored:    _regime_optimize/meta/progress
+    Ignored:    _regime_optimize/objects/
+    Ignored:    _regime_optimize/user/
+    Ignored:    _targets/meta/process
+    Ignored:    _targets/meta/progress
+    Ignored:    _targets/objects/
+    Ignored:    _targets/user/
+    Ignored:    analysis/report_cache/
+    Ignored:    analysis/shiny/rsconnect/
+    Ignored:    analysis/shiny_land/rsconnect/
+    Ignored:    dev/
+    Ignored:    inst/extdata/
+    Ignored:    papers/aime2021/aime2021.md
+    Ignored:    papers/epia2022/epia2022.md
+    Ignored:    presentations/MEDCIDS21/MEDCIDS21-10min_files/
+    Ignored:    presentations/MEDCIDS21/MEDCIDS21_files/
+    Ignored:    presentations/Report/Midterm-Report_cache/
+    Ignored:    presentations/Report/Midterm-Report_files/
+    Ignored:    protocol/SecondReport_cache/
+    Ignored:    protocol/SecondReport_files/
+    Ignored:    protocol/_files/
+    Ignored:    renv/python/
+    Ignored:    renv/staging/
+    Ignored:    src/RcppExports.cpp
+    Ignored:    src/RcppExports.o
+    Ignored:    src/contrast.o
+    Ignored:    src/false.alarm.so
+    Ignored:    src/fft.o
+    Ignored:    src/mass.o
+    Ignored:    src/math.o
+    Ignored:    src/mpx.o
+    Ignored:    src/scrimp.o
+    Ignored:    src/stamp.o
+    Ignored:    src/stomp.o
+    Ignored:    src/windowfunc.o
+    Ignored:    thesis/Rplots.pdf
+    Ignored:    thesis/_bookdown_files/
+    Ignored:    tmp/
+
+Unstaged changes:
+    Modified:   analysis/regime_optimize.Rmd
+
+</code></pre>
+<p>
+Note that any generated files, e.g. HTML, png, CSS, etc., are not included in
+this status report because it is ok for generated content to have uncommitted
+changes.
+</p>
+</div>
+</div>
+</div>
+</div>
+<hr>
+</div>
+<div id="versions" class="tab-pane fade">
+
+<p>
+These are the previous versions of the repository in which changes were made
+to the R Markdown (<code>analysis/regime_optimize.Rmd</code>) and HTML (<code>docs/regime_optimize.html</code>)
+files. If you’ve configured a remote Git repository (see
+<code>?wflow_git_remote</code>), click on the hyperlinks in the table below to
+view the files as they were in that past version.
+</p>
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+File
+</th>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+<th>
+Message
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+html
+</td>
+<td>
+<a href="https://rawcdn.githack.com/franzbischoff/false.alarm/a8ef1d1a1eaebc8db4d7d8148c6b707eafec76d0/docs/regime_optimize.html" target="_blank">a8ef1d1</a>
+</td>
+<td>
+Francisco Bischoff
+</td>
+<td>
+2022-07-19
+</td>
+<td>
+Build site.
+</td>
+</tr>
+<tr>
+<td>
+Rmd
+</td>
+<td>
+<a href="https://github.com/franzbischoff/false.alarm/blob/03d1e682b4f9fc6680785e1b1d8215f0026a52e0/analysis/regime_optimize.Rmd" target="_blank">03d1e68</a>
+</td>
+<td>
+Francisco Bischoff
+</td>
+<td>
+2022-07-19
+</td>
+<td>
+Squashed commit of the following:
+</td>
+</tr>
+<tr>
+<td>
+Rmd
+</td>
+<td>
+<a href="https://github.com/franzbischoff/false.alarm/blob/0c543500a5333b58bdfdbaa75cb86f3b6624e98a/analysis/regime_optimize.Rmd" target="_blank">0c54350</a>
+</td>
+<td>
+Francisco Bischoff
+</td>
+<td>
+2022-06-10
+</td>
+<td>
+regimes
+</td>
+</tr>
+<tr>
+<td>
+Rmd
+</td>
+<td>
+<a href="https://github.com/franzbischoff/false.alarm/blob/a6f0406df8c3783311c1e975870768f2a5c785d2/analysis/regime_optimize.Rmd" target="_blank">a6f0406</a>
+</td>
+<td>
+Francisco Bischoff
+</td>
+<td>
+2022-06-08
+</td>
+<td>
+optimize
+</td>
+</tr>
+<tr>
+<td>
+Rmd
+</td>
+<td>
+<a href="https://github.com/franzbischoff/false.alarm/blob/441629fd97dbbc9d8a075852a2d31638a5c4b38b/analysis/regime_optimize.Rmd" target="_blank">441629f</a>
+</td>
+<td>
+Francisco Bischoff
+</td>
+<td>
+2022-05-31
+</td>
+<td>
+begining analysis
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<hr>
+</div>
+</div>
+</div>
+<div id="regime-changes-optimization" class="section level1" number="1">
+<h1><span class="header-section-number">1</span> Regime changes optimization</h1>
+<p>In this article, we will interchangeably use the words <em>parameter</em>, <em>variable</em>, and <em>feature</em>.</p>
+<div id="current-pipeline" class="section level2" number="1.1">
+<h2><span class="header-section-number">1.1</span> Current pipeline</h2>
+<div class="figure" style="text-align: center"><span style="display:block;" id="fig:thepipeline"></span>
+<div id="htmlwidget-24512ae3b9d6a760b942" style="width:100%;height:480px;" class="visNetwork html-widget"></div>
+<script type="application/json" data-for="htmlwidget-24512ae3b9d6a760b942">{"x":{"nodes":{"name":["analysis_evaluation","analysis_fitted","analysis_split","assessment_split","dataset","file_paths","file_paths_files","initial_resample","testing_evaluation","testing_split","training_split"],"type":["pattern","pattern","stem","stem","stem","pattern","stem","stem","stem","stem","stem"],"status":["uptodate","uptodate","uptodate","uptodate","uptodate","uptodate","uptodate","uptodate","uptodate","uptodate","uptodate"],"seconds":[3479,413047.405,9.628,2.778,111.345,0.049,0.001,0.604,1798.428,0.377,0.378],"bytes":[884,27917917,1751408547,437853723,623533964,43973,932,265182127,422,46270820,218927342],"branches":[2,2,null,null,null,229,null,null,null,null,null],"label":["analysis_evaluation","analysis_fitted","analysis_split","assessment_split","dataset","file_paths","file_paths_files","initial_resample","testing_evaluation","testing_split","training_split"],"color":["#354823","#354823","#354823","#354823","#354823","#354823","#354823","#354823","#354823","#354823","#354823"],"id":["analysis_evaluation","analysis_fitted","analysis_split","assessment_split","dataset","file_paths","file_paths_files","initial_resample","testing_evaluation","testing_split","training_split"],"level":[8,7,6,6,3,2,1,4,9,5,5],"shape":["square","square","dot","dot","dot","square","dot","dot","dot","dot","dot"],"title":["57.983 minutes<br />884 bytes<br />2 branches","4.781 days<br />27.918 megabytes<br />2 branches","9.628 seconds<br />1.751 gigabytes","2.778 seconds<br />437.854 megabytes","1.856 minutes<br />623.534 megabytes","0.049 seconds<br />43.973 kilobytes<br />229 branches","0.001 seconds<br />932 bytes","0.604 seconds<br />265.182 megabytes","29.974 minutes<br />422 bytes","0.377 seconds<br />46.271 megabytes","0.378 seconds<br />218.927 megabytes"]},"edges":{"from":["analysis_fitted","assessment_split","file_paths_files","initial_resample","training_split","dataset","analysis_split","training_split","initial_resample","file_paths","analysis_evaluation","testing_split"],"to":["analysis_evaluation","analysis_evaluation","file_paths","testing_split","assessment_split","initial_resample","analysis_fitted","analysis_split","training_split","dataset","testing_evaluation","testing_evaluation"],"arrows":["to","to","to","to","to","to","to","to","to","to","to","to"]},"nodesToDataframe":true,"edgesToDataframe":true,"options":{"width":"100%","height":"100%","nodes":{"shape":"dot","physics":true},"manipulation":{"enabled":false},"edges":{"smooth":{"type":"cubicBezier","forceDirection":"horizontal"}},"physics":{"hierarchicalRepulsion":{"springLength":1,"avoidOverlap":0.5,"nodeDistance":120}},"interaction":{"hover":true,"multiselect":true,"tooltipDelay":100,"zoomSpeed":1},"layout":{"hierarchical":{"enabled":true,"direction":"LR"}}},"groups":null,"width":null,"height":null,"idselection":{"enabled":false,"style":"width: 150px; height: 26px","useLabels":true,"main":"Select by id"},"byselection":{"enabled":false,"style":"width: 150px; height: 26px","multiple":false,"hideColor":"rgba(200,200,200,0.5)","highlight":false},"main":{"text":"","style":"font-family:Georgia, Times New Roman, Times, serif;font-weight:bold;font-size:20px;text-align:center;"},"submain":null,"footer":null,"background":"rgba(0, 0, 0, 0)","highlight":{"enabled":true,"hoverNearest":false,"degree":{"from":1,"to":1},"algorithm":"hierarchical","hideColor":"rgba(200,200,200,0.5)","labelOnly":true},"collapse":{"enabled":true,"fit":false,"resetHighlight":true,"clusterOptions":null,"keepCoord":true,"labelSuffix":"(cluster)"},"legend":{"width":0.2,"useGroups":false,"position":"right","ncol":1,"stepX":100,"stepY":100,"zoom":true,"nodes":{"label":["Up to date","Pattern","Stem"],"color":["#354823","#899DA4","#899DA4"],"shape":["dot","square","dot"]},"nodesToDataframe":true},"tooltipStay":300,"tooltipStyle":"position: fixed;visibility:hidden;padding: 5px;white-space: nowrap;font-family: verdana;font-size:14px;font-color:#000000;background-color: #f5f4ed;-moz-border-radius: 3px;-webkit-border-radius: 3px;border-radius: 3px;border: 1px solid #808074;box-shadow: 3px 3px 10px rgba(0, 0, 0, 0.2);"},"evals":[],"jsHooks":[]}</script>
+<p class="caption">
+Figure 1.1: FLOSS pipeline.
+</p>
+</div>
+</div>
+<div id="tuning-process" class="section level2" number="1.2">
+<h2><span class="header-section-number">1.2</span> Tuning process</h2>
+<p>As we have seen previously, the FLOSS algorithm is built on top of the Matrix Profile (MP). Thus, we have proposed several parameters that may or not impact the FLOSS prediction performance.</p>
+<p>The variables for building the MP are:</p>
+<ul>
+<li><strong><code>mp_threshold</code></strong>: the minimum similarity value to be considered for 1-NN.</li>
+<li><strong><code>time_constraint</code></strong>: the maximum distance to look for the nearest neighbor.</li>
+<li><strong><code>window_size</code></strong>: the default parameter always used to build an MP.</li>
+</ul>
+<p>Later, the FLOSS algorithm also has a parameter that needs tuning to optimize the prediction:</p>
+<ul>
+<li><strong><code>regime_threshold</code></strong>: the threshold below which a regime change is considered.</li>
+</ul>
+<p>Using the <code>tidymodels</code> framework, we performed a basic grid search on all these parameters, followed by a bayesian search trying to finetune the parameters.</p>
+<p>The workflow is as follows:</p>
+<ul>
+<li>From a total of 229 records, a set of 171 records were selected for tuning, and 58 records were held out.</li>
+<li>From these 171 records, a 5-fold cross-validation was performed two times. Here is where the grid search was performed (Figs. <a href="#fig:marginalplot">1.2</a> and <a href="#fig:performanceplot">1.3</a>).</li>
+<li>The best ten models from the cross-validation (5 models from each time) were then evaluated on the hold-out set. Table <a href="#tab:holdout">1.1</a>.</li>
+</ul>
+<p>Fig. <a href="#fig:marginalplot">1.2</a> shows the performance achieved individually during the cross-validation for each parameter. The plot shows the default performance metric (<code>floss_error_macro</code>) and another version (<code>floss_error_micro</code>) where the error is computed globally, being less prone to individual record errors.</p>
+<div class="figure" style="text-align: center"><span style="display:block;" id="fig:marginalplot"></span>
+<img src="figure/regime_optimize.Rmd/marginalplot-1.svg" alt="Marginal plot of all parameters searched during the cross-validation. The first line shows the default performance metric (`macro`), which is the average of the scores of every recording in the resamples. The line below shows another metric (`micro`) which does not take into account the length of every recording but is later normalized by the total length of the resample. Lower values are better." width="100%" />
+<p class="caption">
+Figure 1.2: Marginal plot of all parameters searched during the cross-validation. The first line shows the default performance metric (<code>macro</code>), which is the average of the scores of every recording in the resamples. The line below shows another metric (<code>micro</code>) which does not take into account the length of every recording but is later normalized by the total length of the resample. Lower values are better.
+</p>
+</div>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-marginalplot-1">
+Past versions of marginalplot-1.svg
+</button>
+</p>
+<div id="fig-marginalplot-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/franzbischoff/false.alarm/blob/a8ef1d1a1eaebc8db4d7d8148c6b707eafec76d0/docs/figure/regime_optimize.Rmd/marginalplot-1.svg" target="_blank">a8ef1d1</a>
+</td>
+<td>
+Francisco Bischoff
+</td>
+<td>
+2022-07-19
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p>Fig. <a href="#fig:performanceplot">1.3</a> shows the performance across all cross-validation folds for every iteration of the bayes search.</p>
+<div class="figure" style="text-align: center"><span style="display:block;" id="fig:performanceplot"></span>
+<img src="figure/regime_optimize.Rmd/performanceplot-1.svg" alt="Parameters exploration using  Bayesian optimization. The plots show the performances across all cross-validation folds on every iteration of the bayes search. The first line shows the results of the first repetition, and the second line during the second repetition. The values on the left are shown in the default metric (`macro`). On the right side, the values are shown in the `micro` metric. The iteration 'Zero' is the initial grid search." width="90%" />
+<p class="caption">
+Figure 1.3: Parameters exploration using Bayesian optimization. The plots show the performances across all cross-validation folds on every iteration of the bayes search. The first line shows the results of the first repetition, and the second line during the second repetition. The values on the left are shown in the default metric (<code>macro</code>). On the right side, the values are shown in the <code>micro</code> metric. The iteration ‘Zero’ is the initial grid search.
+</p>
+</div>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-performanceplot-1">
+Past versions of performanceplot-1.svg
+</button>
+</p>
+<div id="fig-performanceplot-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/franzbischoff/false.alarm/blob/a8ef1d1a1eaebc8db4d7d8148c6b707eafec76d0/docs/figure/regime_optimize.Rmd/performanceplot-1.svg" target="_blank">a8ef1d1</a>
+</td>
+<td>
+Francisco Bischoff
+</td>
+<td>
+2022-07-19
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p>Table <a href="#tab:holdout">1.1</a> shows the performance of the best ten models on the hold-out set (a set of records that was never used for training).</p>
+<table class="table" style="margin-left: auto; margin-right: auto;">
+<caption>
+<span id="tab:holdout">Table 1.1: </span>Holdout results of the 10 best models from cross-validation (less is better)
+</caption>
+<thead>
+<tr>
+<th style="text-align:center;font-weight: bold;">
+#
+</th>
+<th style="text-align:center;font-weight: bold;">
+Time Constraint
+</th>
+<th style="text-align:center;font-weight: bold;">
+MP Threshold
+</th>
+<th style="text-align:center;font-weight: bold;">
+Window Size
+</th>
+<th style="text-align:center;font-weight: bold;">
+Regime Threshold
+</th>
+<th style="text-align:center;font-weight: bold;">
+FLOSS Score
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center;">
+1
+</td>
+<td style="text-align:center;">
+1350
+</td>
+<td style="text-align:center;">
+0.3
+</td>
+<td style="text-align:center;">
+100
+</td>
+<td style="text-align:center;">
+0.5
+</td>
+<td style="text-align:center;">
+0.676
+</td>
+</tr>
+<tr>
+<td style="text-align:center;">
+2
+</td>
+<td style="text-align:center;">
+1350
+</td>
+<td style="text-align:center;">
+0.3
+</td>
+<td style="text-align:center;">
+100
+</td>
+<td style="text-align:center;">
+0.5
+</td>
+<td style="text-align:center;">
+0.678
+</td>
+</tr>
+<tr>
+<td style="text-align:center;">
+3
+</td>
+<td style="text-align:center;">
+1850
+</td>
+<td style="text-align:center;">
+0.1
+</td>
+<td style="text-align:center;">
+125
+</td>
+<td style="text-align:center;">
+0.4
+</td>
+<td style="text-align:center;">
+0.729
+</td>
+</tr>
+<tr>
+<td style="text-align:center;">
+4
+</td>
+<td style="text-align:center;">
+1850
+</td>
+<td style="text-align:center;">
+0.1
+</td>
+<td style="text-align:center;">
+125
+</td>
+<td style="text-align:center;">
+0.4
+</td>
+<td style="text-align:center;">
+0.734
+</td>
+</tr>
+<tr>
+<td style="text-align:center;">
+5
+</td>
+<td style="text-align:center;">
+1950
+</td>
+<td style="text-align:center;">
+0.2
+</td>
+<td style="text-align:center;">
+100
+</td>
+<td style="text-align:center;">
+0.5
+</td>
+<td style="text-align:center;">
+0.740
+</td>
+</tr>
+<tr>
+<td style="text-align:center;">
+6
+</td>
+<td style="text-align:center;">
+1400
+</td>
+<td style="text-align:center;">
+0.3
+</td>
+<td style="text-align:center;">
+125
+</td>
+<td style="text-align:center;">
+0.5
+</td>
+<td style="text-align:center;">
+0.760
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div id="parameters-analysis" class="section level2" number="1.3">
+<h2><span class="header-section-number">1.3</span> Parameters analysis</h2>
+<p>The above process was an example of parameter tuning seeking the best model for a given set of parameters. It used a nested cross-validation procedure that aims to find the best combination of parameters and avoid overfitting.</p>
+<p>While this process is powerful and robust, it does not show us the importance of each parameter. At least one parameter has been introduced by reasoning about the problem (<code>mp_threshold</code>), but how important it (and other parameters) is for predicting regime changes?</p>
+<p>For example, the process above took 4 days, 20 hours, and 15 minutes to complete the grid search using an Intel(R) Xeon(R) Silver 4210R @ 2.40 GHz server. Notice that about 133 different combinations of parameters were tested on computing the MP (not FLOSS, the <code>regime_threshold</code>), 5 folds, 2 times each. That sums up about 35.2 x 10<sup>9</sup> all-pairs Euclidean distances computed on less than 5 days (on CPU, not GPU). Not bad.</p>
+<p>Another side note on the above process, it is not a “release” environment, so we must consider lots of overhead in computation and memory usage that must be taken into account during these five days of grid search. Thus, much time can be saved if we know what parameters are essential for the problem.</p>
+<p>In order to check the effect of the parameters on the model, we need to compute the <em>importance</em> of each parameter.</p>
+<p>Wei <em>et al.</em> published a comprehensive review on variable importance analysis<span class="citation"><sup><a href="#ref-Wei2015" role="doc-biblioref">1</a></sup></span>.</p>
+<p>Our case is not a typical case of variable importance analysis, where a set of <em>features</em> are tested against an <em>outcome</em>. Instead, we have to proxy our analysis by using as <em>outcome</em> the FLOSS performance score and as <em>features</em> (or <em>predictors</em>) the tuning parameters that lead to that score.</p>
+<p>That is accomplished by fitting a model using the tuning parameters to predict the FLOSS score and then applying the techniques to compute the importance of each parameter.</p>
+<p>For this matter, a Bayesian Additive Regression Trees (BART) model was chosen after an experimental trial with a set of regression models (including glmnet, gbm, mlp) and for its inherent characteristics, which allows being used for model-free variable selection<span class="citation"><sup><a href="#ref-Chipman2010" role="doc-biblioref">2</a></sup></span>. The best BART model was selected using 10-fold cross-validation repeated 3 times, having great predictive power with an RMSE around 0.2 and an R<sup>2</sup> around 0.99. With this fitted model, we could evaluate each parameter’s importance.</p>
+<div id="interactions" class="section level3" number="1.3.1">
+<h3><span class="header-section-number">1.3.1</span> Interactions</h3>
+<p>Before starting the parameter importance analysis, we need to consider the parameter interactions since this is usually the weak spot of the analysis techniques, as will be discussed later.</p>
+<p>The first BART model was fitted using the following parameters:</p>
+<p><span class="math display" id="eq:first">\[\begin{equation}
+\begin{aligned}
+E( score ) &amp;= \alpha + time\_constraint\\
+&amp;\quad + mp\_threshold + window\_size\\
+&amp;\quad + regime\_threshold
+\end{aligned}
+\tag{1.1}
+\end{equation}\]</span></p>
+<p>After checking the interactions, this is the refitted model:</p>
+<p><span class="math display" id="eq:refitted">\[\begin{equation}
+\begin{aligned}
+E( score ) &amp;= \alpha + time\_constraint\\
+&amp;\quad + mp\_threshold + window\_size\\
+&amp;\quad + regime\_threshold + \left(mp\_threshold \times window\_size\right)
+\end{aligned}
+\tag{1.2}
+\end{equation}\]</span></p>
+<p>Fig. <a href="#fig:interaction">1.4</a> shows the variable interaction strength between pairs of variables. That allows us to verify if there are any significant interactions between the variables. Using the information from the first model fit, equation <a href="#eq:first">(1.1)</a>, we see that <code>mp_threshold</code> interacts strongly with <code>window_size</code>. After refitting, taking into account this interaction, we see that the interaction strength graphic is much better, equation <a href="#eq:refitted">(1.2)</a>.</p>
+<div class="figure" style="text-align: center"><span style="display:block;" id="fig:interaction"></span>
+<img src="figure/regime_optimize.Rmd/interaction-1.svg" alt="Variable interactions strenght using feature importance ranking measure (FIRM) approach [@Greenwell2018]. A) Shows strong interaction between `mp_threshold` and `window_size`. B) Refitting the model with this interaction taken into account, the strength is substantially reduced." width="100%" />
+<p class="caption">
+Figure 1.4: Variable interactions strenght using feature importance ranking measure (FIRM) approach<span class="citation"><sup><a href="#ref-Greenwell2018" role="doc-biblioref">3</a></sup></span>. A) Shows strong interaction between <code>mp_threshold</code> and <code>window_size</code>. B) Refitting the model with this interaction taken into account, the strength is substantially reduced.
+</p>
+</div>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-interaction-1">
+Past versions of interaction-1.svg
+</button>
+</p>
+<div id="fig-interaction-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/franzbischoff/false.alarm/blob/a8ef1d1a1eaebc8db4d7d8148c6b707eafec76d0/docs/figure/regime_optimize.Rmd/interaction-1.svg" target="_blank">a8ef1d1</a>
+</td>
+<td>
+Francisco Bischoff
+</td>
+<td>
+2022-07-19
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+<div id="importance" class="section level3" number="1.3.2">
+<h3><span class="header-section-number">1.3.2</span> Importance</h3>
+<p>After evaluating the interactions, we then can perform the analysis of the variable importance. The goal is to understand how the FLOSS score behaves when we change the parameters.</p>
+<p>Here is a brief overview of the different techniques:</p>
+<div id="feature-importance-ranking-measure-firm" class="section level4" number="1.3.2.1">
+<h4><span class="header-section-number">1.3.2.1</span> Feature Importance Ranking Measure (FIRM)</h4>
+<p>The FIRM is a variance-based method. This implementation uses the ICE curves to quantify each feature effect which is more robust than partial dependance plots (PDP)<span class="citation"><sup><a href="#ref-Greenwell2020" role="doc-biblioref">4</a></sup></span>.</p>
+<p>It is also helpful to inspect the ICE curves to uncover some heterogeneous relationships with the outcome<span class="citation"><sup><a href="#ref-Molnar2022" role="doc-biblioref">5</a></sup></span>.</p>
+<p><strong>Advantages:</strong></p>
+<ul>
+<li>Has a causal interpretation (for the model, not for the real world)</li>
+<li>ICE curves can uncover heterogeneous relationships</li>
+</ul>
+<p><strong>Disadvantages:</strong></p>
+<ul>
+<li>The method does not take into account interactions.</li>
+</ul>
+</div>
+<div id="permutation" class="section level4" number="1.3.2.2">
+<h4><span class="header-section-number">1.3.2.2</span> Permutation</h4>
+<p>The Permutation method was introduced by Breiman in 2001<span class="citation"><sup><a href="#ref-Breiman2001" role="doc-biblioref">6</a></sup></span> for Random Forest, and the implementation used here is a model-agnostic version introduced by Fisher <em>et al.</em> in 2019<span class="citation"><sup><a href="#ref-Fisher2018" role="doc-biblioref">7</a></sup></span>. A feature is “unimportant” if shuffling its values leaves the model error unchanged, assuming that the model has ignored the feature for the prediction.</p>
+<p><strong>Advantages:</strong></p>
+<ul>
+<li>Easy interpretation: the importance is the increase in model error when the feature’s information is destroyed.</li>
+<li>No interactions: the interaction effects are also destroyed by permuting the feature values.</li>
+</ul>
+<p><strong>Disadvantages:</strong></p>
+<ul>
+<li>It is linked to the model error: not a disadvantage <em>per se</em>, but may lead to misinterpretation if the goal is to understand how the output varies, regardless of the model’s performance. For example, if we want to measure the robustness of the model when someone tampers the features, we want to know the <em>model variance</em> explained by the features. Model variance (explained by the features) and feature importance correlate strongly when the model generalizes well (it is not overfitting).</li>
+<li>Correlations: If features are correlated, the permutation feature importance can be biased by unrealistic data instances. Thus we need to be careful if there are strong correlations between features.</li>
+</ul>
+</div>
+<div id="shap" class="section level4" number="1.3.2.3">
+<h4><span class="header-section-number">1.3.2.3</span> SHAP</h4>
+<p>The SHAP feature importance<span class="citation"><sup><a href="#ref-Lundberg2017" role="doc-biblioref">8</a></sup></span> is an alternative to permutation feature importance. The difference between both is that Permutation feature importance is based on the decrease in model performance, while SHAP is based on the magnitude of feature attributions.</p>
+<p><strong>Advantages:</strong></p>
+<ul>
+<li>It is not linked to the model error: as the underlying concept of SHAP is the Shapley value, the value attributed to each feature is related to its contribution to the output value. If a feature is important, its addition will significantly affect the output.</li>
+</ul>
+<p><strong>Disadvantages:</strong></p>
+<ul>
+<li>Computer time: Shapley value is a computationally expensive method and usually is computed using Montecarlo simulations.</li>
+<li>The Shapley value can be misinterpreted: The Shapley value of a feature value <strong>is not</strong> the difference of the predicted value after removing the feature from the model training. The interpretation of the Shapley value is: “Given the current set of feature values, the contribution of a feature value to the difference between the actual prediction and the mean prediction is the estimated Shapley value”<span class="citation"><sup><a href="#ref-Molnar2022" role="doc-biblioref">5</a></sup></span>.</li>
+<li>Correlations: As with other permutation methods, the SHAP feature importance can be biased by unrealistic data instances when features are correlated.</li>
+</ul>
+</div>
+</div>
+<div id="importance-analysis" class="section level3" number="1.3.3">
+<h3><span class="header-section-number">1.3.3</span> Importance analysis</h3>
+<p>Using the three techniques above simultaneously allows a broad comparison of the model behavior<span class="citation"><sup><a href="#ref-Greenwell2020" role="doc-biblioref">4</a></sup></span>. All three methods are model-agnostic (separates interpretation from the model), but as we have seen above, each method has its advantages and disadvantages<span class="citation"><sup><a href="#ref-Molnar2022" role="doc-biblioref">5</a></sup></span>.</p>
+<p>Fig. <a href="#fig:importance">1.5</a> then shows the variable importance using three methods: Feature Importance Ranking Measure (FIRM) using Individual Conditional Expectation (ICE), Permutation-based, and Shapley Additive explanations (SHAP). The first line of this figure shows that the interaction between <code>mp_threshold</code> and <code>window_size</code> obscures the results, where except for <code>time_constraint</code>, the other variables have similar importance. In the second line, the most important feature that all three methods agree on is the <code>regime_threshold</code>.</p>
+<div class="figure" style="text-align: center"><span style="display:block;" id="fig:importance"></span>
+<img src="figure/regime_optimize.Rmd/importance-1.svg" alt="Variables importances using three different methods. A) Feature Importance Ranking Measure using ICE curves. B) Permutation method. C) SHAP (400 iterations). Line 1 refers to the original fit, and line 2 to the re-fit, taking into account the interactions between variables (Fig. \@ref(fig:interaction))." width="100%" />
+<p class="caption">
+Figure 1.5: Variables importances using three different methods. A) Feature Importance Ranking Measure using ICE curves. B) Permutation method. C) SHAP (400 iterations). Line 1 refers to the original fit, and line 2 to the re-fit, taking into account the interactions between variables (Fig. <a href="#fig:interaction">1.4</a>).
+</p>
+</div>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-importance-1">
+Past versions of importance-1.svg
+</button>
+</p>
+<div id="fig-importance-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/franzbischoff/false.alarm/blob/a8ef1d1a1eaebc8db4d7d8148c6b707eafec76d0/docs/figure/regime_optimize.Rmd/importance-1.svg" target="_blank">a8ef1d1</a>
+</td>
+<td>
+Francisco Bischoff
+</td>
+<td>
+2022-07-19
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p>Fig. <a href="#fig:importanceshap">1.6</a> and <a href="#fig:importanceshap2">1.7</a> show the effect of each feature on the FLOSS score. The main differences before and after removing the interactions are the magnitude of the less important features and the shape of <code>time_constraint</code> that initially had a valley around 1600. However, it seems that it flats out.</p>
+<div class="figure" style="text-align: center"><span style="display:block;" id="fig:importanceshap"></span>
+<img src="figure/regime_optimize.Rmd/importanceshap-1.svg" alt="This shows the effect each variable has on FLOSS score. This plot doesn't take into account the variable interactions." width="100%" />
+<p class="caption">
+Figure 1.6: This shows the effect each variable has on FLOSS score. This plot doesn’t take into account the variable interactions.
+</p>
+</div>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-importanceshap-1">
+Past versions of importanceshap-1.svg
+</button>
+</p>
+<div id="fig-importanceshap-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/franzbischoff/false.alarm/blob/a8ef1d1a1eaebc8db4d7d8148c6b707eafec76d0/docs/figure/regime_optimize.Rmd/importanceshap-1.svg" target="_blank">a8ef1d1</a>
+</td>
+<td>
+Francisco Bischoff
+</td>
+<td>
+2022-07-19
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="figure" style="text-align: center"><span style="display:block;" id="fig:importanceshap2"></span>
+<img src="figure/regime_optimize.Rmd/importanceshap2-1.svg" alt="This shows the effect each variable has on FLOSS score taking into account the interactions." width="100%" />
+<p class="caption">
+Figure 1.7: This shows the effect each variable has on FLOSS score taking into account the interactions.
+</p>
+</div>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-importanceshap2-1">
+Past versions of importanceshap2-1.svg
+</button>
+</p>
+<div id="fig-importanceshap2-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/franzbischoff/false.alarm/blob/a8ef1d1a1eaebc8db4d7d8148c6b707eafec76d0/docs/figure/regime_optimize.Rmd/importanceshap2-1.svg" target="_blank">a8ef1d1</a>
+</td>
+<td>
+Francisco Bischoff
+</td>
+<td>
+2022-07-19
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p>We then can see that in this setting, the only variables worthing tuning are the <code>window_size</code> that is a required parameter for the Matrix Profile and seems to give better results with lower window sizes, and the <code>regime_threshold</code> that is a required parameter for FLOSS and seems to have a better performance around 0.4. As <code>time_constraint</code> flats out, this parameter can be, at this moment, removed from the model. <code>mp_threshold</code> also seems not to be a good parameter to keep so that we can leave it at its default of zero.</p>
+<p>According to the FLOSS paper<span class="citation"><sup><a href="#ref-gharghabi2018" role="doc-biblioref">9</a></sup></span>, the <code>window_size</code> is a feature that can be tuned; nevertheless, the results appear to be similar in a reasonably wide range of windows. At this point, we see that the window size of 100 (which is less than half of a second) did not reach a minimum, suggesting that smaller windows could have better performances.</p>
+<p>On the other hand, the <code>regime_threshold</code> seems to have an optimal value, but due to a lack of resources until this date, we could not test another variable (that is worth tuning, now that we know that we can have a shorter window size) that is the <code>regime_landmark</code>.</p>
+<p>This parameter was fixed to the value of 3 seconds from the last observation (at 250hz, this means the position 750 from the end). It can be shifted, for example, from 1 second to a maximum of 10 seconds (the official limit to fire the alarm) and assess the <em>Corrected Arc Counts</em> in a location with more information about the new regime and is less distorted by the edges.</p>
+<p>A preliminary result of the ongoing tuning (with <code>regime_landmark</code>) is depicted below (still a work in progress). It shows us two prediction paths, and assuming (by eye) that the more vertical the line, the less interference will be on the prediction, this means that having settled the <code>window_size</code> and a <code>regime_landmark</code>, the <code>regime_threshold</code> will have the best tuning value for each case.</p>
+<div class="figure" style="text-align: center"><span style="display:block;" id="fig:preliminar"></span>
+<img src="figure/shapfurr.png" alt="Multioutput decision plot." width="100%" />
+<p class="caption">
+Figure 1.8: Multioutput decision plot.
+</p>
+</div>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-shapfurr">
+Past versions of shapfurr.png
+</button>
+</p>
+<div id="fig-shapfurr" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/franzbischoff/false.alarm/blob/03d1e682b4f9fc6680785e1b1d8215f0026a52e0/docs/figure/shapfurr.png" target="_blank">03d1e68</a>
+</td>
+<td>
+Francisco Bischoff
+</td>
+<td>
+2022-07-19
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+</div>
+<div id="visualizing-the-predictions" class="section level2" number="1.4">
+<h2><span class="header-section-number">1.4</span> Visualizing the predictions</h2>
+<p>At this point, the grid search tested a total of 233 models with resulting (individual) scores from 0.0009 to 1279.4 (Q25: 0.3498, Q50: 1.0930, Q75: 2.4673).</p>
+<div id="by-recording" class="section level3" number="1.4.1">
+<h3><span class="header-section-number">1.4.1</span> By recording</h3>
+<p>First, we will visualize how the models (in general) performed throughout the individual recordings.</p>
+<p>Fig. <a href="#fig:global">1.9</a> shows a violin plot of equal areas clipped to the minimum value. The blue color indicates the recordings with a small IQR (interquartile range) of model scores. We see on the left half 10% of the recordings with the worst minimum score, and on the right half, 10% of the recordings with the best minimum score.</p>
+<p>Next, we will visualize some of these predictions to understand why some recordings were difficult to segment. For us to have a simple baseline: a recording with just one regime change, and the model predicts exactly one regime change, but far from the truth, the score will be roughly 1.</p>
+<div class="figure" style="text-align: center"><span style="display:block;" id="fig:global"></span>
+<img src="figure/regime_optimize.Rmd/global-1.svg" alt="Violin plot showing the distribution of the FLOSS score achieved by all tested models by recording.  The left half shows the recordings that were difficult to predict (10% overall), whereas the right half shows the recordings that at least one model could achieve a good prediction (10% overall).  The recordings are sorted (left-right) by the minimum (best) score achieved in descending order, and ties are sorted by the median of all recording scores.  The blue color highlights recordings where models had an IQR variability of less than one.  As a simple example, a recording with just one regime change, and the model predicts exactly one change, far from the truth, the score will be roughly 1." width="100%" />
+<p class="caption">
+Figure 1.9: Violin plot showing the distribution of the FLOSS score achieved by all tested models by recording. The left half shows the recordings that were difficult to predict (10% overall), whereas the right half shows the recordings that at least one model could achieve a good prediction (10% overall). The recordings are sorted (left-right) by the minimum (best) score achieved in descending order, and ties are sorted by the median of all recording scores. The blue color highlights recordings where models had an IQR variability of less than one. As a simple example, a recording with just one regime change, and the model predicts exactly one change, far from the truth, the score will be roughly 1.
+</p>
+</div>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-global-1">
+Past versions of global-1.svg
+</button>
+</p>
+<div id="fig-global-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/franzbischoff/false.alarm/blob/a8ef1d1a1eaebc8db4d7d8148c6b707eafec76d0/docs/figure/regime_optimize.Rmd/global-1.svg" target="_blank">a8ef1d1</a>
+</td>
+<td>
+Francisco Bischoff
+</td>
+<td>
+2022-07-19
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p>Fig. <a href="#fig:worst">1.10</a> shows the best effort in predicting the most complex recordings. One information not declared before is that if the model does not predict any change, it will put a mark on the zero position. On the other side, the truth markers positioned at the beginning and the end of the recording were removed, as these locations lack information and do not represent a streaming setting.</p>
+<div class="figure" style="text-align: center"><span style="display:block;" id="fig:worst"></span>
+<img src="figure/regime_optimize.Rmd/worst-1.png" alt="Prediction of the worst 10% of recordings (red is the truth, blue are the predictions)." width="100%" />
+<p class="caption">
+Figure 1.10: Prediction of the worst 10% of recordings (red is the truth, blue are the predictions).
+</p>
+</div>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-worst-1">
+Past versions of worst-1.png
+</button>
+</p>
+<div id="fig-worst-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/franzbischoff/false.alarm/blob/a8ef1d1a1eaebc8db4d7d8148c6b707eafec76d0/docs/figure/regime_optimize.Rmd/worst-1.png" target="_blank">a8ef1d1</a>
+</td>
+<td>
+Francisco Bischoff
+</td>
+<td>
+2022-07-19
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p>Fig. <a href="#fig:best">1.11</a> shows the best performances of the best recordings. Notice that there are recordings with a significant duration and few regime changes, making it hard for a “trivial model” to predict randomly.</p>
+<div class="figure" style="text-align: center"><span style="display:block;" id="fig:best"></span>
+<img src="figure/regime_optimize.Rmd/best-1.png" alt="Prediction of the best 10% of recordings (red is the truth, blue are the predictions)." width="100%" />
+<p class="caption">
+Figure 1.11: Prediction of the best 10% of recordings (red is the truth, blue are the predictions).
+</p>
+</div>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-best-1">
+Past versions of best-1.png
+</button>
+</p>
+<div id="fig-best-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/franzbischoff/false.alarm/blob/a8ef1d1a1eaebc8db4d7d8148c6b707eafec76d0/docs/figure/regime_optimize.Rmd/best-1.png" target="_blank">a8ef1d1</a>
+</td>
+<td>
+Francisco Bischoff
+</td>
+<td>
+2022-07-19
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p>An online interactive version of all the datasets and predictions can be accessed at <a href="https://franzbischoff.shinyapps.io/FLOSS/">Shiny app</a>.</p>
+<p>A work-in-progress version for the finer grid-search over the <code>regime_landmark</code> is available here: <a href="https://franzbischoff.shinyapps.io/FLOSS_land/">Shiny app</a>, which shows promising results.</p>
+</div>
+<div id="by-model" class="section level3" number="1.4.2">
+<h3><span class="header-section-number">1.4.2</span> By model</h3>
+<p>Fig. <a href="#fig:globalmodel">1.12</a> shows the distribution of the FLOSS score of the 10% worst (left side) and 10% best models across the recordings (right side). The bluish color highlights the models with SD below 3 and IQR below 1.</p>
+<div class="figure" style="text-align: center"><span style="display:block;" id="fig:globalmodel"></span>
+<img src="figure/regime_optimize.Rmd/globalmodel-1.svg" alt="Violin plot showing the distribution of the FLOSS score achieved by all tested models during the inner ressample.  The left half shows the models with the worst performances (10% overall), whereas the right half shows the models with the best performances (10% overall). The models are sorted (left-right) by the mean score (top) and by the median (below). Ties are sorted by the SD and IQR, respectively.  The bluish colors highlights models with an SD below 3 and IQR below 1." width="100%" />
+<p class="caption">
+Figure 1.12: Violin plot showing the distribution of the FLOSS score achieved by all tested models during the inner ressample. The left half shows the models with the worst performances (10% overall), whereas the right half shows the models with the best performances (10% overall). The models are sorted (left-right) by the mean score (top) and by the median (below). Ties are sorted by the SD and IQR, respectively. The bluish colors highlights models with an SD below 3 and IQR below 1.
+</p>
+</div>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-globalmodel-1">
+Past versions of globalmodel-1.svg
+</button>
+</p>
+<div id="fig-globalmodel-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/franzbischoff/false.alarm/blob/a8ef1d1a1eaebc8db4d7d8148c6b707eafec76d0/docs/figure/regime_optimize.Rmd/globalmodel-1.svg" target="_blank">a8ef1d1</a>
+</td>
+<td>
+Francisco Bischoff
+</td>
+<td>
+2022-07-19
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p>Fig. <a href="#fig:bestmodels">1.13</a> the performance of the six best models across all inner resamples. They are ordered from left to right, from the worst record to the best record. The top model is the one with the lowest mean across the scores. The blue line indicates the mean score, and the red line the median score. The scores above 3 are squished in the plot and colored according to the scale in the legend.</p>
+<div class="figure" style="text-align: center"><span style="display:block;" id="fig:bestmodels"></span>
+<img src="figure/regime_optimize.Rmd/bestmodels-1.svg" alt="Performances of the best 6 models across all inner resample of recordings. The recordings are ordered by score, from the worst to the best. Each plot shows one model, starting from the best one. The red line indicates the median score of the model. The blue line indicates the mean score of the model. The gray line limits the zero-score region. The plot is limited on the &quot;y&quot; axis, and the scores above this limit are shown in color." width="100%" />
+<p class="caption">
+Figure 1.13: Performances of the best 6 models across all inner resample of recordings. The recordings are ordered by score, from the worst to the best. Each plot shows one model, starting from the best one. The red line indicates the median score of the model. The blue line indicates the mean score of the model. The gray line limits the zero-score region. The plot is limited on the “y” axis, and the scores above this limit are shown in color.
+</p>
+</div>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-bestmodels-1">
+Past versions of bestmodels-1.svg
+</button>
+</p>
+<div id="fig-bestmodels-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/franzbischoff/false.alarm/blob/a8ef1d1a1eaebc8db4d7d8148c6b707eafec76d0/docs/figure/regime_optimize.Rmd/bestmodels-1.svg" target="_blank">a8ef1d1</a>
+</td>
+<td>
+Francisco Bischoff
+</td>
+<td>
+2022-07-19
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p>We can see that some records (namely #26, #45, #122, #124, #132, #162) are contained in the set of “difficult” records shown in Fig. <a href="#fig:global">1.9</a>.</p>
+</div>
+</div>
+</div>
+<div id="current-status" class="section level1" number="2">
+<h1><span class="header-section-number">2</span> Current status</h1>
+<p>That is the current status of the project. The optimization using the <code>regime_landmark</code> feature is in progress, and the following article will discuss all the findings.</p>
+<p>In parallel, another score measure is being developed based on the concept of Precision and Recall, but for time-series<span class="citation"><sup><a href="#ref-Tatbul2018" role="doc-biblioref">10</a></sup></span>. It is expected that such a score measure will help to choose the best final model where most of the significant regime changes are detected, keeping a reasonable amount of false positives that will be ruled out further by the classification algorithm.</p>
+</div>
+<div id="references" class="section level1 unnumbered">
+<h1>References</h1>
+<div id="refs" class="references csl-bib-body">
+<div id="ref-Wei2015" class="csl-entry">
+<div class="csl-left-margin">1. </div><div class="csl-right-inline">Wei P, Lu Z, Song J. <span class="nocase">Variable importance analysis: A comprehensive review</span>. <em>Reliability Engineering <span>&amp;</span> System Safety</em>. 2015;142:399-432. doi:<a href="https://doi.org/10.1016/j.ress.2015.05.018">10.1016/j.ress.2015.05.018</a></div>
+</div>
+<div id="ref-Chipman2010" class="csl-entry">
+<div class="csl-left-margin">2. </div><div class="csl-right-inline">Chipman HA, George EI, McCulloch RE. <span class="nocase">BART: Bayesian additive regression trees</span>. <em>The Annals of Applied Statistics</em>. 2010;4(1):266-298. doi:<a href="https://doi.org/10.1214/09-AOAS285">10.1214/09-AOAS285</a></div>
+</div>
+<div id="ref-Greenwell2018" class="csl-entry">
+<div class="csl-left-margin">3. </div><div class="csl-right-inline">Greenwell BM, Boehmke BC, McCarthy AJ. A simple and effective model-based variable importance measure. Published online 2018. doi:<a href="https://doi.org/10.48550/arxiv.1805.04755">10.48550/arxiv.1805.04755</a></div>
+</div>
+<div id="ref-Greenwell2020" class="csl-entry">
+<div class="csl-left-margin">4. </div><div class="csl-right-inline">Greenwell BM, Boehmke BC. <span class="nocase">Variable Importance Plots-An Introduction to the vip Package</span>. <em>R Journal</em>. 2020;12(1):343-366. doi:<a href="https://doi.org/10.32614/rj-2020-013">10.32614/rj-2020-013</a></div>
+</div>
+<div id="ref-Molnar2022" class="csl-entry">
+<div class="csl-left-margin">5. </div><div class="csl-right-inline">Molnar C. <em><span class="nocase">Interpretable Machine Learning. A Guide for Making Black Box Models Explainable.</span></em> 2nd ed.; 2022:329. <a href="https://christophm.github.io/interpretable-ml-book">https://christophm.github.io/interpretable-ml-book</a></div>
+</div>
+<div id="ref-Breiman2001" class="csl-entry">
+<div class="csl-left-margin">6. </div><div class="csl-right-inline">Breiman L. <span>Random Forests</span>. <em>Machine Learning</em>. 2001;45(1):5-32. doi:<a href="https://doi.org/10.1023/A:1010933404324">10.1023/A:1010933404324</a></div>
+</div>
+<div id="ref-Fisher2018" class="csl-entry">
+<div class="csl-left-margin">7. </div><div class="csl-right-inline">Fisher A, Rudin C, Dominici F. <span class="nocase">All Models are Wrong, but Many are Useful: Learning a Variable’s Importance by Studying an Entire Class of Prediction Models Simultaneously.</span> <em>Journal of machine learning research : JMLR</em>. 2019;20(Vi). <a href="http://arxiv.org/abs/1801.01489 http://www.ncbi.nlm.nih.gov/pubmed/34335110 http://www.pubmedcentral.nih.gov/articlerender.fcgi?artid=PMC8323609">http://arxiv.org/abs/1801.01489 http://www.ncbi.nlm.nih.gov/pubmed/34335110 http://www.pubmedcentral.nih.gov/articlerender.fcgi?artid=PMC8323609</a></div>
+</div>
+<div id="ref-Lundberg2017" class="csl-entry">
+<div class="csl-left-margin">8. </div><div class="csl-right-inline">Lundberg SM, Lee SI. <span class="nocase">A unified approach to interpreting model predictions</span>. In: <em>Advances in Neural Information Processing Systems</em>. Vol 2017-Decem.; 2017:4766-4775. <a href="https://arxiv.org/abs/1705.07874">https://arxiv.org/abs/1705.07874</a></div>
+</div>
+<div id="ref-gharghabi2018" class="csl-entry">
+<div class="csl-left-margin">9. </div><div class="csl-right-inline">Gharghabi S, Yeh C-CM, Ding Y, et al. Domain agnostic online semantic segmentation for multi-dimensional time series. <em>Data Mining and Knowledge Discovery</em>. 2018;33(1):96-130. doi:<a href="https://doi.org/10.1007/s10618-018-0589-3">10.1007/s10618-018-0589-3</a></div>
+</div>
+<div id="ref-Tatbul2018" class="csl-entry">
+<div class="csl-left-margin">10. </div><div class="csl-right-inline">Tatbul N, Lee TJ, Zdonik S, Alam M, Gottschlich J. <span class="nocase">Precision and recall for time series</span>. <em>Advances in Neural Information Processing Systems</em>. 2018;2018-Decem(NeurIPS):1920-1930. <a href="https://arxiv.org/abs/1803.03639">https://arxiv.org/abs/1803.03639</a></div>
+</div>
+</div>
+<br>
+<p>
+<button type="button" class="btn btn-default btn-workflowr btn-workflowr-sessioninfo" data-toggle="collapse" data-target="#workflowr-sessioninfo" style="display: block;">
+<span class="glyphicon glyphicon-wrench" aria-hidden="true"></span>
+Session information
+</button>
+</p>
+<div id="workflowr-sessioninfo" class="collapse">
+<pre><code>─ Session info ───────────────────────────────────────────────────────────────
+ setting  value
+ version  R version 4.2.1 (2022-06-23)
+ os       Ubuntu 20.04.4 LTS
+ system   x86_64, linux-gnu
+ ui       X11
+ language (EN)
+ collate  en_US.UTF-8
+ ctype    en_US.UTF-8
+ tz       Europe/Lisbon
+ date     2022-07-21
+ pandoc   2.17.0.1 @ /usr/bin/ (via rmarkdown)
+
+─ Packages ───────────────────────────────────────────────────────────────────
+ package      * version     date (UTC) lib source
+ askpass        1.1         2019-01-13 [1] CRAN (R 4.2.0)
+ assertthat     0.2.1       2019-03-21 [1] CRAN (R 4.2.0)
+ backports      1.4.1       2021-12-13 [1] CRAN (R 4.2.0)
+ base64url      1.4         2018-05-14 [1] CRAN (R 4.2.0)
+ bit            4.0.4       2020-08-04 [1] CRAN (R 4.2.0)
+ bit64          4.0.5       2020-08-30 [1] CRAN (R 4.2.0)
+ bookdown       0.27.3      2022-07-06 [1] Github (rstudio/bookdown@900f921)
+ bslib          0.3.1       2021-10-06 [1] CRAN (R 4.2.0)
+ cachem         1.0.6       2021-08-19 [1] CRAN (R 4.2.0)
+ callr          3.7.1       2022-07-13 [1] CRAN (R 4.2.1)
+ checkmate      2.1.0       2022-04-21 [1] CRAN (R 4.2.0)
+ class          7.3-20      2022-01-13 [2] CRAN (R 4.2.0)
+ cli            3.3.0       2022-04-25 [1] CRAN (R 4.2.0)
+ codetools      0.2-18      2020-11-04 [2] CRAN (R 4.2.0)
+ colorspace     2.0-3       2022-02-21 [1] CRAN (R 4.2.0)
+ crayon         1.5.1       2022-03-26 [1] CRAN (R 4.2.0)
+ credentials    1.3.2       2021-11-29 [1] CRAN (R 4.2.0)
+ data.table     1.14.2      2021-09-27 [1] CRAN (R 4.2.0)
+ dbarts         0.9-22      2022-03-29 [1] CRAN (R 4.2.0)
+ DBI            1.1.3       2022-06-18 [1] CRAN (R 4.2.0)
+ debugme        1.1.0       2017-10-22 [1] CRAN (R 4.2.0)
+ devtools       2.4.3       2021-11-30 [1] CRAN (R 4.2.0)
+ dials          1.0.0       2022-06-14 [1] CRAN (R 4.2.0)
+ DiceDesign     1.9         2021-02-13 [1] CRAN (R 4.2.0)
+ digest         0.6.29      2021-12-01 [1] CRAN (R 4.2.0)
+ dplyr          1.0.9       2022-04-28 [1] CRAN (R 4.2.0)
+ ellipsis       0.3.2       2021-04-29 [1] CRAN (R 4.2.0)
+ evaluate       0.15        2022-02-18 [1] CRAN (R 4.2.0)
+ fansi          1.0.3       2022-03-24 [1] CRAN (R 4.2.0)
+ farver         2.1.1       2022-07-06 [1] CRAN (R 4.2.0)
+ fastmap        1.1.0       2021-01-25 [1] CRAN (R 4.2.0)
+ fastshap       0.0.7       2021-12-06 [1] CRAN (R 4.2.0)
+ forcats        0.5.1       2021-01-27 [2] CRAN (R 4.2.0)
+ foreach        1.5.2       2022-02-02 [1] CRAN (R 4.2.0)
+ fs             1.5.2       2021-12-08 [1] CRAN (R 4.2.0)
+ furrr          0.3.0       2022-05-04 [1] CRAN (R 4.2.0)
+ future         1.26.1      2022-05-27 [1] CRAN (R 4.2.0)
+ future.apply   1.9.0       2022-04-25 [1] CRAN (R 4.2.0)
+ generics       0.1.3       2022-07-05 [1] CRAN (R 4.2.0)
+ gert           1.6.0       2022-03-29 [1] CRAN (R 4.2.0)
+ getPass        0.2-2       2017-07-21 [1] CRAN (R 4.2.0)
+ ggplot2      * 3.3.6       2022-05-03 [1] CRAN (R 4.2.0)
+ git2r          0.30.1.9000 2022-04-29 [1] Github (ropensci/git2r@80ba185)
+ gittargets   * 0.0.3.9000  2022-04-29 [1] Github (wlandau/gittargets@13a9cd8)
+ globals        0.15.1      2022-06-24 [1] CRAN (R 4.2.0)
+ glue         * 1.6.2       2022-02-24 [1] CRAN (R 4.2.0)
+ gower          1.0.0       2022-02-03 [1] CRAN (R 4.2.0)
+ GPfit          1.0-8       2019-02-08 [1] CRAN (R 4.2.0)
+ gridExtra      2.3         2017-09-09 [1] CRAN (R 4.2.0)
+ gtable         0.3.0       2019-03-25 [1] CRAN (R 4.2.0)
+ hardhat        1.2.0       2022-06-30 [1] CRAN (R 4.2.0)
+ here         * 1.0.1       2020-12-13 [1] CRAN (R 4.2.0)
+ highr          0.9         2021-04-16 [1] CRAN (R 4.2.0)
+ hms            1.1.1       2021-09-26 [1] CRAN (R 4.2.0)
+ htmltools      0.5.2       2021-08-25 [1] CRAN (R 4.2.0)
+ htmlwidgets    1.5.4       2021-09-08 [1] CRAN (R 4.2.0)
+ httpuv         1.6.5       2022-01-05 [1] CRAN (R 4.2.0)
+ httr           1.4.3       2022-05-04 [1] CRAN (R 4.2.0)
+ igraph         1.3.3       2022-07-15 [1] CRAN (R 4.2.1)
+ ipred          0.9-13      2022-06-02 [1] CRAN (R 4.2.0)
+ iterators      1.0.14      2022-02-05 [1] CRAN (R 4.2.0)
+ jquerylib      0.1.4       2021-04-26 [1] CRAN (R 4.2.0)
+ jsonlite       1.8.0       2022-02-22 [1] CRAN (R 4.2.0)
+ kableExtra   * 1.3.4       2021-02-20 [1] CRAN (R 4.2.0)
+ knitr          1.39        2022-04-26 [1] CRAN (R 4.2.0)
+ labeling       0.4.2       2020-10-20 [1] CRAN (R 4.2.0)
+ later          1.3.0       2021-08-18 [1] CRAN (R 4.2.0)
+ lattice        0.20-45     2021-09-22 [2] CRAN (R 4.2.0)
+ lava           1.6.10      2021-09-02 [1] CRAN (R 4.2.0)
+ lhs            1.1.5       2022-03-22 [1] CRAN (R 4.2.0)
+ lifecycle      1.0.1       2021-09-24 [1] CRAN (R 4.2.0)
+ listenv        0.8.0       2019-12-05 [1] CRAN (R 4.2.0)
+ lubridate      1.8.0       2021-10-07 [1] CRAN (R 4.2.0)
+ magrittr       2.0.3       2022-03-30 [1] CRAN (R 4.2.0)
+ MASS           7.3-58      2022-07-14 [1] CRAN (R 4.2.1)
+ Matrix         1.4-1       2022-03-23 [2] CRAN (R 4.2.0)
+ memoise        2.0.1       2021-11-26 [1] CRAN (R 4.2.0)
+ mgcv           1.8-40      2022-03-29 [2] CRAN (R 4.2.0)
+ munsell        0.5.0       2018-06-12 [1] CRAN (R 4.2.0)
+ nlme           3.1-158     2022-06-15 [1] CRAN (R 4.2.0)
+ nnet           7.3-17      2022-01-13 [2] CRAN (R 4.2.0)
+ openssl        2.0.2       2022-05-24 [1] CRAN (R 4.2.0)
+ parallelly     1.32.0      2022-06-07 [1] CRAN (R 4.2.0)
+ parsnip        1.0.0       2022-06-16 [1] CRAN (R 4.2.0)
+ patchwork    * 1.1.1       2020-12-17 [1] CRAN (R 4.2.0)
+ pdp            0.8.1       2022-06-07 [1] CRAN (R 4.2.0)
+ pillar         1.7.0       2022-02-01 [1] CRAN (R 4.2.0)
+ pkgbuild       1.3.1       2021-12-20 [1] CRAN (R 4.2.0)
+ pkgconfig      2.0.3       2019-09-22 [1] CRAN (R 4.2.0)
+ pkgload        1.3.0       2022-06-27 [1] CRAN (R 4.2.0)
+ prettyunits    1.1.1       2020-01-24 [1] CRAN (R 4.2.0)
+ processx       3.7.0       2022-07-07 [1] CRAN (R 4.2.1)
+ prodlim        2019.11.13  2019-11-17 [1] CRAN (R 4.2.0)
+ promises       1.2.0.1     2021-02-11 [1] CRAN (R 4.2.0)
+ ps             1.7.1       2022-06-18 [1] CRAN (R 4.2.0)
+ purrr          0.3.4       2020-04-17 [1] CRAN (R 4.2.0)
+ R6             2.5.1       2021-08-19 [1] CRAN (R 4.2.0)
+ Rcpp           1.0.9       2022-07-08 [1] CRAN (R 4.2.1)
+ readr          2.1.2       2022-01-30 [1] CRAN (R 4.2.0)
+ recipes        1.0.1       2022-07-07 [1] CRAN (R 4.2.1)
+ remotes        2.4.2       2021-11-30 [1] CRAN (R 4.2.0)
+ renv           0.15.5      2022-05-26 [1] CRAN (R 4.2.0)
+ rlang          1.0.4       2022-07-12 [1] CRAN (R 4.2.1)
+ rmarkdown      2.14.3      2022-06-23 [1] Github (rstudio/rmarkdown@d23e479)
+ rpart          4.1.16      2022-01-24 [2] CRAN (R 4.2.0)
+ rprojroot      2.0.3       2022-04-02 [1] CRAN (R 4.2.0)
+ rsample        1.0.0       2022-06-24 [1] CRAN (R 4.2.0)
+ rstudioapi     0.13        2020-11-12 [1] CRAN (R 4.2.0)
+ rvest          1.0.2       2021-10-16 [1] CRAN (R 4.2.0)
+ sass           0.4.1       2022-03-23 [1] CRAN (R 4.2.0)
+ scales         1.2.0       2022-04-13 [1] CRAN (R 4.2.0)
+ sessioninfo    1.2.2       2021-12-06 [1] CRAN (R 4.2.0)
+ signal         0.7-7       2021-05-25 [1] CRAN (R 4.2.0)
+ stringi        1.7.8       2022-07-11 [1] CRAN (R 4.2.1)
+ stringr        1.4.0       2019-02-10 [1] CRAN (R 4.2.0)
+ survival       3.3-1       2022-03-03 [2] CRAN (R 4.2.0)
+ svglite        2.1.0.9000  2022-04-29 [1] Github (r-lib/svglite@d673908)
+ sys            3.4         2020-07-23 [1] CRAN (R 4.2.0)
+ systemfonts    1.0.4       2022-02-11 [1] CRAN (R 4.2.0)
+ tarchetypes  * 0.6.0       2022-04-19 [1] CRAN (R 4.2.0)
+ targets      * 0.12.1      2022-06-03 [1] CRAN (R 4.2.0)
+ tibble       * 3.1.7       2022-05-03 [1] CRAN (R 4.2.0)
+ tidyr          1.2.0       2022-02-01 [1] CRAN (R 4.2.0)
+ tidyselect     1.1.2       2022-02-21 [1] CRAN (R 4.2.0)
+ timeDate       3043.102    2018-02-21 [1] CRAN (R 4.2.0)
+ timetk         2.8.1       2022-05-31 [1] CRAN (R 4.2.0)
+ tune           1.0.0       2022-07-07 [1] CRAN (R 4.2.1)
+ tzdb           0.3.0       2022-03-28 [1] CRAN (R 4.2.0)
+ usethis        2.1.6       2022-05-25 [1] CRAN (R 4.2.0)
+ utf8           1.2.2       2021-07-24 [1] CRAN (R 4.2.0)
+ uuid           1.1-0       2022-04-19 [1] CRAN (R 4.2.0)
+ vctrs          0.4.1       2022-04-13 [1] CRAN (R 4.2.0)
+ vip            0.3.2       2020-12-17 [1] CRAN (R 4.2.0)
+ viridisLite    0.4.0       2021-04-13 [1] CRAN (R 4.2.0)
+ visNetwork   * 2.1.0       2021-09-29 [1] CRAN (R 4.2.0)
+ vroom          1.5.7       2021-11-30 [1] CRAN (R 4.2.0)
+ webshot        0.5.3       2022-04-14 [1] CRAN (R 4.2.0)
+ whisker        0.4         2019-08-28 [1] CRAN (R 4.2.0)
+ withr          2.5.0       2022-03-03 [1] CRAN (R 4.2.0)
+ workflowr    * 1.7.0       2021-12-21 [1] CRAN (R 4.2.0)
+ workflows      1.0.0       2022-07-05 [1] CRAN (R 4.2.0)
+ xfun           0.31        2022-05-10 [1] CRAN (R 4.2.0)
+ xml2           1.3.3       2021-11-30 [1] CRAN (R 4.2.0)
+ xts            0.12.1      2020-09-09 [1] CRAN (R 4.2.0)
+ yaml           2.3.5       2022-02-21 [1] CRAN (R 4.2.0)
+ yardstick      1.0.0       2022-06-06 [1] CRAN (R 4.2.0)
+ zoo            1.8-10      2022-04-15 [1] CRAN (R 4.2.0)
+
+ [1] /workspace/.cache/R/renv/proj_libs/false.alarm-d6f1a0d1/R-4.2/x86_64-pc-linux-gnu
+ [2] /usr/lib/R/library
+
+──────────────────────────────────────────────────────────────────────────────</code></pre>
+</div>
+</div>
+
+
+<!-- Adjust MathJax settings so that all math formulae are shown using
+TeX fonts only; see
+https://docs.mathjax.org/en/latest/web/configuration.html. This will make
+the presentation more consistent at the cost of the webpage sometimes
+taking slightly longer to load. Note that this only works because the
+footer is added to webpages before the MathJax javascript. -->
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    "HTML-CSS": { availableFonts: ["TeX"] }
+  });
+</script>
+
+
+
+
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.odd').parent('tbody').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- tabsets -->
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open');
+  });
+});
+</script>
+
+<!-- code folding -->
+
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>
