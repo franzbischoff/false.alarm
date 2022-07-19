@@ -6,7 +6,6 @@
     "hbenl.vscode-test-explorer",
     "cschleiden.vscode-github-actions",
     "editorconfig.editorconfig",
-    "tht13.html-preview-vscode",
     "donjayamanne.git-extension-pack",
     "codezombiech.gitignore",
     "james-yu.latex-workshop",
@@ -29,6 +28,7 @@
     "rdebugger.r-debugger",
     "hediet.vscode-drawio",
     "serhioromano.vscode-gitflow",
-    "REditorSupport.r"
+    "reditorsupport.r",
+    "notZaki.pandocciter"
   ]
 }

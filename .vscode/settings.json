@@ -144,40 +144,6 @@
     ".github/workflows/ci.yaml",
     ".github/workflows/binder.yaml"
   ],
-  "grammarly.overrides": [
-    {
-      "config": {
-        "audience": "knowledgeable",
-        "dialect": "american",
-        "domain": "casual",
-        "emotions": [
-          "optimistic"
-        ],
-        "goals": [
-          "describe"
-        ]
-      },
-      "files": [
-        "**/analysis/blog.Rmd"
-      ]
-    },
-    {
-      "config": {
-        "audience": "knowledgeable",
-        "dialect": "american",
-        "domain": "casual",
-        "emotions": [
-          "confident"
-        ],
-        "goals": [
-          "describe"
-        ]
-      },
-      "files": [
-        "**/analysis/report.Rmd"
-      ]
-    }
-  ],
   "json.schemas": [
     {
       "fileMatch": [
@@ -190,30 +156,6 @@
   "latex-workshop.bibtex-format.sortby": [
     "key",
     "title"
-  ],
-  "latex-workshop.chktex.args.active": [
-    "-wall",
-    "-n22",
-    "-n30",
-    "-e16",
-    "-q",
-    "-n46",
-    "-n8",
-    "-n1",
-    "-n25",
-    "-n45"
-  ],
-  "latex-workshop.chktex.args.root": [
-    "-wall",
-    "-n22",
-    "-n30",
-    "-e16",
-    "-q",
-    "-n46",
-    "-n8",
-    "-n1",
-    "-n25",
-    "-n45"
   ],
   "latex-workshop.latex.autoBuild.run": "never",
   "latex-workshop.view.pdf.viewer": "tab",
@@ -252,7 +194,10 @@
   ],
   "markdownlint.run": "onSave",
   "r.alwaysUseActiveTerminal": true,
+  "r.lsp.diagnostics": false,
+  "r.rmarkdown.knit.focusOutputChannel": false,
   "r.session.levelOfObjectDetail": "Detailed",
+  "reflowMarkdown.preferredLineLength": 120,
   "search.exclude": {
     "**/_*/": true
   },
@@ -298,7 +243,6 @@
   "taskExplorer.groupMaxLevel": 2,
   "taskExplorer.groupSeparator": ": ",
   "taskExplorer.showLastTasks": false,
-  "terminal.integrated.scrollback": 10000,
   "todo-tree.filtering.includeGlobs": [
     "**/src/**",
     "**/R/**",
@@ -336,7 +280,13 @@
   "yaml.schemas": {
     "https://json.schemastore.org/github-workflow.json": "file:///workspace/false.alarm/.github/workflows/ci.yaml"
   },
-  "testExplorer.useNativeTesting": true,
-  "reflowMarkdown.preferredLineLength": 100,
-  "r.rmarkdown.knit.focusOutputChannel": false
+  "PandocCiter.DefaultBib": "papers/references.bib",
+  "terminal.integrated.shellIntegration.enabled": false,
+  "grammarly.config.documentDialect": "american",
+  "grammarly.config.documentDomain": "academic",
+  "grammarly.config.suggestions.ConjunctionAtStartOfSentence": true,
+  "grammarly.config.suggestions.InformalPronounsAcademic": false,
+  "grammarly.config.suggestions.OxfordComma": false,
+  "grammarly.config.suggestions.PassiveVoice": false,
+  "grammarly.startTextCheckInPausedState": true
 }

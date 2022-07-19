@@ -1,13 +1,13 @@
 # Sys.setenv(TAR_PROJECT = "regime_optimize")
 
-source(here::here("scripts", "_globals.R"), local = .GlobalEnv, encoding = "UTF-8")
+source(here::here("scripts", "_globals.R"), local = .GlobalEnv, encoding = "UTF-8") # nolint
 
 # source(here("regimes", "tar_inner_resample.R"))
 # source(here("regimes", "tar_outer_resample.R"))
 
 
-options(target_ds_path = here("inst/extdata/afib_regimes"))
-options(tidymodels.dark = TRUE)
+options(target_ds_path = here("inst", "extdata", "afib_regimes")) # nolint
+options(tidymodels.dark = TRUE) # nolint
 
 #### Pipeline: variable definitions ----
 # signal sample frequency, this is a constant
@@ -85,13 +85,10 @@ var_save_pred <- TRUE
 
 
 # # All configurations used different CPUs while running the code.
-library(future)
-library(future.callr)
 # plan(multisession) # create top-level processes
 # plan(multicore) # create child processes
 future::plan(future.callr::callr, workers = 10) # create child processes with a child process
 
-suppressPackageStartupMessages(library(tidymodels))
 tidymodels::tidymodels_prefer(quiet = TRUE)
 
 
@@ -100,12 +97,14 @@ tidymodels::tidymodels_prefer(quiet = TRUE)
 # debugme::debugme()
 # }
 
+# cat(.Random.seed)
+# cat("\n\n\n\n")
 
 list(
   tar_files_input(
     #### Pipeline: file_paths - Read files from directory ----
     file_paths,
-    find_all_files(here::here("inst/extdata/afib_regimes"),
+    find_all_files(here::here("inst", "extdata", "afib_regimes"),
       data_type = "regimes",
       classes = var_classes_include
       # limit_per_class = 10
@@ -140,14 +139,16 @@ list(
   tar_target(
     #### Pipeline: testing_split - Create the final testing split for the outer loop ----
     testing_split,
-    { # outer loop, this will be evaluated last
+    {
+      # outer loop, this will be evaluated last
       rsample::testing(initial_resample) # 5
     }
   ),
   tar_target(
     #### Pipeline: training_split - Create the training split for the inner loop ----
     training_split,
-    { # outer-inner loop, this will be cross-validated
+    {
+      # outer-inner loop, this will be cross-validated
       rsample::training(initial_resample) # 15
     }
   ),
@@ -361,28 +362,21 @@ list(
     #### Pipeline: analysis_evaluation - Here we select the best from each optimization split and test in a separate split ----
     analysis_evaluation,
     {
+      future::plan(future.callr::callr, workers = 6)
       source(here::here("scripts", "regimes", "parsnip_model.R"), encoding = "UTF-8")
 
       # all_fits <- lst_to_df(analysis_fitted)
       all_fits <- analysis_fitted
 
-      fits_by_fold <- all_fits %>%
-        dplyr::select(id, rep, .metrics) %>%
-        tidyr::unnest(.metrics) %>%
-        dplyr::filter(.estimator == "macro") %>%
-        dplyr::select(-.estimator) %>%
-        dplyr::group_by(id) %>%
-        dplyr::arrange(.estimate) %>%
-        dplyr::group_map(~ head(.x, 3L), .keep = TRUE)
-      # fits_by_fold
+      best_fits <- all_fits %>% tune::show_best("floss_error_macro", 5)
+      folds <- assessment_split %>% dplyr::filter(rep == best_fits$rep[1])
+
+      # must have var_vfolds^th folds
+      tar_assert_true(nrow(folds) == var_vfolds)
 
       result <- NULL
-      for (i in seq_len(length(fits_by_fold))) {
-        fold <- fits_by_fold[[i]]$id[1]
-
-        resample <- assessment_split %>% dplyr::filter(id == fold)
-        class(resample) <- class(assessment_split) # fix for fit_resamples
-        model <- fits_by_fold[[i]][1, ]
+      for (i in seq_len(nrow(best_fits))) {
+        model <- best_fits[i, ]
 
         floss_spec <-
           floss_regime_model(
@@ -395,9 +389,7 @@ list(
           parsnip::set_engine("floss") %>%
           parsnip::set_mode("regression")
 
-        assessment_data <- resample$splits[[1]]$data
-
-        floss_rec <- recipes::recipe(x = head(assessment_data, 1)) %>%
+        floss_rec <- recipes::recipe(x = head(folds$splits[[1]]$data, 1)) %>%
           recipes::update_role(truth, new_role = "outcome") %>%
           recipes::update_role(id, new_role = "predictor") %>%
           recipes::update_role(ts, new_role = "predictor")
@@ -407,19 +399,24 @@ list(
           workflows::add_model(floss_spec) %>%
           workflows::add_recipe(floss_rec)
 
-        model_fit <- floss_wflow %>%
-          parsnip::fit(assessment_data)
-        model_predicted <- model_fit %>%
-          predict(assessment_data) %>%
-          dplyr::bind_cols(assessment_data)
-        eval <- floss_error_macro(model_predicted, truth = model_predicted$truth, estimate = model_predicted$.pred)
-        eval <- model %>%
-          dplyr::select(id, rep, window_size, time_constraint, mp_threshold, regime_threshold, .config) %>%
-          dplyr::bind_cols(eval)
-        result <- dplyr::bind_rows(result, eval)
+        for (j in seq_len(nrow(folds))) {
+          assessment_data <- folds$splits[[j]]$data
+
+          model_fit <- floss_wflow %>%
+            parsnip::fit(assessment_data)
+          model_predicted <- model_fit %>%
+            predict(assessment_data) %>%
+            dplyr::bind_cols(assessment_data)
+          eval <- floss_error_macro(model_predicted, truth = model_predicted$truth, estimate = model_predicted$.pred)
+          eval <- model %>%
+            dplyr::select(rep, window_size, time_constraint, mp_threshold, regime_threshold, .config) %>%
+            dplyr::bind_cols(eval) %>%
+            dplyr::mutate(id = glue::glue("Fold0{j}"))
+          result <- dplyr::bind_rows(result, eval)
+        }
       }
 
-      result <- result %>% dplyr::arrange(.estimate)
+      result <- result %>% dplyr::arrange(.config, .estimate)
     },
     pattern = map(analysis_fitted),
     iteration = "list" # thus the objects keep their attributes
@@ -428,8 +425,17 @@ list(
     #### Pipeline: testing_evaluation - In the end, get the best from the inner resample and test with the testing split ----
     testing_evaluation,
     {
+      future::plan(future.callr::callr, workers = 6)
       source(here::here("scripts", "regimes", "parsnip_model.R"), encoding = "UTF-8")
-      best_parameters <- purrr::map_dfr(analysis_evaluation, ~ .x %>% dplyr::top_n(n = 3, wt = .estimate))
+      best_parameters <- dplyr::bind_rows(analysis_evaluation) %>%
+        dplyr::group_by(
+          window_size, time_constraint,
+          mp_threshold, regime_threshold, .metric, .estimator
+        ) %>%
+        dplyr::summarise(mean = mean(.estimate), std_err = sd(.estimate), n = dplyr::n()) %>%
+        dplyr::ungroup() %>%
+        dplyr::arrange(mean, std_err) %>%
+        dplyr::slice_min(n = 5, order_by = mean)
 
       result <- NULL
       for (i in seq_len(nrow(best_parameters))) {
@@ -459,12 +465,15 @@ list(
         model_predicted <- model_fit %>%
           predict(testing_split) %>%
           dplyr::bind_cols(testing_split)
-        eval <- floss_error(model_predicted, truth = model_predicted$truth, estimate = model_predicted$.pred, estimator = "macro")
+        eval <- floss_error_macro(model_predicted, truth = model_predicted$truth, estimate = model_predicted$.pred)
+        model_predicted <- model_predicted %>%
+          dplyr::select(.sizes, .id, .pred, truth) %>%
+          tidyr::nest(.predictions = everything())
         eval <- best_parameters[i, ] %>%
-          dplyr::select(id, window_size, time_constraint, mp_threshold, regime_threshold, .config) %>%
-          dplyr::bind_cols(eval)
+          dplyr::select(window_size, time_constraint, mp_threshold, regime_threshold) %>%
+          dplyr::bind_cols(eval, model_predicted)
 
-        result <- result %>% dplyr::bind_rows(eval)
+        result <- dplyr::bind_rows(result, eval)
       }
       result
     }

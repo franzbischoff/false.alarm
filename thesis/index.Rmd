@@ -32,7 +32,7 @@ always_allow_html: true # for word documents
 # lines 25-39 in this YAML header.
 # abstract is being output for: github, word, pdf
 
-bibliography: ../papers/references.bib
+bibliography: [../papers/references.bib]
 link-citations: true
 # Download your specific csl file and refer to it in the line below.
 csl: csl/ama.csl

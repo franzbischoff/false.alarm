@@ -9,7 +9,7 @@ output:
     toc_float: true
     toc_depth: 4
     number_sections: false
-bibliography: ../papers/references.bib
+bibliography: [../papers/references.bib]
 link-citations: true
 csl: ../thesis/csl/ama.csl
 css: style.css

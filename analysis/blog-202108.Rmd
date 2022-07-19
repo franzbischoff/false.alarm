@@ -8,7 +8,7 @@ output:
     toc: true
     toc_float: true
     number_sections: false
-bibliography: ../papers/references.bib
+bibliography: [../papers/references.bib]
 link-citations: true
 csl: ../thesis/csl/ama.csl
 css: style.css

@@ -6,7 +6,7 @@ editor_options:
   markdown:
     canonical: false
 output: revealjs::revealjs_presentation
-bibliography: ../../papers/references.bib
+bibliography: [../../papers/references.bib]
 csl: csusbe.csl
 css: style.css
 # rstudioapi::viewer("http://localhost:8787/files/workspace/false.alarm/presentations/MEDCIDS21/MEDCIDS21.html#/")

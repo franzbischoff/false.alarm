@@ -74,7 +74,7 @@ mp_threshold_par <- function(range = c(0, 1), trans = trans_round(0.1)) {
   )
 }
 
-regime_threshold_par <- function(range = c(0, 1), trans = trans_round(0.1)) {
+regime_threshold_par <- function(range = c(0, 1), trans = trans_round(0.05)) {
   dials::new_quant_param(
     type = "double",
     range = range,
@@ -136,7 +136,8 @@ floss_regime_model <- function(mode = "regression",
 train_regime_model <- function(truth, ts, ..., window_size, regime_threshold, regime_landmark, mp_threshold, time_constraint) {
   cli::cli_alert(c("!" = "Training the model: <<- this takes time"))
   # cli::cli_inform(c("*" = "train_regime_model: dots_n {rlang::dots_n(...)}"))
-  if (rlang::dots_n(...) > 0) { # 0
+  if (rlang::dots_n(...) > 0) {
+    # 0
     cli::cli_alert(c("*" = "train_regime_model: dots_names {names(rlang::dots_list(..., .preserve_empty = TRUE))}"))
   }
   dots <- rlang::dots_list(...)
@@ -202,10 +203,12 @@ train_regime_model <- function(truth, ts, ..., window_size, regime_threshold, re
 # type = "numeric"
 # regime_threshold = object$spec$args$regime_threshold
 # verbose = FALSE
-predict.floss_regime_model <- function(object, new_data, type = NULL, regime_threshold = NULL, regime_landmark = NULL, ...) { # nolint
+predict.floss_regime_model <- function(object, new_data, type = NULL, regime_threshold = NULL, regime_landmark = NULL, ...) {
+  # nolint
   # cli::cli_alert(c("*" = "predict.floss_regime_model <<- work here"))
   # cli::cli_inform(c("*" = "predict.floss_regime_model: dots_n {rlang::dots_n(...)}"))
-  if (rlang::dots_n(...) > 0) { # 0
+  if (rlang::dots_n(...) > 0) {
+    # 0
     cli::cli_alert(c("*" = "predict.floss_regime_model: dots_names {names(rlang::dots_list(..., .preserve_empty = TRUE))}"))
   }
   # type raw came from "numeric", type NULL came from raw directly
@@ -228,11 +231,13 @@ predict.floss_regime_model <- function(object, new_data, type = NULL, regime_thr
   # for now, compare:
   checkmate::assert_true(all(new_data$id %in% obj_fit$id))
 
-  if (length(regime_threshold) == 0) { # are we predicting with the old fit?
+  if (length(regime_threshold) == 0) {
+    # are we predicting with the old fit?
     regime_threshold <- terms$regime_threshold
   }
 
-  if (length(regime_landmark) == 0) { # are we predicting with the old fit?
+  if (length(regime_landmark) == 0) {
+    # are we predicting with the old fit?
     regime_landmark <- terms$regime_landmark
   }
 
@@ -287,10 +292,12 @@ predict.floss_regime_model <- function(object, new_data, type = NULL, regime_thr
 #'  follow the usual standard based on prediction `type` (i.e. `.pred_class` for
 #'  `type = "class"` and so on).
 
-multi_predict._floss_regime_model <- function(object, new_data, type = NULL, regime_threshold = NULL, regime_landmark = NULL, ...) { # nolint
+multi_predict._floss_regime_model <- function(object, new_data, type = NULL, regime_threshold = NULL, regime_landmark = NULL, ...) {
+  # nolint
   # cli::cli_warn(c("x" = "multi_predict._floss_regime_model"))
   # cli::cli_inform(c("*" = "multi_predict._floss_regime_model: dots_n {rlang::dots_n(...)}"))
-  if (rlang::dots_n(...) > 0) { # 0
+  if (rlang::dots_n(...) > 0) {
+    # 0
     cli::cli_alert(c("*" = "multi_predict._floss_regime_model: dots_names {names(rlang::dots_list(..., .preserve_empty = TRUE))}"))
   }
 
@@ -347,7 +354,8 @@ multi_predict._floss_regime_model <- function(object, new_data, type = NULL, reg
 
 # multi_predict.floss_regime_model <- multi_predict._floss_regime_model
 
-print.floss_regime_model <- function(x, ...) { # nolint
+print.floss_regime_model <- function(x, ...) {
+  # nolint
   cat("FLOSS Regime Model Specification (", x$mode, ")\n\n", sep = "")
   parsnip::model_printer(x, ...)
 
@@ -367,7 +375,8 @@ update.floss_regime_model <- function(object,
                                       mp_threshold = NULL,
                                       regime_threshold = NULL,
                                       regime_landmark = NULL,
-                                      fresh = FALSE, ...) { # nolint
+                                      fresh = FALSE, ...) {
+  # nolint
   # cli::cli_inform(c("*" = "update.floss_regime_model"))
   # cli::cli_inform(c("*" = "update.floss_regime_model: dots_n {rlang::dots_n(...)}"))
   if (rlang::dots_n(...) > 0) {
@@ -864,10 +873,12 @@ mytune$make_submod_arg <- make_submod_arg
 # mytune$predict_model <- predict_model
 # mytune$tune_grid_loop_iter <- tune_grid_loop_iter
 
-min_grid.floss_regime_model <- function(x, grid, ...) { # nolint
+min_grid.floss_regime_model <- function(x, grid, ...) {
+  # nolint
   # cli::cli_inform(c("*" = "min_grid.floss_regime_model "))
   # cli::cli_inform(c("*" = "min_grid.floss_regime_model: dots_n {rlang::dots_n(...)}"))
-  if (rlang::dots_n(...) > 0) { # 0
+  if (rlang::dots_n(...) > 0) {
+    # 0
     cli::cli_alert(c("*" = "min_grid.floss_regime_model: dots_names {names(rlang::dots_list(..., .preserve_empty = TRUE))}"))
   }
 
@@ -962,7 +973,8 @@ min_grid.floss_regime_model <- function(x, grid, ...) { # nolint
   # res
 }
 
-check_args.floss_regime_model <- function(object) { # nolint
+check_args.floss_regime_model <- function(object) {
+  # nolint
 
   "!DEBUG This runs in fit()"
   # cli::cli_inform(c("*" = "check_args.floss_regime_model"))
@@ -1002,10 +1014,12 @@ check_args.floss_regime_model <- function(object) { # nolint
 }
 
 
-translate.floss_regime_model <- function(x, engine = x$engine, ...) { # nolint
+translate.floss_regime_model <- function(x, engine = x$engine, ...) {
+  # nolint
   # cli::cli_inform(c("*" = "translate.floss_regime_model"))
   # cli::cli_inform(c("*" = "translate.floss_regime_model: dots_n {rlang::dots_n(...)}"))
-  if (rlang::dots_n(...) > 0) { # 0
+  if (rlang::dots_n(...) > 0) {
+    # 0
     cli::cli_alert(c("*" = "translate.floss_regime_model: dots_names {names(rlang::dots_list(..., .preserve_empty = TRUE))}"))
   }
 
@@ -1112,7 +1126,8 @@ translate.floss_regime_model <- function(x, engine = x$engine, ...) { # nolint
 #' @rdname floss_helpers
 #' @keywords internal
 #' @export
-.check_floss_regime_threshold_fit <- function(x) { # nolint
+.check_floss_regime_threshold_fit <- function(x) {
+  # nolint
   # cli::cli_inform(c("*" = ".check_floss_regime_threshold_fit"))
   regime_threshold <- rlang::eval_tidy(x$args$regime_threshold)
   regime_landmark <- rlang::eval_tidy(x$args$regime_landmark)
@@ -1318,15 +1333,17 @@ floss_error <- yardstick::new_numeric_metric(floss_error, direction = "minimize"
 floss_error_micro <- yardstick::metric_tweak("floss_error_micro", floss_error, estimator = "micro")
 floss_error_macro <- yardstick::metric_tweak("floss_error_macro", floss_error, estimator = "macro")
 
-floss_error.data.frame <- function(data, truth, estimate, na_rm = TRUE, estimator = "binary", ...) { # nolint
+floss_error.data.frame <- function(data, truth, estimate, na_rm = TRUE, estimator = "binary", ...) {
+  # nolint
   # cli::cli_alert(c("*" = "floss_error.data.frame <<- work here"))
   # cli::cli_inform(c("*" = "floss_error.data.frame: dots_n {rlang::dots_n(...)}"))
-  if (rlang::dots_n(...) > 0) { # 0
+  if (rlang::dots_n(...) > 0) {
+    # 0
     cli::cli_alert(c("*" = "floss_error.data.frame: dots_names {names(rlang::dots_list(..., .preserve_empty = TRUE))}"))
   }
 
   "!DEBUG evaluating model."
-  sizes <- rlang::expr(.sizes)
+  sizes <- rlang::expr(.sizes) # nolint
   yardstick::metric_summarizer(
     metric_nm = "floss_error",
     metric_fn = floss_error_vec,
@@ -1337,17 +1354,6 @@ floss_error.data.frame <- function(data, truth, estimate, na_rm = TRUE, estimato
     estimator = estimator,
     metric_fn_options = list(data_size = rlang::enquo(sizes)) # purrr::map(data$ts, length))
   )
-}
-
-clean_pred <- function(data, threshold = 100) {
-  if (is.list(data)) {
-    data <- purrr::map(data, clean_pred, threshold)
-    return(data)
-  }
-
-  data <- sort(data)
-  mask <- c(diff(data) > threshold, TRUE)
-  data[mask]
 }
 
 floss_error_vec <- function(truth, estimate, data_size, na_rm = TRUE, estimator = "binary", ...) {
@@ -1369,6 +1375,7 @@ floss_error_vec <- function(truth, estimate, data_size, na_rm = TRUE, estimator 
   # if (length(data_size) <= 2) {
   #   cli::cli_abort(c("x" = "data_size len: {length(data_size)}"))
   # }
+  truth <- clean_truth(truth, data_size)
   estimate <- clean_pred(estimate)
   # 100 is the batch size, this removes the redundant regime changes
 
@@ -1382,7 +1389,8 @@ floss_error_vec <- function(truth, estimate, data_size, na_rm = TRUE, estimator 
     }
   }
 
-  if (estimator == "micro") { # current micro method (sum of errors / dataset length)
+  if (estimator == "micro") {
+    # current micro method (sum of errors / dataset length)
     # cli::cli_inform(c("*" = "floss_error_vec <<- micro"))
     res <- purrr::map2_dbl(
       truth, estimate,
@@ -1400,8 +1408,9 @@ floss_error_vec <- function(truth, estimate, data_size, na_rm = TRUE, estimator 
     res <- sum(res)
 
     div <- purrr::reduce(data_size, sum) + 1
-    return(res / div) # micro is the sum of the scores / length(all_data_set)
-  } else if (estimator == "macro") { # current macro method (average of the sum of errors / sample range)
+    return(res / div / 10) # micro is the sum of the scores / length(all_data_set)
+  } else if (estimator == "macro") {
+    # current macro method (average of the sum of errors / sample range)
     # cli::cli_inform(c("*" = "floss_error_vec <<- macro"))
     res <- purrr::map2_dbl(
       truth, estimate,

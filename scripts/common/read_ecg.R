@@ -769,7 +769,6 @@ read_and_prepare_ecgs <- function(file_paths, subset = NULL, true_alarm = NULL, 
       # If data_type is NULL (default), read the false.alarm dataset
 
       if (is.numeric(limit_per_class)) {
-
         # the class is the first character of the file
         class <- substr(filename, 1, 1)
 
@@ -887,4 +886,36 @@ reshape_ds_by_truefalse <- function(dataset, signals, all_signals = TRUE) {
   data <- purrr::map2(df_true, df_false, dplyr::bind_rows)
 
   return(data)
+}
+
+
+clean_pred <- function(pred, threshold = 100) {
+  if (is.list(pred)) {
+    pred <- purrr::map(pred, clean_pred, threshold)
+    return(pred)
+  }
+  pred <- sort(pred)
+  mask <- c(diff(pred) > threshold, TRUE)
+  pred[mask]
+}
+
+clean_truth <- function(truth, data_size = NULL, first = TRUE, last = TRUE) {
+  if (!checkmate::test_true(isTRUE(last) && !is.null(data_size))) {
+    cli::cli_abort("If `last` is TRUE, `data_size` must not be NULL.")
+  }
+
+  if (is.list(truth)) {
+    truth <- purrr::map2(truth, data_size, clean_truth, first, last)
+    return(truth)
+  }
+
+  if (isTRUE(first) && (truth[1] <= 10)) {
+    truth <- tail(truth, -1)
+  }
+
+  if (isTRUE(last) && (tail(truth, 1) >= (data_size - 10))) {
+    truth <- head(truth, -1)
+  }
+
+  return(truth)
 }

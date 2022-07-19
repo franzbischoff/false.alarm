@@ -48,9 +48,9 @@ compute_score_regimes <- function(data_regimes, params, infos) {
   "!DEBUG Score regime truth `params$gold_truth`, predicted `regime$idxs`"
 
   if (!isFALSE(regime)) {
-    idxs <- sort(regime$idxs)
-    idxs <- idxs[diff(idxs) > params$batch] # this removes the redundant regime changes
-    score <- score_regimes(params$gold_truth, regime$idxs, length(data))
+    pred <- clean_pred(regime$idxs, params$batch) # this removes the redundant regime changes
+    truth <- clean_truth(params$gold_truth, length(data))
+    score <- score_regimes(truth, pred, 0) # length(data)
     "!DEBUG Finished Score."
     regime$score <- score
   } else {
@@ -65,6 +65,31 @@ compute_score_regimes <- function(data_regimes, params, infos) {
 
 
 score_regimes <- function(gtruth, reported, data_size) {
+  # Probably we are receiving a tibble
+  if (is.list(gtruth) && length(gtruth) > 1) {
+    if (length(data_size) == 1) {
+      data_size <- rep(0, length(gtruth))
+    } else {
+      checkmate::assert(length(gtruth) == length(data_size))
+    }
+
+    # Proceed if same size
+    if (length(gtruth) == length(reported)) {
+      scores <- purrr::pmap_dbl(list(gtruth, reported, data_size), score_regimes)
+    }
+
+    return(scores)
+  } else {
+    if (is.list(gtruth) && length(gtruth) == 1) {
+      gtruth <- gtruth[[1]]
+    }
+    if (is.list(reported) && length(reported) == 1) {
+      reported <- reported[[1]]
+    }
+  }
+
+  # browser()
+
   gtruth <- sort(gtruth[gtruth > 0])
   reported <- sort(reported[reported > 0])
 
@@ -90,6 +115,7 @@ score_regimes <- function(gtruth, reported, data_size) {
     }
   }
 
+  # If there are truth not referenced by the reported, we reference them to the nearest reported
   if (truth_len > reported_len) {
     lefties <- seq_len(truth_len)
     lefties <- lefties[!(lefties %in% l)]
@@ -111,8 +137,8 @@ score_regimes <- function(gtruth, reported, data_size) {
   }
 
   if (data_size <= 0) {
-    # computes the mean error during a period of time, not bounded to the data size
-    range <- max(gtruth, reported) - min(gtruth, reported)
+    # computes the error during a period of time, not bounded to the data size
+    range <- max(gtruth, reported) - min(gtruth, reported) + 1000
     score <- sum(minv) / (min_points * range)
   } else {
     score <- sum(minv) / (min_points * data_size)
@@ -122,8 +148,265 @@ score_regimes <- function(gtruth, reported, data_size) {
 }
 
 
-score_regimes_old <- function(gtruth, reported, data_size) {
+# window parameter will be used to compute if the prediction is a true positive or not
+# the limit for event detection is 10 seconds, so a prediction flagged after 10 seconds
+# from the gold truth is a true positive. For balance, we will use half of this window
+# for predictions made before the gold truth.
 
+score_regimes_precision <- function(gtruth, reported, data_size, window, delta_prec = "flat", delta_rec = "back", gamma = "reciprocal", alpha = 0.5) {
+  # Probably we are receiving a tibble
+  if (is.list(gtruth) && length(gtruth) > 1) {
+    if (length(data_size) == 1) {
+      data_size <- rep(0, length(gtruth))
+    } else {
+      checkmate::assert(length(gtruth) == length(data_size))
+    }
+
+    future::plan(future.callr::callr)
+
+    # Proceed if same size
+    if (length(gtruth) == length(reported)) {
+      scores <- furrr::future_pmap(list(gtruth, reported, data_size, window), score_regimes_precision)
+    }
+
+    # # Proceed if same size
+    # if (length(gtruth) == length(reported)) {
+    #   scores <- purrr::pmap(list(gtruth, reported, data_size, window), score_regimes_precision)
+    # }
+
+    return(scores)
+  } else {
+    if (is.list(gtruth) && length(gtruth) == 1) {
+      gtruth <- gtruth[[1]]
+    }
+    if (is.list(reported) && length(reported) == 1) {
+      reported <- reported[[1]]
+    }
+  }
+
+  gtruth <- gtruth[gtruth > 1]
+  reported <- reported[reported > 1]
+
+  if (length(gtruth) == 0 || length(reported) == 0) {
+    return(tibble::tibble(precision = 0, recall = 0, f1 = 0))
+  }
+
+  gtruth <- sort(gtruth)
+  reported <- sort(reported)
+
+  precision <- score_precision(gtruth, reported, floor(window / 2), delta = delta_prec)
+  recall <- score_recall(gtruth, reported, floor(window / 2), delta = delta_rec, gamma = gamma, alpha = alpha)
+  f1 <- f1_score(precision, recall)
+
+  return(tibble::tibble(precision = precision, recall = recall, f1 = f1))
+}
+
+
+### Recall ###
+
+# Existence
+# Size
+# Position
+# Cardinality
+
+score_recall <- function(truths, predictions, window, delta = "back", gamma = "reciprocal", alpha = 0.5) {
+  checkmate::qassert(alpha, "N[0, 1]")
+
+  if (delta == "back") {
+    delta <- "front"
+  } else if (delta == "front") {
+    delta <- "back"
+  }
+
+  # sum of all recalls divided by the number of truths
+  recall <- purrr::map_dbl(truths, score_recall_t, predictions, window, delta, gamma, alpha)
+
+  if (anyNA(recall)) {
+    rlang::abort("Recall is NA")
+  }
+
+  # > 1 happens when the window overlaps
+  recall <- pmin(recall, 1)
+  recall <- sum(recall) / length(truths)
+  return(recall)
+}
+
+# alpha rewards existence over the others
+score_recall_t <- function(truth, predictions, window, delta, gamma, alpha) {
+  existence <- 0
+  overlap <- 0
+
+  if (alpha > 0) {
+    existence <- alpha * score_existence(truth, predictions, window)
+  }
+
+  if (alpha < 1) {
+    overlap <- (1 - alpha) * overlap_reward(truth, predictions, window, delta, gamma)
+  }
+
+  return(existence + overlap)
+}
+
+# Existence
+score_existence <- function(truth, predictions, window) {
+  res <- purrr::some(predictions, dplyr::between, truth - window, truth + window)
+
+  if (isTRUE(res)) {
+    return(1)
+  } else {
+    return(0)
+  }
+  # for all predictions, if any intersects the truth[i], then it is 1
+}
+
+score_precision <- function(truths, predictions, window, delta = "flat") {
+  # iterates over all predictions, compute the precision for each one and sum them
+  # divided by the total of predicted anomalies
+
+  gamma <- "one"
+  precision <- purrr::map_dbl(predictions, overlap_reward, truths, window, delta, gamma)
+
+  if (anyNA(precision)) {
+    rlang::abort("Recall is NA")
+  }
+
+  # > 1 happens when the window overlaps
+  precision <- pmin(precision, 1)
+  precision <- sum(precision) / length(predictions)
+  return(precision)
+}
+
+# checkmate::qassert(gamma, "N[0, 1]") # cardinality
+# We expect the gamma function to be defined similarly
+# for both RecallT and PrecisionT.  Intuitively, in both cases, the cardinality factor should be
+# inversely proportional to the number of distinct ranges that a given anomaly range overlaps.
+
+# Thus, we expect gamma() to be generally structured as a reciprocal rational function 1/f(x), where f(x)
+# ≥ 1 is a single-variable polynomial and x represents the number of distinct overlap ranges.  A
+# typical example for gamma() is 1/x.
+
+# omega reward
+overlap_reward <- function(anomaly, overlap_set, window, delta, gamma = c("one", "reciprocal")) {
+  # using only for recall
+  if (gamma == "one") {
+    cardinality <- 1
+  } else {
+    cardinality <- gamma_function(c(anomaly - window, anomaly + window), overlap_set)
+  }
+
+
+  # on precision, anomaly are the predictions, overlap_set are the truths
+  omega_reward <- purrr::map_dbl(overlap_set, function(x) {
+    omega_function(c(anomaly - window, anomaly + window), c(x - window, x + window), delta)
+  })
+  omega_reward <- sum(omega_reward)
+  reward <- cardinality * omega_reward
+  return(reward)
+
+  # when only one pred is linked to truth, the cardinality is the largest (1); otherwise
+  # is [0,1], defined by the application.
+}
+
+# gamma function
+gamma_function <- function(anomaly_range, overlap_set) {
+  cardinality <- sum(dplyr::between(overlap_set, anomaly_range[1], anomaly_range[2]))
+
+  if (cardinality == 0) {
+    return(1)
+  } else {
+    return(1 / cardinality)
+  }
+}
+
+omega_function <- function(anomaly_range, overlap_range, delta = "flat") {
+  a <- seq.int(anomaly_range[1], anomaly_range[2])
+  b <- seq.int(overlap_range[1], overlap_range[2])
+
+  if (delta == "flat") {
+    omega <- sum(a %in% b) / length(a)
+  } else if (delta == "back") {
+    omega <- sum(which(a %in% b)) / sum(seq_along(a))
+  } else if (delta == "front") {
+    omega <- sum(which(b %in% a)) / sum(seq_along(a))
+  } else if (delta == "middle") {
+    half <- ceiling(length(a) / 2)
+    overlap <- (a %in% b)
+    if (length(overlap) < 2 * half) {
+      sequence <- c(seq_len(half), rev(seq_len(half - 1)))
+    } else {
+      sequence <- c(seq_len(half), rev(seq_len(half)))
+    }
+    omega <- sum(overlap * sequence) / (sum(sequence))
+  } else {
+    rlang::abort("Unrecognized delta parameter")
+    # omega <- omega_function_orig(anomaly_range, overlap_range, delta)
+  }
+
+  return(omega)
+}
+
+# Size # checkmate::qassert(omega, "N[0, 1]") # size (overlap)
+# Use the same for recall and precision
+# omega function
+# omega_function_orig <- function(anomaly_range, overlap_range, delta) {
+#   # browser()
+#   my_bias <- 0
+#   max_bias <- 0
+
+#   anomaly_length <- anomaly_range[2] - anomaly_range[1] + 1
+
+#   for (i in seq_len(anomaly_length)) {
+#     bias <- delta_function(i, anomaly_length, delta)
+#     max_bias <- max_bias + bias
+
+#     if (dplyr::between((anomaly_range[1] + i - 1), overlap_range[1], overlap_range[2])) {
+#       my_bias <- my_bias + bias
+#     }
+#   }
+
+#   if (max_bias > 0) {
+#     return(my_bias / max_bias)
+#   } else {
+#     return(0)
+#   }
+# }
+
+# Position # checkmate::qassert(delta, "N[1, )") # position
+# Flat bias is ok for precision.
+# delta function
+# delta_function <- function(i, anomaly_length, type = c("flat", "front", "back", "middle")) {
+#   if (type == "flat") {
+#     return(1)
+#   } else if (type == "front") {
+#     return(anomaly_length - i + 1)
+#   } else if (type == "back") {
+#     return(i)
+#   } else if (type == "middle") {
+#     if (i <= floor(anomaly_length / 2)) {
+#       return(i)
+#     } else {
+#       return(anomaly_length - i + 1)
+#     }
+#   } else {
+#     rlang::abort("Invalid type")
+#   }
+# }
+
+
+### Precision ###
+
+# --!Existence!--
+# Size
+# Position
+# Cardinality
+
+
+
+f1_score <- function(precision, recall) {
+  2 * precision * recall / (precision + recall)
+}
+
+score_regimes_old <- function(gtruth, reported, data_size) {
   # FIXME: Fix this on regime_test
   # idxs <- sort(regime$idxs)
   # idxs <- idxs[diff(idxs) > params$batch] # this removes the redundant regime changes
@@ -176,4 +459,20 @@ score_regimes_old <- function(gtruth, reported, data_size) {
   }
 
   score <- sum(minv) / (inn * data_size)
+  score
 }
+
+
+# tr <- c(1516, 1994, 3529, 5198, 8488, 9066, 15778, 16692, 21630, 22321, 28498, 28984, 46029, 46520, 51368, 51958, 54301, 54895, 64938, 65422, 80239, 80731, 83144, 83636, 84790, 85289)
+# pr <- c(5751, 9951, 13151, 15751, 17451, 22551, 22951, 29851, 37851, 40651, 45851, 51251, 54151, 55951, 61351, 64751, 65751, 84551)
+# pr <- c(4782, 17780, 23868, 39882)
+# w <- 50
+# a <- seq.int(tr[1] - w, tr[1] + w)
+# b <- seq.int(pr[1] - w, pr[1] + w)
+# c <- a %in% b
+# c
+# sum(c)
+# which(c)
+
+# score_recall(tr, pr, window = 1250, delta = "middle", gamma = "one", alpha = 1)
+# score_precision(tr, pr, window = 1250, delta = "middle")

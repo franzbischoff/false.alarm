@@ -7,7 +7,8 @@ if (.Platform$OS.type == "windows") {
 
 source("renv/activate.R")
 
-if (Sys.getenv("CI") == "") { # not CI
+if (Sys.getenv("CI") == "") {
+  # not CI
 
   # a <- NULL
   # suppressMessages(if (requireNamespace("languageserver", quietly = TRUE)) {
@@ -46,6 +47,7 @@ if (Sys.getenv("CI") == "") { # not CI
     )
     options(
       vsc.rstudioapi = TRUE,
+      max.print = 1000,
       width = 200,
       # vsc.browser = "Two",
       # vsc.viewer = "Two",
@@ -55,8 +57,8 @@ if (Sys.getenv("CI") == "") { # not CI
       # vsc.helpPanel = "Two",
       # vsc.str.max.level = 2,
       vsc.show_object_size = TRUE,
-      vsc.globalenv = TRUE
-      # vsc.dev.args = list(width = 1000, height = 1000)
+      vsc.globalenv = TRUE,
+      vsc.dev.args = list(width = 1000, height = 700)
     )
 
     options(languageserver.formatting_style = function(options) {
@@ -80,6 +82,8 @@ if (Sys.getenv("CI") == "") { # not CI
         require("devtools", quietly = TRUE)
         require("usethis", quietly = TRUE)
         require("conflicted", quietly = TRUE)
+        # require("tidyverse", quietly = TRUE)
+        # require("tidymodels", quietly = TRUE)
         require("here", quietly = TRUE)
         require("glue", quietly = TRUE)
         require("workflowr", quietly = TRUE)
@@ -88,6 +92,9 @@ if (Sys.getenv("CI") == "") { # not CI
         require("tarchetypes", quietly = TRUE)
       })
     )
+
+    conflicted::conflict_prefer("filter", "dplyr")
+    options(dplyr.summarise.inform = FALSE)
 
     if (.Platform$OS.type != "windows") {
       if (suppressMessages(requireNamespace("prettycode", quietly = TRUE))) {
@@ -117,7 +124,8 @@ if (Sys.getenv("CI") == "") { # not CI
         cat("bye bye...\n") # print this so we see if any non-interactive session is lost here
       }
     }
-  } else { # is RSTUDIO
+  } else {
+    # is RSTUDIO
     suppressMessages(
       suppressWarnings({
         require("here", quietly = TRUE)
@@ -128,7 +136,8 @@ if (Sys.getenv("CI") == "") { # not CI
       })
     )
   }
-} else { # is CI
+} else {
+  # is CI
   suppressMessages(
     suppressWarnings({
       require("here", quietly = TRUE)

@@ -8,7 +8,7 @@ output:
     toc: true
     toc_float: true
     number_sections: false
-bibliography: ../papers/references.bib
+bibliography: [../papers/references.bib]
 link-citations: true
 csl: ../thesis/csl/ama.csl
 css: style.css
@@ -142,7 +142,8 @@ get_dist <- function(mp_const = 1250, floss_const = 0) {
   pro_size <- 5000
   mp_time_constraint <- mp_const
   floss_time_constraint <- floss_const
-  for (i in 1:5) { # DEBUG
+  for (i in 1:5) {
+    # DEBUG
     # for (i in 1:500) { # RELEASE
     iac[[i]] <- get_asym(pro_size, mp_time_constraint, floss_time_constraint)
   }
