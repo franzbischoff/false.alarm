@@ -54,6 +54,7 @@ Use the top menu for further information and the thesis itself.
 Last Targets Run network:
 
 ```{r network, echo=FALSE, fig.width=10}
+library(magrittr)
 network <- readRDS(here("output/network.rds"))
 network <- network %>%
   visNetwork::visPhysics(hierarchicalRepulsion = list(

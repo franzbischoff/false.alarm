@@ -239,14 +239,14 @@ rm(gg)
 ```
 
 ```{r output_data, include=FALSE}
-if (file.exists(here("output/work_output.rds"))) {
-  output <- readRDS(here("output/work_output.rds"))
+if (file.exists(here("output/work_output_202110.rds"))) {
+  output <- readRDS(here("output/work_output_202110.rds"))
   mp_data <- output$mp_constraint[[1]]$II[[76]]
   mp_data <- tibble(time = seq_along(mp_data$cac), cac = mp_data$cac, iac = mp_data$iac, arcs = mp_data$arcs)
   floss_data <- output$floss_constraint[[1]]$II[[76]]
   floss_data <- tibble(time = seq_along(floss_data$cac), cac = floss_data$cac, iac = floss_data$iac, arcs = floss_data$arcs)
   rm(output)
-  invisible(gc())
+  # invisible(gc())
 }
 ```
 
