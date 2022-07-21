@@ -386,7 +386,7 @@ $(document).ready(function () {
 <button type="button" class="btn btn-default btn-workflowr btn-workflowr-report" data-toggle="collapse" data-target="#workflowr-report">
 <span class="glyphicon glyphicon-list" aria-hidden="true"></span>
 workflowr
-<span class="glyphicon glyphicon-exclamation-sign text-danger" aria-hidden="true"></span>
+<span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span>
 </button>
 </p>
 <div id="workflowr-report" class="collapse">
@@ -396,7 +396,7 @@ workflowr
 </li>
 <li>
 <a data-toggle="tab" href="#checks">
-Checks <span class="glyphicon glyphicon-exclamation-sign text-danger" aria-hidden="true"></span>
+Checks <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span>
 </a>
 </li>
 <li>
@@ -411,9 +411,9 @@ Checks <span class="glyphicon glyphicon-exclamation-sign text-danger" aria-hidde
 <p>
 <strong>Checks:</strong>
 <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span>
-6
+7
 <span class="glyphicon glyphicon-exclamation-sign text-danger" aria-hidden="true"></span>
-1
+0
 </p>
 <p>
 <strong>Knit directory:</strong>
@@ -436,21 +436,16 @@ The <em>Past versions</em> tab lists the development history.
 <div class="panel panel-default">
 <div class="panel-heading">
 <p class="panel-title">
-<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRMarkdownfilestronguncommittedchanges">
-<span class="glyphicon glyphicon-exclamation-sign text-danger" aria-hidden="true"></span>
-<strong>R Markdown file:</strong> uncommitted changes
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRMarkdownfilestronguptodate">
+<span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span>
+<strong>R Markdown file:</strong> up-to-date
 </a>
 </p>
 </div>
-<div id="strongRMarkdownfilestronguncommittedchanges" class="panel-collapse collapse">
+<div id="strongRMarkdownfilestronguptodate" class="panel-collapse collapse">
 <div class="panel-body">
-<p>The R Markdown file has unstaged changes.
-To know which version of the R Markdown file created these
-results, you’ll want to first commit it to the Git repo. If
-you’re still working on the analysis, you can ignore this
-warning. When you’re finished, you can run
-<code>wflow_publish</code> to commit the R Markdown file and
-build the HTML.</p>
+<p>Great! Since the R Markdown file has been committed to the Git repository, you
+know the exact version of the code that produced these results.</p>
 </div>
 </div>
 </div>
@@ -539,20 +534,20 @@ makes it easier to run your code on other machines.</p>
 <div class="panel panel-default">
 <div class="panel-heading">
 <p class="panel-title">
-<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomfranzbischofffalsealarmtreea8ef1d1a1eaebc8db4d7d8148c6b707eafec76d0targetblanka8ef1d1a">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomfranzbischofffalsealarmtree332847719ca9442b5441ff9f9f07402200c59327targetblank3328477a">
 <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span>
-<strong>Repository version:</strong> <a href="https://github.com/franzbischoff/false.alarm/tree/a8ef1d1a1eaebc8db4d7d8148c6b707eafec76d0" target="_blank">a8ef1d1</a>
+<strong>Repository version:</strong> <a href="https://github.com/franzbischoff/false.alarm/tree/332847719ca9442b5441ff9f9f07402200c59327" target="_blank">3328477</a>
 </a>
 </p>
 </div>
-<div id="strongRepositoryversionstrongahrefhttpsgithubcomfranzbischofffalsealarmtreea8ef1d1a1eaebc8db4d7d8148c6b707eafec76d0targetblanka8ef1d1a" class="panel-collapse collapse">
+<div id="strongRepositoryversionstrongahrefhttpsgithubcomfranzbischofffalsealarmtree332847719ca9442b5441ff9f9f07402200c59327targetblank3328477a" class="panel-collapse collapse">
 <div class="panel-body">
 <p>
 Great! You are using Git for version control. Tracking code development and
 connecting the code version to the results is critical for reproducibility.
 </p>
 <p>
-The results in this page were generated with repository version <a href="https://github.com/franzbischoff/false.alarm/tree/a8ef1d1a1eaebc8db4d7d8148c6b707eafec76d0" target="_blank">a8ef1d1</a>.
+The results in this page were generated with repository version <a href="https://github.com/franzbischoff/false.alarm/tree/332847719ca9442b5441ff9f9f07402200c59327" target="_blank">3328477</a>.
 See the <em>Past versions</em> tab to see a history of the changes made to the
 R Markdown and HTML files.
 </p>
@@ -620,9 +615,6 @@ Ignored files:
     Ignored:    thesis/_bookdown_files/
     Ignored:    tmp/
 
-Unstaged changes:
-    Modified:   analysis/regime_optimize.Rmd
-
 </code></pre>
 <p>
 Note that any generated files, e.g. HTML, png, CSS, etc., are not included in
@@ -668,16 +660,33 @@ Message
 <tbody>
 <tr>
 <td>
-html
+Rmd
 </td>
 <td>
-<a href="https://rawcdn.githack.com/franzbischoff/false.alarm/a8ef1d1a1eaebc8db4d7d8148c6b707eafec76d0/docs/regime_optimize.html" target="_blank">a8ef1d1</a>
+<a href="https://github.com/franzbischoff/false.alarm/blob/332847719ca9442b5441ff9f9f07402200c59327/analysis/regime_optimize.Rmd" target="_blank">3328477</a>
 </td>
 <td>
 Francisco Bischoff
 </td>
 <td>
-2022-07-19
+2022-07-21
+</td>
+<td>
+Build site.
+</td>
+</tr>
+<tr>
+<td>
+html
+</td>
+<td>
+<a href="https://rawcdn.githack.com/franzbischoff/false.alarm/332847719ca9442b5441ff9f9f07402200c59327/docs/regime_optimize.html" target="_blank">3328477</a>
+</td>
+<td>
+Francisco Bischoff
+</td>
+<td>
+2022-07-21
 </td>
 <td>
 Build site.
@@ -822,13 +831,13 @@ Date
 <tbody>
 <tr>
 <td>
-<a href="https://github.com/franzbischoff/false.alarm/blob/a8ef1d1a1eaebc8db4d7d8148c6b707eafec76d0/docs/figure/regime_optimize.Rmd/marginalplot-1.svg" target="_blank">a8ef1d1</a>
+<a href="https://github.com/franzbischoff/false.alarm/blob/332847719ca9442b5441ff9f9f07402200c59327/docs/figure/regime_optimize.Rmd/marginalplot-1.svg" target="_blank">3328477</a>
 </td>
 <td>
 Francisco Bischoff
 </td>
 <td>
-2022-07-19
+2022-07-21
 </td>
 </tr>
 </tbody>
@@ -866,13 +875,13 @@ Date
 <tbody>
 <tr>
 <td>
-<a href="https://github.com/franzbischoff/false.alarm/blob/a8ef1d1a1eaebc8db4d7d8148c6b707eafec76d0/docs/figure/regime_optimize.Rmd/performanceplot-1.svg" target="_blank">a8ef1d1</a>
+<a href="https://github.com/franzbischoff/false.alarm/blob/332847719ca9442b5441ff9f9f07402200c59327/docs/figure/regime_optimize.Rmd/performanceplot-1.svg" target="_blank">3328477</a>
 </td>
 <td>
 Francisco Bischoff
 </td>
 <td>
-2022-07-19
+2022-07-21
 </td>
 </tr>
 </tbody>
@@ -1093,13 +1102,13 @@ Date
 <tbody>
 <tr>
 <td>
-<a href="https://github.com/franzbischoff/false.alarm/blob/a8ef1d1a1eaebc8db4d7d8148c6b707eafec76d0/docs/figure/regime_optimize.Rmd/interaction-1.svg" target="_blank">a8ef1d1</a>
+<a href="https://github.com/franzbischoff/false.alarm/blob/332847719ca9442b5441ff9f9f07402200c59327/docs/figure/regime_optimize.Rmd/interaction-1.svg" target="_blank">3328477</a>
 </td>
 <td>
 Francisco Bischoff
 </td>
 <td>
-2022-07-19
+2022-07-21
 </td>
 </tr>
 </tbody>
@@ -1188,13 +1197,13 @@ Date
 <tbody>
 <tr>
 <td>
-<a href="https://github.com/franzbischoff/false.alarm/blob/a8ef1d1a1eaebc8db4d7d8148c6b707eafec76d0/docs/figure/regime_optimize.Rmd/importance-1.svg" target="_blank">a8ef1d1</a>
+<a href="https://github.com/franzbischoff/false.alarm/blob/332847719ca9442b5441ff9f9f07402200c59327/docs/figure/regime_optimize.Rmd/importance-1.svg" target="_blank">3328477</a>
 </td>
 <td>
 Francisco Bischoff
 </td>
 <td>
-2022-07-19
+2022-07-21
 </td>
 </tr>
 </tbody>
@@ -1232,13 +1241,13 @@ Date
 <tbody>
 <tr>
 <td>
-<a href="https://github.com/franzbischoff/false.alarm/blob/a8ef1d1a1eaebc8db4d7d8148c6b707eafec76d0/docs/figure/regime_optimize.Rmd/importanceshap-1.svg" target="_blank">a8ef1d1</a>
+<a href="https://github.com/franzbischoff/false.alarm/blob/332847719ca9442b5441ff9f9f07402200c59327/docs/figure/regime_optimize.Rmd/importanceshap-1.svg" target="_blank">3328477</a>
 </td>
 <td>
 Francisco Bischoff
 </td>
 <td>
-2022-07-19
+2022-07-21
 </td>
 </tr>
 </tbody>
@@ -1275,13 +1284,13 @@ Date
 <tbody>
 <tr>
 <td>
-<a href="https://github.com/franzbischoff/false.alarm/blob/a8ef1d1a1eaebc8db4d7d8148c6b707eafec76d0/docs/figure/regime_optimize.Rmd/importanceshap2-1.svg" target="_blank">a8ef1d1</a>
+<a href="https://github.com/franzbischoff/false.alarm/blob/332847719ca9442b5441ff9f9f07402200c59327/docs/figure/regime_optimize.Rmd/importanceshap2-1.svg" target="_blank">3328477</a>
 </td>
 <td>
 Francisco Bischoff
 </td>
 <td>
-2022-07-19
+2022-07-21
 </td>
 </tr>
 </tbody>
@@ -1376,13 +1385,13 @@ Date
 <tbody>
 <tr>
 <td>
-<a href="https://github.com/franzbischoff/false.alarm/blob/a8ef1d1a1eaebc8db4d7d8148c6b707eafec76d0/docs/figure/regime_optimize.Rmd/global-1.svg" target="_blank">a8ef1d1</a>
+<a href="https://github.com/franzbischoff/false.alarm/blob/332847719ca9442b5441ff9f9f07402200c59327/docs/figure/regime_optimize.Rmd/global-1.svg" target="_blank">3328477</a>
 </td>
 <td>
 Francisco Bischoff
 </td>
 <td>
-2022-07-19
+2022-07-21
 </td>
 </tr>
 </tbody>
@@ -1420,13 +1429,13 @@ Date
 <tbody>
 <tr>
 <td>
-<a href="https://github.com/franzbischoff/false.alarm/blob/a8ef1d1a1eaebc8db4d7d8148c6b707eafec76d0/docs/figure/regime_optimize.Rmd/worst-1.png" target="_blank">a8ef1d1</a>
+<a href="https://github.com/franzbischoff/false.alarm/blob/332847719ca9442b5441ff9f9f07402200c59327/docs/figure/regime_optimize.Rmd/worst-1.png" target="_blank">3328477</a>
 </td>
 <td>
 Francisco Bischoff
 </td>
 <td>
-2022-07-19
+2022-07-21
 </td>
 </tr>
 </tbody>
@@ -1464,13 +1473,13 @@ Date
 <tbody>
 <tr>
 <td>
-<a href="https://github.com/franzbischoff/false.alarm/blob/a8ef1d1a1eaebc8db4d7d8148c6b707eafec76d0/docs/figure/regime_optimize.Rmd/best-1.png" target="_blank">a8ef1d1</a>
+<a href="https://github.com/franzbischoff/false.alarm/blob/332847719ca9442b5441ff9f9f07402200c59327/docs/figure/regime_optimize.Rmd/best-1.png" target="_blank">3328477</a>
 </td>
 <td>
 Francisco Bischoff
 </td>
 <td>
-2022-07-19
+2022-07-21
 </td>
 </tr>
 </tbody>
@@ -1513,13 +1522,13 @@ Date
 <tbody>
 <tr>
 <td>
-<a href="https://github.com/franzbischoff/false.alarm/blob/a8ef1d1a1eaebc8db4d7d8148c6b707eafec76d0/docs/figure/regime_optimize.Rmd/globalmodel-1.svg" target="_blank">a8ef1d1</a>
+<a href="https://github.com/franzbischoff/false.alarm/blob/332847719ca9442b5441ff9f9f07402200c59327/docs/figure/regime_optimize.Rmd/globalmodel-1.svg" target="_blank">3328477</a>
 </td>
 <td>
 Francisco Bischoff
 </td>
 <td>
-2022-07-19
+2022-07-21
 </td>
 </tr>
 </tbody>
@@ -1557,13 +1566,13 @@ Date
 <tbody>
 <tr>
 <td>
-<a href="https://github.com/franzbischoff/false.alarm/blob/a8ef1d1a1eaebc8db4d7d8148c6b707eafec76d0/docs/figure/regime_optimize.Rmd/bestmodels-1.svg" target="_blank">a8ef1d1</a>
+<a href="https://github.com/franzbischoff/false.alarm/blob/332847719ca9442b5441ff9f9f07402200c59327/docs/figure/regime_optimize.Rmd/bestmodels-1.svg" target="_blank">3328477</a>
 </td>
 <td>
 Francisco Bischoff
 </td>
 <td>
-2022-07-19
+2022-07-21
 </td>
 </tr>
 </tbody>
