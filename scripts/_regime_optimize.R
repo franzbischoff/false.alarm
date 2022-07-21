@@ -1,3 +1,9 @@
+#
+cli::cli_abort(c(
+  "x" = "This script is bound to the commit this release: https://github.com/franzbischoff/false.alarm/tree/vRelease-3",
+  "i" = "It won't work outside of that."
+))
+
 # Sys.setenv(TAR_PROJECT = "regime_optimize")
 
 source(here::here("scripts", "_globals.R"), local = .GlobalEnv, encoding = "UTF-8") # nolint

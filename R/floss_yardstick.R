@@ -99,7 +99,7 @@ floss_error_vec <- function(truth, estimate, data_size, na_rm = TRUE, estimator 
     res <- sum(res)
 
     div <- purrr::reduce(data_size, sum) + 1L
-    return(res / div) # micro is the sum of the scores / length(all_data_set)
+    return(res / div / 10) # micro is the sum of the scores / length(all_data_set)
   } else if (estimator == "macro") {
     # current macro method (average of the sum of errors / sample range)
     # cli::cli_inform(c("*" = "floss_error_vec <<- macro"))

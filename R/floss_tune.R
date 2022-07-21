@@ -67,7 +67,7 @@ mp_threshold_par <- function(range = c(0.0, 1.0), trans = trans_round(0.1)) {
 }
 
 #' @export
-regime_threshold_par <- function(range = c(0.0, 1.0), trans = trans_round(0.1)) {
+regime_threshold_par <- function(range = c(0.0, 1.0), trans = trans_round(0.05)) {
   dials::new_quant_param(
     type = "double",
     range = range,

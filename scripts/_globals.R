@@ -22,8 +22,6 @@ if (dev_mode) {
 # CONCEPT: density of similarity changes a little bit from the size of constraint,
 #    but a lot due to the window size. but, the sum of the density from 50-100 doesn't change in any case
 
-# CONCEPT: https://www.wikiwand.com/en/Platt_scaling for classification
-
 
 #### Physionet's dataset definitions ----
 # Asystole: No QRS for at least 4 seconds
