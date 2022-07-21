@@ -155,7 +155,7 @@ compute_s_profile_with_stats <- function(data_with_stats, params, infos) {
 
   data <- data_with_stats[[1L]]
   data_info <- attr(data, "info")
-  subset_start <- dplyr::if_else(isFALSE(data_info$subset), 0L, data_info$subset[1L] - 1L)
+  subset_start <- ifelse(isFALSE(data_info$subset), 0L, data_info$subset[1L] - 1L)
   stats <- data_with_stats[[2L]]
 
   # don't compute if the stats are not compatible
@@ -241,8 +241,8 @@ compute_floss <- function(mp_data, params, infos) {
   checkmate::qassert(infos, "L+")
 
   ez <- params$ez
-  mp_time_constraint <- dplyr::if_else(is.null(params$mp_time_constraint), 0L, params$mp_time_constraint)
-  floss_time_constraint <- dplyr::if_else(is.null(params$floss_time_constraint), 0L, params$floss_time_constraint)
+  mp_time_constraint <- ifelse(is.null(params$mp_time_constraint), 0L, params$mp_time_constraint)
+  floss_time_constraint <- ifelse(is.null(params$floss_time_constraint), 0L, params$floss_time_constraint)
   if (mp_time_constraint > floor(params$history * 3.0 / 4.0)) {
     mp_time_constraint <- 0L
   }
@@ -278,7 +278,7 @@ compute_floss <- function(mp_data, params, infos) {
   }
 
   result_floss <- purrr::map(mp_data, function(x) {
-    curr_ez <- dplyr::if_else(!is.null(ez), ez, x$ez * 10.0)
+    curr_ez <- ifelse(!is.null(ez), ez, x$ez * 10.0)
     cac <- compute_arcs(
       x$right_profile_index, x$w,
       curr_ez,

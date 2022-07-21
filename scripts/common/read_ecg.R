@@ -175,9 +175,9 @@ read_ecg <- function(filename, plot = FALSE, subset = NULL,
 
   if (nlines != n_signals) {
     alarm <- hea_content[[nlines - 1]][1]
-    alarm <- dplyr::if_else(startsWith(alarm, "#"), substr(alarm, 2L, 1000000L), alarm)
+    alarm <- ifelse(startsWith(alarm, "#"), substr(alarm, 2L, 1000000L), alarm)
     true_false <- hea_content[[nlines]][1]
-    true_false <- dplyr::if_else(startsWith(true_false, "#"), substr(true_false, 2L, 1000000L), true_false)
+    true_false <- ifelse(startsWith(true_false, "#"), substr(true_false, 2L, 1000000L), true_false)
   }
 
   if (!is.null(true_alarm)) {
@@ -432,9 +432,9 @@ read_ecg_csv <- function(filename, plot = FALSE, subset = NULL,
 
   if (nlines != n_signals) {
     alarm <- hea_content[[nlines - 1]][1]
-    alarm <- dplyr::if_else(startsWith(alarm, "#"), substr(alarm, 2L, 1000000L), alarm)
+    alarm <- ifelse(startsWith(alarm, "#"), substr(alarm, 2L, 1000000L), alarm)
     true_false <- hea_content[[nlines]][1]
-    true_false <- dplyr::if_else(startsWith(true_false, "#"), substr(true_false, 2L, 1000000L), true_false)
+    true_false <- ifelse(startsWith(true_false, "#"), substr(true_false, 2L, 1000000L), true_false)
   }
 
   if (!is.null(true_alarm)) {
@@ -646,7 +646,7 @@ read_ecg_with_atr <- function(filename, subset = NULL, classes = c("all", "persi
 
   if (nlines != n_signals) {
     comment <- paste(hea_content[[nlines]], collapse = " ")
-    comment <- stringr::str_trim(dplyr::if_else(startsWith(comment, "#"), substr(comment, 2L, 1000000L), comment))
+    comment <- stringr::str_trim(ifelse(startsWith(comment, "#"), substr(comment, 2L, 1000000L), comment))
   }
 
   csv_content <- readr::read_csv(content, show_col_types = FALSE, col_types = "nnnnnnn")

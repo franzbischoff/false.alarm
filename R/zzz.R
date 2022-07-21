@@ -11,7 +11,6 @@
 #' @importFrom withr with_options
 #' @importFrom stats predict
 #' @importFrom dials new_quant_param
-#' @importFrom tune get_submodel_info submod_only submod_only_multi submod_and_others submod_and_others_multi
 
 .onLoad <- function(libname, pkgname) {
   tryCatch(debugme::debugme(), error = identity)

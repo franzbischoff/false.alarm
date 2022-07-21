@@ -64,7 +64,7 @@ compute_floss <- function(mp_data, params, infos) {
   }
 
   result_floss <- purrr::map(mp_data, function(x) {
-    curr_ez <- dplyr::if_else(!is.null(ez), ez, x$ez * 10)
+    curr_ez <- ifelse(!is.null(ez), ez, x$ez * 10)
     cac <- compute_arcs(
       x$right_profile_index, x$w,
       curr_ez,

@@ -9,9 +9,9 @@ mass(
   pre_obj,
   data,
   query = data,
-  index = 1,
+  index = 1L,
   version = c("v3", "v2"),
-  n_workers = 1
+  n_workers = 1L
 )
 
 mass_pre(

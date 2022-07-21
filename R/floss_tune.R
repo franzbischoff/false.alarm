@@ -105,7 +105,7 @@ min_grid.floss_regime_model <- function(x, grid, ...) {
 
   # # This is basically `fit_max_value()` with an extra error trap
   gr_nms <- names(grid)
-  param_info <- get_submodel_info(x)
+  param_info <- tune:::get_submodel_info(x)
   sub_nm <- param_info$id[param_info$has_submodel]
 
   if (length(sub_nm) == 0L || !any(names(grid) %in% sub_nm)) {
@@ -117,15 +117,15 @@ min_grid.floss_regime_model <- function(x, grid, ...) {
 
   if (length(fixed_args) == 0L) {
     if (length(sub_nm) > 1L) {
-      res <- submod_only_multi(grid)
+      res <- tune:::submod_only_multi(grid)
     } else {
-      res <- submod_only(grid)
+      res <- tune:::submod_only(grid)
     }
   } else {
     if (length(sub_nm) > 1L) {
-      res <- submod_and_others_multi(grid, fixed_args)
+      res <- tune:::submod_and_others_multi(grid, fixed_args)
     } else {
-      res <- submod_and_others(grid, fixed_args)
+      res <- tune:::submod_and_others(grid, fixed_args)
     }
   }
   res

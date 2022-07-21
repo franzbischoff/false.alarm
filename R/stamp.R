@@ -79,7 +79,7 @@ stamp <- function(data, window_size, query = NULL, exclusion_zone = 0.5, s_size 
   ez <- exclusion_zone
   result <- NULL
 
-  query_size <- dplyr::if_else(is.null(query), length(data),
+  query_size <- ifelse(is.null(query), length(data),
     pmin(length(data), length(query))
   )
 

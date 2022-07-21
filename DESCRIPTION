@@ -38,8 +38,10 @@ Imports:
     tibble (>= 3.1.6),
     visNetwork (>= 2.1.0),
     workflowr (>= 1.6.2),
+    workflows (>= 1.0.0),
+    parsnip (>= 1.0.0),
     tune (>= 0.2.0.9002),
-    yardstick (>= 0.0.9),
+    yardstick (>= 1.0.0),
     magrittr
 Suggests:
     clustermq (>= 0.8.95),
