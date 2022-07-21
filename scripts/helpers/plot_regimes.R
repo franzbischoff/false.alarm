@@ -25,6 +25,7 @@ plot_regimes <- function(data_with_regimes, params, infos, save = FALSE) {
   filename <- infos$filename
   threshold <- params$threshold
   regime_threshold <- params$regime_threshold
+  regime_landmark <- params$regime_landmark
   window_size <- params$window_size
   history <- params$history
   mp_time_constraint <- ifelse(params$mp_time_constraint == 0, history, params$mp_time_constraint)
@@ -32,17 +33,22 @@ plot_regimes <- function(data_with_regimes, params, infos, save = FALSE) {
   signal <- data_info$signal
   alarm <- infos$alarm
   alarm_true <- infos$true
+  frequency <- infos$frequency
   filter_size <- "raw" # HACK
 
-  file <- sprintf(
-    "%s_%s_%.1f_%d_%d_%.1f_%d_%s.png", filename, signal, regime_threshold, floss_time_constraint, mp_time_constraint, threshold, window_size, filter_size
-  )
-  title <- sprintf(
-    "FLOSS-Regimes - %s-%s, w: %d, t: %.1f, ct: %.1f, c: %d, fc: %d, %s-%s", filename, signal, window_size, threshold,
-    regime_threshold, mp_time_constraint, floss_time_constraint, alarm, alarm_true
-  )
+  # file <- sprintf(
+  #   "%s_%s_%.1f_%d_%d_%d_%.1f_%d_%s.png", filename, signal, regime_threshold, regime_landmark, floss_time_constraint, mp_time_constraint, threshold, window_size, filter_size
+  # )
+  file <- glue::glue("{filename}_{signal}_{glue_fmt('{regime_threshold:.1f}')}_{regime_landmark}_{floss_time_constraint}_{mp_time_constraint}_{glue_fmt('{threshold:.1f}')}_{window_size}_{filter_size}.png")
 
-  a <- plot_ecg_with_regimes(data, regimes, title, params, subset_start, ylim = c(min(data), max(data)))
+  # title <- sprintf(
+  #   "FLOSS-Regimes - %s-%s, w: %d, t: %.1f, ct: %.1f, lmk: %d, c: %d, fc: %d, %s-%s", filename, signal, window_size, threshold,
+  #   regime_threshold, regime_landmark, mp_time_constraint, floss_time_constraint, alarm, alarm_true
+  # )
+
+  title <- glue::glue("FLOSS-Regimes - {filename}-{signal}, w: {window_size}, t: {glue_fmt('{threshold:.1f}')}, ct: {glue_fmt('{regime_threshold:.1f}')}, lmk: {regime_landmark}, c: {mp_time_constraint}, fc: {floss_time_constraint}, {alarm}-{alarm_true}")
+
+  a <- plot_ecg_with_regimes(data, regimes, title, params, infos, subset_start, ylim = c(min(data), max(data)))
 
   if (save || params$save_png) {
     ggplot2::ggsave(
@@ -54,7 +60,7 @@ plot_regimes <- function(data_with_regimes, params, infos, save = FALSE) {
   return(a)
 }
 
-plot_ecg_with_regimes <- function(ecg_data, regimes, title, params, subset_start, ylim) {
+plot_ecg_with_regimes <- function(ecg_data, regimes, title, params, infos, subset_start, ylim) {
   window_size <- params$window_size
   mp_time_constraint <- params$mp_time_constraint
   data_length <- length(ecg_data)
@@ -65,8 +71,8 @@ plot_ecg_with_regimes <- function(ecg_data, regimes, title, params, subset_start
 
   data_idxs <- seq.int(subset_start + 1, subset_end)
   y_amp <- (ylim[2] - ylim[1])
-  last_3_secs <- subset_end - (3 * 250) # this is the max detection delay needed for Asystole and Fibv
-  last_10_secs <- subset_end - (10 * 250) # this is the max detection delay needed for Asystole and Fibv
+  last_3_secs <- subset_end - (3 * infos$frequency) # this is the max detection delay needed for Asystole and Fibv
+  last_10_secs <- subset_end - (10 * infos$frequency) # this is the max detection delay needed for Asystole and Fibv
 
   aa <- ggplot2::ggplot(data.frame(x = data_idxs, y = ecg_data), ggplot2::aes(x, y)) +
     ggplot2::geom_line(size = 0.1)
@@ -108,4 +114,40 @@ plot_ecg_with_regimes <- function(ecg_data, regimes, title, params, subset_start
     ggplot2::xlab("frames (250hz)") # 2.5 is 250hz/batch_size
 
   return(aa)
+}
+
+plot_regime_predictions <- function(data, truth, pred) {
+  plotly::layout(
+    plotly::plot_ly(
+      y = data, mode = "lines",
+      type = "scatter",
+      line = list(width = 0.5, color = "#1f77b4"),
+      name = "Data"
+    ) %>%
+      plotly::add_segments(
+        x = truth, xend = truth, y = min(data),
+        yend = max(data),
+        line = list(width = 1.5, color = "#ff00007f"),
+        name = "Truth"
+      ) %>%
+      plotly::add_segments(
+        x = pred, xend = pred, y = min(data) * 0.85,
+        yend = max(data) * 1.15,
+        line = list(width = 1.5, color = "#01c7017f"),
+        name = "Predicted"
+      ) %>%
+      plotly::config(
+        displaylogo = FALSE, scrollZoom = TRUE,
+        toImageButtonOptions = list(format = "svg")
+      ),
+    margin = list(t = 80, b = 50, l = 50, r = 50, pad = 0),
+    title = glue::glue("Regime change detection"),
+    xaxis = list(
+      title = "time",
+      type = "linear",
+      ticklen = 5,
+      ticks = "inside",
+      rangeslider = TRUE
+    )
+  )
 }

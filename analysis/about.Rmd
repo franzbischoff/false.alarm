@@ -6,7 +6,7 @@ output:
   bookdown::html_document2:
     base_format: workflowr::wflow_html
     toc: false
-bibliography: ../papers/references.bib
+bibliography: [../papers/references.bib]
 link-citations: true
 csl: ../thesis/csl/ama.csl
 css: style.css

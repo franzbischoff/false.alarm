@@ -4,7 +4,7 @@ cellar/
 lock/
 python/
 staging/
-.Rhistory
+.Rhistory*
 .Renviron
 .Rapp.history
 Pprof.out
@@ -59,6 +59,7 @@ vignettes/*.pdf
 # End of https://www.gitignore.io/api/r
 
 # Personalized
+tmp
 /tmp/
 /tmp_*/
 .future
@@ -73,6 +74,7 @@ debugme.log
 /R/RcppExports.R
 /code/
 /pdfs/
+/docs/reference
 /pkgdown/
 /revdep/*.html
 /revdep/checks
@@ -88,6 +90,7 @@ debugme.log
 LOCAL_APPDATA_FONTCONFIG_CACHE/
 README.html
 Rplots.pdf
+dev
 dev/
 packrat/lib*/
 packrat/src/
@@ -110,3 +113,5 @@ mpxtest.RData
 .devcontainer/mathjax.tgz
 docs/thesis/*.log
 docs/thesis/__*.tex
+analysis/shiny/rsconnect/shinyapps.io/franzbischoff/FLOSS.dcf
+analysis/shiny_land/rsconnect/shinyapps.io/franzbischoff/FLOSS_land.dcf

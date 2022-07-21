@@ -8,7 +8,7 @@ output:
     toc: true
     fig_caption: yes
     number_sections: yes
-bibliography: ../papers/references.bib
+bibliography: [../papers/references.bib]
 link-citations: true
 csl: ../thesis/csl/ama.csl
 css: style.css

@@ -21,6 +21,8 @@ if (dev_mode) {
 # CONCEPT: how near to consider to update the MP
 # CONCEPT: density of similarity changes a little bit from the size of constraint, but a lot due to the window size. but, the sum of the density from 50-100 doesn't change in any case
 
+# CONCEPT: https://www.wikiwand.com/en/Platt_scaling for classification
+
 
 #### Physionet's dataset definitions ----
 # Asystole: No QRS for at least 4 seconds
@@ -35,8 +37,6 @@ if (dev_mode) {
 options(tidyverse.quiet = TRUE)
 options(target_ds_path = "inst/extdata/physionet")
 options(crayon.enabled = TRUE)
-cluster <- FALSE
-backend <- "FUTURE"
 
 #### Targets: Load Scripts ----
 
@@ -44,81 +44,7 @@ backend <- "FUTURE"
 script_files <- list.files(here::here("scripts", "common"), pattern = "*.R")
 sapply(here::here("scripts", "common", script_files), source, local = .GlobalEnv, encoding = "UTF-8")
 rm(script_files)
-
-#### Targets: Setup engine ----
-
-if (isFALSE(cluster)) { ## Locally
-  if (backend == "FUTURE") {
-    library(future)
-    library(future.callr)
-    future::plan(callr)
-  } else {
-    options(
-      clustermq.scheduler = "multiprocess",
-      clustermq.ssh.host = NULL,
-      clustermq.ssh.log = NULL
-    )
-    library(clustermq)
-  }
-} else {
-  if (backend == "FUTURE") { ## cluster # tar_make_future(workers = 4)
-    # *** If using future for multithreading / clustering ***
-    library(future)
-    library(future.batchtools)
-
-    future::plan(
-      strategy = future.batchtools::batchtools_custom,
-      cluster.functions = batchtools::makeClusterFunctionsSSH(
-        list(
-          # batchtools::Worker$new("franz@192.168.1.237", ncpus = 4)
-          batchtools::Worker$new("localhost", ncpus = 4)
-        ),
-        # fs.latency = 1000
-      )
-    )
-  } else { # tar_make_clustermq(workers = 3)
-    options(
-      clustermq.scheduler = "ssh",
-      clustermq.ssh.host = "franz@192.168.1.237", # use your user and host, obviously
-      clustermq.ssh.log = "~/cmq_ssh.log" # log for easier debugging # nolint
-    )
-    library(clustermq)
-  }
-}
-
-#### Targets: Define targets options ----
-
-# use renv::install(".") to update the rcpp functions
-tar_option_set(
-  packages = c("dplyr", "false.alarm"),
-  format = "rds",
-  resources = tar_resources(
-    #   #   #   # *** If using clustermq for multithreading / clustering ***
-    # clustermq = tar_resources_clustermq(
-    #   template = list(num_cores = 4)
-    # ), # or n_jobs??
-    #   #   #   # *** If using future for multithreading / clustering ***
-    future = tar_resources_future(
-      resources = list(n_cores = 4)
-    )
-  ),
-  garbage_collection = TRUE,
-  # workspace_on_error = TRUE,
-  memory = "transient",
-  # storage = "main",
-  # envir = globalenv(),
-  # iteration = "list",
-  # debug = "ds_stats_mps_floss2_0_1250_0_200_fa978ffc",
-  # cue = tar_cue(
-  #   mode = "thorough",
-  #   command = TRUE,
-  #   depend = TRUE,
-  #   format = TRUE,
-  #   iteration = TRUE,
-  #   file = FALSE
-  # ),
-  imports = "false.alarm" # TODO: remove when there is no change on package functions. Clears the graph.
-)
+source(here::here("scripts", "helpers", "glue_fmt.R"), local = .GlobalEnv, encoding = "UTF-8")
 
 #### Pipeline: variable definitions ----
 # signal sample frequency, this is a constant
@@ -175,6 +101,6 @@ var_regime_threshold <- c(0.3, 0.4, 0.5) # c(0.1, 0.2, 0.3, 0.4, 0.5)
 # tar_make(names = ds_mp_filtered, callr_function = NULL)
 
 # start debugme after loading all functions
-if (dev_mode) {
-  debugme::debugme()
-}
+# if (dev_mode) {
+#   debugme::debugme()
+# }

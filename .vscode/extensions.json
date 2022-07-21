@@ -3,11 +3,9 @@
     "gruntfuggly.todo-tree",
     "spmeesseman.vscode-taskexplorer",
     "meakbiyik.vscode-r-test-adapter",
-    "ikuyadeu.r",
     "hbenl.vscode-test-explorer",
     "cschleiden.vscode-github-actions",
     "editorconfig.editorconfig",
-    "tht13.html-preview-vscode",
     "donjayamanne.git-extension-pack",
     "codezombiech.gitignore",
     "james-yu.latex-workshop",
@@ -29,6 +27,8 @@
     "usernamehw.errorlens",
     "rdebugger.r-debugger",
     "hediet.vscode-drawio",
-    "PsykoSoldi3r.vscode-git-flow"
+    "serhioromano.vscode-gitflow",
+    "reditorsupport.r",
+    "notZaki.pandocciter"
   ]
 }

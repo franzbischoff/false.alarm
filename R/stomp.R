@@ -219,7 +219,7 @@ stomp <- function(..., window_size, exclusion_zone = getOption("tsmp.exclusion_z
   tictac <- Sys.time() - tictac
 
   if (verbose > 0) {
-    message(sprintf("Finished in %.2f %s", tictac, units(tictac)))
+    message(glue::glue("Finished in {glue_fmt('{tictac:.2f}')} {units(tictac)}"))
   }
 
   return({

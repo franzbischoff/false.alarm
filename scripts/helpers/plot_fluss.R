@@ -79,7 +79,7 @@ plot_fluss <- function(ecg_data, type = c("data", "matrix"),
     attr(ecg_data[[file]][[n]], "plot") <- s()
 
     # good idea to have the files while debugging
-    readr::write_file(s(), file = here::here("output", sprintf("Fluss_%s_%s.svg", file, n)))
+    readr::write_file(s(), file = here::here("output", glue::glue("Fluss_{file}_{n}.svg")))
   }
   return(ecg_data)
 }

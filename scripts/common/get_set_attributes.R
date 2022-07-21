@@ -30,6 +30,24 @@ get_file_annotations <- function(obj) {
   return(NULL)
 }
 
+get_file_regimes <- function(obj) {
+  checkmate::qassert(obj, "L+")
+
+  depth <- purrr::vec_depth(obj)
+  if (!is.null(attr(obj, "regimes"))) {
+    return(attr(obj, "regimes"))
+  } else if (depth > 1) {
+    for (i in seq.int(1, depth - 1)) {
+      obj <- obj[[1]]
+      if (!is.null(attr(obj, "regimes"))) {
+        return(attr(obj, "regimes"))
+      }
+    }
+  }
+
+  return(NULL)
+}
+
 #' Get the "info" of the given signal if found on this object
 #'
 #' The signal may be down in the list hierarchy

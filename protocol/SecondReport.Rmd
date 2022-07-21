@@ -2,7 +2,7 @@
 title: "Research Progress Report"
 author: "Francisco Bischoff"
 link-citations: true
-bibliography: ../papers/references.bib
+bibliography: [../papers/references.bib]
 csl: ../thesis/csl/ama.csl
 linestretch: 1.5
 indent: true
@@ -246,7 +246,8 @@ library(ggplot2)
 
 knitr::opts_knit$set(
   root.dir = here("docs"),
-  base.dir = here("protocol"), verbose = TRUE
+  base.dir = here("protocol"),
+  verbose = TRUE
 )
 ```
 

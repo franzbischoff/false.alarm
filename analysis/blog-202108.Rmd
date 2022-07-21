@@ -1,0 +1,96 @@
+---
+title: "2021, August Update"
+author: "Francisco Bischoff"
+date: "on August 17, 2021"
+output:
+  bookdown::html_document2:
+    base_format: workflowr::wflow_html
+    toc: true
+    toc_float: true
+    number_sections: false
+bibliography: [../papers/references.bib]
+link-citations: true
+csl: ../thesis/csl/ama.csl
+css: style.css
+editor_options:
+  chunk_output_type: console
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(
+  echo = FALSE, fig.align = "center", dev = "svg", autodep = TRUE,
+  fig.height = 5, fig.width = 10,
+  tidy = "styler",
+  tidy.opts = list(strict = TRUE)
+)
+
+library(here)
+library(ggplot2)
+library(glue)
+library(dplyr)
+library(tibble)
+library(plotly)
+library(kableExtra)
+conflicted::conflict_prefer("filter", "dplyr")
+options(ggplot2.discrete.fill = c("#1b9e77", "#d95f02"))
+# library(visNetwork)
+# library(kableExtra)
+# library(targets)
+my_graphics <- function(image_name, base_path = here::here("docs", "figure")) {
+  file_path <- glue::glue("{base_path}/{image_name}")
+
+  if (knitr::is_latex_output()) {
+    if (file.exists(glue::glue("{file_path}.pdf"))) {
+      file_path <- glue::glue("{file_path}.pdf")
+    } else if (file.exists(glue::glue("{file_path}.png"))) {
+      file_path <- glue::glue("{file_path}.png")
+    } else {
+      file_path <- glue::glue("{file_path}.jpg")
+    }
+  } else {
+    if (file.exists(glue::glue("{file_path}.svg"))) {
+      file_path <- glue::glue("{file_path}.svg")
+    } else if (file.exists(glue::glue("{file_path}.png"))) {
+      file_path <- glue::glue("{file_path}.png")
+    } else {
+      file_path <- glue::glue("{file_path}.jpg")
+    }
+  }
+
+  knitr::include_graphics(file_path)
+}
+
+my_kable <- function(title, label, content) {
+  res <- glue(r"(<br><table class="tg"><caption>)", "(\\#tab:{label}) {title}", r"(</caption>{content}</table>)")
+  out <- structure(res, format = "html", class = "knitr_kable")
+  attr(out, "format") <- "html"
+  out
+}
+```
+
+The first workflow presented in July has changed. Its purpose was to define a "big picture" of the
+process.
+
+The main changes introduced were:
+
+## The Data
+
+Initially, the data had been carried along the workflow, being copied at each new step. That
+obviously is not the way to handle it. Thus, the raw data is stored only on the "dataset" object and
+reused where needed.
+
+Now, any modification to the raw data will create a new object, for example, "ds_filtered," where
+the SQI filter is applied to the data.
+
+## Streaming paradigm
+
+The goal of this work is to operate with streaming data. Thus, the Matrix Profile computation
+algorithm has been rewritten to handle receiving data in chunks. The algorithm can simulate one
+observation at a time or a batch of observations (for efficiency). The result will always be as if
+one observation had been received individually by the model.
+
+To avoid unnecessary recomputations for this analysis phase, the companion statistics needed by the
+model are pre-computed and fed alongside the data the algorithm needs to process. The
+pre-computation also allows experimenting with parameters during this process.
+
+## References {-}

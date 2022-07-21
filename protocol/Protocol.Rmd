@@ -2,7 +2,7 @@
 title: "Research Protocol"
 author: "Francisco Bischoff"
 link-citations: true
-bibliography: ../papers/references.bib
+bibliography: [../papers/references.bib]
 csl: ../thesis/csl/ama.csl
 linestretch: 1.5
 indent: true

@@ -26,7 +26,7 @@
       "debugMode": "function",
       "workingDirectory": "${workspaceFolder}",
       "file": "${file}",
-      "mainFunction": "stompi",
+      "mainFunction": "score_regimes",
       "allowGlobalDebugging": false
     },
     {
@@ -45,6 +45,12 @@
       "request": "attach",
       "name": "Attach to R process",
       "splitOverwrittenOutput": true
+    },
+    {
+      "type": "pwa-chrome",
+      "name": "http://127.0.0.1:3000/docs/regime_optimize.html",
+      "request": "launch",
+      "url": "http://127.0.0.1:3000/docs/regime_optimize.html"
     }
   ]
 }

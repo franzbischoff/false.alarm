@@ -67,7 +67,7 @@ find_all_files <- function(path = here::here("inst/extdata/physionet"),
         filtered <- c(filtered, res)
       }
     } else {
-      stop("Invalid type: ", data_type)
+      rlang::abort("Invalid type: ", data_type)
     }
     files <- filtered
   }

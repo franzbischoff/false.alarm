@@ -50,12 +50,14 @@ extract_regimes <- function(floss_list, params, infos) {
     )
   )
 
+  # browser()
+
   regime_threshold <- params$regime_threshold
   window_size <- params$window_size
   history <- params$history
   landmark <- history - params$regime_landmark # here is where we look for the minimum value
 
-  if (params$mp_time_constraint > 0) {
+  if (params$mp_time_constraint > 0 && params$mp_time_constraint <= floor(params$history * 3 / 4)) {
     floss_constraint <- params$mp_time_constraint
   } else {
     floss_constraint <- floor(history / 2)
@@ -78,21 +80,23 @@ extract_regimes <- function(floss_list, params, infos) {
     cac[seq.int(1, history - floss_constraint)] <- 1
     min_trigger_idx <- which.min(cac)
     # if (min_trigger_idx > landmark) {
-    #   message("min_trigger at ", min_trigger_idx, " for landmark ", landmark, ".")
+    #   rlang::inform("min_trigger at ", min_trigger_idx, " for landmark ", landmark, ".")
     # }
 
     if (cac[landmark] < regime_threshold) {
       abs_min_idx <- x$offset - history + landmark + 1
-      if ((abs_min_idx - current_abs_min_idx) > floss_constraint) { # IMPROVE: tweak floss_constraint
-        message("abs_min_idx at ", abs_min_idx, " value ", cac[landmark], ".")
+      if ((abs_min_idx - current_abs_min_idx) > floss_constraint) {
+        # IMPROVE: tweak floss_constraint
+        # cli::cli_inform("abs_min_idx at {abs_min_idx}, value {cac[landmark]}.")
         current_abs_min_idx <<- abs_min_idx
         current_abs_min_value <<- cac[landmark]
         all_regimes_idxs <<- c(all_regimes_idxs, current_abs_min_idx)
         all_regimes_values <<- c(all_regimes_values, current_abs_min_value)
       }
       if (cac[landmark] < current_abs_min_value) {
-        if ((abs_min_idx - current_abs_min_idx) < floor(history / 2)) { # IMPROVE: tweak floor(history / 2)
-          message("abs_min_idx2 at ", abs_min_idx, " value ", cac[landmark], ".")
+        if ((abs_min_idx - current_abs_min_idx) < floor(history / 2)) {
+          # IMPROVE: tweak floor(history / 2)
+          # cli::cli_inform("abs_min_idx2 at {abs_min_idx}, value {cac[landmark]}.")
           current_abs_min_idx <<- abs_min_idx
           current_abs_min_value <<- cac[landmark]
           all_regimes_idxs <<- c(all_regimes_idxs, current_abs_min_idx)

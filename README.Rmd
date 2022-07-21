@@ -2,7 +2,7 @@
 title: "Detecting life-threatening patterns in Point-of-care ECG using efficient memory and processor power."
 author: "Francisco Bischoff"
 date: "on `r format(Sys.time(), '%B %d, %Y')`"
-bibliography: ./papers/references.bib
+bibliography: [./papers/references.bib]
 link-citations: true
 csl: ./thesis/csl/ama.csl
 editor_options:

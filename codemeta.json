@@ -7,13 +7,13 @@
   "codeRepository": "https://github.com/franzbischoff/false.alarm",
   "issueTracker": "https://github.com/franzbischoff/false.alarm/issues",
   "license": "https://spdx.org/licenses/CC-BY-NC-SA-4.0",
-  "version": "0.0.0.9200",
+  "version": "0.0.1.9000",
   "programmingLanguage": {
     "@type": "ComputerLanguage",
     "name": "R",
     "url": "https://r-project.org"
   },
-  "runtimePlatform": "R version 4.1.2 (2021-11-01)",
+  "runtimePlatform": "R version 4.2.1 (2022-06-23)",
   "author": [
     {
       "@type": "Person",
@@ -325,7 +325,7 @@
       "@type": "SoftwareApplication",
       "identifier": "R",
       "name": "R",
-      "version": ">= 4.1"
+      "version": ">= 4.2"
     },
     "2": {
       "@type": "SoftwareApplication",
@@ -596,7 +596,7 @@
     },
     "SystemRequirements": "GNU make"
   },
-  "fileSize": "75762.534KB",
+  "fileSize": "3447194.077KB",
   "readme": "https://github.com/franzbischoff/false.alarm/blob/master/README.md",
   "contIntegration": ["https://github.com/franzbischoff/false.alarm/actions/workflows/R-CMD-check.yaml", "https://codecov.io/gh/franzbischoff/false.alarm"],
   "developmentStatus": "https://www.repostatus.org/#wip",
