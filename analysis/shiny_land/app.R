@@ -170,7 +170,6 @@ server <- function(input, output) {
 
   scoreResult <- reactive({
     wsize <- input$window_size # hack, dunno why this is necessary
-    scores <<- readRDS(glue::glue("{input$filename}_scores.rds"))
     res <- scores %>% dplyr::filter(
       window_size == input$window_size,
       time_constraint == input$time_constraint,
@@ -190,14 +189,7 @@ server <- function(input, output) {
     }
   })
 
-  # Histogram of the Old Faithful Geyser Data ----
-  # with requested number of bins
-  # This expression that generates a histogram is wrapped in a call
-  # to renderPlot to indicate that:
-  #
-  # 1. It is "reactive" and therefore should be automatically
-  #    re-executed when inputs (input$bins) change
-  # 2. Its output type is a plot
+
   output$distPlot <- renderPlotly(
     ecgRecord()$plot %>% plotly::add_segments(
       x = scoreResult()$pred[[1]], xend = scoreResult()$pred[[1]], y = ecgRecord()$min,
