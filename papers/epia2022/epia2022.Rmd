@@ -252,6 +252,13 @@ withr::with_par(list(mai = c(0.8, 0.5, 0.6, 0.5), cex = 1), {
 })
 ```
 
+## Validation
+
+Both processes of detecting regime change and classification of the new regime has its own type of scoring.
+The extended details is available online [@franz_evaluation]. The best parameters will be selected using
+_nested resampling_ [@Bischl2012]. While the regime change will try to minimize the false negatives (keeping
+the false positives as low as possible), the classification model will try to eliminate the false positives.
+
 ## Implementation
 
 Later, this workflow will be experimented on a low-power device, such as an ESP32 microcontroller
@@ -265,3 +272,4 @@ high-quality model for identifying these pathological conditions while maintaini
 in the presence of noise and artifacts seen in real-world applications.
 
 # References
+

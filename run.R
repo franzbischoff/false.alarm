@@ -3,7 +3,7 @@ library("optparse")
 
 option_list <- list(
   make_option(c("-d", "--dataset"),
-    type = "character", default = "https://zenodo.org/record/5794658/files/physionet.zip?download=1",
+    type = "character", default = "https://zenodo.org/record/4634013/files/physionet.zip?download=1",
     help = "dataset url", metavar = "character"
   ),
   make_option(c("-r", "--run"),
@@ -68,7 +68,8 @@ if (dir.exists(here::here("inst/extdata"))) {
     )
   }
 
-  if (opt$run) { # run targets?
+  if (opt$run) {
+    # run targets?
     targets::tar_watch(
       targets_only = TRUE, supervise = TRUE, seconds = 30, display = "graph", browse = TRUE, outdated = FALSE,
       label = c("time", "branches", "size"), port = 55444
