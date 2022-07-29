@@ -156,6 +156,17 @@
       "Hash": "0c7658433758cea5bcae50edd02b55b7",
       "Requirements": []
     },
+    "RPushbullet": {
+      "Package": "RPushbullet",
+      "Version": "0.3.4",
+      "Source": "Repository",
+      "Repository": "CRAN",
+      "Hash": "0b600e4308115126387df20181e731d2",
+      "Requirements": [
+        "curl",
+        "jsonlite"
+      ]
+    },
     "Rcpp": {
       "Package": "Rcpp",
       "Version": "1.0.9",
@@ -363,9 +374,9 @@
       "RemoteUsername": "rstudio",
       "RemoteRepo": "bookdown",
       "RemoteRef": "main",
-      "RemoteSha": "900f92106bda673ac6ad8d76317c9017c1b17528",
+      "RemoteSha": "85f5d0a83fa056bc497007e382f13847a07255a2",
       "RemoteHost": "api.github.com",
-      "Hash": "128facaab29fae2a9b9159222705ea9f",
+      "Hash": "89c7e1cf740a09aa70503e8df3c75010",
       "Requirements": [
         "htmltools",
         "jquerylib",
@@ -1008,15 +1019,16 @@
     },
     "forecast": {
       "Package": "forecast",
-      "Version": "8.16",
+      "Version": "8.17.0",
       "Source": "Repository",
       "Repository": "CRAN",
-      "Hash": "5d2502b83f310c485c5ba62b6b0bbfb9",
+      "Hash": "15366feb2c7d26e8c86ffa6e7b91ba14",
       "Requirements": [
         "Rcpp",
         "RcppArmadillo",
         "colorspace",
         "fracdiff",
+        "generics",
         "ggplot2",
         "lmtest",
         "magrittr",
@@ -1073,10 +1085,10 @@
     },
     "future": {
       "Package": "future",
-      "Version": "1.26.1",
+      "Version": "1.27.0",
       "Source": "Repository",
       "Repository": "CRAN",
-      "Hash": "cd20396d5395828de2e12d60467f6a53",
+      "Hash": "f6811da7bee83f2cef50ee3d21c5c794",
       "Requirements": [
         "digest",
         "globals",
@@ -2379,10 +2391,15 @@
     },
     "renv": {
       "Package": "renv",
-      "Version": "0.15.5",
-      "Source": "Repository",
-      "Repository": "CRAN",
-      "Hash": "6a38294e7d12f5d8e656b08c5bd8ae34",
+      "Version": "0.15.5-48",
+      "Source": "GitHub",
+      "RemoteType": "github",
+      "RemoteHost": "api.github.com",
+      "RemoteUsername": "rstudio",
+      "RemoteRepo": "renv",
+      "RemoteRef": "main",
+      "RemoteSha": "a74721479861a7015bbb661ee8836fa65cfd18a8",
+      "Hash": "3ceff1e477d7d92949a22da8d4852315",
       "Requirements": []
     },
     "reticulate": {
@@ -2451,9 +2468,9 @@
       "RemoteUsername": "rstudio",
       "RemoteRepo": "rmarkdown",
       "RemoteRef": "main",
-      "RemoteSha": "d23e479017ceec894cc62c6b98f40f4188a4a75f",
+      "RemoteSha": "63b7ecf5e4672a6dacef7e5899c479e6e4080052",
       "RemoteHost": "api.github.com",
-      "Hash": "7dc7b7f9da568783ecff4a61b2634391",
+      "Hash": "0079fbbf21c6710007b310c1268b2889",
       "Requirements": [
         "bslib",
         "evaluate",
@@ -2804,9 +2821,9 @@
       "RemoteUsername": "r-lib",
       "RemoteRepo": "styler",
       "RemoteRef": "main",
-      "RemoteSha": "6f3ccf45fce1f78ddde85abb5e62fc3dd55cdd68",
+      "RemoteSha": "3414b811f7a31ae70ce23b0e86e37d9a9330888e",
       "RemoteHost": "api.github.com",
-      "Hash": "8b4c5ad7442676abc50dc2b81995606e",
+      "Hash": "d547707d6bf4d9f46e434c04abe30995",
       "Requirements": [
         "R.cache",
         "cli",
@@ -2971,12 +2988,11 @@
     },
     "tibble": {
       "Package": "tibble",
-      "Version": "3.1.7",
+      "Version": "3.1.8",
       "Source": "Repository",
       "Repository": "CRAN",
-      "Hash": "08415af406e3dd75049afef9552e7355",
+      "Hash": "56b6934ef0f8c68225949a8672fe1a8f",
       "Requirements": [
-        "ellipsis",
         "fansi",
         "lifecycle",
         "magrittr",

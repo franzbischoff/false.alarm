@@ -108,11 +108,16 @@ lst_to_df <- function(lst, keep_attributes = TRUE) {
   return(new_df)
 }
 
-train_models <- function(data, parallel = FALSE, v = 10, rep = 3, grid = 30) {
-  set.seed(616)
-  initial_sampling <- rsample::initial_split(data, prop = 3 / 4)
-  training_split <- rsample::training(initial_sampling)
-  testing_split <- rsample::testing(initial_sampling)
+train_models <- function(data, parallel = FALSE, v = 10, rep = 3, grid = 30, train = NULL, test = NULL) {
+  if (is.null(train) && is.null(test)) {
+    set.seed(616)
+    initial_sampling <- rsample::initial_split(data, prop = 3 / 4)
+    training_split <- rsample::training(initial_sampling)
+    testing_split <- rsample::testing(initial_sampling)
+  } else {
+    training_split <- train
+    testing_split <- test
+  }
 
   set.seed(616)
   folds <- rsample::vfold_cv(training_split, v = v, rep = rep)
@@ -282,7 +287,7 @@ tkplot <- function(object, interactive = FALSE, res = 50) {
   data <- tibble::tibble(time = time, value = value)
   min_data <- min(data$value)
   max_data <- max(data$value)
-  truth <- object$truth[[1]]
+  truth <- clean_truth(attr(ecg[[1]], "regimes"), length(ecg[[1]]$II)) # object$truth[[1]]
   preds <- object$pred[[1]]
 
   title <- glue::glue(
@@ -353,6 +358,10 @@ tkplot <- function(object, interactive = FALSE, res = 50) {
   plot
 }
 
+pbFinished <- function(msg) {
+  RPushbullet::pbPost("note", "Alert", msg)
+}
+
 source(here::here("scripts", "common", "read_ecg.R"))
 source(here::here("scripts", "common", "score_floss.R"))
 ```
@@ -374,30 +383,31 @@ outcome_name <- "mean"
 # predictors_names <- c("time_constraint", "regime_threshold", "mp_threshold", "window_size", "regime_landmark")
 
 all_fitted <- lst_to_df(outputs$fitted_models)
-all_scores <- all_fitted %>%
-  # dplyr::slice_head(n = 10) %>%
-  tidyr::unnest(.predictions) %>%
-  ## mp_threshold of 1 and time_constraint of 750 are unrealistic, so we filter them out
-  dplyr::filter(dplyr::if_any(predictors_names[2]) <= 0.9, dplyr::if_any(predictors_names[1]) >= 800) %>%
-  dplyr::select(
-    id, rep, .sizes, .id,
-    all_of(predictors_names),
-    .config, .pred, truth
-  ) %>%
-  dplyr::rename(fold = id, size = .sizes, record = .id, model = .config, pred = .pred) %>%
-  dplyr::distinct(rep, record, across(all_of(predictors_names)), .keep_all = TRUE) %>%
-  dplyr::mutate(truth = clean_truth(truth, size), pred = clean_pred(pred)) %>%
-  dplyr::mutate(score = score_regimes(truth, pred, 0))
+# all_scores <- all_fitted %>%
+#   # dplyr::slice_head(n = 10) %>%
+#   tidyr::unnest(.predictions) %>%
+#   ## mp_threshold of 1 and time_constraint of 750 are unrealistic, so we filter them out
+#   dplyr::filter(dplyr::if_any(predictors_names[2]) <= 0.9, dplyr::if_any(predictors_names[1]) >= 800) %>%
+#   dplyr::select(
+#     id, rep, .sizes, .id,
+#     all_of(predictors_names),
+#     .config, .pred, truth
+#   ) %>%
+#   dplyr::rename(fold = id, size = .sizes, record = .id, model = .config, pred = .pred) %>%
+#   dplyr::distinct(rep, record, across(all_of(predictors_names)), .keep_all = TRUE) %>%
+#   dplyr::mutate(truth = clean_truth(truth, size), pred = clean_pred(pred)) %>%
+#   dplyr::mutate(score = score_regimes(truth, pred, 0))
+all_scores <- readRDS(here::here("dev/all_scores3.rds"))
 
-holdout_scores <- outputs$final_evaluation %>%
-  dplyr::select(
-    all_of(predictors_names),
-    .estimate
-  ) %>%
-  dplyr::rename(score = .estimate) %>%
-  dplyr::arrange(score) %>%
-  dplyr::mutate(score = round(score, 3)) %>%
-  dplyr::mutate(`#` = dplyr::row_number(), .before = 1)
+# holdout_scores <- outputs$final_evaluation %>%
+#   dplyr::select(
+#     all_of(predictors_names),
+#     .estimate
+#   ) %>%
+#   dplyr::rename(score = .estimate) %>%
+#   dplyr::arrange(score) %>%
+#   dplyr::mutate(score = round(score, 3)) %>%
+#   dplyr::mutate(`#` = dplyr::row_number(), .before = 1)
 ```
 
 
@@ -436,7 +446,7 @@ The workflow is as follows:
 
 Fig. \@ref(fig:marginalplot) shows the performance achieved individually during the cross-validation for each parameter. The plot shows the default performance metric (`floss_error_macro`) and another version (`floss_error_micro`) where the error is computed globally, being less prone to individual record errors.
 
-```{r marginalplot, out.width="100%", cache=FALSE}
+```{r marginalplot, eval = FALSE, out.width="100%", cache=FALSE}
 #| fig.cap="Marginal plot of all parameters searched during the cross-validation.
 #|  The first line shows the default performance metric (`macro`), which is the average of the scores of every recording
 #|  in the resamples. The line below shows another metric (`micro`) which does not take into account the length of every
@@ -494,7 +504,7 @@ fit1$layers[[2]]$geom$default_aes$alpha <- NA
 
 Table \@ref(tab:holdout) shows the performance of the best ten models on the hold-out set (a set of records that was never used for training).
 
-```{r holdout, cache=FALSE}
+```{r holdout, eval = FALSE, cache=FALSE}
 kableExtra::kbl(holdout_scores,
   booktabs = TRUE,
   col.names = c("#", "Time Constraint", "MP Threshold", "Window Size", "Regime Threshold", "FLOSS Score"),
@@ -555,28 +565,28 @@ E( score ) &= \alpha + time\_constraint\\
 Fig. \@ref(fig:interaction) shows the variable interaction strength between pairs of variables. That allows us to verify if there are any significant interactions between the variables. Using the information from the first model fit, equation \@ref(eq:first), we see that `mp_threshold` interacts strongly with `window_size`. After refitting, taking into account this interaction, we see that the interaction strength graphic is much better, equation \@ref(eq:refitted).
 
 ```{r modelbart, message=FALSE, cache=FALSE}
-tree_data <- all_scores %>%
-  dplyr::group_by(across(all_of(predictors_names))) %>%
-  dplyr::summarize(mean = mean(score)) %>%
-  dplyr::ungroup()
-
+# tree_data <- all_scores %>%
+#   dplyr::group_by(across(all_of(predictors_names))) %>%
+#   dplyr::summarize(mean = mean(score)) %>%
+#   dplyr::ungroup()
 trained_model <- NULL
 # Caching ===========
-if (file.exists(here("output", "dbarts_fitted.rds"))) {
-  trained_model <- readRDS(here("output", "dbarts_fitted.rds"))
+if (file.exists(here("output", "dbarts_fitted_lmk.rds"))) {
+  trained_model <- readRDS(here("output", "dbarts_fitted_lmk.rds"))
 } else {
-  trained_model <- train_models(tree_data, parallel = TRUE, v = 10, rep = 3, grid = 30)
-  saveRDS(trained_model, file = here("output", "dbarts_fitted.rds"))
+  trained_model <- train_models(tree_data, parallel = TRUE, v = 5, rep = 1, grid = 30)
+  saveRDS(trained_model, file = here("output", "dbarts_fitted_lmk.rds"))
 }
 
 train_data <- trained_model$training_data
 testing_data <- trained_model$testing_data
 set.seed(102)
 best_fit <- generics::fit(trained_model$model, train_data)
+# beepr::beep("complete")
 
 # Caching ===========
-if (file.exists(here("output", "importances.rds"))) {
-  interactions <- readRDS(here("output", "importances.rds"))
+if (file.exists(here("output", "importances_lmk.rds"))) {
+  interactions <- readRDS(here("output", "importances_lmk.rds"))
   importance_firm <- interactions$importance_firm
   importance_perm <- interactions$importance_perm
   importance_shap <- interactions$importance_shap
@@ -585,19 +595,26 @@ if (file.exists(here("output", "importances.rds"))) {
   interactions <- interactions$interactions
 } else {
   interactions <- check_interactions(best_fit, train_data, predictors_names, parallel = TRUE)
+  pbFinished("interactions done")
+
   importance_firm <- check_importance(best_fit, testing_data, testing_data, predictors_names,
     type = "firm", parallel = TRUE
   )
+  pbFinished("importance_firm done")
   importance_perm <- check_importance(best_fit, testing_data, testing_data, predictors_names,
     type = "permute", nsim = 100, parallel = TRUE
   )
+  pbFinished("importance_perm done")
   importance_shap <- check_importance(best_fit, train_data, testing_data[, predictors_names], predictors_names,
     type = "shap", nsim = 400, parallel = TRUE
   )
+  pbFinished("importance_shap done")
+
   shap_fastshap_all_test <- shap_explain(best_fit, train_data[, predictors_names], testing_data[, predictors_names],
     predictors_names,
     nsim = 400, parallel = TRUE
   )
+  pbFinished("shap_fastshap_all_test done")
 
   preds_test <- predict(best_fit, testing_data[, predictors_names])
   shap_html_test <- fastshap::force_plot(
@@ -613,26 +630,74 @@ if (file.exists(here("output", "importances.rds"))) {
     importance_shap = importance_shap,
     shap_fastshap_all_test = shap_fastshap_all_test,
     shap_html_test = shap_html_test
-  ), file = here("output", "importances.rds"))
+  ), file = here("output", "importances_lmk.rds"))
 }
 
-tree_data2 <- tree_data %>%
+# tree_data2 <- tree_data %>%
+#   dplyr::mutate(
+#     int_mp_w = mp_threshold * window_size,
+#     # int_mp_rt = mp_threshold * regime_threshold
+#     # int_mp_tc = mp_threshold * time_constraint
+#     .before = mean
+#   )
+
+# A tibble: 10 × 2
+#    Variables                        Interaction
+#    <chr>                                  <dbl>
+#  1 regime_threshold*regime_landmark       1.51
+#  2 mp_threshold*window_size               1.20
+#  3 mp_threshold*regime_landmark           1.16
+#  4 window_size*regime_landmark            0.985
+#  5 time_constraint*regime_threshold       0.887
+#  6 regime_threshold*window_size           0.850
+#  7 regime_threshold*mp_threshold          0.810
+#  8 time_constraint*regime_landmark        0.671
+#  9 time_constraint*mp_threshold           0.619
+# 10 time_constraint*window_size            0.389
+
+# # A tibble: 10 × 2
+#    Variables                        Interaction
+#    <chr>                                  <dbl>
+#  1 mp_threshold*regime_landmark           1.46
+#  2 regime_threshold*window_size           0.992
+#  3 time_constraint*regime_threshold       0.683
+#  4 regime_threshold*regime_landmark       0.624
+#  5 time_constraint*mp_threshold           0.590
+#  6 time_constraint*regime_landmark        0.449
+#  7 mp_threshold*window_size               0.329
+#  8 regime_threshold*mp_threshold          0.288
+#  9 window_size*regime_landmark            0.256
+# 10 time_constraint*window_size            0.251
+
+
+train_data2 <- train_data %>%
   dplyr::mutate(
+    int_rt_rl = regime_threshold * regime_landmark,
     int_mp_w = mp_threshold * window_size,
     # int_mp_rt = mp_threshold * regime_threshold
     # int_mp_tc = mp_threshold * time_constraint
     .before = mean
   )
 
-predictor_names_int <- c(predictors_names, "int_mp_w")
+testing_data2 <- testing_data %>%
+  dplyr::mutate(
+    int_rt_rl = regime_threshold * regime_landmark,
+    int_mp_w = mp_threshold * window_size,
+    # int_mp_rt = mp_threshold * regime_threshold
+    # int_mp_tc = mp_threshold * time_constraint
+    .before = mean
+  )
+
+predictor_names_int <- c(predictors_names, "int_rt_rl", "int_mp_w")
 
 trained_model2 <- NULL
 # Caching ==========
-if (file.exists(here("output", "dbarts_fitted2.rds"))) {
-  trained_model2 <- readRDS(here("output", "dbarts_fitted2.rds"))
+if (file.exists(here("output", "dbarts_fitted2_lmk.rds"))) {
+  trained_model2 <- readRDS(here("output", "dbarts_fitted2_lmk.rds"))
 } else {
-  trained_model2 <- train_models(tree_data2, parallel = TRUE)
-  saveRDS(trained_model2, file = here("output", "dbarts_fitted2.rds"))
+  trained_model2 <- train_models(NULL, parallel = TRUE, v = 5, rep = 1, grid = 30, train_data2, testing_data2)
+  pbFinished("trained_model2 done")
+  saveRDS(trained_model2, file = here("output", "dbarts_fitted2_lmk.rds"))
 }
 
 train_data2 <- trained_model2$training_data
@@ -641,8 +706,8 @@ set.seed(102)
 best_fit2 <- generics::fit(trained_model2$model, train_data2)
 
 # Caching ===========
-if (file.exists(here("output", "importances2.rds"))) {
-  interactions2 <- readRDS(here("output", "importances2.rds"))
+if (file.exists(here("output", "importances2_lmk.rds"))) {
+  interactions2 <- readRDS(here("output", "importances2_lmk.rds"))
   importance_firm2 <- interactions2$importance_firm2
   importance_perm2 <- interactions2$importance_perm2
   importance_shap2 <- interactions2$importance_shap2
@@ -650,16 +715,17 @@ if (file.exists(here("output", "importances2.rds"))) {
   shap_html_test2 <- interactions2$shap_html_test2
   interactions2 <- interactions2$interactions2
 } else {
-  importance_shap2 <- check_importance(best_fit2, train_data2[, predictor_names_int], testing_data2[, predictor_names_int], predictor_names_int,
-    type = "shap", nsim = 400, parallel = TRUE
-  )
   interactions2 <- check_interactions(best_fit2, train_data2, predictors_names, parallel = TRUE)
   importance_firm2 <- check_importance(best_fit2, testing_data2, testing_data2, predictors_names, type = "firm", parallel = TRUE)
   importance_perm2 <- check_importance(best_fit2, testing_data2, testing_data2, predictor_names_int,
     type = "permute",
     nsim = 100, parallel = TRUE
   )
+  importance_shap2 <- check_importance(best_fit2, train_data2[, predictor_names_int], testing_data2[, predictor_names_int], predictor_names_int,
+    type = "shap", nsim = 400, parallel = TRUE
+  )
   shap_fastshap_all_test2 <- shap_explain(best_fit2, train_data2[, predictor_names_int], testing_data2[, predictor_names_int], predictors_names, nsim = 400, parallel = TRUE)
+  pbFinished("shap_fastshap_all_test2 done")
 
   preds_test2 <- predict(best_fit2, testing_data2[, predictor_names_int])
   shap_html_test2 <- fastshap::force_plot(object = shap_fastshap_all_test2, feature_values = testing_data2[, predictors_names], baseline = mean(preds_test2$.pred), display = "html")
@@ -672,7 +738,7 @@ if (file.exists(here("output", "importances2.rds"))) {
     importance_shap2 = importance_shap2,
     shap_fastshap_all_test2 = shap_fastshap_all_test2,
     shap_html_test2 = shap_html_test2
-  ), file = here("output", "importances2.rds"))
+  ), file = here("output", "importances2_lmk.rds"))
 }
 ```
 
@@ -693,7 +759,7 @@ interactions_plot <- ggplot2::ggplot(interactions, ggplot2::aes(
     y = ggplot2::element_blank(),
     x = ggplot2::element_blank()
   ) +
-  ggplot2::ylim(0, 1.2) +
+  ggplot2::ylim(0, 1.6) +
   ggplot2::theme_bw() +
   ggplot2::theme(legend.position = "none")
 
@@ -708,7 +774,7 @@ interactions2_plot <- ggplot2::ggplot(interactions2, ggplot2::aes(
     y = "Interaction strength",
     x = ggplot2::element_blank()
   ) +
-  ggplot2::ylim(0, 1.2) +
+  ggplot2::ylim(0, 1.6) +
   ggplot2::theme_bw() +
   ggplot2::theme(legend.position = "none")
 
@@ -790,7 +856,7 @@ importance_firm_plot <- importance_firm +
     subtitle = "Individual Conditional Expectation",
     y = ggplot2::element_blank()
   ) +
-  ggplot2::ylim(0, 4.5) +
+  ggplot2::ylim(0, 3.5) +
   ggplot2::theme_bw() +
   ggplot2::theme(
     legend.position = "none",
@@ -802,7 +868,7 @@ importance_perm_plot <- importance_perm +
     title = "Permutation-based (100x)",
     y = ggplot2::element_blank()
   ) +
-  ggplot2::ylim(1, 7) +
+  ggplot2::ylim(2, 15) +
   ggplot2::theme_bw() +
   ggplot2::theme(
     legend.position = "none",
@@ -814,19 +880,18 @@ importance_shap_plot <- importance_shap +
     title = "SHAP (400 iterations)",
     y = ggplot2::element_blank()
   ) +
-  ggplot2::ylim(0, 2.5) +
+  ggplot2::ylim(0, 1.6) +
   ggplot2::theme_bw() +
   ggplot2::theme(
     legend.position = "none",
     plot.margin = margin(0, 0, 0, 10)
   )
 
-
 importance_firm2_plot <- importance_firm2 +
   ggplot2::labs(
     y = "Importance"
   ) +
-  ggplot2::ylim(0, 4.5) +
+  ggplot2::ylim(0, 3.5) +
   ggplot2::theme_bw() +
   ggplot2::theme(
     legend.position = "none",
@@ -837,7 +902,7 @@ importance_perm2_plot <- importance_perm2 +
   ggplot2::labs(
     y = "Importance"
   ) +
-  ggplot2::ylim(1, 7) +
+  ggplot2::ylim(2, 15) +
   ggplot2::theme_bw() +
   ggplot2::theme(
     legend.position = "none",
@@ -848,7 +913,7 @@ importance_shap2_plot <- importance_shap2 +
   ggplot2::labs(
     y = "Importance"
   ) +
-  ggplot2::ylim(0, 2.5) +
+  ggplot2::ylim(0, 1.6) +
   ggplot2::theme_bw() +
   ggplot2::theme(
     legend.position = "none",
@@ -878,19 +943,19 @@ Fig. \@ref(fig:importanceshap) and \@ref(fig:importanceshap2) show the effect of
 t1 <- autoplot(shap_fastshap_all_test,
   type = "dependence",
   X = testing_data, feature = predictors_names[2], alpha = 0.2
-) + ggplot2::geom_smooth() + ggplot2::theme_bw()
+) + ggplot2::geom_smooth(method = loess) + ggplot2::theme_bw()
 t2 <- autoplot(shap_fastshap_all_test,
   type = "dependence",
   X = testing_data, feature = predictors_names[1], alpha = 0.2
-) + ggplot2::geom_smooth() + ggplot2::labs(y = ggplot2::element_blank()) + ggplot2::theme_bw()
+) + ggplot2::geom_smooth(method = loess) + ggplot2::labs(y = ggplot2::element_blank()) + ggplot2::theme_bw()
 t3 <- autoplot(shap_fastshap_all_test,
   type = "dependence",
   X = testing_data, feature = predictors_names[4], alpha = 0.2
-) + ggplot2::geom_smooth() + ggplot2::theme_bw()
+) + ggplot2::geom_smooth(method = loess) + ggplot2::theme_bw()
 t4 <- autoplot(shap_fastshap_all_test,
   type = "dependence",
   X = testing_data, feature = predictors_names[3], alpha = 0.2
-) + ggplot2::geom_smooth() + ggplot2::labs(y = ggplot2::element_blank()) + ggplot2::theme_bw()
+) + ggplot2::geom_smooth(method = loess) + ggplot2::labs(y = ggplot2::element_blank()) + ggplot2::theme_bw()
 
 all <- (t1 + t2) /
   (t3 + t4) + plot_layout(guides = "collect")
@@ -904,22 +969,23 @@ all + plot_annotation(
 
 ```{r importanceshap2, message=FALSE, fig.height = 6, fig.width= 10, out.width="100%", cache=FALSE}
 #| fig.cap="This shows the effect each variable has on FLOSS score taking into account the interactions."
+
 t1 <- autoplot(shap_fastshap_all_test2,
   type = "dependence",
   X = testing_data2, feature = predictors_names[2], alpha = 0.2
-) + ggplot2::geom_smooth() + ggplot2::theme_bw()
+) + ggplot2::geom_smooth(method = loess) + ggplot2::theme_bw()
 t2 <- autoplot(shap_fastshap_all_test2,
   type = "dependence",
   X = testing_data2, feature = predictors_names[1], alpha = 0.2
-) + ggplot2::geom_smooth() + ggplot2::labs(y = ggplot2::element_blank()) + ggplot2::theme_bw()
+) + ggplot2::geom_smooth(method = loess) + ggplot2::labs(y = ggplot2::element_blank()) + ggplot2::theme_bw()
 t3 <- autoplot(shap_fastshap_all_test2,
   type = "dependence",
   X = testing_data2, feature = predictors_names[4], alpha = 0.2
-) + ggplot2::geom_smooth() + ggplot2::theme_bw()
+) + ggplot2::geom_smooth(method = loess) + ggplot2::theme_bw()
 t4 <- autoplot(shap_fastshap_all_test2,
   type = "dependence",
   X = testing_data2, feature = predictors_names[3], alpha = 0.2
-) + ggplot2::geom_smooth() + ggplot2::labs(y = ggplot2::element_blank()) + ggplot2::theme_bw()
+) + ggplot2::geom_smooth(method = loess) + ggplot2::labs(y = ggplot2::element_blank()) + ggplot2::theme_bw()
 
 all <- (t1 + t2) /
   (t3 + t4) + plot_layout(guides = "collect")
@@ -960,7 +1026,7 @@ Fig. \@ref(fig:global) shows a violin plot of equal areas clipped to the minimum
 Next, we will visualize some of these predictions to understand why some recordings were difficult to segment. For us to have a simple baseline: a recording with just one regime change, and the model predicts exactly one regime change, but far from the truth, the score will be roughly 1.
 
 
-```{r global, fig.height=5, fig.width=10, out.width="100%", cache=FALSE}
+```{r global, eval=TRUE, fig.height=5, fig.width=10, out.width="100%", cache=FALSE}
 #| fig.cap="Violin plot showing the distribution of the FLOSS score achieved by all tested models by
 #|  recording.  The left half shows the recordings that were difficult to predict (10% overall), whereas
 #|  the right half shows the recordings that at least one model could achieve a good prediction (10%
@@ -996,7 +1062,7 @@ scores_stats %>%
 
 Fig. \@ref(fig:worst) shows the best effort in predicting the most complex recordings. One information not declared before is that if the model does not predict any change, it will put a mark on the zero position. On the other side, the truth markers positioned at the beginning and the end of the recording were removed, as these locations lack information and do not represent a streaming setting.
 
-```{r worst, fig.height=15, fig.width=12, out.width="100%", dev="png", cache=FALSE}
+```{r worst, eval=TRUE, fig.height=15, fig.width=12, out.width="100%", dev="png", cache=FALSE}
 #| fig.cap="Prediction of the worst 10% of recordings (red is the truth, blue are the predictions)."
 
 worst <- scores_stats %>%
@@ -1028,7 +1094,7 @@ wrap_plots(plots, ncol = 1)
 Fig. \@ref(fig:best) shows the best performances of the best recordings. Notice that there are recordings with a significant duration and few regime changes, making it hard for a "trivial model" to predict randomly.
 
 
-```{r best, fig.height=15, fig.width=12, out.width="100%", dev="png", cache=FALSE}
+```{r best, eval=TRUE, fig.height=15, fig.width=12, out.width="100%", dev="png", cache=FALSE}
 #| fig.cap="Prediction of the best 10% of recordings (red is the truth, blue are the predictions)."
 
 bests <- scores_stats %>%
@@ -1063,7 +1129,7 @@ A work-in-progress version for the finer grid-search over the `regime_landmark` 
 
 Fig. \@ref(fig:globalmodel) shows the distribution of the FLOSS score of the 10% worst (left side) and 10% best models across the recordings (right side). The bluish color highlights the models with SD below 3 and IQR below 1.
 
-```{r globalmodel, fig.height=5, fig.width=10, out.width="100%", cache=FALSE}
+```{r globalmodel, eval=TRUE, fig.height=5, fig.width=10, out.width="100%", cache=FALSE}
 #| fig.cap="Violin plot showing the distribution of the FLOSS score achieved by all tested models during the
 #|  inner ressample.  The left half shows the models with the worst performances (10% overall), whereas
 #|  the right half shows the models with the best performances (10% overall).
@@ -1122,7 +1188,7 @@ model_median <- scores_stats_model %>%
 
 Fig. \@ref(fig:bestmodels) the performance of the six best models across all inner resamples. They are ordered from left to right, from the worst record to the best record. The top model is the one with the lowest mean across the scores. The blue line indicates the mean score, and the red line the median score. The scores above 3 are squished in the plot and colored according to the scale in the legend.
 
-```{r bestmodels, fig.height=22, fig.width=18, out.width="100%", cache=FALSE}
+```{r bestmodels, eval=TRUE, fig.height=22, fig.width=18, out.width="100%", cache=FALSE}
 #| fig.cap="Performances of the best 6 models across all inner resample of recordings.
 #|  The recordings are ordered by score, from the worst to the best.
 #|  Each plot shows one model, starting from the best one.
