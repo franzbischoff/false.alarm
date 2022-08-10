@@ -378,9 +378,9 @@ net <- network %>%
 fitted1 <- outputs$fitted_models[[1]]
 fitted2 <- outputs$fitted_models[[2]]
 
-predictors_names <- c("time_constraint", "mp_threshold", "window_size", "regime_threshold")
+# predictors_names <- c("time_constraint", "mp_threshold", "window_size", "regime_threshold")
 outcome_name <- "mean"
-# predictors_names <- c("time_constraint", "regime_threshold", "mp_threshold", "window_size", "regime_landmark")
+predictors_names <- c("time_constraint", "regime_threshold", "mp_threshold", "window_size", "regime_landmark")
 
 all_fitted <- lst_to_df(outputs$fitted_models)
 # all_scores <- all_fitted %>%

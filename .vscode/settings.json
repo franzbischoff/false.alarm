@@ -115,8 +115,7 @@
     "**/log/**": true,
     "**/logs/**": true,
     "**/man/**": true,
-    "**/pdfs/**": true,
-    "**/renv/**": true
+    "**/pdfs/**": true
   },
   "files.insertFinalNewline": true,
   "files.trimTrailingWhitespace": true,
