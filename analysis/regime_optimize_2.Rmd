@@ -287,7 +287,7 @@ tkplot <- function(object, interactive = FALSE, res = 50) {
   data <- tibble::tibble(time = time, value = value)
   min_data <- min(data$value)
   max_data <- max(data$value)
-  truth <- clean_truth(attr(ecg[[1]], "regimes"), length(ecg[[1]]$II)) # object$truth[[1]]
+  truth <- clean_truth(floor(attr(ecg[[1]], "regimes") * prop), floor(length(value) * prop)) # object$truth[[1]]
   preds <- object$pred[[1]]
 
   title <- glue::glue(
@@ -303,7 +303,8 @@ tkplot <- function(object, interactive = FALSE, res = 50) {
     "MP window: {object$window_size}, ",
     "MP threshold: {object$mp_threshold}, ",
     "Time constraint: {object$time_constraint}, ",
-    "Regime threshold: {object$regime_threshold}"
+    "Regime threshold: {object$regime_threshold}, ",
+    "Regime landmark: {object$regime_landmark}"
   )
 
 
@@ -366,7 +367,7 @@ source(here::here("scripts", "common", "read_ecg.R"))
 source(here::here("scripts", "common", "score_floss.R"))
 ```
 
-```{r cached, echo=FALSE, cache=FALSE}
+```{r cached, echo=FALSE, cache=TRUE}
 network_1 <- readRDS(here::here("output", "regime_network.rds"))
 outputs_1 <- readRDS(here::here("output", "regime_outputs.rds"))
 net_1 <- network_1 %>%
@@ -448,7 +449,7 @@ The workflow is as follows:
 
 Fig. \@ref(fig:marginalplot) shows the performance achieved individually during the cross-validation for each parameter. The plot shows the default performance metric (`floss_error_macro`) and another version (`floss_error_micro`) where the error is computed globally, being less prone to individual record errors.
 
-```{r marginalplot, eval = FALSE, out.width="100%", cache=FALSE}
+```{r marginalplot, eval = FALSE, out.width="100%", cache=TRUE}
 #| fig.cap="Marginal plot of all parameters searched during the cross-validation.
 #|  The first line shows the default performance metric (`macro`), which is the average of the scores of every recording
 #|  in the resamples. The line below shows another metric (`micro`) which does not take into account the length of every
@@ -481,7 +482,7 @@ rlang::env_poke(aa$layers[[1]]$stat, "compute_group", hack) # unhack
 
 Fig. \@ref(fig:performanceplot) shows the performance across all cross-validation folds for every iteration of the bayes search.
 
-```{r performanceplot, fig.height = 7.5, out.width="90%", cache=FALSE}
+```{r performanceplot, eval=FALSE, fig.height = 7.5, out.width="90%", cache=TRUE}
 #| fig.cap="Parameters exploration using  Bayesian optimization. The plots show the performances across all cross-validation
 #|  folds on every iteration of the bayes search. The first line shows the results of the first repetition, and
 #|  the second line during the second repetition. The values on the left are shown in the default metric (`macro`).
@@ -506,7 +507,7 @@ fit1$layers[[2]]$geom$default_aes$alpha <- NA
 
 Table \@ref(tab:holdout) shows the performance of the best ten models on the hold-out set (a set of records that was never used for training).
 
-```{r holdout, eval = FALSE, cache=FALSE}
+```{r holdout, eval = FALSE, cache=TRUE}
 kableExtra::kbl(holdout_scores_1,
   booktabs = TRUE,
   col.names = c("#", "Time Constraint", "MP Threshold", "Window Size", "Regime Threshold", "FLOSS Score"),
@@ -566,7 +567,7 @@ E( score ) &= \alpha + time\_constraint\\
 
 Fig. \@ref(fig:interaction) shows the variable interaction strength between pairs of variables. That allows us to verify if there are any significant interactions between the variables. Using the information from the first model fit, equation \@ref(eq:first), we see that `mp_threshold` interacts strongly with `window_size`. After refitting, taking into account this interaction, we see that the interaction strength graphic is much better, equation \@ref(eq:refitted).
 
-```{r modelbart, message=FALSE, cache=FALSE}
+```{r modelbart, message=FALSE, cache=TRUE}
 tree_data <- all_scores %>%
   dplyr::group_by(across(all_of(predictors_names))) %>%
   dplyr::summarize(mean = mean(score)) %>%
@@ -758,10 +759,12 @@ if (file.exists(here("output", "importances2_lmk.rds"))) {
 ```
 
 
-```{r interaction, fig.height = 5, fig.width= 8, out.width="100%", cache=FALSE}
-#| fig.cap="Variable interactions strenght using feature importance ranking measure (FIRM) approach [@Greenwell2018].
-#|  A) Shows strong interaction between `mp_threshold` and `window_size`.
-#|  B) Refitting the model with this interaction taken into account, the strength is substantially reduced."
+```{r interaction, fig.height = 5, fig.width= 8, out.width="100%", cache=TRUE}
+#| fig.cap="Variable interactions strength using feature importance ranking measure (FIRM) approach [@Greenwell2018].
+#|  A) Shows strong interaction between `regime_threshold` and `regime_landmark`, `mp_threshold` and `window_size`,
+#|     `mp_threshold` and `regime_landmark`.
+#|  B) Refitting the model with these interactions taken into account, the strength is substantially reduced, except
+#|     for the first, showing that indeed there is a strong correlation between those variables."
 
 interactions_plot <- ggplot2::ggplot(interactions, ggplot2::aes(
   x = reorder(Variables, Interaction),
@@ -858,7 +861,7 @@ Using the three techniques above simultaneously allows a broad comparison of the
 Fig. \@ref(fig:importance) then shows the variable importance using three methods: Feature Importance Ranking Measure (FIRM) using Individual Conditional Expectation (ICE), Permutation-based, and Shapley Additive explanations (SHAP). The first line of this figure shows that the interaction between `mp_threshold` and `window_size` obscures the results, where except for `time_constraint`, the other variables have similar importance. In the second line, the most important feature that all three methods agree on is the `regime_threshold`.
 
 
-```{r importance, fig.height = 7, fig.width= 15, out.width="100%", cache=FALSE}
+```{r importance, fig.height = 7, fig.width= 15, out.width="100%", cache=TRUE}
 #| fig.cap="Variables importances using three different methods. A) Feature Importance Ranking Measure
 #|  using ICE curves. B) Permutation method. C) SHAP (400 iterations). Line 1 refers to the original
 #|  fit, and line 2 to the re-fit, taking into account the interactions between variables
@@ -989,13 +992,13 @@ all + plot_annotation(
 Fig. \@ref(fig:importanceshap) and \@ref(fig:importanceshap2) show the effect of each feature on the FLOSS score. The main differences before and after removing the interactions are the magnitude of the less important features and the shape of `time_constraint` that initially had a valley around 1600. However, it seems that it flats out.
 
 
-```{r importanceshap, message=FALSE, fig.height = 6, fig.width= 10, out.width="100%", cache=FALSE}
+```{r importanceshap, message=FALSE, fig.height = 6, fig.width= 10, out.width="100%", cache=TRUE}
 #| fig.cap="This shows the effect each variable has on FLOSS score. This plot doesn't take into account the
 #|  variable interactions."
 t1 <- autoplot(shap_fastshap_all_test,
   type = "dependence",
   X = testing_data, feature = predictors_names[2], alpha = 0.2
-) + ggplot2::geom_smooth(method = loess) + ggplot2::theme_bw()
+) + ggplot2::geom_smooth(method = loess) + ggplot2::labs(y = ggplot2::element_blank()) + ggplot2::theme_bw()
 t2 <- autoplot(shap_fastshap_all_test,
   type = "dependence",
   X = testing_data, feature = predictors_names[1], alpha = 0.2
@@ -1003,14 +1006,24 @@ t2 <- autoplot(shap_fastshap_all_test,
 t3 <- autoplot(shap_fastshap_all_test,
   type = "dependence",
   X = testing_data, feature = predictors_names[4], alpha = 0.2
-) + ggplot2::geom_smooth(method = loess) + ggplot2::theme_bw()
+) + ggplot2::geom_smooth(method = loess) + ggplot2::labs(y = ggplot2::element_blank()) + ggplot2::theme_bw()
 t4 <- autoplot(shap_fastshap_all_test,
   type = "dependence",
   X = testing_data, feature = predictors_names[3], alpha = 0.2
 ) + ggplot2::geom_smooth(method = loess) + ggplot2::labs(y = ggplot2::element_blank()) + ggplot2::theme_bw()
+t5 <- autoplot(shap_fastshap_all_test,
+  type = "dependence",
+  X = testing_data, feature = predictors_names[5], alpha = 0.2
+) + ggplot2::geom_smooth(method = loess) + ggplot2::labs(y = ggplot2::element_blank()) + ggplot2::theme_bw()
 
-all <- (t1 + t2) /
-  (t3 + t4) + plot_layout(guides = "collect")
+
+layout <- "
+AABB
+CCDD
+#EE#
+"
+all <- t1 + t2 + t3 + t4 + t5 +
+  plot_layout(design = layout, guides = "collect")
 
 all + plot_annotation(
   title = "Shapley value vs. variable values",
@@ -1019,13 +1032,13 @@ all + plot_annotation(
 )
 ```
 
-```{r importanceshap2, message=FALSE, fig.height = 6, fig.width= 10, out.width="100%", cache=FALSE}
+```{r importanceshap2, message=FALSE, fig.height = 6, fig.width= 10, out.width="100%", cache=TRUE}
 #| fig.cap="This shows the effect each variable has on FLOSS score taking into account the interactions."
 
 t1 <- autoplot(shap_fastshap_all_test2,
   type = "dependence",
   X = testing_data2, feature = predictors_names[2], alpha = 0.2
-) + ggplot2::geom_smooth(method = loess) + ggplot2::theme_bw()
+) + ggplot2::geom_smooth(method = loess) + ggplot2::labs(y = ggplot2::element_blank()) + ggplot2::theme_bw()
 t2 <- autoplot(shap_fastshap_all_test2,
   type = "dependence",
   X = testing_data2, feature = predictors_names[1], alpha = 0.2
@@ -1033,14 +1046,24 @@ t2 <- autoplot(shap_fastshap_all_test2,
 t3 <- autoplot(shap_fastshap_all_test2,
   type = "dependence",
   X = testing_data2, feature = predictors_names[4], alpha = 0.2
-) + ggplot2::geom_smooth(method = loess) + ggplot2::theme_bw()
+) + ggplot2::geom_smooth(method = loess) + ggplot2::labs(y = ggplot2::element_blank()) + ggplot2::theme_bw()
 t4 <- autoplot(shap_fastshap_all_test2,
   type = "dependence",
   X = testing_data2, feature = predictors_names[3], alpha = 0.2
 ) + ggplot2::geom_smooth(method = loess) + ggplot2::labs(y = ggplot2::element_blank()) + ggplot2::theme_bw()
+t5 <- autoplot(shap_fastshap_all_test,
+  type = "dependence",
+  X = testing_data2, feature = predictors_names[5], alpha = 0.2
+) + ggplot2::geom_smooth(method = loess) + ggplot2::labs(y = ggplot2::element_blank()) + ggplot2::theme_bw()
 
-all <- (t1 + t2) /
-  (t3 + t4) + plot_layout(guides = "collect")
+
+layout <- "
+AABB
+CCDD
+#EE#
+"
+all <- t1 + t2 + t3 + t4 + t5 +
+  plot_layout(design = layout, guides = "collect")
 
 all + plot_annotation(
   title = "Shapley value vs. variable values",
@@ -1059,7 +1082,7 @@ This parameter was fixed to the value of 3 seconds from the last observation (at
 
 A preliminary result of the ongoing tuning (with `regime_landmark`) is depicted below (still a work in progress). It shows us two prediction paths, and assuming (by eye) that the more vertical the line, the less interference will be on the prediction, this means that having settled the `window_size` and a `regime_landmark`, the `regime_threshold` will have the best tuning value for each case.
 
-```{r preliminar,fig.height=10, fig.width=15, out.width="100%", results="asis", cache=FALSE}
+```{r preliminar,fig.height=10, fig.width=15, out.width="100%", results="asis", cache=TRUE}
 #| fig.cap="Multioutput decision plot."
 my_graphics("shapfurr", "figure")
 ```
@@ -1078,7 +1101,7 @@ Fig. \@ref(fig:global) shows a violin plot of equal areas clipped to the minimum
 Next, we will visualize some of these predictions to understand why some recordings were difficult to segment. For us to have a simple baseline: a recording with just one regime change, and the model predicts exactly one regime change, but far from the truth, the score will be roughly 1.
 
 
-```{r global, eval=TRUE, fig.height=5, fig.width=10, out.width="100%", cache=FALSE}
+```{r global, eval=TRUE, fig.height=5, fig.width=10, out.width="100%", cache=TRUE}
 #| fig.cap="Violin plot showing the distribution of the FLOSS score achieved by all tested models by
 #|  recording.  The left half shows the recordings that were difficult to predict (10% overall), whereas
 #|  the right half shows the recordings that at least one model could achieve a good prediction (10%
@@ -1100,7 +1123,7 @@ scores_stats <- all_scores %>%
 
 records_factors <- forcats::as_factor(scores_stats$record)
 
-scores_stats$id <- sprintf("%02d", (as.numeric(records_factors)))
+scores_stats$id <- sprintf("%03d", (as.numeric(records_factors)))
 
 scores_stats %>%
   dplyr::mutate(low_iqr = q75 - q25 < 1) %>%
@@ -1114,7 +1137,7 @@ scores_stats %>%
 
 Fig. \@ref(fig:worst) shows the best effort in predicting the most complex recordings. One information not declared before is that if the model does not predict any change, it will put a mark on the zero position. On the other side, the truth markers positioned at the beginning and the end of the recording were removed, as these locations lack information and do not represent a streaming setting.
 
-```{r worst, eval=TRUE, fig.height=15, fig.width=12, out.width="100%", dev="png", cache=FALSE}
+```{r worst, eval=TRUE, fig.height=15, fig.width=12, out.width="100%", dev="png", cache=TRUE}
 #| fig.cap="Prediction of the worst 10% of recordings (red is the truth, blue are the predictions)."
 
 worst <- scores_stats %>%
@@ -1146,7 +1169,7 @@ wrap_plots(plots, ncol = 1)
 Fig. \@ref(fig:best) shows the best performances of the best recordings. Notice that there are recordings with a significant duration and few regime changes, making it hard for a "trivial model" to predict randomly.
 
 
-```{r best, eval=TRUE, fig.height=15, fig.width=12, out.width="100%", dev="png", cache=FALSE}
+```{r best, eval=TRUE, fig.height=15, fig.width=12, out.width="100%", dev="png", cache=TRUE}
 #| fig.cap="Prediction of the best 10% of recordings (red is the truth, blue are the predictions)."
 
 bests <- scores_stats %>%
@@ -1181,7 +1204,7 @@ A work-in-progress version for the finer grid-search over the `regime_landmark` 
 
 Fig. \@ref(fig:globalmodel) shows the distribution of the FLOSS score of the 10% worst (left side) and 10% best models across the recordings (right side). The bluish color highlights the models with SD below 3 and IQR below 1.
 
-```{r globalmodel, eval=TRUE, fig.height=5, fig.width=10, out.width="100%", cache=FALSE}
+```{r globalmodel, eval=TRUE, fig.height=5, fig.width=10, out.width="100%", cache=TRUE}
 #| fig.cap="Violin plot showing the distribution of the FLOSS score achieved by all tested models during the
 #|  inner ressample.  The left half shows the models with the worst performances (10% overall), whereas
 #|  the right half shows the models with the best performances (10% overall).
@@ -1190,9 +1213,8 @@ Fig. \@ref(fig:globalmodel) shows the distribution of the FLOSS score of the 10%
 #|  and IQR below 1."
 
 scores_stats_model <- all_scores %>%
-  dplyr::distinct(across(all_of(predictors_names)), record, score) %>%
   dplyr::group_by(across(all_of(predictors_names))) %>%
-  dplyr::mutate(model = glue("{window_size}_{time_constraint}_{mp_threshold}_{regime_threshold}")) %>%
+  dplyr::mutate(model = glue("{window_size}_{time_constraint}_{mp_threshold}_{regime_threshold}_{regime_landmark}")) %>%
   dplyr::summarize(
     record = record,
     model = model,
@@ -1204,15 +1226,17 @@ scores_stats_model <- all_scores %>%
   ) %>%
   dplyr::ungroup()
 
-
-scores_stats_model$id <- (sprintf("%03d", (as.numeric(as.factor(scores_stats_model$model)))))
-scores_stats_model$id_text <- (sprintf("Model_%03d", (as.numeric(as.factor(scores_stats_model$model)))))
-scores_stats_model$record <- (sprintf("%02d", (as.numeric(factor(scores_stats_model$record, labels = levels(records_factors))))))
+scores_stats_model$id <- (sprintf("%05d", (as.numeric(as.factor(scores_stats_model$model)))))
+scores_stats_model$id_text <- (sprintf("Model_%05d", (as.numeric(as.factor(scores_stats_model$model)))))
+scores_stats_model$record <- (sprintf("%03d", (as.numeric(factor(scores_stats_model$record, labels = levels(records_factors))))))
 scores_stats_model <- scores_stats_model %>% dplyr::select(-model)
+
+low <- head(sort(unique(scores_stats_model$mean)), 20)
+high <- tail(sort(unique(scores_stats_model$mean)), 20)
 
 model_mean <- scores_stats_model %>%
   dplyr::mutate(low_sd = sd < 3) %>%
-  dplyr::filter(mean > quantile(mean, 0.9) | mean < quantile(mean, 0.1)) %>%
+  dplyr::filter(mean > dplyr::all_of(high) | mean < dplyr::all_of(low)) %>%
   ggplot2::ggplot(aes(x = reorder(reorder(id, -sd), -mean), y = score, colour = low_sd)) +
   ggplot2::scale_colour_manual(values = c("FALSE" = "#ff0000c2", "TRUE" = "#0000ffb5")) +
   ggplot2::geom_violin() +
@@ -1221,9 +1245,12 @@ model_mean <- scores_stats_model %>%
   ggplot2::theme(axis.text.x = element_text(size = 8, angle = 90, vjust = 0.5, hjust = 1)) +
   ggplot2::labs(subtitle = "Ordered by Mean and SD", colour = "SD < 3", x = ggplot2::element_blank(), y = "Score distribution")
 
+low <- head(sort(unique(scores_stats_model$median)), 20)
+high <- tail(sort(unique(scores_stats_model$median)), 20)
+
 model_median <- scores_stats_model %>%
   dplyr::mutate(low_iqr = q75 - q25 < 1) %>%
-  dplyr::filter(median > quantile(median, 0.9) | median < quantile(median, 0.1)) %>%
+  dplyr::filter(median > dplyr::all_of(high) | median < dplyr::all_of(low)) %>%
   ggplot2::ggplot(aes(x = reorder(reorder(id, -iqr), -median), y = score, colour = low_iqr)) +
   ggplot2::geom_violin() +
   ggplot2::coord_cartesian(ylim = c(0, 3)) +
@@ -1240,7 +1267,7 @@ model_median <- scores_stats_model %>%
 
 Fig. \@ref(fig:bestmodels) the performance of the six best models across all inner resamples. They are ordered from left to right, from the worst record to the best record. The top model is the one with the lowest mean across the scores. The blue line indicates the mean score, and the red line the median score. The scores above 3 are squished in the plot and colored according to the scale in the legend.
 
-```{r bestmodels, eval=TRUE, fig.height=22, fig.width=18, out.width="100%", cache=FALSE}
+```{r bestmodels, eval=TRUE, fig.height=22, fig.width=18, out.width="100%", cache=TRUE}
 #| fig.cap="Performances of the best 6 models across all inner resample of recordings.
 #|  The recordings are ordered by score, from the worst to the best.
 #|  Each plot shows one model, starting from the best one.
