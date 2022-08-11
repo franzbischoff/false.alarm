@@ -367,47 +367,49 @@ source(here::here("scripts", "common", "score_floss.R"))
 ```
 
 ```{r cached, echo=FALSE, cache=FALSE}
-network <- readRDS(here::here("output", "regime_network.rds"))
-outputs <- readRDS(here::here("output", "regime_outputs.rds"))
-net <- network %>%
+network_1 <- readRDS(here::here("output", "regime_network.rds"))
+outputs_1 <- readRDS(here::here("output", "regime_outputs.rds"))
+net_1 <- network_1 %>%
   visNetwork::visPhysics(hierarchicalRepulsion = list(
     springLength = 1,
     avoidOverlap = 0.5,
     nodeDistance = 120
   ))
-fitted1 <- outputs$fitted_models[[1]]
-fitted2 <- outputs$fitted_models[[2]]
+fitted1_1 <- outputs_1$fitted_models[[1]]
+fitted2_1 <- outputs_1$fitted_models[[2]]
 
-# predictors_names <- c("time_constraint", "mp_threshold", "window_size", "regime_threshold")
-outcome_name <- "mean"
+predictors_names_1 <- c("time_constraint", "mp_threshold", "window_size", "regime_threshold")
 predictors_names <- c("time_constraint", "regime_threshold", "mp_threshold", "window_size", "regime_landmark")
+outcome_name <- "mean"
 
-all_fitted <- lst_to_df(outputs$fitted_models)
-# all_scores <- all_fitted %>%
-#   # dplyr::slice_head(n = 10) %>%
-#   tidyr::unnest(.predictions) %>%
-#   ## mp_threshold of 1 and time_constraint of 750 are unrealistic, so we filter them out
-#   dplyr::filter(dplyr::if_any(predictors_names[2]) <= 0.9, dplyr::if_any(predictors_names[1]) >= 800) %>%
-#   dplyr::select(
-#     id, rep, .sizes, .id,
-#     all_of(predictors_names),
-#     .config, .pred, truth
-#   ) %>%
-#   dplyr::rename(fold = id, size = .sizes, record = .id, model = .config, pred = .pred) %>%
-#   dplyr::distinct(rep, record, across(all_of(predictors_names)), .keep_all = TRUE) %>%
-#   dplyr::mutate(truth = clean_truth(truth, size), pred = clean_pred(pred)) %>%
-#   dplyr::mutate(score = score_regimes(truth, pred, 0))
-all_scores <- readRDS(here::here("dev/all_scores3.rds"))
+all_fitted_1 <- lst_to_df(outputs_1$fitted_models)
+all_scores_1 <- all_fitted_1 %>%
+  # dplyr::slice_head(n = 10) %>%
+  tidyr::unnest(.predictions) %>%
+  ## mp_threshold of 1 and time_constraint of 750 are unrealistic, so we filter them out
+  dplyr::filter(dplyr::if_any(predictors_names_1[2]) <= 0.9, dplyr::if_any(predictors_names_1[1]) >= 800) %>%
+  dplyr::select(
+    id, rep, .sizes, .id,
+    all_of(predictors_names_1),
+    .config, .pred, truth
+  ) %>%
+  dplyr::rename(fold = id, size = .sizes, record = .id, model = .config, pred = .pred) %>%
+  dplyr::distinct(rep, record, across(all_of(predictors_names_1)), .keep_all = TRUE) %>%
+  dplyr::mutate(truth = clean_truth(truth, size), pred = clean_pred(pred)) %>%
+  dplyr::mutate(score = score_regimes(truth, pred, 0))
 
-# holdout_scores <- outputs$final_evaluation %>%
-#   dplyr::select(
-#     all_of(predictors_names),
-#     .estimate
-#   ) %>%
-#   dplyr::rename(score = .estimate) %>%
-#   dplyr::arrange(score) %>%
-#   dplyr::mutate(score = round(score, 3)) %>%
-#   dplyr::mutate(`#` = dplyr::row_number(), .before = 1)
+holdout_scores_1 <- outputs_1$final_evaluation %>%
+  dplyr::select(
+    all_of(predictors_names_1),
+    .estimate
+  ) %>%
+  dplyr::rename(score = .estimate) %>%
+  dplyr::arrange(score) %>%
+  dplyr::mutate(score = round(score, 3)) %>%
+  dplyr::mutate(`#` = dplyr::row_number(), .before = 1)
+
+# this is a join of the all_scores_1 with the results using the landmark
+all_scores <- readRDS(here::here("output/regime_outputs_lmk.rds"))
 ```
 
 
@@ -418,7 +420,7 @@ In this article, we will interchangeably use the words _parameter_, _variable_, 
 ## Current pipeline
 
 ```{r thepipeline, out.width="100%", fig.cap="FLOSS pipeline."}
-visNetwork::visInteraction(net, hover = TRUE, multiselect = TRUE, tooltipDelay = 100)
+visNetwork::visInteraction(net_1, hover = TRUE, multiselect = TRUE, tooltipDelay = 100)
 ```
 
 ## Tuning process
@@ -505,7 +507,7 @@ fit1$layers[[2]]$geom$default_aes$alpha <- NA
 Table \@ref(tab:holdout) shows the performance of the best ten models on the hold-out set (a set of records that was never used for training).
 
 ```{r holdout, eval = FALSE, cache=FALSE}
-kableExtra::kbl(holdout_scores,
+kableExtra::kbl(holdout_scores_1,
   booktabs = TRUE,
   col.names = c("#", "Time Constraint", "MP Threshold", "Window Size", "Regime Threshold", "FLOSS Score"),
   caption = "Holdout results of the 10 best models from cross-validation (less is better)",
@@ -565,10 +567,11 @@ E( score ) &= \alpha + time\_constraint\\
 Fig. \@ref(fig:interaction) shows the variable interaction strength between pairs of variables. That allows us to verify if there are any significant interactions between the variables. Using the information from the first model fit, equation \@ref(eq:first), we see that `mp_threshold` interacts strongly with `window_size`. After refitting, taking into account this interaction, we see that the interaction strength graphic is much better, equation \@ref(eq:refitted).
 
 ```{r modelbart, message=FALSE, cache=FALSE}
-# tree_data <- all_scores %>%
-#   dplyr::group_by(across(all_of(predictors_names))) %>%
-#   dplyr::summarize(mean = mean(score)) %>%
-#   dplyr::ungroup()
+tree_data <- all_scores %>%
+  dplyr::group_by(across(all_of(predictors_names))) %>%
+  dplyr::summarize(mean = mean(score)) %>%
+  dplyr::ungroup()
+
 trained_model <- NULL
 # Caching ===========
 if (file.exists(here("output", "dbarts_fitted_lmk.rds"))) {
@@ -582,7 +585,6 @@ train_data <- trained_model$training_data
 testing_data <- trained_model$testing_data
 set.seed(102)
 best_fit <- generics::fit(trained_model$model, train_data)
-# beepr::beep("complete")
 
 # Caching ===========
 if (file.exists(here("output", "importances_lmk.rds"))) {
@@ -595,27 +597,29 @@ if (file.exists(here("output", "importances_lmk.rds"))) {
   interactions <- interactions$interactions
 } else {
   interactions <- check_interactions(best_fit, train_data, predictors_names, parallel = TRUE)
-  pbFinished("interactions done")
-
   importance_firm <- check_importance(best_fit, testing_data, testing_data, predictors_names,
     type = "firm", parallel = TRUE
   )
-  pbFinished("importance_firm done")
+  importance_firm <- ggplot2::ggplot_build(importance_firm)$plot$data
+
   importance_perm <- check_importance(best_fit, testing_data, testing_data, predictors_names,
     type = "permute", nsim = 100, parallel = TRUE
   )
-  pbFinished("importance_perm done")
+  importance_perm <- ggplot2::ggplot_build(importance_perm)$plot$data
+  importance_perm <- attr(importance_perm, "raw_scores")
+  importance_perm <- tibble::as_tibble(t(importance_perm)) %>%
+    dplyr::select(all_of(predictors_names)) %>%
+    tidyr::pivot_longer(everything(), names_to = "Variable", values_to = "Importance")
+
   importance_shap <- check_importance(best_fit, train_data, testing_data[, predictors_names], predictors_names,
     type = "shap", nsim = 400, parallel = TRUE
   )
-  pbFinished("importance_shap done")
+  importance_shap <- ggplot2::ggplot_build(importance_shap)$plot$data
 
   shap_fastshap_all_test <- shap_explain(best_fit, train_data[, predictors_names], testing_data[, predictors_names],
     predictors_names,
     nsim = 400, parallel = TRUE
   )
-  pbFinished("shap_fastshap_all_test done")
-
   preds_test <- predict(best_fit, testing_data[, predictors_names])
   shap_html_test <- fastshap::force_plot(
     object = shap_fastshap_all_test, feature_values = testing_data[, predictors_names],
@@ -674,6 +678,7 @@ train_data2 <- train_data %>%
   dplyr::mutate(
     int_rt_rl = regime_threshold * regime_landmark,
     int_mp_w = mp_threshold * window_size,
+    int_mp_rl = mp_threshold * regime_landmark,
     # int_mp_rt = mp_threshold * regime_threshold
     # int_mp_tc = mp_threshold * time_constraint
     .before = mean
@@ -683,12 +688,13 @@ testing_data2 <- testing_data %>%
   dplyr::mutate(
     int_rt_rl = regime_threshold * regime_landmark,
     int_mp_w = mp_threshold * window_size,
+    int_mp_rl = mp_threshold * regime_landmark,
     # int_mp_rt = mp_threshold * regime_threshold
     # int_mp_tc = mp_threshold * time_constraint
     .before = mean
   )
 
-predictor_names_int <- c(predictors_names, "int_rt_rl", "int_mp_w")
+predictor_names_int <- c(predictors_names, "int_rt_rl", "int_mp_w", "int_mp_rl")
 
 trained_model2 <- NULL
 # Caching ==========
@@ -696,7 +702,6 @@ if (file.exists(here("output", "dbarts_fitted2_lmk.rds"))) {
   trained_model2 <- readRDS(here("output", "dbarts_fitted2_lmk.rds"))
 } else {
   trained_model2 <- train_models(NULL, parallel = TRUE, v = 5, rep = 1, grid = 30, train_data2, testing_data2)
-  pbFinished("trained_model2 done")
   saveRDS(trained_model2, file = here("output", "dbarts_fitted2_lmk.rds"))
 }
 
@@ -716,16 +721,26 @@ if (file.exists(here("output", "importances2_lmk.rds"))) {
   interactions2 <- interactions2$interactions2
 } else {
   interactions2 <- check_interactions(best_fit2, train_data2, predictors_names, parallel = TRUE)
+
   importance_firm2 <- check_importance(best_fit2, testing_data2, testing_data2, predictors_names, type = "firm", parallel = TRUE)
+  importance_firm2 <- ggplot2::ggplot_build(importance_firm2)$plot$data
+
   importance_perm2 <- check_importance(best_fit2, testing_data2, testing_data2, predictor_names_int,
     type = "permute",
     nsim = 100, parallel = TRUE
   )
+  importance_perm2 <- ggplot2::ggplot_build(importance_perm2)$plot$data
+  importance_perm2 <- attr(importance_perm2, "raw_scores")
+  importance_perm2 <- tibble::as_tibble(t(importance_perm2)) %>%
+    dplyr::select(all_of(predictors_names)) %>%
+    tidyr::pivot_longer(everything(), names_to = "Variable", values_to = "Importance")
+
   importance_shap2 <- check_importance(best_fit2, train_data2[, predictor_names_int], testing_data2[, predictor_names_int], predictor_names_int,
     type = "shap", nsim = 400, parallel = TRUE
   )
+  importance_shap2 <- ggplot2::ggplot_build(importance_shap2)$plot$data
+
   shap_fastshap_all_test2 <- shap_explain(best_fit2, train_data2[, predictor_names_int], testing_data2[, predictor_names_int], predictors_names, nsim = 400, parallel = TRUE)
-  pbFinished("shap_fastshap_all_test2 done")
 
   preds_test2 <- predict(best_fit2, testing_data2[, predictor_names_int])
   shap_html_test2 <- fastshap::force_plot(object = shap_fastshap_all_test2, feature_values = testing_data2[, predictors_names], baseline = mean(preds_test2$.pred), display = "html")
@@ -759,7 +774,7 @@ interactions_plot <- ggplot2::ggplot(interactions, ggplot2::aes(
     y = ggplot2::element_blank(),
     x = ggplot2::element_blank()
   ) +
-  ggplot2::ylim(0, 1.6) +
+  ggplot2::ylim(0, 1.65) +
   ggplot2::theme_bw() +
   ggplot2::theme(legend.position = "none")
 
@@ -774,7 +789,7 @@ interactions2_plot <- ggplot2::ggplot(interactions2, ggplot2::aes(
     y = "Interaction strength",
     x = ggplot2::element_blank()
   ) +
-  ggplot2::ylim(0, 1.6) +
+  ggplot2::ylim(0, 1.65) +
   ggplot2::theme_bw() +
   ggplot2::theme(legend.position = "none")
 
@@ -850,10 +865,16 @@ Fig. \@ref(fig:importance) then shows the variable importance using three method
 #|  (Fig. \\@ref(fig:interaction))."
 
 
-importance_firm_plot <- importance_firm +
+importance_firm_plot <- ggplot2::ggplot(importance_firm, aes(
+  x = reorder(Variable, Importance),
+  y = Importance, fill = Variable
+)) +
+  ggplot2::geom_col(colour = "grey35", size = 0.8, show.legend = FALSE) +
+  ggplot2::coord_flip() +
   ggplot2::labs(
     title = "Feature Importance Ranking Measure",
     subtitle = "Individual Conditional Expectation",
+    x = "",
     y = ggplot2::element_blank()
   ) +
   ggplot2::ylim(0, 3.5) +
@@ -863,9 +884,15 @@ importance_firm_plot <- importance_firm +
     plot.margin = margin(0, 0, 0, 10)
   )
 
-importance_perm_plot <- importance_perm +
+importance_perm_plot <- ggplot2::ggplot(importance_perm, aes(
+  x = reorder(Variable, Importance),
+  y = Importance, fill = Variable
+)) +
+  ggplot2::geom_boxplot(colour = "grey35", size = 0.5, show.legend = FALSE) +
+  ggplot2::coord_flip() +
   ggplot2::labs(
     title = "Permutation-based (100x)",
+    x = "",
     y = ggplot2::element_blank()
   ) +
   ggplot2::ylim(2, 15) +
@@ -875,9 +902,15 @@ importance_perm_plot <- importance_perm +
     plot.margin = margin(0, 0, 0, 10)
   )
 
-importance_shap_plot <- importance_shap +
+importance_shap_plot <- ggplot2::ggplot(importance_shap, aes(
+  x = reorder(Variable, Importance),
+  y = Importance, fill = Variable
+)) +
+  ggplot2::geom_col(colour = "grey35", size = 0.8, show.legend = FALSE) +
+  ggplot2::coord_flip() +
   ggplot2::labs(
     title = "SHAP (400 iterations)",
+    x = "",
     y = ggplot2::element_blank()
   ) +
   ggplot2::ylim(0, 1.6) +
@@ -887,8 +920,14 @@ importance_shap_plot <- importance_shap +
     plot.margin = margin(0, 0, 0, 10)
   )
 
-importance_firm2_plot <- importance_firm2 +
+importance_firm2_plot <- ggplot2::ggplot(importance_firm2, aes(
+  x = reorder(Variable, Importance),
+  y = Importance, fill = Variable
+)) +
+  ggplot2::geom_col(colour = "grey35", size = 0.8, show.legend = FALSE) +
+  ggplot2::coord_flip() +
   ggplot2::labs(
+    x = "",
     y = "Importance"
   ) +
   ggplot2::ylim(0, 3.5) +
@@ -898,8 +937,14 @@ importance_firm2_plot <- importance_firm2 +
     plot.margin = margin(0, 0, 0, 10)
   )
 
-importance_perm2_plot <- importance_perm2 +
+importance_perm2_plot <- ggplot2::ggplot(importance_perm2, aes(
+  x = reorder(Variable, Importance),
+  y = Importance, fill = Variable
+)) +
+  ggplot2::geom_boxplot(colour = "grey35", size = 0.5, show.legend = FALSE) +
+  ggplot2::coord_flip() +
   ggplot2::labs(
+    x = "",
     y = "Importance"
   ) +
   ggplot2::ylim(2, 15) +
@@ -909,8 +954,14 @@ importance_perm2_plot <- importance_perm2 +
     plot.margin = margin(0, 0, 0, 10)
   )
 
-importance_shap2_plot <- importance_shap2 +
+importance_shap2_plot <- ggplot2::ggplot(importance_shap2, aes(
+  x = reorder(Variable, Importance),
+  y = Importance, fill = Variable
+)) +
+  ggplot2::geom_col(colour = "grey35", size = 0.8, show.legend = FALSE) +
+  ggplot2::coord_flip() +
   ggplot2::labs(
+    x = "",
     y = "Importance"
   ) +
   ggplot2::ylim(0, 1.6) +
@@ -919,6 +970,7 @@ importance_shap2_plot <- importance_shap2 +
     legend.position = "none",
     plot.margin = margin(0, 0, 0, 10)
   )
+
 
 all <- (importance_firm_plot / importance_firm2_plot + plot_layout(tag_level = "new")) |
   (importance_perm_plot / importance_perm2_plot + plot_layout(tag_level = "new")) |
