@@ -353,6 +353,8 @@ div.tocify {
 </li>
 <li class="dropdown">
   <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+    <span class="fa fa-book"></span>
+     
     Blog
      
     <span class="caret"></span>
@@ -375,8 +377,20 @@ div.tocify {
 <li>
   <a href="report.html">Report</a>
 </li>
-<li>
-  <a href="regime_optimize.html">Regime Change</a>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+    Regime Change
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+    <li>
+      <a href="regime_optimize.html">First Optimization</a>
+    </li>
+    <li>
+      <a href="regime_optimize_2.html">Second Optimization</a>
+    </li>
+  </ul>
 </li>
 <li>
   <a href="about.html">About</a>
@@ -454,7 +468,7 @@ Checks <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></sp
 <div class="tab-content">
 <div id="summary" class="tab-pane fade in active">
 <p>
-<strong>Last updated:</strong> 2022-07-21
+<strong>Last updated:</strong> 2022-08-21
 </p>
 <p>
 <strong>Checks:</strong>
@@ -465,7 +479,7 @@ Checks <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></sp
 </p>
 <p>
 <strong>Knit directory:</strong>
-<code>false.alarm/docs/</code>
+<code>false.alarm_2submodels/docs/</code>
 <span class="glyphicon glyphicon-question-sign" aria-hidden="true" title="This is the local directory in which the code in this file was executed.">
 </span>
 </p>
@@ -582,20 +596,20 @@ makes it easier to run your code on other machines.</p>
 <div class="panel panel-default">
 <div class="panel-heading">
 <p class="panel-title">
-<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomfranzbischofffalsealarmtree332847719ca9442b5441ff9f9f07402200c59327targetblank3328477a">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomfranzbischofffalsealarmtree1b337ae6e1e13543ff9b52bbb19624f1ac37e868targetblank1b337aea">
 <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span>
-<strong>Repository version:</strong> <a href="https://github.com/franzbischoff/false.alarm/tree/332847719ca9442b5441ff9f9f07402200c59327" target="_blank">3328477</a>
+<strong>Repository version:</strong> <a href="https://github.com/franzbischoff/false.alarm/tree/1b337ae6e1e13543ff9b52bbb19624f1ac37e868" target="_blank">1b337ae</a>
 </a>
 </p>
 </div>
-<div id="strongRepositoryversionstrongahrefhttpsgithubcomfranzbischofffalsealarmtree332847719ca9442b5441ff9f9f07402200c59327targetblank3328477a" class="panel-collapse collapse">
+<div id="strongRepositoryversionstrongahrefhttpsgithubcomfranzbischofffalsealarmtree1b337ae6e1e13543ff9b52bbb19624f1ac37e868targetblank1b337aea" class="panel-collapse collapse">
 <div class="panel-body">
 <p>
 Great! You are using Git for version control. Tracking code development and
 connecting the code version to the results is critical for reproducibility.
 </p>
 <p>
-The results in this page were generated with repository version <a href="https://github.com/franzbischoff/false.alarm/tree/332847719ca9442b5441ff9f9f07402200c59327" target="_blank">3328477</a>.
+The results in this page were generated with repository version <a href="https://github.com/franzbischoff/false.alarm/tree/1b337ae6e1e13543ff9b52bbb19624f1ac37e868" target="_blank">1b337ae</a>.
 See the <em>Past versions</em> tab to see a history of the changes made to the
 R Markdown and HTML files.
 </p>
@@ -612,39 +626,22 @@ Ignored files:
     Ignored:    .Renviron
     Ignored:    .Rhistory
     Ignored:    .Rproj.user/
-    Ignored:    .devcontainer/exts/
     Ignored:    .docker/
-    Ignored:    .github/ISSUE_TEMPLATE/
     Ignored:    .httr-oauth
     Ignored:    R/RcppExports.R
     Ignored:    _regime_change/meta/process
     Ignored:    _regime_change/meta/progress
     Ignored:    _regime_change/objects/
-    Ignored:    _regime_change/scratch/
     Ignored:    _regime_change/user/
     Ignored:    _regime_optimize/meta/meta2
     Ignored:    _regime_optimize/meta/process
     Ignored:    _regime_optimize/meta/progress
     Ignored:    _regime_optimize/objects/
     Ignored:    _regime_optimize/user/
-    Ignored:    _targets/meta/process
-    Ignored:    _targets/meta/progress
-    Ignored:    _targets/objects/
-    Ignored:    _targets/user/
-    Ignored:    analysis/report_cache/
-    Ignored:    analysis/shiny/rsconnect/
     Ignored:    analysis/shiny_land/rsconnect/
-    Ignored:    dev/
+    Ignored:    dev
     Ignored:    inst/extdata/
-    Ignored:    papers/aime2021/aime2021.md
     Ignored:    papers/epia2022/epia2022.md
-    Ignored:    presentations/MEDCIDS21/MEDCIDS21-10min_files/
-    Ignored:    presentations/MEDCIDS21/MEDCIDS21_files/
-    Ignored:    presentations/Report/Midterm-Report_cache/
-    Ignored:    presentations/Report/Midterm-Report_files/
-    Ignored:    protocol/SecondReport_cache/
-    Ignored:    protocol/SecondReport_files/
-    Ignored:    protocol/_files/
     Ignored:    renv/python/
     Ignored:    renv/staging/
     Ignored:    src/RcppExports.cpp
@@ -659,9 +656,8 @@ Ignored files:
     Ignored:    src/stamp.o
     Ignored:    src/stomp.o
     Ignored:    src/windowfunc.o
-    Ignored:    thesis/Rplots.pdf
-    Ignored:    thesis/_bookdown_files/
-    Ignored:    tmp/
+    Ignored:    tests/testthat/_snaps/
+    Ignored:    tmp
 
 </code></pre>
 <p>
@@ -706,6 +702,23 @@ Message
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+html
+</td>
+<td>
+<a href="https://rawcdn.githack.com/franzbischoff/false.alarm/5943a09b5929113482a84084377dd1b4446c0c0b/docs/blog-202110.html" target="_blank">5943a09</a>
+</td>
+<td>
+Francisco Bischoff
+</td>
+<td>
+2022-07-21
+</td>
+<td>
+Build site.
+</td>
+</tr>
 <tr>
 <td>
 html
@@ -1067,21 +1080,21 @@ Session information
  collate  en_US.UTF-8
  ctype    en_US.UTF-8
  tz       Europe/Lisbon
- date     2022-07-21
+ date     2022-08-21
  pandoc   2.17.0.1 @ /usr/bin/ (via rmarkdown)
 
 ─ Packages ───────────────────────────────────────────────────────────────────
  package     * version     date (UTC) lib source
  askpass       1.1         2019-01-13 [1] CRAN (R 4.2.0)
- assertthat    0.2.1       2019-03-21 [1] CRAN (R 4.2.0)
+ assertthat    0.2.1       2019-03-21 [2] CRAN (R 4.2.0)
  backports     1.4.1       2021-12-13 [1] CRAN (R 4.2.0)
  base64url     1.4         2018-05-14 [1] CRAN (R 4.2.0)
- bookdown      0.27.3      2022-07-06 [1] Github (rstudio/bookdown@900f921)
- bslib         0.3.1       2021-10-06 [1] CRAN (R 4.2.0)
+ bookdown      0.28.1      2022-08-11 [1] Github (rstudio/bookdown@f52bdab)
+ bslib         0.4.0       2022-07-16 [1] CRAN (R 4.2.1)
  cachem        1.0.6       2021-08-19 [1] CRAN (R 4.2.0)
  callr         3.7.1       2022-07-13 [1] CRAN (R 4.2.1)
  cli           3.3.0       2022-04-25 [1] CRAN (R 4.2.0)
- codetools     0.2-18      2020-11-04 [2] CRAN (R 4.2.0)
+ codetools     0.2-18      2020-11-04 [1] CRAN (R 4.2.0)
  colorspace    2.0-3       2022-02-21 [1] CRAN (R 4.2.0)
  conflicted    1.1.0       2021-11-26 [1] CRAN (R 4.2.0)
  crayon        1.5.1       2022-03-26 [1] CRAN (R 4.2.0)
@@ -1089,31 +1102,31 @@ Session information
  data.table    1.14.2      2021-09-27 [1] CRAN (R 4.2.0)
  DBI           1.1.3       2022-06-18 [1] CRAN (R 4.2.0)
  debugme       1.1.0       2017-10-22 [1] CRAN (R 4.2.0)
- devtools      2.4.3       2021-11-30 [1] CRAN (R 4.2.0)
+ devtools      2.4.4       2022-07-20 [1] CRAN (R 4.2.1)
  digest        0.6.29      2021-12-01 [1] CRAN (R 4.2.0)
  dplyr       * 1.0.9       2022-04-28 [1] CRAN (R 4.2.0)
  ellipsis      0.3.2       2021-04-29 [1] CRAN (R 4.2.0)
- evaluate      0.15        2022-02-18 [1] CRAN (R 4.2.0)
+ evaluate      0.16        2022-08-09 [1] CRAN (R 4.2.1)
  fansi         1.0.3       2022-03-24 [1] CRAN (R 4.2.0)
  farver        2.1.1       2022-07-06 [1] CRAN (R 4.2.0)
  fastmap       1.1.0       2021-01-25 [1] CRAN (R 4.2.0)
  fs            1.5.2       2021-12-08 [1] CRAN (R 4.2.0)
  generics      0.1.3       2022-07-05 [1] CRAN (R 4.2.0)
- gert          1.6.0       2022-03-29 [1] CRAN (R 4.2.0)
+ gert          1.7.0       2022-08-07 [1] CRAN (R 4.2.1)
  getPass       0.2-2       2017-07-21 [1] CRAN (R 4.2.0)
  ggplot2     * 3.3.6       2022-05-03 [1] CRAN (R 4.2.0)
  git2r         0.30.1.9000 2022-04-29 [1] Github (ropensci/git2r@80ba185)
- gittargets  * 0.0.3.9000  2022-04-29 [1] Github (wlandau/gittargets@13a9cd8)
+ gittargets  * 0.0.4.9000  2022-08-14 [1] Github (wlandau/gittargets@64d5134)
  glue        * 1.6.2       2022-02-24 [1] CRAN (R 4.2.0)
  gridExtra     2.3         2017-09-09 [1] CRAN (R 4.2.0)
  gtable        0.3.0       2019-03-25 [1] CRAN (R 4.2.0)
  here        * 1.0.1       2020-12-13 [1] CRAN (R 4.2.0)
  highr         0.9         2021-04-16 [1] CRAN (R 4.2.0)
- htmltools     0.5.2       2021-08-25 [1] CRAN (R 4.2.0)
+ htmltools     0.5.3       2022-07-18 [1] CRAN (R 4.2.1)
  htmlwidgets   1.5.4       2021-09-08 [1] CRAN (R 4.2.0)
  httpuv        1.6.5       2022-01-05 [1] CRAN (R 4.2.0)
  httr          1.4.3       2022-05-04 [1] CRAN (R 4.2.0)
- igraph        1.3.3       2022-07-15 [1] CRAN (R 4.2.1)
+ igraph        1.3.4       2022-07-19 [1] CRAN (R 4.2.1)
  jquerylib     0.1.4       2021-04-26 [1] CRAN (R 4.2.0)
  jsonlite      1.8.0       2022-02-22 [1] CRAN (R 4.2.0)
  kableExtra  * 1.3.4       2021-02-20 [1] CRAN (R 4.2.0)
@@ -1124,40 +1137,45 @@ Session information
  lifecycle     1.0.1       2021-09-24 [1] CRAN (R 4.2.0)
  magrittr      2.0.3       2022-03-30 [1] CRAN (R 4.2.0)
  memoise       2.0.1       2021-11-26 [1] CRAN (R 4.2.0)
+ mime          0.12        2021-09-28 [1] CRAN (R 4.2.0)
+ miniUI        0.1.1.1     2018-05-18 [1] CRAN (R 4.2.0)
  munsell       0.5.0       2018-06-12 [1] CRAN (R 4.2.0)
  openssl       2.0.2       2022-05-24 [1] CRAN (R 4.2.0)
- pillar        1.7.0       2022-02-01 [1] CRAN (R 4.2.0)
+ pillar        1.8.0       2022-07-18 [1] CRAN (R 4.2.1)
  pkgbuild      1.3.1       2021-12-20 [1] CRAN (R 4.2.0)
  pkgconfig     2.0.3       2019-09-22 [1] CRAN (R 4.2.0)
  pkgload       1.3.0       2022-06-27 [1] CRAN (R 4.2.0)
  plotly      * 4.10.0      2021-10-09 [1] CRAN (R 4.2.0)
  prettyunits   1.1.1       2020-01-24 [1] CRAN (R 4.2.0)
  processx      3.7.0       2022-07-07 [1] CRAN (R 4.2.1)
+ profvis       0.3.7       2020-11-02 [1] CRAN (R 4.2.1)
  promises      1.2.0.1     2021-02-11 [1] CRAN (R 4.2.0)
  ps            1.7.1       2022-06-18 [1] CRAN (R 4.2.0)
  purrr         0.3.4       2020-04-17 [1] CRAN (R 4.2.0)
  R6            2.5.1       2021-08-19 [1] CRAN (R 4.2.0)
  Rcpp          1.0.9       2022-07-08 [1] CRAN (R 4.2.1)
  remotes       2.4.2       2021-11-30 [1] CRAN (R 4.2.0)
- renv          0.15.5      2022-05-26 [1] CRAN (R 4.2.0)
+ renv          0.15.5-49   2022-08-11 [1] Github (rstudio/renv@96d0a62)
  rlang         1.0.4       2022-07-12 [1] CRAN (R 4.2.1)
- rmarkdown     2.14.3      2022-06-23 [1] Github (rstudio/rmarkdown@d23e479)
+ rmarkdown     2.14.3      2022-07-28 [1] Github (rstudio/rmarkdown@63b7ecf)
  rprojroot     2.0.3       2022-04-02 [1] CRAN (R 4.2.0)
  rstudioapi    0.13        2020-11-12 [1] CRAN (R 4.2.0)
  rvest         1.0.2       2021-10-16 [1] CRAN (R 4.2.0)
- sass          0.4.1       2022-03-23 [1] CRAN (R 4.2.0)
+ sass          0.4.2       2022-07-16 [1] CRAN (R 4.2.1)
  scales        1.2.0       2022-04-13 [1] CRAN (R 4.2.0)
  sessioninfo   1.2.2       2021-12-06 [1] CRAN (R 4.2.0)
+ shiny         1.7.2       2022-07-19 [1] CRAN (R 4.2.1)
  stringi       1.7.8       2022-07-11 [1] CRAN (R 4.2.1)
  stringr       1.4.0       2019-02-10 [1] CRAN (R 4.2.0)
- svglite       2.1.0.9000  2022-04-29 [1] Github (r-lib/svglite@d673908)
+ svglite       2.1.0.9000  2022-08-11 [1] Github (r-lib/svglite@8f30fc6)
  sys           3.4         2020-07-23 [1] CRAN (R 4.2.0)
  systemfonts   1.0.4       2022-02-11 [1] CRAN (R 4.2.0)
- tarchetypes * 0.6.0       2022-04-19 [1] CRAN (R 4.2.0)
- targets     * 0.12.1      2022-06-03 [1] CRAN (R 4.2.0)
- tibble      * 3.1.7       2022-05-03 [1] CRAN (R 4.2.0)
+ tarchetypes * 0.7.0       2022-08-05 [1] CRAN (R 4.2.1)
+ targets     * 0.13.1      2022-08-05 [1] CRAN (R 4.2.1)
+ tibble      * 3.1.8       2022-07-22 [1] CRAN (R 4.2.1)
  tidyr         1.2.0       2022-02-01 [1] CRAN (R 4.2.0)
  tidyselect    1.1.2       2022-02-21 [1] CRAN (R 4.2.0)
+ urlchecker    1.0.1       2021-11-30 [1] CRAN (R 4.2.1)
  usethis       2.1.6       2022-05-25 [1] CRAN (R 4.2.0)
  utf8          1.2.2       2021-07-24 [1] CRAN (R 4.2.0)
  uuid          1.1-0       2022-04-19 [1] CRAN (R 4.2.0)
@@ -1167,11 +1185,12 @@ Session information
  whisker       0.4         2019-08-28 [1] CRAN (R 4.2.0)
  withr         2.5.0       2022-03-03 [1] CRAN (R 4.2.0)
  workflowr   * 1.7.0       2021-12-21 [1] CRAN (R 4.2.0)
- xfun          0.31        2022-05-10 [1] CRAN (R 4.2.0)
+ xfun          0.32        2022-08-10 [1] CRAN (R 4.2.1)
  xml2          1.3.3       2021-11-30 [1] CRAN (R 4.2.0)
+ xtable        1.8-4       2019-04-21 [1] CRAN (R 4.2.0)
  yaml          2.3.5       2022-02-21 [1] CRAN (R 4.2.0)
 
- [1] /workspace/.cache/R/renv/proj_libs/false.alarm-d6f1a0d1/R-4.2/x86_64-pc-linux-gnu
+ [1] /workspace/.cache/R/renv/proj_libs/false.alarm_2submodels-0a931486/R-4.2/x86_64-pc-linux-gnu
  [2] /usr/lib/R/library
 
 ──────────────────────────────────────────────────────────────────────────────</code></pre>
