@@ -92,6 +92,7 @@ README.html
 Rplots.pdf
 dev
 dev/
+dev
 packrat/lib*/
 packrat/src/
 src-*/
@@ -113,5 +114,4 @@ mpxtest.RData
 .devcontainer/mathjax.tgz
 docs/thesis/*.log
 docs/thesis/__*.tex
-analysis/shiny/rsconnect/shinyapps.io/franzbischoff/FLOSS.dcf
-analysis/shiny_land/rsconnect/shinyapps.io/franzbischoff/FLOSS_land.dcf
+**/rsconnect/**

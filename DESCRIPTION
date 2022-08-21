@@ -16,7 +16,8 @@ License: CC BY-NC-SA 4.0
 URL: https://github.com/franzbischoff/false.alarm
 BugReports: https://github.com/franzbischoff/false.alarm/issues
 Depends:
-    R (>= 4.2)
+    R (>= 4.2),
+    parsnip (>= 1.0.0)
 Imports:
     bookdown (>= 0.22),
     checkmate (>= 2.0.0),
@@ -26,6 +27,8 @@ Imports:
     gridExtra (>= 2.3),
     here (>= 0.1.0),
     kableExtra (>= 1.3.4),
+    magrittr (>= 2.0.3),
+    parsnip (>= 1.0.0),
     plotly (>= 4.9.3),
     purrr (>= 0.3.4),
     Rcpp (>= 1.0.6),
@@ -35,10 +38,11 @@ Imports:
     targets (>= 0.2.0),
     thesisdown (>= 0.1.9),
     tibble (>= 3.1.6),
-    tidymodels (>= 0.1.4),
+    tune (>= 1.0.0.9000),
     visNetwork (>= 2.1.0),
     workflowr (>= 1.6.2),
-    yardstick (>= 0.0.9)
+    workflows (>= 1.0.0),
+    yardstick (>= 1.0.0)
 Suggests:
     clustermq (>= 0.8.95),
     codemetar (>= 0.3.3),
@@ -75,7 +79,8 @@ Remotes:
     r-lib/testthat,
     rstudio/bookdown,
     rstudio/rmarkdown,
-    wlandau/gittargets
+    wlandau/gittargets,
+    franzbischoff/tune@539e1eea1426e9ace11b4e71ac4dafadddda7f0a
 Config/testthat/edition: 3
 Config/testthat/parallel: false
 Encoding: UTF-8

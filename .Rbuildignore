@@ -58,8 +58,6 @@
 ^false.alarm.*\.tgz$
 ^false.alarm\.Rcheck$
 ^flowcharts$
-^inst/extdata$
-^inst/testfiles$
 ^output$
 ^packrat$
 ^papers$

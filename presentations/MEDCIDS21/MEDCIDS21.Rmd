@@ -466,7 +466,7 @@ The results on detecting regime changes are very similar in both cases. Fig. `r 
 
 
 ```{r output_data, cache=TRUE, include=FALSE}
-output <- readRDS(here("output/work_output.rds"))
+output <- readRDS(here("output/work_output_202110.rds"))
 mp_data <- output$mp_constraint[[1]]$II[[76]]
 mp_data <- tibble(time = seq_along(mp_data$cac), cac = mp_data$cac, iac = mp_data$iac, arcs = mp_data$arcs)
 floss_data <- output$floss_constraint[[1]]$II[[76]]

@@ -598,7 +598,15 @@
   },
   "fileSize": "3447194.077KB",
   "readme": "https://github.com/franzbischoff/false.alarm/blob/master/README.md",
-  "contIntegration": ["https://github.com/franzbischoff/false.alarm/actions/workflows/R-CMD-check.yaml", "https://codecov.io/gh/franzbischoff/false.alarm"],
+  "contIntegration": [
+    "https://github.com/franzbischoff/false.alarm/actions/workflows/R-CMD-check.yaml",
+    "https://codecov.io/gh/franzbischoff/false.alarm"
+  ],
   "developmentStatus": "https://www.repostatus.org/#wip",
-  "keywords": ["ecg", "signal-processing", "time-series", "matrix-profile"]
+  "keywords": [
+    "ecg",
+    "signal-processing",
+    "time-series",
+    "matrix-profile"
+  ]
 }

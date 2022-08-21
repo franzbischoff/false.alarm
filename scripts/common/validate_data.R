@@ -32,7 +32,7 @@ validate_data <- function(data, window_size) {
 
   # TODO: validate_data() may be useful for MPX too, but needs to be checked.
 
-  windowed_size <- length(data) - window_size + 1
+  # windowed_size <- length(data) - window_size + 1
   pad_size <- window_size - 1
   is_finite <- is.finite(data)
 

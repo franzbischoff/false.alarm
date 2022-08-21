@@ -9,11 +9,11 @@
 
 # Language
 
-as_symbols <- tarchetypes:::as_symbols
+# as_symbols <- tarchetypes:::as_symbols
 
-call_ns <- tarchetypes:::call_ns
+# call_ns <- tarchetypes:::call_ns
 
-call_function <- tarchetypes:::call_function
+# call_function <- tarchetypes:::call_function
 
 # Hacks
 
@@ -22,9 +22,19 @@ lst_to_df <- function(lst, keep_attributes = TRUE) {
 
   if (keep_attributes) {
     nc <- nrow(new_df)
-    attributes(new_df) <- attributes(lst[[1]])
-    attr(new_df, "row.names") <- seq.int(1, nc)
+    attributes(new_df) <- attributes(lst[[1L]])
+    attr(new_df, "row.names") <- seq.int(1L, nc)
   }
 
   return(new_df)
+}
+
+clean_splits_data <- function(object) {
+  tidy_splits <- object$splits
+  tidy_splits <- purrr::map(tidy_splits, function(x) {
+    x$data$ts <- NA
+    x
+  })
+  object$splits <- tidy_splits
+  object
 }

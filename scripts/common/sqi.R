@@ -39,7 +39,7 @@ deriv3 <- function(data) {
 }
 
 sd_r <- function(data) {
-  std(data)
+  false.alarm::std(data)
 }
 
 rmssd_r <- function(data) {
@@ -102,6 +102,7 @@ complexity <- function(data) {
 
 hard_limit <- function(data) {
   value <- sum(data == max(data, na.rm = TRUE) | data == min(data, na.rm = TRUE), na.rm = TRUE)
+  value
 }
 
 compl <- function(data) {
