@@ -406,63 +406,6 @@ f1_score <- function(precision, recall) {
   2 * precision * recall / (precision + recall)
 }
 
-score_regimes_old <- function(gtruth, reported, data_size) {
-  # FIXME: Fix this on regime_test
-  # idxs <- sort(regime$idxs)
-  # idxs <- idxs[diff(idxs) > params$batch] # this removes the redundant regime changes
-  # score <- score_regimes(params$gold_truth, regime$idxs, length(data))
-  # "!DEBUG Finished Score."
-  # regime$score <- score
-
-
-  gtruth <- gtruth[gtruth > 0]
-  reported <- reported[reported > 0]
-
-  m <- length(gtruth)
-  n <- length(reported)
-
-  out <- max(m, n)
-  inn <- min(m, n)
-
-  # FIXME: by default, outer should be the reported (paper!); swaping this gives different results.
-  if (out == m) {
-    outer <- sort(gtruth)
-    inner <- sort(reported)
-  } else {
-    outer <- sort(reported)
-    inner <- sort(gtruth)
-  }
-
-  # minv <- rep(Inf, out)
-
-  # for (j in seq.int(1, out)) {
-  #   for (i in seq.int(1, inn)) {
-  #     if (abs(inner[i] - outer[j]) < abs(minv[j])) {
-  #       minv[j] <- abs(inner[i] - outer[j])
-  #     }
-  #   }
-  # }
-
-  minv <- rep(Inf, out)
-
-  k <- 1
-
-  for (j in seq.int(1, out)) {
-    for (i in seq.int(k, inn)) {
-      if (abs(inner[i] - outer[j]) <= minv[j]) {
-        minv[j] <- abs(inner[i] - outer[j])
-        k <- i # pruning, truth and reported must be sorted
-      } else {
-        break # pruning, truth and reported must be sorted
-      }
-    }
-  }
-
-  score <- sum(minv) / (inn * data_size)
-  score
-}
-
-
 # tr <- c(1516, 1994, 3529, 5198, 8488, 9066, 15778, 16692, 21630, 22321, 28498, 28984, 46029, 46520, 51368, 51958, 54301, 54895, 64938, 65422, 80239, 80731, 83144, 83636, 84790, 85289)
 # pr <- c(5751, 9951, 13151, 15751, 17451, 22551, 22951, 29851, 37851, 40651, 45851, 51251, 54151, 55951, 61351, 64751, 65751, 84551)
 # pr <- c(4782, 17780, 23868, 39882)

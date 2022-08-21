@@ -25,8 +25,6 @@ process_ts_in_file <- function(ecg_data, id, fun, params, exclude = "time") {
   "!DEBUG file `file`."
   checkmate::qassert(file, "S1")
 
-  fun_name <- substitute(fun)
-
   paas <- attr(ecg_data[[1]], "params")
 
   "!!DEBUG assert paas: `paas$window_size`, params: `params$window_size`."
@@ -95,7 +93,7 @@ process_ts_in_file <- function(ecg_data, id, fun, params, exclude = "time") {
 
   result <- list()
   result[[file]] <- purrr::map(ecg_data, function(x) { ## attributes are lost with 2 lists
-    "!DEBUG calling `fun_name`() for TS `names(x)`."
+    "!DEBUG calling `substitute(fun)`() for TS `names(x)`."
 
     if (checkmate::qtest(x, "L1")) {
       x <- x[[1]]

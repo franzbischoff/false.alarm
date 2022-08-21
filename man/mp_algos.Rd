@@ -15,7 +15,7 @@ stamp(
   query = NULL,
   exclusion_zone = 0.5,
   s_size = 1,
-  n_workers = 1,
+  n_workers = 1L,
   progress = TRUE
 )
 
@@ -26,7 +26,7 @@ scrimp(
   exclusion_zone = 0.5,
   s_size = 1,
   pre_scrimp = 0.25,
-  n_workers = 1,
+  n_workers = 1L,
   progress = TRUE
 )
 
@@ -190,10 +190,10 @@ Website: \url{http://www.cs.ucr.edu/~eamonn/MatrixProfile.html}
 
 \code{mpxab()} for the forward and reverse join-similarity.
 
-Other matrix profile computations: 
+Other matrix profile computations:
 \code{\link{stomp}()}
 
-Other matrix profile computations: 
+Other matrix profile computations:
 \code{\link{stomp}()}
 }
 \concept{matrix profile computations}

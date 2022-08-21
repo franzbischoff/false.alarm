@@ -19,7 +19,7 @@
 znorm <- function(data, rcpp = TRUE) {
   # Rcpp is faster
   if (rcpp) {
-    return(znorm_rcpp(data))
+    return(znorm_rcpp(data)) # nolint
   }
 
   data_mean <- mean(data)
@@ -50,9 +50,9 @@ znorm <- function(data, rcpp = TRUE) {
 #' correlation <- ed_corr(fake_data, 50)
 ed_corr <- function(data, w, rcpp = TRUE) {
   if (rcpp) {
-    return(ed_corr_rcpp(data, w))
+    return(ed_corr_rcpp(data, w)) # nolint
   } else {
-    return((2 * w - data^2) / (2 * w))
+    return((2.0 * w - data^2.0) / (2.0 * w))
   }
 }
 
@@ -69,9 +69,9 @@ ed_corr <- function(data, w, rcpp = TRUE) {
 #' euclidean <- corr_ed(fake_data, 50)
 corr_ed <- function(data, w, rcpp = TRUE) {
   if (rcpp) {
-    return(corr_ed_rcpp(data, w))
+    return(corr_ed_rcpp(data, w)) # nolint
   } else {
-    sqrt(2 * w * (1 - ifelse(data > 1, 1, data)))
+    sqrt(2.0 * w * (1.0 - pmin(data, 1.0)))
   }
 }
 
@@ -93,7 +93,7 @@ mode <- function(x, rcpp = FALSE) {
 
   # Rcpp is not faster
   if (rcpp) {
-    return(mode_rcpp(x))
+    return(mode_rcpp(x)) # nolint
   }
 
   ux <- unique(x)
@@ -112,11 +112,10 @@ mode <- function(x, rcpp = FALSE) {
 #' @examples
 #' fake_data <- c(1, 1.4, 4.3, 5.1, 2, 3.6, 1.24, 2, 9, 4.3, 5, 2.1, 3)
 #' res <- std(fake_data)
-std <- function(data, na.rm = FALSE, rcpp = TRUE) { # nolint
-
+std <- function(data, na.rm = FALSE, rcpp = TRUE) {
   # Rcpp is faster
   if (rcpp) {
-    return(std_rcpp(data, na.rm))
+    return(std_rcpp(data, na.rm)) # nolint
   }
 
   sdx <- stats::sd(data, na.rm)
@@ -125,7 +124,7 @@ std <- function(data, na.rm = FALSE, rcpp = TRUE) { # nolint
     return(NA)
   }
 
-  return(sqrt((length(data) - 1) / length(data)) * sdx)
+  return(sqrt((length(data) - 1L) / length(data)) * sdx)
 }
 
 #' Math Functions
@@ -141,13 +140,13 @@ std <- function(data, na.rm = FALSE, rcpp = TRUE) { # nolint
 #' @examples
 #' fake_data <- c(1, 1.4, 4.3, 5.1, 2, 3.6, 1.24, 1, 9, 4.3, 5, 2.1, 3)
 #' res <- normalize(fake_data)
-normalize <- function(data, min_lim = 0, max_lim = 1, rcpp = FALSE) {
+normalize <- function(data, min_lim = 0.0, max_lim = 1.0, rcpp = FALSE) {
   if (rcpp) {
     na <- sort(which(is.na(data)))
     data <- data[!is.na(data)]
-    data <- normalize_rcpp(data, min_lim, max_lim)
+    data <- normalize_rcpp(data, min_lim, max_lim) # nolint
     for (n in na) {
-      data <- append(data, NA, n - 1)
+      data <- append(data, NA, n - 1.0)
     }
     return(data)
   }
@@ -177,7 +176,7 @@ normalize <- function(data, min_lim = 0, max_lim = 1, rcpp = FALSE) {
 #' fake_data <- c(1, 1.4, 4.3, 5.1, 2, 3.6, 1.24, 8, 9, 4.3, 5, 2.1, 3)
 #' res <- complexity(fake_data)
 complexity <- function(data) {
-  return(sqrt(sum(diff(data)^2)))
+  return(sqrt(sum(diff(data)^2.0)))
 }
 
 #' Math Functions
@@ -195,24 +194,24 @@ complexity <- function(data) {
 #' res <- binary_split(fake_data)
 binary_split <- function(n, rcpp = TRUE) {
   if (rcpp) {
-    res <- binary_split_rcpp(as.integer(n))
+    res <- binary_split_rcpp(as.integer(n)) # nolint
     return(as.integer(res))
   }
 
-  if (n < 2) {
-    return(1)
+  if (n < 2L) {
+    return(1L)
   }
 
   split <- function(lb, ub, m) {
     if (lb == m) {
       l <- NULL
-      r <- c(m + 1, ub)
+      r <- c(m + 1L, ub)
     } else if (ub == m) {
-      l <- c(lb, m - 1)
+      l <- c(lb, m - 1L)
       r <- NULL
     } else {
-      l <- c(lb, m - 1)
-      r <- c(m + 1, ub)
+      l <- c(lb, m - 1L)
+      r <- c(m + 1L, ub)
     }
 
     return(list(l = l, r = r))
@@ -221,28 +220,28 @@ binary_split <- function(n, rcpp = TRUE) {
   idxs <- vector(mode = "numeric", length = n)
   intervals <- list()
 
-  idxs[1] <- 1 # We always begin by explore the first integer
-  intervals[[1]] <- c(2, n) # After exploring the first integer, we begin splitting the interval 2:n
-  i <- 2
+  idxs[1L] <- 1L # We always begin by explore the first integer
+  intervals[[1L]] <- c(2L, n) # After exploring the first integer, we begin splitting the interval 2L:n
+  i <- 2L
 
-  while (length(intervals) > 0) {
-    lb <- intervals[[1]][1]
-    ub <- intervals[[1]][2]
-    mid <- floor((lb + ub) / 2)
-    intervals[[1]] <- NULL
+  while (length(intervals) > 0L) {
+    lb <- intervals[[1L]][1L]
+    ub <- intervals[[1L]][2L]
+    mid <- floor((lb + ub) / 2.0)
+    intervals[[1L]] <- NULL
 
     idxs[i] <- mid
-    i <- i + 1
+    i <- i + 1L
 
     if (lb == ub) {
       next
     } else {
       lr <- split(lb, ub, mid)
       if (!is.null(lr$l)) {
-        intervals[[length(intervals) + 1]] <- lr$l
+        intervals[[length(intervals) + 1L]] <- lr$l
       }
       if (!is.null(lr$r)) {
-        intervals[[length(intervals) + 1]] <- lr$r
+        intervals[[length(intervals) + 1L]] <- lr$r
       }
     }
   }
@@ -278,7 +277,7 @@ motif_quality <- function(mp, method = c("mean", "median"), input_format = c("eu
     mp <- corr_ed(mp, window_size)
   }
 
-  result <- 1 - (min(mp) / do.call(method, list(mp)))
+  result <- 1.0 - (min(mp) / do.call(method, list(mp)))
 
   return(result)
 }

@@ -10,7 +10,7 @@
 source(here("scripts", "_globals.R"))
 # Load all scripts
 script_files <- list.files(here::here("scripts", "classification"), pattern = "*.R")
-sapply(here::here("scripts", "classification", script_files), source, local = .GlobalEnv, encoding = "UTF-8")
+purrr::walk(here::here("scripts", "classification", script_files), source, local = .GlobalEnv, encoding = "UTF-8")
 rm(script_files)
 
 # Overwrite some configs
@@ -306,6 +306,7 @@ list(
 # rolling_origin {rsample}
 
 #### Pipeline: Join targets ----
-# list(r_input, r_dataset, b_initial_split, b_data_pos_neg, b_find_shapelets, b_find_neg_shapelets, b_data_pos_neg, b_find_val_shapelets, b_find_neg_val_shapelets)
+# list(r_input, r_dataset, b_initial_split, b_data_pos_neg, b_find_shapelets,
+#   b_find_neg_shapelets, b_data_pos_neg, b_find_val_shapelets, b_find_neg_val_shapelets)
 
 #### Pipeline: End ----

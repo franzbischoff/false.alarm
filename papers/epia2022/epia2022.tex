@@ -115,9 +115,9 @@ for formal diagnostics of hearth electric conduction pathologies. The automatic 
 derived from a complete analysis of the 12-dimension data after it is fully and well collected.
 
 In February 2015, the CinC/Physionet Challenge 2015 was about ``Reducing False Arrhythmia Alarms in
-the ICU'' {[}\protect\hyperlink{ref-Clifford2015}{2}{]}. The introduction article stated that it had been reported that up to 86\%
+the ICU'' {[}\protect\hyperlink{ref-Clifford2015}{4}{]}. The introduction article stated that it had been reported that up to 86\%
 of the alarms are false, which can lead to decreased staff attention and an increase in patients'
-delirium {[}\protect\hyperlink{ref-Chambrin2001}{1}, \protect\hyperlink{ref-Lawless1994}{10}, \protect\hyperlink{ref-Parthasarathy2004}{13}{]}.
+delirium {[}\protect\hyperlink{ref-Chambrin2001}{3}, \protect\hyperlink{ref-Lawless1994}{12}, \protect\hyperlink{ref-Parthasarathy2004}{15}{]}.
 
 This subject highlights the importance of correctly identifying abnormal hearth electric patterns.
 Meanwhile, this opens the opportunity of thinking outside the ICU setting, where we still monitor
@@ -138,7 +138,7 @@ memory) while maintaining robustness?
 \section{Related Works}\label{related-works}}
 
 The Physionet's challenge yielded several papers on the subject
-{[}\protect\hyperlink{ref-couto2015}{3}, \protect\hyperlink{ref-fallet2015}{5}, \protect\hyperlink{ref-hoogantink2015}{8}, \protect\hyperlink{ref-kalidas2015}{9}, \protect\hyperlink{ref-plesinger2015}{14}{]}. However, independently of
+{[}\protect\hyperlink{ref-couto2015}{5}, \protect\hyperlink{ref-fallet2015}{7}, \protect\hyperlink{ref-hoogantink2015}{10}, \protect\hyperlink{ref-kalidas2015}{11}, \protect\hyperlink{ref-plesinger2015}{16}{]}. However, independently of
 their approach to this problem, none of the authors reported benchmarks, memory usage, robustness
 test, or context invariance that could assure its implementation in smaller devices.
 
@@ -148,34 +148,34 @@ test, or context invariance that could assure its implementation in smaller devi
 \hypertarget{dataset}{%
 \subsection{Dataset}\label{dataset}}
 
-The dataset used is the CinC/Physionet Challenge 2015 public dataset {[}\protect\hyperlink{ref-Clifford2015}{2}{]}, composed of
+The dataset used is the CinC/Physionet Challenge 2015 public dataset {[}\protect\hyperlink{ref-Clifford2015}{4}{]}, composed of
 750 patients with at least five minutes records. The \emph{events} we seek to identify are the
-life-threatening arrhythmias as defined by Physionet's challenge {[}\protect\hyperlink{ref-Clifford2015}{2}{]}.
+life-threatening arrhythmias as defined by Physionet's challenge {[}\protect\hyperlink{ref-Clifford2015}{4}{]}.
 
 \hypertarget{matrix-profile}{%
 \subsection{Matrix Profile}\label{matrix-profile}}
 
-This work will use the state-of-the-art {[}\protect\hyperlink{ref-DePaepe2020}{4}, \protect\hyperlink{ref-Feremans2020}{6}{]} time series analysis technique
+This work will use the state-of-the-art {[}\protect\hyperlink{ref-DePaepe2020}{6}, \protect\hyperlink{ref-Feremans2020}{8}{]} time series analysis technique
 called Matrix Profile (MP) that, once computed, allows us to derive frameworks for all sorts of
-tasks, such as motif discovery, anomaly detection, regime change detection, and others {[}\protect\hyperlink{ref-Yeh2017a}{16}{]}.
-The MP is known to be an incredible fast algorithm {[}\protect\hyperlink{ref-gharghabi2018}{7}, \protect\hyperlink{ref-Madrid2019}{11}{]}, thus viewing on
+tasks, such as motif discovery, anomaly detection, regime change detection, and others {[}\protect\hyperlink{ref-Yeh2017a}{18}{]}.
+The MP is known to be an incredible fast algorithm {[}\protect\hyperlink{ref-gharghabi2018}{9}, \protect\hyperlink{ref-Madrid2019}{13}{]}, thus viewing on
 the other side (not to process billions of data points using a desktop), it has a great potential to
 be used on small devices.
 
 The streaming data coming from a patient is processed to create its MP in real-time. Then, the
-FLOSS algorithm {[}\protect\hyperlink{ref-gharghabi2018}{7}{]} is computed to detect a regime change. When a new regime is
+FLOSS algorithm {[}\protect\hyperlink{ref-gharghabi2018}{9}{]} is computed to detect a regime change. When a new regime is
 detected, a sample of this new regime is analyzed by a model, and a decision is made. If the new
 regime is life-threatening, the alarm will be fired.
 
 \hypertarget{detecting-regime-changes}{%
 \subsection{Detecting regime changes}\label{detecting-regime-changes}}
 
-The regime change detection will use the FLOSS algorithm {[}\protect\hyperlink{ref-gharghabi2018}{7}{]}, an online algorithm built
+The regime change detection will use the FLOSS algorithm {[}\protect\hyperlink{ref-gharghabi2018}{9}{]}, an online algorithm built
 on top of the computed MP. The algorithm is based on the assumption that between two regimes, the
 most similar shape (its nearest neighbor, 1-NN) is located on ``the same side''. The details of the
-algorithm are described in the original paper {[}\protect\hyperlink{ref-gharghabi2018}{7}{]}. In short, the algorithm keeps track
+algorithm are described in the original paper {[}\protect\hyperlink{ref-gharghabi2018}{9}{]}. In short, the algorithm keeps track
 of the number of 1-NN references (called \emph{Arc Counts}) that crosses a point in time. As shown in
-the original article, figures 2 and 3 {[}\protect\hyperlink{ref-gharghabi2018}{7}{]}, a drop in the Arc Counts indicates a regime
+the original article, figures 2 and 3 {[}\protect\hyperlink{ref-gharghabi2018}{9}{]}, a drop in the Arc Counts indicates a regime
 change.
 
 \hypertarget{classification-of-the-new-regime}{%
@@ -186,18 +186,26 @@ to identify the exact type of the new regime but if it is life-threatening or no
 choice is a classification model using shapelets as signatures of such patterns. In this case, we
 will need to use a set of shapelet candidates, which maximize the classification performance.
 
-Leveraging on the MP concept, we can use the Contrast Profile (CP) {[}\protect\hyperlink{ref-Mercer2021}{12}{]} to derive a set of
+Leveraging on the MP concept, we can use the Contrast Profile (CP) {[}\protect\hyperlink{ref-Mercer2021}{14}{]} to derive a set of
 shapelets candidates. The CP looks for patterns simultaneously very \emph{similar} to its neighbors in
 class \emph{A} while being very \emph{different} from the nearest neighbor in class \emph{B}.
 
 For a complete understanding of the process, in the original article, figure 6 shows a practical
-example {[}\protect\hyperlink{ref-Mercer2021}{12}{]}.
+example {[}\protect\hyperlink{ref-Mercer2021}{14}{]}.
+
+\hypertarget{validation}{%
+\subsection{Validation}\label{validation}}
+
+Both processes of detecting regime change and classification of the new regime has its own type of scoring.
+The extended details is available online {[}\protect\hyperlink{ref-franz_evaluation}{1}{]}. The best parameters will be selected using
+\emph{nested resampling} {[}\protect\hyperlink{ref-Bischl2012}{2}{]}. While the regime change will try to minimize the false negatives (keeping
+the false positives as low as possible), the classification model will try to eliminate the false positives.
 
 \hypertarget{implementation}{%
 \subsection{Implementation}\label{implementation}}
 
 Later, this workflow will be experimented on a low-power device, such as an ESP32 microcontroller
-{[}\protect\hyperlink{ref-esp32}{15}{]}, to validate the concept and measure the performance and benchmarks.
+{[}\protect\hyperlink{ref-esp32}{17}{]}, to validate the concept and measure the performance and benchmarks.
 
 \hypertarget{expected-results-and-outcomes}{%
 \section{Expected results and outcomes}\label{expected-results-and-outcomes}}
@@ -213,68 +221,76 @@ in the presence of noise and artifacts seen in real-world applications.
 
 \hypertarget{refs}{}
 \begin{CSLReferences}{0}{0}
-\leavevmode\vadjust pre{\hypertarget{ref-Chambrin2001}{}}%
+\leavevmode\vadjust pre{\hypertarget{ref-franz_evaluation}{}}%
 \CSLLeftMargin{1. }
+\CSLRightInline{Franzbischoff/false.alarm: Ph.d. Report - evaluation of the algorithms, \url{https://franzbischoff.github.io/false.alarm/report.html\#evaluation}, last accessed 2022/01/31.}
+
+\leavevmode\vadjust pre{\hypertarget{ref-Bischl2012}{}}%
+\CSLLeftMargin{2. }
+\CSLRightInline{Bischl, B. et al.: {Resampling Methods for Meta-Model Validation with Recommendations for Evolutionary Computation}. Evolutionary Computation. 20, 2, 249--275 (2012). https://doi.org/\href{https://doi.org/10.1162/EVCO_a_00069}{10.1162/EVCO\_a\_00069}. https://www.ncbi.nlm.nih.gov/pubmed/\href{https://www.ncbi.nlm.nih.gov/pubmed/22339368}{22339368}.}
+
+\leavevmode\vadjust pre{\hypertarget{ref-Chambrin2001}{}}%
+\CSLLeftMargin{3. }
 \CSLRightInline{Chambrin, M.C.: Alarms in the intensive care unit: How can the number of false alarms be reduced? Critical care (London, England). 5, 4, 184--8 (2001). https://doi.org/\href{https://doi.org/10.1186/cc1021}{10.1186/cc1021}.}
 
 \leavevmode\vadjust pre{\hypertarget{ref-Clifford2015}{}}%
-\CSLLeftMargin{2. }
+\CSLLeftMargin{4. }
 \CSLRightInline{Clifford, G.D. et al.: The PhysioNet/computing in cardiology challenge 2015: Reducing false arrhythmia alarms in the ICU. In: Computing in cardiology. (2015). https://doi.org/\href{https://doi.org/10.1109/cic.2015.7408639}{10.1109/cic.2015.7408639}.}
 
 \leavevmode\vadjust pre{\hypertarget{ref-couto2015}{}}%
-\CSLLeftMargin{3. }
+\CSLLeftMargin{5. }
 \CSLRightInline{Couto, P. et al.: Suppression of false arrhythmia alarms using ECG and pulsatile waveforms. Presented at the September (2015). https://doi.org/\href{https://doi.org/10.1109/cic.2015.7411019}{10.1109/cic.2015.7411019}.}
 
 \leavevmode\vadjust pre{\hypertarget{ref-DePaepe2020}{}}%
-\CSLLeftMargin{4. }
+\CSLLeftMargin{6. }
 \CSLRightInline{De Paepe, D. et al.: {A generalized matrix profile framework with support for contextual series analysis}. Engineering Applications of Artificial Intelligence. 90, January, 103487 (2020). https://doi.org/\href{https://doi.org/10.1016/j.engappai.2020.103487}{10.1016/j.engappai.2020.103487}.}
 
 \leavevmode\vadjust pre{\hypertarget{ref-fallet2015}{}}%
-\CSLLeftMargin{5. }
+\CSLLeftMargin{7. }
 \CSLRightInline{Fallet, S. et al.: A multimodal approach to reduce false arrhythmia alarms in the intensive care unit. Presented at the September (2015). https://doi.org/\href{https://doi.org/10.1109/cic.2015.7408640}{10.1109/cic.2015.7408640}.}
 
 \leavevmode\vadjust pre{\hypertarget{ref-Feremans2020}{}}%
-\CSLLeftMargin{6. }
+\CSLLeftMargin{8. }
 \CSLRightInline{Feremans, L. et al.: {Pattern-Based Anomaly Detection in Mixed-Type Time Series}. In: Lecture notes in computer science (including subseries lecture notes in artificial intelligence and lecture notes in bioinformatics). pp. 240--256 (2020). https://doi.org/\href{https://doi.org/10.1007/978-3-030-46150-8_15}{10.1007/978-3-030-46150-8\_15}.}
 
 \leavevmode\vadjust pre{\hypertarget{ref-gharghabi2018}{}}%
-\CSLLeftMargin{7. }
+\CSLLeftMargin{9. }
 \CSLRightInline{Gharghabi, S. et al.: Domain agnostic online semantic segmentation for multi-dimensional time series. Data Mining and Knowledge Discovery. 33, 1, 96--130 (2018). https://doi.org/\href{https://doi.org/10.1007/s10618-018-0589-3}{10.1007/s10618-018-0589-3}.}
 
 \leavevmode\vadjust pre{\hypertarget{ref-hoogantink2015}{}}%
-\CSLLeftMargin{8. }
+\CSLLeftMargin{10. }
 \CSLRightInline{Hoog Antink, C., Leonhardt, S.: Reducing false arrhythmia alarms using robust interval estimation and machine learning. Presented at the September (2015). https://doi.org/\href{https://doi.org/10.1109/cic.2015.7408642}{10.1109/cic.2015.7408642}.}
 
 \leavevmode\vadjust pre{\hypertarget{ref-kalidas2015}{}}%
-\CSLLeftMargin{9. }
+\CSLLeftMargin{11. }
 \CSLRightInline{Kalidas, V., Tamil, L.S.: Enhancing accuracy of arrhythmia classification by combining logical and machine learning techniques. Presented at the September (2015). https://doi.org/\href{https://doi.org/10.1109/cic.2015.7411015}{10.1109/cic.2015.7411015}.}
 
 \leavevmode\vadjust pre{\hypertarget{ref-Lawless1994}{}}%
-\CSLLeftMargin{10. }
+\CSLLeftMargin{12. }
 \CSLRightInline{Lawless, S.T.: Crying wolf: False alarms in a pediatric intensive care unit. Critical care medicine. 22, 6, 981--5 (1994). https://www.ncbi.nlm.nih.gov/pubmed/\href{https://www.ncbi.nlm.nih.gov/pubmed/8205831}{8205831}.}
 
 \leavevmode\vadjust pre{\hypertarget{ref-Madrid2019}{}}%
-\CSLLeftMargin{11. }
+\CSLLeftMargin{13. }
 \CSLRightInline{Madrid, F. et al.: {Matrix Profile XVI: Efficient and Effective Labeling of Massive Time Series Archives}. In: 2019 IEEE international conference on data science and advanced analytics (DSAA). pp. 463--472 IEEE (2019). https://doi.org/\href{https://doi.org/10.1109/DSAA.2019.00061}{10.1109/DSAA.2019.00061}.}
 
 \leavevmode\vadjust pre{\hypertarget{ref-Mercer2021}{}}%
-\CSLLeftMargin{12. }
+\CSLLeftMargin{14. }
 \CSLRightInline{Mercer, R. et al.: Matrix profile XXIII: Contrast profile: A novel time series primitive that allows real world classification. In: 2021 IEEE international conference on data mining (ICDM). pp. 1240--1245 (2021). https://doi.org/\href{https://doi.org/10.1109/ICDM51629.2021.00151}{10.1109/ICDM51629.2021.00151}.}
 
 \leavevmode\vadjust pre{\hypertarget{ref-Parthasarathy2004}{}}%
-\CSLLeftMargin{13. }
+\CSLLeftMargin{15. }
 \CSLRightInline{Parthasarathy, S., Tobin, M.J.: Sleep in the intensive care unit. Intensive Care Medicine. 30, 2, 197--206 (2004). https://doi.org/\href{https://doi.org/10.1007/s00134-003-2030-6}{10.1007/s00134-003-2030-6}.}
 
 \leavevmode\vadjust pre{\hypertarget{ref-plesinger2015}{}}%
-\CSLLeftMargin{14. }
+\CSLLeftMargin{16. }
 \CSLRightInline{Plesinger, F. et al.: False alarms in intensive care unit monitors: Detection of life-threatening arrhythmias using elementary algebra, descriptive statistics and fuzzy logic. Presented at the September (2015). https://doi.org/\href{https://doi.org/10.1109/cic.2015.7408641}{10.1109/cic.2015.7408641}.}
 
 \leavevmode\vadjust pre{\hypertarget{ref-esp32}{}}%
-\CSLLeftMargin{15. }
+\CSLLeftMargin{17. }
 \CSLRightInline{Wikipedia: ESP32, \url{https://en.wikipedia.org/wiki/ESP32}, last accessed 2022/06/13.}
 
 \leavevmode\vadjust pre{\hypertarget{ref-Yeh2017a}{}}%
-\CSLLeftMargin{16. }
+\CSLLeftMargin{18. }
 \CSLRightInline{Yeh, C.-C.M. et al.: Matrix profile i: All pairs similarity joins for time series: A unifying view that includes motifs, discords and shapelets. In: 2016 IEEE 16th international conference on data mining (ICDM). pp. 1317--1322 IEEE (2016). https://doi.org/\href{https://doi.org/10.1109/ICDM.2016.0179}{10.1109/ICDM.2016.0179}.}
 
 \end{CSLReferences}

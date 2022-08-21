@@ -5,7 +5,8 @@ navbar:
   left:
     - text: Home
       href: index.html
-    - text: Blog
+    - icon: fa fa-book
+      text: Blog
       menu:
         - text: 2021, August
           href: blog-202108.html
@@ -18,7 +19,11 @@ navbar:
     - text: Report
       href: report.html
     - text: Regime Change
-      href: regime_optimize.html
+      menu:
+        - text: First Optimization
+          href: regime_optimize.html
+        - text: Second Optimization
+          href: regime_optimize_2.html
     - text: About
       href: about.html
     - text: License

@@ -20,12 +20,14 @@ library(here)
 
 <!-- badges init -->
 
-[![minimal R version](https://img.shields.io/badge/R%3E=-4.0.0-brightgreen.svg)](https://cran.r-project.org/)
+[![minimal R version](https://img.shields.io/badge/R%3E=-4.2.0-brightgreen.svg)](https://cran.r-project.org/)
 [![Licence](https://mirrors.creativecommons.org/presskit/buttons/80x15/svg/by-nc-sa.svg)](http://creativecommons.org/licenses/by-nc-sa/4.0/)
 
 Dataset hosted by:
 
 [![](https://zenodo.org/badge/DOI/10.5281/zenodo.4634013.svg)](https://doi.org/10.5281/zenodo.4634013)
+[![](https://zenodo.org/badge/DOI/10.5281/zenodo.6879232.svg)](https://doi.org/10.5281/zenodo.6879232)
+
 
 <!-- badges end -->
 

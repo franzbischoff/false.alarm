@@ -12,7 +12,10 @@
 
 find_all_files <- function(path = here::here("inst/extdata/physionet"),
                            data_type = c("alarm", "regimes"),
-                           classes = c("all", "asystole", "bradycardia", "tachycardia", "fibv", "vtachy", "persistent_afib", "paroxysmal_afib", "non_afib"),
+                           classes = c(
+                             "all", "asystole", "bradycardia", "tachycardia", "fibv",
+                             "vtachy", "persistent_afib", "paroxysmal_afib", "non_afib"
+                           ),
                            limit_per_class = 1000,
                            long = FALSE) {
   "!DEBUG Starting process"
