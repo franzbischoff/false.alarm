@@ -71,12 +71,13 @@ my_graphics <- function(image_name, base_path = here::here("docs", "figure")) {
 }
 
 my_plot_html <- function(html, options) {
-  structure(paste0(
-    "<div class=\"figure\" style=\"text-align: ",
-    options$fig.align, "\">", html, "<p class=\"caption\">(#",
-    options$fig.lp, options$label, ")", options$fig.cap, "</p></div>"
-  ),
-  class = "knit_asis"
+  structure(
+    paste0(
+      "<div class=\"figure\" style=\"text-align: ",
+      options$fig.align, "\">", html, "<p class=\"caption\">(#",
+      options$fig.lp, options$label, ")", options$fig.cap, "</p></div>"
+    ),
+    class = "knit_asis"
   )
 }
 
@@ -367,7 +368,7 @@ source(here::here("scripts", "common", "read_ecg.R"))
 source(here::here("scripts", "common", "score_floss.R"))
 ```
 
-```{r cached, echo=FALSE, cache=TRUE}
+```{r cached, echo=FALSE, cache=FALSE}
 network_1 <- readRDS(here::here("output", "regime_network.rds"))
 outputs_1 <- readRDS(here::here("output", "regime_outputs.rds"))
 net_1 <- network_1 %>%
@@ -414,9 +415,9 @@ all_scores <- readRDS(here::here("output/regime_outputs_lmk.rds"))
 ```
 
 
-# Regime changes optimization
+# Regime changes optimization (continuation)
 
-In this article, we will interchangeably use the words _parameter_, _variable_, and _feature_.
+Following the [previous article](regime_optimize.html), this article aims to complete the analysis of the regime change optimization.  Here we add the `regime_landmark` parameter to the optimization.
 
 ## Current pipeline
 
@@ -426,7 +427,8 @@ visNetwork::visInteraction(net_1, hover = TRUE, multiselect = TRUE, tooltipDelay
 
 ## Tuning process
 
-As we have seen previously, the FLOSS algorithm is built on top of the Matrix Profile (MP). Thus, we have proposed several parameters that may or not impact the FLOSS prediction performance.
+As we have seen previously, the FLOSS algorithm is built on top of the Matrix Profile (MP).  Thus, we have proposed
+several parameters that may or not impact the FLOSS prediction performance.
 
 The variables for building the MP are:
 
@@ -437,111 +439,34 @@ The variables for building the MP are:
 Later, the FLOSS algorithm also has a parameter that needs tuning to optimize the prediction:
 
 -  **`regime_threshold`**: the threshold below which a regime change is considered.
+-  **`regime_landmark`**: the point in time where the regime threshold is applied.
 
-Using the `tidymodels` framework, we performed a basic grid search on all these parameters, followed by a bayesian search trying to finetune the parameters.
+Using the `tidymodels` framework, we performed a basic grid search on all these parameters, now limiting the exploration
+on the MP and focusing on the FLOSS parameters.
 
 The workflow is as follows:
 
--  From a total of 229 records, a set of 171 records were selected for tuning, and 58 records were held out.
--  From these 171 records, a 5-fold cross-validation was performed two times. Here is where the grid search was performed (Figs. \@ref(fig:marginalplot) and \@ref(fig:performanceplot)).
--  The best ten models from the cross-validation (5 models from each time) were then evaluated on the hold-out set. Table \@ref(tab:holdout).
+-  From the original set of 229 records, a subset of 137 records was selected for the grid search.
+-  The MP parameters were explored using the following values:
+   -  **`mp_threshold`**: 0.0, 0.4, 0.6 and 0.8;
+   -  **`time_constraint`**: 0, 800 and 1500;
+   -  **`window_size`**: 25, 50, 75, 100, 125 and 150;
+-  The FLOSS parameters were explored using the following values:
+   -  **`regime_threshold`**: 0.05 to 0.90, by 0.05 steps;
+   -  **`regime_landmark`**: 1 to 10, by 0.5 steps.
 
-
-Fig. \@ref(fig:marginalplot) shows the performance achieved individually during the cross-validation for each parameter. The plot shows the default performance metric (`floss_error_macro`) and another version (`floss_error_micro`) where the error is computed globally, being less prone to individual record errors.
-
-```{r marginalplot, eval = FALSE, out.width="100%", cache=TRUE}
-#| fig.cap="Marginal plot of all parameters searched during the cross-validation.
-#|  The first line shows the default performance metric (`macro`), which is the average of the scores of every recording
-#|  in the resamples. The line below shows another metric (`micro`) which does not take into account the length of every
-#|  recording but is later normalized by the total length of the resample. Lower values are better."
-
-plot_data <- all_fitted %>% # this will collect the macro and micro scores
-  tidyr::unnest(.metrics) %>%
-  ## mp_threshold of 1 and time_constraint of 750 are unrealistic, so we filter them out
-  dplyr::filter(dplyr::if_any(predictors_names[2]) <= 0.9, dplyr::if_any(predictors_names[1]) >= 800) %>%
-  dplyr::select(all_of(predictors_names), .metric, .estimate) %>%
-  dplyr::rename(prediction = .estimate, metric = .metric) %>%
-  tidyr::pivot_longer(names_to = "parameter", values_to = "value", cols = all_of(predictors_names))
-
-aa <- ggplot2::ggplot(plot_data, ggplot2::aes(x = value, y = prediction, group = value)) +
-  ggplot2::geom_boxplot(outlier.alpha = 0.2) +
-  ggplot2::facet_grid(metric ~ parameter, scales = "free") +
-  ggplot2::labs(title = "Marginal plot", x = "Parameter value", y = "Performance") +
-  ggplot2::ylim(0, 30) +
-  ggplot2::theme_bw()
-
-hack <- rlang::env_get(aa$layers[[1]]$stat, "compute_group")
-body(hack)[[16]][[3]] <- quote(dplyr::if_else(data$x[1] <= 10, 0.02021286,
-  dplyr::if_else(data$x[1] <= 500, 5, 20)
-))
-rlang::env_poke(aa$layers[[1]]$stat, "compute_group", hack)
-aa
-body(hack)[[16]][[3]] <- quote(width) # unhack
-rlang::env_poke(aa$layers[[1]]$stat, "compute_group", hack) # unhack
-```
-
-Fig. \@ref(fig:performanceplot) shows the performance across all cross-validation folds for every iteration of the bayes search.
-
-```{r performanceplot, eval=FALSE, fig.height = 7.5, out.width="90%", cache=TRUE}
-#| fig.cap="Parameters exploration using  Bayesian optimization. The plots show the performances across all cross-validation
-#|  folds on every iteration of the bayes search. The first line shows the results of the first repetition, and
-#|  the second line during the second repetition. The values on the left are shown in the default metric (`macro`).
-#|  On the right side, the values are shown in the `micro` metric. The iteration 'Zero' is the initial grid search."
-
-fit1 <- tune::autoplot(fitted1, type = "performance", width = 0.8) +
-  ggplot2::labs(title = "Performances - Repetition 1", x = "Iterations", y = "Performance") +
-  ggplot2::ylim(0, 45) + ggplot2::theme_bw()
-
-fit1$layers[[1]]$geom$default_aes$alpha <- 0.2
-fit1$layers[[2]]$geom$default_aes$alpha <- 0.5
-
-fit2 <- tune::autoplot(fitted2, type = "performance", width = 0.8) +
-  ggplot2::labs(title = "Performances - Repetition 2", x = "Iterations", y = "Performance") +
-  ggplot2::ylim(0, 45) + ggplot2::theme_bw()
-
-fit1 / fit2
-
-fit1$layers[[1]]$geom$default_aes$alpha <- NA
-fit1$layers[[2]]$geom$default_aes$alpha <- NA
-```
-
-Table \@ref(tab:holdout) shows the performance of the best ten models on the hold-out set (a set of records that was never used for training).
-
-```{r holdout, eval = FALSE, cache=TRUE}
-kableExtra::kbl(holdout_scores_1,
-  booktabs = TRUE,
-  col.names = c("#", "Time Constraint", "MP Threshold", "Window Size", "Regime Threshold", "FLOSS Score"),
-  caption = "Holdout results of the 10 best models from cross-validation (less is better)",
-  align = "c",
-  position = "ht"
-) %>%
-  kableExtra::row_spec(0, bold = TRUE) %>%
-  kableExtra::kable_styling(full_width = TRUE)
-```
+The results were then combined with the previous optimization and deduplicated.
 
 ## Parameters analysis
 
-The above process was an example of parameter tuning seeking the best model for a given set of parameters. It used a nested cross-validation procedure that aims to find the best combination of parameters and avoid overfitting.
-
-While this process is powerful and robust, it does not show us the importance of each parameter. At least one parameter has been introduced by reasoning about the problem (`mp_threshold`), but how important it (and other parameters) is for predicting regime changes?
-
-For example, the process above took 4 days, 20 hours, and 15 minutes to complete the grid search using an Intel(R) Xeon(R) Silver 4210R @ 2.40 GHz server. Notice that about 133 different combinations of parameters were tested on computing the MP (not FLOSS, the `regime_threshold`), 5 folds, 2 times each. That sums up about 35.2 x 10^9^ all-pairs Euclidean distances computed on less than 5 days (on CPU, not GPU). Not bad.
-
-Another side note on the above process, it is not a "release" environment, so we must consider lots of overhead in computation and memory usage that must be taken into account during these five days of grid search. Thus, much time can be saved if we know what parameters are essential for the problem.
-
-In order to check the effect of the parameters on the model, we need to compute the _importance_ of each parameter.
-
-Wei _et al._ published a comprehensive review on variable importance analysis [@Wei2015].
-
-Our case is not a typical case of variable importance analysis, where a set of _features_ are tested against an _outcome_. Instead, we have to proxy our analysis by using as _outcome_ the FLOSS performance score and as _features_ (or _predictors_) the tuning parameters that lead to that score.
-
-That is accomplished by fitting a model using the tuning parameters to predict the FLOSS score and then applying the techniques to compute the importance of each parameter.
-
-For this matter, a Bayesian Additive Regression Trees (BART) model was chosen after an experimental trial with a set of regression models (including glmnet, gbm, mlp) and for its inherent characteristics, which allows being used for model-free variable selection [@Chipman2010]. The best BART model was selected using 10-fold cross-validation repeated 3 times, having great predictive power with an RMSE around 0.2 and an R^2^ around 0.99. With this fitted model, we could evaluate each parameter's importance.
+As before, we started by computing the _importance_ of each parameter [@Wei2015]. We used the same approach
+using the Bayesian Additive Regression Trees (BART) model to fit the tuning parameters as predictors of the
+FLOSS score.
 
 ### Interactions
 
-Before starting the parameter importance analysis, we need to consider the parameter interactions since this is usually the weak spot of the analysis techniques, as will be discussed later.
+Before starting the parameter importance analysis, we need to consider the parameter interactions since this
+is usually the weak spot of the analysis techniques.
 
 The first BART model was fitted using the following parameters:
 
@@ -549,7 +474,7 @@ The first BART model was fitted using the following parameters:
 \begin{aligned}
 E( score ) &= \alpha + time\_constraint\\
  &\quad + mp\_threshold + window\_size\\
- &\quad + regime\_threshold
+ &\quad + regime\_threshold + regime\_landmark
 \end{aligned}
 (\#eq:first)
 \end{equation}
@@ -560,14 +485,23 @@ After checking the interactions, this is the refitted model:
 \begin{aligned}
 E( score ) &= \alpha + time\_constraint\\
 &\quad + mp\_threshold + window\_size\\
-&\quad + regime\_threshold + \left(mp\_threshold \times window\_size\right)
+&\quad + regime\_threshold + regime\_landmark\\
+&\quad + \left(regime\_threshold \times regime\_landmark\right)\\
+&\quad + \left(mp\_threshold \times regime\_landmark\right)\\
+&\quad + \left(mp\_threshold \times window\_size\right)
 \end{aligned}
 (\#eq:refitted)
 \end{equation}
 
-Fig. \@ref(fig:interaction) shows the variable interaction strength between pairs of variables. That allows us to verify if there are any significant interactions between the variables. Using the information from the first model fit, equation \@ref(eq:first), we see that `mp_threshold` interacts strongly with `window_size`. After refitting, taking into account this interaction, we see that the interaction strength graphic is much better, equation \@ref(eq:refitted).
+Fig.  \@ref(fig:interaction) shows the variable interaction strength between pairs of variables.  That allows us to
+verify if there are any significant interactions between the variables.  Using the information from the first model fit,
+equation \@ref(eq:first), we see that `regime_threshold` interacts strongly with `regime_landmark`.  This interaction
+was already expected, and we see that even after refitting the model, equation \@ref(eq:refitted), this interaction is
+still strong.
 
-```{r modelbart, message=FALSE, cache=TRUE}
+This is not a problem _per se_ but a signal we must be aware of when exploring the parameters.
+
+```{r modelbart, message=FALSE, cache=FALSE}
 tree_data <- all_scores %>%
   dplyr::group_by(across(all_of(predictors_names))) %>%
   dplyr::summarize(mean = mean(score)) %>%
@@ -637,14 +571,6 @@ if (file.exists(here("output", "importances_lmk.rds"))) {
     shap_html_test = shap_html_test
   ), file = here("output", "importances_lmk.rds"))
 }
-
-# tree_data2 <- tree_data %>%
-#   dplyr::mutate(
-#     int_mp_w = mp_threshold * window_size,
-#     # int_mp_rt = mp_threshold * regime_threshold
-#     # int_mp_tc = mp_threshold * time_constraint
-#     .before = mean
-#   )
 
 # A tibble: 10 × 2
 #    Variables                        Interaction
@@ -759,7 +685,7 @@ if (file.exists(here("output", "importances2_lmk.rds"))) {
 ```
 
 
-```{r interaction, fig.height = 5, fig.width= 8, out.width="100%", cache=TRUE}
+```{r interaction, fig.height = 7, fig.width= 8, out.width="100%"}
 #| fig.cap="Variable interactions strength using feature importance ranking measure (FIRM) approach [@Greenwell2018].
 #|  A) Shows strong interaction between `regime_threshold` and `regime_landmark`, `mp_threshold` and `window_size`,
 #|     `mp_threshold` and `regime_landmark`.
@@ -807,61 +733,27 @@ inter + plot_annotation(
 
 ### Importance
 
-After evaluating the interactions, we then can perform the analysis of the variable importance. The goal is to understand how the FLOSS score behaves when we change the parameters.
+After evaluating the interactions, we can then perform the analysis of the variable importance. The goal is to understand how the FLOSS score behaves when we change the parameters.
 
-Here is a brief overview of the different techniques:
-
-####  Feature Importance Ranking Measure (FIRM)
-
-The FIRM is a variance-based method. This implementation uses the ICE curves to quantify each feature effect which is more robust than partial dependance plots (PDP) [@Greenwell2020].
-
-It is also helpful to inspect the ICE curves to uncover some heterogeneous relationships with the outcome [@Molnar2022].
-
-**Advantages:**
-
-*  Has a causal interpretation (for the model, not for the real world)
-*  ICE curves can uncover heterogeneous relationships
-
-**Disadvantages:**
-
-*  The method does not take into account interactions.
-
-#### Permutation
-
-The Permutation method was introduced by Breiman in 2001 [@Breiman2001] for Random Forest, and the implementation used here is a model-agnostic version introduced by Fisher _et al._ in 2019 [@Fisher2018]. A feature is "unimportant" if shuffling its values leaves the model error unchanged, assuming that the model has ignored the feature for the prediction.
-
-**Advantages:**
-
-*  Easy interpretation: the importance is the increase in model error when the feature's information is destroyed.
-*  No interactions: the interaction effects are also destroyed by permuting the feature values.
-
-**Disadvantages:**
-
-*  It is linked to the model error: not a disadvantage _per se_, but may lead to misinterpretation if the goal is to understand how the output varies, regardless of the model's performance. For example, if we want to measure the robustness of the model when someone tampers the features, we want to know the _model variance_ explained by the features. Model variance (explained by the features) and feature importance correlate strongly when the model generalizes well (it is not overfitting).
-*  Correlations: If features are correlated, the permutation feature importance can be biased by unrealistic data instances. Thus we need to be careful if there are strong correlations between features.
-
-#### SHAP
-
-The SHAP feature importance [@Lundberg2017] is an alternative to permutation feature importance. The difference between both is that Permutation feature importance is based on the decrease in model performance, while SHAP is based on the magnitude of feature attributions.
-
-**Advantages:**
-
-*  It is not linked to the model error: as the underlying concept of SHAP is the Shapley value, the value attributed to each feature is related to its contribution to the output value. If a feature is important, its addition will significantly affect the output.
-
-**Disadvantages:**
-
-*  Computer time: Shapley value is a computationally expensive method and usually is computed using Montecarlo simulations.
-*  The Shapley value can be misinterpreted: The Shapley value of a feature value **is not** the difference of the predicted value after removing the feature from the model training. The interpretation of the Shapley value is: "Given the current set of feature values, the contribution of a feature value to the difference between the actual prediction and the mean prediction is the estimated Shapley value" [@Molnar2022].
-*  Correlations: As with other permutation methods, the SHAP feature importance can be biased by unrealistic data instances when features are correlated.
+The techniques for evaluating the variable importances were described in the [previous article](regime_optimize.html).
 
 ### Importance analysis
 
-Using the three techniques above simultaneously allows a broad comparison of the model behavior [@Greenwell2020]. All three methods are model-agnostic (separates interpretation from the model), but as we have seen above, each method has its advantages and disadvantages [@Molnar2022].
+Using the three techniques simultaneously allows a broad comparison of the model behavior [@Greenwell2020].  All
+three methods are model-agnostic (separates interpretation from the model), but as we have seen, each method has
+its advantages and disadvantages [@Molnar2022].
 
-Fig. \@ref(fig:importance) then shows the variable importance using three methods: Feature Importance Ranking Measure (FIRM) using Individual Conditional Expectation (ICE), Permutation-based, and Shapley Additive explanations (SHAP). The first line of this figure shows that the interaction between `mp_threshold` and `window_size` obscures the results, where except for `time_constraint`, the other variables have similar importance. In the second line, the most important feature that all three methods agree on is the `regime_threshold`.
+Fig.  \@ref(fig:importance) then shows the variable importance using three methods: Feature Importance Ranking Measure
+(FIRM) using Individual Conditional Expectation (ICE), Permutation-based, and Shapley Additive explanations (SHAP).  The
+first line of this figure shows an interesting result that probably comes from the main disadvantage of the FIRM method:
+_the method does not take into account interactions_.  We see that FIRM is the only one that disagrees with the other
+two methods, giving much importance to `window_size`.
 
+In the second line, taking into account the interactions, we see that all methods somewhat agree with each other,
+accentuating the importance of `regime_threshold`, which makes sense as it is the most evident parameter we need to set
+to determine if the _Arc Counts_ are low enough to indicate a regime change.
 
-```{r importance, fig.height = 7, fig.width= 15, out.width="100%", cache=TRUE}
+```{r importance, fig.height = 7, fig.width= 15, out.width="100%"}
 #| fig.cap="Variables importances using three different methods. A) Feature Importance Ranking Measure
 #|  using ICE curves. B) Permutation method. C) SHAP (400 iterations). Line 1 refers to the original
 #|  fit, and line 2 to the re-fit, taking into account the interactions between variables
@@ -989,11 +881,40 @@ all + plot_annotation(
 ```
 
 
-Fig. \@ref(fig:importanceshap) and \@ref(fig:importanceshap2) show the effect of each feature on the FLOSS score. The main differences before and after removing the interactions are the magnitude of the less important features and the shape of `time_constraint` that initially had a valley around 1600. However, it seems that it flats out.
+Fig.  \@ref(fig:importanceshap) and \@ref(fig:importanceshap2) show the effect of each feature on the FLOSS score.  The
+more evident difference is the shape of the effect of `time_constraint` that initially suggested better results with
+larger values.  However, removing the interactions seems to be a flat line.
+
+Based on Figures \@ref(fig:importance) and \@ref(fig:importanceshap2) we can infer that:
+
+- **`regime_threshold`**: is the most important feature, has an optimal value to be set, and since the high interaction with the `regime_landmark`, both must be tuned simultaneously.
+  In this setting, high thresholds significantly impact the score, probably due to an increase in false positives starting on >0.65 the overall impact is mostly negative.
+
+- **`regime_landmark`**: is not as important as the `regime_threshold,` but since there is a high interaction, it must
+  not be underestimated.  It is known that the _Arc Counts_ have more uncertainty as we approach the margin of the
+  streaming, and this becomes evident looking at how the score is negatively affected for values below 3.5s.
+
+- **`window_size`**: has a near zero impact on the score when correctly set.  Nevertheless, for higher window values,
+  the score is negatively affected.  This high value probably depends on the data domain.  In this setting, the model is
+  being tuned towards the changes from atrial fibrillation/non-fibrillation; thus, the "shape of interest" is small
+  compared to the whole heartbeat waveform.  Window sizes smaller than 150 are more suitable in this case.  As Beyer _et
+  al._ noted, "as dimensionality increases, the distance to the nearest data point approaches the distance to the
+  farthest data point" [@Beyer1999], which means that the bigger the window size, the smaller will be the contrast
+  between different regimes.
+
+- **`mp_threshold`**: has a fair impact on the score, but primarily by _not using it_.  We start to see a negative
+  impact on the score with values above 0.60, while a constant positive impact with lower values.
+
+- **`time_constraint`**: is a parameter that must be interpreted cautiously.  The 0 (zero) value means **no
+  constraint**, which is equivalent to the size of the FLOSS history buffer (in our setting, 5000).  We can see that
+  this parameter's impact throughout the possible values is constantly near zero.
 
 
-```{r importanceshap, message=FALSE, fig.height = 6, fig.width= 10, out.width="100%", cache=TRUE}
-#| fig.cap="This shows the effect each variable has on FLOSS score. This plot doesn't take into account the
+In short, for the MP computation, the parameter that is worth tuning is the `window_size`, while for the FLOSS
+computation, both `regime_threshold` (mainly) and `regime_landmark` shall be tuned.
+
+```{r importanceshap, message=FALSE, fig.height = 6, fig.width= 10, out.width="100%"}
+#| fig.cap="This shows the effect each variable has on the FLOSS score. This plot doesn't take into account the
 #|  variable interactions."
 t1 <- autoplot(shap_fastshap_all_test,
   type = "dependence",
@@ -1032,8 +953,8 @@ all + plot_annotation(
 )
 ```
 
-```{r importanceshap2, message=FALSE, fig.height = 6, fig.width= 10, out.width="100%", cache=TRUE}
-#| fig.cap="This shows the effect each variable has on FLOSS score taking into account the interactions."
+```{r importanceshap2, message=FALSE, fig.height = 6, fig.width= 10, out.width="100%"}
+#| fig.cap="This shows the effect each variable has on the FLOSS score, taking into account the interactions."
 
 t1 <- autoplot(shap_fastshap_all_test2,
   type = "dependence",
@@ -1072,36 +993,28 @@ all + plot_annotation(
 )
 ```
 
-We then can see that in this setting, the only variables worthing tuning are the `window_size` that is a required parameter for the Matrix Profile and seems to give better results with lower window sizes, and the `regime_threshold` that is a required parameter for FLOSS and seems to have a better performance around 0.4. As `time_constraint` flats out, this parameter can be, at this moment, removed from the model. `mp_threshold` also seems not to be a good parameter to keep so that we can leave it at its default of zero.
-
-According to the FLOSS paper [@gharghabi2018], the `window_size` is a feature that can be tuned; nevertheless, the results appear to be similar in a reasonably wide range of windows. At this point, we see that the window size of 100 (which is less than half of a second) did not reach a minimum, suggesting that smaller windows could have better performances.
-
-On the other hand, the `regime_threshold` seems to have an optimal value, but due to a lack of resources until this date, we could not test another variable (that is worth tuning, now that we know that we can have a shorter window size) that is the `regime_landmark`.
-
-This parameter was fixed to the value of 3 seconds from the last observation (at 250hz, this means the position 750 from the end). It can be shifted, for example, from 1 second to a maximum of 10 seconds (the official limit to fire the alarm) and assess the _Corrected Arc Counts_ in a location with more information about the new regime and is less distorted by the edges.
-
-A preliminary result of the ongoing tuning (with `regime_landmark`) is depicted below (still a work in progress). It shows us two prediction paths, and assuming (by eye) that the more vertical the line, the less interference will be on the prediction, this means that having settled the `window_size` and a `regime_landmark`, the `regime_threshold` will have the best tuning value for each case.
-
-```{r preliminar,fig.height=10, fig.width=15, out.width="100%", results="asis", cache=TRUE}
-#| fig.cap="Multioutput decision plot."
-my_graphics("shapfurr", "figure")
-```
+According to the FLOSS paper [@gharghabi2018], the `window_size` is indeed a feature that can be tuned; nevertheless,
+the results appear to be similar in a reasonably wide range of window sizes, up to a limit, consistent with our findings.
 
 ## Visualizing the predictions
 
-At this point, the grid search tested a total of 233 models with resulting (individual) scores from 0.0009 to 1279.4 (Q25: 0.3498, Q50: 1.0930, Q75: 2.4673).
-
+At this point, the grid search tested a total of 23,389 models with resulting (individual) scores from 0.0002 to 1669.83
+(Q25: 0.9838, Q50: 1.8093, Q75: 3.3890).
 
 ### By recording
 
 First, we will visualize how the models (in general) performed throughout the individual recordings.
 
-Fig. \@ref(fig:global) shows a violin plot of equal areas clipped to the minimum value. The blue color indicates the recordings with a small IQR (interquartile range) of model scores. We see on the left half 10% of the recordings with the worst minimum score, and on the right half, 10% of the recordings with the best minimum score.
+Fig. \@ref(fig:global) shows a violin plot of equal areas clipped to the minimum value. The blue color indicates the
+recordings with a small IQR (interquartile range) of model scores. We see on the left half 10% of the recordings with
+the worst minimum score, and on the right half, 10% of the recordings with the best minimum score.
 
-Next, we will visualize some of these predictions to understand why some recordings were difficult to segment. For us to have a simple baseline: a recording with just one regime change, and the model predicts exactly one regime change, but far from the truth, the score will be roughly 1.
+Next, we will visualize some of these predictions to understand why some recordings were difficult to segment. For us to
+have a simple baseline: a recording with just one regime change, and the model predicts exactly one regime change, but
+far from the truth, the score will be roughly 1.
 
 
-```{r global, eval=TRUE, fig.height=5, fig.width=10, out.width="100%", cache=TRUE}
+```{r global, eval=TRUE, fig.height=5, fig.width=10, out.width="100%", cache=FALSE}
 #| fig.cap="Violin plot showing the distribution of the FLOSS score achieved by all tested models by
 #|  recording.  The left half shows the recordings that were difficult to predict (10% overall), whereas
 #|  the right half shows the recordings that at least one model could achieve a good prediction (10%
@@ -1135,9 +1048,14 @@ scores_stats %>%
   ggplot2::labs(title = "Scores by recording", colour = "IQR < 1", x = "Recording ID", y = "Score distribution")
 ```
 
-Fig. \@ref(fig:worst) shows the best effort in predicting the most complex recordings. One information not declared before is that if the model does not predict any change, it will put a mark on the zero position. On the other side, the truth markers positioned at the beginning and the end of the recording were removed, as these locations lack information and do not represent a streaming setting.
+Fig.  \@ref(fig:worst) shows the best effort in predicting the most complex recordings.  One information not declared
+before is that if the model does not predict any change, it will put a mark on the zero position.  On the other side,
+the truth markers positioned at the beginning and the end of the recording were removed, as these locations lack
+information and do not represent a streaming setting.  Compared to the corresponding figure in the
+[previous article](regime_optimize.html), we can see that even the most complex recordings had better predictions.
 
-```{r worst, eval=TRUE, fig.height=15, fig.width=12, out.width="100%", dev="png", cache=TRUE}
+
+```{r worst, eval=TRUE, fig.height=15, fig.width=12, out.width="100%", dev="png", cache=FALSE}
 #| fig.cap="Prediction of the worst 10% of recordings (red is the truth, blue are the predictions)."
 
 worst <- scores_stats %>%
@@ -1166,10 +1084,11 @@ wrap_plots(plots, ncol = 1)
 ```
 
 
-Fig. \@ref(fig:best) shows the best performances of the best recordings. Notice that there are recordings with a significant duration and few regime changes, making it hard for a "trivial model" to predict randomly.
+Fig. \@ref(fig:best) shows the best performances of the best recordings. Notice that there are recordings with a
+significant duration and few regime changes, making it hard for a "trivial model" to predict randomly.
 
 
-```{r best, eval=TRUE, fig.height=15, fig.width=12, out.width="100%", dev="png", cache=TRUE}
+```{r best, eval=TRUE, fig.height=15, fig.width=12, out.width="100%", dev="png", cache=FALSE}
 #| fig.cap="Prediction of the best 10% of recordings (red is the truth, blue are the predictions)."
 
 bests <- scores_stats %>%
@@ -1196,15 +1115,18 @@ for (i in seq_len(nrow(bests_data))) {
 wrap_plots(plots, ncol = 1)
 ```
 
-An online interactive version of all the datasets and predictions can be accessed at [Shiny app](https://franzbischoff.shinyapps.io/FLOSS/).
-
-A work-in-progress version for the finer grid-search over the `regime_landmark` is available here: [Shiny app](https://franzbischoff.shinyapps.io/FLOSS_land/), which shows promising results.
+An online interactive version of all the datasets and predictions can be accessed at
+[Shiny app](https://franzbischoff.shinyapps.io/FLOSS_land/).
 
 ### By model
 
-Fig. \@ref(fig:globalmodel) shows the distribution of the FLOSS score of the 10% worst (left side) and 10% best models across the recordings (right side). The bluish color highlights the models with SD below 3 and IQR below 1.
+Fig. \@ref(fig:globalmodel) shows the distribution of the FLOSS score of the 10% worst (left side) and 10% best models
+across the recordings (right side). The bluish color highlights the models with SD below 3 and IQR below 1.
 
-```{r globalmodel, eval=TRUE, fig.height=5, fig.width=10, out.width="100%", cache=TRUE}
+Here again, we can compare with the [previous article](regime_optimize.html) and see an improvement in the performance,
+as the models present lower SD and IQR.
+
+```{r globalmodel, eval=TRUE, fig.height=5, fig.width=10, out.width="100%", cache=FALSE}
 #| fig.cap="Violin plot showing the distribution of the FLOSS score achieved by all tested models during the
 #|  inner ressample.  The left half shows the models with the worst performances (10% overall), whereas
 #|  the right half shows the models with the best performances (10% overall).
@@ -1265,9 +1187,13 @@ model_median <- scores_stats_model %>%
   )
 ```
 
-Fig. \@ref(fig:bestmodels) the performance of the six best models across all inner resamples. They are ordered from left to right, from the worst record to the best record. The top model is the one with the lowest mean across the scores. The blue line indicates the mean score, and the red line the median score. The scores above 3 are squished in the plot and colored according to the scale in the legend.
+Fig.  \@ref(fig:bestmodels) the performance of the six best models.  They are ordered from left to right, from the worst
+record to the best record.  The top model is the one with the lowest mean across the scores.  The blue line indicates
+the mean score, and the red line the median score.  The scores above 3 are squished in the plot and colored according to
+the scale in the legend. Notice the improvement on the blue and red lines compared to the [previous article](regime_optimize.html).
 
-```{r bestmodels, eval=TRUE, fig.height=22, fig.width=18, out.width="100%", cache=TRUE}
+
+```{r bestmodels, eval=TRUE, fig.height=22, fig.width=18, out.width="100%", cache=FALSE}
 #| fig.cap="Performances of the best 6 models across all inner resample of recordings.
 #|  The recordings are ordered by score, from the worst to the best.
 #|  Each plot shows one model, starting from the best one.
@@ -1311,6 +1237,8 @@ wrap_plots(plots, ncol = 1, guides = "collect") + plot_annotation(
   theme = ggplot2::theme_bw()
 )
 
+# 41 19 100 107 -13 -86 -09 -94 -10 -58 93 -121 -97
+
 # 26 50 132 124     85 171 113 09 114 16    30     130  45       127 21 163
 # 26 50     124 122 85 171 113 09 114 16 35    32  130     48
 # 26    132 124 122 85 171 113 09 114    35    32          48 29 127        18
@@ -1319,7 +1247,8 @@ wrap_plots(plots, ncol = 1, guides = "collect") + plot_annotation(
 # 26        124     85 171 113 09 114 16 35    32          48 29                   162
 ```
 
-We can see that some records (namely #26, #45, #122, #124, #132, #162) are contained in the set of "difficult" records shown in Fig. \@ref(fig:global).
+We can see that some records (namely #19, #41, #93, #100, #107) are contained in the set of "difficult" records
+shown in Fig. \@ref(fig:global).
 
 
 ```{r pytest, eval=FALSE}
@@ -1694,8 +1623,14 @@ fit3$layers[[1]]$geom$default_aes$alpha <- NA
 
 # Current status
 
-That is the current status of the project. The optimization using the `regime_landmark` feature is in progress, and the following article will discuss all the findings.
+The current status of the project shows that FLOSS is up to the task of signaling possible regime changes.
+After introducing the `regime_landmark` feature, the performance improves significantly, and we can narrow down the tuning space to a small number of parameters.
 
-In parallel, another score measure is being developed based on the concept of Precision and Recall, but for time-series [@Tatbul2018]. It is expected that such a score measure will help to choose the best final model where most of the significant regime changes are detected, keeping a reasonable amount of false positives that will be ruled out further by the classification algorithm.
+In parallel, another score measure is being developed based on the concept of Precision and Recall, but for time-series
+[@Tatbul2018]. It is expected that such a score measure will help to choose the best final model where most of the
+significant regime changes are detected, keeping a reasonable amount of false positives that will be ruled out further
+by the classification algorithm.
+
+Further evaluation will be performed in more datasets; later, the results will be presented here.
 
 # References {-}
