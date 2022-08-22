@@ -705,7 +705,12 @@ read_ecg_with_atr <- function(filename, subset = NULL, classes = c("all", "persi
     csv_annotations$sample <- csv_annotations$sample * prop
   }
 
-  regime_changes <- which(csv_annotations$label_store == 28)
+  # afib_regimes
+  # malignantventricular
+  regime_changes <- sort(which(csv_annotations$label_store %in% c(28, 32, 33)))
+
+  # vtachyarrhythmias
+  # regime_changes <- which(csv_annotations$label_store == 32, 33)
 
   length_signal <- length(signals[[1]])
 
