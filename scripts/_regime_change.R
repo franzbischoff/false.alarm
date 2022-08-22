@@ -6,18 +6,18 @@ source(here::here("scripts", "_globals.R"), local = .GlobalEnv, encoding = "UTF-
 # source(here("regimes", "tar_outer_resample.R"))
 
 
-options(target_ds_path = here("inst", "extdata", "afib_regimes")) # nolint
+options(target_ds_path = here("inst", "extdata", "malignantventricular")) # nolint
 options(tidymodels.dark = TRUE) # nolint
 options(progressr.enable = TRUE) # nolint
 
 #### Pipeline: variable definitions ----
 # signal sample frequency, this is a constant
 const_sample_freq <- 250
-const_signals <- c("time", "I", "II")
-const_classes <- c("persistent_afib", "paroxysmal_afib", "non_afib")
+const_signals <- c("time", "ECG1", "ECG2")
+# const_classes <- c("persistent_afib", "paroxysmal_afib", "non_afib")
 
-var_resample_from <- 200
-var_resample_to <- const_sample_freq
+# var_resample_from <- 200
+# var_resample_to <- const_sample_freq
 
 # keep only the X filenames
 # var_head <- 10
@@ -26,10 +26,10 @@ var_resample_to <- const_sample_freq
 var_subset <- NULL # 1:10000
 var_limit_per_class <- NULL
 
-var_classes_include <- "paroxysmal_afib"
-var_classes_exclude <- setdiff(const_classes, var_classes_include)
+var_classes_include <- NULL
+var_classes_exclude <- NULL
 
-var_signals_include <- "II"
+var_signals_include <- "ECG1"
 var_signals_exclude <- setdiff(const_signals, var_signals_include)
 
 
@@ -57,11 +57,11 @@ tar_option_set(
 ############
 # tuning variables
 # var_window_size_tune <- c(150L, 350L)
-var_window_size_tune <- c(25L, 26L)
-var_mp_threshold_tune <- c(0, 1)
-var_time_constraint_tune <- c(750L, 2000L)
+# var_window_size_tune <- c(25L, 26L)
+# var_mp_threshold_tune <- c(0, 1)
+# var_time_constraint_tune <- c(750L, 2000L)
 var_regime_threshold_tune <- c(0.05, 0.9)
-var_regime_landmark_tune <- c(1, 10)
+var_regime_landmark_tune <- c(2, 10)
 var_regime_landmark <- 3
 # which tune algorithm?
 # tune_grid, tune_bayes, tune_sim_anneal, tune_race_anova, tune_race_win_loss
@@ -77,9 +77,9 @@ var_tune_sim_anneal_no_improve <- var_tune_bayes_no_improve # anneal
 # initial split, 3/4 will hold 25% of the data for final, independent, performance.
 var_initial_split_prop <- 3 / 4
 var_vfolds <- 5 # for the inner resample
-var_vfolds_repeats <- 1 # for the inner resample
+var_vfolds_repeats <- 2 # for the inner resample
 # parallel
-var_dopar_cores <- 1 # number of cores to use on tuning (inner resample)
+var_dopar_cores <- 3 # number of cores to use on tuning (inner resample)
 
 var_verbose <- TRUE
 var_save_workflow <- FALSE
@@ -89,7 +89,7 @@ var_save_pred <- TRUE
 # # All configurations used different CPUs while running the code.
 # plan(multisession) # create top-level processes
 # plan(multicore) # create child processes
-future::plan(future.callr::callr, workers = 1) # create child processes with a child process
+future::plan(future.callr::callr, workers = 3) # create child processes with a child process
 
 tidymodels::tidymodels_prefer(quiet = TRUE)
 
@@ -106,9 +106,9 @@ list(
   tar_files_input(
     #### Pipeline: file_paths - Read files from directory ----
     file_paths,
-    find_all_files(here::here("inst", "extdata", "afib_regimes"),
+    find_all_files(here::here("inst", "extdata", "malignantventricular"),
       data_type = "regimes",
-      classes = var_classes_include
+      # classes = NULL
       # limit_per_class = 10
     )
   ),
@@ -119,8 +119,8 @@ list(
       subset = var_subset,
       limit_per_class = var_limit_per_class,
       data_type = "regime",
-      resample_from = var_resample_from,
-      resample_to = var_resample_to,
+      # resample_from = var_resample_from,
+      # resample_to = var_resample_to,
       normalize = TRUE
     )
   ),
@@ -133,7 +133,7 @@ list(
         if (length(regimes) == 0) {
           return(NULL) # remove files that has no change in the subset
         }
-        tibble::tibble(truth = list(regimes), ts = list(x$II))
+        tibble::tibble(truth = list(regimes), ts = list(x[[var_signals_include]]))
       }, .id = "id")
       rsample::initial_split(tidy_dataset, prop = var_initial_split_prop)
     }
@@ -223,7 +223,7 @@ list(
     iteration = "group"
   ),
   tar_map(
-    list(window_size_map = c(25, 50, 75, 100, 125, 150)),
+    list(window_size_map = c(25, 50, 75, 100, 125, 150, 175, 200)),
     tar_target(
       #### Pipeline: analysis_fitted - Here we will conduct the parameter optimizations ----
       analysis_fitted,
@@ -238,7 +238,7 @@ list(
           floss_regime_model(
             window_size = tune::tune(),
             time_constraint = 0L,
-            mp_threshold = 0.8,
+            mp_threshold = 0.0,
             regime_threshold = tune::tune(),
             regime_landmark = tune::tune()
           ) %>%

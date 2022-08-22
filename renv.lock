@@ -19,10 +19,10 @@
     },
     "DT": {
       "Package": "DT",
-      "Version": "0.24",
+      "Version": "0.23",
       "Source": "Repository",
       "Repository": "CRAN",
-      "Hash": "c814c35b0bc58613b4632c8acaf80b04",
+      "Hash": "d8f1498dc47763ce4647c8d03214d30b",
       "Requirements": [
         "crosstalk",
         "htmltools",
@@ -62,10 +62,10 @@
     },
     "MASS": {
       "Package": "MASS",
-      "Version": "7.3-58.1",
+      "Version": "7.3-58",
       "Source": "Repository",
       "Repository": "CRAN",
-      "Hash": "762e1804143a332333c054759f89a706",
+      "Hash": "4bf2c61e656bbc238634c798c208d386",
       "Requirements": []
     },
     "Matrix": {
@@ -156,17 +156,6 @@
       "Hash": "0c7658433758cea5bcae50edd02b55b7",
       "Requirements": []
     },
-    "RPushbullet": {
-      "Package": "RPushbullet",
-      "Version": "0.3.4",
-      "Source": "Repository",
-      "Repository": "CRAN",
-      "Hash": "0b600e4308115126387df20181e731d2",
-      "Requirements": [
-        "curl",
-        "jsonlite"
-      ]
-    },
     "Rcpp": {
       "Package": "Rcpp",
       "Version": "1.0.9",
@@ -251,10 +240,10 @@
     },
     "V8": {
       "Package": "V8",
-      "Version": "4.2.1",
+      "Version": "4.2.0",
       "Source": "Repository",
       "Repository": "CRAN",
-      "Hash": "2f56b7e2f0d534f3c4022e48c33835ce",
+      "Hash": "0315f0d8f1d2be81b7271a07a0ecc918",
       "Requirements": [
         "Rcpp",
         "curl",
@@ -914,10 +903,10 @@
     },
     "evaluate": {
       "Package": "evaluate",
-      "Version": "0.16",
+      "Version": "0.15",
       "Source": "Repository",
       "Repository": "CRAN",
-      "Hash": "9a3d3c345f8a5648abe61608aaa29518",
+      "Hash": "699a7a93d08c962d9f8950b2d7a227f1",
       "Requirements": []
     },
     "fansi": {
@@ -1246,7 +1235,7 @@
     },
     "gittargets": {
       "Package": "gittargets",
-      "Version": "0.0.4.9000",
+      "Version": "0.0.3.9000",
       "Source": "GitHub",
       "RemoteType": "github",
       "RemoteUsername": "wlandau",
@@ -1862,12 +1851,11 @@
     },
     "narray": {
       "Package": "narray",
-      "Version": "0.5.0",
+      "Version": "0.4.1.1",
       "Source": "Repository",
       "Repository": "CRAN",
-      "Hash": "6986e287a03d8e335cc7d2720dcdd9b3",
+      "Hash": "c64865aba235f36a49d798613cbfccf7",
       "Requirements": [
-        "Rcpp",
         "progress",
         "stringr"
       ]
@@ -1886,10 +1874,10 @@
     },
     "nlme": {
       "Package": "nlme",
-      "Version": "3.1-159",
+      "Version": "3.1-158",
       "Source": "Repository",
       "Repository": "CRAN",
-      "Hash": "4a0b3a68f846cb999ff0e8e519524fbb",
+      "Hash": "9469aeaeddf4f48a7ac70877d0b7ba36",
       "Requirements": [
         "lattice"
       ]
@@ -2396,15 +2384,10 @@
     },
     "renv": {
       "Package": "renv",
-      "Version": "0.15.5-49",
-      "Source": "GitHub",
-      "RemoteType": "github",
-      "RemoteUsername": "rstudio",
-      "RemoteRepo": "renv",
-      "RemoteRef": "main",
-      "RemoteSha": "96d0a62fa2a534470b6fc84cb36ba0ae595f1460",
-      "RemoteHost": "api.github.com",
-      "Hash": "a73c3895c6005e13e7af80e046149367",
+      "Version": "0.15.5",
+      "Source": "Repository",
+      "Repository": "CRAN",
+      "Hash": "6a38294e7d12f5d8e656b08c5bd8ae34",
       "Requirements": []
     },
     "reticulate": {
@@ -2531,10 +2514,10 @@
     },
     "rsample": {
       "Package": "rsample",
-      "Version": "1.1.0",
+      "Version": "1.0.0",
       "Source": "Repository",
       "Repository": "CRAN",
-      "Hash": "a795abe9bf46591be70b75b5a64fa736",
+      "Hash": "d3ef8543c8f3b44990cc122909847087",
       "Requirements": [
         "dplyr",
         "ellipsis",
@@ -2686,19 +2669,6 @@
         "xtable"
       ]
     },
-    "shinyFeedback": {
-      "Package": "shinyFeedback",
-      "Version": "0.4.0",
-      "Source": "Repository",
-      "Repository": "CRAN",
-      "Hash": "88a6b7ff3d135195ad0011fec04336f2",
-      "Requirements": [
-        "fontawesome",
-        "htmltools",
-        "jsonlite",
-        "shiny"
-      ]
-    },
     "shinyWidgets": {
       "Package": "shinyWidgets",
       "Version": "0.7.3",
@@ -2706,7 +2676,6 @@
       "Repository": "CRAN",
       "Hash": "93797f9ae8185c55a2f775f331591a55",
       "Requirements": [
-        "anytime",
         "bslib",
         "htmltools",
         "jsonlite",
@@ -2863,9 +2832,9 @@
       "RemoteUsername": "r-lib",
       "RemoteRepo": "svglite",
       "RemoteRef": "main",
-      "RemoteSha": "8f30fc6e23094027debc117e3965bc887d9964f5",
+      "RemoteSha": "d673908b4ea246aa45fddde56d4d96eb0db87164",
       "RemoteHost": "api.github.com",
-      "Hash": "757244a0f9ac36a8d03d47c040450504",
+      "Hash": "b1532fbfbc6c6eaaa1fe46c707de5221",
       "Requirements": [
         "cpp11",
         "systemfonts"
@@ -2891,10 +2860,10 @@
     },
     "tarchetypes": {
       "Package": "tarchetypes",
-      "Version": "0.7.0",
+      "Version": "0.6.0",
       "Source": "Repository",
       "Repository": "CRAN",
-      "Hash": "c53b09692ff57646716efc928dad5705",
+      "Hash": "4d76a20b57bc46b0be7ef6ca3cb68e2f",
       "Requirements": [
         "digest",
         "dplyr",
@@ -2909,10 +2878,10 @@
     },
     "targets": {
       "Package": "targets",
-      "Version": "0.13.1",
+      "Version": "0.12.1",
       "Source": "Repository",
       "Repository": "CRAN",
-      "Hash": "fd48f11ad10f12db2d201b934fda670f",
+      "Hash": "e3c201e69f4ca0e4e50fde1cd0aa3137",
       "Requirements": [
         "R6",
         "base64url",
@@ -3515,10 +3484,10 @@
     },
     "xfun": {
       "Package": "xfun",
-      "Version": "0.32",
+      "Version": "0.31",
       "Source": "Repository",
       "Repository": "CRAN",
-      "Hash": "0498af3034691dde715dcd86198efe75",
+      "Hash": "a318c6f752b8dcfe9fb74d897418ab2b",
       "Requirements": []
     },
     "xml2": {

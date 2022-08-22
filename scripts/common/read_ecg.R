@@ -678,16 +678,29 @@ read_ecg_with_atr <- function(filename, subset = NULL, classes = c("all", "persi
 
     name <- siginfo[[i]]$description
 
-    # this dataset was stored normalized...
+    # afib_dataset
+    # # this dataset was stored normalized...
+    # if (normalize) {
+    #   # if normalizing, set all wfdb_nan to NA
+    #   # csv_content[csv_content[[i]] == wfdb_nan, i] <- NA
+    #   signals[[name]] <- csv_content[[i]]
+    #   # signals[[name]] <- (csv_content[[i]] - siginfo[[i]]$baseline) / siginfo[[i]]$gain
+    # } else {
+    #   signals[[name]] <- ((csv_content[[i]] - 5) * siginfo[[i]]$gain) # + siginfo[[i]]$baseline
+    #   # if not normalizing, set all NA to wfdb_nan
+    #   signals[[name]][is.na(signals[[name]])] <- wfdb_nan
+    # }
+    # others
     if (normalize) {
       # if normalizing, set all wfdb_nan to NA
-      # csv_content[csv_content[[i]] == wfdb_nan, i] <- NA
-      signals[[name]] <- csv_content[[i]]
-      # signals[[name]] <- (csv_content[[i]] - siginfo[[i]]$baseline) / siginfo[[i]]$gain
+      mask <- csv_content[[i]] == wfdb_nan
+      csv_content[[i]][mask] <- NA
+      signals[[name]] <- (csv_content[[i]] - siginfo[[i]]$baseline) / siginfo[[i]]$gain
     } else {
-      signals[[name]] <- ((csv_content[[i]] - 5) * siginfo[[i]]$gain) # + siginfo[[i]]$baseline
       # if not normalizing, set all NA to wfdb_nan
-      signals[[name]][is.na(signals[[name]])] <- wfdb_nan
+      mask <- is.na(csv_content[[i]])
+      csv_content[[i]][mask] <- wfdb_nan
+      signals[[name]] <- csv_content[[i]]
     }
 
     if (!is.null(subset)) {
