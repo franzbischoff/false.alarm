@@ -1248,9 +1248,9 @@
       "RemoteUsername": "wlandau",
       "RemoteRepo": "gittargets",
       "RemoteRef": "main",
-      "RemoteSha": "a24b0595d9473b040187f3fb527ad91f723d6c2d",
+      "RemoteSha": "64d51345ca498adf44b3502a6772137f2a1a8a5c",
       "RemoteHost": "api.github.com",
-      "Hash": "f789d1a0cd6d53edfbe791ca8d9e5f66",
+      "Hash": "067a737f51cb4abd0d64c9750563296f",
       "Requirements": [
         "cli",
         "data.table",
@@ -2823,9 +2823,9 @@
       "RemoteUsername": "r-lib",
       "RemoteRepo": "styler",
       "RemoteRef": "main",
-      "RemoteSha": "a3b69e4a28f8c874ba07258f8de7f7e92827cd1b",
+      "RemoteSha": "e63eab4b2f62a62a556412ac8467177d6a5f94ae",
       "RemoteHost": "api.github.com",
-      "Hash": "0d99c56ccbe0ae068cd75b2ad59ae7f7",
+      "Hash": "5d31a23e8f77a88e6fda8103ce006bef",
       "Requirements": [
         "R.cache",
         "cli",

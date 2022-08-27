@@ -288,5 +288,6 @@
   "grammarly.config.suggestions.OxfordComma": false,
   "grammarly.config.suggestions.PassiveVoice": false,
   "grammarly.startTextCheckInPausedState": true,
-  "grammarly.config.suggestions.PunctuationWithQuotation": false
+  "grammarly.config.suggestions.PunctuationWithQuotation": false,
+  "svg.preview.background": "editor"
 }

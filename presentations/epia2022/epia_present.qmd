@@ -1,0 +1,155 @@
+---
+title: "Detecting life-threatening patterns in Point-of-care ECG using efficient memory and processor power"
+author: "<br/><br/>Author: Francisco Bischoff<br/><fbischoff@med.up.pt><br/><br/>"
+institute:
+  - Center of Health Technology and Services Research
+  - Medicine Faculty of University of Porto
+  - HEADS - PhD. Programme in Health Data Science
+date: "`r Sys.Date()`"
+format:
+  revealjs:
+    slide-number: c/t
+    logo: "figures/3-logos.svg"
+    footer: "Detecting life-threatening patterns in Point-of-care ECG using efficient memory and processor power"
+    theme: [default, custom.scss]
+    title-slide-attributes:
+      data-background-image: qrcodes/qr-present.svg
+      data-background-size: 100px
+      data-background-position: center bottom 50px
+    center-title-slide: true
+    include-before-body: header.html
+    auto-stretch: false
+    mouse-wheel: true
+    hash: true
+    scrollable: false
+    default-timing: 10
+    history: true
+    controls: true
+    hide-cursor-time: 2000
+    csl: llncs-alpha.csl
+    reference-location: document
+    show-notes: false
+    preview-links: true
+    footnotes-hover: true
+    lang: en-US
+    standalone: true
+    margin: 0.15
+    center: true
+    width: 1920
+    height: 1200
+    auto-play-media: true
+    allottedTime: 360000
+    barColor: 'rgb(0,0,200)'
+    revealjs-plugins:
+      # - fullscreen
+      # - elapsed
+      - presentations/epia2022/fullscreen
+      - presentations/epia2022/elapsed
+    self-contained: true
+bibliography: [../../papers/references.bib]
+---
+
+# The problem
+
+## ECG
+
+-   Simple and straightforward concept for our time.
+
+-   Still requires high-quality devices.
+
+-   Automatic interpretations are not good enough.
+
+-   Still requires lots of (human) training for correct interpretation.
+
+-   Research field still being expanded, but usually for improve accuracy, not for expanding usage scenarios.
+
+    ::: notes
+    1.  Doctors are told to never rely on automatic interpretations
+    2.  And we are never good enough!
+    :::
+
+## Monitoring
+
+-   The rule is one complex monitor per patient and medical evaluation.
+-   Outpatient monitoring usual is based on Holter devices.
+-   Analysis is made afterwards, offline.
+-   The equipment is not cheap, and the user is not the "general population".
+
+## Monitoring
+
+-   In our days we are collecting large amounts of data from ourselves.
+-   There are wearable devices powerful enough to read and analyse ECG in real-time.
+-   The general population could benefit from specific life-threatening warnings.
+
+# Objectives and research question
+
+## Objectives and research question
+
+-   **Objective**
+
+    Detect life-threatening patterns in Point-of-care ECG\
+    using efficient memory and processor power.
+
+::: incremental
+-   **Main question**
+
+    Can we accomplish this objective while maintaining robustness?
+:::
+
+# Planned approach
+
+## Overview
+
+![Overview of the final implementation.](figures/draw-global-model.svg){width="59%"}
+
+## Matrix Profile
+
+State of art time-series analysis [@Yeh2017a]
+
+![The concept of Matrix Profile](figures/mp_1.png){width="45%"}
+
+## FLOSS
+
+Regime change detection [@gharghabi2018]
+
+![Explaining the arc counts](figures/fluss_arcs.svg){width="82%"}
+
+## FLOSS
+
+![](floss_example.mp4){fig-align="center" width="40%"}
+
+## FLOSS
+
+![Example of regime change](figures/graph_regime_floss.svg)
+
+## Classification
+
+Contrast Profile [@Mercer2021]\
+\
+
+![Finding class signatures with contrast profile](figures/contrast.svg){width="90%"}
+
+## Classification
+
+Snippets candidates
+
+![Snippet candidates extracted using the contrast profile](figures/vtachy-1.svg){fig-align="center"}
+
+# Questions
+
+\
+\
+
+
+|                                                                         |                                            |
+|:-----------------------------------------------------------------------:|-------------------------------------------:|
+|                           This presentation:                            |                                            |
+| ![](qrcodes/qr-present.svg){style="vertical-align: middle" width="150"} | <https://rpubs.com/franzbischoff/epia2022> |
+
+
+|                                                                          |                                              |
+|:------------------------------------------------------------------------:|---------------------------------------------:|
+|                               Project website:                               |                                               |
+| ![](qrcodes/qr-project-site.svg){style="vertical-align: middle" width="150"} | <https://franzbischoff.github.io/false.alarm> |
+
+# References

@@ -1,0 +1,37 @@
+/*-- scss:defaults --*/
+
+// $body-bg: #191919;
+// $body-color: #fff;
+// $link-color: #42affa;
+
+$presentation-title-slide-text-align: center;
+
+/*-- scss:rules --*/
+
+p.author {
+  font-size: 1em;
+  font-weight: 700;
+}
+
+p.institute {
+  font-size: 0.95em;
+}
+
+.header {
+  margin: 10px auto 10px auto;
+  text-align: center;
+  color: $text-muted;
+  font-family: $font-family-sans-serif;
+  position: absolute;
+  width: 100%;
+}
+
+.reveal h1,
+h2 {
+  text-align: center;
+}
+
+.reveal section figure figcaption {
+  text-align: center;
+  margin-top: 0px;
+}

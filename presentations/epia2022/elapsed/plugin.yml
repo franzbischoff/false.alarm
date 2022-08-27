@@ -1,0 +1,5 @@
+name: ElapsedTimeBar
+script: [elapsed.js]
+config:
+  allottedTime: 180000
+  barColor: "rgb(200,0,0)"
