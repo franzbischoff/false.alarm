@@ -2860,10 +2860,10 @@
     },
     "tarchetypes": {
       "Package": "tarchetypes",
-      "Version": "0.6.0",
+      "Version": "0.7.0",
       "Source": "Repository",
       "Repository": "CRAN",
-      "Hash": "4d76a20b57bc46b0be7ef6ca3cb68e2f",
+      "Hash": "c53b09692ff57646716efc928dad5705",
       "Requirements": [
         "digest",
         "dplyr",
@@ -2878,10 +2878,10 @@
     },
     "targets": {
       "Package": "targets",
-      "Version": "0.12.1",
+      "Version": "0.13.1",
       "Source": "Repository",
       "Repository": "CRAN",
-      "Hash": "e3c201e69f4ca0e4e50fde1cd0aa3137",
+      "Hash": "fd48f11ad10f12db2d201b934fda670f",
       "Requirements": [
         "R6",
         "base64url",

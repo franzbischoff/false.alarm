@@ -6,14 +6,15 @@ source(here::here("scripts", "_globals.R"), local = .GlobalEnv, encoding = "UTF-
 # source(here("regimes", "tar_outer_resample.R"))
 
 
-options(target_ds_path = here("inst", "extdata", "malignantventricular")) # nolint
+# options(target_ds_path = here("inst", "extdata", "malignantventricular")) # nolint
+options(target_ds_path = here("inst", "extdata", "vtachyarrhythmias")) # nolint
 options(tidymodels.dark = TRUE) # nolint
 options(progressr.enable = TRUE) # nolint
 
 #### Pipeline: variable definitions ----
 # signal sample frequency, this is a constant
 const_sample_freq <- 250
-const_signals <- c("time", "ECG1", "ECG2")
+const_signals <- c("time", "ECG")
 # const_classes <- c("persistent_afib", "paroxysmal_afib", "non_afib")
 
 # var_resample_from <- 200
@@ -29,7 +30,7 @@ var_limit_per_class <- NULL
 var_classes_include <- NULL
 var_classes_exclude <- NULL
 
-var_signals_include <- "ECG1"
+var_signals_include <- "ECG"
 var_signals_exclude <- setdiff(const_signals, var_signals_include)
 
 
@@ -106,7 +107,7 @@ list(
   tar_files_input(
     #### Pipeline: file_paths - Read files from directory ----
     file_paths,
-    find_all_files(here::here("inst", "extdata", "malignantventricular"),
+    find_all_files(here::here("inst", "extdata", "vtachyarrhythmias"),
       data_type = "regimes",
       # classes = NULL
       # limit_per_class = 10
@@ -472,6 +473,12 @@ list(
     use_names = FALSE,
     command = bind_rows(vctrs::vec_c(!!!.x))
   ),
+
+
+  # analysis_evaluation_150[[1]] %>% dplyr::group_by(window_size, regime_threshold, regime_landmark) %>%
+  #   dplyr::summarize(mean = mean(.estimate), sd = sd(.estimate))
+
+
   tar_target(
     #### Pipeline: testing_evaluation - In the end, get the best from the inner resample and test with the testing split ----
     testing_evaluation,
@@ -483,7 +490,7 @@ list(
         dplyr::summarize(mean = mean(.estimate), sd = sd(.estimate)) %>%
         dplyr::ungroup() %>%
         dplyr::arrange(mean, sd) %>%
-        dplyr::slice_head(n = 6)
+        dplyr::slice_head(n = 15)
 
 
       if (var_dopar_cores > 1) {

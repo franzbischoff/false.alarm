@@ -45,9 +45,9 @@ matches; if a query data is provided (join similarity), this parameter is ignore
 }
 \section{Functions}{
 \itemize{
-\item \code{stomp}: Single thread version.
-}}
+\item \code{stomp()}: Single thread version.
 
+}}
 \examples{
 mp <- stomp(tsmp::mp_toy_data$data[1:200, 1], window_size = 30, verbose = 0)
 \donttest{

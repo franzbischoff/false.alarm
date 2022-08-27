@@ -158,7 +158,7 @@ on Ogita's work for better precision computing mean and standard deviation (part
 }
 }
 \section{This document}{
-Last updated on 2022-07-21 using R version 4.2.1.
+Last updated on 2022-08-27 using R version 4.2.1.
 }
 
 \examples{
@@ -190,10 +190,10 @@ Website: \url{http://www.cs.ucr.edu/~eamonn/MatrixProfile.html}
 
 \code{mpxab()} for the forward and reverse join-similarity.
 
-Other matrix profile computations:
+Other matrix profile computations: 
 \code{\link{stomp}()}
 
-Other matrix profile computations:
+Other matrix profile computations: 
 \code{\link{stomp}()}
 }
 \concept{matrix profile computations}

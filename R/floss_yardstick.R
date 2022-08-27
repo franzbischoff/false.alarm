@@ -48,6 +48,7 @@ clean_pred <- function(data, threshold = 100L) {
   data[mask]
 }
 
+#' @export
 floss_error_vec <- function(truth, estimate, data_size, na_rm = TRUE, estimator = "binary", ...) {
   # cli::cli_alert(c("*" = "floss_error_vec <<- work here"))
   # cli::cli_inform(c("*" = "floss_error_vec: dots_n {rlang::dots_n(...)}"))
@@ -239,6 +240,16 @@ floss_score <- function(gtruth, reported, data_size) {
   truth_len <- length(gtruth)
   reported_len <- length(reported)
 
+  if (truth_len == 0) {
+    gtruth <- 1
+    truth_len <- 1
+  }
+
+  if (reported_len == 0) {
+    reported <- 1
+    reported_len <- 1
+  }
+
   min_points <- min(truth_len, reported_len)
 
   minv <- rep(Inf, reported_len)
@@ -246,45 +257,59 @@ floss_score <- function(gtruth, reported, data_size) {
   k <- 1L
   l <- NULL
 
-  for (j in seq.int(1L, reported_len)) {
-    for (i in seq.int(k, truth_len)) {
-      if (abs(gtruth[i] - reported[j]) <= minv[j]) {
-        minv[j] <- abs(gtruth[i] - reported[j])
-        k <- i # pruning, truth and reported must be sorted
-      } else {
-        l <- c(l, k)
-        break # pruning, truth and reported must be sorted
-      }
-    }
-  }
-
-  if (truth_len > reported_len) {
-    lefties <- seq_len(truth_len)
-    lefties <- lefties[!(lefties %in% l)]
-    minv_left <- rep(Inf, truth_len)
-    k <- 1L
-    for (j in lefties) {
-      for (i in seq.int(k, reported_len)) {
-        if (abs(gtruth[j] - reported[i]) <= minv_left[j]) {
-          minv_left[j] <- abs(gtruth[j] - reported[i])
-          k <- i # pruning, truth and reported must be sorted
-        } else {
-          break # pruning, truth and reported must be sorted
+  score <- rlang::try_fetch(
+    {
+      for (j in seq.int(1L, reported_len)) {
+        for (i in seq.int(k, truth_len)) {
+          if (abs(gtruth[i] - reported[j]) <= minv[j]) {
+            minv[j] <- abs(gtruth[i] - reported[j])
+            k <- i # pruning, truth and reported must be sorted
+          } else {
+            l <- c(l, k)
+            break # pruning, truth and reported must be sorted
+          }
         }
       }
+
+      if (truth_len > reported_len) {
+        lefties <- seq_len(truth_len)
+        lefties <- lefties[!(lefties %in% l)]
+        minv_left <- rep(Inf, truth_len)
+        k <- 1L
+        for (j in lefties) {
+          for (i in seq.int(k, reported_len)) {
+            if (abs(gtruth[j] - reported[i]) <= minv_left[j]) {
+              minv_left[j] <- abs(gtruth[j] - reported[i])
+              k <- i # pruning, truth and reported must be sorted
+            } else {
+              break # pruning, truth and reported must be sorted
+            }
+          }
+        }
+
+        minv_left <- minv_left[is.finite(minv_left)]
+        minv <- c(minv, minv_left)
+      }
+
+      if (data_size <= 0L) {
+        # computes the mean error during a period of time, not bounded to the data size
+        range <- max(gtruth, reported) - min(gtruth, reported)
+        score <- sum(minv) / (min_points * range)
+      } else {
+        score <- sum(minv) / (min_points * data_size)
+      }
+
+      score
+    },
+    error = function(cnd) {
+      cli::cli_warn("Something wrong.")
+      cli::cli_warn("gtruth = {gtruth}.")
+      cli::cli_warn("reported = {reported}.")
+      cli::cli_warn("minv = {minv}.")
+      score <- 1000
+      score
     }
-
-    minv_left <- minv_left[is.finite(minv_left)]
-    minv <- c(minv, minv_left)
-  }
-
-  if (data_size <= 0L) {
-    # computes the mean error during a period of time, not bounded to the data size
-    range <- max(gtruth, reported) - min(gtruth, reported)
-    score <- sum(minv) / (min_points * range)
-  } else {
-    score <- sum(minv) / (min_points * data_size)
-  }
+  )
 
   score
 }

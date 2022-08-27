@@ -29,7 +29,7 @@ on Ogita's work for better precision computing mean and standard deviation (part
 }
 }
 \section{This document}{
-Last updated on 2022-07-21 using R version 4.2.1.
+Last updated on 2022-08-27 using R version 4.2.1.
 }
 
 \seealso{

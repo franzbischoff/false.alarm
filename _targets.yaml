@@ -11,6 +11,12 @@ classifier:
   store: _classifier
   script: scripts/_classifier.R
 
+regime_change2:
+  inherits: main
+  store: _regime_change2
+  script: scripts/_regime_change2.R
+  workers: 2
+
 regime_change:
   inherits: main
   store: _regime_change
