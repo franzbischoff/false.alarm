@@ -18,7 +18,8 @@ p.institute {
 }
 
 .header {
-  margin: 10px auto 10px auto;
+  margin: 2vh auto 2vh auto;
+  font-size: 2vh;
   text-align: center;
   color: $text-muted;
   font-family: $font-family-sans-serif;
@@ -34,4 +35,12 @@ h2 {
 .reveal section figure figcaption {
   text-align: center;
   margin-top: 0px;
+}
+
+div.csl-bib-body {
+  font-size: 1.2em;
+}
+
+.flossvideo {
+  height: 23em;
 }

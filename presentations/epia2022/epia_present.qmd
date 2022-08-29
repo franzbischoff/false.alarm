@@ -14,8 +14,8 @@ format:
     theme: [default, custom.scss]
     title-slide-attributes:
       data-background-image: qrcodes/qr-present.svg
-      data-background-size: 100px
-      data-background-position: center bottom 50px
+      data-background-size: 12vh
+      data-background-position: center bottom 7vh
     center-title-slide: true
     include-before-body: header.html
     auto-stretch: false
@@ -34,6 +34,7 @@ format:
     lang: en-US
     standalone: true
     margin: 0.15
+    min-scale: 0.2
     center: true
     width: 1920
     height: 1200
@@ -41,10 +42,10 @@ format:
     allottedTime: 360000
     barColor: 'rgb(0,0,200)'
     revealjs-plugins:
-      # - fullscreen
-      # - elapsed
-      - presentations/epia2022/fullscreen
-      - presentations/epia2022/elapsed
+      - fullscreen
+      - elapsed
+      # - presentations/epia2022/fullscreen
+      # - presentations/epia2022/elapsed
     self-contained: true
 bibliography: [../../papers/references.bib]
 ---
@@ -116,7 +117,9 @@ Regime change detection [@gharghabi2018]
 
 ## FLOSS
 
-![](floss_example.mp4){fig-align="center" width="40%"}
+![](floss_example.mp4){.flossvideo fig-align="center"}
+
+![](qrcodes/qrcode-video.svg){fig-align="center" width="11vh"}
 
 ## FLOSS
 
