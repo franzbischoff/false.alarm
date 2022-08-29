@@ -38,3 +38,7 @@ clean_splits_data <- function(object) {
   object$splits <- tidy_splits
   object
 }
+
+pbFinished <- function(msg) {
+  RPushbullet::pbPost("note", "Alert", msg)
+}

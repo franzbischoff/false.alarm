@@ -147,6 +147,111 @@ score_regimes <- function(gtruth, reported, data_size) {
   score
 }
 
+# floss_score <- function(gtruth, reported, data_size) {
+
+#   # Probably we are receiving a tibble
+#   if (is.list(gtruth) && length(gtruth) > 1) {
+#     if (length(data_size) == 1) {
+#       data_size <- rep(0, length(gtruth))
+#     } else {
+#       checkmate::assert(length(gtruth) == length(data_size))
+#     }
+
+#     # Proceed if same size
+#     if (length(gtruth) == length(reported)) {
+#       scores <- purrr::pmap_dbl(list(gtruth, reported, data_size), floss_score)
+#     }
+
+#     return(scores)
+#   } else {
+#     if (is.list(gtruth) && length(gtruth) == 1) {
+#       gtruth <- gtruth[[1]]
+#     }
+#     if (is.list(reported) && length(reported) == 1) {
+#       reported <- reported[[1]]
+#     }
+#   }
+
+#   gtruth <- sort(gtruth[gtruth > 0L])
+#   reported <- sort(reported[reported > 0L])
+
+#   truth_len <- length(gtruth)
+#   reported_len <- length(reported)
+
+#   if (truth_len == 0) {
+#     gtruth <- 1
+#     truth_len <- 1
+#   }
+
+#   if (reported_len == 0) {
+#     reported <- 1
+#     reported_len <- 1
+#   }
+
+#   min_points <- min(truth_len, reported_len)
+
+#   minv <- rep(Inf, reported_len)
+
+#   k <- 1L
+#   l <- NULL
+
+#   score <- rlang::try_fetch(
+#     {
+#       for (j in seq.int(1L, reported_len)) {
+#         for (i in seq.int(k, truth_len)) {
+#           if (abs(gtruth[i] - reported[j]) <= minv[j]) {
+#             minv[j] <- abs(gtruth[i] - reported[j])
+#             k <- i # pruning, truth and reported must be sorted
+#           } else {
+#             l <- c(l, k)
+#             break # pruning, truth and reported must be sorted
+#           }
+#         }
+#       }
+
+#       if (truth_len > reported_len) {
+#         lefties <- seq_len(truth_len)
+#         lefties <- lefties[!(lefties %in% l)]
+#         minv_left <- rep(Inf, truth_len)
+#         k <- 1L
+#         for (j in lefties) {
+#           for (i in seq.int(k, reported_len)) {
+#             if (abs(gtruth[j] - reported[i]) <= minv_left[j]) {
+#               minv_left[j] <- abs(gtruth[j] - reported[i])
+#               k <- i # pruning, truth and reported must be sorted
+#             } else {
+#               break # pruning, truth and reported must be sorted
+#             }
+#           }
+#         }
+
+#         minv_left <- minv_left[is.finite(minv_left)]
+#         minv <- c(minv, minv_left)
+#       }
+
+#       if (data_size <= 0L) {
+#         # computes the mean error during a period of time, not bounded to the data size
+#         range <- max(gtruth, reported) - min(gtruth, reported)
+#         score <- sum(minv) / (min_points * range)
+#       } else {
+#         score <- sum(minv) / (min_points * data_size)
+#       }
+
+#       score
+#     },
+#     error = function(cnd) {
+#       cli::cli_warn("Something wrong.")
+#       cli::cli_warn("gtruth = {gtruth}.")
+#       cli::cli_warn("reported = {reported}.")
+#       cli::cli_warn("minv = {minv}.")
+#       score <- 1000
+#       score
+#     }
+#   )
+
+#   score
+# }
+
 
 # window parameter will be used to compute if the prediction is a true positive or not
 # the limit for event detection is 10 seconds, so a prediction flagged after 10 seconds

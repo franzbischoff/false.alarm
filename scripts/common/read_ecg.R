@@ -946,11 +946,19 @@ clean_truth <- function(truth, data_size = NULL, first = TRUE, last = TRUE) {
   }
 
   if (isTRUE(first) && (truth[1] <= 10)) {
-    truth <- tail(truth, -1)
+    if (length(truth) == 1) {
+      truth <- 1
+    } else {
+      truth <- tail(truth, -1)
+    }
   }
 
   if (isTRUE(last) && (tail(truth, 1) >= (data_size - 10))) {
-    truth <- head(truth, -1)
+    if (length(truth) == 1) {
+      truth <- data_size
+    } else {
+      truth <- head(truth, -1)
+    }
   }
 
   return(truth)

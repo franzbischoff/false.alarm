@@ -79,7 +79,8 @@ var_initial_split_prop <- 3 / 4
 var_vfolds <- 5 # for the inner resample
 var_vfolds_repeats <- 2 # for the inner resample
 # parallel
-var_dopar_cores <- 3 # number of cores to use on tuning (inner resample)
+var_dopar_cores <- 5 # number of cores to use on tuning (inner resample)
+var_future_workers <- 3
 
 var_verbose <- TRUE
 var_save_workflow <- FALSE
@@ -89,7 +90,7 @@ var_save_pred <- TRUE
 # # All configurations used different CPUs while running the code.
 # plan(multisession) # create top-level processes
 # plan(multicore) # create child processes
-future::plan(future.callr::callr, workers = 3) # create child processes with a child process
+future::plan(future.callr::callr, workers = var_future_workers) # create child processes with a child process
 
 tidymodels::tidymodels_prefer(quiet = TRUE)
 
@@ -131,6 +132,9 @@ list(
       tidy_dataset <- purrr::map_dfr(dataset, function(x) {
         regimes <- attr(x, "regimes")
         if (length(regimes) == 0) {
+          return(NULL) # remove files that has no change in the subset
+        }
+        if (length(regimes) == 1 && regimes == 0) {
           return(NULL) # remove files that has no change in the subset
         }
         tibble::tibble(truth = list(regimes), ts = list(x[[var_signals_include]]))
@@ -228,7 +232,7 @@ list(
       #### Pipeline: analysis_fitted - Here we will conduct the parameter optimizations ----
       analysis_fitted,
       {
-        future::plan(future.callr::callr, workers = 3)
+        future::plan(future.callr::callr, workers = var_future_workers)
         # source(here::here("scripts", "regimes", "parsnip_model.R"), encoding = "UTF-8")
         # A fix for targets branches that wipes off these classes
         # analysis_split <- analysis_split[1, ] # this is for fast testing, uses only the first split
