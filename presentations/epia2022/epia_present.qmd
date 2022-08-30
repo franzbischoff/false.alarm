@@ -3,7 +3,7 @@ title: "Detecting life-threatening patterns in Point-of-care ECG using efficient
 author: "<br/><br/>Author: Francisco Bischoff<br/><fbischoff@med.up.pt><br/><br/>"
 institute:
   - Center of Health Technology and Services Research
-  - Medicine Faculty of University of Porto
+  - Faculty of Medicine of Porto University
   - HEADS - PhD. Programme in Health Data Science
 date: "`r Sys.Date()`"
 format:
