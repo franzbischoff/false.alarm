@@ -156,6 +156,17 @@
       "Hash": "0c7658433758cea5bcae50edd02b55b7",
       "Requirements": []
     },
+    "RPushbullet": {
+      "Package": "RPushbullet",
+      "Version": "0.3.4",
+      "Source": "Repository",
+      "Repository": "CRAN",
+      "Hash": "0b600e4308115126387df20181e731d2",
+      "Requirements": [
+        "curl",
+        "jsonlite"
+      ]
+    },
     "Rcpp": {
       "Package": "Rcpp",
       "Version": "1.0.9",
