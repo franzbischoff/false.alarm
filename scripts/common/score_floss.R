@@ -147,118 +147,24 @@ score_regimes <- function(gtruth, reported, data_size) {
   score
 }
 
-# floss_score <- function(gtruth, reported, data_size) {
-
-#   # Probably we are receiving a tibble
-#   if (is.list(gtruth) && length(gtruth) > 1) {
-#     if (length(data_size) == 1) {
-#       data_size <- rep(0, length(gtruth))
-#     } else {
-#       checkmate::assert(length(gtruth) == length(data_size))
-#     }
-
-#     # Proceed if same size
-#     if (length(gtruth) == length(reported)) {
-#       scores <- purrr::pmap_dbl(list(gtruth, reported, data_size), floss_score)
-#     }
-
-#     return(scores)
-#   } else {
-#     if (is.list(gtruth) && length(gtruth) == 1) {
-#       gtruth <- gtruth[[1]]
-#     }
-#     if (is.list(reported) && length(reported) == 1) {
-#       reported <- reported[[1]]
-#     }
-#   }
-
-#   gtruth <- sort(gtruth[gtruth > 0L])
-#   reported <- sort(reported[reported > 0L])
-
-#   truth_len <- length(gtruth)
-#   reported_len <- length(reported)
-
-#   if (truth_len == 0) {
-#     gtruth <- 1
-#     truth_len <- 1
-#   }
-
-#   if (reported_len == 0) {
-#     reported <- 1
-#     reported_len <- 1
-#   }
-
-#   min_points <- min(truth_len, reported_len)
-
-#   minv <- rep(Inf, reported_len)
-
-#   k <- 1L
-#   l <- NULL
-
-#   score <- rlang::try_fetch(
-#     {
-#       for (j in seq.int(1L, reported_len)) {
-#         for (i in seq.int(k, truth_len)) {
-#           if (abs(gtruth[i] - reported[j]) <= minv[j]) {
-#             minv[j] <- abs(gtruth[i] - reported[j])
-#             k <- i # pruning, truth and reported must be sorted
-#           } else {
-#             l <- c(l, k)
-#             break # pruning, truth and reported must be sorted
-#           }
-#         }
-#       }
-
-#       if (truth_len > reported_len) {
-#         lefties <- seq_len(truth_len)
-#         lefties <- lefties[!(lefties %in% l)]
-#         minv_left <- rep(Inf, truth_len)
-#         k <- 1L
-#         for (j in lefties) {
-#           for (i in seq.int(k, reported_len)) {
-#             if (abs(gtruth[j] - reported[i]) <= minv_left[j]) {
-#               minv_left[j] <- abs(gtruth[j] - reported[i])
-#               k <- i # pruning, truth and reported must be sorted
-#             } else {
-#               break # pruning, truth and reported must be sorted
-#             }
-#           }
-#         }
-
-#         minv_left <- minv_left[is.finite(minv_left)]
-#         minv <- c(minv, minv_left)
-#       }
-
-#       if (data_size <= 0L) {
-#         # computes the mean error during a period of time, not bounded to the data size
-#         range <- max(gtruth, reported) - min(gtruth, reported)
-#         score <- sum(minv) / (min_points * range)
-#       } else {
-#         score <- sum(minv) / (min_points * data_size)
-#       }
-
-#       score
-#     },
-#     error = function(cnd) {
-#       cli::cli_warn("Something wrong.")
-#       cli::cli_warn("gtruth = {gtruth}.")
-#       cli::cli_warn("reported = {reported}.")
-#       cli::cli_warn("minv = {minv}.")
-#       score <- 1000
-#       score
-#     }
-#   )
-
-#   score
-# }
-
 
 # window parameter will be used to compute if the prediction is a true positive or not
 # the limit for event detection is 10 seconds, so a prediction flagged after 10 seconds
 # from the gold truth is a true positive. For balance, we will use half of this window
 # for predictions made before the gold truth.
 
-score_regimes_precision <- function(gtruth, reported, data_size, window, delta_prec = "flat", delta_rec = "back", gamma = "reciprocal", alpha = 0.5) {
+# alpha: balance between (alpha)existance and (1-alpha)overlap
+
+# gamma: We expect the gamma function to be defined similarly for both RecallT and PrecisionT.
+# Intuitively, in both cases, the cardinality factor should be inversely proportional to the
+# number of distinct ranges that a given anomaly range overlaps. Thus, we expect gamma() to
+# be generally structured as a reciprocal rational function 1/f(x), where f(x) ≥ 1 is a
+# single-variable polynomial and x represents the number of distinct overlap ranges.  A
+# typical example for gamma() is 1/x.
+
+# delta: flat, back, front, middle (where the overlap is more important). For Precision, flat is the default.
+
+score_regimes_precision <- function(gtruth, reported, data_size, window = 1000, delta_prec = "flat", delta_rec = "back", gamma = "reciprocal", alpha = 0.5, beta = 1) {
   # Probably we are receiving a tibble
   if (is.list(gtruth) && length(gtruth) > 1) {
     if (length(data_size) == 1) {
@@ -301,9 +207,10 @@ score_regimes_precision <- function(gtruth, reported, data_size, window, delta_p
 
   precision <- score_precision(gtruth, reported, floor(window / 2), delta = delta_prec)
   recall <- score_recall(gtruth, reported, floor(window / 2), delta = delta_rec, gamma = gamma, alpha = alpha)
-  f1 <- f1_score(precision, recall)
+  fscore <- f_score(precision, recall, beta)
 
-  return(tibble::tibble(precision = precision, recall = recall, f1 = f1))
+  return(tibble::tibble(precision = precision, recall = recall, fscore = fscore))
+  # return(f1)
 }
 
 
@@ -381,14 +288,7 @@ score_precision <- function(truths, predictions, window, delta = "flat") {
   return(precision)
 }
 
-# checkmate::qassert(gamma, "N[0, 1]") # cardinality
-# We expect the gamma function to be defined similarly
-# for both RecallT and PrecisionT.  Intuitively, in both cases, the cardinality factor should be
-# inversely proportional to the number of distinct ranges that a given anomaly range overlaps.
 
-# Thus, we expect gamma() to be generally structured as a reciprocal rational function 1/f(x), where f(x)
-# ≥ 1 is a single-variable polynomial and x represents the number of distinct overlap ranges.  A
-# typical example for gamma() is 1/x.
 
 # omega reward
 overlap_reward <- function(anomaly, overlap_set, window, delta, gamma = c("one", "reciprocal")) {
@@ -444,83 +344,16 @@ omega_function <- function(anomaly_range, overlap_range, delta = "flat") {
     omega <- sum(overlap * sequence) / (sum(sequence))
   } else {
     rlang::abort("Unrecognized delta parameter")
-    # omega <- omega_function_orig(anomaly_range, overlap_range, delta)
   }
 
   return(omega)
 }
 
-# Size # checkmate::qassert(omega, "N[0, 1]") # size (overlap)
-# Use the same for recall and precision
-# omega function
-# omega_function_orig <- function(anomaly_range, overlap_range, delta) {
-#   # browser()
-#   my_bias <- 0
-#   max_bias <- 0
-
-#   anomaly_length <- anomaly_range[2] - anomaly_range[1] + 1
-
-#   for (i in seq_len(anomaly_length)) {
-#     bias <- delta_function(i, anomaly_length, delta)
-#     max_bias <- max_bias + bias
-
-#     if (dplyr::between((anomaly_range[1] + i - 1), overlap_range[1], overlap_range[2])) {
-#       my_bias <- my_bias + bias
-#     }
-#   }
-
-#   if (max_bias > 0) {
-#     return(my_bias / max_bias)
-#   } else {
-#     return(0)
-#   }
-# }
-
-# Position # checkmate::qassert(delta, "N[1, )") # position
-# Flat bias is ok for precision.
-# delta function
-# delta_function <- function(i, anomaly_length, type = c("flat", "front", "back", "middle")) {
-#   if (type == "flat") {
-#     return(1)
-#   } else if (type == "front") {
-#     return(anomaly_length - i + 1)
-#   } else if (type == "back") {
-#     return(i)
-#   } else if (type == "middle") {
-#     if (i <= floor(anomaly_length / 2)) {
-#       return(i)
-#     } else {
-#       return(anomaly_length - i + 1)
-#     }
-#   } else {
-#     rlang::abort("Invalid type")
-#   }
-# }
-
-
-### Precision ###
-
-# --!Existence!--
-# Size
-# Position
-# Cardinality
-
-
 
 f1_score <- function(precision, recall) {
-  2 * precision * recall / (precision + recall)
+  2 * precision * recall / (precision + recall + .Machine$double.eps)
 }
 
-# tr <- c(1516, 1994, 3529, 5198, 8488, 9066, 15778, 16692, 21630, 22321, 28498, 28984, 46029, 46520, 51368, 51958, 54301, 54895, 64938, 65422, 80239, 80731, 83144, 83636, 84790, 85289)
-# pr <- c(5751, 9951, 13151, 15751, 17451, 22551, 22951, 29851, 37851, 40651, 45851, 51251, 54151, 55951, 61351, 64751, 65751, 84551)
-# pr <- c(4782, 17780, 23868, 39882)
-# w <- 50
-# a <- seq.int(tr[1] - w, tr[1] + w)
-# b <- seq.int(pr[1] - w, pr[1] + w)
-# c <- a %in% b
-# c
-# sum(c)
-# which(c)
-
-# score_recall(tr, pr, window = 1250, delta = "middle", gamma = "one", alpha = 1)
-# score_precision(tr, pr, window = 1250, delta = "middle")
+f_score <- function(precision, recall, beta) {
+  (1 + beta^2) * precision * recall / (beta^2 * precision + recall + .Machine$double.eps)
+}

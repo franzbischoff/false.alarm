@@ -916,26 +916,26 @@ computation, both `regime_threshold` (mainly) and `regime_landmark` shall be tun
 ```{r importanceshap, message=FALSE, fig.height = 6, fig.width= 10, out.width="100%"}
 #| fig.cap="This shows the effect each variable has on the FLOSS score. This plot doesn't take into account the
 #|  variable interactions."
-t1 <- autoplot(shap_fastshap_all_test,
-  type = "dependence",
-  X = testing_data, feature = predictors_names[2], alpha = 0.2
-) + ggplot2::geom_smooth(method = loess) + ggplot2::labs(y = ggplot2::element_blank()) + ggplot2::theme_bw()
-t2 <- autoplot(shap_fastshap_all_test,
-  type = "dependence",
-  X = testing_data, feature = predictors_names[1], alpha = 0.2
-) + ggplot2::geom_smooth(method = loess) + ggplot2::labs(y = ggplot2::element_blank()) + ggplot2::theme_bw()
-t3 <- autoplot(shap_fastshap_all_test,
-  type = "dependence",
-  X = testing_data, feature = predictors_names[4], alpha = 0.2
-) + ggplot2::geom_smooth(method = loess) + ggplot2::labs(y = ggplot2::element_blank()) + ggplot2::theme_bw()
-t4 <- autoplot(shap_fastshap_all_test,
-  type = "dependence",
-  X = testing_data, feature = predictors_names[3], alpha = 0.2
-) + ggplot2::geom_smooth(method = loess) + ggplot2::labs(y = ggplot2::element_blank()) + ggplot2::theme_bw()
-t5 <- autoplot(shap_fastshap_all_test,
-  type = "dependence",
-  X = testing_data, feature = predictors_names[5], alpha = 0.2
-) + ggplot2::geom_smooth(method = loess) + ggplot2::labs(y = ggplot2::element_blank()) + ggplot2::theme_bw()
+# t1 <- autoplot(shap_fastshap_all_test,
+#   type = "dependence",
+#   X = testing_data, feature = predictors_names[2], alpha = 0.2
+# ) + ggplot2::geom_smooth(method = loess) + ggplot2::labs(y = ggplot2::element_blank()) + ggplot2::theme_bw()
+# t2 <- autoplot(shap_fastshap_all_test,
+#   type = "dependence",
+#   X = testing_data, feature = predictors_names[1], alpha = 0.2
+# ) + ggplot2::geom_smooth(method = loess) + ggplot2::labs(y = ggplot2::element_blank()) + ggplot2::theme_bw()
+# t3 <- autoplot(shap_fastshap_all_test,
+#   type = "dependence",
+#   X = testing_data, feature = predictors_names[4], alpha = 0.2
+# ) + ggplot2::geom_smooth(method = loess) + ggplot2::labs(y = ggplot2::element_blank()) + ggplot2::theme_bw()
+# t4 <- autoplot(shap_fastshap_all_test,
+#   type = "dependence",
+#   X = testing_data, feature = predictors_names[3], alpha = 0.2
+# ) + ggplot2::geom_smooth(method = loess) + ggplot2::labs(y = ggplot2::element_blank()) + ggplot2::theme_bw()
+# t5 <- autoplot(shap_fastshap_all_test,
+#   type = "dependence",
+#   X = testing_data, feature = predictors_names[5], alpha = 0.2
+# ) + ggplot2::geom_smooth(method = loess) + ggplot2::labs(y = ggplot2::element_blank()) + ggplot2::theme_bw()
 
 
 layout <- "
@@ -943,12 +943,42 @@ AABB
 CCDD
 #EE#
 "
-all <- t1 + t2 + t3 + t4 + t5 +
-  plot_layout(design = layout, guides = "collect")
+# all <- t1 + t2 + t3 + t4 + t5 +
+#   plot_layout(design = layout, guides = "collect")
 
-all + plot_annotation(
+# all + plot_annotation(
+#   title = "Shapley value vs. variable values",
+#   subtitle = "Original fit",
+#   theme = ggplot2::theme_bw()
+# )
+
+d1 <- shapviz::shapviz(shap_fastshap_all_test, X = testing_data[, predictors_names], baseline = mean(testing_data[, outcome_name]$mean))
+a1 <- shapviz::sv_dependence(d1, "window_size", color_var = "auto") +
+  ggplot2::geom_smooth(method = loess, colour = "#0000ff44", alpha = 0.2) +
+  ggplot2::labs(y = ggplot2::element_blank()) +
+  ggplot2::theme_bw()
+a2 <- shapviz::sv_dependence(d1, "regime_threshold", color_var = "auto") +
+  ggplot2::geom_smooth(method = loess, colour = "#0000ff44", alpha = 0.2) +
+  ggplot2::labs(y = ggplot2::element_blank()) +
+  ggplot2::theme_bw()
+a3 <- shapviz::sv_dependence(d1, "regime_landmark", color_var = "auto") +
+  ggplot2::geom_smooth(method = loess, colour = "#0000ff44", alpha = 0.2) +
+  ggplot2::labs(y = ggplot2::element_blank()) +
+  ggplot2::theme_bw()
+a4 <- shapviz::sv_dependence(d1, "mp_threshold", color_var = "auto") +
+  ggplot2::geom_smooth(method = loess, colour = "#0000ff44", alpha = 0.2) +
+  ggplot2::labs(y = ggplot2::element_blank()) +
+  ggplot2::theme_bw()
+a5 <- shapviz::sv_dependence(d1, "time_constraint", color_var = "auto") +
+  ggplot2::geom_smooth(method = loess, colour = "#0000ff44", alpha = 0.2) +
+  ggplot2::labs(y = ggplot2::element_blank()) +
+  ggplot2::theme_bw()
+
+all2 <- ((a1 + a5 + a3 + a4 +
+  plot_layout(guides = "collect")) +
+  (a2 + plot_layout(guides = "collect")))
+all2 + plot_layout(design = layout) + plot_annotation(
   title = "Shapley value vs. variable values",
-  subtitle = "Original fit",
   theme = ggplot2::theme_bw()
 )
 ```
@@ -956,26 +986,26 @@ all + plot_annotation(
 ```{r importanceshap2, message=FALSE, fig.height = 6, fig.width= 10, out.width="100%"}
 #| fig.cap="This shows the effect each variable has on the FLOSS score, taking into account the interactions."
 
-t1 <- autoplot(shap_fastshap_all_test2,
-  type = "dependence",
-  X = testing_data2, feature = predictors_names[2], alpha = 0.2
-) + ggplot2::geom_smooth(method = loess) + ggplot2::labs(y = ggplot2::element_blank()) + ggplot2::theme_bw()
-t2 <- autoplot(shap_fastshap_all_test2,
-  type = "dependence",
-  X = testing_data2, feature = predictors_names[1], alpha = 0.2
-) + ggplot2::geom_smooth(method = loess) + ggplot2::labs(y = ggplot2::element_blank()) + ggplot2::theme_bw()
-t3 <- autoplot(shap_fastshap_all_test2,
-  type = "dependence",
-  X = testing_data2, feature = predictors_names[4], alpha = 0.2
-) + ggplot2::geom_smooth(method = loess) + ggplot2::labs(y = ggplot2::element_blank()) + ggplot2::theme_bw()
-t4 <- autoplot(shap_fastshap_all_test2,
-  type = "dependence",
-  X = testing_data2, feature = predictors_names[3], alpha = 0.2
-) + ggplot2::geom_smooth(method = loess) + ggplot2::labs(y = ggplot2::element_blank()) + ggplot2::theme_bw()
-t5 <- autoplot(shap_fastshap_all_test,
-  type = "dependence",
-  X = testing_data2, feature = predictors_names[5], alpha = 0.2
-) + ggplot2::geom_smooth(method = loess) + ggplot2::labs(y = ggplot2::element_blank()) + ggplot2::theme_bw()
+# t1 <- autoplot(shap_fastshap_all_test2,
+#   type = "dependence",
+#   X = testing_data2, feature = predictors_names[2], alpha = 0.2
+# ) + ggplot2::geom_smooth(method = loess) + ggplot2::labs(y = ggplot2::element_blank()) + ggplot2::theme_bw()
+# t2 <- autoplot(shap_fastshap_all_test2,
+#   type = "dependence",
+#   X = testing_data2, feature = predictors_names[1], alpha = 0.2
+# ) + ggplot2::geom_smooth(method = loess) + ggplot2::labs(y = ggplot2::element_blank()) + ggplot2::theme_bw()
+# t3 <- autoplot(shap_fastshap_all_test2,
+#   type = "dependence",
+#   X = testing_data2, feature = predictors_names[4], alpha = 0.2
+# ) + ggplot2::geom_smooth(method = loess) + ggplot2::labs(y = ggplot2::element_blank()) + ggplot2::theme_bw()
+# t4 <- autoplot(shap_fastshap_all_test2,
+#   type = "dependence",
+#   X = testing_data2, feature = predictors_names[3], alpha = 0.2
+# ) + ggplot2::geom_smooth(method = loess) + ggplot2::labs(y = ggplot2::element_blank()) + ggplot2::theme_bw()
+# t5 <- autoplot(shap_fastshap_all_test,
+#   type = "dependence",
+#   X = testing_data2, feature = predictors_names[5], alpha = 0.2
+# ) + ggplot2::geom_smooth(method = loess) + ggplot2::labs(y = ggplot2::element_blank()) + ggplot2::theme_bw()
 
 
 layout <- "
@@ -983,12 +1013,42 @@ AABB
 CCDD
 #EE#
 "
-all <- t1 + t2 + t3 + t4 + t5 +
-  plot_layout(design = layout, guides = "collect")
+# all <- t1 + t2 + t3 + t4 + t5 +
+#   plot_layout(design = layout, guides = "collect")
 
-all + plot_annotation(
+# all + plot_annotation(
+#   title = "Shapley value vs. variable values",
+#   subtitle = "Re-fit for iteractions",
+#   theme = ggplot2::theme_bw()
+# )
+
+d1 <- shapviz::shapviz(shap_fastshap_all_test2, X = testing_data2[, predictors_names], baseline = mean(testing_data2[, outcome_name]$mean))
+a1 <- shapviz::sv_dependence(d1, "window_size", color_var = "auto") +
+  ggplot2::geom_smooth(method = loess, colour = "#0000ff44", alpha = 0.2) +
+  ggplot2::labs(y = ggplot2::element_blank()) +
+  ggplot2::theme_bw()
+a2 <- shapviz::sv_dependence(d1, "regime_threshold", color_var = "auto") +
+  ggplot2::geom_smooth(method = loess, colour = "#0000ff44", alpha = 0.2) +
+  ggplot2::labs(y = ggplot2::element_blank()) +
+  ggplot2::theme_bw()
+a3 <- shapviz::sv_dependence(d1, "regime_landmark", color_var = "auto") +
+  ggplot2::geom_smooth(method = loess, colour = "#0000ff44", alpha = 0.2) +
+  ggplot2::labs(y = ggplot2::element_blank()) +
+  ggplot2::theme_bw()
+a4 <- shapviz::sv_dependence(d1, "mp_threshold", color_var = "auto") +
+  ggplot2::geom_smooth(method = loess, colour = "#0000ff44", alpha = 0.2) +
+  ggplot2::labs(y = ggplot2::element_blank()) +
+  ggplot2::theme_bw()
+a5 <- shapviz::sv_dependence(d1, "time_constraint", color_var = "auto") +
+  ggplot2::geom_smooth(method = loess, colour = "#0000ff44", alpha = 0.2) +
+  ggplot2::labs(y = ggplot2::element_blank()) +
+  ggplot2::theme_bw()
+
+all2 <- ((a1 + a5 + a3 + a4 +
+  plot_layout(guides = "collect")) +
+  (a2 + plot_layout(guides = "collect")))
+all2 + plot_layout(design = layout) + plot_annotation(
   title = "Shapley value vs. variable values",
-  subtitle = "Re-fit for iteractions",
   theme = ggplot2::theme_bw()
 )
 ```

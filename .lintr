@@ -12,7 +12,7 @@ linters: linters_with_defaults(
   extraction_operator_linter = NULL,
   fixed_regex_linter(),
   ifelse_censor_linter(),
-  implicit_integer_linter(),
+  implicit_integer_linter = NULL,
   inner_combine_linter(),
   line_length_linter(150),
   literal_coercion_linter(),

@@ -70,10 +70,10 @@
     },
     "Matrix": {
       "Package": "Matrix",
-      "Version": "1.4-1",
+      "Version": "1.5-1",
       "Source": "Repository",
       "Repository": "CRAN",
-      "Hash": "699c47c606293bdfbc9fd78a93c9c8fe",
+      "Hash": "539dc0c0c05636812f1080f473d2c177",
       "Requirements": [
         "lattice"
       ]
@@ -339,6 +339,14 @@
       "Requirements": [
         "backports"
       ]
+    },
+    "beeswarm": {
+      "Package": "beeswarm",
+      "Version": "0.4.0",
+      "Source": "Repository",
+      "Repository": "CRAN",
+      "Hash": "0f4e9d8caa6feaa7e409ae6c30f2ca66",
+      "Requirements": []
     },
     "bit": {
       "Package": "bit",
@@ -1162,6 +1170,42 @@
       "Repository": "CRAN",
       "Hash": "ad68e3263f0bc9269aab8c2039440117",
       "Requirements": []
+    },
+    "ggbeeswarm": {
+      "Package": "ggbeeswarm",
+      "Version": "0.6.0",
+      "Source": "Repository",
+      "Repository": "CRAN",
+      "Hash": "dd68b9b215b2d3119603549a794003c3",
+      "Requirements": [
+        "beeswarm",
+        "ggplot2",
+        "vipor"
+      ]
+    },
+    "ggfittext": {
+      "Package": "ggfittext",
+      "Version": "0.9.1",
+      "Source": "Repository",
+      "Repository": "CRAN",
+      "Hash": "42aafda63a2012fb3b928fef01d96698",
+      "Requirements": [
+        "ggplot2",
+        "shades",
+        "stringi"
+      ]
+    },
+    "gggenes": {
+      "Package": "gggenes",
+      "Version": "0.4.1",
+      "Source": "Repository",
+      "Repository": "CRAN",
+      "Hash": "479a12ca982385be9b20ba4c0aba4ab6",
+      "Requirements": [
+        "ggfittext",
+        "ggplot2",
+        "rlang"
+      ]
     },
     "ggnetwork": {
       "Package": "ggnetwork",
@@ -2651,6 +2695,30 @@
         "cli"
       ]
     },
+    "shades": {
+      "Package": "shades",
+      "Version": "1.4.0",
+      "Source": "Repository",
+      "Repository": "CRAN",
+      "Hash": "3a2cf5eecb2cbca814d01d56bfb51494",
+      "Requirements": []
+    },
+    "shapviz": {
+      "Package": "shapviz",
+      "Version": "0.2.1",
+      "Source": "Repository",
+      "Repository": "CRAN",
+      "Hash": "911f289b7a0ced923c987f2c07bc27f0",
+      "Requirements": [
+        "ggbeeswarm",
+        "ggfittext",
+        "gggenes",
+        "ggplot2",
+        "ggrepel",
+        "rlang",
+        "xgboost"
+      ]
+    },
     "shiny": {
       "Package": "shiny",
       "Version": "1.7.2",
@@ -2678,6 +2746,19 @@
         "sourcetools",
         "withr",
         "xtable"
+      ]
+    },
+    "shinyFeedback": {
+      "Package": "shinyFeedback",
+      "Version": "0.4.0",
+      "Source": "Repository",
+      "Repository": "CRAN",
+      "Hash": "88a6b7ff3d135195ad0011fec04336f2",
+      "Requirements": [
+        "fontawesome",
+        "htmltools",
+        "jsonlite",
+        "shiny"
       ]
     },
     "shinyWidgets": {
@@ -3315,6 +3396,14 @@
         "tibble"
       ]
     },
+    "vipor": {
+      "Package": "vipor",
+      "Version": "0.4.5",
+      "Source": "Repository",
+      "Repository": "CRAN",
+      "Hash": "ea85683da7f2bfa63a98dc6416892591",
+      "Requirements": []
+    },
     "viridisLite": {
       "Package": "viridisLite",
       "Version": "0.4.1",
@@ -3500,6 +3589,18 @@
       "Repository": "CRAN",
       "Hash": "a318c6f752b8dcfe9fb74d897418ab2b",
       "Requirements": []
+    },
+    "xgboost": {
+      "Package": "xgboost",
+      "Version": "1.6.0.1",
+      "Source": "Repository",
+      "Repository": "CRAN",
+      "Hash": "d25eaad6dd96cab8930d13bc411425c5",
+      "Requirements": [
+        "Matrix",
+        "data.table",
+        "jsonlite"
+      ]
     },
     "xml2": {
       "Package": "xml2",

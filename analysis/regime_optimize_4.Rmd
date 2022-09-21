@@ -1,5 +1,5 @@
 ---
-title: "Regime changes 4.0"
+title: "Regime changes 4.0 - vtachyarrhythmias dataset"
 author: "Francisco Bischoff"
 date: "on `r format(Sys.time(), '%B %d, %Y')`"
 output:
@@ -372,21 +372,21 @@ source(here::here("scripts", "common", "score_floss.R"))
 ```
 
 ```{r buildoutputs}
-if (!file.exists(here("output", "regime_outputs_lmk2.rds"))) {
+if (!file.exists(here("output", "regime_outputs_vtds.rds"))) {
   Sys.setenv(TAR_PROJECT = "regime_change2")
   tar_load(num_range("analysis_fitted_", 1:200))
   all_objs <- mget(objects(pattern = "analysis_fitted_\\d{1,3}"))
   rm(list = objects(pattern = "analysis_fitted_\\d{1,3}"))
   all_fitted <- purrr::map_dfr(all_objs, function(x) x[[1]])
-  saveRDS(all_fitted, file = here("output", "regime_outputs_lmk2.rds"))
+  saveRDS(all_fitted, file = here("output", "regime_outputs_vtds.rds"))
   rm("all_objs")
   rm("all_fitted")
 }
 ```
 
 ```{r cached, echo=FALSE, cache=FALSE}
-network <- readRDS(here::here("output", "regime_network_lmk2.rds"))
-all_fitted <- readRDS(here::here("output", "regime_outputs_lmk2.rds"))
+network <- readRDS(here::here("output", "regime_network_vtds.rds"))
+all_fitted <- readRDS(here::here("output", "regime_outputs_vtds.rds"))
 net <- network %>%
   visNetwork::visPhysics(hierarchicalRepulsion = list(
     springLength = 1,
@@ -409,7 +409,7 @@ all_scores <- all_fitted %>%
   dplyr::rename(fold = id, size = .sizes, record = .id, model = .config, pred = .pred) %>%
   dplyr::distinct(rep, record, across(all_of(predictors_names)), .keep_all = TRUE) %>%
   dplyr::mutate(truth = clean_truth(truth, size), pred = clean_pred(pred)) %>%
-  dplyr::mutate(score = score_regimes(truth, pred, 0))
+  dplyr::mutate(score = score_regimes(truth, pred, size))
 ```
 
 
@@ -512,11 +512,11 @@ tree_data <- all_scores %>%
 
 trained_model <- NULL
 # Caching ===========
-if (file.exists(here("output", "dbarts_fitted_lmk2.rds"))) {
-  trained_model <- readRDS(here("output", "dbarts_fitted_lmk2.rds"))
+if (file.exists(here("output", "dbarts_fitted_vtds.rds"))) {
+  trained_model <- readRDS(here("output", "dbarts_fitted_vtds.rds"))
 } else {
   trained_model <- train_models(tree_data, parallel = TRUE, v = 5, rep = 1, grid = 30)
-  saveRDS(trained_model, file = here("output", "dbarts_fitted_lmk2.rds"))
+  saveRDS(trained_model, file = here("output", "dbarts_fitted_vtds.rds"))
 }
 
 train_data <- trained_model$training_data
@@ -528,8 +528,8 @@ yardstick::rmse_vec(testing_data$mean, pred)
 yardstick::rsq_vec(testing_data$mean, pred)
 
 # Caching ===========
-if (file.exists(here("output", "importances_lmk2.rds"))) {
-  interactions <- readRDS(here("output", "importances_lmk2.rds"))
+if (file.exists(here("output", "importances_vtds.rds"))) {
+  interactions <- readRDS(here("output", "importances_vtds.rds"))
   importance_firm <- interactions$importance_firm
   importance_perm <- interactions$importance_perm
   importance_shap <- interactions$importance_shap
@@ -572,12 +572,13 @@ if (file.exists(here("output", "importances_lmk2.rds"))) {
     predictors_names,
     nsim = 400, parallel = TRUE
   )
-  preds_test <- predict(best_fit, testing_data[, predictors_names])
-  shap_html_test <- fastshap::force_plot(
-    object = shap_fastshap_all_test, feature_values = testing_data[, predictors_names],
-    baseline = mean(preds_test$.pred), display = "html"
-  )
-  shap_html_test <- stringr::str_remove(shap_html_test, "<meta.+?>")
+  shap_html_test <- NA
+  # preds_test <- predict(best_fit, testing_data[, predictors_names])
+  # shap_html_test <- fastshap::force_plot(
+  #   object = shap_fastshap_all_test, feature_values = testing_data[, predictors_names],
+  #   baseline = mean(preds_test$.pred), display = "html"
+  # )
+  # shap_html_test <- stringr::str_remove(shap_html_test, "<meta.+?>")
 
   saveRDS(list(
     interactions = interactions,
@@ -586,7 +587,7 @@ if (file.exists(here("output", "importances_lmk2.rds"))) {
     importance_shap = importance_shap,
     shap_fastshap_all_test = shap_fastshap_all_test,
     shap_html_test = shap_html_test
-  ), file = here("output", "importances_lmk2.rds"))
+  ), file = here("output", "importances_vtds.rds"))
 }
 
 # A tibble: 10 × 2
@@ -775,29 +776,49 @@ computation, both `regime_threshold` (mainly) and `regime_landmark` shall be tun
 ```{r importanceshap, message=FALSE, fig.height = 6, fig.width= 10, out.width="100%"}
 #| fig.cap="This shows the effect each variable has on the FLOSS score. This plot doesn't take into account the
 #|  variable interactions."
-t1 <- autoplot(shap_fastshap_all_test,
-  type = "dependence",
-  X = testing_data, feature = predictors_names[2], alpha = 0.2
-) + ggplot2::geom_smooth(method = loess) + ggplot2::labs(y = ggplot2::element_blank()) + ggplot2::theme_bw()
-t2 <- autoplot(shap_fastshap_all_test,
-  type = "dependence",
-  X = testing_data, feature = predictors_names[1], alpha = 0.2
-) + ggplot2::geom_smooth(method = loess) + ggplot2::labs(y = ggplot2::element_blank()) + ggplot2::theme_bw()
-t3 <- autoplot(shap_fastshap_all_test,
-  type = "dependence",
-  X = testing_data, feature = predictors_names[3], alpha = 0.2
-) + ggplot2::geom_smooth(method = loess) + ggplot2::labs(y = ggplot2::element_blank()) + ggplot2::theme_bw()
+# t1 <- autoplot(shap_fastshap_all_test,
+#   type = "dependence",
+#   X = testing_data, feature = predictors_names[2], alpha = 0.2
+# ) + ggplot2::geom_smooth(method = loess) + ggplot2::labs(y = ggplot2::element_blank()) + ggplot2::theme_bw()
+# t2 <- autoplot(shap_fastshap_all_test,
+#   type = "dependence",
+#   X = testing_data, feature = predictors_names[1], alpha = 0.2
+# ) + ggplot2::geom_smooth(method = loess) + ggplot2::labs(y = ggplot2::element_blank()) + ggplot2::theme_bw()
+# t3 <- autoplot(shap_fastshap_all_test,
+#   type = "dependence",
+#   X = testing_data, feature = predictors_names[3], alpha = 0.2
+# ) + ggplot2::geom_smooth(method = loess) + ggplot2::labs(y = ggplot2::element_blank()) + ggplot2::theme_bw()
 
-layout <- "
-AABB
-#CC#
-"
-all <- t1 + t2 + t3 +
-  plot_layout(design = layout, guides = "collect")
+# layout <- "
+# AABB
+# #CC#
+# "
+# all <- t1 + t2 + t3 +
+#   plot_layout(design = layout, guides = "collect")
 
-all + plot_annotation(
+# all + plot_annotation(
+#   title = "Shapley value vs. variable values",
+#   subtitle = "Original fit",
+#   theme = ggplot2::theme_bw()
+# )
+
+d1 <- shapviz::shapviz(shap_fastshap_all_test, X = testing_data[, predictors_names], baseline = mean(testing_data[, outcome_name]$mean))
+a1 <- shapviz::sv_dependence(d1, "window_size", color_var = "auto") +
+  ggplot2::geom_smooth(method = loess, colour = "#0000ff44", alpha = 0.2) +
+  ggplot2::labs(y = ggplot2::element_blank()) +
+  ggplot2::theme_bw()
+a2 <- shapviz::sv_dependence(d1, "regime_threshold", color_var = "auto") +
+  ggplot2::geom_smooth(method = loess, colour = "#0000ff44", alpha = 0.2) +
+  ggplot2::labs(y = ggplot2::element_blank()) +
+  ggplot2::theme_bw()
+a3 <- shapviz::sv_dependence(d1, "regime_landmark", color_var = "auto") +
+  ggplot2::geom_smooth(method = loess, colour = "#0000ff44", alpha = 0.2) +
+  ggplot2::labs(y = ggplot2::element_blank()) +
+  ggplot2::theme_bw()
+
+all2 <- (a1 + a3 + plot_layout(design = "AABB", guides = "collect")) / a2
+all2 + plot_annotation(
   title = "Shapley value vs. variable values",
-  subtitle = "Original fit",
   theme = ggplot2::theme_bw()
 )
 ```
@@ -1036,7 +1057,10 @@ for (i in seq_len(length(best_models))) {
     ggplot2::theme_bw(base_size = 15) +
     ggplot2::theme(axis.text.x = element_text(size = 9, angle = 90, vjust = 0.5, hjust = 1)) +
     ggplot2::labs(
-      title = best_models[i],
+      title = glue::glue(
+        "{best_models[i]} - window_size {dd$window_size}; ",
+        "regime_threshold {dd$regime_threshold}; regime_landmark {dd$regime_landmark}"
+      ),
       colour = "Score out\nof bounds",
       x = ifelse(i == length(best_models), "Record ID", ""),
       y = ggplot2::element_blank()
@@ -1082,8 +1106,8 @@ set.seed(102)
 best_fit <- generics::fit(trained_model$model, train_x)
 predictions <- predict(best_fit, train_x[, 1:5])$.pred
 expected <- mean(testing_data$mean)
-yardstick::rmse_vec(train_x[, 6]$mean, predictions)
-yardstick::rsq_vec(train_x[, 6]$mean, predictions)
+cli::cli_alert_info("RMSE: {yardstick::rmse_vec(train_x[, 6]$mean, predictions)}")
+cli::cli_alert_info("RSQ: {yardstick::rsq_vec(train_x[, 6]$mean, predictions)}")
 
 shap_values <- shap_explain(best_fit, train_x[, 1:5], train_x[, 1:5], predictors_names, nsim = 50, parallel = TRUE)
 shap_samples <- shap_values %>%

@@ -101,7 +101,7 @@ floss_error_vec <- function(truth, estimate, data_size, na_rm = TRUE, estimator 
 
     div <- purrr::reduce(data_size, sum) + 1L
     return(res / div / 10) # micro is the sum of the scores / length(all_data_set)
-  } else if (estimator == "macro") {
+  } else if (estimator == "macro_mean") {
     # current macro method (average of the sum of errors / sample range)
     # cli::cli_inform(c("*" = "floss_error_vec <<- macro"))
     res <- purrr::map2_dbl(
@@ -134,7 +134,7 @@ floss_error_vec <- function(truth, estimate, data_size, na_rm = TRUE, estimator 
     )
     return(median(res)) # macro;
     # res
-  } else if (estimator == "macro_mean") {
+  } else if (estimator == "macro") {
     # cli::cli_inform(c("*" = "floss_error_vec <<- macro"))
     res <- purrr::pmap_dbl(
       list(truth, estimate, data_size),

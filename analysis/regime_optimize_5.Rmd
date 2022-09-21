@@ -1,5 +1,5 @@
 ---
-title: "Regime changes 3.0 - malignantventricular dataset"
+title: "Regime changes 5.0 - vtachyarrhythmias with PR"
 author: "Francisco Bischoff"
 date: "on `r format(Sys.time(), '%B %d, %Y')`"
 output:
@@ -131,7 +131,7 @@ train_models <- function(data, parallel = FALSE, v = 10, rep = 3, grid = 30, tra
 
   wflw <- workflows::workflow() %>%
     workflows::add_model(model_spec) %>%
-    workflows::add_formula(mean ~ .)
+    workflows::add_formula(mean ~ regime_threshold + window_size + regime_threshold)
 
   if (parallel) {
     doParallel::registerDoParallel(cores = parallelly::availableCores())
@@ -163,7 +163,7 @@ train_models <- function(data, parallel = FALSE, v = 10, rep = 3, grid = 30, tra
     doParallel::stopImplicitCluster()
   }
 
-  return(list(model = final_flow, training_data = training_split, testing_data = testing_split))
+  return(list(model = final_flow, training_data = training_split, testing_data = testing_split, search = tune_search))
 }
 
 check_interactions <- function(model, train_data, features, parallel = FALSE) {
@@ -278,8 +278,8 @@ check_importance <- function(model, train_data, test_data, features, type = c("f
 }
 
 tkplot <- function(object, interactive = FALSE, res = 50) {
-  ecg <- read_ecg_with_atr(here::here("inst/extdata/malignantventricular", object$record), resample_from = 250, resample_to = res)
-  value <- ecg[[1]]$ECG1
+  ecg <- read_ecg_with_atr(here::here("inst/extdata/vtachyarrhythmias", object$record), resample_from = 250, resample_to = res)
+  value <- ecg[[1]]$ECG
   prop <- 250 / res
   mask <- seq.int(50, 100)
   value[1:5] <- median(value[mask])
@@ -372,21 +372,21 @@ source(here::here("scripts", "common", "score_floss.R"))
 ```
 
 ```{r buildoutputs}
-if (!file.exists(here("output", "regime_outputs_mvds.rds"))) {
-  Sys.setenv(TAR_PROJECT = "regime_change")
+if (!file.exists(here("output", "regime_outputs_vtds.rds"))) {
+  Sys.setenv(TAR_PROJECT = "regime_change2")
   tar_load(num_range("analysis_fitted_", 1:200))
   all_objs <- mget(objects(pattern = "analysis_fitted_\\d{1,3}"))
   rm(list = objects(pattern = "analysis_fitted_\\d{1,3}"))
   all_fitted <- purrr::map_dfr(all_objs, function(x) x[[1]])
-  saveRDS(all_fitted, file = here("output", "regime_outputs_mvds.rds"))
+  saveRDS(all_fitted, file = here("output", "regime_outputs_vtds.rds"))
   rm("all_objs")
   rm("all_fitted")
 }
 ```
 
 ```{r cached, echo=FALSE, cache=FALSE}
-network <- readRDS(here::here("output", "regime_network_mvds.rds"))
-all_fitted <- readRDS(here::here("output", "regime_outputs_mvds.rds"))
+network <- readRDS(here::here("output", "regime_network_vtds.rds"))
+all_fitted <- readRDS(here::here("output", "regime_outputs_vtds.rds"))
 net <- network %>%
   visNetwork::visPhysics(hierarchicalRepulsion = list(
     springLength = 1,
@@ -397,21 +397,41 @@ net <- network %>%
 predictors_names <- c("regime_threshold", "window_size", "regime_landmark")
 outcome_name <- "mean"
 
-all_scores <- all_fitted %>%
-  # dplyr::slice_head(n = 10) %>%
-  tidyr::unnest(.predictions) %>%
-  dplyr::filter(regime_landmark < 10) %>%
-  dplyr::select(
-    id, rep, .sizes, .id,
-    all_of(predictors_names),
-    .config, .pred, truth
-  ) %>%
-  dplyr::rename(fold = id, size = .sizes, record = .id, model = .config, pred = .pred) %>%
-  dplyr::distinct(rep, record, across(all_of(predictors_names)), .keep_all = TRUE) %>%
-  dplyr::mutate(truth = clean_truth(truth, size), pred = clean_pred(pred)) %>%
-  dplyr::mutate(score = score_regimes(truth, pred, size))
-```
+fscore <- function(truth, pred, size, window = 1000, delta_prec = "flat", delta_rec = "flat",
+                   gamma = "one", alpha = 1, beta = 1) {
+  score <- score_regimes_precision(truth, pred, size,
+    window = window, delta_prec = delta_prec,
+    delta_rec = delta_rec, gamma = gamma, alpha = alpha,
+    beta = beta
+  )
+  score <- dplyr::bind_rows(score)
+  score$fscore[is.na(score$fscore)] <- 0
+  result <- pmax(1 - score$fscore, 0)
+  return(tibble::tibble(precision = score$precision, recall = score$recall, fscore = result))
+}
 
+if (!file.exists(here("output", "regime_outputs_vtds_pr.rds"))) {
+  all_scores <- all_fitted %>%
+    # dplyr::slice_head(n = 10) %>%
+    tidyr::unnest(.predictions) %>%
+    dplyr::filter(regime_landmark < 10) %>% # ten is too much
+    dplyr::select(
+      id, rep, .sizes, .id,
+      all_of(predictors_names),
+      .config, .pred, truth
+    ) %>%
+    dplyr::rename(fold = id, size = .sizes, record = .id, model = .config, pred = .pred) %>%
+    dplyr::distinct(rep, record, across(all_of(predictors_names)), .keep_all = TRUE) %>%
+    dplyr::mutate(truth = clean_truth(truth, size), pred = clean_pred(pred)) %>%
+    dplyr::mutate(score = fscore(truth, pred, size, window = 5000, beta = 2, alpha = 1, gamma = "one")) %>% # use this new score function
+    tidyr::unnest(score) %>%
+    dplyr::rename(score = fscore)
+
+  saveRDS(all_scores, file = here("output", "regime_outputs_vtds_pr.rds"))
+} else {
+  all_scores <- readRDS(here::here("output", "regime_outputs_vtds_pr.rds"))
+}
+```
 
 
 # Regime changes optimization (continuation)
@@ -503,7 +523,7 @@ This is not a problem _per se_ but a signal we must be aware of when exploring t
 ```{r modelbart, message=FALSE, cache=FALSE}
 tree_data <- all_scores %>%
   dplyr::group_by(across(all_of(predictors_names))) %>%
-  dplyr::summarize(mean = mean(score)) %>%
+  dplyr::summarize(mean = mean(score), prec = mean(precision), rec = mean(recall)) %>%
   dplyr::ungroup()
 
 # rt * w
@@ -512,11 +532,11 @@ tree_data <- all_scores %>%
 
 trained_model <- NULL
 # Caching ===========
-if (file.exists(here("output", "dbarts_fitted_mvds.rds"))) {
-  trained_model <- readRDS(here("output", "dbarts_fitted_mvds.rds"))
+if (file.exists(here("output", "dbarts_fitted_lmk5.rds"))) {
+  trained_model <- readRDS(here("output", "dbarts_fitted_lmk5.rds"))
 } else {
   trained_model <- train_models(tree_data, parallel = TRUE, v = 5, rep = 1, grid = 30)
-  saveRDS(trained_model, file = here("output", "dbarts_fitted_mvds.rds"))
+  saveRDS(trained_model, file = here("output", "dbarts_fitted_lmk5.rds"))
 }
 
 train_data <- trained_model$training_data
@@ -528,8 +548,8 @@ yardstick::rmse_vec(testing_data$mean, pred)
 yardstick::rsq_vec(testing_data$mean, pred)
 
 # Caching ===========
-if (file.exists(here("output", "importances_mvds.rds"))) {
-  interactions <- readRDS(here("output", "importances_mvds.rds"))
+if (file.exists(here("output", "importances_lmk5.rds"))) {
+  interactions <- readRDS(here("output", "importances_lmk5.rds"))
   importance_firm <- interactions$importance_firm
   importance_perm <- interactions$importance_perm
   importance_shap <- interactions$importance_shap
@@ -587,7 +607,7 @@ if (file.exists(here("output", "importances_mvds.rds"))) {
     importance_shap = importance_shap,
     shap_fastshap_all_test = shap_fastshap_all_test,
     shap_html_test = shap_html_test
-  ), file = here("output", "importances_mvds.rds"))
+  ), file = here("output", "importances_lmk5.rds"))
 }
 
 # A tibble: 10 × 2
@@ -620,7 +640,7 @@ if (file.exists(here("output", "importances_mvds.rds"))) {
 ```
 
 ```{r interaction, fig.height = 7, fig.width= 8, out.width="100%"}
-#| fig.cap="Variable interactioFFFFns strength using feature importance ranking measure (FIRM) approach [@Greenwell2018].
+#| fig.cap="Variable interactions strength using feature importance ranking measure (FIRM) approach [@Greenwell2018].
 #|  A) Shows strong interaction between `regime_threshold` and `regime_landmark`, `mp_threshold` and `window_size`,
 #|     `mp_threshold` and `regime_landmark`.
 #|  B) Refitting the model with these interactions taken into account, the strength is substantially reduced, except
@@ -788,18 +808,19 @@ computation, both `regime_threshold` (mainly) and `regime_landmark` shall be tun
 #   type = "dependence",
 #   X = testing_data, feature = predictors_names[3], alpha = 0.2
 # ) + ggplot2::geom_smooth(method = loess) + ggplot2::labs(y = ggplot2::element_blank()) + ggplot2::theme_bw()
+
 # layout <- "
 # AABB
 # #CC#
 # "
 # all <- t1 + t2 + t3 +
 #   plot_layout(design = layout, guides = "collect")
+
 # all + plot_annotation(
 #   title = "Shapley value vs. variable values",
 #   subtitle = "Original fit",
 #   theme = ggplot2::theme_bw()
 # )
-
 
 d1 <- shapviz::shapviz(shap_fastshap_all_test, X = testing_data[, predictors_names], baseline = mean(testing_data[, outcome_name]$mean))
 a1 <- shapviz::sv_dependence(d1, "window_size", color_var = "auto") +
@@ -854,13 +875,12 @@ far from the truth, the score will be roughly 1.
 #|  score will be roughly 1."
 
 scores_stats <- all_scores %>%
-  dplyr::select(record, score) %>%
+  dplyr::select(record, score, precision, recall) %>%
   # dplyr::filter(!is.na(score)) %>%
   dplyr::group_by(record) %>%
   dplyr::summarize(
-    score = score, min = min(score), q25 = quantile(score, 0.25),
-    median = quantile(score, 0.5), q75 = quantile(score, 0.75),
-    mean = mean(score), max = max(score)
+    score = mean(score), min = min(score), median = median(score),
+    q25 = quantile(score, 0.25), q75 = quantile(score, 0.75), precision = mean(precision), recall = mean(recall)
   ) %>%
   dplyr::ungroup()
 
@@ -885,15 +905,16 @@ information and do not represent a streaming setting.  Compared to the correspon
 [previous article](regime_optimize.html), we can see that even the most complex recordings had better predictions.
 
 
-```{r worst, eval=TRUE, fig.height=15, fig.width=12, out.width="100%", dev="png", cache=FALSE}
+```{r worst, eval=FALSE, fig.height=15, fig.width=12, out.width="100%", dev="png", cache=FALSE}
 #| fig.cap="Prediction of the worst 10% of recordings (red is the truth, blue are the predictions)."
 
 worst <- scores_stats %>%
-  dplyr::filter(min > quantile(min, 0.7)) %>%
+  dplyr::filter(score > 0.9) %>%
   dplyr::group_by(record) %>%
   dplyr::slice_head() %>%
   dplyr::ungroup() %>%
-  dplyr::arrange(desc(min), desc(median)) %>%
+  # dplyr::arrange(desc(min), desc(median)) %>%
+  # dplyr::distinct(min, .keep_all = TRUE) %>%
   dplyr::slice_head(n = 10) %>%
   dplyr::pull(record)
 # "data_25_1.par"  "data_32_12.par" "data_85_1.par"  "data_90_1.par"  "data_68_2.par"
@@ -923,11 +944,11 @@ significant duration and few regime changes, making it hard for a "trivial model
 #| fig.cap="Prediction of the best 10% of recordings (red is the truth, blue are the predictions)."
 
 bests <- scores_stats %>%
-  dplyr::filter(min < quantile(min, 0.3)) %>%
+  dplyr::filter(score < 0.8) %>%
   dplyr::group_by(record) %>%
   dplyr::slice_head() %>%
   dplyr::ungroup() %>%
-  dplyr::arrange(desc(min), desc(median)) %>%
+  # dplyr::arrange(desc(min), desc(median)) %>%
   dplyr::slice_head(n = 10) %>%
   dplyr::pull(record)
 
@@ -971,6 +992,8 @@ scores_stats_model <- all_scores %>%
   dplyr::summarize(
     record = record,
     model = model,
+    recall = recall,
+    precision = precision,
     score = score, min = min(score), q25 = quantile(score, 0.25),
     median = quantile(score, 0.5), q75 = quantile(score, 0.75),
     iqr = q75 - q25,
@@ -993,7 +1016,7 @@ model_mean <- scores_stats_model %>%
   ggplot2::ggplot(aes(x = reorder(reorder(id, -sd), -mean), y = score, colour = low_sd)) +
   ggplot2::scale_colour_manual(values = c("FALSE" = "#ff0000c2", "TRUE" = "#0000ffb5")) +
   ggplot2::geom_violin() +
-  ggplot2::coord_cartesian(ylim = c(0, 3)) +
+  ggplot2::coord_cartesian(ylim = c(0, 1)) +
   ggplot2::theme_bw() +
   ggplot2::theme(axis.text.x = element_text(size = 8, angle = 90, vjust = 0.5, hjust = 1)) +
   ggplot2::labs(subtitle = "Ordered by Mean and SD", colour = "SD < 3", x = ggplot2::element_blank(), y = "Score distribution")
@@ -1006,7 +1029,7 @@ model_median <- scores_stats_model %>%
   dplyr::filter(median >= dplyr::all_of(high) | median <= dplyr::all_of(low)) %>%
   ggplot2::ggplot(aes(x = reorder(reorder(id, -iqr), -median), y = score, colour = low_iqr)) +
   ggplot2::geom_violin() +
-  ggplot2::coord_cartesian(ylim = c(0, 3)) +
+  ggplot2::coord_cartesian(ylim = c(0, 1)) +
   ggplot2::theme_bw() +
   ggplot2::theme(axis.text.x = element_text(size = 8, angle = 90, vjust = 0.5, hjust = 1)) +
   ggplot2::labs(subtitle = "Ordered by Median and IQR", colour = "IQR < 1", x = "Model ID", y = "Score distribution")
@@ -1024,7 +1047,7 @@ the mean score, and the red line the median score.  The scores above 3 are squis
 the scale in the legend. Notice the improvement on the blue and red lines compared to the [previous article](regime_optimize.html).
 
 
-```{r bestmodels, eval=TRUE, fig.height=22, fig.width=18, out.width="100%", cache=FALSE}
+```{r bestmodels, eval=TRUE, warning=FALSE, fig.height=22, fig.width=18, out.width="100%", cache=FALSE}
 #| fig.cap="Performances of the best 6 models across all inner resample of recordings.
 #|  The recordings are ordered by score, from the worst to the best.
 #|  Each plot shows one model, starting from the best one.
@@ -1033,8 +1056,8 @@ the scale in the legend. Notice the improvement on the blue and red lines compar
 #|  limit are shown in color."
 
 best_models <- scores_stats_model %>%
-  dplyr::filter(mean < quantile(mean, 0.1)) %>%
-  dplyr::arrange(mean, sd) %>%
+  dplyr::filter(mean < 0.9) %>%
+  dplyr::arrange(mean) %>%
   dplyr::pull(id_text) %>%
   unique() %>%
   .[1:6]
@@ -1042,17 +1065,29 @@ best_models <- scores_stats_model %>%
 plots <- list()
 for (i in seq_len(length(best_models))) {
   dd <- scores_stats_model %>% dplyr::filter(id_text == best_models[i])
-  plots[[i]] <- ggplot2::ggplot(dd, aes(x = reorder(record, -score), y = score, colour = score)) +
-    ggplot2::geom_point(size = 2) +
-    ggplot2::geom_hline(aes(yintercept = median), colour = "red") +
-    ggplot2::geom_hline(aes(yintercept = mean), colour = "blue") +
+
+  ff <- dd %>% dplyr::arrange(score)
+  ff$record <- factor(ff$record, levels = ff$record, ordered = TRUE)
+
+  plots[[i]] <- ggplot2::ggplot(ff, aes(x = record, y = 1 - score)) +
+    ggplot2::geom_point(size = 2, colour = "#00000080") +
+    ggplot2::geom_segment(aes(xend = c(tail(record, -1), NA), yend = c(tail(1 - score, -1), NA))) +
+    ggplot2::geom_segment(aes(
+      xend = c(tail(record, -1), NA), y = precision,
+      yend = c(tail(precision, -1), NA)
+    ), colour = "#008cff", size = 1) +
+    ggplot2::geom_segment(aes(
+      xend = c(tail(record, -1), NA), y = recall,
+      yend = c(tail(recall, -1), NA)
+    ), colour = "#26ff00", size = 1) +
+    ggplot2::geom_hline(aes(yintercept = median), colour = "#52046e", size = 0.5, linetype = 1) +
+    ggplot2::geom_hline(aes(yintercept = mean), colour = "blue", size = 0.5, linetype = 2) +
     ggplot2::geom_hline(aes(yintercept = 0), colour = "gray50") +
     ggplot2::scale_y_continuous(
-      limits = c(0, 1),
+      limits = c(0, 1.1),
       oob = scales::oob_squish,
       expand = c(0.1, 0.05, 0.1, -0.1)
     ) +
-    ggplot2::scale_color_gradientn(colors = c("#ffd500db", "#ff8800", "#ff5e00", "#ff0000"), limits = c(3.1, 100)) +
     ggplot2::theme_bw(base_size = 15) +
     ggplot2::theme(axis.text.x = element_text(size = 9, angle = 90, vjust = 0.5, hjust = 1)) +
     ggplot2::labs(
@@ -1060,7 +1095,6 @@ for (i in seq_len(length(best_models))) {
         "{best_models[i]} - window_size {dd$window_size}; ",
         "regime_threshold {dd$regime_threshold}; regime_landmark {dd$regime_landmark}"
       ),
-      colour = "Score out\nof bounds",
       x = ifelse(i == length(best_models), "Record ID", ""),
       y = ggplot2::element_blank()
     )
@@ -1070,6 +1104,14 @@ wrap_plots(plots, ncol = 1, guides = "collect") + plot_annotation(
   title = "Performances of the 6 best models",
   theme = ggplot2::theme_bw()
 )
+
+# ff <- dd %>% dplyr::arrange(score)
+# ff$record <- factor(ff$record, levels = ff$record, ordered = TRUE)
+# ff$record
+
+# ggplot2::ggplot(ff, aes(x = record, xend = c(tail(record, -1), NA),
+#  y = score, yend = c(tail(score, -1), NA))) +
+#     ggplot2::geom_segment()
 
 # 41 19 100 107 -13 -86 -09 -94 -10 -58 93 -121 -97
 
@@ -1105,8 +1147,8 @@ set.seed(102)
 best_fit <- generics::fit(trained_model$model, train_x)
 predictions <- predict(best_fit, train_x[, 1:5])$.pred
 expected <- mean(testing_data$mean)
-yardstick::rmse_vec(train_x[, 6]$mean, predictions)
-yardstick::rsq_vec(train_x[, 6]$mean, predictions)
+cli::cli_alert_info("RMSE: {yardstick::rmse_vec(train_x[, 6]$mean, predictions)}")
+cli::cli_alert_info("RSQ: {yardstick::rsq_vec(train_x[, 6]$mean, predictions)}")
 
 shap_values <- shap_explain(best_fit, train_x[, 1:5], train_x[, 1:5], predictors_names, nsim = 50, parallel = TRUE)
 shap_samples <- shap_values %>%
