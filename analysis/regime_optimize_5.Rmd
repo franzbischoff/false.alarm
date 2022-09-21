@@ -423,7 +423,7 @@ if (!file.exists(here("output", "regime_outputs_vtds_pr.rds"))) {
     dplyr::rename(fold = id, size = .sizes, record = .id, model = .config, pred = .pred) %>%
     dplyr::distinct(rep, record, across(all_of(predictors_names)), .keep_all = TRUE) %>%
     dplyr::mutate(truth = clean_truth(truth, size), pred = clean_pred(pred)) %>%
-    dplyr::mutate(score = fscore(truth, pred, size, window = 5000, beta = 2, alpha = 1, gamma = "one")) %>% # use this new score function
+    dplyr::mutate(score = fscore(truth, pred, size, window = 2500, beta = 2, alpha = 1, gamma = "one")) %>% # use this new score function
     tidyr::unnest(score) %>%
     dplyr::rename(score = fscore)
 
@@ -823,15 +823,15 @@ computation, both `regime_threshold` (mainly) and `regime_landmark` shall be tun
 # )
 
 d1 <- shapviz::shapviz(shap_fastshap_all_test, X = testing_data[, predictors_names], baseline = mean(testing_data[, outcome_name]$mean))
-a1 <- shapviz::sv_dependence(d1, "window_size", color_var = "auto") +
+a1 <- shapviz::sv_dependence(d1, "window_size", color_var = "regime_threshold") +
   ggplot2::geom_smooth(method = loess, colour = "#0000ff44", alpha = 0.2) +
   ggplot2::labs(y = ggplot2::element_blank()) +
   ggplot2::theme_bw()
-a2 <- shapviz::sv_dependence(d1, "regime_threshold", color_var = "auto") +
+a2 <- shapviz::sv_dependence(d1, "regime_threshold", color_var = "regime_landmark") +
   ggplot2::geom_smooth(method = loess, colour = "#0000ff44", alpha = 0.2) +
   ggplot2::labs(y = ggplot2::element_blank()) +
   ggplot2::theme_bw()
-a3 <- shapviz::sv_dependence(d1, "regime_landmark", color_var = "auto") +
+a3 <- shapviz::sv_dependence(d1, "regime_landmark", color_var = "regime_threshold") +
   ggplot2::geom_smooth(method = loess, colour = "#0000ff44", alpha = 0.2) +
   ggplot2::labs(y = ggplot2::element_blank()) +
   ggplot2::theme_bw()
