@@ -24,6 +24,14 @@ navbar:
           href: regime_optimize.html
         - text: Second Optimization
           href: regime_optimize_2.html
+        - text: Using malignantventricular dataset
+          href: regime_optimize_3.html
+        - text: Using malignantventricular dataset and PR
+          href: regime_optimize_3_5.html
+        - text: Using vtachyarrhythmias dataset
+          href: regime_optimize_4.html
+        - text: Using vtachyarrhythmias dataset and PR
+          href: regime_optimize_4_5.html
     - text: About
       href: about.html
     - text: License

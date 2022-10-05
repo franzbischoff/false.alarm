@@ -1,5 +1,5 @@
 ---
-title: "Regime changes 5.0 - vtachyarrhythmias with PR"
+title: "Regime changes 3.5 - malignantventricular with PR"
 author: "Francisco Bischoff"
 date: "on `r format(Sys.time(), '%B %d, %Y')`"
 output:
@@ -278,8 +278,8 @@ check_importance <- function(model, train_data, test_data, features, type = c("f
 }
 
 tkplot <- function(object, interactive = FALSE, res = 50) {
-  ecg <- read_ecg_with_atr(here::here("inst/extdata/vtachyarrhythmias", object$record), resample_from = 250, resample_to = res)
-  value <- ecg[[1]]$ECG
+  ecg <- read_ecg_with_atr(here::here("inst/extdata/malignantventricular", object$record), resample_from = 250, resample_to = res)
+  value <- ecg[[1]]$ECG1
   prop <- 250 / res
   mask <- seq.int(50, 100)
   value[1:5] <- median(value[mask])
@@ -358,7 +358,7 @@ tkplot <- function(object, interactive = FALSE, res = 50) {
   plot
 }
 
-pbFinished <- function(msg) {
+pb_finished <- function(msg) {
   RPushbullet::pbPost("note", "Alert", msg)
   # RPushbullet::pbPost("note", "Alert", "Finished")
 }
@@ -372,21 +372,21 @@ source(here::here("scripts", "common", "score_floss.R"))
 ```
 
 ```{r buildoutputs}
-if (!file.exists(here("output", "regime_outputs_vtds.rds"))) {
-  Sys.setenv(TAR_PROJECT = "regime_change2")
+if (!file.exists(here("output", "regime_outputs_mvds.rds"))) {
+  Sys.setenv(TAR_PROJECT = "regime_change")
   tar_load(num_range("analysis_fitted_", 1:200))
   all_objs <- mget(objects(pattern = "analysis_fitted_\\d{1,3}"))
   rm(list = objects(pattern = "analysis_fitted_\\d{1,3}"))
   all_fitted <- purrr::map_dfr(all_objs, function(x) x[[1]])
-  saveRDS(all_fitted, file = here("output", "regime_outputs_vtds.rds"))
+  saveRDS(all_fitted, file = here("output", "regime_outputs_mvds.rds"))
   rm("all_objs")
   rm("all_fitted")
 }
 ```
 
 ```{r cached, echo=FALSE, cache=FALSE}
-network <- readRDS(here::here("output", "regime_network_vtds.rds"))
-all_fitted <- readRDS(here::here("output", "regime_outputs_vtds.rds"))
+network <- readRDS(here::here("output", "regime_network_mvds.rds"))
+all_fitted <- readRDS(here::here("output", "regime_outputs_mvds.rds"))
 net <- network %>%
   visNetwork::visPhysics(hierarchicalRepulsion = list(
     springLength = 1,
@@ -410,7 +410,7 @@ fscore <- function(truth, pred, size, window = 1000, delta_prec = "flat", delta_
   return(tibble::tibble(precision = score$precision, recall = score$recall, fscore = result))
 }
 
-if (!file.exists(here("output", "regime_outputs_vtds_pr.rds"))) {
+if (!file.exists(here("output", "regime_outputs_mvds_pr.rds"))) {
   all_scores <- all_fitted %>%
     # dplyr::slice_head(n = 10) %>%
     tidyr::unnest(.predictions) %>%
@@ -423,20 +423,33 @@ if (!file.exists(here("output", "regime_outputs_vtds_pr.rds"))) {
     dplyr::rename(fold = id, size = .sizes, record = .id, model = .config, pred = .pred) %>%
     dplyr::distinct(rep, record, across(all_of(predictors_names)), .keep_all = TRUE) %>%
     dplyr::mutate(truth = clean_truth(truth, size), pred = clean_pred(pred)) %>%
-    dplyr::mutate(score = fscore(truth, pred, size, window = 2500, beta = 2, alpha = 1, gamma = "one")) %>% # use this new score function
+    dplyr::mutate(score = fscore(truth, pred, size, window = 1250, beta = 3, alpha = 1, gamma = "one")) %>% # use this new score function
     tidyr::unnest(score) %>%
     dplyr::rename(score = fscore)
 
-  saveRDS(all_scores, file = here("output", "regime_outputs_vtds_pr.rds"))
+  saveRDS(all_scores, file = here("output", "regime_outputs_mvds_pr.rds"))
 } else {
-  all_scores <- readRDS(here::here("output", "regime_outputs_vtds_pr.rds"))
+  all_scores <- readRDS(here::here("output", "regime_outputs_mvds_pr.rds"))
 }
 ```
 
 
 # Regime changes optimization (continuation)
 
-Following the [previous article](regime_optimize.html), this article aims to complete the analysis of the regime change optimization.  Here we add the `regime_landmark` parameter to the optimization.
+This article uses the same principles as the [previous article](regime_optimize_2.html) but here we will evaluate the
+models in another dataset, the "CU Ventricular Tachyarrhythmia Database" which contains 35 eight-minute ECG recordings
+of human subjects who experienced episodes of sustained ventricular tachycardia, ventricular flutter, and ventricular
+fibrillation.
+
+This version of the analysis uses another scoring function, which is based on the F-score, and uses a simple approach
+to calculate the Precision and Recall. The Recall reflects the hability of the model to detect the labeled regime changes;
+the algorithm accounts as a "detection" if the prediction is within a window of 5 seconds (plus or minus 2.5s).
+The Precision reflects the hability of the model to avoid false positives; the algorithm accounts as a "false positive"
+when the prediction is outside a window of 5 seconds (plus or minus 2.5s) from the labeled regime change.
+
+The F-score will be calculated giving more weight to the Recall (beta = 3).
+Except for the Fig. \@ref(fig:bestmodels), all other figures will represent the F-score as $Score = 1 - F_{score}$, to make
+it easier to compare with the previous score function.
 
 ## Current pipeline
 
@@ -446,35 +459,25 @@ visNetwork::visInteraction(net, hover = TRUE, multiselect = TRUE, tooltipDelay =
 
 ## Tuning process
 
-As we have seen previously, the FLOSS algorithm is built on top of the Matrix Profile (MP).  Thus, we have proposed
-several parameters that may or not impact the FLOSS prediction performance.
+This time, as we have already seen the results of the previous optimization, we will only tune the parameters that
+we have concluded that they are meaningful.
 
-The variables for building the MP are:
+The variable for building the MP:
 
--  **`mp_threshold`**: the minimum similarity value to be considered for 1-NN.
--  **`time_constraint`**: the maximum distance to look for the nearest neighbor.
 -  **`window_size`**: the default parameter always used to build an MP.
 
-Later, the FLOSS algorithm also has a parameter that needs tuning to optimize the prediction:
+The variables used on the FLOSS algorithm:
 
 -  **`regime_threshold`**: the threshold below which a regime change is considered.
 -  **`regime_landmark`**: the point in time where the regime threshold is applied.
 
-Using the `tidymodels` framework, we performed a basic grid search on all these parameters, now limiting the exploration
-on the MP and focusing on the FLOSS parameters.
+Using the `tidymodels` framework, we performed a basic grid search on all these parameters as follows:
 
-The workflow is as follows:
-
--  From the original set of 229 records, a subset of 137 records was selected for the grid search.
 -  The MP parameters were explored using the following values:
-   -  **`mp_threshold`**: 0.0, 0.4, 0.6 and 0.8;
-   -  **`time_constraint`**: 0, 800 and 1500;
-   -  **`window_size`**: 25, 50, 75, 100, 125 and 150;
+   -  **`window_size`**: 25 to 200, by 25 steps;
 -  The FLOSS parameters were explored using the following values:
    -  **`regime_threshold`**: 0.05 to 0.90, by 0.05 steps;
-   -  **`regime_landmark`**: 1 to 10, by 0.5 steps.
-
-The results were then combined with the previous optimization and deduplicated.
+   -  **`regime_landmark`**: 2 to 9.5, by 0.5 steps.
 
 ## Parameters analysis
 
@@ -487,43 +490,25 @@ FLOSS score.
 Before starting the parameter importance analysis, we need to consider the parameter interactions since this
 is usually the weak spot of the analysis techniques.
 
-The first BART model was fitted using the following parameters:
+The BART model was fitted using the following parameters:
 
 \begin{equation}
 \begin{aligned}
-E( score ) &= \alpha + time\_constraint\\
- &\quad + mp\_threshold + window\_size\\
+E( score ) &= \alpha + window\_size\\
  &\quad + regime\_threshold + regime\_landmark
 \end{aligned}
 (\#eq:first)
 \end{equation}
 
-After checking the interactions, this is the refitted model:
 
-\begin{equation}
-\begin{aligned}
-E( score ) &= \alpha + time\_constraint\\
-&\quad + mp\_threshold + window\_size\\
-&\quad + regime\_threshold + regime\_landmark\\
-&\quad + \left(regime\_threshold \times regime\_landmark\right)\\
-&\quad + \left(mp\_threshold \times regime\_landmark\right)\\
-&\quad + \left(mp\_threshold \times window\_size\right)
-\end{aligned}
-(\#eq:refitted)
-\end{equation}
-
-Fig.  \@ref(fig:interaction) shows the variable interaction strength between pairs of variables.  That allows us to
-verify if there are any significant interactions between the variables.  Using the information from the first model fit,
-equation \@ref(eq:first), we see that `regime_threshold` interacts strongly with `regime_landmark`.  This interaction
-was already expected, and we see that even after refitting the model, equation \@ref(eq:refitted), this interaction is
-still strong.
-
-This is not a problem _per se_ but a signal we must be aware of when exploring the parameters.
+Fig. \@ref(fig:interaction) shows the variable interaction strength between pairs of variables. That allows us to verify
+if there are any significant interactions between the variables. Here we see that the interaction between variables are
+minimal.
 
 ```{r modelbart, message=FALSE, cache=FALSE}
 tree_data <- all_scores %>%
   dplyr::group_by(across(all_of(predictors_names))) %>%
-  dplyr::summarize(mean = mean(score), prec = mean(precision), rec = mean(recall)) %>%
+  dplyr::summarize(mean = mean(score)) %>% # , prec = mean(precision), rec = mean(recall)) %>%
   dplyr::ungroup()
 
 # rt * w
@@ -532,11 +517,11 @@ tree_data <- all_scores %>%
 
 trained_model <- NULL
 # Caching ===========
-if (file.exists(here("output", "dbarts_fitted_lmk5.rds"))) {
-  trained_model <- readRDS(here("output", "dbarts_fitted_lmk5.rds"))
+if (file.exists(here("output", "dbarts_fitted_mvds_pr.rds"))) {
+  trained_model <- readRDS(here("output", "dbarts_fitted_mvds_pr.rds"))
 } else {
   trained_model <- train_models(tree_data, parallel = TRUE, v = 5, rep = 1, grid = 30)
-  saveRDS(trained_model, file = here("output", "dbarts_fitted_lmk5.rds"))
+  saveRDS(trained_model, file = here("output", "dbarts_fitted_mvds_pr.rds"))
 }
 
 train_data <- trained_model$training_data
@@ -544,12 +529,12 @@ testing_data <- trained_model$testing_data
 set.seed(102)
 best_fit <- generics::fit(trained_model$model, train_data)
 pred <- predict(best_fit, testing_data)$.pred
-yardstick::rmse_vec(testing_data$mean, pred)
-yardstick::rsq_vec(testing_data$mean, pred)
+# yardstick::rmse_vec(testing_data$mean, pred)
+# yardstick::rsq_vec(testing_data$mean, pred)
 
 # Caching ===========
-if (file.exists(here("output", "importances_lmk5.rds"))) {
-  interactions <- readRDS(here("output", "importances_lmk5.rds"))
+if (file.exists(here("output", "importances_mvds_pr.rds"))) {
+  interactions <- readRDS(here("output", "importances_mvds_pr.rds"))
   importance_firm <- interactions$importance_firm
   importance_perm <- interactions$importance_perm
   importance_shap <- interactions$importance_shap
@@ -607,44 +592,13 @@ if (file.exists(here("output", "importances_lmk5.rds"))) {
     importance_shap = importance_shap,
     shap_fastshap_all_test = shap_fastshap_all_test,
     shap_html_test = shap_html_test
-  ), file = here("output", "importances_lmk5.rds"))
+  ), file = here("output", "importances_mvds_pr.rds"))
 }
-
-# A tibble: 10 × 2
-#    Variables                        Interaction
-#    <chr>                                  <dbl>
-#  1 regime_threshold*regime_landmark       1.51
-#  2 mp_threshold*window_size               1.20
-#  3 mp_threshold*regime_landmark           1.16
-#  4 window_size*regime_landmark            0.985
-#  5 time_constraint*regime_threshold       0.887
-#  6 regime_threshold*window_size           0.850
-#  7 regime_threshold*mp_threshold          0.810
-#  8 time_constraint*regime_landmark        0.671
-#  9 time_constraint*mp_threshold           0.619
-# 10 time_constraint*window_size            0.389
-
-# # A tibble: 10 × 2
-#    Variables                        Interaction
-#    <chr>                                  <dbl>
-#  1 mp_threshold*regime_landmark           1.46
-#  2 regime_threshold*window_size           0.992
-#  3 time_constraint*regime_threshold       0.683
-#  4 regime_threshold*regime_landmark       0.624
-#  5 time_constraint*mp_threshold           0.590
-#  6 time_constraint*regime_landmark        0.449
-#  7 mp_threshold*window_size               0.329
-#  8 regime_threshold*mp_threshold          0.288
-#  9 window_size*regime_landmark            0.256
-# 10 time_constraint*window_size            0.251
 ```
 
-```{r interaction, fig.height = 7, fig.width= 8, out.width="100%"}
+```{r interaction, fig.height = 3, fig.width= 8, out.width="100%"}
 #| fig.cap="Variable interactions strength using feature importance ranking measure (FIRM) approach [@Greenwell2018].
-#|  A) Shows strong interaction between `regime_threshold` and `regime_landmark`, `mp_threshold` and `window_size`,
-#|     `mp_threshold` and `regime_landmark`.
-#|  B) Refitting the model with these interactions taken into account, the strength is substantially reduced, except
-#|     for the first, showing that indeed there is a strong correlation between those variables."
+#|  Shows almost no interaction between the variables."
 
 interactions_plot <- ggplot2::ggplot(interactions, ggplot2::aes(
   x = reorder(Variables, Interaction),
@@ -653,19 +607,22 @@ interactions_plot <- ggplot2::ggplot(interactions, ggplot2::aes(
   ggplot2::geom_col(color = "grey35", size = 0.2) +
   ggplot2::coord_flip() +
   ggplot2::labs(
-    title = "Normal fit",
+    title = "Interactions",
     y = ggplot2::element_blank(),
     x = ggplot2::element_blank()
   ) +
-  ggplot2::ylim(0, 1.65) +
+  # ggplot2::ylim(0, 1.25) +
   ggplot2::theme_bw() +
   ggplot2::theme(legend.position = "none")
+
+interactions_plot
 ```
 
 
 ### Importance
 
-After evaluating the interactions, we can then perform the analysis of the variable importance. The goal is to understand how the FLOSS score behaves when we change the parameters.
+After evaluating the interactions, we can then perform the analysis of the variable importance. The goal is to
+understand how the FLOSS score behaves when we change the parameters.
 
 The techniques for evaluating the variable importances were described in the [previous article](regime_optimize.html).
 
@@ -676,20 +633,13 @@ three methods are model-agnostic (separates interpretation from the model), but 
 its advantages and disadvantages [@Molnar2022].
 
 Fig.  \@ref(fig:importance) then shows the variable importance using three methods: Feature Importance Ranking Measure
-(FIRM) using Individual Conditional Expectation (ICE), Permutation-based, and Shapley Additive explanations (SHAP).  The
-first line of this figure shows an interesting result that probably comes from the main disadvantage of the FIRM method:
-_the method does not take into account interactions_.  We see that FIRM is the only one that disagrees with the other
-two methods, giving much importance to `window_size`.
+(FIRM) using Individual Conditional Expectation (ICE), Permutation-based, and Shapley Additive explanations (SHAP).
+Here we see that all three methods agree on the importances.
 
-In the second line, taking into account the interactions, we see that all methods somewhat agree with each other,
-accentuating the importance of `regime_threshold`, which makes sense as it is the most evident parameter we need to set
-to determine if the _Arc Counts_ are low enough to indicate a regime change.
 
-```{r importance, fig.height = 7, fig.width= 15, out.width="100%"}
+```{r importance, fig.height = 5, fig.width= 15, out.width="100%"}
 #| fig.cap="Variables importances using three different methods. A) Feature Importance Ranking Measure
-#|  using ICE curves. B) Permutation method. C) SHAP (400 iterations). Line 1 refers to the original
-#|  fit, and line 2 to the re-fit, taking into account the interactions between variables
-#|  (Fig. \\@ref(fig:interaction))."
+#|  using ICE curves. B) Permutation method. C) SHAP (400 iterations)."
 
 
 importance_firm_plot <- ggplot2::ggplot(importance_firm, aes(
@@ -747,13 +697,13 @@ importance_shap_plot <- ggplot2::ggplot(importance_shap, aes(
     plot.margin = margin(0, 0, 0, 10)
   )
 
-all <- (importance_firm_plot + plot_layout(tag_level = "new")) |
-  (importance_perm_plot + plot_layout(tag_level = "new")) |
-  (importance_shap_plot + plot_layout(tag_level = "new")) +
+all <- (importance_firm_plot + plot_layout(tag_level = "keep")) |
+  (importance_perm_plot + plot_layout(tag_level = "keep")) |
+  (importance_shap_plot + plot_layout(tag_level = "keep")) +
     plot_layout(guides = "collect")
 all + plot_annotation(
   title = "Variable importances",
-  tag_levels = c("A", "1"),
+  tag_levels = "A",
   theme = ggplot2::theme_bw() + ggplot2::theme(
     plot.title = ggplot2::element_text(size = 20)
   )
@@ -761,37 +711,16 @@ all + plot_annotation(
 ```
 
 
-Fig.  \@ref(fig:importanceshap) and \@ref(fig:importanceshap2) show the effect of each feature on the FLOSS score.  The
-more evident difference is the shape of the effect of `time_constraint` that initially suggested better results with
-larger values.  However, removing the interactions seems to be a flat line.
+Fig. \@ref(fig:importanceshap) shows the effect of each feature on the FLOSS score.
 
-Based on Figures \@ref(fig:importance) and \@ref(fig:importanceshap2) we can infer that:
+Based on Figures \@ref(fig:importance) and \@ref(fig:importanceshap) we can infer that:
 
-- **`regime_threshold`**: is the most important feature, has an optimal value to be set, and since the high interaction with the `regime_landmark`, both must be tuned simultaneously.
-  In this setting, high thresholds significantly impact the score, probably due to an increase in false positives starting on >0.65 the overall impact is mostly negative.
+- **`regime_threshold`**: is the most important feature, as in the previous dataset, and have a converging value.
 
-- **`regime_landmark`**: is not as important as the `regime_threshold,` but since there is a high interaction, it must
-  not be underestimated.  It is known that the _Arc Counts_ have more uncertainty as we approach the margin of the
-  streaming, and this becomes evident looking at how the score is negatively affected for values below 3.5s.
+- **`regime_landmark`**: seems to have lost its importance using this metric.
 
-- **`window_size`**: has a near zero impact on the score when correctly set.  Nevertheless, for higher window values,
-  the score is negatively affected.  This high value probably depends on the data domain.  In this setting, the model is
-  being tuned towards the changes from atrial fibrillation/non-fibrillation; thus, the "shape of interest" is small
-  compared to the whole heartbeat waveform.  Window sizes smaller than 150 are more suitable in this case.  As Beyer _et
-  al._ noted, "as dimensionality increases, the distance to the nearest data point approaches the distance to the
-  farthest data point" [@Beyer1999], which means that the bigger the window size, the smaller will be the contrast
-  between different regimes.
+- **`window_size`**: has some importance, and as before, value below 75 starts to degrade the FLOSS score.
 
-- **`mp_threshold`**: has a fair impact on the score, but primarily by _not using it_.  We start to see a negative
-  impact on the score with values above 0.60, while a constant positive impact with lower values.
-
-- **`time_constraint`**: is a parameter that must be interpreted cautiously.  The 0 (zero) value means **no
-  constraint**, which is equivalent to the size of the FLOSS history buffer (in our setting, 5000).  We can see that
-  this parameter's impact throughout the possible values is constantly near zero.
-
-
-In short, for the MP computation, the parameter that is worth tuning is the `window_size`, while for the FLOSS
-computation, both `regime_threshold` (mainly) and `regime_landmark` shall be tuned.
 
 ```{r importanceshap, message=FALSE, fig.height = 6, fig.width= 10, out.width="100%"}
 #| fig.cap="This shows the effect each variable has on the FLOSS score. This plot doesn't take into account the
@@ -843,44 +772,35 @@ all2 + plot_annotation(
 )
 ```
 
-According to the FLOSS paper [@gharghabi2018], the `window_size` is indeed a feature that can be tuned; nevertheless,
-the results appear to be similar in a reasonably wide range of window sizes, up to a limit, consistent with our findings.
-
 ## Visualizing the predictions
-
-At this point, the grid search tested a total of 23,389 models with resulting (individual) scores from 0.0002 to 1669.83
-(Q25: 0.9838, Q50: 1.8093, Q75: 3.3890).
 
 ### By recording
 
 First, we will visualize how the models (in general) performed throughout the individual recordings.
 
 Fig. \@ref(fig:global) shows a violin plot of equal areas clipped to the minimum value. The blue color indicates the
-recordings with a small IQR (interquartile range) of model scores. We see on the left half 10% of the recordings with
-the worst minimum score, and on the right half, 10% of the recordings with the best minimum score.
+recordings with a small IQR (interquartile range) of model scores. We see on the left half 50% of the recordings with
+the worst minimum score, and on the right half, 50% of the recordings with the best minimum score.
 
-Next, we will visualize some of these predictions to understand why some recordings were difficult to segment. For us to
-have a simple baseline: a recording with just one regime change, and the model predicts exactly one regime change, but
-far from the truth, the score will be roughly 1.
+Next, we will visualize some of these predictions to understand why some recordings were difficult to segment.
 
 
 ```{r global, eval=TRUE, fig.height=5, fig.width=10, out.width="100%", cache=FALSE}
 #| fig.cap="Violin plot showing the distribution of the FLOSS score achieved by all tested models by
-#|  recording.  The left half shows the recordings that were difficult to predict (10% overall), whereas
-#|  the right half shows the recordings that at least one model could achieve a good prediction (10%
+#|  recording.  The left half shows the recordings that were difficult to predict (50% overall), whereas
+#|  the right half shows the recordings that at least one model could achieve a good prediction (50%
 #|  overall).  The recordings are sorted (left-right) by the minimum (best) score achieved in descending
 #|  order, and ties are sorted by the median of all recording scores.  The blue color highlights
-#|  recordings where models had an IQR variability of less than one.  As a simple example, a recording
-#|  with just one regime change, and the model predicts exactly one change, far from the truth, the
-#|  score will be roughly 1."
+#|  recordings where models had an IQR variability of less than 0.5."
 
 scores_stats <- all_scores %>%
-  dplyr::select(record, score, precision, recall) %>%
+  dplyr::select(record, score) %>%
   # dplyr::filter(!is.na(score)) %>%
   dplyr::group_by(record) %>%
   dplyr::summarize(
-    score = mean(score), min = min(score), median = median(score),
-    q25 = quantile(score, 0.25), q75 = quantile(score, 0.75), precision = mean(precision), recall = mean(recall)
+    score = score, min = min(score), q25 = quantile(score, 0.25),
+    median = quantile(score, 0.5), q75 = quantile(score, 0.75),
+    mean = mean(score), max = max(score), size = dplyr::n()
   ) %>%
   dplyr::ungroup()
 
@@ -889,33 +809,38 @@ records_factors <- forcats::as_factor(scores_stats$record)
 scores_stats$id <- sprintf("%02d", (as.numeric(records_factors)))
 
 scores_stats %>%
-  dplyr::mutate(low_iqr = q75 - q25 < 1) %>%
-  dplyr::filter(min > quantile(min, 0.7) | min < quantile(min, 0.3)) %>%
-  ggplot2::ggplot(aes(x = reorder(reorder(id, -median), -min), y = score, colour = low_iqr)) +
-  ggplot2::geom_violin() +
+  dplyr::mutate(low_iqr = q75 - q25 < 0.5) %>%
+  dplyr::filter(min > quantile(min, 0.5) | min < quantile(min, 0.5)) %>%
+  ggplot2::ggplot(aes(
+    x = reorder(reorder(id, -median), -min),
+    y = score, colour = low_iqr
+  )) +
+  ggplot2::geom_violin() + # scale = "width"
   ggplot2::coord_cartesian(ylim = c(0, 1)) +
   ggplot2::theme_bw() +
-  ggplot2::labs(title = "Scores by recording", colour = "IQR < 1", x = "Recording ID", y = "Score distribution")
+  ggplot2::labs(
+    title = "Scores by recording (lower is better)",
+    subtitle = glue::glue("{floor(mean(scores_stats$size))} models by recording"),
+    colour = "IQR < 0.5",
+    x = "Recording ID", y = "Score distribution"
+  )
 ```
 
 Fig.  \@ref(fig:worst) shows the best effort in predicting the most complex recordings.  One information not declared
 before is that if the model does not predict any change, it will put a mark on the zero position.  On the other side,
 the truth markers positioned at the beginning and the end of the recording were removed, as these locations lack
-information and do not represent a streaming setting.  Compared to the corresponding figure in the
-[previous article](regime_optimize.html), we can see that even the most complex recordings had better predictions.
+information and do not represent a streaming setting.
 
 
-```{r worst, eval=FALSE, fig.height=15, fig.width=12, out.width="100%", dev="png", cache=FALSE}
-#| fig.cap="Prediction of the worst 10% of recordings (red is the truth, blue are the predictions)."
+```{r worst, eval=TRUE, fig.height=9, fig.width=12, out.width="100%", dev="png", cache=FALSE}
+#| fig.cap="Prediction of the worst recordings (red is the truth, blue are the predictions)."
 
 worst <- scores_stats %>%
-  dplyr::filter(score > 0.9) %>%
+  dplyr::filter(min > quantile(min, 0.7)) %>%
   dplyr::group_by(record) %>%
   dplyr::slice_head() %>%
   dplyr::ungroup() %>%
-  # dplyr::arrange(desc(min), desc(median)) %>%
-  # dplyr::distinct(min, .keep_all = TRUE) %>%
-  dplyr::slice_head(n = 10) %>%
+  dplyr::arrange(desc(min), desc(median)) %>%
   dplyr::pull(record)
 # "data_25_1.par"  "data_32_12.par" "data_85_1.par"  "data_90_1.par"  "data_68_2.par"
 
@@ -936,20 +861,19 @@ wrap_plots(plots, ncol = 1)
 ```
 
 
-Fig. \@ref(fig:best) shows the best performances of the best recordings. Notice that there are recordings with a
-significant duration and few regime changes, making it hard for a "trivial model" to predict randomly.
+Fig. \@ref(fig:best) shows the best performances of the best recordings.
 
 
-```{r best, eval=TRUE, fig.height=15, fig.width=12, out.width="100%", dev="png", cache=FALSE}
-#| fig.cap="Prediction of the best 10% of recordings (red is the truth, blue are the predictions)."
+```{r best, eval=TRUE, fig.height=9, fig.width=12, out.width="100%", dev="png", cache=FALSE}
+#| fig.cap="Prediction of the best recordings (red is the truth, blue are the predictions)."
 
 bests <- scores_stats %>%
-  dplyr::filter(score < 0.8) %>%
+  dplyr::filter(min < quantile(min, 0.3)) %>%
   dplyr::group_by(record) %>%
   dplyr::slice_head() %>%
   dplyr::ungroup() %>%
-  # dplyr::arrange(desc(min), desc(median)) %>%
-  dplyr::slice_head(n = 10) %>%
+  dplyr::arrange(desc(min), desc(median)) %>%
+  # dplyr::slice_head(n = 10) %>%
   dplyr::pull(record)
 
 bests_data <- all_scores %>%
@@ -967,24 +891,18 @@ for (i in seq_len(nrow(bests_data))) {
 wrap_plots(plots, ncol = 1)
 ```
 
-An online interactive version of all the datasets and predictions can be accessed at
-[Shiny app](https://franzbischoff.shinyapps.io/FLOSS_land/).
-
 ### By model
 
-Fig. \@ref(fig:globalmodel) shows the distribution of the FLOSS score of the 10% worst (left side) and 10% best models
-across the recordings (right side). The bluish color highlights the models with SD below 3 and IQR below 1.
-
-Here again, we can compare with the [previous article](regime_optimize.html) and see an improvement in the performance,
-as the models present lower SD and IQR.
+Fig. \@ref(fig:globalmodel) shows the distribution of the FLOSS score of the 25% worst (left side) and 25% best models
+across the recordings (right side). The bluish color highlights the models with SD below 0.5 and IQR below 0.5.
 
 ```{r globalmodel, eval=TRUE, fig.height=5, fig.width=10, out.width="100%", cache=FALSE}
 #| fig.cap="Violin plot showing the distribution of the FLOSS score achieved by all tested models during the
-#|  inner ressample.  The left half shows the models with the worst performances (10% overall), whereas
-#|  the right half shows the models with the best performances (10% overall).
+#|  inner ressample.  The left half shows the models with the worst performances (top 25), whereas
+#|  the right half shows the models with the best performances (top 25).
 #|  The models are sorted (left-right) by the mean score (top) and by the median (below). Ties are
-#|  sorted by the SD and IQR, respectively.  The bluish colors highlights models with an SD below 3
-#|  and IQR below 1."
+#|  sorted by the SD and IQR, respectively.  The bluish colors highlights models with an SD below 0.5
+#|  and IQR below 0.5."
 
 scores_stats_model <- all_scores %>%
   dplyr::group_by(across(all_of(predictors_names))) %>%
@@ -1010,54 +928,86 @@ scores_stats_model <- scores_stats_model %>% dplyr::select(-model)
 low <- sort(unique(scores_stats_model$mean))[10]
 high <- tail(sort(unique(scores_stats_model$mean)), 10)[1]
 
+best_mean <- scores_stats_model %>%
+  dplyr::filter(mean < low) %>%
+  dplyr::group_by(mean) %>%
+  dplyr::slice_head() %>%
+  dplyr::ungroup() %>%
+  dplyr::arrange(desc(min), desc(mean)) %>%
+  dplyr::pull(id)
+
+worst_mean <- scores_stats_model %>%
+  dplyr::filter(mean > high) %>%
+  dplyr::group_by(mean) %>%
+  dplyr::slice_head() %>%
+  dplyr::ungroup() %>%
+  dplyr::arrange(desc(min), desc(mean)) %>%
+  dplyr::pull(id)
+
 model_mean <- scores_stats_model %>%
-  dplyr::mutate(low_sd = sd < 3) %>%
-  dplyr::filter(mean >= dplyr::all_of(high) | mean <= dplyr::all_of(low)) %>%
+  dplyr::mutate(low_sd = sd < 0.5) %>%
+  dplyr::filter(id %in% c(worst_mean, best_mean)) %>%
   ggplot2::ggplot(aes(x = reorder(reorder(id, -sd), -mean), y = score, colour = low_sd)) +
   ggplot2::scale_colour_manual(values = c("FALSE" = "#ff0000c2", "TRUE" = "#0000ffb5")) +
   ggplot2::geom_violin() +
   ggplot2::coord_cartesian(ylim = c(0, 1)) +
   ggplot2::theme_bw() +
   ggplot2::theme(axis.text.x = element_text(size = 8, angle = 90, vjust = 0.5, hjust = 1)) +
-  ggplot2::labs(subtitle = "Ordered by Mean and SD", colour = "SD < 3", x = ggplot2::element_blank(), y = "Score distribution")
+  ggplot2::labs(subtitle = "Ordered by Mean and SD", colour = "SD < 0.5", x = ggplot2::element_blank(), y = "Score distribution")
 
 low <- sort(unique(scores_stats_model$median))[10]
 high <- tail(sort(unique(scores_stats_model$median)), 10)[1]
 
+best_median <- scores_stats_model %>%
+  dplyr::filter(median < low) %>%
+  dplyr::group_by(median) %>%
+  dplyr::slice_head() %>%
+  dplyr::ungroup() %>%
+  dplyr::arrange(desc(min), desc(median)) %>%
+  dplyr::pull(id)
+
+worst_median <- scores_stats_model %>%
+  dplyr::filter(median > high) %>%
+  dplyr::group_by(median) %>%
+  dplyr::slice_head() %>%
+  dplyr::ungroup() %>%
+  dplyr::arrange(desc(min), desc(median)) %>%
+  dplyr::pull(id)
+
 model_median <- scores_stats_model %>%
-  dplyr::mutate(low_iqr = q75 - q25 < 1) %>%
-  dplyr::filter(median >= dplyr::all_of(high) | median <= dplyr::all_of(low)) %>%
+  dplyr::mutate(low_iqr = q75 - q25 < 0.5) %>%
+  dplyr::filter(id %in% c(worst_median, best_median)) %>%
   ggplot2::ggplot(aes(x = reorder(reorder(id, -iqr), -median), y = score, colour = low_iqr)) +
+  ggplot2::scale_colour_manual(values = c("FALSE" = "#ff0000c2", "TRUE" = "#0000ffb5")) +
   ggplot2::geom_violin() +
   ggplot2::coord_cartesian(ylim = c(0, 1)) +
   ggplot2::theme_bw() +
   ggplot2::theme(axis.text.x = element_text(size = 8, angle = 90, vjust = 0.5, hjust = 1)) +
-  ggplot2::labs(subtitle = "Ordered by Median and IQR", colour = "IQR < 1", x = "Model ID", y = "Score distribution")
+  ggplot2::labs(subtitle = "Ordered by Median and IQR", colour = "IQR < 0.5", x = "Model ID", y = "Score distribution")
 
 (model_mean / model_median) + plot_layout(guides = "auto") +
   plot_annotation(
-    title = "Scores grouped by model",
+    title = "Scores grouped by model (lower is better)",
     theme = ggplot2::theme_bw()
   )
 ```
 
-Fig.  \@ref(fig:bestmodels) the performance of the six best models.  They are ordered from left to right, from the worst
-record to the best record.  The top model is the one with the lowest mean across the scores.  The blue line indicates
-the mean score, and the red line the median score.  The scores above 3 are squished in the plot and colored according to
-the scale in the legend. Notice the improvement on the blue and red lines compared to the [previous article](regime_optimize.html).
+Fig.  \@ref(fig:bestmodels) the performance of the six best models.  They are ordered from left to right, from the best
+record to the worst record.  The top model is the one with the highest mean across the scores.  The blue line indicates
+the precision of the model, and the green line the recall. The black line with dots is the f-score. The red continuous
+and dashed lines are the median and the mean f-score respectively. The gray line limits the zero-score region.
 
-
-```{r bestmodels, eval=TRUE, warning=FALSE, fig.height=22, fig.width=18, out.width="100%", cache=FALSE}
+```{r bestmodels, eval=TRUE, warning=FALSE, fig.height=18, fig.width=18, out.width="100%", cache=FALSE}
 #| fig.cap="Performances of the best 6 models across all inner resample of recordings.
-#|  The recordings are ordered by score, from the worst to the best.
+#|  The recordings are ordered by score, from the best to the worst.
 #|  Each plot shows one model, starting from the best one.
-#|  The red line indicates the median score of the model. The blue line indicates the mean score of the model.
-#|  The gray line limits the zero-score region. The plot is limited on the \"y\" axis, and the scores above this
-#|  limit are shown in color."
+#|  The blue line indicates the precision of the model. The green line the recall. The black line with dots is the f-score.
+#|  The red continuous and dashed lines indicate respectively the median and mean f-score of the model.
+#|  The gray line limits the zero-score region."
 
 best_models <- scores_stats_model %>%
-  dplyr::filter(mean < 0.9) %>%
-  dplyr::arrange(mean) %>%
+  dplyr::filter(id %in% best_median) %>%
+  dplyr::arrange(mean, sd) %>%
   dplyr::pull(id_text) %>%
   unique() %>%
   .[1:6]
@@ -1066,7 +1016,7 @@ plots <- list()
 for (i in seq_len(length(best_models))) {
   dd <- scores_stats_model %>% dplyr::filter(id_text == best_models[i])
 
-  ff <- dd %>% dplyr::arrange(score)
+  ff <- dd %>% dplyr::arrange(score, desc(recall))
   ff$record <- factor(ff$record, levels = ff$record, ordered = TRUE)
 
   plots[[i]] <- ggplot2::ggplot(ff, aes(x = record, y = 1 - score)) +
@@ -1080,8 +1030,8 @@ for (i in seq_len(length(best_models))) {
       xend = c(tail(record, -1), NA), y = recall,
       yend = c(tail(recall, -1), NA)
     ), colour = "#26ff00", size = 1) +
-    ggplot2::geom_hline(aes(yintercept = median), colour = "#52046e", size = 0.5, linetype = 1) +
-    ggplot2::geom_hline(aes(yintercept = mean), colour = "blue", size = 0.5, linetype = 2) +
+    ggplot2::geom_hline(aes(yintercept = 1 - median), colour = "red", size = 0.5, linetype = 1) +
+    ggplot2::geom_hline(aes(yintercept = 1 - mean), colour = "red", size = 0.5, linetype = 2) +
     ggplot2::geom_hline(aes(yintercept = 0), colour = "gray50") +
     ggplot2::scale_y_continuous(
       limits = c(0, 1.1),
@@ -1095,7 +1045,7 @@ for (i in seq_len(length(best_models))) {
         "{best_models[i]} - window_size {dd$window_size}; ",
         "regime_threshold {dd$regime_threshold}; regime_landmark {dd$regime_landmark}"
       ),
-      x = ifelse(i == length(best_models), "Record ID", ""),
+      x = dplyr::if_else(i == length(best_models), "Record ID", ""),
       y = ggplot2::element_blank()
     )
 }
@@ -1104,14 +1054,6 @@ wrap_plots(plots, ncol = 1, guides = "collect") + plot_annotation(
   title = "Performances of the 6 best models",
   theme = ggplot2::theme_bw()
 )
-
-# ff <- dd %>% dplyr::arrange(score)
-# ff$record <- factor(ff$record, levels = ff$record, ordered = TRUE)
-# ff$record
-
-# ggplot2::ggplot(ff, aes(x = record, xend = c(tail(record, -1), NA),
-#  y = score, yend = c(tail(score, -1), NA))) +
-#     ggplot2::geom_segment()
 
 # 41 19 100 107 -13 -86 -09 -94 -10 -58 93 -121 -97
 
@@ -1122,391 +1064,5 @@ wrap_plots(plots, ncol = 1, guides = "collect") + plot_annotation(
 # 26 50 132 124 122 85 171 113 09 114 16 35 30     130
 # 26        124     85 171 113 09 114 16 35    32          48 29                   162
 ```
-
-We can see that some records (namely #19, #41, #93, #100, #107) are contained in the set of "difficult" records
-shown in Fig. \@ref(fig:global).
-
-
-```{r pytest, eval=FALSE}
-shap <- reticulate::import("shap")
-matlib <- reticulate::import("matplotlib")
-matlib$use("gtk3agg")
-
-
-predictors_names <- c("time_constraint", "regime_threshold", "mp_threshold", "window_size", "regime_landmark")
-a <- preds %>% dplyr::select(window_size, time_constraint, mp_threshold, regime_threshold, regime_landmark, score)
-a <- a %>%
-  dplyr::group_by(window_size, time_constraint, mp_threshold, regime_threshold, regime_landmark) %>%
-  dplyr::summarize(mean = mean(score, na.rm = TRUE))
-trained_model <- train_models(a, parallel = TRUE, v = 2, rep = 1, grid = 10)
-train_data <- trained_model$training_data
-testing_data <- trained_model$testing_data
-## mp_threshold of 1 and time_constraint of 750 are unrealistic, so we filter them out
-train_x <- train_data # %>% dplyr::filter(mp_threshold <= 0.9, time_constraint >= 800)
-set.seed(102)
-best_fit <- generics::fit(trained_model$model, train_x)
-predictions <- predict(best_fit, train_x[, 1:5])$.pred
-expected <- mean(testing_data$mean)
-cli::cli_alert_info("RMSE: {yardstick::rmse_vec(train_x[, 6]$mean, predictions)}")
-cli::cli_alert_info("RSQ: {yardstick::rsq_vec(train_x[, 6]$mean, predictions)}")
-
-shap_values <- shap_explain(best_fit, train_x[, 1:5], train_x[, 1:5], predictors_names, nsim = 50, parallel = TRUE)
-shap_samples <- shap_values %>%
-  tibble::as_tibble() %>%
-  dplyr::slice_sample(n = 1000)
-
-mask <- which(train_x$mean <= 2 | train_x$mean > 10)
-expected <- mean(train_x[mask, ]$mean)
-# shap_values <- shap_fastshap_all_test
-# feature_idx <- c(2L, 0L, 3L, 1L)
-shap$decision_plot(expected, data.matrix(shap_values[mask, ]), predictors_names,
-  feature_order = "hclust", legend_location = "lower right"
-)
-```
-
-
-```{r shaptest, eval=FALSE, fig.height=10, fig.width=15, out.width="100%", results="asis"}
-#| fig.cap="Interactive plot for SHAP values. Original fit."
-
-my_plot_html(shap_html_test, knitr::opts_current$get())
-```
-
-```{r shaptest2, eval=FALSE, fig.height=10, fig.width=15, out.width="100%", results="asis"}
-#| fig.cap="Interactive plot for SHAP values. Re-fit taking into account interactions."
-
-my_plot_html(shap_html_test2, knitr::opts_current$get())
-```
-
-
-```{r tests, eval=FALSE, echo=FALSE, out.width="80%", fig.cap="FLOSS pipeline."}
-
-
-# all_scores2 <- all_scores %>% dplyr::mutate(test = score_regimes_precision(truth, pred, 0,
-#   window = 250,
-#   delta_prec = "flat",
-#   delta_rec = "back",
-#   gamma = "reciprocal",
-#   alpha = 0.5
-# ))
-
-# all_scores3 <- all_scores2 %>%
-#   tidyr::unnest(test)
-
-# all_scores <- all_scores %>%
-#   dplyr::mutate(test3 = score_regimes_precision(truth, pred, 0,
-#     window = 250,
-#     delta_prec = "flat",
-#     delta_rec = "back",
-#     gamma = "reciprocal",
-#     alpha = 0.5
-#   ))
-
-# all_scores2 <- all_scores %>%
-#   tidyr::unnest(test3)
-# dplyr::arrange(desc(f1))
-
-ppp_mp <- pdp::partial(best_fit$fit$fit,
-  type = "regression",
-  grid.resolution = 51,
-  parallel = TRUE,
-  pred.var = "mp_threshold",
-  train = tree_data
-)
-
-ppp_w <- pdp::partial(best_fit$fit$fit,
-  type = "regression",
-  grid.resolution = 51,
-  parallel = TRUE,
-  pred.var = "window_size",
-  train = tree_data
-)
-
-ppp_rt <- pdp::partial(best_fit$fit$fit,
-  type = "regression",
-  grid.resolution = 51,
-  parallel = TRUE,
-  pred.var = "regime_threshold",
-  train = tree_data
-)
-
-ppp_tc <- pdp::partial(best_fit$fit$fit,
-  type = "regression",
-  grid.resolution = 51,
-  parallel = TRUE,
-  pred.var = "time_constraint",
-  train = tree_data
-)
-
-ppp_mp_w <- pdp::partial(best_fit$fit$fit,
-  type = "regression",
-  # grid.resolution = 51,
-  parallel = TRUE,
-  pred.var = c("mp_threshold", "window_size"),
-  train = tree_data
-)
-
-pdp::plotPartial(ppp_mp_w, levelplot = FALSE, zlim = c(0, 15))
-
-ppp_mp_rt <- pdp::partial(best_fit$fit$fit,
-  type = "regression",
-  # grid.resolution = 51,
-  parallel = TRUE,
-  pred.var = c("mp_threshold", "regime_threshold"),
-  train = tree_data
-)
-
-ppp_mp_tc <- pdp::partial(best_fit$fit$fit,
-  type = "regression",
-  # grid.resolution = 51,
-  parallel = TRUE,
-  pred.var = c("mp_threshold", "time_constraint"),
-  train = tree_data
-)
-ppp_rt_w <- pdp::partial(best_fit$fit$fit,
-  type = "regression",
-  # grid.resolution = 51,
-  parallel = TRUE,
-  pred.var = c("regime_threshold", "window_size"),
-  train = tree_data
-)
-
-ppp_rt_tc <- pdp::partial(best_fit$fit$fit,
-  type = "regression",
-  # grid.resolution = 51,
-  parallel = TRUE,
-  pred.var = c("regime_threshold", "time_constraint"),
-  train = tree_data
-)
-
-ppp_tc_w <- pdp::partial(best_fit$fit$fit,
-  type = "regression",
-  # grid.resolution = 51,
-  parallel = TRUE,
-  pred.var = c("time_constraint", "window_size"),
-  train = tree_data
-)
-
-ppp_mp_w_tc <- pdp::partial(best_fit$fit$fit,
-  type = "regression",
-  # grid.resolution = 51,
-  parallel = TRUE,
-  pred.var = c("mp_threshold", "window_size", "time_constraint"),
-  train = tree_data
-)
-
-ppp_mp_rt_tc <- pdp::partial(best_fit$fit$fit,
-  type = "regression",
-  # grid.resolution = 51,
-  parallel = TRUE,
-  pred.var = c("mp_threshold", "regime_threshold", "time_constraint"),
-  train = tree_data
-)
-
-ppp_w_rt_tc <- pdp::partial(best_fit$fit$fit,
-  type = "regression",
-  # grid.resolution = 51,
-  parallel = TRUE,
-  pred.var = c("window_size", "regime_threshold", "time_constraint"),
-  train = tree_data
-)
-
-ppp_mp_w_rt <- pdp::partial(best_fit$fit$fit,
-  type = "regression",
-  # grid.resolution = 51,
-  parallel = TRUE,
-  pred.var = c("mp_threshold", "window_size", "regime_threshold"),
-  train = tree_data
-)
-
-ppp_mp_tc_rt <- pdp::partial(best_fit$fit$fit,
-  type = "regression",
-  # grid.resolution = 51,
-  parallel = TRUE,
-  pred.var = c("mp_threshold", "time_constraint", "regime_threshold"),
-  train = tree_data
-)
-
-ppp_tc_w_rt <- pdp::partial(best_fit$fit$fit,
-  type = "regression",
-  # grid.resolution = 51,
-  parallel = TRUE,
-  pred.var = c("time_constraint", "window_size", "regime_threshold"),
-  train = tree_data
-)
-
-ppp_w_tc_mp <- pdp::partial(best_fit$fit$fit,
-  type = "regression",
-  # grid.resolution = 51,
-  parallel = TRUE,
-  pred.var = c("window_size", "time_constraint", "mp_threshold"),
-  train = tree_data
-)
-
-ppp_w_rt_mp <- pdp::partial(best_fit$fit$fit,
-  type = "regression",
-  # grid.resolution = 51,
-  parallel = TRUE,
-  pred.var = c("window_size", "regime_threshold", "mp_threshold"),
-  train = tree_data
-)
-
-ppp_tc_rt_mp <- pdp::partial(best_fit$fit$fit,
-  type = "regression",
-  # grid.resolution = 51,
-  parallel = TRUE,
-  pred.var = c("time_constraint", "regime_threshold", "mp_threshold"),
-  train = tree_data
-)
-
-ppp_tc_mp_w <- pdp::partial(best_fit$fit$fit,
-  type = "regression",
-  # grid.resolution = 51,
-  parallel = TRUE,
-  pred.var = c("time_constraint", "mp_threshold", "window_size"),
-  train = tree_data
-)
-
-ppp_rt_mp_w <- pdp::partial(best_fit$fit$fit,
-  type = "regression",
-  # grid.resolution = 51,
-  parallel = TRUE,
-  pred.var = c("regime_threshold", "mp_threshold", "window_size"),
-  train = tree_data
-)
-
-ppp_tc_rt_w <- pdp::partial(best_fit$fit$fit,
-  type = "regression",
-  # grid.resolution = 51,
-  parallel = TRUE,
-  pred.var = c("time_constraint", "regime_threshold", "window_size"),
-  train = tree_data
-)
-
-
-# ppp_mp_rt_tc <- pdp::partial(best_fit$fit$fit,
-#   type = "regression",
-#   grid.resolution = 51,
-#   parallel = FALSE,
-#   pred.var = c("regime_landmark", "regime_threshold", "window_size"),
-#   train = tree_data
-# )
-# pdp::plotPartial(ppp_mp_rt_tc, train = tree_data, rug = TRUE)
-
-
-partials <- list(
-  pdp_mp = ppp_mp,
-  pdp_w = ppp_w,
-  pdp_rt = ppp_rt,
-  pdp_tc = ppp_tc,
-  pdp_mp_w = ppp_mp_w,
-  pdp_mp_rt = ppp_mp_rt,
-  pdp_mp_tc = ppp_mp_tc,
-  pdp_rt_w = ppp_rt_w,
-  pdp_rt_tc = ppp_rt_tc,
-  pdp_tc_w = ppp_tc_w,
-  pdp_mp_w_tc = ppp_mp_w_tc,
-  pdp_mp_rt_tc = ppp_mp_rt_tc,
-  pdp_w_rt_tc = ppp_w_rt_tc,
-  pdp_mp_w_rt = ppp_mp_w_rt,
-  pdp_mp_tc_rt = ppp_mp_tc_rt,
-  pdp_tc_w_rt = ppp_tc_w_rt,
-  pdp_w_tc_mp = ppp_w_tc_mp,
-  pdp_w_rt_mp = ppp_w_rt_mp,
-  pdp_tc_rt_mp = ppp_tc_rt_mp,
-  pdp_tc_mp_w = ppp_tc_mp_w,
-  pdp_rt_mp_w = ppp_rt_mp_w,
-  pdp_tc_rt_w = ppp_tc_rt_w
-)
-
-# saveRDS(partials, file = here::here("dev", "partials.rds"))
-partials <- readRDS(file = here::here("dev", "partials.rds"))
-
-pdp::plotPartial(partials$pdp_rt, train = tree_data, rug = TRUE)
-pdp::plotPartial(partials$pdp_tc, train = tree_data, rug = TRUE)
-pdp::plotPartial(partials$pdp_mp, train = tree_data, rug = TRUE)
-pdp::plotPartial(partials$pdp_w, train = tree_data, rug = TRUE)
-pdp::plotPartial(partials$pdp_mp_w, train = tree_data, levelplot = FALSE)
-pdp::plotPartial(partials$pdp_mp_rt, train = tree_data, levelplot = FALSE)
-pdp::plotPartial(partials$pdp_mp_tc, train = tree_data, levelplot = FALSE)
-pdp::plotPartial(partials$pdp_rt_w, train = tree_data, levelplot = TRUE, rug = TRUE)
-pdp::plotPartial(partials$pdp_rt_tc, train = tree_data, levelplot = FALSE)
-pdp::plotPartial(partials$pdp_tc_w, train = tree_data, levelplot = FALSE)
-pdp::plotPartial(partials$pdp_mp_w_tc, train = tree_data, levelplot = FALSE)
-pdp::plotPartial(partials$pdp_tc_mp_w, train = tree_data, levelplot = FALSE)
-pdp::plotPartial(partials$pdp_w_tc_mp, train = tree_data, levelplot = FALSE)
-
-#  dbarts:rmse: 0.3191 mp_threshold and window_size interact strongly
-#   shap: regime mp window time
-#   firm: mp regime window time
-#   perm: mp time regime window
-#  bag_tree rpart: rmse: 1.273935;  mp_threshold and window_size interact medium
-#    shap: regime, mp (big), win time
-#    firm: mp, regime (big), win time
-#    perm: mp regime window time
-#  kknn reg: rmse 1.344419?  mp_threshold and window_size interact strongly
-#    shap: mp, regime (big), win time
-#    firm: mp, regime (big), win time
-#    perm: mp, (big), win/regime (mid) time
-#  mlp reg: rmse 1.689  mp x win, mp x reg, reg x win, mp x time ~ 1.77,1.63,1.55,1.25
-#    model: regime!!! mp, time, win (smalls)
-#    shap: mp, regime (big), win time
-#    firm: mp, regime (big), win time
-#    perm: mp, regime (big), win time
-#  kernlab reg: rmse 1.9033 mp_threshold and window_size interact +- as others
-#    shap: mp, regime, win (big), time
-#    firm: mp, regime, win (big), time
-#    perm: mp, win/regime (big), time
-#  mars reg: rmse 3.42  mp_threshold and window_size interact strongly
-#    model: w mp reg -time
-#    shap: mp reg w  -time
-#    firm: reg mp w  -time
-#    perm: mp reg w  -time
-#  decision_tree rpart: rmse: 3.600 regime_threshold and window_size interact strongly
-#    model: mp regime window time importance
-#    firm: mp regime window time
-#    perm: mp time regime window
-#    shap: mp regime time window
-#  glmnet: rmse: 4.48 ?? 1 regime_threshold*window_size        1.81e-16
-#    model: mp regime window time
-#   shap: time constraint
-#    firm: mp, regime (big), win time
-#    perm: mp regime window time
-#  keras reg: rmse 5.836752  no interactions
-#    shap: window(big), time, mp, regime
-#    firm: window(big), mp, time, regime
-#    perm: window(big), mp, regime, time
-#  brulee reg: rmse 7.40 fail interactions
-#    shap:fail interactions
-```
-
-
-
-```{r parametersplot, eval=FALSE, out.width="100%"}
-#| fig.cap="Parameters exploration using Bayesian optimization to attempt to finetune the parameters "
-
-fit3 <- tune::autoplot(fitted1, type = "parameters") + ggplot2::facet_wrap(~name, ncol = 4, scales = "free_y") +
-  ggplot2::labs(title = "Parameter search - Repetition 1", x = "Iterations", y = "Parameter value") + ggplot2::theme_bw()
-
-fit3$layers[[1]]$geom$default_aes$alpha <- 0.2
-
-fit4 <- tune::autoplot(fitted2, type = "parameters") + ggplot2::facet_wrap(~name, ncol = 4, scales = "free_y") +
-  ggplot2::labs(title = "Parameter search - Repetition 2", x = "Iterations", y = "Parameter value") + ggplot2::theme_bw()
-
-fit3 / fit4
-
-fit3$layers[[1]]$geom$default_aes$alpha <- NA
-```
-
-# Current status
-
-The current status of the project shows that FLOSS is up to the task of signaling possible regime changes.
-After introducing the `regime_landmark` feature, the performance improves significantly, and we can narrow down the tuning space to a small number of parameters.
-
-In parallel, another score measure is being developed based on the concept of Precision and Recall, but for time-series
-[@Tatbul2018]. It is expected that such a score measure will help to choose the best final model where most of the
-significant regime changes are detected, keeping a reasonable amount of false positives that will be ruled out further
-by the classification algorithm.
-
-Further evaluation will be performed in more datasets; later, the results will be presented here.
 
 # References {-}

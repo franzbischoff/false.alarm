@@ -35,7 +35,7 @@ linters: linters_with_defaults(
   string_boundary_linter(),
   strings_as_factors_linter(),
   system_file_linter(),
-  undesirable_function_linter(all_undesirable_functions),
+  undesirable_function_linter = NULL,
   undesirable_operator_linter(all_undesirable_operators),
   unneeded_concatenation_linter(),
   unreachable_code_linter(),

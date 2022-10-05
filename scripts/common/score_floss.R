@@ -177,7 +177,7 @@ score_regimes_precision <- function(gtruth, reported, data_size, window = 1000, 
 
     # Proceed if same size
     if (length(gtruth) == length(reported)) {
-      scores <- furrr::future_pmap(list(gtruth, reported, data_size, window), score_regimes_precision)
+      scores <- furrr::future_pmap(list(gtruth, reported, data_size, window, delta_prec, delta_rec, gamma, alpha, beta), score_regimes_precision)
     }
 
     # # Proceed if same size
