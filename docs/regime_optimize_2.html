@@ -318,6 +318,18 @@ $(document).ready(function () {
     <li>
       <a href="regime_optimize_2.html">Second Optimization</a>
     </li>
+    <li>
+      <a href="regime_optimize_3.html">Using malignantventricular dataset</a>
+    </li>
+    <li>
+      <a href="regime_optimize_3_5.html">Using malignantventricular dataset and PR</a>
+    </li>
+    <li>
+      <a href="regime_optimize_4.html">Using vtachyarrhythmias dataset</a>
+    </li>
+    <li>
+      <a href="regime_optimize_4_5.html">Using vtachyarrhythmias dataset and PR</a>
+    </li>
   </ul>
 </li>
 <li>
@@ -367,7 +379,7 @@ $(document).ready(function () {
 
 <h1 class="title toc-ignore">Regime changes 2.0</h1>
 <h4 class="author">Francisco Bischoff</h4>
-<h4 class="date">on August 21, 2022</h4>
+<h4 class="date">on October 05, 2022</h4>
 
 </div>
 
@@ -418,7 +430,7 @@ Checks <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></sp
 <div class="tab-content">
 <div id="summary" class="tab-pane fade in active">
 <p>
-<strong>Last updated:</strong> 2022-08-21
+<strong>Last updated:</strong> 2022-10-05
 </p>
 <p>
 <strong>Checks:</strong>
@@ -429,7 +441,7 @@ Checks <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></sp
 </p>
 <p>
 <strong>Knit directory:</strong>
-<code>false.alarm_2submodels/docs/</code>
+<code>false.alarm/docs/</code>
 <span class="glyphicon glyphicon-question-sign" aria-hidden="true" title="This is the local directory in which the code in this file was executed.">
 </span>
 </p>
@@ -546,20 +558,20 @@ makes it easier to run your code on other machines.</p>
 <div class="panel panel-default">
 <div class="panel-heading">
 <p class="panel-title">
-<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomfranzbischofffalsealarmtree1b337ae6e1e13543ff9b52bbb19624f1ac37e868targetblank1b337aea">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomfranzbischofffalsealarmtreeb79f104ddcaa39536c6afdf7120bd80f47482366targetblankb79f104a">
 <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span>
-<strong>Repository version:</strong> <a href="https://github.com/franzbischoff/false.alarm/tree/1b337ae6e1e13543ff9b52bbb19624f1ac37e868" target="_blank">1b337ae</a>
+<strong>Repository version:</strong> <a href="https://github.com/franzbischoff/false.alarm/tree/b79f104ddcaa39536c6afdf7120bd80f47482366" target="_blank">b79f104</a>
 </a>
 </p>
 </div>
-<div id="strongRepositoryversionstrongahrefhttpsgithubcomfranzbischofffalsealarmtree1b337ae6e1e13543ff9b52bbb19624f1ac37e868targetblank1b337aea" class="panel-collapse collapse">
+<div id="strongRepositoryversionstrongahrefhttpsgithubcomfranzbischofffalsealarmtreeb79f104ddcaa39536c6afdf7120bd80f47482366targetblankb79f104a" class="panel-collapse collapse">
 <div class="panel-body">
 <p>
 Great! You are using Git for version control. Tracking code development and
 connecting the code version to the results is critical for reproducibility.
 </p>
 <p>
-The results in this page were generated with repository version <a href="https://github.com/franzbischoff/false.alarm/tree/1b337ae6e1e13543ff9b52bbb19624f1ac37e868" target="_blank">1b337ae</a>.
+The results in this page were generated with repository version <a href="https://github.com/franzbischoff/false.alarm/tree/b79f104ddcaa39536c6afdf7120bd80f47482366" target="_blank">b79f104</a>.
 See the <em>Past versions</em> tab to see a history of the changes made to the
 R Markdown and HTML files.
 </p>
@@ -576,22 +588,45 @@ Ignored files:
     Ignored:    .Renviron
     Ignored:    .Rhistory
     Ignored:    .Rproj.user/
+    Ignored:    .devcontainer/exts/
     Ignored:    .docker/
+    Ignored:    .github/ISSUE_TEMPLATE/
     Ignored:    .httr-oauth
     Ignored:    R/RcppExports.R
     Ignored:    _regime_change/meta/process
     Ignored:    _regime_change/meta/progress
     Ignored:    _regime_change/objects/
     Ignored:    _regime_change/user/
+    Ignored:    _regime_change2/meta/process
+    Ignored:    _regime_change2/meta/progress
+    Ignored:    _regime_change2/objects/
+    Ignored:    _regime_change2/user/
+    Ignored:    _regime_change3/meta/process
+    Ignored:    _regime_change3/meta/progress
+    Ignored:    _regime_change3/objects/
+    Ignored:    _regime_change3/user/
     Ignored:    _regime_optimize/meta/meta2
     Ignored:    _regime_optimize/meta/process
     Ignored:    _regime_optimize/meta/progress
     Ignored:    _regime_optimize/objects/
     Ignored:    _regime_optimize/user/
+    Ignored:    _targets/meta/process
+    Ignored:    _targets/meta/progress
+    Ignored:    _targets/objects/
+    Ignored:    _targets/user/
+    Ignored:    analysis/shiny/rsconnect/
     Ignored:    analysis/shiny_land/rsconnect/
-    Ignored:    dev
+    Ignored:    dev/
     Ignored:    inst/extdata/
+    Ignored:    papers/aime2021/aime2021.md
     Ignored:    papers/epia2022/epia2022.md
+    Ignored:    presentations/MEDCIDS21/MEDCIDS21-10min_files/
+    Ignored:    presentations/MEDCIDS21/MEDCIDS21_files/
+    Ignored:    presentations/Report/Midterm-Report_cache/
+    Ignored:    presentations/Report/Midterm-Report_files/
+    Ignored:    protocol/SecondReport_cache/
+    Ignored:    protocol/SecondReport_files/
+    Ignored:    protocol/_files/
     Ignored:    renv/python/
     Ignored:    renv/staging/
     Ignored:    src/RcppExports.cpp
@@ -606,8 +641,9 @@ Ignored files:
     Ignored:    src/stamp.o
     Ignored:    src/stomp.o
     Ignored:    src/windowfunc.o
-    Ignored:    tests/testthat/_snaps/
-    Ignored:    tmp
+    Ignored:    thesis/Rplots.pdf
+    Ignored:    thesis/_bookdown_files/
+    Ignored:    tmp/
 
 </code></pre>
 <p>
@@ -657,7 +693,58 @@ Message
 Rmd
 </td>
 <td>
-<a href="https://github.com/franzbischoff/false.alarm/blob/1b337ae6e1e13543ff9b52bbb19624f1ac37e868/analysis/regime_optimize_2.Rmd" target="_blank">1b337ae</a>
+<a href="https://github.com/franzbischoff/false.alarm/blob/b118c48696c8ab3e6e35147c1802fa680be5248c/analysis/regime_optimize_2.Rmd" target="_blank">b118c48</a>
+</td>
+<td>
+Francisco Bischoff
+</td>
+<td>
+2022-09-21
+</td>
+<td>
+PR done
+</td>
+</tr>
+<tr>
+<td>
+Rmd
+</td>
+<td>
+<a href="https://github.com/franzbischoff/false.alarm/blob/dbbd1d6cddac02bea772b865d05b82645c7e5a29/analysis/regime_optimize_2.Rmd" target="_blank">dbbd1d6</a>
+</td>
+<td>
+Francisco Bischoff
+</td>
+<td>
+2022-08-22
+</td>
+<td>
+Squashed commit of the following:
+</td>
+</tr>
+<tr>
+<td>
+html
+</td>
+<td>
+<a href="https://rawcdn.githack.com/franzbischoff/false.alarm/dbbd1d6cddac02bea772b865d05b82645c7e5a29/docs/regime_optimize_2.html" target="_blank">dbbd1d6</a>
+</td>
+<td>
+Francisco Bischoff
+</td>
+<td>
+2022-08-22
+</td>
+<td>
+Squashed commit of the following:
+</td>
+</tr>
+<tr>
+<td>
+Rmd
+</td>
+<td>
+<a href="https://github.com/franzbischoff/false.alarm/blob/de21180260daae8c61b2f073a354159ff263b8ad/analysis/regime_optimize_2.Rmd" target="_blank">de21180</a>
 </td>
 <td>
 Francisco Bischoff
@@ -666,92 +753,24 @@ Francisco Bischoff
 2022-08-21
 </td>
 <td>
-optimize2
+Squashed commit of the following:
 </td>
 </tr>
 <tr>
 <td>
-Rmd
+html
 </td>
 <td>
-<a href="https://github.com/franzbischoff/false.alarm/blob/c1e4b44fbc8b676507738c6e8722df4c7e1d8ef9/analysis/regime_optimize_2.Rmd" target="_blank">c1e4b44</a>
+<a href="https://rawcdn.githack.com/franzbischoff/false.alarm/de21180260daae8c61b2f073a354159ff263b8ad/docs/regime_optimize_2.html" target="_blank">de21180</a>
 </td>
 <td>
 Francisco Bischoff
 </td>
 <td>
-2022-08-11
+2022-08-21
 </td>
 <td>
-update shiny
-</td>
-</tr>
-<tr>
-<td>
-Rmd
-</td>
-<td>
-<a href="https://github.com/franzbischoff/false.alarm/blob/1781cad0419dc1649b6aa3e6f589eb3d996feb88/analysis/regime_optimize_2.Rmd" target="_blank">1781cad</a>
-</td>
-<td>
-Francisco Bischoff
-</td>
-<td>
-2022-08-11
-</td>
-<td>
-regime2
-</td>
-</tr>
-<tr>
-<td>
-Rmd
-</td>
-<td>
-<a href="https://github.com/franzbischoff/false.alarm/blob/5541b04dfffd36104726d97a1d8d1dbcda257b1d/analysis/regime_optimize_2.Rmd" target="_blank">5541b04</a>
-</td>
-<td>
-Francisco Bischoff
-</td>
-<td>
-2022-08-10
-</td>
-<td>
-premerge
-</td>
-</tr>
-<tr>
-<td>
-Rmd
-</td>
-<td>
-<a href="https://github.com/franzbischoff/false.alarm/blob/7ed884448dbefdada8bc6555da4401803e952c39/analysis/regime_optimize_2.Rmd" target="_blank">7ed8844</a>
-</td>
-<td>
-Francisco Bischoff
-</td>
-<td>
-2022-07-29
-</td>
-<td>
-changes
-</td>
-</tr>
-<tr>
-<td>
-Rmd
-</td>
-<td>
-<a href="https://github.com/franzbischoff/false.alarm/blob/d603ecec33a030d44f42019817ea0ddf2dd49db5/analysis/regime_optimize_2.Rmd" target="_blank">d603ece</a>
-</td>
-<td>
-Francisco Bischoff
-</td>
-<td>
-2022-07-23
-</td>
-<td>
-lint
+Squashed commit of the following:
 </td>
 </tr>
 </tbody>
@@ -850,6 +869,54 @@ still strong.</p>
 Figure 1.2: Variable interactions strength using feature importance ranking measure (FIRM) approach<span class="citation"><sup><a href="#ref-Greenwell2018" role="doc-biblioref">2</a></sup></span>. A) Shows strong interaction between <code>regime_threshold</code> and <code>regime_landmark</code>, <code>mp_threshold</code> and <code>window_size</code>, <code>mp_threshold</code> and <code>regime_landmark</code>. B) Refitting the model with these interactions taken into account, the strength is substantially reduced, except for the first, showing that indeed there is a strong correlation between those variables.
 </p>
 </div>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-interaction-1">
+Past versions of interaction-1.svg
+</button>
+</p>
+<div id="fig-interaction-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/franzbischoff/false.alarm/blob/dbbd1d6cddac02bea772b865d05b82645c7e5a29/docs/figure/regime_optimize_2.Rmd/interaction-1.svg" target="_blank">dbbd1d6</a>
+</td>
+<td>
+Francisco Bischoff
+</td>
+<td>
+2022-08-22
+</td>
+</tr>
+<tr>
+<td>
+<a href="https://github.com/franzbischoff/false.alarm/blob/de21180260daae8c61b2f073a354159ff263b8ad/docs/figure/regime_optimize_2.Rmd/interaction-1.svg" target="_blank">de21180</a>
+</td>
+<td>
+Francisco Bischoff
+</td>
+<td>
+2022-08-21
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 </div>
 <div id="importance" class="section level3" number="1.3.2">
 <h3><span class="header-section-number">1.3.2</span> Importance</h3>
@@ -874,6 +941,54 @@ to determine if the <em>Arc Counts</em> are low enough to indicate a regime chan
 <p class="caption">
 Figure 1.3: Variables importances using three different methods. A) Feature Importance Ranking Measure using ICE curves. B) Permutation method. C) SHAP (400 iterations). Line 1 refers to the original fit, and line 2 to the re-fit, taking into account the interactions between variables (Fig. <a href="#fig:interaction">1.2</a>).
 </p>
+</div>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-importance-1">
+Past versions of importance-1.svg
+</button>
+</p>
+<div id="fig-importance-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/franzbischoff/false.alarm/blob/dbbd1d6cddac02bea772b865d05b82645c7e5a29/docs/figure/regime_optimize_2.Rmd/importance-1.svg" target="_blank">dbbd1d6</a>
+</td>
+<td>
+Francisco Bischoff
+</td>
+<td>
+2022-08-22
+</td>
+</tr>
+<tr>
+<td>
+<a href="https://github.com/franzbischoff/false.alarm/blob/de21180260daae8c61b2f073a354159ff263b8ad/docs/figure/regime_optimize_2.Rmd/importance-1.svg" target="_blank">de21180</a>
+</td>
+<td>
+Francisco Bischoff
+</td>
+<td>
+2022-08-21
+</td>
+</tr>
+</tbody>
+</table>
+</div>
 </div>
 <p>Fig. <a href="#fig:importanceshap">1.4</a> and <a href="#fig:importanceshap2">1.5</a> show the effect of each feature on the FLOSS score. The
 more evident difference is the shape of the effect of <code>time_constraint</code> that initially suggested better results with
@@ -906,11 +1021,107 @@ computation, both <code>regime_threshold</code> (mainly) and <code>regime_landma
 Figure 1.4: This shows the effect each variable has on the FLOSS score. This plot doesn’t take into account the variable interactions.
 </p>
 </div>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-importanceshap-1">
+Past versions of importanceshap-1.svg
+</button>
+</p>
+<div id="fig-importanceshap-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/franzbischoff/false.alarm/blob/dbbd1d6cddac02bea772b865d05b82645c7e5a29/docs/figure/regime_optimize_2.Rmd/importanceshap-1.svg" target="_blank">dbbd1d6</a>
+</td>
+<td>
+Francisco Bischoff
+</td>
+<td>
+2022-08-22
+</td>
+</tr>
+<tr>
+<td>
+<a href="https://github.com/franzbischoff/false.alarm/blob/de21180260daae8c61b2f073a354159ff263b8ad/docs/figure/regime_optimize_2.Rmd/importanceshap-1.svg" target="_blank">de21180</a>
+</td>
+<td>
+Francisco Bischoff
+</td>
+<td>
+2022-08-21
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <div class="figure" style="text-align: center"><span style="display:block;" id="fig:importanceshap2"></span>
 <img src="figure/regime_optimize_2.Rmd/importanceshap2-1.svg" alt="This shows the effect each variable has on the FLOSS score, taking into account the interactions." width="100%" />
 <p class="caption">
 Figure 1.5: This shows the effect each variable has on the FLOSS score, taking into account the interactions.
 </p>
+</div>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-importanceshap2-1">
+Past versions of importanceshap2-1.svg
+</button>
+</p>
+<div id="fig-importanceshap2-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/franzbischoff/false.alarm/blob/dbbd1d6cddac02bea772b865d05b82645c7e5a29/docs/figure/regime_optimize_2.Rmd/importanceshap2-1.svg" target="_blank">dbbd1d6</a>
+</td>
+<td>
+Francisco Bischoff
+</td>
+<td>
+2022-08-22
+</td>
+</tr>
+<tr>
+<td>
+<a href="https://github.com/franzbischoff/false.alarm/blob/de21180260daae8c61b2f073a354159ff263b8ad/docs/figure/regime_optimize_2.Rmd/importanceshap2-1.svg" target="_blank">de21180</a>
+</td>
+<td>
+Francisco Bischoff
+</td>
+<td>
+2022-08-21
+</td>
+</tr>
+</tbody>
+</table>
+</div>
 </div>
 <p>According to the FLOSS paper<span class="citation"><sup><a href="#ref-gharghabi2018" role="doc-biblioref">6</a></sup></span>, the <code>window_size</code> is indeed a feature that can be tuned; nevertheless,
 the results appear to be similar in a reasonably wide range of window sizes, up to a limit, consistent with our findings.</p>
@@ -935,6 +1146,54 @@ far from the truth, the score will be roughly 1.</p>
 Figure 1.6: Violin plot showing the distribution of the FLOSS score achieved by all tested models by recording. The left half shows the recordings that were difficult to predict (10% overall), whereas the right half shows the recordings that at least one model could achieve a good prediction (10% overall). The recordings are sorted (left-right) by the minimum (best) score achieved in descending order, and ties are sorted by the median of all recording scores. The blue color highlights recordings where models had an IQR variability of less than one. As a simple example, a recording with just one regime change, and the model predicts exactly one change, far from the truth, the score will be roughly 1.
 </p>
 </div>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-global-1">
+Past versions of global-1.svg
+</button>
+</p>
+<div id="fig-global-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/franzbischoff/false.alarm/blob/dbbd1d6cddac02bea772b865d05b82645c7e5a29/docs/figure/regime_optimize_2.Rmd/global-1.svg" target="_blank">dbbd1d6</a>
+</td>
+<td>
+Francisco Bischoff
+</td>
+<td>
+2022-08-22
+</td>
+</tr>
+<tr>
+<td>
+<a href="https://github.com/franzbischoff/false.alarm/blob/de21180260daae8c61b2f073a354159ff263b8ad/docs/figure/regime_optimize_2.Rmd/global-1.svg" target="_blank">de21180</a>
+</td>
+<td>
+Francisco Bischoff
+</td>
+<td>
+2022-08-21
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <p>Fig. <a href="#fig:worst">1.7</a> shows the best effort in predicting the most complex recordings. One information not declared
 before is that if the model does not predict any change, it will put a mark on the zero position. On the other side,
 the truth markers positioned at the beginning and the end of the recording were removed, as these locations lack
@@ -946,6 +1205,54 @@ information and do not represent a streaming setting. Compared to the correspond
 Figure 1.7: Prediction of the worst 10% of recordings (red is the truth, blue are the predictions).
 </p>
 </div>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-worst-1">
+Past versions of worst-1.png
+</button>
+</p>
+<div id="fig-worst-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/franzbischoff/false.alarm/blob/dbbd1d6cddac02bea772b865d05b82645c7e5a29/docs/figure/regime_optimize_2.Rmd/worst-1.png" target="_blank">dbbd1d6</a>
+</td>
+<td>
+Francisco Bischoff
+</td>
+<td>
+2022-08-22
+</td>
+</tr>
+<tr>
+<td>
+<a href="https://github.com/franzbischoff/false.alarm/blob/de21180260daae8c61b2f073a354159ff263b8ad/docs/figure/regime_optimize_2.Rmd/worst-1.png" target="_blank">de21180</a>
+</td>
+<td>
+Francisco Bischoff
+</td>
+<td>
+2022-08-21
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <p>Fig. <a href="#fig:best">1.8</a> shows the best performances of the best recordings. Notice that there are recordings with a
 significant duration and few regime changes, making it hard for a “trivial model” to predict randomly.</p>
 <div class="figure" style="text-align: center"><span style="display:block;" id="fig:best"></span>
@@ -953,6 +1260,54 @@ significant duration and few regime changes, making it hard for a “trivial mod
 <p class="caption">
 Figure 1.8: Prediction of the best 10% of recordings (red is the truth, blue are the predictions).
 </p>
+</div>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-best-1">
+Past versions of best-1.png
+</button>
+</p>
+<div id="fig-best-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/franzbischoff/false.alarm/blob/dbbd1d6cddac02bea772b865d05b82645c7e5a29/docs/figure/regime_optimize_2.Rmd/best-1.png" target="_blank">dbbd1d6</a>
+</td>
+<td>
+Francisco Bischoff
+</td>
+<td>
+2022-08-22
+</td>
+</tr>
+<tr>
+<td>
+<a href="https://github.com/franzbischoff/false.alarm/blob/de21180260daae8c61b2f073a354159ff263b8ad/docs/figure/regime_optimize_2.Rmd/best-1.png" target="_blank">de21180</a>
+</td>
+<td>
+Francisco Bischoff
+</td>
+<td>
+2022-08-21
+</td>
+</tr>
+</tbody>
+</table>
+</div>
 </div>
 <p>An online interactive version of all the datasets and predictions can be accessed at
 <a href="https://franzbischoff.shinyapps.io/FLOSS_land/">Shiny app</a>.</p>
@@ -969,6 +1324,54 @@ as the models present lower SD and IQR.</p>
 Figure 1.9: Violin plot showing the distribution of the FLOSS score achieved by all tested models during the inner ressample. The left half shows the models with the worst performances (10% overall), whereas the right half shows the models with the best performances (10% overall). The models are sorted (left-right) by the mean score (top) and by the median (below). Ties are sorted by the SD and IQR, respectively. The bluish colors highlights models with an SD below 3 and IQR below 1.
 </p>
 </div>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-globalmodel-1">
+Past versions of globalmodel-1.svg
+</button>
+</p>
+<div id="fig-globalmodel-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/franzbischoff/false.alarm/blob/dbbd1d6cddac02bea772b865d05b82645c7e5a29/docs/figure/regime_optimize_2.Rmd/globalmodel-1.svg" target="_blank">dbbd1d6</a>
+</td>
+<td>
+Francisco Bischoff
+</td>
+<td>
+2022-08-22
+</td>
+</tr>
+<tr>
+<td>
+<a href="https://github.com/franzbischoff/false.alarm/blob/de21180260daae8c61b2f073a354159ff263b8ad/docs/figure/regime_optimize_2.Rmd/globalmodel-1.svg" target="_blank">de21180</a>
+</td>
+<td>
+Francisco Bischoff
+</td>
+<td>
+2022-08-21
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <p>Fig. <a href="#fig:bestmodels">1.10</a> the performance of the six best models. They are ordered from left to right, from the worst
 record to the best record. The top model is the one with the lowest mean across the scores. The blue line indicates
 the mean score, and the red line the median score. The scores above 3 are squished in the plot and colored according to
@@ -978,6 +1381,54 @@ the scale in the legend. Notice the improvement on the blue and red lines compar
 <p class="caption">
 Figure 1.10: Performances of the best 6 models across all inner resample of recordings. The recordings are ordered by score, from the worst to the best. Each plot shows one model, starting from the best one. The red line indicates the median score of the model. The blue line indicates the mean score of the model. The gray line limits the zero-score region. The plot is limited on the “y” axis, and the scores above this limit are shown in color.
 </p>
+</div>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-bestmodels-1">
+Past versions of bestmodels-1.svg
+</button>
+</p>
+<div id="fig-bestmodels-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/franzbischoff/false.alarm/blob/dbbd1d6cddac02bea772b865d05b82645c7e5a29/docs/figure/regime_optimize_2.Rmd/bestmodels-1.svg" target="_blank">dbbd1d6</a>
+</td>
+<td>
+Francisco Bischoff
+</td>
+<td>
+2022-08-22
+</td>
+</tr>
+<tr>
+<td>
+<a href="https://github.com/franzbischoff/false.alarm/blob/de21180260daae8c61b2f073a354159ff263b8ad/docs/figure/regime_optimize_2.Rmd/bestmodels-1.svg" target="_blank">de21180</a>
+</td>
+<td>
+Francisco Bischoff
+</td>
+<td>
+2022-08-21
+</td>
+</tr>
+</tbody>
+</table>
+</div>
 </div>
 <p>We can see that some records (namely #19, #41, #93, #100, #107) are contained in the set of “difficult” records
 shown in Fig. <a href="#fig:global">1.6</a>.</p>
@@ -1029,107 +1480,107 @@ Session information
 <pre><code>─ Session info ───────────────────────────────────────────────────────────────
  setting  value
  version  R version 4.2.1 (2022-06-23)
- os       Ubuntu 20.04.4 LTS
+ os       Ubuntu 20.04.5 LTS
  system   x86_64, linux-gnu
  ui       X11
  language (EN)
  collate  en_US.UTF-8
  ctype    en_US.UTF-8
  tz       Europe/Lisbon
- date     2022-08-21
+ date     2022-10-05
  pandoc   2.17.0.1 @ /usr/bin/ (via rmarkdown)
 
 ─ Packages ───────────────────────────────────────────────────────────────────
  package      * version     date (UTC) lib source
  askpass        1.1         2019-01-13 [1] CRAN (R 4.2.0)
- assertthat     0.2.1       2019-03-21 [2] CRAN (R 4.2.0)
+ assertthat     0.2.1       2019-03-21 [1] CRAN (R 4.2.0)
  backports      1.4.1       2021-12-13 [1] CRAN (R 4.2.0)
  base64url      1.4         2018-05-14 [1] CRAN (R 4.2.0)
  bit            4.0.4       2020-08-04 [1] CRAN (R 4.2.0)
  bit64          4.0.5       2020-08-30 [1] CRAN (R 4.2.0)
- bookdown       0.28.1      2022-08-11 [1] Github (rstudio/bookdown@f52bdab)
+ bookdown       0.29.2      2022-09-26 [1] Github (rstudio/bookdown@dfe92a2)
  bslib          0.4.0       2022-07-16 [1] CRAN (R 4.2.1)
  cachem         1.0.6       2021-08-19 [1] CRAN (R 4.2.0)
- callr          3.7.1       2022-07-13 [1] CRAN (R 4.2.1)
+ callr          3.7.2       2022-08-22 [1] CRAN (R 4.2.1)
  checkmate      2.1.0       2022-04-21 [1] CRAN (R 4.2.0)
- class          7.3-20      2022-01-13 [1] CRAN (R 4.2.0)
- cli            3.3.0       2022-04-25 [1] CRAN (R 4.2.0)
- codetools      0.2-18      2020-11-04 [1] CRAN (R 4.2.0)
+ class          7.3-20      2022-01-13 [2] CRAN (R 4.2.0)
+ cli            3.4.1       2022-09-23 [1] CRAN (R 4.2.1)
+ codetools      0.2-18      2020-11-04 [2] CRAN (R 4.2.0)
  colorspace     2.0-3       2022-02-21 [1] CRAN (R 4.2.0)
  crayon         1.5.1       2022-03-26 [1] CRAN (R 4.2.0)
  credentials    1.3.2       2021-11-29 [1] CRAN (R 4.2.0)
  data.table     1.14.2      2021-09-27 [1] CRAN (R 4.2.0)
- dbarts         0.9-22      2022-03-29 [2] CRAN (R 4.2.0)
+ dbarts         0.9-22      2022-03-29 [1] CRAN (R 4.2.0)
  DBI            1.1.3       2022-06-18 [1] CRAN (R 4.2.0)
  debugme        1.1.0       2017-10-22 [1] CRAN (R 4.2.0)
  devtools       2.4.4       2022-07-20 [1] CRAN (R 4.2.1)
  dials          1.0.0       2022-06-14 [1] CRAN (R 4.2.0)
  DiceDesign     1.9         2021-02-13 [1] CRAN (R 4.2.0)
  digest         0.6.29      2021-12-01 [1] CRAN (R 4.2.0)
- dplyr          1.0.9       2022-04-28 [1] CRAN (R 4.2.0)
+ dplyr          1.0.10      2022-09-01 [1] CRAN (R 4.2.1)
  ellipsis       0.3.2       2021-04-29 [1] CRAN (R 4.2.0)
  evaluate       0.16        2022-08-09 [1] CRAN (R 4.2.1)
  fansi          1.0.3       2022-03-24 [1] CRAN (R 4.2.0)
  farver         2.1.1       2022-07-06 [1] CRAN (R 4.2.0)
  fastmap        1.1.0       2021-01-25 [1] CRAN (R 4.2.0)
  fastshap       0.0.7       2021-12-06 [1] CRAN (R 4.2.0)
- forcats        0.5.1       2021-01-27 [2] CRAN (R 4.2.0)
+ forcats        0.5.2       2022-08-19 [2] CRAN (R 4.2.1)
  foreach        1.5.2       2022-02-02 [1] CRAN (R 4.2.0)
  fs             1.5.2       2021-12-08 [1] CRAN (R 4.2.0)
- furrr          0.3.0       2022-05-04 [1] CRAN (R 4.2.0)
- future         1.27.0      2022-07-22 [1] CRAN (R 4.2.1)
- future.apply   1.9.0       2022-04-25 [1] CRAN (R 4.2.0)
+ furrr          0.3.1       2022-08-15 [1] CRAN (R 4.2.1)
+ future         1.28.0      2022-09-02 [1] CRAN (R 4.2.1)
+ future.apply   1.9.1       2022-09-07 [1] CRAN (R 4.2.1)
  generics       0.1.3       2022-07-05 [1] CRAN (R 4.2.0)
- gert           1.7.0       2022-08-07 [1] CRAN (R 4.2.1)
+ gert           1.9.0       2022-09-15 [1] CRAN (R 4.2.1)
  getPass        0.2-2       2017-07-21 [1] CRAN (R 4.2.0)
  ggplot2      * 3.3.6       2022-05-03 [1] CRAN (R 4.2.0)
  git2r          0.30.1.9000 2022-04-29 [1] Github (ropensci/git2r@80ba185)
- gittargets   * 0.0.4.9000  2022-08-14 [1] Github (wlandau/gittargets@64d5134)
- globals        0.16.0      2022-08-05 [1] CRAN (R 4.2.1)
+ gittargets   * 0.0.5.9000  2022-09-26 [1] Github (wlandau/gittargets@a50dd58)
+ globals        0.16.1      2022-08-28 [1] CRAN (R 4.2.1)
  glue         * 1.6.2       2022-02-24 [1] CRAN (R 4.2.0)
  gower          1.0.0       2022-02-03 [1] CRAN (R 4.2.0)
  GPfit          1.0-8       2019-02-08 [1] CRAN (R 4.2.0)
  gridExtra      2.3         2017-09-09 [1] CRAN (R 4.2.0)
- gtable         0.3.0       2019-03-25 [1] CRAN (R 4.2.0)
+ gtable         0.3.1       2022-09-01 [1] CRAN (R 4.2.1)
  hardhat        1.2.0       2022-06-30 [1] CRAN (R 4.2.0)
  here         * 1.0.1       2020-12-13 [1] CRAN (R 4.2.0)
  highr          0.9         2021-04-16 [1] CRAN (R 4.2.0)
- hms            1.1.1       2021-09-26 [1] CRAN (R 4.2.0)
+ hms            1.1.2       2022-08-19 [1] CRAN (R 4.2.1)
  htmltools      0.5.3       2022-07-18 [1] CRAN (R 4.2.1)
  htmlwidgets    1.5.4       2021-09-08 [1] CRAN (R 4.2.0)
- httpuv         1.6.5       2022-01-05 [1] CRAN (R 4.2.0)
- httr           1.4.3       2022-05-04 [1] CRAN (R 4.2.0)
- igraph         1.3.4       2022-07-19 [1] CRAN (R 4.2.1)
+ httpuv         1.6.6       2022-09-08 [1] CRAN (R 4.2.1)
+ httr           1.4.4       2022-08-17 [1] CRAN (R 4.2.1)
+ igraph         1.3.5       2022-09-22 [1] CRAN (R 4.2.1)
  ipred          0.9-13      2022-06-02 [1] CRAN (R 4.2.0)
  iterators      1.0.14      2022-02-05 [1] CRAN (R 4.2.0)
  jquerylib      0.1.4       2021-04-26 [1] CRAN (R 4.2.0)
  jsonlite       1.8.0       2022-02-22 [1] CRAN (R 4.2.0)
  kableExtra   * 1.3.4       2021-02-20 [1] CRAN (R 4.2.0)
- knitr          1.39        2022-04-26 [1] CRAN (R 4.2.0)
+ knitr          1.40        2022-08-24 [1] CRAN (R 4.2.1)
  labeling       0.4.2       2020-10-20 [1] CRAN (R 4.2.0)
  later          1.3.0       2021-08-18 [1] CRAN (R 4.2.0)
- lattice        0.20-45     2021-09-22 [1] CRAN (R 4.2.0)
+ lattice        0.20-45     2021-09-22 [2] CRAN (R 4.2.0)
  lava           1.6.10      2021-09-02 [1] CRAN (R 4.2.0)
  lhs            1.1.5       2022-03-22 [1] CRAN (R 4.2.0)
- lifecycle      1.0.1       2021-09-24 [1] CRAN (R 4.2.0)
+ lifecycle      1.0.2       2022-09-09 [1] CRAN (R 4.2.1)
  listenv        0.8.0       2019-12-05 [1] CRAN (R 4.2.0)
  lubridate      1.8.0       2021-10-07 [1] CRAN (R 4.2.0)
  magrittr       2.0.3       2022-03-30 [1] CRAN (R 4.2.0)
  MASS           7.3-58.1    2022-08-03 [1] CRAN (R 4.2.1)
- Matrix         1.4-1       2022-03-23 [1] CRAN (R 4.2.0)
+ Matrix         1.5-1       2022-09-13 [2] CRAN (R 4.2.1)
  memoise        2.0.1       2021-11-26 [1] CRAN (R 4.2.0)
- mgcv           1.8-40      2022-03-29 [1] CRAN (R 4.2.0)
+ mgcv           1.8-40      2022-03-29 [2] CRAN (R 4.2.0)
  mime           0.12        2021-09-28 [1] CRAN (R 4.2.0)
  miniUI         0.1.1.1     2018-05-18 [1] CRAN (R 4.2.0)
  munsell        0.5.0       2018-06-12 [1] CRAN (R 4.2.0)
  nlme           3.1-159     2022-08-09 [1] CRAN (R 4.2.1)
- nnet           7.3-17      2022-01-13 [1] CRAN (R 4.2.0)
- openssl        2.0.2       2022-05-24 [1] CRAN (R 4.2.0)
+ nnet           7.3-17      2022-01-13 [2] CRAN (R 4.2.0)
+ openssl        2.0.3       2022-09-14 [1] CRAN (R 4.2.1)
  parallelly     1.32.1      2022-07-21 [1] CRAN (R 4.2.1)
- parsnip        1.0.0       2022-06-16 [1] CRAN (R 4.2.0)
- patchwork    * 1.1.1       2020-12-17 [2] CRAN (R 4.2.0)
+ parsnip        1.0.1       2022-08-18 [1] CRAN (R 4.2.1)
+ patchwork    * 1.1.2       2022-08-19 [1] CRAN (R 4.2.1)
  pdp            0.8.1       2022-06-07 [1] CRAN (R 4.2.0)
- pillar         1.8.0       2022-07-18 [1] CRAN (R 4.2.1)
+ pillar         1.8.1       2022-08-19 [1] CRAN (R 4.2.1)
  pkgbuild       1.3.1       2021-12-20 [1] CRAN (R 4.2.0)
  pkgconfig      2.0.3       2019-09-22 [1] CRAN (R 4.2.0)
  pkgload        1.3.0       2022-06-27 [1] CRAN (R 4.2.0)
@@ -1145,57 +1596,59 @@ Session information
  readr          2.1.2       2022-01-30 [1] CRAN (R 4.2.0)
  recipes        1.0.1       2022-07-07 [1] CRAN (R 4.2.1)
  remotes        2.4.2       2021-11-30 [1] CRAN (R 4.2.0)
- renv           0.15.5-49   2022-08-11 [1] Github (rstudio/renv@96d0a62)
- rlang          1.0.4       2022-07-12 [1] CRAN (R 4.2.1)
- rmarkdown      2.14.3      2022-07-28 [1] Github (rstudio/rmarkdown@63b7ecf)
- rpart          4.1.16      2022-01-24 [1] CRAN (R 4.2.0)
+ renv           0.15.5      2022-05-26 [1] CRAN (R 4.2.0)
+ rlang          1.0.6       2022-09-24 [1] CRAN (R 4.2.1)
+ rmarkdown      2.16.1      2022-09-26 [1] Github (rstudio/rmarkdown@9577707)
+ rpart          4.1.16      2022-01-24 [2] CRAN (R 4.2.0)
  rprojroot      2.0.3       2022-04-02 [1] CRAN (R 4.2.0)
  rsample        1.1.0       2022-08-08 [1] CRAN (R 4.2.1)
- rstudioapi     0.13        2020-11-12 [1] CRAN (R 4.2.0)
- rvest          1.0.2       2021-10-16 [1] CRAN (R 4.2.0)
+ rstudioapi     0.14        2022-08-22 [1] CRAN (R 4.2.1)
+ rvest          1.0.3       2022-08-19 [1] CRAN (R 4.2.1)
  sass           0.4.2       2022-07-16 [1] CRAN (R 4.2.1)
- scales         1.2.0       2022-04-13 [1] CRAN (R 4.2.0)
+ scales         1.2.1       2022-08-20 [1] CRAN (R 4.2.1)
  sessioninfo    1.2.2       2021-12-06 [1] CRAN (R 4.2.0)
+ shapviz        0.2.1       2022-08-11 [1] CRAN (R 4.2.1)
  shiny          1.7.2       2022-07-19 [1] CRAN (R 4.2.1)
  signal         0.7-7       2021-05-25 [1] CRAN (R 4.2.0)
  stringi        1.7.8       2022-07-11 [1] CRAN (R 4.2.1)
- stringr        1.4.0       2019-02-10 [1] CRAN (R 4.2.0)
- survival       3.4-0       2022-08-09 [1] CRAN (R 4.2.1)
- svglite        2.1.0.9000  2022-08-11 [1] Github (r-lib/svglite@8f30fc6)
+ stringr        1.4.1       2022-08-20 [1] CRAN (R 4.2.1)
+ survival       3.4-0       2022-08-09 [2] CRAN (R 4.2.1)
+ svglite        2.1.0.9000  2022-09-26 [1] Github (r-lib/svglite@8f30fc6)
  sys            3.4         2020-07-23 [1] CRAN (R 4.2.0)
  systemfonts    1.0.4       2022-02-11 [1] CRAN (R 4.2.0)
- tarchetypes  * 0.7.0       2022-08-05 [1] CRAN (R 4.2.1)
- targets      * 0.13.1      2022-08-05 [1] CRAN (R 4.2.1)
+ tarchetypes  * 0.7.1       2022-09-07 [1] CRAN (R 4.2.1)
+ targets      * 0.13.4      2022-09-15 [1] CRAN (R 4.2.1)
  tibble       * 3.1.8       2022-07-22 [1] CRAN (R 4.2.1)
- tidyr          1.2.0       2022-02-01 [1] CRAN (R 4.2.0)
+ tidyr          1.2.1       2022-09-08 [1] CRAN (R 4.2.1)
  tidyselect     1.1.2       2022-02-21 [1] CRAN (R 4.2.0)
  timeDate       4021.104    2022-07-19 [1] CRAN (R 4.2.1)
- timetk         2.8.1       2022-05-31 [2] CRAN (R 4.2.1)
+ timetk         2.8.1       2022-05-31 [1] CRAN (R 4.2.0)
  tune           1.0.0.9000  2022-07-22 [1] Github (franzbischoff/tune@539e1ee)
  tzdb           0.3.0       2022-03-28 [1] CRAN (R 4.2.0)
  urlchecker     1.0.1       2021-11-30 [1] CRAN (R 4.2.1)
- usethis        2.1.6       2022-05-25 [1] CRAN (R 4.2.0)
+ usethis        2.1.6.9000  2022-10-03 [1] Github (r-lib/usethis@8ecb7ab)
  utf8           1.2.2       2021-07-24 [1] CRAN (R 4.2.0)
  uuid           1.1-0       2022-04-19 [1] CRAN (R 4.2.0)
  vctrs          0.4.1       2022-04-13 [1] CRAN (R 4.2.0)
- vip            0.3.2       2020-12-17 [2] CRAN (R 4.2.0)
- viridisLite    0.4.0       2021-04-13 [1] CRAN (R 4.2.0)
+ vip            0.3.2       2020-12-17 [1] CRAN (R 4.2.0)
+ viridisLite    0.4.1       2022-08-22 [1] CRAN (R 4.2.1)
  visNetwork   * 2.1.0       2021-09-29 [1] CRAN (R 4.2.0)
  vroom          1.5.7       2021-11-30 [1] CRAN (R 4.2.0)
  webshot        0.5.3       2022-04-14 [1] CRAN (R 4.2.0)
  whisker        0.4         2019-08-28 [1] CRAN (R 4.2.0)
  withr          2.5.0       2022-03-03 [1] CRAN (R 4.2.0)
  workflowr    * 1.7.0       2021-12-21 [1] CRAN (R 4.2.0)
- workflows      1.0.0       2022-07-05 [1] CRAN (R 4.2.0)
- xfun           0.32        2022-08-10 [1] CRAN (R 4.2.1)
+ workflows      1.1.0       2022-09-26 [1] CRAN (R 4.2.1)
+ xfun           0.33        2022-09-12 [1] CRAN (R 4.2.1)
+ xgboost        1.6.0.1     2022-04-16 [1] CRAN (R 4.2.0)
  xml2           1.3.3       2021-11-30 [1] CRAN (R 4.2.0)
  xtable         1.8-4       2019-04-21 [1] CRAN (R 4.2.0)
- xts            0.12.1      2020-09-09 [2] CRAN (R 4.2.1)
+ xts            0.12.1      2020-09-09 [1] CRAN (R 4.2.0)
  yaml           2.3.5       2022-02-21 [1] CRAN (R 4.2.0)
- yardstick      1.0.0.9000  2022-06-15 [1] Github (tidymodels/yardstick@90ab794)
- zoo            1.8-10      2022-04-15 [1] CRAN (R 4.2.0)
+ yardstick      1.1.0       2022-09-07 [1] CRAN (R 4.2.1)
+ zoo            1.8-11      2022-09-17 [1] CRAN (R 4.2.1)
 
- [1] /workspace/.cache/R/renv/proj_libs/false.alarm_2submodels-0a931486/R-4.2/x86_64-pc-linux-gnu
+ [1] /workspace/.cache/R/renv/proj_libs/false.alarm-d6f1a0d1/R-4.2/x86_64-pc-linux-gnu
  [2] /usr/lib/R/library
 
 ──────────────────────────────────────────────────────────────────────────────</code></pre>

@@ -1,0 +1,1144 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+
+<meta name="author" content="Francisco Bischoff" />
+
+
+<title>Regime changes 3.5 - malignantventricular with PR</title>
+
+<script src="site_libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="site_libs/bootstrap-3.3.5/css/bootstrap.min.css" rel="stylesheet" />
+<script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<style>h1 {font-size: 34px;}
+       h1.title {font-size: 38px;}
+       h2 {font-size: 30px;}
+       h3 {font-size: 24px;}
+       h4 {font-size: 18px;}
+       h5 {font-size: 16px;}
+       h6 {font-size: 12px;}
+       code {color: inherit; background-color: rgba(0, 0, 0, 0.04);}
+       pre:not([class]) { background-color: white }</style>
+<script src="site_libs/navigation-1.1/tabsets.js"></script>
+<script src="site_libs/htmlwidgets-1.5.4/htmlwidgets.js"></script>
+<link href="site_libs/vis-9.1.0/vis-network.min.css" rel="stylesheet" />
+<script src="site_libs/vis-9.1.0/vis-network.min.js"></script>
+<script src="site_libs/visNetwork-binding-2.1.0/visNetwork.js"></script>
+<link href="site_libs/font-awesome-5.1.0/css/all.css" rel="stylesheet" />
+<link href="site_libs/font-awesome-5.1.0/css/v4-shims.css" rel="stylesheet" />
+
+<link rel="icon" href="https://github.com/workflowr/workflowr-assets/raw/main/img/reproducible.png">
+<!-- Add a small amount of space between sections. -->
+<style type="text/css">
+div.section {
+  padding-top: 12px;
+}
+</style>
+
+
+
+<style type="text/css">
+  code{white-space: pre-wrap;}
+  span.smallcaps{font-variant: small-caps;}
+  span.underline{text-decoration: underline;}
+  div.column{display: inline-block; vertical-align: top; width: 50%;}
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+  ul.task-list{list-style: none;}
+    </style>
+
+
+
+
+
+
+<style type="text/css">
+/* for pandoc --citeproc since 2.11 */
+div.csl-bib-body { }
+div.csl-entry {
+  clear: both;
+}
+.hanging div.csl-entry {
+  margin-left:2em;
+  text-indent:-2em;
+}
+div.csl-left-margin {
+  min-width:2em;
+  float:left;
+}
+div.csl-right-inline {
+  margin-left:2em;
+  padding-left:1em;
+}
+div.csl-indent {
+  margin-left: 2em;
+}
+</style>
+
+<link rel="stylesheet" href="style.css" type="text/css" />
+
+
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+img {
+  max-width:100%;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+.html-widget {
+  margin-bottom: 20px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+summary {
+  display: list-item;
+}
+details > summary > p:only-child {
+  display: inline;
+}
+pre code {
+  padding: 0;
+}
+</style>
+
+
+<style type="text/css">
+.dropdown-submenu {
+  position: relative;
+}
+.dropdown-submenu>.dropdown-menu {
+  top: 0;
+  left: 100%;
+  margin-top: -6px;
+  margin-left: -1px;
+  border-radius: 0 6px 6px 6px;
+}
+.dropdown-submenu:hover>.dropdown-menu {
+  display: block;
+}
+.dropdown-submenu>a:after {
+  display: block;
+  content: " ";
+  float: right;
+  width: 0;
+  height: 0;
+  border-color: transparent;
+  border-style: solid;
+  border-width: 5px 0 5px 5px;
+  border-left-color: #cccccc;
+  margin-top: 5px;
+  margin-right: -10px;
+}
+.dropdown-submenu:hover>a:after {
+  border-left-color: #adb5bd;
+}
+.dropdown-submenu.pull-left {
+  float: none;
+}
+.dropdown-submenu.pull-left>.dropdown-menu {
+  left: -100%;
+  margin-left: 10px;
+  border-radius: 6px 0 6px 6px;
+}
+</style>
+
+<script type="text/javascript">
+// manage active state of menu based on current page
+$(document).ready(function () {
+  // active menu anchor
+  href = window.location.pathname
+  href = href.substr(href.lastIndexOf('/') + 1)
+  if (href === "")
+    href = "index.html";
+  var menuAnchor = $('a[href="' + href + '"]');
+
+  // mark the anchor link active (and if it's in a dropdown, also mark that active)
+  var dropdown = menuAnchor.closest('li.dropdown');
+  if (window.bootstrap) { // Bootstrap 4+
+    menuAnchor.addClass('active');
+    dropdown.find('> .dropdown-toggle').addClass('active');
+  } else { // Bootstrap 3
+    menuAnchor.parent().addClass('active');
+    dropdown.addClass('active');
+  }
+
+  // Navbar adjustments
+  var navHeight = $(".navbar").first().height() + 15;
+  var style = document.createElement('style');
+  var pt = "padding-top: " + navHeight + "px; ";
+  var mt = "margin-top: -" + navHeight + "px; ";
+  var css = "";
+  // offset scroll position for anchor links (for fixed navbar)
+  for (var i = 1; i <= 6; i++) {
+    css += ".section h" + i + "{ " + pt + mt + "}\n";
+  }
+  style.innerHTML = "body {" + pt + "padding-bottom: 40px; }\n" + css;
+  document.head.appendChild(style);
+});
+</script>
+
+<!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "&#xe258;";
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+  background-color: transparent;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
+<!-- code folding -->
+
+
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
+
+
+
+
+<div class="navbar navbar-default  navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-bs-toggle="collapse" data-target="#navbar" data-bs-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="index.html">false.alarm</a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        <li>
+  <a href="index.html">Home</a>
+</li>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+    <span class="fa fa-book"></span>
+     
+    Blog
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+    <li>
+      <a href="blog-202108.html">2021, August</a>
+    </li>
+    <li>
+      <a href="blog-202110.html">2021, October</a>
+    </li>
+    <li>
+      <a href="blog-202201.html">2022, January</a>
+    </li>
+    <li>
+      <a href="blog-202204.html">2022, April</a>
+    </li>
+  </ul>
+</li>
+<li>
+  <a href="report.html">Report</a>
+</li>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+    Regime Change
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+    <li>
+      <a href="regime_optimize.html">First Optimization</a>
+    </li>
+    <li>
+      <a href="regime_optimize_2.html">Second Optimization</a>
+    </li>
+    <li>
+      <a href="regime_optimize_3.html">Using malignantventricular dataset</a>
+    </li>
+    <li>
+      <a href="regime_optimize_3_5.html">Using malignantventricular dataset and PR</a>
+    </li>
+    <li>
+      <a href="regime_optimize_4.html">Using vtachyarrhythmias dataset</a>
+    </li>
+    <li>
+      <a href="regime_optimize_4_5.html">Using vtachyarrhythmias dataset and PR</a>
+    </li>
+  </ul>
+</li>
+<li>
+  <a href="about.html">About</a>
+</li>
+<li>
+  <a href="license.html">License</a>
+</li>
+<li>
+  <a href="thesis/introduction.html">Thesis</a>
+</li>
+<li>
+  <a href="https://github.com/franzbischoff/false.alarm">
+    <span class="fa fa-github"></span>
+     
+    Source
+  </a>
+</li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        <li>
+  <a href="https://twitter.com/intent/tweet?text=Detecting%20life-threatening%20patterns%20in%20Point-of-care%20ECG%20using%20efficient%20memory%20and%20processor%20power&amp;url=https%3A%2F%2Ffranzbischoff.github.io%2Ffalse.alarm%2F&amp;hashtags=rmarkdown,bookdown">
+    <span class="fab fa-twitter"></span>
+     
+  </a>
+</li>
+<li>
+  <a href="https://www.facebook.com/sharer/sharer.php?u=https%3A%2F%2Ffranzbischoff.github.io%2Ffalse.alarm%2F">
+    <span class="fa fa-facebook"></span>
+     
+  </a>
+</li>
+<li>
+  <a href="https://www.facebook.com/sharer/sharer.php?u=https%3A%2F%2Ffranzbischoff.github.io%2Ffalse.alarm%2F">
+    <span class="fa fa-share-alt"></span>
+     
+  </a>
+</li>
+      </ul>
+    </div><!--/.nav-collapse -->
+  </div><!--/.container -->
+</div><!--/.navbar -->
+
+<div id="header">
+
+
+
+<h1 class="title toc-ignore">Regime changes 3.5 - malignantventricular with PR</h1>
+<h4 class="author">Francisco Bischoff</h4>
+<h4 class="date">on October 05, 2022</h4>
+
+</div>
+
+<div id="TOC">
+<ul>
+<li><a href="#regime-changes-optimization-continuation"><span class="toc-section-number">1</span> Regime changes optimization (continuation)</a>
+<ul>
+<li><a href="#current-pipeline"><span class="toc-section-number">1.1</span> Current pipeline</a></li>
+<li><a href="#tuning-process"><span class="toc-section-number">1.2</span> Tuning process</a></li>
+<li><a href="#parameters-analysis"><span class="toc-section-number">1.3</span> Parameters analysis</a>
+<ul>
+<li><a href="#interactions"><span class="toc-section-number">1.3.1</span> Interactions</a></li>
+<li><a href="#importance"><span class="toc-section-number">1.3.2</span> Importance</a></li>
+<li><a href="#importance-analysis"><span class="toc-section-number">1.3.3</span> Importance analysis</a></li>
+</ul></li>
+<li><a href="#visualizing-the-predictions"><span class="toc-section-number">1.4</span> Visualizing the predictions</a>
+<ul>
+<li><a href="#by-recording"><span class="toc-section-number">1.4.1</span> By recording</a></li>
+<li><a href="#by-model"><span class="toc-section-number">1.4.2</span> By model</a></li>
+</ul></li>
+</ul></li>
+<li><a href="#references">References</a></li>
+</ul>
+</div>
+
+<p>
+<button type="button" class="btn btn-default btn-workflowr btn-workflowr-report" data-toggle="collapse" data-target="#workflowr-report">
+<span class="glyphicon glyphicon-list" aria-hidden="true"></span>
+workflowr
+<span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span>
+</button>
+</p>
+<div id="workflowr-report" class="collapse">
+<ul class="nav nav-tabs">
+<li class="active">
+<a data-toggle="tab" href="#summary">Summary</a>
+</li>
+<li>
+<a data-toggle="tab" href="#checks">
+Checks <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span>
+</a>
+</li>
+<li>
+<a data-toggle="tab" href="#versions">Past versions</a>
+</li>
+</ul>
+<div class="tab-content">
+<div id="summary" class="tab-pane fade in active">
+<p>
+<strong>Last updated:</strong> 2022-10-05
+</p>
+<p>
+<strong>Checks:</strong>
+<span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span>
+7
+<span class="glyphicon glyphicon-exclamation-sign text-danger" aria-hidden="true"></span>
+0
+</p>
+<p>
+<strong>Knit directory:</strong>
+<code>false.alarm/docs/</code>
+<span class="glyphicon glyphicon-question-sign" aria-hidden="true" title="This is the local directory in which the code in this file was executed.">
+</span>
+</p>
+<p>
+This reproducible <a href="https://rmarkdown.rstudio.com">R Markdown</a>
+analysis was created with <a
+  href="https://github.com/workflowr/workflowr">workflowr</a> (version
+1.7.0). The <em>Checks</em> tab describes the
+reproducibility checks that were applied when the results were created.
+The <em>Past versions</em> tab lists the development history.
+</p>
+<hr>
+</div>
+<div id="checks" class="tab-pane fade">
+<div id="workflowr-checks" class="panel-group">
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRMarkdownfilestronguptodate">
+<span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span>
+<strong>R Markdown file:</strong> up-to-date
+</a>
+</p>
+</div>
+<div id="strongRMarkdownfilestronguptodate" class="panel-collapse collapse">
+<div class="panel-body">
+<p>Great! Since the R Markdown file has been committed to the Git repository, you
+know the exact version of the code that produced these results.</p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongEnvironmentstrongempty">
+<span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span>
+<strong>Environment:</strong> empty
+</a>
+</p>
+</div>
+<div id="strongEnvironmentstrongempty" class="panel-collapse collapse">
+<div class="panel-body">
+<p>Great job! The global environment was empty. Objects defined in the global
+environment can affect the analysis in your R Markdown file in unknown ways.
+For reproduciblity it’s best to always run the code in an empty environment.</p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongSeedstrongcodesetseed20201020code">
+<span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span>
+<strong>Seed:</strong> <code>set.seed(20201020)</code>
+</a>
+</p>
+</div>
+<div id="strongSeedstrongcodesetseed20201020code" class="panel-collapse collapse">
+<div class="panel-body">
+<p>The command <code>set.seed(20201020)</code> was run prior to running the code in the R Markdown file.
+Setting a seed ensures that any results that rely on randomness, e.g.
+subsampling or permutations, are reproducible.</p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongSessioninformationstrongrecorded">
+<span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span>
+<strong>Session information:</strong> recorded
+</a>
+</p>
+</div>
+<div id="strongSessioninformationstrongrecorded" class="panel-collapse collapse">
+<div class="panel-body">
+<p>Great job! Recording the operating system, R version, and package versions is
+critical for reproducibility.</p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongCachestrongnone">
+<span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span>
+<strong>Cache:</strong> none
+</a>
+</p>
+</div>
+<div id="strongCachestrongnone" class="panel-collapse collapse">
+<div class="panel-body">
+<p>Nice! There were no cached chunks for this analysis, so you can be confident
+that you successfully produced the results during this run.</p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongFilepathsstrongrelative">
+<span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span>
+<strong>File paths:</strong> relative
+</a>
+</p>
+</div>
+<div id="strongFilepathsstrongrelative" class="panel-collapse collapse">
+<div class="panel-body">
+<p>Great job! Using relative paths to the files within your workflowr project
+makes it easier to run your code on other machines.</p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomfranzbischofffalsealarmtreeb79f104ddcaa39536c6afdf7120bd80f47482366targetblankb79f104a">
+<span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span>
+<strong>Repository version:</strong> <a href="https://github.com/franzbischoff/false.alarm/tree/b79f104ddcaa39536c6afdf7120bd80f47482366" target="_blank">b79f104</a>
+</a>
+</p>
+</div>
+<div id="strongRepositoryversionstrongahrefhttpsgithubcomfranzbischofffalsealarmtreeb79f104ddcaa39536c6afdf7120bd80f47482366targetblankb79f104a" class="panel-collapse collapse">
+<div class="panel-body">
+<p>
+Great! You are using Git for version control. Tracking code development and
+connecting the code version to the results is critical for reproducibility.
+</p>
+<p>
+The results in this page were generated with repository version <a href="https://github.com/franzbischoff/false.alarm/tree/b79f104ddcaa39536c6afdf7120bd80f47482366" target="_blank">b79f104</a>.
+See the <em>Past versions</em> tab to see a history of the changes made to the
+R Markdown and HTML files.
+</p>
+<p>
+Note that you need to be careful to ensure that all relevant files for the
+analysis have been committed to Git prior to generating the results (you can
+use <code>wflow_publish</code> or <code>wflow_git_commit</code>). workflowr only
+checks the R Markdown file, but you know if there are other scripts or data
+files that it depends on. Below is the status of the Git repository when the
+results were generated:
+</p>
+<pre><code>
+Ignored files:
+    Ignored:    .Renviron
+    Ignored:    .Rhistory
+    Ignored:    .Rproj.user/
+    Ignored:    .devcontainer/exts/
+    Ignored:    .docker/
+    Ignored:    .github/ISSUE_TEMPLATE/
+    Ignored:    .httr-oauth
+    Ignored:    R/RcppExports.R
+    Ignored:    _regime_change/meta/process
+    Ignored:    _regime_change/meta/progress
+    Ignored:    _regime_change/objects/
+    Ignored:    _regime_change/user/
+    Ignored:    _regime_change2/meta/process
+    Ignored:    _regime_change2/meta/progress
+    Ignored:    _regime_change2/objects/
+    Ignored:    _regime_change2/user/
+    Ignored:    _regime_change3/meta/process
+    Ignored:    _regime_change3/meta/progress
+    Ignored:    _regime_change3/objects/
+    Ignored:    _regime_change3/user/
+    Ignored:    _regime_optimize/meta/meta2
+    Ignored:    _regime_optimize/meta/process
+    Ignored:    _regime_optimize/meta/progress
+    Ignored:    _regime_optimize/objects/
+    Ignored:    _regime_optimize/user/
+    Ignored:    _targets/meta/process
+    Ignored:    _targets/meta/progress
+    Ignored:    _targets/objects/
+    Ignored:    _targets/user/
+    Ignored:    analysis/shiny/rsconnect/
+    Ignored:    analysis/shiny_land/rsconnect/
+    Ignored:    dev/
+    Ignored:    inst/extdata/
+    Ignored:    papers/aime2021/aime2021.md
+    Ignored:    papers/epia2022/epia2022.md
+    Ignored:    presentations/MEDCIDS21/MEDCIDS21-10min_files/
+    Ignored:    presentations/MEDCIDS21/MEDCIDS21_files/
+    Ignored:    presentations/Report/Midterm-Report_cache/
+    Ignored:    presentations/Report/Midterm-Report_files/
+    Ignored:    protocol/SecondReport_cache/
+    Ignored:    protocol/SecondReport_files/
+    Ignored:    protocol/_files/
+    Ignored:    renv/python/
+    Ignored:    renv/staging/
+    Ignored:    src/RcppExports.cpp
+    Ignored:    src/RcppExports.o
+    Ignored:    src/contrast.o
+    Ignored:    src/false.alarm.so
+    Ignored:    src/fft.o
+    Ignored:    src/mass.o
+    Ignored:    src/math.o
+    Ignored:    src/mpx.o
+    Ignored:    src/scrimp.o
+    Ignored:    src/stamp.o
+    Ignored:    src/stomp.o
+    Ignored:    src/windowfunc.o
+    Ignored:    thesis/Rplots.pdf
+    Ignored:    thesis/_bookdown_files/
+    Ignored:    tmp/
+
+</code></pre>
+<p>
+Note that any generated files, e.g. HTML, png, CSS, etc., are not included in
+this status report because it is ok for generated content to have uncommitted
+changes.
+</p>
+</div>
+</div>
+</div>
+</div>
+<hr>
+</div>
+<div id="versions" class="tab-pane fade">
+
+<p>
+These are the previous versions of the repository in which changes were made
+to the R Markdown (<code>analysis/regime_optimize_3_5.Rmd</code>) and HTML (<code>docs/regime_optimize_3_5.html</code>)
+files. If you’ve configured a remote Git repository (see
+<code>?wflow_git_remote</code>), click on the hyperlinks in the table below to
+view the files as they were in that past version.
+</p>
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+File
+</th>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+<th>
+Message
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+Rmd
+</td>
+<td>
+<a href="https://github.com/franzbischoff/false.alarm/blob/b79f104ddcaa39536c6afdf7120bd80f47482366/analysis/regime_optimize_3_5.Rmd" target="_blank">b79f104</a>
+</td>
+<td>
+Francisco Bischoff
+</td>
+<td>
+2022-10-05
+</td>
+<td>
+another score
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<hr>
+</div>
+</div>
+</div>
+<div id="regime-changes-optimization-continuation" class="section level1" number="1">
+<h1><span class="header-section-number">1</span> Regime changes optimization (continuation)</h1>
+<p>This article uses the same principles as the <a href="regime_optimize_2.html">previous article</a> but here we will evaluate the
+models in another dataset, the “CU Ventricular Tachyarrhythmia Database” which contains 35 eight-minute ECG recordings
+of human subjects who experienced episodes of sustained ventricular tachycardia, ventricular flutter, and ventricular
+fibrillation.</p>
+<p>This version of the analysis uses another scoring function, which is based on the F-score, and uses a simple approach
+to calculate the Precision and Recall. The Recall reflects the hability of the model to detect the labeled regime changes;
+the algorithm accounts as a “detection” if the prediction is within a window of 5 seconds (plus or minus 2.5s).
+The Precision reflects the hability of the model to avoid false positives; the algorithm accounts as a “false positive”
+when the prediction is outside a window of 5 seconds (plus or minus 2.5s) from the labeled regime change.</p>
+<p>The F-score will be calculated giving more weight to the Recall (beta = 3).
+Except for the Fig. <a href="#fig:bestmodels">1.9</a>, all other figures will represent the F-score as <span class="math inline">\(Score = 1 - F_{score}\)</span>, to make
+it easier to compare with the previous score function.</p>
+<div id="current-pipeline" class="section level2" number="1.1">
+<h2><span class="header-section-number">1.1</span> Current pipeline</h2>
+<div class="figure" style="text-align: center"><span style="display:block;" id="fig:thepipeline"></span>
+<div id="htmlwidget-24512ae3b9d6a760b942" style="width:100%;height:480px;" class="visNetwork html-widget"></div>
+<script type="application/json" data-for="htmlwidget-24512ae3b9d6a760b942">{"x":{"nodes":{"name":["analysis_evaluation_100","analysis_evaluation_125","analysis_evaluation_150","analysis_evaluation_175","analysis_evaluation_200","analysis_evaluation_25","analysis_evaluation_50","analysis_evaluation_75","analysis_fitted_100","analysis_fitted_125","analysis_fitted_150","analysis_fitted_175","analysis_fitted_200","analysis_fitted_25","analysis_fitted_50","analysis_fitted_75","analysis_split","assessment_split","combined","dataset","file_paths","file_paths_files","initial_resample","testing_evaluation","testing_split","training_split"],"type":["pattern","pattern","pattern","pattern","pattern","pattern","pattern","pattern","pattern","pattern","pattern","pattern","pattern","pattern","pattern","pattern","stem","stem","stem","stem","pattern","stem","stem","stem","stem","stem"],"status":["uptodate","uptodate","uptodate","uptodate","uptodate","uptodate","uptodate","uptodate","uptodate","uptodate","uptodate","uptodate","uptodate","uptodate","uptodate","uptodate","uptodate","uptodate","uptodate","uptodate","uptodate","uptodate","uptodate","uptodate","uptodate","uptodate"],"seconds":[1227.895,1257.598,1346.444,1328.241,1329.405,1201.441,1221.278,1235.92,3127.079,3718.576,3597.706,2732.245,2630.983,2824.462,2797.757,2432.403,3.58,1.029,0.005,7.416,0.005,0.001,0.04,1170.795,0.002,0.001],"bytes":[1423,1410,1416,1438,1452,1423,1429,1456,7763095,9022023,9397581,10023692,10148874,2679399,4976220,6689622,105490241,26375109,5385,63362833,2090,200,17994502,327,4814432,13186813],"branches":[2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,null,null,null,null,22,null,null,null,null,null],"label":["analysis_evaluation_100","analysis_evaluation_125","analysis_evaluation_150","analysis_evaluation_175","analysis_evaluation_200","analysis_evaluation_25","analysis_evaluation_50","analysis_evaluation_75","analysis_fitted_100","analysis_fitted_125","analysis_fitted_150","analysis_fitted_175","analysis_fitted_200","analysis_fitted_25","analysis_fitted_50","analysis_fitted_75","analysis_split","assessment_split","combined","dataset","file_paths","file_paths_files","initial_resample","testing_evaluation","testing_split","training_split"],"color":["#354823","#354823","#354823","#354823","#354823","#354823","#354823","#354823","#354823","#354823","#354823","#354823","#354823","#354823","#354823","#354823","#354823","#354823","#354823","#354823","#354823","#354823","#354823","#354823","#354823","#354823"],"id":["analysis_evaluation_100","analysis_evaluation_125","analysis_evaluation_150","analysis_evaluation_175","analysis_evaluation_200","analysis_evaluation_25","analysis_evaluation_50","analysis_evaluation_75","analysis_fitted_100","analysis_fitted_125","analysis_fitted_150","analysis_fitted_175","analysis_fitted_200","analysis_fitted_25","analysis_fitted_50","analysis_fitted_75","analysis_split","assessment_split","combined","dataset","file_paths","file_paths_files","initial_resample","testing_evaluation","testing_split","training_split"],"level":[8,8,8,8,8,8,8,8,7,7,7,7,7,7,7,7,6,6,9,3,2,1,4,10,5,5],"shape":["square","square","square","square","square","square","square","square","square","square","square","square","square","square","square","square","dot","dot","dot","dot","square","dot","dot","dot","dot","dot"],"title":["20.465 minutes<br />1.423 kilobytes<br />2 branches","20.96 minutes<br />1.41 kilobytes<br />2 branches","22.441 minutes<br />1.416 kilobytes<br />2 branches","22.137 minutes<br />1.438 kilobytes<br />2 branches","22.157 minutes<br />1.452 kilobytes<br />2 branches","20.024 minutes<br />1.423 kilobytes<br />2 branches","20.355 minutes<br />1.429 kilobytes<br />2 branches","20.599 minutes<br />1.456 kilobytes<br />2 branches","52.118 minutes<br />7.763 megabytes<br />2 branches","1.033 hours<br />9.022 megabytes<br />2 branches","59.962 minutes<br />9.398 megabytes<br />2 branches","45.537 minutes<br />10.024 megabytes<br />2 branches","43.85 minutes<br />10.149 megabytes<br />2 branches","47.074 minutes<br />2.679 megabytes<br />2 branches","46.629 minutes<br />4.976 megabytes<br />2 branches","40.54 minutes<br />6.69 megabytes<br />2 branches","3.58 seconds<br />105.49 megabytes","1.029 seconds<br />26.375 megabytes","0.005 seconds<br />5.385 kilobytes","7.416 seconds<br />63.363 megabytes","0.005 seconds<br />2.09 kilobytes<br />22 branches","0.001 seconds<br />200 bytes","0.04 seconds<br />17.995 megabytes","19.513 minutes<br />327 bytes","0.002 seconds<br />4.814 megabytes","0.001 seconds<br />13.187 megabytes"]},"edges":{"from":["analysis_fitted_75","assessment_split","combined","testing_split","initial_resample","analysis_fitted_100","assessment_split","analysis_fitted_125","assessment_split","analysis_evaluation_100","analysis_evaluation_125","analysis_evaluation_150","analysis_evaluation_175","analysis_evaluation_200","analysis_evaluation_25","analysis_evaluation_50","analysis_evaluation_75","analysis_split","analysis_fitted_175","assessment_split","analysis_split","analysis_split","analysis_split","analysis_fitted_200","assessment_split","dataset","analysis_fitted_25","assessment_split","training_split","analysis_split","analysis_split","analysis_fitted_150","assessment_split","analysis_fitted_50","assessment_split","analysis_split","analysis_split","training_split","file_paths","file_paths_files","initial_resample"],"to":["analysis_evaluation_75","analysis_evaluation_75","testing_evaluation","testing_evaluation","testing_split","analysis_evaluation_100","analysis_evaluation_100","analysis_evaluation_125","analysis_evaluation_125","combined","combined","combined","combined","combined","combined","combined","combined","analysis_fitted_175","analysis_evaluation_175","analysis_evaluation_175","analysis_fitted_50","analysis_fitted_100","analysis_fitted_125","analysis_evaluation_200","analysis_evaluation_200","initial_resample","analysis_evaluation_25","analysis_evaluation_25","analysis_split","analysis_fitted_25","analysis_fitted_150","analysis_evaluation_150","analysis_evaluation_150","analysis_evaluation_50","analysis_evaluation_50","analysis_fitted_75","analysis_fitted_200","assessment_split","dataset","file_paths","training_split"],"arrows":["to","to","to","to","to","to","to","to","to","to","to","to","to","to","to","to","to","to","to","to","to","to","to","to","to","to","to","to","to","to","to","to","to","to","to","to","to","to","to","to","to"]},"nodesToDataframe":true,"edgesToDataframe":true,"options":{"width":"100%","height":"100%","nodes":{"shape":"dot","physics":true},"manipulation":{"enabled":false},"edges":{"smooth":{"type":"cubicBezier","forceDirection":"horizontal"}},"physics":{"hierarchicalRepulsion":{"springLength":1,"avoidOverlap":0.5,"nodeDistance":120}},"interaction":{"hover":true,"multiselect":true,"tooltipDelay":100,"zoomSpeed":1},"layout":{"hierarchical":{"enabled":true,"direction":"LR"}}},"groups":null,"width":null,"height":null,"idselection":{"enabled":false,"style":"width: 150px; height: 26px","useLabels":true,"main":"Select by id"},"byselection":{"enabled":false,"style":"width: 150px; height: 26px","multiple":false,"hideColor":"rgba(200,200,200,0.5)","highlight":false},"main":{"text":"","style":"font-family:Georgia, Times New Roman, Times, serif;font-weight:bold;font-size:20px;text-align:center;"},"submain":null,"footer":null,"background":"rgba(0, 0, 0, 0)","highlight":{"enabled":true,"hoverNearest":false,"degree":{"from":1,"to":1},"algorithm":"hierarchical","hideColor":"rgba(200,200,200,0.5)","labelOnly":true},"collapse":{"enabled":true,"fit":false,"resetHighlight":true,"clusterOptions":null,"keepCoord":true,"labelSuffix":"(cluster)"},"legend":{"width":0.2,"useGroups":false,"position":"right","ncol":1,"stepX":100,"stepY":100,"zoom":true,"nodes":{"label":["Up to date","Pattern","Stem"],"color":["#354823","#899DA4","#899DA4"],"shape":["dot","square","dot"]},"nodesToDataframe":true},"tooltipStay":300,"tooltipStyle":"position: fixed;visibility:hidden;padding: 5px;white-space: nowrap;font-family: verdana;font-size:14px;font-color:#000000;background-color: #f5f4ed;-moz-border-radius: 3px;-webkit-border-radius: 3px;border-radius: 3px;border: 1px solid #808074;box-shadow: 3px 3px 10px rgba(0, 0, 0, 0.2);"},"evals":[],"jsHooks":[]}</script>
+<p class="caption">
+Figure 1.1: FLOSS pipeline.
+</p>
+</div>
+</div>
+<div id="tuning-process" class="section level2" number="1.2">
+<h2><span class="header-section-number">1.2</span> Tuning process</h2>
+<p>This time, as we have already seen the results of the previous optimization, we will only tune the parameters that
+we have concluded that they are meaningful.</p>
+<p>The variable for building the MP:</p>
+<ul>
+<li><strong><code>window_size</code></strong>: the default parameter always used to build an MP.</li>
+</ul>
+<p>The variables used on the FLOSS algorithm:</p>
+<ul>
+<li><strong><code>regime_threshold</code></strong>: the threshold below which a regime change is considered.</li>
+<li><strong><code>regime_landmark</code></strong>: the point in time where the regime threshold is applied.</li>
+</ul>
+<p>Using the <code>tidymodels</code> framework, we performed a basic grid search on all these parameters as follows:</p>
+<ul>
+<li>The MP parameters were explored using the following values:
+<ul>
+<li><strong><code>window_size</code></strong>: 25 to 200, by 25 steps;</li>
+</ul></li>
+<li>The FLOSS parameters were explored using the following values:
+<ul>
+<li><strong><code>regime_threshold</code></strong>: 0.05 to 0.90, by 0.05 steps;</li>
+<li><strong><code>regime_landmark</code></strong>: 2 to 9.5, by 0.5 steps.</li>
+</ul></li>
+</ul>
+</div>
+<div id="parameters-analysis" class="section level2" number="1.3">
+<h2><span class="header-section-number">1.3</span> Parameters analysis</h2>
+<p>As before, we started by computing the <em>importance</em> of each parameter<span class="citation"><sup><a href="#ref-Wei2015" role="doc-biblioref">1</a></sup></span>. We used the same approach
+using the Bayesian Additive Regression Trees (BART) model to fit the tuning parameters as predictors of the
+FLOSS score.</p>
+<div id="interactions" class="section level3" number="1.3.1">
+<h3><span class="header-section-number">1.3.1</span> Interactions</h3>
+<p>Before starting the parameter importance analysis, we need to consider the parameter interactions since this
+is usually the weak spot of the analysis techniques.</p>
+<p>The BART model was fitted using the following parameters:</p>
+<p><span class="math display" id="eq:first">\[\begin{equation}
+\begin{aligned}
+E( score ) &amp;= \alpha + window\_size\\
+&amp;\quad + regime\_threshold + regime\_landmark
+\end{aligned}
+\tag{1.1}
+\end{equation}\]</span></p>
+<p>Fig. <a href="#fig:interaction">1.2</a> shows the variable interaction strength between pairs of variables. That allows us to verify
+if there are any significant interactions between the variables. Here we see that the interaction between variables are
+minimal.</p>
+<div class="figure" style="text-align: center"><span style="display:block;" id="fig:interaction"></span>
+<img src="figure/regime_optimize_3_5.Rmd/interaction-1.svg" alt="Variable interactions strength using feature importance ranking measure (FIRM) approach [@Greenwell2018]. Shows almost no interaction between the variables." width="100%" />
+<p class="caption">
+Figure 1.2: Variable interactions strength using feature importance ranking measure (FIRM) approach<span class="citation"><sup><a href="#ref-Greenwell2018" role="doc-biblioref">2</a></sup></span>. Shows almost no interaction between the variables.
+</p>
+</div>
+</div>
+<div id="importance" class="section level3" number="1.3.2">
+<h3><span class="header-section-number">1.3.2</span> Importance</h3>
+<p>After evaluating the interactions, we can then perform the analysis of the variable importance. The goal is to
+understand how the FLOSS score behaves when we change the parameters.</p>
+<p>The techniques for evaluating the variable importances were described in the <a href="regime_optimize.html">previous article</a>.</p>
+</div>
+<div id="importance-analysis" class="section level3" number="1.3.3">
+<h3><span class="header-section-number">1.3.3</span> Importance analysis</h3>
+<p>Using the three techniques simultaneously allows a broad comparison of the model behavior<span class="citation"><sup><a href="#ref-Greenwell2020" role="doc-biblioref">3</a></sup></span>. All
+three methods are model-agnostic (separates interpretation from the model), but as we have seen, each method has
+its advantages and disadvantages<span class="citation"><sup><a href="#ref-Molnar2022" role="doc-biblioref">4</a></sup></span>.</p>
+<p>Fig. <a href="#fig:importance">1.3</a> then shows the variable importance using three methods: Feature Importance Ranking Measure
+(FIRM) using Individual Conditional Expectation (ICE), Permutation-based, and Shapley Additive explanations (SHAP).
+Here we see that all three methods agree on the importances.</p>
+<div class="figure" style="text-align: center"><span style="display:block;" id="fig:importance"></span>
+<img src="figure/regime_optimize_3_5.Rmd/importance-1.svg" alt="Variables importances using three different methods. A) Feature Importance Ranking Measure using ICE curves. B) Permutation method. C) SHAP (400 iterations)." width="100%" />
+<p class="caption">
+Figure 1.3: Variables importances using three different methods. A) Feature Importance Ranking Measure using ICE curves. B) Permutation method. C) SHAP (400 iterations).
+</p>
+</div>
+<p>Fig. <a href="#fig:importanceshap">1.4</a> shows the effect of each feature on the FLOSS score.</p>
+<p>Based on Figures <a href="#fig:importance">1.3</a> and <a href="#fig:importanceshap">1.4</a> we can infer that:</p>
+<ul>
+<li><p><strong><code>regime_threshold</code></strong>: is the most important feature, as in the previous dataset, and have a converging value.</p></li>
+<li><p><strong><code>regime_landmark</code></strong>: seems to have lost its importance using this metric.</p></li>
+<li><p><strong><code>window_size</code></strong>: has some importance, and as before, value below 75 starts to degrade the FLOSS score.</p></li>
+</ul>
+<div class="figure" style="text-align: center"><span style="display:block;" id="fig:importanceshap"></span>
+<img src="figure/regime_optimize_3_5.Rmd/importanceshap-1.svg" alt="This shows the effect each variable has on the FLOSS score. This plot doesn't take into account the variable interactions." width="100%" />
+<p class="caption">
+Figure 1.4: This shows the effect each variable has on the FLOSS score. This plot doesn’t take into account the variable interactions.
+</p>
+</div>
+</div>
+</div>
+<div id="visualizing-the-predictions" class="section level2" number="1.4">
+<h2><span class="header-section-number">1.4</span> Visualizing the predictions</h2>
+<div id="by-recording" class="section level3" number="1.4.1">
+<h3><span class="header-section-number">1.4.1</span> By recording</h3>
+<p>First, we will visualize how the models (in general) performed throughout the individual recordings.</p>
+<p>Fig. <a href="#fig:global">1.5</a> shows a violin plot of equal areas clipped to the minimum value. The blue color indicates the
+recordings with a small IQR (interquartile range) of model scores. We see on the left half 50% of the recordings with
+the worst minimum score, and on the right half, 50% of the recordings with the best minimum score.</p>
+<p>Next, we will visualize some of these predictions to understand why some recordings were difficult to segment.</p>
+<div class="figure" style="text-align: center"><span style="display:block;" id="fig:global"></span>
+<img src="figure/regime_optimize_3_5.Rmd/global-1.svg" alt="Violin plot showing the distribution of the FLOSS score achieved by all tested models by recording.  The left half shows the recordings that were difficult to predict (50% overall), whereas the right half shows the recordings that at least one model could achieve a good prediction (50% overall).  The recordings are sorted (left-right) by the minimum (best) score achieved in descending order, and ties are sorted by the median of all recording scores.  The blue color highlights recordings where models had an IQR variability of less than 0.5." width="100%" />
+<p class="caption">
+Figure 1.5: Violin plot showing the distribution of the FLOSS score achieved by all tested models by recording. The left half shows the recordings that were difficult to predict (50% overall), whereas the right half shows the recordings that at least one model could achieve a good prediction (50% overall). The recordings are sorted (left-right) by the minimum (best) score achieved in descending order, and ties are sorted by the median of all recording scores. The blue color highlights recordings where models had an IQR variability of less than 0.5.
+</p>
+</div>
+<p>Fig. <a href="#fig:worst">1.6</a> shows the best effort in predicting the most complex recordings. One information not declared
+before is that if the model does not predict any change, it will put a mark on the zero position. On the other side,
+the truth markers positioned at the beginning and the end of the recording were removed, as these locations lack
+information and do not represent a streaming setting.</p>
+<div class="figure" style="text-align: center"><span style="display:block;" id="fig:worst"></span>
+<img src="figure/regime_optimize_3_5.Rmd/worst-1.png" alt="Prediction of the worst recordings (red is the truth, blue are the predictions)." width="100%" />
+<p class="caption">
+Figure 1.6: Prediction of the worst recordings (red is the truth, blue are the predictions).
+</p>
+</div>
+<p>Fig. <a href="#fig:best">1.7</a> shows the best performances of the best recordings.</p>
+<div class="figure" style="text-align: center"><span style="display:block;" id="fig:best"></span>
+<img src="figure/regime_optimize_3_5.Rmd/best-1.png" alt="Prediction of the best recordings (red is the truth, blue are the predictions)." width="100%" />
+<p class="caption">
+Figure 1.7: Prediction of the best recordings (red is the truth, blue are the predictions).
+</p>
+</div>
+</div>
+<div id="by-model" class="section level3" number="1.4.2">
+<h3><span class="header-section-number">1.4.2</span> By model</h3>
+<p>Fig. <a href="#fig:globalmodel">1.8</a> shows the distribution of the FLOSS score of the 25% worst (left side) and 25% best models
+across the recordings (right side). The bluish color highlights the models with SD below 0.5 and IQR below 0.5.</p>
+<div class="figure" style="text-align: center"><span style="display:block;" id="fig:globalmodel"></span>
+<img src="figure/regime_optimize_3_5.Rmd/globalmodel-1.svg" alt="Violin plot showing the distribution of the FLOSS score achieved by all tested models during the inner ressample.  The left half shows the models with the worst performances (top 25), whereas the right half shows the models with the best performances (top 25). The models are sorted (left-right) by the mean score (top) and by the median (below). Ties are sorted by the SD and IQR, respectively.  The bluish colors highlights models with an SD below 0.5 and IQR below 0.5." width="100%" />
+<p class="caption">
+Figure 1.8: Violin plot showing the distribution of the FLOSS score achieved by all tested models during the inner ressample. The left half shows the models with the worst performances (top 25), whereas the right half shows the models with the best performances (top 25). The models are sorted (left-right) by the mean score (top) and by the median (below). Ties are sorted by the SD and IQR, respectively. The bluish colors highlights models with an SD below 0.5 and IQR below 0.5.
+</p>
+</div>
+<p>Fig. <a href="#fig:bestmodels">1.9</a> the performance of the six best models. They are ordered from left to right, from the best
+record to the worst record. The top model is the one with the highest mean across the scores. The blue line indicates
+the precision of the model, and the green line the recall. The black line with dots is the f-score. The red continuous
+and dashed lines are the median and the mean f-score respectively. The gray line limits the zero-score region.</p>
+<div class="figure" style="text-align: center"><span style="display:block;" id="fig:bestmodels"></span>
+<img src="figure/regime_optimize_3_5.Rmd/bestmodels-1.svg" alt="Performances of the best 6 models across all inner resample of recordings. The recordings are ordered by score, from the best to the worst. Each plot shows one model, starting from the best one. The blue line indicates the precision of the model. The green line the recall. The black line with dots is the f-score. The red continuous and dashed lines indicate respectively the median and mean f-score of the model. The gray line limits the zero-score region." width="100%" />
+<p class="caption">
+Figure 1.9: Performances of the best 6 models across all inner resample of recordings. The recordings are ordered by score, from the best to the worst. Each plot shows one model, starting from the best one. The blue line indicates the precision of the model. The green line the recall. The black line with dots is the f-score. The red continuous and dashed lines indicate respectively the median and mean f-score of the model. The gray line limits the zero-score region.
+</p>
+</div>
+</div>
+</div>
+</div>
+<div id="references" class="section level1 unnumbered">
+<h1>References</h1>
+<div id="refs" class="references csl-bib-body">
+<div id="ref-Wei2015" class="csl-entry">
+<div class="csl-left-margin">1. </div><div class="csl-right-inline">Wei P, Lu Z, Song J. <span class="nocase">Variable importance analysis: A comprehensive review</span>. <em>Reliability Engineering <span>&amp;</span> System Safety</em>. 2015;142:399-432. doi:<a href="https://doi.org/10.1016/j.ress.2015.05.018">10.1016/j.ress.2015.05.018</a></div>
+</div>
+<div id="ref-Greenwell2018" class="csl-entry">
+<div class="csl-left-margin">2. </div><div class="csl-right-inline">Greenwell BM, Boehmke BC, McCarthy AJ. A simple and effective model-based variable importance measure. Published online 2018. doi:<a href="https://doi.org/10.48550/arxiv.1805.04755">10.48550/arxiv.1805.04755</a></div>
+</div>
+<div id="ref-Greenwell2020" class="csl-entry">
+<div class="csl-left-margin">3. </div><div class="csl-right-inline">Greenwell BM, Boehmke BC. <span class="nocase">Variable Importance Plots-An Introduction to the vip Package</span>. <em>R Journal</em>. 2020;12(1):343-366. doi:<a href="https://doi.org/10.32614/rj-2020-013">10.32614/rj-2020-013</a></div>
+</div>
+<div id="ref-Molnar2022" class="csl-entry">
+<div class="csl-left-margin">4. </div><div class="csl-right-inline">Molnar C. <em><span class="nocase">Interpretable Machine Learning. A Guide for Making Black Box Models Explainable.</span></em> 2nd ed.; 2022:329. <a href="https://christophm.github.io/interpretable-ml-book">https://christophm.github.io/interpretable-ml-book</a></div>
+</div>
+</div>
+<br>
+<p>
+<button type="button" class="btn btn-default btn-workflowr btn-workflowr-sessioninfo" data-toggle="collapse" data-target="#workflowr-sessioninfo" style="display: block;">
+<span class="glyphicon glyphicon-wrench" aria-hidden="true"></span>
+Session information
+</button>
+</p>
+<div id="workflowr-sessioninfo" class="collapse">
+<pre><code>─ Session info ───────────────────────────────────────────────────────────────
+ setting  value
+ version  R version 4.2.1 (2022-06-23)
+ os       Ubuntu 20.04.5 LTS
+ system   x86_64, linux-gnu
+ ui       X11
+ language (EN)
+ collate  en_US.UTF-8
+ ctype    en_US.UTF-8
+ tz       Europe/Lisbon
+ date     2022-10-05
+ pandoc   2.17.0.1 @ /usr/bin/ (via rmarkdown)
+
+─ Packages ───────────────────────────────────────────────────────────────────
+ package      * version     date (UTC) lib source
+ askpass        1.1         2019-01-13 [1] CRAN (R 4.2.0)
+ assertthat     0.2.1       2019-03-21 [1] CRAN (R 4.2.0)
+ backports      1.4.1       2021-12-13 [1] CRAN (R 4.2.0)
+ base64url      1.4         2018-05-14 [1] CRAN (R 4.2.0)
+ bit            4.0.4       2020-08-04 [1] CRAN (R 4.2.0)
+ bit64          4.0.5       2020-08-30 [1] CRAN (R 4.2.0)
+ bookdown       0.29.2      2022-09-26 [1] Github (rstudio/bookdown@dfe92a2)
+ bslib          0.4.0       2022-07-16 [1] CRAN (R 4.2.1)
+ cachem         1.0.6       2021-08-19 [1] CRAN (R 4.2.0)
+ callr          3.7.2       2022-08-22 [1] CRAN (R 4.2.1)
+ checkmate      2.1.0       2022-04-21 [1] CRAN (R 4.2.0)
+ class          7.3-20      2022-01-13 [2] CRAN (R 4.2.0)
+ cli            3.4.1       2022-09-23 [1] CRAN (R 4.2.1)
+ codetools      0.2-18      2020-11-04 [2] CRAN (R 4.2.0)
+ colorspace     2.0-3       2022-02-21 [1] CRAN (R 4.2.0)
+ crayon         1.5.1       2022-03-26 [1] CRAN (R 4.2.0)
+ credentials    1.3.2       2021-11-29 [1] CRAN (R 4.2.0)
+ data.table     1.14.2      2021-09-27 [1] CRAN (R 4.2.0)
+ dbarts         0.9-22      2022-03-29 [1] CRAN (R 4.2.0)
+ DBI            1.1.3       2022-06-18 [1] CRAN (R 4.2.0)
+ debugme        1.1.0       2017-10-22 [1] CRAN (R 4.2.0)
+ devtools       2.4.4       2022-07-20 [1] CRAN (R 4.2.1)
+ dials          1.0.0       2022-06-14 [1] CRAN (R 4.2.0)
+ DiceDesign     1.9         2021-02-13 [1] CRAN (R 4.2.0)
+ digest         0.6.29      2021-12-01 [1] CRAN (R 4.2.0)
+ dplyr          1.0.10      2022-09-01 [1] CRAN (R 4.2.1)
+ ellipsis       0.3.2       2021-04-29 [1] CRAN (R 4.2.0)
+ evaluate       0.16        2022-08-09 [1] CRAN (R 4.2.1)
+ fansi          1.0.3       2022-03-24 [1] CRAN (R 4.2.0)
+ farver         2.1.1       2022-07-06 [1] CRAN (R 4.2.0)
+ fastmap        1.1.0       2021-01-25 [1] CRAN (R 4.2.0)
+ fastshap       0.0.7       2021-12-06 [1] CRAN (R 4.2.0)
+ forcats        0.5.2       2022-08-19 [2] CRAN (R 4.2.1)
+ foreach        1.5.2       2022-02-02 [1] CRAN (R 4.2.0)
+ fs             1.5.2       2021-12-08 [1] CRAN (R 4.2.0)
+ furrr          0.3.1       2022-08-15 [1] CRAN (R 4.2.1)
+ future         1.28.0      2022-09-02 [1] CRAN (R 4.2.1)
+ future.apply   1.9.1       2022-09-07 [1] CRAN (R 4.2.1)
+ generics       0.1.3       2022-07-05 [1] CRAN (R 4.2.0)
+ gert           1.9.0       2022-09-15 [1] CRAN (R 4.2.1)
+ getPass        0.2-2       2017-07-21 [1] CRAN (R 4.2.0)
+ ggplot2      * 3.3.6       2022-05-03 [1] CRAN (R 4.2.0)
+ git2r          0.30.1.9000 2022-04-29 [1] Github (ropensci/git2r@80ba185)
+ gittargets   * 0.0.5.9000  2022-09-26 [1] Github (wlandau/gittargets@a50dd58)
+ globals        0.16.1      2022-08-28 [1] CRAN (R 4.2.1)
+ glue         * 1.6.2       2022-02-24 [1] CRAN (R 4.2.0)
+ gower          1.0.0       2022-02-03 [1] CRAN (R 4.2.0)
+ GPfit          1.0-8       2019-02-08 [1] CRAN (R 4.2.0)
+ gridExtra      2.3         2017-09-09 [1] CRAN (R 4.2.0)
+ gtable         0.3.1       2022-09-01 [1] CRAN (R 4.2.1)
+ hardhat        1.2.0       2022-06-30 [1] CRAN (R 4.2.0)
+ here         * 1.0.1       2020-12-13 [1] CRAN (R 4.2.0)
+ highr          0.9         2021-04-16 [1] CRAN (R 4.2.0)
+ hms            1.1.2       2022-08-19 [1] CRAN (R 4.2.1)
+ htmltools      0.5.3       2022-07-18 [1] CRAN (R 4.2.1)
+ htmlwidgets    1.5.4       2021-09-08 [1] CRAN (R 4.2.0)
+ httpuv         1.6.6       2022-09-08 [1] CRAN (R 4.2.1)
+ httr           1.4.4       2022-08-17 [1] CRAN (R 4.2.1)
+ igraph         1.3.5       2022-09-22 [1] CRAN (R 4.2.1)
+ ipred          0.9-13      2022-06-02 [1] CRAN (R 4.2.0)
+ iterators      1.0.14      2022-02-05 [1] CRAN (R 4.2.0)
+ jquerylib      0.1.4       2021-04-26 [1] CRAN (R 4.2.0)
+ jsonlite       1.8.0       2022-02-22 [1] CRAN (R 4.2.0)
+ kableExtra   * 1.3.4       2021-02-20 [1] CRAN (R 4.2.0)
+ knitr          1.40        2022-08-24 [1] CRAN (R 4.2.1)
+ labeling       0.4.2       2020-10-20 [1] CRAN (R 4.2.0)
+ later          1.3.0       2021-08-18 [1] CRAN (R 4.2.0)
+ lattice        0.20-45     2021-09-22 [2] CRAN (R 4.2.0)
+ lava           1.6.10      2021-09-02 [1] CRAN (R 4.2.0)
+ lhs            1.1.5       2022-03-22 [1] CRAN (R 4.2.0)
+ lifecycle      1.0.2       2022-09-09 [1] CRAN (R 4.2.1)
+ listenv        0.8.0       2019-12-05 [1] CRAN (R 4.2.0)
+ lubridate      1.8.0       2021-10-07 [1] CRAN (R 4.2.0)
+ magrittr       2.0.3       2022-03-30 [1] CRAN (R 4.2.0)
+ MASS           7.3-58.1    2022-08-03 [1] CRAN (R 4.2.1)
+ Matrix         1.5-1       2022-09-13 [2] CRAN (R 4.2.1)
+ memoise        2.0.1       2021-11-26 [1] CRAN (R 4.2.0)
+ mgcv           1.8-40      2022-03-29 [2] CRAN (R 4.2.0)
+ mime           0.12        2021-09-28 [1] CRAN (R 4.2.0)
+ miniUI         0.1.1.1     2018-05-18 [1] CRAN (R 4.2.0)
+ munsell        0.5.0       2018-06-12 [1] CRAN (R 4.2.0)
+ nlme           3.1-159     2022-08-09 [1] CRAN (R 4.2.1)
+ nnet           7.3-17      2022-01-13 [2] CRAN (R 4.2.0)
+ openssl        2.0.3       2022-09-14 [1] CRAN (R 4.2.1)
+ parallelly     1.32.1      2022-07-21 [1] CRAN (R 4.2.1)
+ parsnip        1.0.1       2022-08-18 [1] CRAN (R 4.2.1)
+ patchwork    * 1.1.2       2022-08-19 [1] CRAN (R 4.2.1)
+ pdp            0.8.1       2022-06-07 [1] CRAN (R 4.2.0)
+ pillar         1.8.1       2022-08-19 [1] CRAN (R 4.2.1)
+ pkgbuild       1.3.1       2021-12-20 [1] CRAN (R 4.2.0)
+ pkgconfig      2.0.3       2019-09-22 [1] CRAN (R 4.2.0)
+ pkgload        1.3.0       2022-06-27 [1] CRAN (R 4.2.0)
+ prettyunits    1.1.1       2020-01-24 [1] CRAN (R 4.2.0)
+ processx       3.7.0       2022-07-07 [1] CRAN (R 4.2.1)
+ prodlim        2019.11.13  2019-11-17 [1] CRAN (R 4.2.0)
+ profvis        0.3.7       2020-11-02 [1] CRAN (R 4.2.1)
+ promises       1.2.0.1     2021-02-11 [1] CRAN (R 4.2.0)
+ ps             1.7.1       2022-06-18 [1] CRAN (R 4.2.0)
+ purrr          0.3.4       2020-04-17 [1] CRAN (R 4.2.0)
+ R6             2.5.1       2021-08-19 [1] CRAN (R 4.2.0)
+ Rcpp           1.0.9       2022-07-08 [1] CRAN (R 4.2.1)
+ readr          2.1.2       2022-01-30 [1] CRAN (R 4.2.0)
+ recipes        1.0.1       2022-07-07 [1] CRAN (R 4.2.1)
+ remotes        2.4.2       2021-11-30 [1] CRAN (R 4.2.0)
+ renv           0.15.5      2022-05-26 [1] CRAN (R 4.2.0)
+ rlang          1.0.6       2022-09-24 [1] CRAN (R 4.2.1)
+ rmarkdown      2.16.1      2022-09-26 [1] Github (rstudio/rmarkdown@9577707)
+ rpart          4.1.16      2022-01-24 [2] CRAN (R 4.2.0)
+ rprojroot      2.0.3       2022-04-02 [1] CRAN (R 4.2.0)
+ rsample        1.1.0       2022-08-08 [1] CRAN (R 4.2.1)
+ rstudioapi     0.14        2022-08-22 [1] CRAN (R 4.2.1)
+ rvest          1.0.3       2022-08-19 [1] CRAN (R 4.2.1)
+ sass           0.4.2       2022-07-16 [1] CRAN (R 4.2.1)
+ scales         1.2.1       2022-08-20 [1] CRAN (R 4.2.1)
+ sessioninfo    1.2.2       2021-12-06 [1] CRAN (R 4.2.0)
+ shapviz        0.2.1       2022-08-11 [1] CRAN (R 4.2.1)
+ shiny          1.7.2       2022-07-19 [1] CRAN (R 4.2.1)
+ signal         0.7-7       2021-05-25 [1] CRAN (R 4.2.0)
+ stringi        1.7.8       2022-07-11 [1] CRAN (R 4.2.1)
+ stringr        1.4.1       2022-08-20 [1] CRAN (R 4.2.1)
+ survival       3.4-0       2022-08-09 [2] CRAN (R 4.2.1)
+ svglite        2.1.0.9000  2022-09-26 [1] Github (r-lib/svglite@8f30fc6)
+ sys            3.4         2020-07-23 [1] CRAN (R 4.2.0)
+ systemfonts    1.0.4       2022-02-11 [1] CRAN (R 4.2.0)
+ tarchetypes  * 0.7.1       2022-09-07 [1] CRAN (R 4.2.1)
+ targets      * 0.13.4      2022-09-15 [1] CRAN (R 4.2.1)
+ tibble       * 3.1.8       2022-07-22 [1] CRAN (R 4.2.1)
+ tidyr          1.2.1       2022-09-08 [1] CRAN (R 4.2.1)
+ tidyselect     1.1.2       2022-02-21 [1] CRAN (R 4.2.0)
+ timeDate       4021.104    2022-07-19 [1] CRAN (R 4.2.1)
+ timetk         2.8.1       2022-05-31 [1] CRAN (R 4.2.0)
+ tune           1.0.0.9000  2022-07-22 [1] Github (franzbischoff/tune@539e1ee)
+ tzdb           0.3.0       2022-03-28 [1] CRAN (R 4.2.0)
+ urlchecker     1.0.1       2021-11-30 [1] CRAN (R 4.2.1)
+ usethis        2.1.6.9000  2022-10-03 [1] Github (r-lib/usethis@8ecb7ab)
+ utf8           1.2.2       2021-07-24 [1] CRAN (R 4.2.0)
+ uuid           1.1-0       2022-04-19 [1] CRAN (R 4.2.0)
+ vctrs          0.4.1       2022-04-13 [1] CRAN (R 4.2.0)
+ vip            0.3.2       2020-12-17 [1] CRAN (R 4.2.0)
+ viridisLite    0.4.1       2022-08-22 [1] CRAN (R 4.2.1)
+ visNetwork   * 2.1.0       2021-09-29 [1] CRAN (R 4.2.0)
+ vroom          1.5.7       2021-11-30 [1] CRAN (R 4.2.0)
+ webshot        0.5.3       2022-04-14 [1] CRAN (R 4.2.0)
+ whisker        0.4         2019-08-28 [1] CRAN (R 4.2.0)
+ withr          2.5.0       2022-03-03 [1] CRAN (R 4.2.0)
+ workflowr    * 1.7.0       2021-12-21 [1] CRAN (R 4.2.0)
+ workflows      1.1.0       2022-09-26 [1] CRAN (R 4.2.1)
+ xfun           0.33        2022-09-12 [1] CRAN (R 4.2.1)
+ xgboost        1.6.0.1     2022-04-16 [1] CRAN (R 4.2.0)
+ xml2           1.3.3       2021-11-30 [1] CRAN (R 4.2.0)
+ xtable         1.8-4       2019-04-21 [1] CRAN (R 4.2.0)
+ xts            0.12.1      2020-09-09 [1] CRAN (R 4.2.0)
+ yaml           2.3.5       2022-02-21 [1] CRAN (R 4.2.0)
+ yardstick      1.1.0       2022-09-07 [1] CRAN (R 4.2.1)
+ zoo            1.8-11      2022-09-17 [1] CRAN (R 4.2.1)
+
+ [1] /workspace/.cache/R/renv/proj_libs/false.alarm-d6f1a0d1/R-4.2/x86_64-pc-linux-gnu
+ [2] /usr/lib/R/library
+
+──────────────────────────────────────────────────────────────────────────────</code></pre>
+</div>
+</div>
+
+
+<!-- Adjust MathJax settings so that all math formulae are shown using
+TeX fonts only; see
+https://docs.mathjax.org/en/latest/web/configuration.html. This will make
+the presentation more consistent at the cost of the webpage sometimes
+taking slightly longer to load. Note that this only works because the
+footer is added to webpages before the MathJax javascript. -->
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    "HTML-CSS": { availableFonts: ["TeX"] }
+  });
+</script>
+
+
+
+
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.odd').parent('tbody').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- tabsets -->
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open');
+  });
+});
+</script>
+
+<!-- code folding -->
+
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>
