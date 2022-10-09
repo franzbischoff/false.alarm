@@ -330,6 +330,7 @@ omega_function <- function(anomaly_range, overlap_range, delta = "flat") {
   if (delta == "flat") {
     omega <- sum(a %in% b) / length(a)
   } else if (delta == "back") {
+    # omega is greater when the anomaly is at the back
     omega <- sum(which(a %in% b)) / sum(seq_along(a))
   } else if (delta == "front") {
     omega <- sum(which(b %in% a)) / sum(seq_along(a))

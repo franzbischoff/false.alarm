@@ -379,7 +379,7 @@ $(document).ready(function () {
 
 <h1 class="title toc-ignore">Regime changes 4.5 - vtachyarrhythmias with PR</h1>
 <h4 class="author">Francisco Bischoff</h4>
-<h4 class="date">on October 05, 2022</h4>
+<h4 class="date">on October 09, 2022</h4>
 
 </div>
 
@@ -429,7 +429,7 @@ Checks <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></sp
 <div class="tab-content">
 <div id="summary" class="tab-pane fade in active">
 <p>
-<strong>Last updated:</strong> 2022-10-05
+<strong>Last updated:</strong> 2022-10-09
 </p>
 <p>
 <strong>Checks:</strong>
@@ -557,20 +557,20 @@ makes it easier to run your code on other machines.</p>
 <div class="panel panel-default">
 <div class="panel-heading">
 <p class="panel-title">
-<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomfranzbischofffalsealarmtreeb79f104ddcaa39536c6afdf7120bd80f47482366targetblankb79f104a">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomfranzbischofffalsealarmtreee8ce96b0af51a781595f25c4003b11c155d4a9f3targetblanke8ce96ba">
 <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span>
-<strong>Repository version:</strong> <a href="https://github.com/franzbischoff/false.alarm/tree/b79f104ddcaa39536c6afdf7120bd80f47482366" target="_blank">b79f104</a>
+<strong>Repository version:</strong> <a href="https://github.com/franzbischoff/false.alarm/tree/e8ce96b0af51a781595f25c4003b11c155d4a9f3" target="_blank">e8ce96b</a>
 </a>
 </p>
 </div>
-<div id="strongRepositoryversionstrongahrefhttpsgithubcomfranzbischofffalsealarmtreeb79f104ddcaa39536c6afdf7120bd80f47482366targetblankb79f104a" class="panel-collapse collapse">
+<div id="strongRepositoryversionstrongahrefhttpsgithubcomfranzbischofffalsealarmtreee8ce96b0af51a781595f25c4003b11c155d4a9f3targetblanke8ce96ba" class="panel-collapse collapse">
 <div class="panel-body">
 <p>
 Great! You are using Git for version control. Tracking code development and
 connecting the code version to the results is critical for reproducibility.
 </p>
 <p>
-The results in this page were generated with repository version <a href="https://github.com/franzbischoff/false.alarm/tree/b79f104ddcaa39536c6afdf7120bd80f47482366" target="_blank">b79f104</a>.
+The results in this page were generated with repository version <a href="https://github.com/franzbischoff/false.alarm/tree/e8ce96b0af51a781595f25c4003b11c155d4a9f3" target="_blank">e8ce96b</a>.
 See the <em>Past versions</em> tab to see a history of the changes made to the
 R Markdown and HTML files.
 </p>
@@ -613,8 +613,11 @@ Ignored files:
     Ignored:    _targets/meta/progress
     Ignored:    _targets/objects/
     Ignored:    _targets/user/
+    Ignored:    analysis/report_cache/
     Ignored:    analysis/shiny/rsconnect/
     Ignored:    analysis/shiny_land/rsconnect/
+    Ignored:    analysis/shiny_ventricular/rsconnect/
+    Ignored:    analysis/shiny_vtachy/rsconnect/
     Ignored:    dev/
     Ignored:    inst/extdata/
     Ignored:    papers/aime2021/aime2021.md
@@ -692,13 +695,47 @@ Message
 Rmd
 </td>
 <td>
-<a href="https://github.com/franzbischoff/false.alarm/blob/b79f104ddcaa39536c6afdf7120bd80f47482366/analysis/regime_optimize_4_5.Rmd" target="_blank">b79f104</a>
+<a href="https://github.com/franzbischoff/false.alarm/blob/e8ce96b0af51a781595f25c4003b11c155d4a9f3/analysis/regime_optimize_4_5.Rmd" target="_blank">e8ce96b</a>
 </td>
 <td>
 Francisco Bischoff
 </td>
 <td>
-2022-10-05
+2022-10-09
+</td>
+<td>
+update optimize
+</td>
+</tr>
+<tr>
+<td>
+html
+</td>
+<td>
+<a href="https://rawcdn.githack.com/franzbischoff/false.alarm/f9f551de38bb9c3eb13ad2e4f2620a11d84897bc/docs/regime_optimize_4_5.html" target="_blank">f9f551d</a>
+</td>
+<td>
+Francisco Bischoff
+</td>
+<td>
+2022-10-06
+</td>
+<td>
+Build site.
+</td>
+</tr>
+<tr>
+<td>
+Rmd
+</td>
+<td>
+<a href="https://github.com/franzbischoff/false.alarm/blob/c052902c482ce1153c5248c6380a6cd352297565/analysis/regime_optimize_4_5.Rmd" target="_blank">c052902</a>
+</td>
+<td>
+Francisco Bischoff
+</td>
+<td>
+2022-10-06
 </td>
 <td>
 another score
@@ -721,7 +758,7 @@ fibrillation.</p>
 to calculate the Precision and Recall. The Recall reflects the hability of the model to detect the labeled regime changes;
 the algorithm accounts as a “detection” if the prediction is within a window of 5 seconds (plus or minus 2.5s).
 The Precision reflects the hability of the model to avoid false positives; the algorithm accounts as a “false positive”
-when the prediction is outside a window of 5 seconds (plus or minus 2.5s) from the labeled regime change.</p>
+when the prediction is outside a window of 10 seconds (plus or minus 5s) from the labeled regime change.</p>
 <p>The F-score will be calculated giving more weight to the Recall (beta = 3).
 Except for the Fig. <a href="#fig:bestmodels">1.9</a>, all other figures will represent the F-score as <span class="math inline">\(Score = 1 - F_{score}\)</span>, to make
 it easier to compare with the previous score function.</p>
@@ -787,6 +824,43 @@ minimal.</p>
 Figure 1.2: Variable interactions strength using feature importance ranking measure (FIRM) approach<span class="citation"><sup><a href="#ref-Greenwell2018" role="doc-biblioref">2</a></sup></span>. Shows almost no interaction between the variables.
 </p>
 </div>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-interaction-1">
+Past versions of interaction-1.svg
+</button>
+</p>
+<div id="fig-interaction-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/franzbischoff/false.alarm/blob/f9f551de38bb9c3eb13ad2e4f2620a11d84897bc/docs/figure/regime_optimize_4_5.Rmd/interaction-1.svg" target="_blank">f9f551d</a>
+</td>
+<td>
+Francisco Bischoff
+</td>
+<td>
+2022-10-06
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 </div>
 <div id="importance" class="section level3" number="1.3.2">
 <h3><span class="header-section-number">1.3.2</span> Importance</h3>
@@ -808,6 +882,43 @@ Here we see that all three methods agree on the importances.</p>
 Figure 1.3: Variables importances using three different methods. A) Feature Importance Ranking Measure using ICE curves. B) Permutation method. C) SHAP (400 iterations).
 </p>
 </div>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-importance-1">
+Past versions of importance-1.svg
+</button>
+</p>
+<div id="fig-importance-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/franzbischoff/false.alarm/blob/f9f551de38bb9c3eb13ad2e4f2620a11d84897bc/docs/figure/regime_optimize_4_5.Rmd/importance-1.svg" target="_blank">f9f551d</a>
+</td>
+<td>
+Francisco Bischoff
+</td>
+<td>
+2022-10-06
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <p>Fig. <a href="#fig:importanceshap">1.4</a> shows the effect of each feature on the FLOSS score.</p>
 <p>Based on Figures <a href="#fig:importance">1.3</a> and <a href="#fig:importanceshap">1.4</a> we can infer that:</p>
 <ul>
@@ -820,6 +931,43 @@ Figure 1.3: Variables importances using three different methods. A) Feature Impo
 <p class="caption">
 Figure 1.4: This shows the effect each variable has on the FLOSS score. This plot doesn’t take into account the variable interactions.
 </p>
+</div>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-importanceshap-1">
+Past versions of importanceshap-1.svg
+</button>
+</p>
+<div id="fig-importanceshap-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/franzbischoff/false.alarm/blob/f9f551de38bb9c3eb13ad2e4f2620a11d84897bc/docs/figure/regime_optimize_4_5.Rmd/importanceshap-1.svg" target="_blank">f9f551d</a>
+</td>
+<td>
+Francisco Bischoff
+</td>
+<td>
+2022-10-06
+</td>
+</tr>
+</tbody>
+</table>
+</div>
 </div>
 </div>
 </div>
@@ -838,6 +986,43 @@ the worst minimum score, and on the right half, 50% of the recordings with the b
 Figure 1.5: Violin plot showing the distribution of the FLOSS score achieved by all tested models by recording. The left half shows the recordings that were difficult to predict (50% overall), whereas the right half shows the recordings that at least one model could achieve a good prediction (50% overall). The recordings are sorted (left-right) by the minimum (best) score achieved in descending order, and ties are sorted by the median of all recording scores. The blue color highlights recordings where models had an IQR variability of less than 0.5.
 </p>
 </div>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-global-1">
+Past versions of global-1.svg
+</button>
+</p>
+<div id="fig-global-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/franzbischoff/false.alarm/blob/f9f551de38bb9c3eb13ad2e4f2620a11d84897bc/docs/figure/regime_optimize_4_5.Rmd/global-1.svg" target="_blank">f9f551d</a>
+</td>
+<td>
+Francisco Bischoff
+</td>
+<td>
+2022-10-06
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <p>Fig. <a href="#fig:worst">1.6</a> shows the best effort in predicting the most complex recordings. One information not declared
 before is that if the model does not predict any change, it will put a mark on the zero position. On the other side,
 the truth markers positioned at the beginning and the end of the recording were removed, as these locations lack
@@ -848,6 +1033,43 @@ information and do not represent a streaming setting.</p>
 Figure 1.6: Prediction of the worst recordings (red is the truth, blue are the predictions).
 </p>
 </div>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-worst-1">
+Past versions of worst-1.png
+</button>
+</p>
+<div id="fig-worst-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/franzbischoff/false.alarm/blob/f9f551de38bb9c3eb13ad2e4f2620a11d84897bc/docs/figure/regime_optimize_4_5.Rmd/worst-1.png" target="_blank">f9f551d</a>
+</td>
+<td>
+Francisco Bischoff
+</td>
+<td>
+2022-10-06
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <p>Fig. <a href="#fig:best">1.7</a> shows the best performances of the best recordings.</p>
 <div class="figure" style="text-align: center"><span style="display:block;" id="fig:best"></span>
 <img src="figure/regime_optimize_4_5.Rmd/best-1.png" alt="Prediction of the best recordings (red is the truth, blue are the predictions)." width="100%" />
@@ -855,6 +1077,45 @@ Figure 1.6: Prediction of the worst recordings (red is the truth, blue are the p
 Figure 1.7: Prediction of the best recordings (red is the truth, blue are the predictions).
 </p>
 </div>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-best-1">
+Past versions of best-1.png
+</button>
+</p>
+<div id="fig-best-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/franzbischoff/false.alarm/blob/f9f551de38bb9c3eb13ad2e4f2620a11d84897bc/docs/figure/regime_optimize_4_5.Rmd/best-1.png" target="_blank">f9f551d</a>
+</td>
+<td>
+Francisco Bischoff
+</td>
+<td>
+2022-10-06
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p>An online interactive version of all the datasets and predictions can be accessed at
+<a href="https://franzbischoff.shinyapps.io/FLOSS_vtachy/">Shiny app</a> (default Score).</p>
 </div>
 <div id="by-model" class="section level3" number="1.4.2">
 <h3><span class="header-section-number">1.4.2</span> By model</h3>
@@ -866,6 +1127,43 @@ across the recordings (right side). The bluish color highlights the models with 
 Figure 1.8: Violin plot showing the distribution of the FLOSS score achieved by all tested models during the inner ressample. The left half shows the models with the worst performances (top 25), whereas the right half shows the models with the best performances (top 25). The models are sorted (left-right) by the mean score (top) and by the median (below). Ties are sorted by the SD and IQR, respectively. The bluish colors highlights models with an SD below 0.5 and IQR below 0.5.
 </p>
 </div>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-globalmodel-1">
+Past versions of globalmodel-1.svg
+</button>
+</p>
+<div id="fig-globalmodel-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/franzbischoff/false.alarm/blob/f9f551de38bb9c3eb13ad2e4f2620a11d84897bc/docs/figure/regime_optimize_4_5.Rmd/globalmodel-1.svg" target="_blank">f9f551d</a>
+</td>
+<td>
+Francisco Bischoff
+</td>
+<td>
+2022-10-06
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <p>Fig. <a href="#fig:bestmodels">1.9</a> the performance of the six best models. They are ordered from left to right, from the best
 record to the worst record. The top model is the one with the highest mean across the scores. The blue line indicates
 the precision of the model, and the green line the recall. The black line with dots is the f-score. The red continuous
@@ -875,6 +1173,43 @@ and dashed lines are the median and the mean f-score respectively. The gray line
 <p class="caption">
 Figure 1.9: Performances of the best 6 models across all inner resample of recordings. The recordings are ordered by score, from the best to the worst. Each plot shows one model, starting from the best one. The blue line indicates the precision of the model. The green line the recall. The black line with dots is the f-score. The red continuous and dashed lines indicate respectively the median and mean f-score of the model. The gray line limits the zero-score region.
 </p>
+</div>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-bestmodels-1">
+Past versions of bestmodels-1.svg
+</button>
+</p>
+<div id="fig-bestmodels-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/franzbischoff/false.alarm/blob/f9f551de38bb9c3eb13ad2e4f2620a11d84897bc/docs/figure/regime_optimize_4_5.Rmd/bestmodels-1.svg" target="_blank">f9f551d</a>
+</td>
+<td>
+Francisco Bischoff
+</td>
+<td>
+2022-10-06
+</td>
+</tr>
+</tbody>
+</table>
+</div>
 </div>
 </div>
 </div>
@@ -913,7 +1248,7 @@ Session information
  collate  en_US.UTF-8
  ctype    en_US.UTF-8
  tz       Europe/Lisbon
- date     2022-10-05
+ date     2022-10-09
  pandoc   2.17.0.1 @ /usr/bin/ (via rmarkdown)
 
 ─ Packages ───────────────────────────────────────────────────────────────────
@@ -1000,7 +1335,7 @@ Session information
  miniUI         0.1.1.1     2018-05-18 [1] CRAN (R 4.2.0)
  munsell        0.5.0       2018-06-12 [1] CRAN (R 4.2.0)
  nlme           3.1-159     2022-08-09 [1] CRAN (R 4.2.1)
- nnet           7.3-17      2022-01-13 [2] CRAN (R 4.2.0)
+ nnet           7.3-18      2022-09-28 [2] CRAN (R 4.2.1)
  openssl        2.0.3       2022-09-14 [1] CRAN (R 4.2.1)
  parallelly     1.32.1      2022-07-21 [1] CRAN (R 4.2.1)
  parsnip        1.0.1       2022-08-18 [1] CRAN (R 4.2.1)

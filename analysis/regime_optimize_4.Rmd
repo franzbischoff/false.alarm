@@ -864,6 +864,9 @@ for (i in seq_len(nrow(bests_data))) {
 wrap_plots(plots, ncol = 1)
 ```
 
+An online interactive version of all the datasets and predictions can be accessed at
+[Shiny app](https://franzbischoff.shinyapps.io/FLOSS_vtachy/).
+
 ### By model
 
 Fig. \@ref(fig:globalmodel) shows the distribution of the FLOSS score of the 10% worst (left side) and 10% best models

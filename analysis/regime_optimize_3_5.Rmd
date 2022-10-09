@@ -423,7 +423,7 @@ if (!file.exists(here("output", "regime_outputs_mvds_pr.rds"))) {
     dplyr::rename(fold = id, size = .sizes, record = .id, model = .config, pred = .pred) %>%
     dplyr::distinct(rep, record, across(all_of(predictors_names)), .keep_all = TRUE) %>%
     dplyr::mutate(truth = clean_truth(truth, size), pred = clean_pred(pred)) %>%
-    dplyr::mutate(score = fscore(truth, pred, size, window = 1250, beta = 3, alpha = 1, gamma = "one")) %>% # use this new score function
+    dplyr::mutate(score = fscore(truth, pred, size, window = 2500, beta = 3, alpha = 1, gamma = "one")) %>% # use this new score function
     tidyr::unnest(score) %>%
     dplyr::rename(score = fscore)
 
@@ -432,7 +432,6 @@ if (!file.exists(here("output", "regime_outputs_mvds_pr.rds"))) {
   all_scores <- readRDS(here::here("output", "regime_outputs_mvds_pr.rds"))
 }
 ```
-
 
 # Regime changes optimization (continuation)
 
@@ -445,7 +444,7 @@ This version of the analysis uses another scoring function, which is based on th
 to calculate the Precision and Recall. The Recall reflects the hability of the model to detect the labeled regime changes;
 the algorithm accounts as a "detection" if the prediction is within a window of 5 seconds (plus or minus 2.5s).
 The Precision reflects the hability of the model to avoid false positives; the algorithm accounts as a "false positive"
-when the prediction is outside a window of 5 seconds (plus or minus 2.5s) from the labeled regime change.
+when the prediction is outside a window of 10 seconds (plus or minus 5s) from the labeled regime change.
 
 The F-score will be calculated giving more weight to the Recall (beta = 3).
 Except for the Fig. \@ref(fig:bestmodels), all other figures will represent the F-score as $Score = 1 - F_{score}$, to make
@@ -575,7 +574,7 @@ if (file.exists(here("output", "importances_mvds_pr.rds"))) {
 
   shap_fastshap_all_test <- shap_explain(best_fit, train_data[, predictors_names], testing_data[, predictors_names],
     predictors_names,
-    nsim = 400, parallel = TRUE
+    nsim = 200, parallel = TRUE
   )
   shap_html_test <- NA
   # preds_test <- predict(best_fit, testing_data[, predictors_names])
@@ -890,6 +889,9 @@ for (i in seq_len(nrow(bests_data))) {
 
 wrap_plots(plots, ncol = 1)
 ```
+
+An online interactive version of all the datasets and predictions can be accessed at
+[Shiny app](https://franzbischoff.shinyapps.io/FLOSS_ventricular/) (default Score).
 
 ### By model
 
