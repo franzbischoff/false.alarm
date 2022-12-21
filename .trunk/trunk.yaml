@@ -1,0 +1,44 @@
+version: 0.1
+cli:
+  version: 1.2.1
+plugins:
+  sources:
+    - id: trunk
+      ref: v0.0.8
+      uri: https://github.com/trunk-io/plugins
+lint:
+  enabled:
+    - include-what-you-use@0.18
+    - semgrep@1.2.1
+    - shfmt@3.5.0
+    - markdownlint@0.32.2
+    - hadolint@2.12.0
+    - git-diff-check
+    - actionlint@1.6.22
+    - gitleaks@8.15.2
+    - shellcheck@0.9.0
+    - prettier@2.8.1
+  disabled:
+    - svgo
+    - oxipng
+  ignore:
+    - linters: [ALL]
+      paths:
+        - .trunk/**
+        - dev/**
+        - .vscode/**
+        - inst/**
+        - output/**
+        - "**/*.html"
+        - "**/*.ico"
+runtimes:
+  enabled:
+    - go@1.18.3
+    - node@16.14.2
+actions:
+  disabled:
+    - trunk-announce
+    - trunk-check-pre-push
+    - trunk-fmt-pre-commit
+  enabled:
+    - trunk-upgrade-available
