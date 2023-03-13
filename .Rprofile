@@ -8,6 +8,7 @@ if (.Platform$OS.type == "windows") {
 source("renv/activate.R")
 
 if (Sys.getenv("CI") == "") {
+
   # not CI
 
   # a <- NULL

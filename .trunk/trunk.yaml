@@ -1,24 +1,62 @@
 version: 0.1
 cli:
-  version: 1.2.1
+  version: 1.6.0
 plugins:
   sources:
     - id: trunk
-      ref: v0.0.8
+      ref: v0.0.13
       uri: https://github.com/trunk-io/plugins
 lint:
+  files:
+    - name: R
+      extensions: [R]
+  definitions:
+    - name: lintr
+      files: [R]
+      package: lintr
+      direct_configs:
+        - .lintr
+      environment:
+        - name: CI
+          value: trunk
+      run_when: [cli, lsp, monitor]
+      commands:
+        - output: regex
+          parse_regex: \s*(?P<path>\/.*\.R):(?P<line>\d+):(?P<col>\d+):.*](?P<message>.*)
+          run: Rscript --no-restore --no-save -e lintr::lint(\"${target}\")
+          batch: false
+          success_codes: [0]
+    - name: styler
+      type: rewrite
+      files: [R]
+      package: styler
+      formatter: true
+      in_place: true
+      cache_results: true
+      run_when: [cli, lsp, monitor]
+      environment:
+        - name: CI
+          value: trunk
+      command:
+        - Rscript
+        - --no-restore --no-save -e styler::style_file('${target}')
+      batch: true
+      success_codes: [0]
   enabled:
-    - include-what-you-use@0.18
-    - semgrep@1.2.1
+    - yamllint@1.29.0
+    - include-what-you-use@0.19
+    - semgrep@1.14.0
     - shfmt@3.5.0
-    - markdownlint@0.32.2
+    - markdownlint@0.33.0
     - hadolint@2.12.0
     - git-diff-check
-    - actionlint@1.6.22
-    - gitleaks@8.15.2
+    - actionlint@1.6.23
+    - gitleaks@8.16.0
     - shellcheck@0.9.0
-    - prettier@2.8.1
+    - prettier@2.8.4
   disabled:
+    - lintr
+    - styler
     - svgo
     - oxipng
   ignore:
@@ -29,12 +67,17 @@ lint:
         - .vscode/**
         - inst/**
         - output/**
+        - docs/**
+        - renv/**
+        - man/**
+        - "**/*.rds"
         - "**/*.html"
         - "**/*.ico"
 runtimes:
   enabled:
-    - go@1.18.3
-    - node@16.14.2
+    - python@3.10.8
+    - go@1.19.5
+    - node@18.12.1
 actions:
   disabled:
     - trunk-announce

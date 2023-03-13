@@ -108,7 +108,7 @@ list(
     #### Pipeline: file_paths - Read files from directory ----
     file_paths,
     find_all_files(here::here("inst", "extdata", "malignantventricular"),
-      data_type = "regimes",
+      data_type = "regimes"
       # classes = NULL
       # limit_per_class = 10
     )

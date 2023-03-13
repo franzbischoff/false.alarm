@@ -1,7 +1,7 @@
-name: "false.alarm"
+name: false.alarm
 output_dir: ../docs
 navbar:
-  title: "false.alarm"
+  title: false.alarm
   left:
     - text: Home
       href: index.html

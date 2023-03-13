@@ -193,7 +193,7 @@
   ],
   "markdownlint.run": "onSave",
   "r.alwaysUseActiveTerminal": true,
-  "r.lsp.diagnostics": false,
+  "r.lsp.diagnostics": true,
   "r.rmarkdown.knit.focusOutputChannel": false,
   "r.session.levelOfObjectDetail": "Detailed",
   "reflowMarkdown.preferredLineLength": 120,
