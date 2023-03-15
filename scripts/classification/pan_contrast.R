@@ -1,5 +1,4 @@
-
-pan <- function(split, shapelet_sizes) {
+pan <- function(split, shapelet_sizes, progress = FALSE) {
   checkmate::qassert(split, "L4")
   checkmate::qassert(shapelet_sizes, "N+")
 
@@ -21,7 +20,7 @@ pan <- function(split, shapelet_sizes) {
   for (i in shapelet_sizes) {
     true_alarms_val <- validate_data(true_alarms, i %/% 2)
     false_alarms_val <- validate_data(false_alarms, i %/% 2)
-    res <- contrast(false_alarms_val, true_alarms_val, i, progress = TRUE)
+    res <- contrast(false_alarms_val, true_alarms_val, i, progress = progress)
     result[[as.character(i)]] <- res
   }
 
@@ -88,7 +87,7 @@ pan_contrast <- function(data_pos_neg, signal = "II", shapelet_sizes) {
 
       join_mp[join_mp > clip] <- clip
 
-      contrast <- join_mp - self_mp  # TruFalse - True
+      contrast <- join_mp - self_mp # TruFalse - True
 
       # normalize between 0 and 1
       contrast <- contrast / clip

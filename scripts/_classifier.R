@@ -232,30 +232,31 @@ list(
     #### Pipeline: assessment_split - Subset the training split into assessment split (test) ----
     validate_data,
     {
-      shapelet_sizes <- c(25, 50, 75, 100, 125, 150, 175, 200)
+      shapelet_sizes <- c(25, 50, 75, 100) # , 100, 125, 150, 175, 200)
 
-        class(assessment_split) <- c("manual_rset", "rset", class(assessment_split))
+      class(assessment_split) <- c("manual_rset", "rset", class(assessment_split))
 
-        first_split <- rsample::get_rsplit(assessment_split, 1)
+      res <- list()
+      for (i in seq_len(var_vfolds)) {
+        fold <- rsample::get_rsplit(assessment_split, i)
+        res[[i]] <- pan(fold, shapelet_sizes)
+      }
 
-        res <- pan(first_split, shapelet_sizes)
-        res
+      res
 
-        z <- matrix(0, nrow = length(shapelet_sizes), ncol = length(validate_data[[1]][[1]]$contrast_profile))
+      # z <- matrix(0, nrow = length(shapelet_sizes), ncol = length(validate_data[[1]]$contrast_profile))
 
-        for(i in seq_along(shapelet_sizes)){
-          a <- length(validate_data[[1]][[1]]$contrast_profile) - length(validate_data[[1]][[i]]$contrast_profile)
-          z[i,] <- c(validate_data[[1]][[i]]$contrast_profile, rep(0, a))
-        }
+      # for (i in seq_along(shapelet_sizes)) {
+      #   a <- length(validate_data[[1]]$contrast_profile) - length(validate_data[[i]]$contrast_profile)
+      #   z[i, ] <- c(validate_data[[i]]$contrast_profile, rep(0, a))
+      # }
 
-fig <- plot_ly(
-    y = shapelet_sizes,
-    z = z, type = "heatmap"
-)
+      # fig <- plot_ly(
+      #     y = shapelet_sizes,
+      #     z = z, type = "heatmap"
+      # )
 
-fig
-
-
+      # fig
     },
     pattern = map(assessment_split),
     iteration = "list"
