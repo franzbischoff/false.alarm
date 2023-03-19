@@ -1,5 +1,5 @@
 name|type|data|command|depend|seed|path|time|size|bytes|format|repository|iteration|parent|children|seconds|warnings|error
-.Random.seed|object|8dca87daffad4ab0|||||||||||||||
+.Random.seed|object|4706619a7b9afa0c|||||||||||||||
 "%|||%"|function|031bda8ec980931b|||||||||||||||
 "%||NA%"|function|ef771f7e0b2b61dc|||||||||||||||
 activity|function|514ba81c8efb42b6|||||||||||||||
@@ -22,6 +22,9 @@ compute_streaming_profile|function|358c55ef8991349d|||||||||||||||
 const_classes|object|4471c27e60bf977b|||||||||||||||
 const_sample_freq|object|71e695e858e0833c|||||||||||||||
 const_signals|object|90e8be76eb583b77|||||||||||||||
+contrast_profiles|pattern|36adcf2357212d5b|94d7df30c0d23be8||-1929489330||||55979403|rds|local|list||contrast_profiles_a91c61b8*contrast_profiles_57d3e088|34247.643||
+contrast_profiles_57d3e088|branch|f816f5e9d091fdef|94d7df30c0d23be8|d77d66b4e9633c0f|-484949587||t19434.9860929162s|68e8a0007ef5cac5|27985692|rds|local|list|contrast_profiles||18303.565||
+contrast_profiles_a91c61b8|branch|7045491e2ec6b5ae|94d7df30c0d23be8|e1e8758dc7d509cd|478854457||t19434.7742109246s|8004f05073aa9afb|27993711|rds|local|list|contrast_profiles||15944.078||
 dataset|stem|dbb3e85a10684cd7|5af3e6903662032a|2895b578978afaf0|914614260||t19349.4072569444s|bff4a2e05d35985a|3185005|rds|local|vector|||44.808||
 deriv|function|e067b65c68e2da0b|||||||||||||||
 deriv2|function|b26f60bb778048b2|||||||||||||||
@@ -805,7 +808,7 @@ maximum|function|f9007408b97f6ce5|||||||||||||||
 mobility|function|c20146f60c67eea0|||||||||||||||
 omega_function|function|c69941a4232f9a9d|||||||||||||||
 overlap_reward|function|bde83d74664dbafe|||||||||||||||
-pan|function|5c4137f8abd0e5b2|||||||||||||||
+pan|function|32ffca7e71b6c82e|||||||||||||||
 pan_contrast|function|1c47b3f86b27243d|||||||||||||||
 pbFinished|function|bc2502b7fd3a187f|||||||||||||||
 process_ts_in_file|function|5d50f331321cd7a9|||||||||||||||
@@ -827,10 +830,13 @@ sprintf_transformer|function|2199f7feeee38815|||||||||||||||
 testing_split|stem|2f6a90b8f0a54a34|c15f1f750870070b|9a058dedecdc90a5|184895865||t19349.4787962963s|977a581670ac3bd0|787604|rds|local|vector|||0.002||
 training_split|stem|4c29940345547d95|74d47449a574137b|9a058dedecdc90a5|708679313||t19349.4797453704s|041b5f00ca5e40f9|2400303|rds|local|vector|||0.002||
 turning_points|function|9903884c923a3261|||||||||||||||
-validate_data|pattern|69ba4861226a3d94|40599de8cd647f6c||564525839||||6696853|rds|local|list||validate_data_6f49dce2*validate_data_3144316c|884.629||
+validate_data|function|39720bfce689d2ca|||||||||||||||
 validate_data_3144316c|branch|884f741136fdcf9c|40599de8cd647f6c|ac1f38eb0cd14701|-243591110||t19431.1463140083s|de7b969605b2009b|3308290|rds|local|list|validate_data||432.408|lengthx  4  1 in coercion to logical1. lengthx  4  1 in coercion to logical1. lengthx  4  1 in coercion to logical1. lengthx  4  1 in coercion to logical1. lengthx  4  1 in coercion to logical1|
-validate_data_6f49dce2|branch|295b56410625d6ce|40599de8cd647f6c|ff56c38d6fb1c3eb|910442343||t19431.1413019758s|6237d1c0f2727136|3388563|rds|local|list|validate_data||452.221|lengthx  4  1 in coercion to logical1. lengthx  4  1 in coercion to logical1. lengthx  4  1 in coercion to logical1. lengthx  4  1 in coercion to logical1. lengthx  4  1 in coercion to logical1|
+validate_data_6f49dce2|branch|2cded0154e9bde25|11fb907b9250ede9|aba705eb918ef924|910442343||t19434.5425361972s|e60a16eedcf320be|2398886|rds|local|list|validate_data||209.572|lengthx  4  1 in coercion to logical1. lengthx  4  1 in coercion to logical1. lengthx  4  1 in coercion to logical1. lengthx  4  1 in coercion to logical1. lengthx  4  1 in coercion to logical1|
 validate_data_a91c61b8|branch||288e1ac8f7883d7e|c44631323ff06eb7|-1618247246||t19365.7288147516s||0|rds|local|list|validate_data||173.555||ignoring SIGPIPE signal
+validate_dataset|pattern|744f8cc126f244b1|bf2399d3e2e4c0b9||691483374||||4717462|rds|local|list||validate_dataset_6f49dce2*validate_dataset_3144316c|694.552||
+validate_dataset_3144316c|branch|6ee67a2f8209c502|bf2399d3e2e4c0b9|4d29c947164c9049|-1493878389||t19434.5624850716s|6ec4cdb02478b612|2323692|rds|local|list|validate_dataset||483.844||
+validate_dataset_6f49dce2|branch|dd593c4921310655|bf2399d3e2e4c0b9|e8d5c7063b8c539b|-10049338||t19434.5568795086s|cf67a366d92eff1d|2393770|rds|local|list|validate_dataset||210.708||
 var_classes_exclude|object|da7e5646cbdfced7|||||||||||||||
 var_classes_include|object|d0097917530c0ef9|||||||||||||||
 var_dopar_cores|object|703a354a3d076f23|||||||||||||||

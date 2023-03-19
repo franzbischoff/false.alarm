@@ -228,17 +228,18 @@ list(
     },
     iteration = "group"
   ),
+  ###### Inner Resample ######
   tar_target(
     #### Pipeline: assessment_split - Subset the training split into assessment split (test) ----
-    validate_data,
+    contrast_profiles,
     {
-      shapelet_sizes <- c(25, 50, 75, 100) # , 100, 125, 150, 175, 200)
+      shapelet_sizes <- c(25, 50, 75, 100, 125, 150, 175, 200)
 
-      class(assessment_split) <- c("manual_rset", "rset", class(assessment_split))
+      class(analysis_split) <- c("manual_rset", "rset", class(analysis_split))
 
       res <- list()
       for (i in seq_len(var_vfolds)) {
-        fold <- rsample::get_rsplit(assessment_split, i)
+        fold <- rsample::get_rsplit(analysis_split, i)
         res[[i]] <- pan(fold, shapelet_sizes)
       }
 
@@ -251,16 +252,42 @@ list(
       #   z[i, ] <- c(validate_data[[i]]$contrast_profile, rep(0, a))
       # }
 
-      # fig <- plot_ly(
-      #     y = shapelet_sizes,
-      #     z = z, type = "heatmap"
-      # )
+      fig <- plot_ly(
+        y = nrow(res$cps),
+        z = res$cps, type = "heatmap"
+      )
 
-      # fig
+      fig
+    },
+    pattern = map(analysis_split),
+    iteration = "list"
+  ),
+  tar_target(
+    best_shapelets,
+    {
+      # algorithm for selecting the best shapelet
+    },
+    pattern = map(contrast_profiles),
+    iteration = "list"
+  ),
+  tar_target(
+    train_classifier,
+    {
+      # train a classifier based on the best shapelets
+    },
+    pattern = map(best_shapelets),
+    iteration = "list"
+  ),
+  tar_target(
+    test_classifier,
+    {
+      # test the classifier on the assessment split
     },
     pattern = map(assessment_split),
     iteration = "list"
   ),
+  ### Evaluate on test set
+  ####
   inner_resample <- tar_map(
     list(window_size_map = c(25, 50, 75, 100, 125, 150, 175, 200)),
     tar_target(
