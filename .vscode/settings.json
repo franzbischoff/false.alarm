@@ -6,7 +6,6 @@
     "RC_INVOKED"
   ],
   "C_Cpp.intelliSenseEngineFallback": "Enabled",
-  "editor.fontFamily": "'Fira Code Retina', Consolas, 'Courier New', monospace",
   "editor.formatOnSave": true,
   "editor.tabCompletion": "on",
   "editor.tabSize": 2,

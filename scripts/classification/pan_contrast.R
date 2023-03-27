@@ -49,6 +49,8 @@ contrastprofile_topk <- function(split, shapelet_sizes, num_shapelets, progress 
   false_alarms <- unlist(split$data$values[!idxs])
   false_alarms <- as.numeric(false_alarms[!is.na(false_alarms)])
 
+  result <- list()
+
   for (i in seq_along(shapelet_sizes)) {
     true_alarms_val <- validate_data(true_alarms, shapelet_sizes[i] %/% 2)
     false_alarms_val <- validate_data(false_alarms, shapelet_sizes[i] %/% 2)
@@ -74,12 +76,12 @@ contrastprofile_topk <- function(split, shapelet_sizes, num_shapelets, progress 
     pad <- length(true_alarms_val) - length(self_mp) + 1
     self_mp_padded <- c(self_mp, rep(NA, pad))
 
-    platos <- array(NA, dim = c(shapelet_sizes[i], num_shapelets, length(shapelet_sizes)))
-    plato_indices <- array(NA, dim = c(num_shapelets, length(shapelet_sizes)))
-    plato_primary_contrast <- array(NA, dim = c(num_shapelets, length(shapelet_sizes)))
-    plato_nary_contrast <- array(NA, dim = c(num_shapelets, length(shapelet_sizes)))
-    cps <- array(NA, dim = c(length(self_mp_padded), num_shapelets, length(shapelet_sizes)))
-    primary_cp <- rep(NA, length(self_mp_padded))
+    platos <- matrix(NA, nrow = shapelet_sizes[i], ncol = num_shapelets)
+    plato_indices <- rep(NA, num_shapelets)
+    plato_primary_contrast <- rep(NA, num_shapelets)
+    plato_nary_contrast <- rep(NA, num_shapelets)
+    cps <- matrix(NA, nrow = length(self_mp_padded), ncol = num_shapelets)
+    primary_cp <- NULL # rep(NA, length(self_mp_padded))
 
     join_mp_history <- rep(clip, length(self_mp_padded))
     past_plato <- false_alarms_val
@@ -122,38 +124,38 @@ contrastprofile_topk <- function(split, shapelet_sizes, num_shapelets, progress 
       # closer nearest neighbor in T-. It's not a behavior of interest here
       cp <- pmax(0, cp)
 
-      cps[, ki, i] <- cp
+      cps[, ki] <- cp
 
       if (ki == 1) {
         primary_cp <- cp
       }
-
-      cli::cli_warn("DEBUG: 1.")
 
       #  plato is the subsequence in true_alarms_val corresponding to index with
       #    largest contrast profile value
       plato_index <- which.max(cp)
       max_contrast_value <- cp[plato_index]
       plato <- true_alarms_val[plato_index:(plato_index + shapelet_sizes[i] - 1)]
-      plato_indices[i, ki] <- plato_index
+      plato_indices[ki] <- plato_index
       # Reflects the contrast without appending previous platos to negativeTS
-      plato_primary_contrast[i, ki] <- primary_cp[plato_index]
+      plato_primary_contrast[ki] <- primary_cp[plato_index]
       # This may be helpful in identifying diminishing returns/redundant platos
-      plato_nary_contrast[i, ki] <- max_contrast_value
-      platos[, ki, i] <- plato
-      cli::cli_warn("DEBUG: 2.")
+      # if primary > nary, probably is a redundant plato
+      plato_nary_contrast[ki] <- max_contrast_value
+      platos[, ki] <- plato
       #  setup for next iteration
       exclusion_length <- shapelet_sizes[i]
       start_index <- max(1, (plato_index - exclusion_length))
       end_index <- min(length(true_alarms_val), ceiling(plato_index + shapelet_sizes[i] - 1 + exclusion_length))
       past_plato <- true_alarms_val[start_index:end_index]
     }
+
+    result[[i]] <- list(
+      cps = cps, platos = platos, plato_indices = plato_indices,
+      plato_primary_contrast = plato_primary_contrast, plato_nary_contrast = plato_nary_contrast
+    )
   }
 
-  return(list(
-    cps = cps, platos = platos, plato_indices = plato_indices,
-    plato_primary_contrast = plato_primary_contrast, plato_nary_contrast = plato_nary_contrast
-  ))
+  return(result)
 }
 
 
