@@ -3,6 +3,7 @@
 \name{mass}
 \alias{mass}
 \alias{mass_pre}
+\alias{dist_profile}
 \title{Computes the Distance between the 'data' and the 'query'.}
 \usage{
 mass(
@@ -21,14 +22,15 @@ mass_pre(
   type = c("normalized", "non_normalized", "absolute", "weighted"),
   weights = NULL
 )
+
+dist_profile(data, query)
 }
 \arguments{
 \item{pre_obj}{Required. This is the object resulting from \code{mass_pre()}. The is no \emph{MASS} without a \emph{pre}.}
 
-\item{data}{Required. Any 1-dimension series of numbers (\code{matrix}, \code{vector}, \code{ts} etc.)}
+\item{data}{The data to be used on the distance profile.}
 
-\item{query}{Optional. Accepts the same types as \code{data} and is used for join-similarity. Defaults to \code{data} for
-self-similarity. \strong{IMPORTANT} Use the same data used on \code{mass_pre()}.}
+\item{query}{The query to be used on the distance profile.}
 
 \item{index}{An \code{integer}. This is the index of the rolling window that will be used. Must be between \code{1} and
 \code{length(data) - window_size + 1}.}
