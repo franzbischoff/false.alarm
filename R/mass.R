@@ -187,3 +187,17 @@ mass <- function(pre_obj, data, query = data, index = 1L, version = c("v3", "v2"
     error = print
   )
 }
+
+#' Lazy wrapper for `mass()`
+#'
+#' @param data The data to be used on the distance profile.
+#' @param query The query to be used on the distance profile.
+#' @export
+#' @rdname mass
+
+dist_profile <- function(data, query) {
+  window_size <- length(query)
+  pre <- mass_pre(data, window_size, query)
+  dist_profile <- mass(pre, data, query)$distance_profile
+  return(sqrt(dist_profile))
+}
