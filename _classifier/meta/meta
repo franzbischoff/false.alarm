@@ -1,10 +1,11 @@
 name|type|data|command|depend|seed|path|time|size|bytes|format|repository|iteration|parent|children|seconds|warnings|error
-.Random.seed|object|4706619a7b9afa0c|||||||||||||||
+.Random.seed|object|48f3f44a31c79aaf|||||||||||||||
 "%|||%"|function|031bda8ec980931b|||||||||||||||
 "%||NA%"|function|ef771f7e0b2b61dc|||||||||||||||
 activity|function|514ba81c8efb42b6|||||||||||||||
 ampl|function|22bb8917cc3362d0|||||||||||||||
 analysis_fitted_150_a91c61b8|branch||1fa2fc3fe1ee2947|e8db5f762942ae2a|-1246025259||t19430.239549051s||0|rds|local|list|analysis_fitted_150||0.751|1m22mThere was 1 warning in mutate.1m22m36mℹ39m In argument object  purrrmapcall_info, eval_call_info.Caused by warning1m22m33m39m The default argument of new_quant_param is deprecated as of dials  1.0.1.36mℹ39m The deprecated feature was likely used in the 34mfalse.alarm39m package.  Please report the issue at  3m34mhttpsgithub.comfranzbischofffalse.alarmissues39m23m.|Cant subset columns that dont exist.31m39m Column truth doesnt exist.
+analysis_fitted_75_a91c61b8|branch||4a722ab7f9e41c98|e8db5f762942ae2a|15549451||t19446.602340979s||0|rds|local|list|analysis_fitted_75||0.655|1m22mThere was 1 warning in mutate.1m22m36mℹ39m In argument object  purrrmapcall_info, eval_call_info.Caused by warning1m22m33m39m The default argument of new_quant_param is deprecated as of dials  1.0.1.36mℹ39m The deprecated feature was likely used in the 34mfalse.alarm39m package.  Please report the issue at  3m34mhttpsgithub.comfranzbischofffalse.alarmissues39m23m.|Cant subset columns that dont exist.31m39m Column truth doesnt exist.
 analysis_split|stem|a266dbfc0abe25a4|7127f216efe098bf|c5cd166a0c187e50|1188165946||t19365.0015162037s|4306dbdebf1bd063|19207572|rds|local|group|||0.294||
 assessment_split|stem|f1ff031855abbcf1|5a0129dff2a25aad|c5cd166a0c187e50|-264140407||t19349.4797453704s|53091e165afb7eef|4808047|rds|local|group|||0.115||
 clean_pred|function|2f000150c7903a2e|||||||||||||||
@@ -22,9 +23,19 @@ compute_streaming_profile|function|358c55ef8991349d|||||||||||||||
 const_classes|object|4471c27e60bf977b|||||||||||||||
 const_sample_freq|object|71e695e858e0833c|||||||||||||||
 const_signals|object|90e8be76eb583b77|||||||||||||||
-contrast_profiles|pattern|36adcf2357212d5b|94d7df30c0d23be8||-1929489330||||55979403|rds|local|list||contrast_profiles_a91c61b8*contrast_profiles_57d3e088|34247.643||
+contrast_profiles|pattern|f7133704a3bca89a|d1d58d79f1a6371a||-1929489330||||107937399|rds|local|list||contrast_profiles_71cd1d8c*contrast_profiles_bdaf2e4c|0.002||
 contrast_profiles_57d3e088|branch|f816f5e9d091fdef|94d7df30c0d23be8|d77d66b4e9633c0f|-484949587||t19434.9860929162s|68e8a0007ef5cac5|27985692|rds|local|list|contrast_profiles||18303.565||
+contrast_profiles_71cd1d8c|branch|7abdb47a5cc591b3|d1d58d79f1a6371a|a2425fa51dc0772f|-1949827193||t19446.8870350616s|4cbb5babf5dfc436|55054942|rds|local|list|contrast_profiles||0.001||
 contrast_profiles_a91c61b8|branch|7045491e2ec6b5ae|94d7df30c0d23be8|e1e8758dc7d509cd|478854457||t19434.7742109246s|8004f05073aa9afb|27993711|rds|local|list|contrast_profiles||15944.078||
+contrast_profiles_bdaf2e4c|branch|f07d46ba740fcd7c|d1d58d79f1a6371a|9808ffeeddedf308|2074126007||t19446.8870905014s|32ba47c46f30b797|52882457|rds|local|list|contrast_profiles||0.001||
+contrastprofile_topk|function|49cf698f4bd06aca|||||||||||||||
+cp_first_half|pattern|199859238138490e|6a555fd45036af38||-812667512||||51641265|rds|local|list||cp_first_half_6f49dce2*cp_first_half_3144316c|361.752||
+cp_first_half_3144316c|branch|4751099aa50bd033|6a555fd45036af38|5f52255e1b639d92|-774332869||t19446.8540227401s|ce1ff4d016db8c37|25251956|rds|local|list|cp_first_half||197.416||
+cp_first_half_6f49dce2|branch|de11a0a7c5fe01f0|6a555fd45036af38|9313ec1b5251c009|918129527||t19446.8517113594s|f06592ce445d8cf6|26389309|rds|local|list|cp_first_half||164.336||
+cp_second_half|pattern|5e8a8dba74156414|575496fa45e78832||405458893||||56296561|rds|local|list||cp_second_half_6f49dce2*cp_second_half_3144316c|367.629||
+cp_second_half_3144316c|branch|8dd338100389897d|575496fa45e78832|ab680d11ae42b894|2016153251||t19446.8869681636s|dc67398e26ac1a0f|27630846|rds|local|list|cp_second_half||177.006||
+cp_second_half_6f49dce2|branch|a26fd2336ace15a5|575496fa45e78832|53d02ceb60fc95c9|1531979432||t19446.8848949154s|769b40aaeb3e7e1f|28665715|rds|local|list|cp_second_half||190.623||
+cp_second_half_a91c61b8|branch||9f97d41137990733|a2c4c3920c1e4b37|-1353361131||t19446.6445125295s||0|rds|local|list|cp_second_half||0.958||object assessment_split not found
 dataset|stem|dbb3e85a10684cd7|5af3e6903662032a|2895b578978afaf0|914614260||t19349.4072569444s|bff4a2e05d35985a|3185005|rds|local|vector|||44.808||
 deriv|function|e067b65c68e2da0b|||||||||||||||
 deriv2|function|b26f60bb778048b2|||||||||||||||
@@ -827,6 +838,9 @@ score_regimes_precision|function|750133b7a87964d6|||||||||||||||
 sd_r|function|edc210211e6db09c|||||||||||||||
 skip_graphics|object|909013909b1f03d4|||||||||||||||
 sprintf_transformer|function|2199f7feeee38815|||||||||||||||
+test_classifier|pattern|bdd50579abe0e613|5463dd8537c157e6||-564191998||||88|rds|local|list||test_classifier_6f49dce2*test_classifier_3144316c|0.002||
+test_classifier_3144316c|branch|9628b82cc66a2880|5463dd8537c157e6|d571055b87ca730b|902194050||t19446.6023213876s|a1c456b03adbfbf8|44|rds|local|list|test_classifier||0.001||
+test_classifier_6f49dce2|branch|9628b82cc66a2880|5463dd8537c157e6|2c429dc89c6fdf24|383576253||t19446.6023174524s|a1c456b03adbfbf8|44|rds|local|list|test_classifier||0.001||
 testing_split|stem|2f6a90b8f0a54a34|c15f1f750870070b|9a058dedecdc90a5|184895865||t19349.4787962963s|977a581670ac3bd0|787604|rds|local|vector|||0.002||
 training_split|stem|4c29940345547d95|74d47449a574137b|9a058dedecdc90a5|708679313||t19349.4797453704s|041b5f00ca5e40f9|2400303|rds|local|vector|||0.002||
 turning_points|function|9903884c923a3261|||||||||||||||
@@ -865,6 +879,7 @@ var_regime_threshold_tune|object|14e65ccba7a92e01|||||||||||||||
 var_save_pred|object|909013909b1f03d4|||||||||||||||
 var_save_workflow|object|df161ddba3dacc9e|||||||||||||||
 var_shapelet_size|object|5df49adce61ad3b5|||||||||||||||
+var_shapelet_sizes|object|d7783e91be2ec521|||||||||||||||
 var_signals_exclude|object|16b6b94c1ea8dfe6|||||||||||||||
 var_signals_include|object|c7057a3e6b525347|||||||||||||||
 var_subset|object|14e1de7d1a909e46|||||||||||||||

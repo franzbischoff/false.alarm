@@ -33,6 +33,7 @@ pan <- function(split, shapelet_sizes, progress = FALSE) {
 #   plato_nary_contrast: Contrast value of each plato after appending
 #     the previous Plato to negativeTS. May be helpful in identifying
 #     diminishing returns and retundant behaviors.
+# TODO: check find_k_shapelets()
 contrastprofile_topk <- function(split, shapelet_sizes, num_shapelets, progress = FALSE) {
   checkmate::qassert(split, "L4")
   checkmate::qassert(shapelet_sizes, "N+")
@@ -156,6 +157,24 @@ contrastprofile_topk <- function(split, shapelet_sizes, num_shapelets, progress 
   }
 
   return(result)
+}
+
+kneed <- function(contrasts) {
+  # contrasts <- c(0.31767218, 0.29146924, 0.17797986, 0.15451647, 0.09342605, 0.08841086, 0.08017338, 0.07088699, 0.07014500, 0.06976499)
+  numk <- length(contrasts)
+  first <- contrasts[1]
+  last <- contrasts[numk]
+  numer <- 1 / numk + contrasts[1]
+  den <- 1 / numk + contrasts[1] + contrasts[numk]
+  new_contrasts <- ((1 / numk + first) - contrasts) / (1 / numk + first - last)
+
+  xlab <- seq_len(numk) / numk
+
+  diag <- abs(xlab - new_contrasts) / sqrt(2)
+  vert <- new_contrasts - xlab
+  elb <- vert - diag
+
+  return(elb)
 }
 
 

@@ -1,6 +1,6 @@
 {
   "R": {
-    "Version": "4.2.2",
+    "Version": "4.2.3",
     "Repositories": [
       {
         "Name": "CRAN",
@@ -455,14 +455,14 @@
     },
     "bookdown": {
       "Package": "bookdown",
-      "Version": "0.33.1",
+      "Version": "0.33.2",
       "Source": "GitHub",
       "RemoteType": "github",
+      "RemoteHost": "api.github.com",
       "RemoteUsername": "rstudio",
       "RemoteRepo": "bookdown",
       "RemoteRef": "main",
-      "RemoteSha": "1d4038815f16fe44f8d614f3f1150e708781e2a6",
-      "RemoteHost": "api.github.com",
+      "RemoteSha": "6d9b147416f94de31fb75113a4b77595633e7492",
       "Requirements": [
         "R",
         "htmltools",
@@ -473,7 +473,7 @@
         "xfun",
         "yaml"
       ],
-      "Hash": "f29054c9d448283ac7a288619d936068"
+      "Hash": "3bf0cfc994bd9f8f5085f2a2016c44a8"
     },
     "brew": {
       "Package": "brew",
@@ -2958,14 +2958,14 @@
     },
     "rmarkdown": {
       "Package": "rmarkdown",
-      "Version": "2.20.1",
+      "Version": "2.21.1",
       "Source": "GitHub",
       "RemoteType": "github",
+      "RemoteHost": "api.github.com",
       "RemoteUsername": "rstudio",
       "RemoteRepo": "rmarkdown",
       "RemoteRef": "main",
-      "RemoteSha": "a75dc3727ae7acaba9f5b529d9ae895d911b09b7",
-      "RemoteHost": "api.github.com",
+      "RemoteSha": "9f782931ab772fc682fb7a31790d93a8ff229eb8",
       "Requirements": [
         "R",
         "bslib",
@@ -2983,7 +2983,7 @@
         "xfun",
         "yaml"
       ],
-      "Hash": "59fba99d65adfe05e27495a6909c3ce8"
+      "Hash": "e0d8ee0cb1bc0e905472b6f9c083e789"
     },
     "roxygen2": {
       "Package": "roxygen2",

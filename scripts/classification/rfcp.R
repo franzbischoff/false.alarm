@@ -62,6 +62,7 @@ rf_contrast_profile <- function(data_pos, data_neg, window_size, max_k) {
     cli::cli_warn("Choice of max_k={max_k}, was too large for dataset, setting to {effective_max_k}")
     rfmp_aa$matrix_profile <- rfmp_aa$matrix_profile[1:effective_max_k, ]
     rfmp_ab$matrix_profile <- rfmp_ab$matrix_profile[1:effective_max_k, ]
+    max_k <- effective_max_k
   }
 
   ### Contrast Profile
@@ -190,12 +191,12 @@ nn_selection <- function(dp, window_size, max_k = NULL) {
 
   exclusion_zone <- rep(0, length(dp))
 
-  sorted_lowest_indices <- rep(NA, k_max)
-  corresponding_distances <- rep(NA, k_max)
+  sorted_lowest_indices <- rep(NA, max_k)
+  corresponding_distances <- rep(NA, max_k)
   index <- 1
   iter_kum <- 1 # for debugging
 
-  while (index <= k_max && iter_kum < length(sorted_dp_idxs)) {
+  while (index <= max_k && iter_kum < length(sorted_dp_idxs)) {
     trial_idx <- sorted_dp_idxs[iter_kum]
 
     if (exclusion_zone[trial_idx] == 0 && !is.na(dp[trial_idx])) {

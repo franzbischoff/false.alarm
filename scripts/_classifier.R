@@ -53,7 +53,8 @@ tar_option_set(
   garbage_collection = TRUE
 )
 
-var_shapelet_size <- c(120, 300, 1000) # c(30, 60, 120, 180, 300) # c(150, 300)
+# var_shapelet_size <- c(120, 300, 1000) # c(30, 60, 120, 180, 300) # c(150, 300)
+var_shapelet_sizes <- c(20, 40)#, 60, 80) # , 100, 120, 140, 160, 180, 200, 220, 240, 260, 280, 300)
 var_positive <- TRUE # c(TRUE, FALSE)
 var_num_shapelets <- 10
 var_num_neighbors <- 10
@@ -231,16 +232,16 @@ list(
   ###### Inner Resample ######
   tar_target(
     #### Pipeline: assessment_split - Subset the training split into assessment split (test) ----
-    contrast_profiles,
+    cp_first_half,
     {
-      shapelet_sizes <- c(25, 50, 75, 100, 125, 150, 175, 200)
+      shapelet_sizes <- var_shapelet_sizes
 
-      class(analysis_split) <- c("manual_rset", "rset", class(analysis_split))
+      class(assessment_split) <- c("manual_rset", "rset", class(assessment_split))
 
       res <- list()
       for (i in seq_len(var_vfolds)) {
-        fold <- rsample::get_rsplit(analysis_split, i)
-        res[[i]] <- pan(fold, shapelet_sizes)
+        fold <- rsample::get_rsplit(assessment_split, i)
+        res[[i]] <- contrastprofile_topk(fold, shapelet_sizes, 20, TRUE)
       }
 
       res
@@ -252,348 +253,394 @@ list(
       #   z[i, ] <- c(validate_data[[i]]$contrast_profile, rep(0, a))
       # }
 
-      fig <- plot_ly(
-        y = nrow(res$cps),
-        z = res$cps, type = "heatmap"
-      )
+      # fig <- plot_ly(
+      #   y = nrow(res$cps),
+      #   z = res$cps, type = "heatmap"
+      # )
 
-      fig
-    },
-    pattern = map(analysis_split),
-    iteration = "list"
-  ),
-  tar_target(
-    best_shapelets,
-    {
-      # algorithm for selecting the best shapelet
-    },
-    pattern = map(contrast_profiles),
-    iteration = "list"
-  ),
-  tar_target(
-    train_classifier,
-    {
-      # train a classifier based on the best shapelets
-    },
-    pattern = map(best_shapelets),
-    iteration = "list"
-  ),
-  tar_target(
-    test_classifier,
-    {
-      # test the classifier on the assessment split
+      # fig
     },
     pattern = map(assessment_split),
     iteration = "list"
   ),
-  ### Evaluate on test set
-  ####
-  inner_resample <- tar_map(
-    list(window_size_map = c(25, 50, 75, 100, 125, 150, 175, 200)),
-    tar_target(
-      #### Pipeline: analysis_fitted - Here we will conduct the parameter optimizations ----
-      analysis_fitted,
-      {
-        future::plan(future.callr::callr, workers = var_future_workers)
-        # source(here::here("scripts", "regimes", "parsnip_model.R"), encoding = "UTF-8")
-        # A fix for targets branches that wipes off these classes
-        # analysis_split <- analysis_split[1, ] # this is for fast testing, uses only the first split
-        class(analysis_split) <- c("manual_rset", "rset", class(analysis_split))
+  tar_target(
+    #### Pipeline: assessment_split - Subset the training split into assessment split (test) ----
+    cp_second_half,
+    {
+      shapelet_sizes <- (var_shapelet_sizes + 10)
 
-        floss_spec <-
-          floss_regime_model(
-            window_size = tune::tune(),
-            time_constraint = 0L,
-            mp_threshold = 0.0,
-            regime_threshold = tune::tune(),
-            regime_landmark = tune::tune()
-          ) %>%
-          parsnip::set_engine("floss") %>%
-          parsnip::set_mode("regression")
+      class(assessment_split) <- c("manual_rset", "rset", class(assessment_split))
 
-        floss_set <- tune::extract_parameter_set_dials(floss_spec)
-        floss_set <- floss_set %>% stats::update(
-          window_size = window_size_par(c(window_size_map, window_size_map + 1)),
-          # mp_threshold = mp_threshold_par(var_mp_threshold_tune),
-          # time_constraint = time_constraint_par(var_time_constraint_tune),
-          regime_threshold = regime_threshold_par(var_regime_threshold_tune, trans_round(0.05)),
-          regime_landmark = regime_landmark_par(var_regime_landmark_tune)
-        )
+      res <- list()
+      for (i in seq_len(var_vfolds)) {
+        fold <- rsample::get_rsplit(assessment_split, i)
+        res[[i]] <- contrastprofile_topk(fold, shapelet_sizes, 20, TRUE)
+      }
 
-        floss_rec <- recipes::recipe(x = head(analysis_split$splits[[1]]$data, 1)) %>%
-          recipes::update_role(truth, new_role = "outcome") %>%
-          recipes::update_role(id, new_role = "predictor") %>%
-          recipes::update_role(ts, new_role = "predictor")
+      res
 
-        # doMC::registerDoMC(cores = 8)
-        if (var_dopar_cores > 1) {
-          doParallel::registerDoParallel(cores = var_dopar_cores)
-        }
+      # z <- matrix(0, nrow = length(shapelet_sizes), ncol = length(validate_data[[1]]$contrast_profile))
 
-        # floss_wflow <-
-        #   workflows::workflow() %>%
-        #   workflows::add_model(floss_spec) %>%
-        #   workflows::add_recipe(floss_rec)
+      # for (i in seq_along(shapelet_sizes)) {
+      #   a <- length(validate_data[[1]]$contrast_profile) - length(validate_data[[i]]$contrast_profile)
+      #   z[i, ] <- c(validate_data[[i]]$contrast_profile, rep(0, a))
+      # }
 
-        # fitted_wflow <- floss_wflow %>% parsnip::fit(analysis_split$splits[[1]]$data)
+      # fig <- plot_ly(
+      #   y = nrow(res$cps),
+      #   z = res$cps, type = "heatmap"
+      # )
 
-        if (var_grid_search == "tune_grid") {
-          floss_search_res <- floss_spec %>%
-            tune::tune_grid(
-              preprocessor = floss_rec,
-              resamples = analysis_split,
-              param_info = floss_set,
-              grid = var_grid_size,
-              metrics = yardstick::metric_set(floss_error_macro),
-              control = tune::control_grid(
-                verbose = var_verbose,
-                allow_par = TRUE,
-                save_workflow = var_save_workflow,
-                save_pred = var_save_pred,
-                parallel_over = "resamples"
-              )
-            )
-        } else if (var_grid_search == "tune_bayes") {
-          trade_off_decay <- function(iter) {
-            tune::expo_decay(iter, start_val = 0.01, limit_val = 0, slope = 0.25)
-          }
-
-          floss_search_res <- floss_spec %>%
-            tune::tune_bayes(
-              preprocessor = floss_rec,
-              resamples = analysis_split,
-              param_info = floss_set,
-              initial = var_tune_bayes_initial,
-              iter = var_tune_bayes_iter,
-              metrics = yardstick::metric_set(floss_error_macro, floss_error_micro),
-              objective = tune::exp_improve(trade_off_decay),
-              control = tune::control_bayes(
-                no_improve = var_tune_bayes_no_improve,
-                verbose = var_verbose,
-                save_workflow = var_save_workflow,
-                save_pred = var_save_pred,
-                parallel_over = "resamples"
-              )
-            )
-        } else if (var_grid_search == "tune_race_win_loss") {
-          floss_search_res <- floss_spec %>%
-            finetune::tune_race_win_loss(
-              preprocessor = floss_rec,
-              resamples = analysis_split,
-              param_info = floss_set,
-              grid = var_grid_size,
-              metrics = yardstick::metric_set(floss_error_macro, floss_error_micro),
-              control = finetune::control_race(
-                verbose_elim = TRUE,
-                verbose = var_verbose,
-                save_workflow = var_save_workflow,
-                save_pred = var_save_pred,
-                allow_par = TRUE,
-                parallel_over = "resamples"
-              )
-            )
-          # TODO: finetune::plot_race(floss_search_res)
-        } else if (var_grid_search == "tune_race_anova") {
-          floss_search_res <- floss_spec %>%
-            finetune::tune_race_anova(
-              preprocessor = floss_rec,
-              resamples = analysis_split,
-              param_info = floss_set,
-              grid = var_grid_size,
-              metrics = yardstick::metric_set(floss_error_macro, floss_error_micro),
-              control = finetune::control_race(
-                verbose_elim = TRUE,
-                verbose = var_verbose,
-                save_workflow = var_save_workflow,
-                save_pred = var_save_pred,
-                allow_par = TRUE,
-                parallel_over = "resamples"
-              )
-            )
-          # TODO: finetune::plot_race(floss_search_res)
-        } else if (var_grid_search == "tune_sim_anneal") {
-          floss_search_res <- floss_spec %>%
-            finetune::tune_sim_anneal(
-              preprocessor = floss_rec,
-              resamples = analysis_split,
-              iter = var_tune_sim_anneal_iter,
-              initial = var_tune_sim_anneal_initial,
-              param_info = floss_set,
-              metrics = yardstick::metric_set(floss_error_macro, floss_error_micro),
-              control = finetune::control_sim_anneal(
-                verbose = var_verbose,
-                save_workflow = var_save_workflow,
-                save_pred = var_save_pred,
-                no_improve = var_tune_sim_anneal_no_improve,
-                parallel_over = "resamples"
-              )
-            )
-        }
-
-        floss_search_res <- clean_splits_data(floss_search_res)
-        floss_search_res
-      },
-      pattern = map(analysis_split),
-      iteration = "list" # thus the objects keep their attributes
-    ),
-    tar_target(
-      #### Pipeline: analysis_evaluation - Here we select the best from each optimization split and test in a separate split ----
-      analysis_evaluation,
-      {
-        # source(here::here("scripts", "regimes", "parsnip_model.R"), encoding = "UTF-8")
-
-        # all_fits will contain a tibble from a mapped window size * repeat, i.e., analysis_fitted_25 repeat1
-        all_fits <- analysis_fitted
-
-
-        # best_models are the best models from some window_size, and current repeat. sorted by the mean over all folds
-        best_models <- all_fits %>% tune::show_best("floss_error_macro", 5)
-
-        if (var_dopar_cores > 1) {
-          doParallel::registerDoParallel(cores = var_dopar_cores)
-        }
-
-
-        result <- NULL
-        # here we will iterate over each fold. The data is different, so we fit a model for each fold.
-        for (i in seq_len(var_vfolds)) {
-          fold <- i
-          repet <- best_models$rep[1]
-
-          # get only the data from the current fold and repeat
-          resample <- assessment_split %>% dplyr::filter(id == glue::glue("Fold0{fold}"), rep == repet)
-          class(resample) <- class(assessment_split) # fix for fit_resamples
-
-          # so we end up with a tibble with all TS from this fold (id, truth and ts)
-          assessment_data <- resample$splits[[1]]$data %>% dplyr::arrange(id)
-
-          # make a generic recipe, it will be all the same anyway
-          floss_rec <- recipes::recipe(x = head(assessment_data, 1)) %>%
-            recipes::update_role(truth, new_role = "outcome") %>%
-            recipes::update_role(id, new_role = "predictor") %>%
-            recipes::update_role(ts, new_role = "predictor")
-
-          # now, fit the model with the current window_size, don't care the other parameters
-          model <- best_models[1, ]
-
-          floss_spec <-
-            floss_regime_model(
-              window_size = model$window_size,
-              time_constraint = 0,
-              mp_threshold = 0,
-              regime_threshold = model$regime_threshold,
-              regime_landmark = model$regime_landmark
-            ) %>%
-            parsnip::set_engine("floss") %>%
-            parsnip::set_mode("regression")
-
-          floss_wflow <-
-            workflows::workflow() %>%
-            workflows::add_model(floss_spec) %>%
-            workflows::add_recipe(floss_rec)
-
-          model_fit <- floss_wflow %>%
-            parsnip::fit(assessment_data)
-
-
-          # now we have the model_fit with the current window_size on all ts of this fold, remember the id and truth must match when evaluate
-
-          # now the submodels:
-          # multi_pred will contain all the predictions from all best models in all ts from this fold
-          multi_pred <- workflows::extract_fit_parsnip(model_fit) %>%
-            multi_predict(
-              new_data = assessment_data,
-              regime_threshold = best_models$regime_threshold,
-              regime_landmark = best_models$regime_landmark
-            )
-
-          all_preds <- multi_pred %>%
-            tidyr::unnest(.pred) %>%
-            dplyr::arrange(.id)
-
-          for (j in seq_len(nrow(best_models))) {
-            model <- best_models[j, ]
-            estimates <- all_preds %>% dplyr::filter(
-              regime_threshold == model$regime_threshold,
-              regime_landmark == model$regime_landmark
-            )
-            eval <- floss_error_vec(truth = assessment_data$truth, estimate = estimates$.pred, data_size = estimates$.sizes, estimator = "macro")
-            eval <- tibble::tibble(.metric = "floss_error_macro", .estimator = "macro", .estimate = eval)
-            eval <- model %>%
-              dplyr::select(rep, window_size, regime_threshold, regime_landmark, .config) %>%
-              dplyr::mutate(fold = glue::glue("Fold0{fold}")) %>%
-              dplyr::bind_cols(eval)
-            result <- dplyr::bind_rows(result, eval)
-          }
-        }
-        result <- result %>% dplyr::arrange(.estimate)
-      },
-      pattern = map(analysis_fitted),
-      iteration = "list" # thus the objects keep their attributes
-    )
-  ),
-  tar_combine(
-    name = combined,
-    inner_resample$analysis_evaluation,
-    use_names = FALSE,
-    command = bind_rows(vctrs::vec_c(!!!.x))
+      # fig
+    },
+    pattern = map(assessment_split),
+    iteration = "list"
   ),
   tar_target(
-    #### Pipeline: testing_evaluation - In the end, get the best from the inner resample and test with the testing split ----
-    testing_evaluation,
+    contrast_profiles,
     {
-      # source(here::here("scripts", "regimes", "parsnip_model.R"), encoding = "UTF-8")
-      # best_parameters <- purrr::map_dfr(combined, ~ .x %>% dplyr::top_n(n = 3, wt = .estimate))
-      best_parameters <- combined %>%
-        dplyr::group_by(window_size, regime_threshold, regime_landmark) %>%
-        dplyr::summarize(mean = mean(.estimate), sd = sd(.estimate)) %>%
-        dplyr::ungroup() %>%
-        dplyr::arrange(mean, sd) %>%
-        dplyr::slice_head(n = 6)
-
-
-      if (var_dopar_cores > 1) {
-        doParallel::registerDoParallel(cores = var_dopar_cores)
+      res <- list()
+      for(i in seq_len(length(cp_first_half))) {
+        res[[i]] <- append(cp_first_half[[i]], cp_second_half[[i]])
       }
+      res
 
-      result <- NULL
-      for (i in seq_len(nrow(best_parameters))) {
-        floss_spec <-
-          floss_regime_model(
-            window_size = best_parameters$window_size[i],
-            time_constraint = 0,
-            mp_threshold = 0,
-            regime_threshold = best_parameters$regime_threshold[i],
-            regime_landmark = best_parameters$regime_landmark[i]
-          ) %>%
-          parsnip::set_engine("floss") %>%
-          parsnip::set_mode("regression")
-
-        floss_rec <- recipes::recipe(x = head(testing_split, 1)) %>%
-          recipes::update_role(truth, new_role = "outcome") %>%
-          recipes::update_role(id, new_role = "predictor") %>%
-          recipes::update_role(ts, new_role = "predictor")
-
-        floss_wflow <-
-          workflows::workflow() %>%
-          workflows::add_model(floss_spec) %>%
-          workflows::add_recipe(floss_rec)
-
-        model_fit <- floss_wflow %>%
-          parsnip::fit(testing_split)
-        model_predicted <- model_fit %>%
-          predict(testing_split) %>%
-          dplyr::bind_cols(testing_split)
-        eval <- floss_error(model_predicted, truth = model_predicted$truth, estimate = model_predicted$.pred, estimator = "macro")
-        eval <- best_parameters[i, ] %>%
-          dplyr::select(window_size, regime_threshold, regime_landmark) %>%
-          dplyr::bind_cols(eval)
-
-        result <- result %>% dplyr::bind_rows(eval)
-      }
-      result
-    }
+    },
+    pattern = map(cp_first_half, cp_second_half),
+    iteration = "list"
   )
+  # tar_target(
+  #   best_shapelets,
+  #   {
+  #     # algorithm for selecting the best shapelet
+  #   },
+  #   pattern = map(contrast_profiles),
+  #   iteration = "list"
+  # ),
+  # tar_target(
+  #   train_classifier,
+  #   {
+  #     # train a classifier based on the best shapelets
+  #   },
+  #   pattern = map(best_shapelets),
+  #   iteration = "list"
+  # ),
+  # tar_target(
+  #   test_classifier,
+  #   {
+  #     # test the classifier on the assessment split
+  #   },
+  #   pattern = map(assessment_split),
+  #   iteration = "list"
+  # ),
+  # ### Evaluate on test set
+  # ####
+  # inner_resample <- tar_map(
+  #   list(window_size_map = c(25, 50, 75, 100, 125, 150, 175, 200)),
+  #   tar_target(
+  #     #### Pipeline: analysis_fitted - Here we will conduct the parameter optimizations ----
+  #     analysis_fitted,
+  #     {
+  #       future::plan(future.callr::callr, workers = var_future_workers)
+  #       # source(here::here("scripts", "regimes", "parsnip_model.R"), encoding = "UTF-8")
+  #       # A fix for targets branches that wipes off these classes
+  #       # analysis_split <- analysis_split[1, ] # this is for fast testing, uses only the first split
+  #       class(analysis_split) <- c("manual_rset", "rset", class(analysis_split))
+
+  #       floss_spec <-
+  #         floss_regime_model(
+  #           window_size = tune::tune(),
+  #           time_constraint = 0L,
+  #           mp_threshold = 0.0,
+  #           regime_threshold = tune::tune(),
+  #           regime_landmark = tune::tune()
+  #         ) %>%
+  #         parsnip::set_engine("floss") %>%
+  #         parsnip::set_mode("regression")
+
+  #       floss_set <- tune::extract_parameter_set_dials(floss_spec)
+  #       floss_set <- floss_set %>% stats::update(
+  #         window_size = window_size_par(c(window_size_map, window_size_map + 1)),
+  #         # mp_threshold = mp_threshold_par(var_mp_threshold_tune),
+  #         # time_constraint = time_constraint_par(var_time_constraint_tune),
+  #         regime_threshold = regime_threshold_par(var_regime_threshold_tune, trans_round(0.05)),
+  #         regime_landmark = regime_landmark_par(var_regime_landmark_tune)
+  #       )
+
+  #       floss_rec <- recipes::recipe(x = head(analysis_split$splits[[1]]$data, 1)) %>%
+  #         recipes::update_role(truth, new_role = "outcome") %>%
+  #         recipes::update_role(id, new_role = "predictor") %>%
+  #         recipes::update_role(ts, new_role = "predictor")
+
+  #       # doMC::registerDoMC(cores = 8)
+  #       if (var_dopar_cores > 1) {
+  #         doParallel::registerDoParallel(cores = var_dopar_cores)
+  #       }
+
+  #       # floss_wflow <-
+  #       #   workflows::workflow() %>%
+  #       #   workflows::add_model(floss_spec) %>%
+  #       #   workflows::add_recipe(floss_rec)
+
+  #       # fitted_wflow <- floss_wflow %>% parsnip::fit(analysis_split$splits[[1]]$data)
+
+  #       if (var_grid_search == "tune_grid") {
+  #         floss_search_res <- floss_spec %>%
+  #           tune::tune_grid(
+  #             preprocessor = floss_rec,
+  #             resamples = analysis_split,
+  #             param_info = floss_set,
+  #             grid = var_grid_size,
+  #             metrics = yardstick::metric_set(floss_error_macro),
+  #             control = tune::control_grid(
+  #               verbose = var_verbose,
+  #               allow_par = TRUE,
+  #               save_workflow = var_save_workflow,
+  #               save_pred = var_save_pred,
+  #               parallel_over = "resamples"
+  #             )
+  #           )
+  #       } else if (var_grid_search == "tune_bayes") {
+  #         trade_off_decay <- function(iter) {
+  #           tune::expo_decay(iter, start_val = 0.01, limit_val = 0, slope = 0.25)
+  #         }
+
+  #         floss_search_res <- floss_spec %>%
+  #           tune::tune_bayes(
+  #             preprocessor = floss_rec,
+  #             resamples = analysis_split,
+  #             param_info = floss_set,
+  #             initial = var_tune_bayes_initial,
+  #             iter = var_tune_bayes_iter,
+  #             metrics = yardstick::metric_set(floss_error_macro, floss_error_micro),
+  #             objective = tune::exp_improve(trade_off_decay),
+  #             control = tune::control_bayes(
+  #               no_improve = var_tune_bayes_no_improve,
+  #               verbose = var_verbose,
+  #               save_workflow = var_save_workflow,
+  #               save_pred = var_save_pred,
+  #               parallel_over = "resamples"
+  #             )
+  #           )
+  #       } else if (var_grid_search == "tune_race_win_loss") {
+  #         floss_search_res <- floss_spec %>%
+  #           finetune::tune_race_win_loss(
+  #             preprocessor = floss_rec,
+  #             resamples = analysis_split,
+  #             param_info = floss_set,
+  #             grid = var_grid_size,
+  #             metrics = yardstick::metric_set(floss_error_macro, floss_error_micro),
+  #             control = finetune::control_race(
+  #               verbose_elim = TRUE,
+  #               verbose = var_verbose,
+  #               save_workflow = var_save_workflow,
+  #               save_pred = var_save_pred,
+  #               allow_par = TRUE,
+  #               parallel_over = "resamples"
+  #             )
+  #           )
+  #         # TODO: finetune::plot_race(floss_search_res)
+  #       } else if (var_grid_search == "tune_race_anova") {
+  #         floss_search_res <- floss_spec %>%
+  #           finetune::tune_race_anova(
+  #             preprocessor = floss_rec,
+  #             resamples = analysis_split,
+  #             param_info = floss_set,
+  #             grid = var_grid_size,
+  #             metrics = yardstick::metric_set(floss_error_macro, floss_error_micro),
+  #             control = finetune::control_race(
+  #               verbose_elim = TRUE,
+  #               verbose = var_verbose,
+  #               save_workflow = var_save_workflow,
+  #               save_pred = var_save_pred,
+  #               allow_par = TRUE,
+  #               parallel_over = "resamples"
+  #             )
+  #           )
+  #         # TODO: finetune::plot_race(floss_search_res)
+  #       } else if (var_grid_search == "tune_sim_anneal") {
+  #         floss_search_res <- floss_spec %>%
+  #           finetune::tune_sim_anneal(
+  #             preprocessor = floss_rec,
+  #             resamples = analysis_split,
+  #             iter = var_tune_sim_anneal_iter,
+  #             initial = var_tune_sim_anneal_initial,
+  #             param_info = floss_set,
+  #             metrics = yardstick::metric_set(floss_error_macro, floss_error_micro),
+  #             control = finetune::control_sim_anneal(
+  #               verbose = var_verbose,
+  #               save_workflow = var_save_workflow,
+  #               save_pred = var_save_pred,
+  #               no_improve = var_tune_sim_anneal_no_improve,
+  #               parallel_over = "resamples"
+  #             )
+  #           )
+  #       }
+
+  #       floss_search_res <- clean_splits_data(floss_search_res)
+  #       floss_search_res
+  #     },
+  #     pattern = map(analysis_split),
+  #     iteration = "list" # thus the objects keep their attributes
+  #   ),
+  #   tar_target(
+  #     #### Pipeline: analysis_evaluation - Here we select the best from each optimization split and test in a separate split ----
+  #     analysis_evaluation,
+  #     {
+  #       # source(here::here("scripts", "regimes", "parsnip_model.R"), encoding = "UTF-8")
+
+  #       # all_fits will contain a tibble from a mapped window size * repeat, i.e., analysis_fitted_25 repeat1
+  #       all_fits <- analysis_fitted
+
+
+  #       # best_models are the best models from some window_size, and current repeat. sorted by the mean over all folds
+  #       best_models <- all_fits %>% tune::show_best("floss_error_macro", 5)
+
+  #       if (var_dopar_cores > 1) {
+  #         doParallel::registerDoParallel(cores = var_dopar_cores)
+  #       }
+
+
+  #       result <- NULL
+  #       # here we will iterate over each fold. The data is different, so we fit a model for each fold.
+  #       for (i in seq_len(var_vfolds)) {
+  #         fold <- i
+  #         repet <- best_models$rep[1]
+
+  #         # get only the data from the current fold and repeat
+  #         resample <- assessment_split %>% dplyr::filter(id == glue::glue("Fold0{fold}"), rep == repet)
+  #         class(resample) <- class(assessment_split) # fix for fit_resamples
+
+  #         # so we end up with a tibble with all TS from this fold (id, truth and ts)
+  #         assessment_data <- resample$splits[[1]]$data %>% dplyr::arrange(id)
+
+  #         # make a generic recipe, it will be all the same anyway
+  #         floss_rec <- recipes::recipe(x = head(assessment_data, 1)) %>%
+  #           recipes::update_role(truth, new_role = "outcome") %>%
+  #           recipes::update_role(id, new_role = "predictor") %>%
+  #           recipes::update_role(ts, new_role = "predictor")
+
+  #         # now, fit the model with the current window_size, don't care the other parameters
+  #         model <- best_models[1, ]
+
+  #         floss_spec <-
+  #           floss_regime_model(
+  #             window_size = model$window_size,
+  #             time_constraint = 0,
+  #             mp_threshold = 0,
+  #             regime_threshold = model$regime_threshold,
+  #             regime_landmark = model$regime_landmark
+  #           ) %>%
+  #           parsnip::set_engine("floss") %>%
+  #           parsnip::set_mode("regression")
+
+  #         floss_wflow <-
+  #           workflows::workflow() %>%
+  #           workflows::add_model(floss_spec) %>%
+  #           workflows::add_recipe(floss_rec)
+
+  #         model_fit <- floss_wflow %>%
+  #           parsnip::fit(assessment_data)
+
+
+  #         # now we have the model_fit with the current window_size on all ts of this fold, remember the id and truth must match when evaluate
+
+  #         # now the submodels:
+  #         # multi_pred will contain all the predictions from all best models in all ts from this fold
+  #         multi_pred <- workflows::extract_fit_parsnip(model_fit) %>%
+  #           multi_predict(
+  #             new_data = assessment_data,
+  #             regime_threshold = best_models$regime_threshold,
+  #             regime_landmark = best_models$regime_landmark
+  #           )
+
+  #         all_preds <- multi_pred %>%
+  #           tidyr::unnest(.pred) %>%
+  #           dplyr::arrange(.id)
+
+  #         for (j in seq_len(nrow(best_models))) {
+  #           model <- best_models[j, ]
+  #           estimates <- all_preds %>% dplyr::filter(
+  #             regime_threshold == model$regime_threshold,
+  #             regime_landmark == model$regime_landmark
+  #           )
+  #           eval <- floss_error_vec(truth = assessment_data$truth, estimate = estimates$.pred, data_size = estimates$.sizes, estimator = "macro")
+  #           eval <- tibble::tibble(.metric = "floss_error_macro", .estimator = "macro", .estimate = eval)
+  #           eval <- model %>%
+  #             dplyr::select(rep, window_size, regime_threshold, regime_landmark, .config) %>%
+  #             dplyr::mutate(fold = glue::glue("Fold0{fold}")) %>%
+  #             dplyr::bind_cols(eval)
+  #           result <- dplyr::bind_rows(result, eval)
+  #         }
+  #       }
+  #       result <- result %>% dplyr::arrange(.estimate)
+  #     },
+  #     pattern = map(analysis_fitted),
+  #     iteration = "list" # thus the objects keep their attributes
+  #   )
+  # ),
+  # tar_combine(
+  #   name = combined,
+  #   inner_resample$analysis_evaluation,
+  #   use_names = FALSE,
+  #   command = bind_rows(vctrs::vec_c(!!!.x))
+  # ),
+  # tar_target(
+  #   #### Pipeline: testing_evaluation - In the end, get the best from the inner resample and test with the testing split ----
+  #   testing_evaluation,
+  #   {
+  #     # source(here::here("scripts", "regimes", "parsnip_model.R"), encoding = "UTF-8")
+  #     # best_parameters <- purrr::map_dfr(combined, ~ .x %>% dplyr::top_n(n = 3, wt = .estimate))
+  #     best_parameters <- combined %>%
+  #       dplyr::group_by(window_size, regime_threshold, regime_landmark) %>%
+  #       dplyr::summarize(mean = mean(.estimate), sd = sd(.estimate)) %>%
+  #       dplyr::ungroup() %>%
+  #       dplyr::arrange(mean, sd) %>%
+  #       dplyr::slice_head(n = 6)
+
+
+  #     if (var_dopar_cores > 1) {
+  #       doParallel::registerDoParallel(cores = var_dopar_cores)
+  #     }
+
+  #     result <- NULL
+  #     for (i in seq_len(nrow(best_parameters))) {
+  #       floss_spec <-
+  #         floss_regime_model(
+  #           window_size = best_parameters$window_size[i],
+  #           time_constraint = 0,
+  #           mp_threshold = 0,
+  #           regime_threshold = best_parameters$regime_threshold[i],
+  #           regime_landmark = best_parameters$regime_landmark[i]
+  #         ) %>%
+  #         parsnip::set_engine("floss") %>%
+  #         parsnip::set_mode("regression")
+
+  #       floss_rec <- recipes::recipe(x = head(testing_split, 1)) %>%
+  #         recipes::update_role(truth, new_role = "outcome") %>%
+  #         recipes::update_role(id, new_role = "predictor") %>%
+  #         recipes::update_role(ts, new_role = "predictor")
+
+  #       floss_wflow <-
+  #         workflows::workflow() %>%
+  #         workflows::add_model(floss_spec) %>%
+  #         workflows::add_recipe(floss_rec)
+
+  #       model_fit <- floss_wflow %>%
+  #         parsnip::fit(testing_split)
+  #       model_predicted <- model_fit %>%
+  #         predict(testing_split) %>%
+  #         dplyr::bind_cols(testing_split)
+  #       eval <- floss_error(model_predicted, truth = model_predicted$truth, estimate = model_predicted$.pred, estimator = "macro")
+  #       eval <- best_parameters[i, ] %>%
+  #         dplyr::select(window_size, regime_threshold, regime_landmark) %>%
+  #         dplyr::bind_cols(eval)
+
+  #       result <- result %>% dplyr::bind_rows(eval)
+  #     }
+  #     result
+  #   }
+  # )
 
   # tar_map(
   #   values = list(map_signals_include = var_signals_include),
