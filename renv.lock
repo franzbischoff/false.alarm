@@ -462,7 +462,7 @@
       "RemoteUsername": "rstudio",
       "RemoteRepo": "bookdown",
       "RemoteRef": "main",
-      "RemoteSha": "6d9b147416f94de31fb75113a4b77595633e7492",
+      "RemoteSha": "30bcdc3d72f3d88077b2ab8bc3c63f7a03de4148",
       "Requirements": [
         "R",
         "htmltools",
@@ -473,7 +473,7 @@
         "xfun",
         "yaml"
       ],
-      "Hash": "3bf0cfc994bd9f8f5085f2a2016c44a8"
+      "Hash": "0519bcc509cd2e62eda24c20eeaf3759"
     },
     "brew": {
       "Package": "brew",

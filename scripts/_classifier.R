@@ -54,7 +54,7 @@ tar_option_set(
 )
 
 # var_shapelet_size <- c(120, 300, 1000) # c(30, 60, 120, 180, 300) # c(150, 300)
-var_shapelet_sizes <- c(20, 40)#, 60, 80) # , 100, 120, 140, 160, 180, 200, 220, 240, 260, 280, 300)
+var_shapelet_sizes <- c(20, 60, 100, 140, 180, 220, 260, 300)
 var_positive <- TRUE # c(TRUE, FALSE)
 var_num_shapelets <- 10
 var_num_neighbors <- 10
@@ -234,6 +234,7 @@ list(
     #### Pipeline: assessment_split - Subset the training split into assessment split (test) ----
     cp_first_half,
     {
+      # TODO: change to analysis_split
       shapelet_sizes <- var_shapelet_sizes
 
       class(assessment_split) <- c("manual_rset", "rset", class(assessment_split))
@@ -241,7 +242,7 @@ list(
       res <- list()
       for (i in seq_len(var_vfolds)) {
         fold <- rsample::get_rsplit(assessment_split, i)
-        res[[i]] <- contrastprofile_topk(fold, shapelet_sizes, 20, TRUE)
+        res[[i]] <- contrastprofile_topk(fold, shapelet_sizes, var_num_shapelets, TRUE)
       }
 
       res
@@ -265,16 +266,17 @@ list(
   ),
   tar_target(
     #### Pipeline: assessment_split - Subset the training split into assessment split (test) ----
+    # TODO: change to analysis_split
     cp_second_half,
     {
-      shapelet_sizes <- (var_shapelet_sizes + 10)
+      shapelet_sizes <- (var_shapelet_sizes + 20)
 
       class(assessment_split) <- c("manual_rset", "rset", class(assessment_split))
 
       res <- list()
       for (i in seq_len(var_vfolds)) {
         fold <- rsample::get_rsplit(assessment_split, i)
-        res[[i]] <- contrastprofile_topk(fold, shapelet_sizes, 20, TRUE)
+        res[[i]] <- contrastprofile_topk(fold, shapelet_sizes, var_num_shapelets, TRUE)
       }
 
       res
@@ -300,11 +302,12 @@ list(
     contrast_profiles,
     {
       res <- list()
-      for(i in seq_len(length(cp_first_half))) {
+      for (i in seq_len(length(cp_first_half))) {
         res[[i]] <- append(cp_first_half[[i]], cp_second_half[[i]])
+        res[[i]] <- res[[i]][order(as.numeric(names(res[[i]])))]
       }
-      res
 
+      res
     },
     pattern = map(cp_first_half, cp_second_half),
     iteration = "list"

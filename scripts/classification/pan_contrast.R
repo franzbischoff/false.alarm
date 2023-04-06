@@ -25,6 +25,205 @@ pan <- function(split, shapelet_sizes, progress = FALSE) {
   return(result)
 }
 
+plot_pan_contrast <- function(contrast_profiles) {
+  checkmate::qassert(contrast_profiles, "L+")
+
+
+  "!DEBUG Plot Pan CP"
+
+  w_sizes <- names(contrast_profiles)
+  n_sizes <- as.numeric(w_sizes)
+  cp_len <- nrow(contrast_profiles[[1]]$cps)
+
+  pan_cp <- matrix(NA, ncol = length(w_sizes), nrow = cp_len)
+
+  for (i in seq_len(length(w_sizes))) {
+    repad <- c(rep(NA, n_sizes[i]), contrast_profiles[[i]]$cps[1:(cp_len - n_sizes[i]), 1])
+
+    pan_cp[, i] <- contrast_profiles[[i]]$cps[, 1]
+    # pan_cp[, i] <- repad
+    # print(paste("Plotting Pan Contrast Profile for shapelet size", i, "name", names(contrast_profiles[[i]])))
+    # res <- pan_contrast[[as.character(i)]]
+    # plot_contrast(res, i, num_shapelets)
+  }
+
+  # steps <- list(
+  #   list(
+  #     args = list("colors", colorRamp(c("red", "green"))),
+  #     label = "Red",
+  #     method = "update",
+  #     value = "1"
+  #   ),
+  #   list(
+  #     args = list("colors", c("#3300FF", "#FF6666")),
+  #     label = "Green",
+  #     method = "update",
+  #     value = "2"
+  #   ),
+  #   list(
+  #     args = list("colors", c("#0000FF", "#FF6666")),
+  #     label = "Blue",
+  #     method = "update",
+  #     value = "3"
+  #   )
+  # )
+
+  # fig <- plotly::plot_ly(
+  #   y = w_sizes,
+  #   z = t(pan_cp), type = "heatmap", colors = colorRamp(c("green", "green"))
+  # ) %>%
+  #   plotly::layout(sliders = list(
+  #     list(
+  #       active = 1,
+  #       # currentvalue = list(prefix = "Color: "),
+  #       pad = list(t = 60),
+  #       steps = steps
+  #     )
+  #   ))
+
+
+  steps <- list()
+
+  min_val <- round(min(pan_cp, na.rm = TRUE), 2)
+  max_val <- round(max(pan_cp, na.rm = TRUE), 2)
+
+  values <- seq(min_val, max_val, by = 0.01)
+  for (i in seq_along(values)) {
+    step <- list(
+      label = values[i], method = "restyle", args = list("zmin", values[i])
+    )
+    steps[[i]] <- step
+  }
+
+  fig <- plotly::plot_ly(
+    y = w_sizes,
+    colorscale = "Viridis",
+    z = t(pan_cp), type = "heatmap", ygap = 1, zsmooth = "best", connectgaps = FALSE
+  ) %>%
+    plotly::layout(
+      sliders = list(
+        list(steps = steps, pad = list(t = 60))
+      ),
+      updatemenus = list(
+        list(
+          type = "dropdown",
+          buttons = list(
+            # repeat for labels: Blackbody,Bluered,Blues,Cividis,Earth,Electric,Greens,Greys,Hot,Jet
+            # Picnic,Portland,Rainbow,RdBu,Reds,Viridis,YlGnBu,YlOrRd
+            list(
+              method = "restyle",
+              args = list("colorscale", "Blackbody"),
+              label = "Blackbody"
+            ),
+            list(
+              method = "restyle",
+              args = list("colorscale", "Bluered"),
+              label = "Bluered"
+            ),
+            list(
+              method = "restyle",
+              args = list("colorscale", "Blues"),
+              label = "Blues"
+            ),
+            list(
+              method = "restyle",
+              args = list("colorscale", "Cividis"),
+              label = "Cividis"
+            ),
+            list(
+              method = "restyle",
+              args = list("colorscale", "Earth"),
+              label = "Earth"
+            ),
+            list(
+              method = "restyle",
+              args = list("colorscale", "Electric"),
+              label = "Electric"
+            ),
+            list(
+              method = "restyle",
+              args = list("colorscale", "Greens"),
+              label = "Greens"
+            ),
+            list(
+              method = "restyle",
+              args = list("colorscale", "Greys"),
+              label = "Greys"
+            ),
+            list(
+              method = "restyle",
+              args = list("colorscale", "Hot"),
+              label = "Hot"
+            ),
+            list(
+              method = "restyle",
+              args = list("colorscale", "Jet"),
+              label = "Jet"
+            ),
+            list(
+              method = "restyle",
+              args = list("colorscale", "Picnic"),
+              label = "Picnic"
+            ),
+            list(
+              method = "restyle",
+              args = list("colorscale", "Portland"),
+              label = "Portland"
+            ),
+            list(
+              method = "restyle",
+              args = list("colorscale", "Rainbow"),
+              label = "Rainbow"
+            ),
+            list(
+              method = "restyle",
+              args = list("colorscale", "RdBu"),
+              label = "RdBu"
+            ),
+            list(
+              method = "restyle",
+              args = list("colorscale", "Reds"),
+              label = "Reds"
+            ),
+            list(
+              method = "restyle",
+              args = list("colorscale", "Viridis"),
+              label = "Viridis"
+            ),
+            list(
+              method = "restyle",
+              args = list("colorscale", "YlGnBu"),
+              label = "YlGnBu"
+            ),
+            list(
+              method = "restyle",
+              args = list("colorscale", "YlOrRd"),
+              label = "YlOrRd"
+            )
+          )
+        ),
+        list(
+          type = "buttons",
+          y = 0.8,
+          buttons = list(
+            list(
+              method = "restyle",
+              args = list("reversescale", FALSE),
+              label = "Normal scale"
+            ),
+            list(
+              method = "restyle",
+              args = list("reversescale", TRUE),
+              label = "Reverse scale"
+            )
+          )
+        )
+      )
+    )
+
+  fig
+}
+
 # Output:
 #   plato: The subsequence that most distinguishes
 #          positiveTS from negativeTS
@@ -150,7 +349,7 @@ contrastprofile_topk <- function(split, shapelet_sizes, num_shapelets, progress 
       past_plato <- true_alarms_val[start_index:end_index]
     }
 
-    result[[i]] <- list(
+    result[[as.character(shapelet_sizes[i])]] <- list(
       cps = cps, platos = platos, plato_indices = plato_indices,
       plato_primary_contrast = plato_primary_contrast, plato_nary_contrast = plato_nary_contrast
     )
