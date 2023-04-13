@@ -25,12 +25,10 @@ pan <- function(split, shapelet_sizes, progress = FALSE) {
   return(result)
 }
 
-plot_pan_contrast <- function(contrast_profiles) {
+get_pan_contrast <- function(contrast_profiles, position = 1) {
   checkmate::qassert(contrast_profiles, "L+")
 
-
-  "!DEBUG Plot Pan CP"
-
+  "!DEBUG Get First Pan CP"
   w_sizes <- names(contrast_profiles)
   n_sizes <- as.numeric(w_sizes)
   cp_len <- nrow(contrast_profiles[[1]]$cps)
@@ -38,188 +36,374 @@ plot_pan_contrast <- function(contrast_profiles) {
   pan_cp <- matrix(NA, ncol = length(w_sizes), nrow = cp_len)
 
   for (i in seq_len(length(w_sizes))) {
-    repad <- c(rep(NA, n_sizes[i]), contrast_profiles[[i]]$cps[1:(cp_len - n_sizes[i]), 1])
+    # adding NA to the left makes a better pan plot, since we are working with streams, we look backwards
+    repad <- c(rep(NA, n_sizes[i]), contrast_profiles[[i]]$cps[1:(cp_len - n_sizes[i]), position])
 
-    pan_cp[, i] <- contrast_profiles[[i]]$cps[, 1]
-    # pan_cp[, i] <- repad
+    # pan_cp[, i] <- contrast_profiles[[i]]$cps[, 1]
+    pan_cp[, i] <- repad
     # print(paste("Plotting Pan Contrast Profile for shapelet size", i, "name", names(contrast_profiles[[i]])))
     # res <- pan_contrast[[as.character(i)]]
     # plot_contrast(res, i, num_shapelets)
   }
 
-  # steps <- list(
-  #   list(
-  #     args = list("colors", colorRamp(c("red", "green"))),
-  #     label = "Red",
-  #     method = "update",
-  #     value = "1"
-  #   ),
-  #   list(
-  #     args = list("colors", c("#3300FF", "#FF6666")),
-  #     label = "Green",
-  #     method = "update",
-  #     value = "2"
-  #   ),
-  #   list(
-  #     args = list("colors", c("#0000FF", "#FF6666")),
-  #     label = "Blue",
-  #     method = "update",
-  #     value = "3"
-  #   )
-  # )
+  colnames(pan_cp) <- w_sizes
+  return(pan_cp)
+}
 
-  # fig <- plotly::plot_ly(
-  #   y = w_sizes,
-  #   z = t(pan_cp), type = "heatmap", colors = colorRamp(c("green", "green"))
-  # ) %>%
-  #   plotly::layout(sliders = list(
-  #     list(
-  #       active = 1,
-  #       # currentvalue = list(prefix = "Color: "),
-  #       pad = list(t = 60),
-  #       steps = steps
-  #     )
-  #   ))
+get_pan_platos <- function(contrast_profiles, position = 1) {
+  checkmate::qassert(contrast_profiles, "L+")
 
+  "!DEBUG Get First Pan CP"
+  w_sizes <- names(contrast_profiles)
+  n_sizes <- as.numeric(w_sizes)
+  max_size <- max(n_sizes)
+
+  pan_platos <- matrix(NA, ncol = length(w_sizes), nrow = max_size)
+
+  for (i in seq_len(length(w_sizes))) {
+    padded <- c(contrast_profiles[[i]]$platos[, position], rep(NA, max_size - n_sizes[i]))
+    pan_platos[, i] <- padded
+  }
+
+  colnames(pan_platos) <- w_sizes
+  return(pan_platos)
+}
+
+plot_pan_contrast <- function(pan_cp, plot_type = c("heatmap", "surface"), mode = c("all", "max")) {
+  checkmate::qassert(pan_cp, "m")
+  plot_type <- match.arg(plot_type)
+  mode <- match.arg(mode)
+
+  "!DEBUG Plot Pan CP"
+
+  w_sizes <- colnames(pan_cp)
 
   steps <- list()
 
-  min_val <- round(min(pan_cp, na.rm = TRUE), 2)
+  min_val <- 0
   max_val <- round(max(pan_cp, na.rm = TRUE), 2)
 
-  values <- seq(min_val, max_val, by = 0.01)
-  for (i in seq_along(values)) {
-    step <- list(
-      label = values[i], method = "restyle", args = list("zmin", values[i])
-    )
-    steps[[i]] <- step
-  }
+  z <- t(pan_cp)
 
-  fig <- plotly::plot_ly(
-    y = w_sizes,
-    colorscale = "Viridis",
-    z = t(pan_cp), type = "heatmap", ygap = 1, zsmooth = "best", connectgaps = FALSE
-  ) %>%
-    plotly::layout(
+  fig <- NULL
+
+  if (mode == "max") {
+    xx <- apply(z, 1, function(x) {
+      which.max(x)
+    })
+    mm <- as.numeric(apply(z, 1, function(x) {
+      max(x, na.rm = TRUE)
+    }))
+    min_plato <- round(min(mm, na.rm = TRUE), 2)
+    yy <- as.numeric(w_sizes)
+
+    values <- seq(min_val, max_val, by = 0.01)
+    for (i in seq_along(values)) {
+      step <- list(
+        label = values[i], method = "restyle", args = list("marker.cmin", values[i])
+      )
+      steps[[i]] <- step
+    }
+
+    fig <- plotly::plot_ly(
+      x = xx,
+      y = yy,
+      text = round(mm, 4),
+      type = "scatter",
+      mode = "markers",
+      hoverinfo = "x+y+text",
+      marker = list(
+        colorscale = "Blackbody",
+        reversescale = TRUE,
+        showscale = TRUE,
+        size = 15,
+        color = mm
+      )
+    ) %>% plotly::layout(
+      xaxis = list(
+        title = "Time",
+        range = c(0, ncol(z))
+      ),
+      yaxis = list(
+        title = "Shapelet Size"
+      ),
       sliders = list(
-        list(steps = steps, pad = list(t = 60))
+        list(steps = steps, pad = list(t = 30), active = floor(min_plato / 0.01))
       ),
       updatemenus = list(
         list(
           type = "dropdown",
           buttons = list(
-            # repeat for labels: Blackbody,Bluered,Blues,Cividis,Earth,Electric,Greens,Greys,Hot,Jet
-            # Picnic,Portland,Rainbow,RdBu,Reds,Viridis,YlGnBu,YlOrRd
             list(
               method = "restyle",
-              args = list("colorscale", "Blackbody"),
+              args = list("marker.colorscale", "Blackbody"),
               label = "Blackbody"
             ),
             list(
               method = "restyle",
-              args = list("colorscale", "Bluered"),
-              label = "Bluered"
-            ),
-            list(
-              method = "restyle",
-              args = list("colorscale", "Blues"),
-              label = "Blues"
-            ),
-            list(
-              method = "restyle",
-              args = list("colorscale", "Cividis"),
-              label = "Cividis"
-            ),
-            list(
-              method = "restyle",
-              args = list("colorscale", "Earth"),
-              label = "Earth"
-            ),
-            list(
-              method = "restyle",
-              args = list("colorscale", "Electric"),
-              label = "Electric"
-            ),
-            list(
-              method = "restyle",
-              args = list("colorscale", "Greens"),
-              label = "Greens"
-            ),
-            list(
-              method = "restyle",
-              args = list("colorscale", "Greys"),
-              label = "Greys"
-            ),
-            list(
-              method = "restyle",
-              args = list("colorscale", "Hot"),
-              label = "Hot"
-            ),
-            list(
-              method = "restyle",
-              args = list("colorscale", "Jet"),
+              args = list("marker.colorscale", "Jet"),
               label = "Jet"
             ),
             list(
               method = "restyle",
-              args = list("colorscale", "Picnic"),
-              label = "Picnic"
-            ),
-            list(
-              method = "restyle",
-              args = list("colorscale", "Portland"),
-              label = "Portland"
-            ),
-            list(
-              method = "restyle",
-              args = list("colorscale", "Rainbow"),
-              label = "Rainbow"
-            ),
-            list(
-              method = "restyle",
-              args = list("colorscale", "RdBu"),
-              label = "RdBu"
-            ),
-            list(
-              method = "restyle",
-              args = list("colorscale", "Reds"),
-              label = "Reds"
-            ),
-            list(
-              method = "restyle",
-              args = list("colorscale", "Viridis"),
+              args = list("marker.colorscale", "Viridis"),
               label = "Viridis"
             ),
             list(
               method = "restyle",
-              args = list("colorscale", "YlGnBu"),
+              args = list("marker.colorscale", "Bluered"),
+              label = "Bluered"
+            ),
+            list(
+              method = "restyle",
+              args = list("marker.colorscale", "Blues"),
+              label = "Blues"
+            ),
+            list(
+              method = "restyle",
+              args = list("marker.colorscale", "Cividis"),
+              label = "Cividis"
+            ),
+            list(
+              method = "restyle",
+              args = list("marker.colorscale", "Earth"),
+              label = "Earth"
+            ),
+            list(
+              method = "restyle",
+              args = list("marker.colorscale", "Electric"),
+              label = "Electric"
+            ),
+            list(
+              method = "restyle",
+              args = list("marker.colorscale", "Greens"),
+              label = "Greens"
+            ),
+            list(
+              method = "restyle",
+              args = list("marker.colorscale", "Greys"),
+              label = "Greys"
+            ),
+            list(
+              method = "restyle",
+              args = list("marker.colorscale", "Hot"),
+              label = "Hot"
+            ),
+            list(
+              method = "restyle",
+              args = list("marker.colorscale", "Picnic"),
+              label = "Picnic"
+            ),
+            list(
+              method = "restyle",
+              args = list("marker.colorscale", "Portland"),
+              label = "Portland"
+            ),
+            list(
+              method = "restyle",
+              args = list("marker.colorscale", "Rainbow"),
+              label = "Rainbow"
+            ),
+            list(
+              method = "restyle",
+              args = list("marker.colorscale", "RdBu"),
+              label = "RdBu"
+            ),
+            list(
+              method = "restyle",
+              args = list("marker.colorscale", "Reds"),
+              label = "Reds"
+            ),
+            list(
+              method = "restyle",
+              args = list("marker.colorscale", "YlGnBu"),
               label = "YlGnBu"
             ),
             list(
               method = "restyle",
-              args = list("colorscale", "YlOrRd"),
+              args = list("marker.colorscale", "YlOrRd"),
               label = "YlOrRd"
             )
           )
         ),
         list(
           type = "buttons",
-          y = 0.8,
+          y = 0.5,
+          active = 1,
           buttons = list(
             list(
               method = "restyle",
-              args = list("reversescale", FALSE),
+              args = list("marker.reversescale", FALSE),
               label = "Normal scale"
             ),
             list(
               method = "restyle",
-              args = list("reversescale", TRUE),
+              args = list("marker.reversescale", TRUE),
               label = "Reverse scale"
             )
           )
         )
       )
     )
+  } else {
+    if (plot_type == "heatmap") {
+      values <- seq(min_val, max_val, by = 0.01)
+      for (i in seq_along(values)) {
+        step <- list(
+          label = values[i], method = "restyle", args = list("zmin", values[i])
+        )
+        steps[[i]] <- step
+      }
+
+      fig <- plotly::plot_ly(
+        y = w_sizes,
+        colorscale = "Jet",
+        type = "heatmap", ygap = 1, zsmooth = "best",
+        z = ~z
+      )
+    } else {
+      values <- seq(min_val, max_val, by = 0.01)
+      for (i in seq_along(values)) {
+        step <- list(
+          label = values[i], method = "restyle", args = list("cmin", values[i])
+        )
+        steps[[i]] <- step
+      }
+
+      fig <- plotly::plot_ly(
+        y = w_sizes,
+        colorscale = "Jet",
+        type = "surface",
+        z = ~z
+      ) %>% plotly::layout(scene = list(
+        camera = list(
+          eye = list(x = -0.5, y = -1, z = 0.5),
+          projection = list(type = "orthographic")
+        ),
+        aspectratio = list(x = 1, y = 0.5, z = 0.5)
+      ))
+    }
+    fig <- fig %>%
+      plotly::layout(
+        sliders = list(
+          list(steps = steps, pad = list(t = 30))
+        ),
+        updatemenus = list(
+          list(
+            type = "dropdown",
+            buttons = list(
+              list(
+                method = "restyle",
+                args = list("colorscale", "Jet"),
+                label = "Jet"
+              ),
+              list(
+                method = "restyle",
+                args = list("colorscale", "Viridis"),
+                label = "Viridis"
+              ),
+              list(
+                method = "restyle",
+                args = list("colorscale", "Blackbody"),
+                label = "Blackbody"
+              ),
+              list(
+                method = "restyle",
+                args = list("colorscale", "Bluered"),
+                label = "Bluered"
+              ),
+              list(
+                method = "restyle",
+                args = list("colorscale", "Blues"),
+                label = "Blues"
+              ),
+              list(
+                method = "restyle",
+                args = list("colorscale", "Cividis"),
+                label = "Cividis"
+              ),
+              list(
+                method = "restyle",
+                args = list("colorscale", "Earth"),
+                label = "Earth"
+              ),
+              list(
+                method = "restyle",
+                args = list("colorscale", "Electric"),
+                label = "Electric"
+              ),
+              list(
+                method = "restyle",
+                args = list("colorscale", "Greens"),
+                label = "Greens"
+              ),
+              list(
+                method = "restyle",
+                args = list("colorscale", "Greys"),
+                label = "Greys"
+              ),
+              list(
+                method = "restyle",
+                args = list("colorscale", "Hot"),
+                label = "Hot"
+              ),
+              list(
+                method = "restyle",
+                args = list("colorscale", "Picnic"),
+                label = "Picnic"
+              ),
+              list(
+                method = "restyle",
+                args = list("colorscale", "Portland"),
+                label = "Portland"
+              ),
+              list(
+                method = "restyle",
+                args = list("colorscale", "Rainbow"),
+                label = "Rainbow"
+              ),
+              list(
+                method = "restyle",
+                args = list("colorscale", "RdBu"),
+                label = "RdBu"
+              ),
+              list(
+                method = "restyle",
+                args = list("colorscale", "Reds"),
+                label = "Reds"
+              ),
+              list(
+                method = "restyle",
+                args = list("colorscale", "YlGnBu"),
+                label = "YlGnBu"
+              ),
+              list(
+                method = "restyle",
+                args = list("colorscale", "YlOrRd"),
+                label = "YlOrRd"
+              )
+            )
+          ),
+          list(
+            type = "buttons",
+            y = 0.5,
+            buttons = list(
+              list(
+                method = "restyle",
+                args = list("reversescale", FALSE),
+                label = "Normal scale"
+              ),
+              list(
+                method = "restyle",
+                args = list("reversescale", TRUE),
+                label = "Reverse scale"
+              )
+            )
+          )
+        )
+      )
+  }
+
 
   fig
 }

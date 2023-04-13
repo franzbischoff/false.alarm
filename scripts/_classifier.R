@@ -311,6 +311,18 @@ list(
     },
     pattern = map(cp_first_half, cp_second_half),
     iteration = "list"
+  ),
+  tar_target(
+    plot_profiles,
+    {
+      res <- list()
+      for (i in seq_len(var_vfolds)) {
+        res[[i]] <- get_pan_contrast(contrast_profiles[[i]], 1)
+      }
+      res
+    },
+    pattern = map(contrast_profiles),
+    iteration = "list"
   )
   # tar_target(
   #   best_shapelets,
