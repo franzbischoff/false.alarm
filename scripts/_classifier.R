@@ -247,6 +247,35 @@ list(
 
       res
 
+      # anewn <- rep(Inf, length(true_alarms_val)-300+1)
+      # dp <- matrix(NA, nrow = length(true_alarms_val)-300+1, ncol = 10)
+      # for(i in seq_len(10)) {
+      #   dp[,i] <- dist_profile(true_alarms_val, cps$platos[,i])
+      #   anewn <- pmin(anewn, dp[,i])
+      # }
+
+      # anew <- rep(Inf, length(false_alarms_val)-300+1)
+      # dpf <- matrix(NA, nrow = length(false_alarms_val)-300+1, ncol = 10)
+      # for(i in seq_len(10)) {
+      #   dpf[,i] <- dist_profile(false_alarms_val, cps$platos[,i])
+      #   anew <- pmin(anew, dpf[,i])
+      # }
+
+      # anewn <- rep(Inf, length(false_alarms_val)-120+1)
+      # for(i in seq_len(10)) {
+      #   dp <- dist_profile(false_alarms_val, cps$platos[,i])
+      #   anewn <- pmin(anewn, dp)
+      # }
+
+      # anewp <- rep(Inf, length(true_alarms_val)-120+1)
+      # for(i in seq_len(10)) {
+      #   dp <- dist_profile(true_alarms_val, cps$platos[,i])
+      #   anewp <- pmin(anewp, dp)
+      # }
+      # plot.ts(cbind(anewn,anewp))
+      # summary(anewn)
+      # summary(anewp)
+
       # z <- matrix(0, nrow = length(shapelet_sizes), ncol = length(validate_data[[1]]$contrast_profile))
 
       # for (i in seq_along(shapelet_sizes)) {

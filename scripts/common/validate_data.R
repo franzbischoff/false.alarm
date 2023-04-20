@@ -48,9 +48,9 @@ validate_data <- function(data, window_size) {
   is_valid_window[is_singularity] <- FALSE
 
   data_std <- false.alarm::mov_std(data, window_size)
-  # This is approximately 0.015. For ECG's, a std smaller than this is probably a
+  # This is approximately 0.0078. For ECG's, a std smaller than this is probably a
   # disconnected lead or boundary hit, so we add noise to avoid spurious correlations.
-  const <- 1 / 64
+  const <- 1 / 128
   invalid_std <- (data_std < const)
 
   is_valid_window[invalid_std] <- FALSE

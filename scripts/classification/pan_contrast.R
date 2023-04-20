@@ -1,54 +1,30 @@
-pan <- function(split, shapelet_sizes, progress = FALSE) {
-  checkmate::qassert(split, "L4")
-  checkmate::qassert(shapelet_sizes, "N+")
+# pan <- function(split, shapelet_sizes, progress = FALSE) {
+#   checkmate::qassert(split, "L4")
+#   checkmate::qassert(shapelet_sizes, "N+")
 
-  "!DEBUG Compute Pan CP"
+#   "!DEBUG Compute Pan CP"
 
-  idxs <- (split$data$alarm == "true")
+#   idxs <- (split$data$alarm == "true")
 
-  true_alarms <- unlist(split$data$values[idxs])
-  true_alarms <- as.numeric(true_alarms[!is.na(true_alarms)])
+#   true_alarms <- unlist(split$data$values[idxs])
+#   true_alarms <- as.numeric(true_alarms[!is.na(true_alarms)])
 
 
-  false_alarms <- unlist(split$data$values[!idxs])
-  false_alarms <- as.numeric(false_alarms[!is.na(false_alarms)])
+#   false_alarms <- unlist(split$data$values[!idxs])
+#   false_alarms <- as.numeric(false_alarms[!is.na(false_alarms)])
 
-  result <- list()
+#   result <- list()
 
-  for (i in shapelet_sizes) {
-    true_alarms_val <- validate_data(true_alarms, i %/% 2)
-    false_alarms_val <- validate_data(false_alarms, i %/% 2)
-    res <- contrast(false_alarms_val, true_alarms_val, i, progress = progress)
-    result[[as.character(i)]] <- res
-  }
+#   for (i in shapelet_sizes) {
+#     true_alarms_val <- validate_data(true_alarms, i %/% 2)
+#     false_alarms_val <- validate_data(false_alarms, i %/% 2)
+#     res <- contrast(false_alarms_val, true_alarms_val, i, progress = progress)
+#     result[[as.character(i)]] <- res
+#   }
 
-  return(result)
-}
+#   return(result)
+# }
 
-get_pan_contrast <- function(contrast_profiles, position = 1) {
-  checkmate::qassert(contrast_profiles, "L+")
-
-  "!DEBUG Get First Pan CP"
-  w_sizes <- names(contrast_profiles)
-  n_sizes <- as.numeric(w_sizes)
-  cp_len <- nrow(contrast_profiles[[1]]$cps)
-
-  pan_cp <- matrix(NA, ncol = length(w_sizes), nrow = cp_len)
-
-  for (i in seq_len(length(w_sizes))) {
-    # adding NA to the left makes a better pan plot, since we are working with streams, we look backwards
-    repad <- c(rep(NA, n_sizes[i]), contrast_profiles[[i]]$cps[1:(cp_len - n_sizes[i]), position])
-
-    # pan_cp[, i] <- contrast_profiles[[i]]$cps[, 1]
-    pan_cp[, i] <- repad
-    # print(paste("Plotting Pan Contrast Profile for shapelet size", i, "name", names(contrast_profiles[[i]])))
-    # res <- pan_contrast[[as.character(i)]]
-    # plot_contrast(res, i, num_shapelets)
-  }
-
-  colnames(pan_cp) <- w_sizes
-  return(pan_cp)
-}
 
 get_pan_platos <- function(contrast_profiles, position = 1) {
   checkmate::qassert(contrast_profiles, "L+")
@@ -69,7 +45,89 @@ get_pan_platos <- function(contrast_profiles, position = 1) {
   return(pan_platos)
 }
 
-plot_pan_contrast <- function(pan_cp, plot_type = c("heatmap", "surface"), mode = c("all", "max")) {
+plot_topk_contrasts <- function(contrast_profiles, type = c("contour", "heatmap"), colorscale = "Viridis") {
+  checkmate::qassert(contrast_profiles, "L+")
+  type <- match.arg(type)
+
+  w_sizes <- names(contrast_profiles)
+  k <- length(contrast_profiles[[1]]$plato_nary_contrast)
+
+  pan_topk <- matrix(NA, ncol = k, nrow = length(w_sizes))
+
+  for (i in seq_len(length(w_sizes))) {
+    pan_topk[i, ] <- contrast_profiles[[i]]$plato_nary_contrast
+  }
+
+  rownames(pan_topk) <- w_sizes
+
+  if (type == "heatmap") {
+    return(plotly::plot_ly(
+      y = w_sizes,
+      z = pan_topk,
+      type = "heatmap",
+      colorscale = colorscale
+    ))
+  } else {
+    plotly::plot_ly(
+      y = w_sizes, type = "contour", z = pan_topk,
+      contours = list(showlabels = TRUE),
+      colorscale = colorscale
+    )
+  }
+}
+
+
+get_pan_contrast <- function(contrast_profiles, position = 1, repad = FALSE) {
+  checkmate::qassert(contrast_profiles, "L+")
+
+  "!DEBUG Get First Pan CP"
+  w_sizes <- names(contrast_profiles)
+  n_sizes <- as.numeric(w_sizes)
+  cp_len <- nrow(contrast_profiles[[1]]$cps)
+
+  pan_cp <- matrix(NA, ncol = length(w_sizes), nrow = cp_len)
+
+  for (i in seq_len(length(w_sizes))) {
+    # adding NA to the left makes a better pan plot, since we are working with streams, we look backwards
+    if (repad == TRUE) {
+      values <- c(rep(NA, n_sizes[i]), contrast_profiles[[i]]$cps[1:(cp_len - n_sizes[i]), position])
+    } else {
+      values <- c(contrast_profiles[[i]]$cps[1:(cp_len - n_sizes[i]), position], rep(NA, n_sizes[i]))
+    }
+    # pan_cp[, i] <- contrast_profiles[[i]]$cps[, 1]
+    pan_cp[, i] <- values
+    # print(paste("Plotting Pan Contrast Profile for shapelet size", i, "name", names(contrast_profiles[[i]])))
+    # res <- pan_contrast[[as.character(i)]]
+    # plot_contrast(res, i, num_shapelets)
+  }
+
+
+  colnames(pan_cp) <- w_sizes
+  return(pan_cp)
+}
+
+plot_topk_distances <- function(data, contrast_profiles, window_size) {
+  checkmate::qassert(contrast_profiles, "L+")
+
+  w_sizes <- names(contrast_profiles)
+  w_size <- as.character(window_size)
+
+  if (!(w_size %in% w_sizes)) {
+    cli::cli_abort("Invalid window_size.")
+  }
+
+  platos <- contrast_profiles[[w_size]]$platos
+
+  dps <- matrix(NA, ncol = ncol(platos), nrow = length(data) - window_size + 1)
+
+  for (i in seq_len(ncol(platos))) {
+    dps[, i] <- dist_profile(data, platos[, i])
+  }
+
+  return(dps)
+}
+
+plot_pan_contrast <- function(pan_cp, plot_type = c("heatmap", "surface"), mode = c("all", "max", "max_idx")) {
   checkmate::qassert(pan_cp, "m")
   plot_type <- match.arg(plot_type)
   mode <- match.arg(mode)
@@ -77,6 +135,7 @@ plot_pan_contrast <- function(pan_cp, plot_type = c("heatmap", "surface"), mode 
   "!DEBUG Plot Pan CP"
 
   w_sizes <- colnames(pan_cp)
+  c_sizes <- as.numeric(w_sizes)
 
   steps <- list()
 
@@ -84,6 +143,15 @@ plot_pan_contrast <- function(pan_cp, plot_type = c("heatmap", "surface"), mode 
   max_val <- round(max(pan_cp, na.rm = TRUE), 2)
 
   z <- t(pan_cp)
+
+  max_contrast <- round(max(z, na.rm = TRUE), 5)
+  max_by_idx <- apply(z, 2, function(x) {
+    x[is.na(x)] <- 0
+    round(max(x, na.rm = TRUE), 5)
+  })
+  max_idx <- which(max_by_idx == max_contrast)
+  profile <- z[, max_idx]
+  max_window <- c_sizes[which.max(profile)]
 
   fig <- NULL
 
@@ -95,7 +163,6 @@ plot_pan_contrast <- function(pan_cp, plot_type = c("heatmap", "surface"), mode 
       max(x, na.rm = TRUE)
     }))
     min_plato <- round(min(mm, na.rm = TRUE), 2)
-    yy <- as.numeric(w_sizes)
 
     values <- seq(min_val, max_val, by = 0.01)
     for (i in seq_along(values)) {
@@ -107,13 +174,14 @@ plot_pan_contrast <- function(pan_cp, plot_type = c("heatmap", "surface"), mode 
 
     fig <- plotly::plot_ly(
       x = xx,
-      y = yy,
+      y = c_sizes,
       text = round(mm, 4),
       type = "scatter",
       mode = "markers",
       hoverinfo = "x+y+text",
       marker = list(
         colorscale = "Blackbody",
+        colorbar = list(title = "Contrast"),
         reversescale = TRUE,
         showscale = TRUE,
         size = 15,
@@ -125,7 +193,7 @@ plot_pan_contrast <- function(pan_cp, plot_type = c("heatmap", "surface"), mode 
         range = c(0, ncol(z))
       ),
       yaxis = list(
-        title = "Shapelet Size"
+        title = "Window Size"
       ),
       sliders = list(
         list(steps = steps, pad = list(t = 30), active = floor(min_plato / 0.01))
@@ -245,6 +313,20 @@ plot_pan_contrast <- function(pan_cp, plot_type = c("heatmap", "surface"), mode 
         )
       )
     )
+  } else if (mode == "max_idx") {
+    data <- tibble::tibble(x = c_sizes, y = profile)
+    gg <- ggplot2::ggplot(data) +
+      ggpattern::geom_area_pattern(ggplot2::aes(x = x, y = y), pattern = "gradient", pattern_fill = "blue", pattern_fill2 = "yellow") +
+      ggplot2::annotate("segment", x = max_window, y = max_contrast, xend = max_window, yend = 0, color = "red") +
+      ggplot2::annotate("text",
+        x = max_window, y = 0, label = glue::glue("Window size {max_window} at index {max_idx}"),
+        color = "white", angle = 90, vjust = -0.5, hjust = -0.2, size = 7
+      ) +
+      ggplot2::theme_bw() +
+      ggplot2::ggtitle("Best window size") +
+      ggplot2::ylab("Contrast") +
+      ggplot2::xlab("Window Size")
+    return(gg)
   } else {
     if (plot_type == "heatmap") {
       values <- seq(min_val, max_val, by = 0.01)
@@ -256,10 +338,44 @@ plot_pan_contrast <- function(pan_cp, plot_type = c("heatmap", "surface"), mode 
       }
 
       fig <- plotly::plot_ly(
-        y = w_sizes,
+        y = c_sizes,
         colorscale = "Jet",
         type = "heatmap", ygap = 1, zsmooth = "best",
-        z = ~z
+        z = ~z,
+        colorbar = list(title = "Contrast")
+      ) %>% plotly::layout(
+        annotations = list(
+          list(
+            x = max_idx,
+            y = max_window,
+            xshift = 2,
+            yshift = -2,
+            arrowcolor = "#000000",
+            arrowsize = 3,
+            standoff = 10,
+            arrowhead = 6,
+            text = "<b>Max</b>",
+            font = list(color = "#000000", size = 14),
+            showarrow = TRUE
+          ),
+          list(
+            x = max_idx,
+            y = max_window,
+            arrowcolor = "#E5E5E5",
+            arrowsize = 3,
+            standoff = 10,
+            arrowhead = 6,
+            text = "<b>Max</b>",
+            font = list(color = "#E5E5E5", size = 14),
+            showarrow = TRUE
+          )
+        ),
+        xaxis = list(
+          title = "Time"
+        ),
+        yaxis = list(
+          title = "Window Size"
+        )
       )
     } else {
       values <- seq(min_val, max_val, by = 0.01)
@@ -271,17 +387,54 @@ plot_pan_contrast <- function(pan_cp, plot_type = c("heatmap", "surface"), mode 
       }
 
       fig <- plotly::plot_ly(
-        y = w_sizes,
+        y = c_sizes,
         colorscale = "Jet",
         type = "surface",
         z = ~z
-      ) %>% plotly::layout(scene = list(
-        camera = list(
-          eye = list(x = -0.5, y = -1, z = 0.5),
-          projection = list(type = "orthographic")
-        ),
-        aspectratio = list(x = 1, y = 0.5, z = 0.5)
-      ))
+      ) %>% plotly::layout(
+        scene = list(
+          annotations = list(
+            list(
+              x = max_idx,
+              y = max_window,
+              z = max_contrast,
+              xshift = 2,
+              yshift = -2,
+              arrowcolor = "#000000",
+              arrowsize = 3,
+              standoff = 10,
+              arrowhead = 6,
+              text = "<b>Max</b>",
+              font = list(color = "#000000", size = 14),
+              showarrow = TRUE
+            ),
+            list(
+              x = max_idx,
+              y = max_window,
+              z = max_contrast,
+              arrowcolor = "#E5E5E5",
+              arrowsize = 3,
+              standoff = 10,
+              arrowhead = 6,
+              text = "<b>Max</b>",
+              font = list(color = "#E5E5E5", size = 14),
+              showarrow = TRUE
+            )
+          ),
+          xaxis = list(
+            title = "Time"
+          ),
+          yaxis = list(
+            title = "Window Size"
+          ),
+          zaxis = list(title = "Contrast"),
+          camera = list(
+            eye = list(x = -0.5, y = -1, z = 0.5),
+            projection = list(type = "orthographic")
+          ),
+          aspectratio = list(x = 1, y = 0.5, z = 0.5)
+        )
+      )
     }
     fig <- fig %>%
       plotly::layout(
@@ -415,7 +568,7 @@ plot_pan_contrast <- function(pan_cp, plot_type = c("heatmap", "surface"), mode 
 #   plato_primary_contrast: Contrast value of each plato in the K=1 CP
 #   plato_nary_contrast: Contrast value of each plato after appending
 #     the previous Plato to negativeTS. May be helpful in identifying
-#     diminishing returns and retundant behaviors.
+#     diminishing returns and redundant behaviors.
 # TODO: check find_k_shapelets()
 contrastprofile_topk <- function(split, shapelet_sizes, num_shapelets, progress = FALSE) {
   checkmate::qassert(split, "L4")
@@ -433,20 +586,22 @@ contrastprofile_topk <- function(split, shapelet_sizes, num_shapelets, progress 
   false_alarms <- unlist(split$data$values[!idxs])
   false_alarms <- as.numeric(false_alarms[!is.na(false_alarms)])
 
+  true_alarms_val <- validate_data(true_alarms, 20)
+  false_alarms_val <- validate_data(false_alarms, 20)
+
   result <- list()
 
   for (i in seq_along(shapelet_sizes)) {
-    true_alarms_val <- validate_data(true_alarms, shapelet_sizes[i] %/% 2)
-    false_alarms_val <- validate_data(false_alarms, shapelet_sizes[i] %/% 2)
-
     self_mp <- mpx(
       data = true_alarms_val,
       window_size = shapelet_sizes[i],
       exclusion_zone = 0.5,
       distance = "euclidean",
-      progress = progress,
-      idxs = FALSE
-    )$matrix_profile
+      progress = progress
+      # idxs = FALSE
+    )
+    self_mpi <- self_mp$profile_index
+    self_mp <- self_mp$matrix_profile
 
     if (!all(is.finite(self_mp))) {
       cli::cli_warn("self_mp contains non finite values.")
@@ -461,7 +616,9 @@ contrastprofile_topk <- function(split, shapelet_sizes, num_shapelets, progress 
     self_mp_padded <- c(self_mp, rep(NA, pad))
 
     platos <- matrix(NA, nrow = shapelet_sizes[i], ncol = num_shapelets)
+    platos_twin <- matrix(NA, nrow = shapelet_sizes[i], ncol = num_shapelets)
     plato_indices <- rep(NA, num_shapelets)
+    plato_twin_indices <- rep(NA, num_shapelets)
     plato_primary_contrast <- rep(NA, num_shapelets)
     plato_nary_contrast <- rep(NA, num_shapelets)
     cps <- matrix(NA, nrow = length(self_mp_padded), ncol = num_shapelets)
@@ -471,7 +628,7 @@ contrastprofile_topk <- function(split, shapelet_sizes, num_shapelets, progress 
     past_plato <- false_alarms_val
 
     for (ki in seq_len(num_shapelets)) {
-      cli::cli_h1("Computing plato {ki} of {num_shapelets}.")
+      cli::cli_alert_info("Computing plato {ki} of {num_shapelets} for size {i}({shapelet_sizes[i]}) of {length(shapelet_sizes)}.")
       #  Matrix profile AB-join between true_alarms_val and false_alarms_val
       join_mp <- mpx(
         data = true_alarms_val,
@@ -530,11 +687,16 @@ contrastprofile_topk <- function(split, shapelet_sizes, num_shapelets, progress 
       exclusion_length <- shapelet_sizes[i]
       start_index <- max(1, (plato_index - exclusion_length))
       end_index <- min(length(true_alarms_val), ceiling(plato_index + shapelet_sizes[i] - 1 + exclusion_length))
+
+      plato_twin_indices[ki] <- self_mpi[plato_index]
+      platos_twin[, ki] <- true_alarms_val[plato_twin_indices[ki]:(plato_twin_indices[ki] + shapelet_sizes[i] - 1)]
+
       past_plato <- true_alarms_val[start_index:end_index]
     }
 
     result[[as.character(shapelet_sizes[i])]] <- list(
       cps = cps, platos = platos, plato_indices = plato_indices,
+      platos_twin = platos_twin, plato_twin_indices = plato_twin_indices,
       plato_primary_contrast = plato_primary_contrast, plato_nary_contrast = plato_nary_contrast
     )
   }
