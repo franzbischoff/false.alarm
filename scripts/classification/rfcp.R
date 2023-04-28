@@ -137,7 +137,7 @@ rf_matrix_profile <- function(ts_a, ts_b, window_size, max_k) {
       next
     }
 
-    dp <- dist_profile(ts_b_no_nan, subsequence) #  / sqrt(window_size) # why original code does this?
+    dp <- dist_profile(ts_b_no_nan, subsequence) / sqrt(window_size) # why original code does this?
 
     for (nan_idx in 1:(length(ts_b) - window_size + 1)) {
       if (is.na(ts_b[nan_idx])) {

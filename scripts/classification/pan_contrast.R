@@ -106,7 +106,233 @@ get_pan_contrast <- function(contrast_profiles, position = 1, repad = FALSE) {
   return(pan_cp)
 }
 
-plot_topk_distances <- function(data, contrast_profiles, window_size) {
+score_by_segment_window <- function(true_data, false_data, contrast_profiles) {
+  checkmate::qassert(contrast_profiles, "L+")
+
+  w_sizes <- names(contrast_profiles)
+  c_sizes <- as.numeric(w_sizes)
+
+  segs <- list()
+  cont <- matrix(Inf, ncol = length(w_sizes), nrow = ncol(contrast_profiles[[1]]$cps))
+
+  for (i in seq_along(c_sizes)) {
+    tp <- topk_distance_profiles(true_data, contrast_profiles, c_sizes[i])
+    fp <- topk_distance_profiles(false_data, contrast_profiles, c_sizes[i])
+    segments <- unique(c(seq(0, nrow(tp), by = 2800), nrow(tp)))
+
+    knn <- ncol(tp)
+
+    seg <- matrix(0, ncol = length(segments) - 1, nrow = knn)
+
+    for (k in seq_len(knn)) {
+      tpk <- tp[, k]
+      # if (k > 1) {
+      #   tpk <- apply(tpk, 1, min)
+      # }
+      fpk <- fp[, k]
+      fpk_min <- min(fpk, na.rm = TRUE)
+      max_min <- NULL
+
+      for (j in seq_along(segments)) {
+        if (j < length(segments)) {
+          sm <- tpk[seq(segments[j] + 1, segments[j + 1])]
+          sm <- sm[sm < fpk_min] # filter out the ones that are bigger than the min
+
+          if (length(sm) > 0) {
+            # get the 10% percentile of the values
+            # this gives us a hint of how well the shapelet is doing by segment
+            max_min <- c(max_min, quantile(sm, 0.1, na.rm = TRUE))
+            seg[k, j] <- 1
+          }
+        }
+      }
+
+      if (!is.null(max_min)) {
+        # stores the overall contrast of the shapelet across segments
+        cont[k, i] <- (fpk_min - quantile(max_min, 1 / 3, na.rm = TRUE)) / sqrt(2 * c_sizes[i])
+      } else {
+        cont[k, i] <- 0
+      }
+    }
+    segs[[w_sizes[i]]] <- seg
+  }
+
+  total_counts <- as.matrix(purrr::map_dfr(segs, function(x) apply(x, 1, sum)))
+  colnames(cont) <- w_sizes
+
+  # NOTE: cont and segs seems to complement each other
+  # cont is similar to plot_topk_contrasts (contrasts values by k vs shapelet size)
+  # but it is more specific, since it takes into account the segments and not just the
+  # best contrast.
+
+  # cont == best overall contrast (specific)
+  # segs == best coverage by segment (sensitive)
+  list(contrast = cont, coverage = segs, cov_counts = total_counts)
+
+  ## TODO: fazer contagem individual de cada segmento
+  ## TODO: ver metodo para combinar os OR's
+
+  # library(purrr)
+  # total_hist <- t(map_dfr(score[[2]], function(x) apply(x, 1, sum)))
+
+
+  # tp <- topk_distance_profiles(true_data, contrast_profiles, c_sizes[i])
+  # tp <- tp[, 1:k]
+  # tp <- apply(tp, 1, min)
+  # fp <- topk_distance_profiles(false_data, contrast_profiles, c_sizes[i])
+  # fp <- fp[, 1:k]
+  # min_f <- min(fp)
+
+
+  # bb <- map(aa, function(x) {
+  #   x <- apply(x, 1, sum)
+  #   x
+  # })
+
+
+  # hit <- 0
+
+  # for (j in seq_along(segments)) {
+  #   if (j < length(segments)) {
+  #     sm <- min(tp[seq(segments[j] + 1, segments[j + 1])])
+
+  #     if (sm < min_f) {
+  #       seg[j] <- seg[j] + 1
+  #       hit <- hit + 1
+  #     }
+  #   }
+  # }
+
+  # score <- hit / (length(segments) - 1)
+
+  # scores <- c(scores, score)
+  # }
+
+
+  # for (i in seq_along(c_sizes)) {
+  #   tp <- topk_distance_profiles(true_data, contrast_profiles, c_sizes[i])
+  #   tp <- tp[, 1:k]
+  #   tp <- apply(tp, 1, min)
+  #   fp <- topk_distance_profiles(false_data, contrast_profiles, c_sizes[i])
+  #   fp <- fp[, 1:k]
+  #   min_f <- min(fp)
+
+  #   segments <- unique(c(seq(0, length(tp), by = 2800), length(tp)))
+
+  #   hit <- 0
+
+  #   for (j in seq_along(segments)) {
+  #     if (j < length(segments)) {
+  #       sm <- min(tp[seq(segments[j] + 1, segments[j + 1])])
+
+  #       if (sm < min_f) {
+  #         seg[j] <- seg[j] + 1
+  #         hit <- hit + 1
+  #       }
+  #     }
+  #   }
+
+  #   score <- hit / (length(segments) - 1)
+
+  #   scores <- c(scores, score)
+  # }
+
+  # list(scores = scores, segs = seg)
+
+  # plot(pt, type = "l")
+  # abline(v = seq(0, length(pt), by = 2800), col = "red")
+  # abline(h = mt, col = "green")
+  # i <- i + 1
+  # i <- 1
+}
+
+score_candidates <- function(score) {
+  data <- NULL
+
+  for (i in seq_len(nrow(score$contrast))) {
+    for (j in names(score$coverage)) {
+      aa <- tibble::tibble_row(
+        window = j,
+        k = i,
+        contrast = score$contrast[i, j],
+        cov_sum = sum(score$coverage[[j]][i, ]),
+        cov_idxs = list(score$coverage[[j]][i, ])
+      )
+      data <- dplyr::bind_rows(data, aa)
+    }
+  }
+
+  data <- data |> dplyr::filter(cov_sum > 0)
+
+  return(data)
+}
+
+find_solutions <- function(score, n = 5, rep = 2000, red = 5, cov = 17) {
+  sols <- list()
+
+  cli::cli_progress_bar("Finding solutions",
+    total = rep,
+    format = "{cli::pb_spin} Finding solutions {cli::pb_bar} {cli::pb_percent} | {cli::pb_eta}"
+  )
+
+  score <- score |> dplyr::filter(cov_sum > 1)
+
+
+  for (i in seq_len(rep)) {
+    cli::cli_progress_update()
+    samples <- round(runif(1, 1, n))
+    some_rows <- dplyr::slice_sample(score, n = samples)
+    coverage <- matrix(unlist(some_rows$cov_idxs), ncol = length(some_rows$cov_idxs[[1]]), byrow = TRUE)
+    coverage <- apply(coverage, 2, sum)
+    redundance <- sum(coverage > 1)
+    if (redundance > red) next
+    coverage <- sum(coverage > 0)
+    if (coverage < cov) next
+    sols[[i]] <- list(
+      c_total = sum(some_rows$contrast), c_median = median(some_rows$contrast), c_mean = mean(some_rows$contrast),
+      c_sd = sd(some_rows$contrast), coverage = coverage, redundance = redundance, samples = samples, cand = some_rows
+    )
+  }
+
+  sols <- list_dfr(sols)
+  sols <- tidyr::nest(sols, data = cand)
+
+  cli::cli_progress_done()
+
+  return(sols)
+}
+
+list_dfr <- function(x) {
+  x <- purrr::map(x, function(x) {
+    x <- tibble::as_tibble(x)
+    x
+  }) |> purrr::list_rbind()
+
+  return(x)
+}
+
+plot_best_candidates <- function(solutions, contrast_profiles) {
+  solutions <- solutions |> dplyr::arrange(as.numeric(window))
+
+  cat(str(solutions))
+
+  max_len <- max(as.numeric(solutions$window))
+  num_platos <- nrow(solutions)
+
+  platos <- matrix(NA, ncol = num_platos, nrow = max_len)
+
+  for (i in seq_len(num_platos)) {
+    pl <- contrast_profiles$pan[[solutions$window[i]]]$platos[, solutions$k[i]]
+    platos[seq_along(pl), i] <- pl
+  }
+
+  plot.ts(platos, nc = 1)
+  return(platos)
+}
+
+
+
+topk_distance_profiles <- function(data, contrast_profiles, window_size) {
   checkmate::qassert(contrast_profiles, "L+")
 
   w_sizes <- names(contrast_profiles)
@@ -117,11 +343,14 @@ plot_topk_distances <- function(data, contrast_profiles, window_size) {
   }
 
   platos <- contrast_profiles[[w_size]]$platos
+  platos_twin <- contrast_profiles[[w_size]]$platos_twin
 
   dps <- matrix(NA, ncol = ncol(platos), nrow = length(data) - window_size + 1)
 
   for (i in seq_len(ncol(platos))) {
-    dps[, i] <- dist_profile(data, platos[, i])
+    query <- (platos[, i] + platos_twin[, i]) / 2
+    # query <- platos[, i]
+    dps[, i] <- dist_profile(data, query)
   }
 
   return(dps)
@@ -578,12 +807,21 @@ contrastprofile_topk <- function(split, shapelet_sizes, num_shapelets, progress 
 
   idxs <- (split$data$alarm == "true")
 
+  true_alarms <- NULL
+  false_alarms <- NULL
+
+  for (i in seq_along(idxs)) {
+    if (isTRUE(idxs[i])) {
+      true_alarms <- c(true_alarms, rnorm(300), split$data$values[[i]])
+    } else {
+      false_alarms <- c(false_alarms, rnorm(300), split$data$values[[i]])
+    }
+  }
+
   # time series containing at least two instances of a desired behavior
-  true_alarms <- unlist(split$data$values[idxs])
   true_alarms <- as.numeric(true_alarms[!is.na(true_alarms)])
 
   # time series containing zero instances of a desired behavior
-  false_alarms <- unlist(split$data$values[!idxs])
   false_alarms <- as.numeric(false_alarms[!is.na(false_alarms)])
 
   true_alarms_val <- validate_data(true_alarms, 20)
@@ -701,7 +939,7 @@ contrastprofile_topk <- function(split, shapelet_sizes, num_shapelets, progress 
     )
   }
 
-  return(result)
+  return(list(pan = result, positive = true_alarms, negative = false_alarms))
 }
 
 kneed <- function(contrasts) {
@@ -796,4 +1034,13 @@ pan_contrast <- function(data_pos_neg, signal = "II", shapelet_sizes) {
   result[[signal]] <- class_result
 
   return(result)
+}
+
+get_exp_dist_series <- function(start, end, steps) {
+  power_min <- log10(start)
+  power_max <- log10(end)
+  power_step <- (power_max - power_min) / steps
+  powers <- seq(power_min, power_max, by = power_step)
+  series <- unique(ceiling(10^powers))
+  return(series)
 }

@@ -54,7 +54,7 @@ tar_option_set(
 )
 
 # var_shapelet_size <- c(120, 300, 1000) # c(30, 60, 120, 180, 300) # c(150, 300)
-var_shapelet_sizes <- c(20, 60, 100, 140, 180, 220, 260, 300)
+var_shapelet_sizes <- get_exp_dist_series(20, 600, 30) # c(20, 60, 100, 140, 180, 220, 260, 300)
 var_positive <- TRUE # c(TRUE, FALSE)
 var_num_shapelets <- 10
 var_num_neighbors <- 10
@@ -235,7 +235,7 @@ list(
     cp_first_half,
     {
       # TODO: change to analysis_split
-      shapelet_sizes <- var_shapelet_sizes
+      shapelet_sizes <- var_shapelet_sizes[1:15]
 
       class(assessment_split) <- c("manual_rset", "rset", class(assessment_split))
 
@@ -298,7 +298,7 @@ list(
     # TODO: change to analysis_split
     cp_second_half,
     {
-      shapelet_sizes <- (var_shapelet_sizes + 20)
+      shapelet_sizes <- var_shapelet_sizes[16:30]
 
       class(assessment_split) <- c("manual_rset", "rset", class(assessment_split))
 
@@ -309,6 +309,31 @@ list(
       }
 
       res
+
+      # pt <- plot_topk_distances(true_alarms, res, as.numeric(shapelet_sizes[i]))
+      # pt <- apply(pt, 1, min)
+      # nt <- plot_topk_distances(false_alarms, res, as.numeric(shapelet_sizes[i]))
+      # # nt <- apply(nt, 1, min)
+      # mt <- min(nt)
+      # # plot(nt, type = "l")
+      # # abline(v = seq(0, length(nt), by=2800), col = "red")
+      # plot(pt, type = "l")
+      # abline(v = seq(0, length(pt), by = 2800), col = "red")
+      # abline(h = mt, col = "green")
+      # i <- i + 1
+      # i <- 1
+
+
+      # for (i in shapelet_sizes) {
+      #   pt <- plot_topk_distances(true_alarms_val, res, as.numeric(i))
+      #   plot.ts(pt, nc = 1)
+      #   mpt <- max(apply(pt, 2, min))
+      #   cli::cli_bullets("min true {mpt}")
+      #   nt <- plot_topk_distances(false_alarms_val, res, as.numeric(i))
+      #   mnt <- min(apply(nt, 2, min))
+      #   cli::cli_bullets("min false {mnt}")
+      #   cli::cli_bullets("c {mnt - mpt}")
+      # }
 
       # z <- matrix(0, nrow = length(shapelet_sizes), ncol = length(validate_data[[1]]$contrast_profile))
 
