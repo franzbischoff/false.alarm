@@ -25,6 +25,16 @@
 #   return(result)
 # }
 
+## sequence:
+# res <- readRDS("dev/topk.rds"); sols <- res$sols; res <- res$res
+# source("/workspace/false.alarm/scripts/classification/pan_contrast.R", encoding = "UTF-8")
+# library(false.alarm)
+# score <- score_by_segment_window(res$positive, res$negative, res$pan)
+# aa <- score_candidates(score)
+# bb <- find_solutions(aa, cov = 10, n = 10, rep = 100000, red = 10); View(bb)
+# plt <- plot_best_candidates(bb$data[[22]]$cand, res$pan[[22]])
+
+
 
 get_pan_platos <- function(contrast_profiles, position = 1) {
   checkmate::qassert(contrast_profiles, "L+")
@@ -282,17 +292,85 @@ find_solutions <- function(score, n = 5, rep = 2000, red = 5, cov = 17) {
     cli::cli_progress_update()
     samples <- round(runif(1, 1, n))
     some_rows <- dplyr::slice_sample(score, n = samples)
-    coverage <- matrix(unlist(some_rows$cov_idxs), ncol = length(some_rows$cov_idxs[[1]]), byrow = TRUE)
-    coverage <- apply(coverage, 2, sum)
-    redundance <- sum(coverage > 1)
-    if (redundance > red) next
-    coverage <- sum(coverage > 0)
-    if (coverage < cov) next
+    n_cols <- length(some_rows$cov_idxs[[1]])
+    sample_data <- matrix(unlist(some_rows$cov_idxs), ncol = n_cols, byrow = TRUE)
+    data_coverage <- apply(sample_data, 2, sum)
+
+    redundance <- sum(data_coverage > 1)
+    if (redundance > red) {
+      next
+    }
+
+    coverage <- sum(data_coverage > 0)
+    if (coverage < cov) {
+      next
+    }
+
+    # cli::cli_alert_info("sample_data i={i}.")
+
+    keep_rows <- list()
+
+    if (nrow(sample_data) > 2) {
+      # test for rows of samples that don't zero the column sum and may be dropped
+      cc <- data_coverage
+      for (j in seq((nrow(sample_data) - 1), 2)) {
+        comb <- combn(seq_len(nrow(sample_data)), j)
+
+        for (k in seq_len(ncol(comb))) {
+          rr <- sample_data[comb[, k], , drop = FALSE]
+          rr <- apply(rr, 2, sum)
+          if (!any(rr[(rr & cc)] == cc[(rr & cc)])) {
+            keep <- setdiff(seq_len(nrow(sample_data)), comb[, k])
+            keep_rows <- c(keep_rows, list(keep))
+          }
+        }
+        if (length(keep_rows) > 0) {
+          break
+        }
+      }
+    }
+
+    if (length(keep_rows) == 0) {
+      keep_rows <- list(seq_len(nrow(sample_data)))
+    } else if (length(keep_rows) > 1) {
+      new_rows <- NULL
+      for (j in seq_len(length(keep_rows))) {
+        temp <- dplyr::bind_cols(idx = j, some_rows[keep_rows[[j]], ])
+        new_rows <- dplyr::bind_rows(new_rows, temp)
+      }
+
+      new_rows <- new_rows |>
+        dplyr::group_by(idx) |>
+        dplyr::summarise(
+          sk = sum(k), sc = sum(contrast),
+          sid = sum(unlist(cov_idxs)), redun = sum(apply(matrix(unlist(cov_idxs), ncol = n_cols, byrow = TRUE), 2, sum) > 1)
+        )
+      new_rows <- new_rows |>
+        dplyr::arrange(sk, desc(sc), sid, redun) |>
+        dplyr::slice_head(n = 1)
+      new_idx <- new_rows |> dplyr::pull(idx)
+      some_rows <- some_rows[keep_rows[[new_idx]], ]
+
+      samples <- length(keep_rows[[new_idx]])
+      data_coverage <- apply(matrix(unlist(some_rows$cov_idxs), ncol = n_cols, byrow = TRUE), 2, sum)
+      redundance <- sum(data_coverage > 1)
+      coverage <- sum(data_coverage > 0)
+    } else {
+      some_rows <- some_rows[keep_rows[[1]], ]
+    }
+
+    # ties: < sum(k), > sum(contrast), < sum(idxs), < sum(data_coverage > 1) // redundance
+
+    # cli::cli_alert_info("sols i={i}, length(keep_rows) {length(keep_rows)}, length(keep_rows[[1]]) {length(keep_rows[[1]])}.")
+
     sols[[i]] <- list(
       c_total = sum(some_rows$contrast), c_median = median(some_rows$contrast), c_mean = mean(some_rows$contrast),
-      c_sd = sd(some_rows$contrast), coverage = coverage, redundance = redundance, samples = samples, cand = some_rows
+      c_sd = sd(some_rows$contrast), coverage = coverage, redundance = redundance,
+      samples = samples, cand = some_rows
     )
   }
+
+  cli::cli_alert_info("done.")
 
   sols <- list_dfr(sols)
   sols <- tidyr::nest(sols, data = cand)
@@ -311,6 +389,15 @@ list_dfr <- function(x) {
   return(x)
 }
 
+list_dfc <- function(x) {
+  x <- purrr::map(x, function(x) {
+    x <- tibble::as_tibble(x)
+    x
+  }) |> purrr::list_cbind()
+
+  return(x)
+}
+
 plot_best_candidates <- function(solutions, contrast_profiles) {
   solutions <- solutions |> dplyr::arrange(as.numeric(window))
 
@@ -323,10 +410,12 @@ plot_best_candidates <- function(solutions, contrast_profiles) {
 
   for (i in seq_len(num_platos)) {
     pl <- contrast_profiles$pan[[solutions$window[i]]]$platos[, solutions$k[i]]
+    pl[is.infinite(pl)] <- NA
     platos[seq_along(pl), i] <- pl
   }
 
   plot.ts(platos, nc = 1)
+  # plt <- plot_best_candidates(bb$data[[22]]$cand, res)
   return(platos)
 }
 
