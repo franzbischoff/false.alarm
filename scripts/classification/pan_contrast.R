@@ -31,10 +31,17 @@
 # library(false.alarm)
 # score <- score_by_segment_window(res$positive, res$negative, res$pan)
 # aa <- score_candidates(score)
-# bb <- find_solutions(aa, cov = 10, n = 10, rep = 100000, red = 10); View(bb)
-# plt <- plot_best_candidates(bb$data[[22]]$cand, res$pan[[22]])
+# bb <- find_solutions(aa, cov = 18, n = 10, rep = 100000, red = 10); View(bb)
+#  jj <- bb %>% dplyr::filter(coverage == max(coverage), c_median > max(c_median)/2, c_sd > max(c_sd)/2) %>%
+#  dplyr::filter(redundance == min(redundance)) %>% dplyr::arrange(c_sd) %>%
+#  dplyr::filter(samples == min(samples)) %>% dplyr::slice_head(n = 1)
+# plt <- plot_best_candidates(jj$data[[1]], res)
 
+# bb %>% dplyr::select(2:7) %>% dplyr::filter(coverage < 20) %>% ggpairs(aes(alpha = 0.05), lower = list(continuous = "smooth"))
 
+# samples vs redundance
+# coverage x redundance
+# sd vs mean
 
 get_pan_platos <- function(contrast_profiles, position = 1) {
   checkmate::qassert(contrast_profiles, "L+")
@@ -278,7 +285,7 @@ score_candidates <- function(score) {
 }
 
 find_solutions <- function(score, n = 5, rep = 2000, red = 5, cov = 17) {
-  sols <- list()
+  # sols <- list()
 
   cli::cli_progress_bar("Finding solutions",
     total = rep,
@@ -288,8 +295,11 @@ find_solutions <- function(score, n = 5, rep = 2000, red = 5, cov = 17) {
   score <- score |> dplyr::filter(cov_sum > 1)
 
 
-  for (i in seq_len(rep)) {
-    cli::cli_progress_update()
+  # for (i in seq_len(rep)) {
+  future::plan(future::multisession, workers = 4)
+  reps <- seq_len(rep)
+  sols <- furrr::future_map(reps, function(i) {
+    # cli::cli_progress_update()
     samples <- round(runif(1, 1, n))
     some_rows <- dplyr::slice_sample(score, n = samples)
     n_cols <- length(some_rows$cov_idxs[[1]])
@@ -298,12 +308,12 @@ find_solutions <- function(score, n = 5, rep = 2000, red = 5, cov = 17) {
 
     redundance <- sum(data_coverage > 1)
     if (redundance > red) {
-      next
+      return(NULL)
     }
 
     coverage <- sum(data_coverage > 0)
     if (coverage < cov) {
-      next
+      return(NULL)
     }
 
     # cli::cli_alert_info("sample_data i={i}.")
@@ -330,8 +340,15 @@ find_solutions <- function(score, n = 5, rep = 2000, red = 5, cov = 17) {
       }
     }
 
-    if (length(keep_rows) == 0) {
-      keep_rows <- list(seq_len(nrow(sample_data)))
+    # if (length(keep_rows) == 0) {
+    #   keep_rows <- list(seq_len(nrow(sample_data)))
+    # } else
+    if (length(keep_rows) == 1) {
+      some_rows <- some_rows[keep_rows[[1]], ]
+      samples <- length(keep_rows[[1]])
+      data_coverage <- apply(matrix(unlist(some_rows$cov_idxs), ncol = n_cols, byrow = TRUE), 2, sum)
+      redundance <- sum(data_coverage > 1)
+      coverage <- sum(data_coverage > 0)
     } else if (length(keep_rows) > 1) {
       new_rows <- NULL
       for (j in seq_len(length(keep_rows))) {
@@ -342,11 +359,12 @@ find_solutions <- function(score, n = 5, rep = 2000, red = 5, cov = 17) {
       new_rows <- new_rows |>
         dplyr::group_by(idx) |>
         dplyr::summarise(
-          sk = sum(k), sc = sum(contrast),
-          sid = sum(unlist(cov_idxs)), redun = sum(apply(matrix(unlist(cov_idxs), ncol = n_cols, byrow = TRUE), 2, sum) > 1)
+          sk = sum(k), mc = median(contrast),
+          sid = sum(unlist(cov_idxs)),
+          redun = sum(apply(matrix(unlist(cov_idxs), ncol = n_cols, byrow = TRUE), 2, sum) > 1)
         )
       new_rows <- new_rows |>
-        dplyr::arrange(sk, desc(sc), sid, redun) |>
+        dplyr::arrange(sk, desc(mc), sid, redun) |>
         dplyr::slice_head(n = 1)
       new_idx <- new_rows |> dplyr::pull(idx)
       some_rows <- some_rows[keep_rows[[new_idx]], ]
@@ -355,25 +373,27 @@ find_solutions <- function(score, n = 5, rep = 2000, red = 5, cov = 17) {
       data_coverage <- apply(matrix(unlist(some_rows$cov_idxs), ncol = n_cols, byrow = TRUE), 2, sum)
       redundance <- sum(data_coverage > 1)
       coverage <- sum(data_coverage > 0)
-    } else {
-      some_rows <- some_rows[keep_rows[[1]], ]
     }
 
-    # ties: < sum(k), > sum(contrast), < sum(idxs), < sum(data_coverage > 1) // redundance
+    # ties: < sum(k), > median(contrast), < sum(idxs), < sum(data_coverage > 1), < sum(redundance)
 
     # cli::cli_alert_info("sols i={i}, length(keep_rows) {length(keep_rows)}, length(keep_rows[[1]]) {length(keep_rows[[1]])}.")
 
-    sols[[i]] <- list(
+    # sols[[i]] <- list(
+    list(
       c_total = sum(some_rows$contrast), c_median = median(some_rows$contrast), c_mean = mean(some_rows$contrast),
-      c_sd = sd(some_rows$contrast), coverage = coverage, redundance = redundance,
+      c_sd = ifelse(length(some_rows$contrast) > 1, sd(some_rows$contrast, na.rm = TRUE), 0), coverage = coverage, redundance = redundance,
       samples = samples, cand = some_rows
     )
-  }
+  }, .options = furrr::furrr_options(seed = 2023))
+
+  sols <- list_dfr(sols)
+  sols <- tidyr::unnest(sols, cols = cand) |>
+    dplyr::distinct_all() |>
+    tidyr::nest(data = c(window, k, contrast, cov_sum, cov_idxs))
 
   cli::cli_alert_info("done.")
 
-  sols <- list_dfr(sols)
-  sols <- tidyr::nest(sols, data = cand)
 
   cli::cli_progress_done()
 
