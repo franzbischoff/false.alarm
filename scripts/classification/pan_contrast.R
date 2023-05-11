@@ -32,9 +32,12 @@
 # score <- score_by_segment_window(res$positive, res$negative, res$pan)
 # aa <- score_candidates(score)
 # bb <- find_solutions(aa, cov = 18, n = 10, rep = 100000, red = 10); View(bb)
-#  jj <- bb %>% dplyr::filter(coverage == max(coverage), c_median > max(c_median)/2, c_sd > max(c_sd)/2) %>%
-#  dplyr::filter(redundance == min(redundance)) %>% dplyr::arrange(c_sd) %>%
-#  dplyr::filter(samples == min(samples)) %>% dplyr::slice_head(n = 1)
+# jj <- bb %>%
+#   dplyr::filter(coverage == max(coverage), c_median > max(c_median) / 2, c_sd > max(c_sd) / 2) %>%
+#   dplyr::filter(redundance == min(redundance)) %>%
+#   dplyr::arrange(c_sd) %>%
+#   dplyr::filter(samples == min(samples)) %>%
+#   dplyr::slice_head(n = 1)
 # plt <- plot_best_candidates(jj$data[[1]], res)
 
 # bb %>% dplyr::select(2:7) %>% dplyr::filter(coverage < 20) %>% ggpairs(aes(alpha = 0.05), lower = list(continuous = "smooth"))
@@ -43,87 +46,28 @@
 # coverage x redundance
 # sd vs mean
 
-get_pan_platos <- function(contrast_profiles, position = 1) {
-  checkmate::qassert(contrast_profiles, "L+")
+# get_pan_platos <- function(contrast_profiles, position = 1) {
+#   checkmate::qassert(contrast_profiles, "L+")
 
-  "!DEBUG Get First Pan CP"
-  w_sizes <- names(contrast_profiles)
-  n_sizes <- as.numeric(w_sizes)
-  max_size <- max(n_sizes)
+#   "!DEBUG Get First Pan CP"
+#   w_sizes <- names(contrast_profiles)
+#   n_sizes <- as.numeric(w_sizes)
+#   max_size <- max(n_sizes)
 
-  pan_platos <- matrix(NA, ncol = length(w_sizes), nrow = max_size)
+#   pan_platos <- matrix(NA, ncol = length(w_sizes), nrow = max_size)
 
-  for (i in seq_len(length(w_sizes))) {
-    padded <- c(contrast_profiles[[i]]$platos[, position], rep(NA, max_size - n_sizes[i]))
-    pan_platos[, i] <- padded
-  }
+#   for (i in seq_len(length(w_sizes))) {
+#     padded <- c(contrast_profiles[[i]]$platos[, position], rep(NA, max_size - n_sizes[i]))
+#     pan_platos[, i] <- padded
+#   }
 
-  colnames(pan_platos) <- w_sizes
-  return(pan_platos)
-}
-
-plot_topk_contrasts <- function(contrast_profiles, type = c("contour", "heatmap"), colorscale = "Viridis") {
-  checkmate::qassert(contrast_profiles, "L+")
-  type <- match.arg(type)
-
-  w_sizes <- names(contrast_profiles)
-  k <- length(contrast_profiles[[1]]$plato_nary_contrast)
-
-  pan_topk <- matrix(NA, ncol = k, nrow = length(w_sizes))
-
-  for (i in seq_len(length(w_sizes))) {
-    pan_topk[i, ] <- contrast_profiles[[i]]$plato_nary_contrast
-  }
-
-  rownames(pan_topk) <- w_sizes
-
-  if (type == "heatmap") {
-    return(plotly::plot_ly(
-      y = w_sizes,
-      z = pan_topk,
-      type = "heatmap",
-      colorscale = colorscale
-    ))
-  } else {
-    plotly::plot_ly(
-      y = w_sizes, type = "contour", z = pan_topk,
-      contours = list(showlabels = TRUE),
-      colorscale = colorscale
-    )
-  }
-}
-
-
-get_pan_contrast <- function(contrast_profiles, position = 1, repad = FALSE) {
-  checkmate::qassert(contrast_profiles, "L+")
-
-  "!DEBUG Get First Pan CP"
-  w_sizes <- names(contrast_profiles)
-  n_sizes <- as.numeric(w_sizes)
-  cp_len <- nrow(contrast_profiles[[1]]$cps)
-
-  pan_cp <- matrix(NA, ncol = length(w_sizes), nrow = cp_len)
-
-  for (i in seq_len(length(w_sizes))) {
-    # adding NA to the left makes a better pan plot, since we are working with streams, we look backwards
-    if (repad == TRUE) {
-      values <- c(rep(NA, n_sizes[i]), contrast_profiles[[i]]$cps[1:(cp_len - n_sizes[i]), position])
-    } else {
-      values <- c(contrast_profiles[[i]]$cps[1:(cp_len - n_sizes[i]), position], rep(NA, n_sizes[i]))
-    }
-    # pan_cp[, i] <- contrast_profiles[[i]]$cps[, 1]
-    pan_cp[, i] <- values
-    # print(paste("Plotting Pan Contrast Profile for shapelet size", i, "name", names(contrast_profiles[[i]])))
-    # res <- pan_contrast[[as.character(i)]]
-    # plot_contrast(res, i, num_shapelets)
-  }
-
-
-  colnames(pan_cp) <- w_sizes
-  return(pan_cp)
-}
+#   colnames(pan_platos) <- w_sizes
+#   return(pan_platos)
+# }
 
 score_by_segment_window <- function(true_data, false_data, contrast_profiles) {
+  checkmate::qassert(true_data, "N+")
+  checkmate::qassert(false_data, "N+")
   checkmate::qassert(contrast_profiles, "L+")
 
   w_sizes <- names(contrast_profiles)
@@ -264,6 +208,7 @@ score_by_segment_window <- function(true_data, false_data, contrast_profiles) {
 }
 
 score_candidates <- function(score) {
+  checkmate::qassert(score, "L+")
   data <- NULL
 
   for (i in seq_len(nrow(score$contrast))) {
@@ -279,7 +224,9 @@ score_candidates <- function(score) {
     }
   }
 
-  data <- data |> dplyr::filter(cov_sum > 0)
+  data <- data |>
+    dplyr::filter(cov_sum > 0, contrast > 0.1) |>
+    dplyr::mutate(cov_con = log10(cov_sum) * (1 / -log(contrast)), .before = cov_idxs)
 
   return(data)
 }
@@ -381,6 +328,7 @@ find_solutions <- function(score, n = 5, rep = 2000, red = 5, cov = 17, n_jobs =
         # sols[[i]] <- list(
         list(
           c_total = sum(some_rows$contrast), c_median = median(some_rows$contrast), c_mean = mean(some_rows$contrast),
+          cov_mean = mean(some_rows$cov_con),
           c_sd = ifelse(length(some_rows$contrast) > 1, sd(some_rows$contrast, na.rm = TRUE), 0), coverage = coverage, redundance = redundance,
           samples = samples, cand = some_rows
         )
@@ -393,7 +341,7 @@ find_solutions <- function(score, n = 5, rep = 2000, red = 5, cov = 17, n_jobs =
   sols <- list_dfr(sols)
   sols <- tidyr::unnest(sols, cols = cand) |>
     dplyr::distinct_all() |>
-    tidyr::nest(data = c(window, k, contrast, cov_sum, cov_idxs))
+    tidyr::nest(data = c(window, k, contrast, cov_sum, cov_con, cov_idxs))
 
   cli::cli_alert_info("done.")
 
@@ -418,29 +366,9 @@ list_dfc <- function(x) {
   return(x)
 }
 
-plot_best_candidates <- function(solutions, contrast_profiles) {
-  solutions <- solutions |> dplyr::arrange(as.numeric(window))
-
-  cat(str(solutions))
-
-  max_len <- max(as.numeric(solutions$window))
-  num_platos <- nrow(solutions)
-
-  platos <- matrix(NA, ncol = num_platos, nrow = max_len)
-
-  for (i in seq_len(num_platos)) {
-    pl <- contrast_profiles$pan[[solutions$window[i]]]$platos[, solutions$k[i]]
-    pl[is.infinite(pl)] <- NA
-    platos[seq_along(pl), i] <- pl
-  }
-
-  plot.ts(platos, nc = 1)
-  # plt <- plot_best_candidates(bb$data[[22]]$cand, res)
-  return(platos)
-}
 
 
-
+# computes the distance profile of all given platos against the given data
 topk_distance_profiles <- function(data, contrast_profiles, window_size) {
   checkmate::qassert(contrast_profiles, "L+")
 
@@ -463,440 +391,6 @@ topk_distance_profiles <- function(data, contrast_profiles, window_size) {
   }
 
   return(dps)
-}
-
-plot_pan_contrast <- function(pan_cp, plot_type = c("heatmap", "surface"), mode = c("all", "max", "max_idx")) {
-  checkmate::qassert(pan_cp, "m")
-  plot_type <- match.arg(plot_type)
-  mode <- match.arg(mode)
-
-  "!DEBUG Plot Pan CP"
-
-  w_sizes <- colnames(pan_cp)
-  c_sizes <- as.numeric(w_sizes)
-
-  steps <- list()
-
-  min_val <- 0
-  max_val <- round(max(pan_cp, na.rm = TRUE), 2)
-
-  z <- t(pan_cp)
-
-  max_contrast <- round(max(z, na.rm = TRUE), 5)
-  max_by_idx <- apply(z, 2, function(x) {
-    x[is.na(x)] <- 0
-    round(max(x, na.rm = TRUE), 5)
-  })
-  max_idx <- which(max_by_idx == max_contrast)
-  profile <- z[, max_idx]
-  max_window <- c_sizes[which.max(profile)]
-
-  fig <- NULL
-
-  if (mode == "max") {
-    xx <- apply(z, 1, function(x) {
-      which.max(x)
-    })
-    mm <- as.numeric(apply(z, 1, function(x) {
-      max(x, na.rm = TRUE)
-    }))
-    min_plato <- round(min(mm, na.rm = TRUE), 2)
-
-    values <- seq(min_val, max_val, by = 0.01)
-    for (i in seq_along(values)) {
-      step <- list(
-        label = values[i], method = "restyle", args = list("marker.cmin", values[i])
-      )
-      steps[[i]] <- step
-    }
-
-    fig <- plotly::plot_ly(
-      x = xx,
-      y = c_sizes,
-      text = round(mm, 4),
-      type = "scatter",
-      mode = "markers",
-      hoverinfo = "x+y+text",
-      marker = list(
-        colorscale = "Blackbody",
-        colorbar = list(title = "Contrast"),
-        reversescale = TRUE,
-        showscale = TRUE,
-        size = 15,
-        color = mm
-      )
-    ) %>% plotly::layout(
-      xaxis = list(
-        title = "Time",
-        range = c(0, ncol(z))
-      ),
-      yaxis = list(
-        title = "Window Size"
-      ),
-      sliders = list(
-        list(steps = steps, pad = list(t = 30), active = floor(min_plato / 0.01))
-      ),
-      updatemenus = list(
-        list(
-          type = "dropdown",
-          buttons = list(
-            list(
-              method = "restyle",
-              args = list("marker.colorscale", "Blackbody"),
-              label = "Blackbody"
-            ),
-            list(
-              method = "restyle",
-              args = list("marker.colorscale", "Jet"),
-              label = "Jet"
-            ),
-            list(
-              method = "restyle",
-              args = list("marker.colorscale", "Viridis"),
-              label = "Viridis"
-            ),
-            list(
-              method = "restyle",
-              args = list("marker.colorscale", "Bluered"),
-              label = "Bluered"
-            ),
-            list(
-              method = "restyle",
-              args = list("marker.colorscale", "Blues"),
-              label = "Blues"
-            ),
-            list(
-              method = "restyle",
-              args = list("marker.colorscale", "Cividis"),
-              label = "Cividis"
-            ),
-            list(
-              method = "restyle",
-              args = list("marker.colorscale", "Earth"),
-              label = "Earth"
-            ),
-            list(
-              method = "restyle",
-              args = list("marker.colorscale", "Electric"),
-              label = "Electric"
-            ),
-            list(
-              method = "restyle",
-              args = list("marker.colorscale", "Greens"),
-              label = "Greens"
-            ),
-            list(
-              method = "restyle",
-              args = list("marker.colorscale", "Greys"),
-              label = "Greys"
-            ),
-            list(
-              method = "restyle",
-              args = list("marker.colorscale", "Hot"),
-              label = "Hot"
-            ),
-            list(
-              method = "restyle",
-              args = list("marker.colorscale", "Picnic"),
-              label = "Picnic"
-            ),
-            list(
-              method = "restyle",
-              args = list("marker.colorscale", "Portland"),
-              label = "Portland"
-            ),
-            list(
-              method = "restyle",
-              args = list("marker.colorscale", "Rainbow"),
-              label = "Rainbow"
-            ),
-            list(
-              method = "restyle",
-              args = list("marker.colorscale", "RdBu"),
-              label = "RdBu"
-            ),
-            list(
-              method = "restyle",
-              args = list("marker.colorscale", "Reds"),
-              label = "Reds"
-            ),
-            list(
-              method = "restyle",
-              args = list("marker.colorscale", "YlGnBu"),
-              label = "YlGnBu"
-            ),
-            list(
-              method = "restyle",
-              args = list("marker.colorscale", "YlOrRd"),
-              label = "YlOrRd"
-            )
-          )
-        ),
-        list(
-          type = "buttons",
-          y = 0.5,
-          active = 1,
-          buttons = list(
-            list(
-              method = "restyle",
-              args = list("marker.reversescale", FALSE),
-              label = "Normal scale"
-            ),
-            list(
-              method = "restyle",
-              args = list("marker.reversescale", TRUE),
-              label = "Reverse scale"
-            )
-          )
-        )
-      )
-    )
-  } else if (mode == "max_idx") {
-    data <- tibble::tibble(x = c_sizes, y = profile)
-    gg <- ggplot2::ggplot(data) +
-      ggpattern::geom_area_pattern(ggplot2::aes(x = x, y = y), pattern = "gradient", pattern_fill = "blue", pattern_fill2 = "yellow") +
-      ggplot2::annotate("segment", x = max_window, y = max_contrast, xend = max_window, yend = 0, color = "red") +
-      ggplot2::annotate("text",
-        x = max_window, y = 0, label = glue::glue("Window size {max_window} at index {max_idx}"),
-        color = "white", angle = 90, vjust = -0.5, hjust = -0.2, size = 7
-      ) +
-      ggplot2::theme_bw() +
-      ggplot2::ggtitle("Best window size") +
-      ggplot2::ylab("Contrast") +
-      ggplot2::xlab("Window Size")
-    return(gg)
-  } else {
-    if (plot_type == "heatmap") {
-      values <- seq(min_val, max_val, by = 0.01)
-      for (i in seq_along(values)) {
-        step <- list(
-          label = values[i], method = "restyle", args = list("zmin", values[i])
-        )
-        steps[[i]] <- step
-      }
-
-      fig <- plotly::plot_ly(
-        y = c_sizes,
-        colorscale = "Jet",
-        type = "heatmap", ygap = 1, zsmooth = "best",
-        z = ~z,
-        colorbar = list(title = "Contrast")
-      ) %>% plotly::layout(
-        annotations = list(
-          list(
-            x = max_idx,
-            y = max_window,
-            xshift = 2,
-            yshift = -2,
-            arrowcolor = "#000000",
-            arrowsize = 3,
-            standoff = 10,
-            arrowhead = 6,
-            text = "<b>Max</b>",
-            font = list(color = "#000000", size = 14),
-            showarrow = TRUE
-          ),
-          list(
-            x = max_idx,
-            y = max_window,
-            arrowcolor = "#E5E5E5",
-            arrowsize = 3,
-            standoff = 10,
-            arrowhead = 6,
-            text = "<b>Max</b>",
-            font = list(color = "#E5E5E5", size = 14),
-            showarrow = TRUE
-          )
-        ),
-        xaxis = list(
-          title = "Time"
-        ),
-        yaxis = list(
-          title = "Window Size"
-        )
-      )
-    } else {
-      values <- seq(min_val, max_val, by = 0.01)
-      for (i in seq_along(values)) {
-        step <- list(
-          label = values[i], method = "restyle", args = list("cmin", values[i])
-        )
-        steps[[i]] <- step
-      }
-
-      fig <- plotly::plot_ly(
-        y = c_sizes,
-        colorscale = "Jet",
-        type = "surface",
-        z = ~z
-      ) %>% plotly::layout(
-        scene = list(
-          annotations = list(
-            list(
-              x = max_idx,
-              y = max_window,
-              z = max_contrast,
-              xshift = 2,
-              yshift = -2,
-              arrowcolor = "#000000",
-              arrowsize = 3,
-              standoff = 10,
-              arrowhead = 6,
-              text = "<b>Max</b>",
-              font = list(color = "#000000", size = 14),
-              showarrow = TRUE
-            ),
-            list(
-              x = max_idx,
-              y = max_window,
-              z = max_contrast,
-              arrowcolor = "#E5E5E5",
-              arrowsize = 3,
-              standoff = 10,
-              arrowhead = 6,
-              text = "<b>Max</b>",
-              font = list(color = "#E5E5E5", size = 14),
-              showarrow = TRUE
-            )
-          ),
-          xaxis = list(
-            title = "Time"
-          ),
-          yaxis = list(
-            title = "Window Size"
-          ),
-          zaxis = list(title = "Contrast"),
-          camera = list(
-            eye = list(x = -0.5, y = -1, z = 0.5),
-            projection = list(type = "orthographic")
-          ),
-          aspectratio = list(x = 1, y = 0.5, z = 0.5)
-        )
-      )
-    }
-    fig <- fig %>%
-      plotly::layout(
-        sliders = list(
-          list(steps = steps, pad = list(t = 30))
-        ),
-        updatemenus = list(
-          list(
-            type = "dropdown",
-            buttons = list(
-              list(
-                method = "restyle",
-                args = list("colorscale", "Jet"),
-                label = "Jet"
-              ),
-              list(
-                method = "restyle",
-                args = list("colorscale", "Viridis"),
-                label = "Viridis"
-              ),
-              list(
-                method = "restyle",
-                args = list("colorscale", "Blackbody"),
-                label = "Blackbody"
-              ),
-              list(
-                method = "restyle",
-                args = list("colorscale", "Bluered"),
-                label = "Bluered"
-              ),
-              list(
-                method = "restyle",
-                args = list("colorscale", "Blues"),
-                label = "Blues"
-              ),
-              list(
-                method = "restyle",
-                args = list("colorscale", "Cividis"),
-                label = "Cividis"
-              ),
-              list(
-                method = "restyle",
-                args = list("colorscale", "Earth"),
-                label = "Earth"
-              ),
-              list(
-                method = "restyle",
-                args = list("colorscale", "Electric"),
-                label = "Electric"
-              ),
-              list(
-                method = "restyle",
-                args = list("colorscale", "Greens"),
-                label = "Greens"
-              ),
-              list(
-                method = "restyle",
-                args = list("colorscale", "Greys"),
-                label = "Greys"
-              ),
-              list(
-                method = "restyle",
-                args = list("colorscale", "Hot"),
-                label = "Hot"
-              ),
-              list(
-                method = "restyle",
-                args = list("colorscale", "Picnic"),
-                label = "Picnic"
-              ),
-              list(
-                method = "restyle",
-                args = list("colorscale", "Portland"),
-                label = "Portland"
-              ),
-              list(
-                method = "restyle",
-                args = list("colorscale", "Rainbow"),
-                label = "Rainbow"
-              ),
-              list(
-                method = "restyle",
-                args = list("colorscale", "RdBu"),
-                label = "RdBu"
-              ),
-              list(
-                method = "restyle",
-                args = list("colorscale", "Reds"),
-                label = "Reds"
-              ),
-              list(
-                method = "restyle",
-                args = list("colorscale", "YlGnBu"),
-                label = "YlGnBu"
-              ),
-              list(
-                method = "restyle",
-                args = list("colorscale", "YlOrRd"),
-                label = "YlOrRd"
-              )
-            )
-          ),
-          list(
-            type = "buttons",
-            y = 0.5,
-            buttons = list(
-              list(
-                method = "restyle",
-                args = list("reversescale", FALSE),
-                label = "Normal scale"
-              ),
-              list(
-                method = "restyle",
-                args = list("reversescale", TRUE),
-                label = "Reverse scale"
-              )
-            )
-          )
-        )
-      )
-  }
-
-
-  fig
 }
 
 # Output:
@@ -1051,105 +545,79 @@ contrastprofile_topk <- function(split, shapelet_sizes, num_shapelets, progress 
   return(list(pan = result, positive = true_alarms, negative = false_alarms))
 }
 
-kneed <- function(contrasts) {
-  # contrasts <- c(0.31767218, 0.29146924, 0.17797986, 0.15451647, 0.09342605, 0.08841086, 0.08017338, 0.07088699, 0.07014500, 0.06976499)
-  numk <- length(contrasts)
-  first <- contrasts[1]
-  last <- contrasts[numk]
-  numer <- 1 / numk + contrasts[1]
-  den <- 1 / numk + contrasts[1] + contrasts[numk]
-  new_contrasts <- ((1 / numk + first) - contrasts) / (1 / numk + first - last)
-
-  xlab <- seq_len(numk) / numk
-
-  diag <- abs(xlab - new_contrasts) / sqrt(2)
-  vert <- new_contrasts - xlab
-  elb <- vert - diag
-
-  return(elb)
-}
 
 
-pan_contrast <- function(data_pos_neg, signal = "II", shapelet_sizes) {
-  checkmate::qassert(data_pos_neg, "L1")
-  checkmate::qassert(signal, "S1")
-  checkmate::qassert(shapelet_sizes, "N+")
+# pan_contrast <- function(data_pos_neg, signal = "II", shapelet_sizes) {
+#   checkmate::qassert(data_pos_neg, "L1")
+#   checkmate::qassert(signal, "S1")
+#   checkmate::qassert(shapelet_sizes, "N+")
 
-  "!DEBUG Compute Pan CP"
+#   "!DEBUG Compute Pan CP"
 
-  cli::cli_h1("Processing signal {signal}")
+#   cli::cli_h1("Processing signal {signal}")
 
-  # which classes are present in the dataset?
-  classes <- unique(names(data_pos_neg[[signal]]))
+#   # which classes are present in the dataset?
+#   classes <- unique(names(data_pos_neg[[signal]]))
 
-  class_result <- list()
+#   class_result <- list()
 
-  # do the thing for each class
-  for (cl in classes) {
-    cli::cli_h2("Starting class {cl}")
-    profiles <- list()
-    for (i in seq_along(shapelet_sizes)) {
-      cli::cli_h2("Window size {shapelet_sizes[i]}")
+#   # do the thing for each class
+#   for (cl in classes) {
+#     cli::cli_h2("Starting class {cl}")
+#     profiles <- list()
+#     for (i in seq_along(shapelet_sizes)) {
+#       cli::cli_h2("Window size {shapelet_sizes[i]}")
 
-      checkmate::assert_true(data_pos_neg[[signal]][[cl]][[i]]$shapelet_size == shapelet_sizes[i])
+#       checkmate::assert_true(data_pos_neg[[signal]][[cl]][[i]]$shapelet_size == shapelet_sizes[i])
 
-      reference <- data_pos_neg[[signal]][[cl]][[i]]$neg_stream
-      anomalous <- data_pos_neg[[signal]][[cl]][[i]]$pos_stream
+#       reference <- data_pos_neg[[signal]][[cl]][[i]]$neg_stream
+#       anomalous <- data_pos_neg[[signal]][[cl]][[i]]$pos_stream
 
-      self_mp <- mpx(
-        data = anomalous,
-        window_size = shapelet_sizes[i],
-        exclusion_zone = 0.5,
-        distance = "euclidean",
-        progress = FALSE,
-        idxs = FALSE
-      )$matrix_profile
+#       self_mp <- mpx(
+#         data = anomalous,
+#         window_size = shapelet_sizes[i],
+#         exclusion_zone = 0.5,
+#         distance = "euclidean",
+#         progress = FALSE,
+#         idxs = FALSE
+#       )$matrix_profile
 
-      if (!all(is.finite(self_mp))) {
-        cli::cli_warn("self_mp contains non finite values.")
-      }
+#       if (!all(is.finite(self_mp))) {
+#         cli::cli_warn("self_mp contains non finite values.")
+#       }
 
-      # clip values above sqrt(2 * shapelet_sizes) as they are anti-correlated
-      clip <- sqrt(2 * shapelet_sizes[i])
-      self_mp[self_mp > clip] <- clip
+#       # clip values above sqrt(2 * shapelet_sizes) as they are anti-correlated
+#       clip <- sqrt(2 * shapelet_sizes[i])
+#       self_mp[self_mp > clip] <- clip
 
-      join_mp <- mpx(
-        data = anomalous,
-        window_size = shapelet_sizes[i],
-        query = reference,
-        exclusion_zone = 0.5,
-        distance = "euclidean",
-        progress = FALSE,
-        idxs = FALSE
-      )$matrix_profile
+#       join_mp <- mpx(
+#         data = anomalous,
+#         window_size = shapelet_sizes[i],
+#         query = reference,
+#         exclusion_zone = 0.5,
+#         distance = "euclidean",
+#         progress = FALSE,
+#         idxs = FALSE
+#       )$matrix_profile
 
-      if (!all(is.finite(join_mp))) {
-        cli::cli_warn("join_mp contains non finite values.")
-      }
+#       if (!all(is.finite(join_mp))) {
+#         cli::cli_warn("join_mp contains non finite values.")
+#       }
 
-      join_mp[join_mp > clip] <- clip
+#       join_mp[join_mp > clip] <- clip
 
-      contrast <- join_mp - self_mp # TruFalse - True
+#       contrast <- join_mp - self_mp # TruFalse - True
 
-      # normalize between 0 and 1
-      contrast <- contrast / clip
-      contrast[contrast < 0] <- 0
-      profiles[[i]] <- contrast
-    }
-    class_result[[cl]] <- profiles
-  }
+#       # normalize between 0 and 1
+#       contrast <- contrast / clip
+#       contrast[contrast < 0] <- 0
+#       profiles[[i]] <- contrast
+#     }
+#     class_result[[cl]] <- profiles
+#   }
 
-  result <- list()
-  result[[signal]] <- class_result
+#   result <- list()
+#   result[[signal]] <- class_result
 
-  return(result)
-}
-
-get_exp_dist_series <- function(start, end, steps) {
-  power_min <- log10(start)
-  power_max <- log10(end)
-  power_step <- (power_max - power_min) / steps
-  powers <- seq(power_min, power_max, by = power_step)
-  series <- unique(ceiling(10^powers))
-  return(series)
-}
+#   return(result)
+# }

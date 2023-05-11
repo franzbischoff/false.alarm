@@ -371,7 +371,7 @@ list(
     {
       res <- list()
       for (i in seq_len(var_vfolds)) {
-        res[[i]] <- get_pan_contrast(contrast_profiles[[i]], 1)
+        res[[i]] <- get_topk_pan_contrast(contrast_profiles[[i]], 1)
       }
       res
     },
