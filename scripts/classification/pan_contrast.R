@@ -284,108 +284,111 @@ score_candidates <- function(score) {
   return(data)
 }
 
-find_solutions <- function(score, n = 5, rep = 2000, red = 5, cov = 17) {
-  # sols <- list()
-
-  cli::cli_progress_bar("Finding solutions",
-    total = rep,
-    format = "{cli::pb_spin} Finding solutions {cli::pb_bar} {cli::pb_percent} | {cli::pb_eta}"
-  )
-
+find_solutions <- function(score, n = 5, rep = 2000, red = 5, cov = 17, n_jobs = 1) {
   score <- score |> dplyr::filter(cov_sum > 1)
 
+  if (n_jobs == 1) {
+    future::plan(future::sequential)
+  } else {
+    future::plan(future::multisession, workers = n_jobs)
+  }
 
-  # for (i in seq_len(rep)) {
-  future::plan(future::multisession, workers = 4)
   reps <- seq_len(rep)
-  sols <- furrr::future_map(reps, function(i) {
-    # cli::cli_progress_update()
-    samples <- round(runif(1, 1, n))
-    some_rows <- dplyr::slice_sample(score, n = samples)
-    n_cols <- length(some_rows$cov_idxs[[1]])
-    sample_data <- matrix(unlist(some_rows$cov_idxs), ncol = n_cols, byrow = TRUE)
-    data_coverage <- apply(sample_data, 2, sum)
 
-    redundance <- sum(data_coverage > 1)
-    if (redundance > red) {
-      return(NULL)
-    }
+  cli::cli_alert_info("Finding solutions using {n_jobs} jobs.")
 
-    coverage <- sum(data_coverage > 0)
-    if (coverage < cov) {
-      return(NULL)
-    }
+  progressr::with_progress(
+    {
+      p <- progressr::progressor(along = reps)
 
-    # cli::cli_alert_info("sample_data i={i}.")
+      sols <- furrr::future_map(reps, function(i) {
+        p()
 
-    keep_rows <- list()
+        samples <- round(runif(1, 1, n))
+        some_rows <- dplyr::slice_sample(score, n = samples)
+        n_cols <- length(some_rows$cov_idxs[[1]])
+        sample_data <- matrix(unlist(some_rows$cov_idxs), ncol = n_cols, byrow = TRUE)
+        data_coverage <- apply(sample_data, 2, sum)
 
-    if (nrow(sample_data) > 2) {
-      # test for rows of samples that don't zero the column sum and may be dropped
-      cc <- data_coverage
-      for (j in seq((nrow(sample_data) - 1), 2)) {
-        comb <- combn(seq_len(nrow(sample_data)), j)
+        redundance <- sum(data_coverage > 1)
+        if (redundance > red) {
+          return(NULL)
+        }
 
-        for (k in seq_len(ncol(comb))) {
-          rr <- sample_data[comb[, k], , drop = FALSE]
-          rr <- apply(rr, 2, sum)
-          if (!any(rr[(rr & cc)] == cc[(rr & cc)])) {
-            keep <- setdiff(seq_len(nrow(sample_data)), comb[, k])
-            keep_rows <- c(keep_rows, list(keep))
+        coverage <- sum(data_coverage > 0)
+        if (coverage < cov) {
+          return(NULL)
+        }
+
+        keep_rows <- list()
+
+        if (nrow(sample_data) > 2) {
+          # test for rows of samples that don't zero the column sum and may be dropped
+          cc <- data_coverage
+          for (j in seq((nrow(sample_data) - 1), 2)) {
+            comb <- combn(seq_len(nrow(sample_data)), j)
+
+            for (k in seq_len(ncol(comb))) {
+              rr <- sample_data[comb[, k], , drop = FALSE]
+              rr <- apply(rr, 2, sum)
+              if (!any(rr[(rr & cc)] == cc[(rr & cc)])) {
+                keep <- setdiff(seq_len(nrow(sample_data)), comb[, k])
+                keep_rows <- c(keep_rows, list(keep))
+              }
+            }
+            if (length(keep_rows) > 0) {
+              break
+            }
           }
         }
-        if (length(keep_rows) > 0) {
-          break
+
+        if (length(keep_rows) == 1) {
+          some_rows <- some_rows[keep_rows[[1]], ]
+          samples <- length(keep_rows[[1]])
+          data_coverage <- apply(matrix(unlist(some_rows$cov_idxs), ncol = n_cols, byrow = TRUE), 2, sum)
+          redundance <- sum(data_coverage > 1)
+          coverage <- sum(data_coverage > 0)
+        } else if (length(keep_rows) > 1) {
+          new_rows <- NULL
+          for (j in seq_len(length(keep_rows))) {
+            temp <- dplyr::bind_cols(idx = j, some_rows[keep_rows[[j]], ])
+            new_rows <- dplyr::bind_rows(new_rows, temp)
+          }
+
+          new_rows <- new_rows |>
+            dplyr::group_by(idx) |>
+            dplyr::summarise(
+              sk = sum(k), mc = median(contrast),
+              sid = sum(unlist(cov_idxs)),
+              redun = sum(apply(matrix(unlist(cov_idxs), ncol = n_cols, byrow = TRUE), 2, sum) > 1)
+            )
+          new_rows <- new_rows |>
+            dplyr::arrange(sk, desc(mc), sid, redun) |>
+            dplyr::slice_head(n = 1)
+          new_idx <- new_rows |> dplyr::pull(idx)
+          some_rows <- some_rows[keep_rows[[new_idx]], ]
+
+          samples <- length(keep_rows[[new_idx]])
+          data_coverage <- apply(matrix(unlist(some_rows$cov_idxs), ncol = n_cols, byrow = TRUE), 2, sum)
+          redundance <- sum(data_coverage > 1)
+          coverage <- sum(data_coverage > 0)
         }
-      }
-    }
 
-    # if (length(keep_rows) == 0) {
-    #   keep_rows <- list(seq_len(nrow(sample_data)))
-    # } else
-    if (length(keep_rows) == 1) {
-      some_rows <- some_rows[keep_rows[[1]], ]
-      samples <- length(keep_rows[[1]])
-      data_coverage <- apply(matrix(unlist(some_rows$cov_idxs), ncol = n_cols, byrow = TRUE), 2, sum)
-      redundance <- sum(data_coverage > 1)
-      coverage <- sum(data_coverage > 0)
-    } else if (length(keep_rows) > 1) {
-      new_rows <- NULL
-      for (j in seq_len(length(keep_rows))) {
-        temp <- dplyr::bind_cols(idx = j, some_rows[keep_rows[[j]], ])
-        new_rows <- dplyr::bind_rows(new_rows, temp)
-      }
+        # ties: < sum(k), > median(contrast), < sum(idxs), < sum(data_coverage > 1), < sum(redundance)
 
-      new_rows <- new_rows |>
-        dplyr::group_by(idx) |>
-        dplyr::summarise(
-          sk = sum(k), mc = median(contrast),
-          sid = sum(unlist(cov_idxs)),
-          redun = sum(apply(matrix(unlist(cov_idxs), ncol = n_cols, byrow = TRUE), 2, sum) > 1)
+        # cli::cli_alert_info("sols i={i}, length(keep_rows) {length(keep_rows)}, length(keep_rows[[1]]) {length(keep_rows[[1]])}.")
+
+        # sols[[i]] <- list(
+        list(
+          c_total = sum(some_rows$contrast), c_median = median(some_rows$contrast), c_mean = mean(some_rows$contrast),
+          c_sd = ifelse(length(some_rows$contrast) > 1, sd(some_rows$contrast, na.rm = TRUE), 0), coverage = coverage, redundance = redundance,
+          samples = samples, cand = some_rows
         )
-      new_rows <- new_rows |>
-        dplyr::arrange(sk, desc(mc), sid, redun) |>
-        dplyr::slice_head(n = 1)
-      new_idx <- new_rows |> dplyr::pull(idx)
-      some_rows <- some_rows[keep_rows[[new_idx]], ]
-
-      samples <- length(keep_rows[[new_idx]])
-      data_coverage <- apply(matrix(unlist(some_rows$cov_idxs), ncol = n_cols, byrow = TRUE), 2, sum)
-      redundance <- sum(data_coverage > 1)
-      coverage <- sum(data_coverage > 0)
-    }
-
-    # ties: < sum(k), > median(contrast), < sum(idxs), < sum(data_coverage > 1), < sum(redundance)
-
-    # cli::cli_alert_info("sols i={i}, length(keep_rows) {length(keep_rows)}, length(keep_rows[[1]]) {length(keep_rows[[1]])}.")
-
-    # sols[[i]] <- list(
-    list(
-      c_total = sum(some_rows$contrast), c_median = median(some_rows$contrast), c_mean = mean(some_rows$contrast),
-      c_sd = ifelse(length(some_rows$contrast) > 1, sd(some_rows$contrast, na.rm = TRUE), 0), coverage = coverage, redundance = redundance,
-      samples = samples, cand = some_rows
-    )
-  }, .options = furrr::furrr_options(seed = 2023))
+      }, .options = furrr::furrr_options(seed = 2023, scheduling = 1))
+    },
+    delay_terminal = TRUE,
+    handlers = progressr::handler_progress(format = "[:bar] :percent :eta :message", interval = 10) # intrusiveness = 100,
+  )
 
   sols <- list_dfr(sols)
   sols <- tidyr::unnest(sols, cols = cand) |>
@@ -393,9 +396,6 @@ find_solutions <- function(score, n = 5, rep = 2000, red = 5, cov = 17) {
     tidyr::nest(data = c(window, k, contrast, cov_sum, cov_idxs))
 
   cli::cli_alert_info("done.")
-
-
-  cli::cli_progress_done()
 
   return(sols)
 }
