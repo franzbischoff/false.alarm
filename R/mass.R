@@ -199,8 +199,13 @@ dist_profile <- function(data, query) {
   window_size <- length(query)
   pre <- mass_pre(data, window_size, query)
   dist_profile <- mass(pre, data, query)$distance_profile
+  dist_profile[dist_profile < 0] <- 0
   return(sqrt(dist_profile))
 }
+
+# index <- 1
+# query_window <- query[index:(index + pre_obj$window_size - 1L)]
+#            aa <- false.alarm:::mass3_rcpp(query_window, data, as.integer(pre_obj$data_size), as.integer(pre_obj$window_size), pre_obj$data_mean, pre_obj$data_sd, pre_obj$query_mean[index], pre_obj$query_sd[index], k = 4096L )
 
 #' Find top-k matches
 #'

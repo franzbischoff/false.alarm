@@ -9,6 +9,8 @@
 # Load global config
 source(here::here("scripts", "_globals.R"), local = .GlobalEnv, encoding = "UTF-8") # nolint
 source(here::here("scripts", "classification", "pan_contrast.R"), local = .GlobalEnv, encoding = "UTF-8") # nolint
+source(here::here("scripts", "helpers", "plot_contrast.R"), local = .GlobalEnv, encoding = "UTF-8") # nolint
+source(here::here("scripts", "helpers", "pan_contrast_helpers.R"), local = .GlobalEnv, encoding = "UTF-8") # nolint
 
 
 options(target_ds_path = here::here("inst", "extdata", "physionet")) # nolint
@@ -40,21 +42,26 @@ var_signals_exclude <- setdiff(const_signals, var_signals_include)
 
 
 #### Targets: Define targets options ----
-
+# readRenviron(".Renviron")
+# source("renv/activate.R")
+# renv::install(c("dplyr", "rlang", "rsample", "tidyr"))
 # use renv::install(".") to update the rcpp functions
+
 tar_option_set(
   tidy_eval = TRUE,
+  # library = "/workspace/.cache/R/renv/proj_libs/false.alarm-d6f1a0d1/R-4.3/x86_64-pc-linux-gnu",
   packages = c(
-    "here", "glue", "dplyr", "rlang", "rsample", "tidyr", "false.alarm",
+    "here", "glue", "false.alarm", "dplyr", "rlang", "rsample", "tidyr",
     "dials", "scales", "tibble", "parsnip", "yardstick", "purrr", "hardhat"
   ),
   format = "rds",
   memory = "transient",
+  # debug = "find_shapelets",
   garbage_collection = TRUE
 )
 
 # var_shapelet_size <- c(120, 300, 1000) # c(30, 60, 120, 180, 300) # c(150, 300)
-var_shapelet_sizes <- get_exp_dist_series(20, 600, 30) # c(20, 60, 100, 140, 180, 220, 260, 300)
+var_shapelet_sizes <- get_exp_dist_series(20, 400, 20) # c(20, 60, 100, 140, 180, 220, 260, 300)
 var_positive <- TRUE # c(TRUE, FALSE)
 var_num_shapelets <- 10
 var_num_neighbors <- 10
@@ -232,150 +239,68 @@ list(
   ###### Inner Resample ######
   tar_target(
     #### Pipeline: assessment_split - Subset the training split into assessment split (test) ----
-    cp_first_half,
-    {
-      # TODO: change to analysis_split
-      shapelet_sizes <- var_shapelet_sizes[1:15]
-
-      class(assessment_split) <- c("manual_rset", "rset", class(assessment_split))
-
-      res <- list()
-      for (i in seq_len(var_vfolds)) {
-        fold <- rsample::get_rsplit(assessment_split, i)
-        res[[i]] <- contrastprofile_topk(fold, shapelet_sizes, var_num_shapelets, TRUE)
-      }
-
-      res
-
-      # anewn <- rep(Inf, length(true_alarms_val)-300+1)
-      # dp <- matrix(NA, nrow = length(true_alarms_val)-300+1, ncol = 10)
-      # for(i in seq_len(10)) {
-      #   dp[,i] <- dist_profile(true_alarms_val, cps$platos[,i])
-      #   anewn <- pmin(anewn, dp[,i])
-      # }
-
-      # anew <- rep(Inf, length(false_alarms_val)-300+1)
-      # dpf <- matrix(NA, nrow = length(false_alarms_val)-300+1, ncol = 10)
-      # for(i in seq_len(10)) {
-      #   dpf[,i] <- dist_profile(false_alarms_val, cps$platos[,i])
-      #   anew <- pmin(anew, dpf[,i])
-      # }
-
-      # anewn <- rep(Inf, length(false_alarms_val)-120+1)
-      # for(i in seq_len(10)) {
-      #   dp <- dist_profile(false_alarms_val, cps$platos[,i])
-      #   anewn <- pmin(anewn, dp)
-      # }
-
-      # anewp <- rep(Inf, length(true_alarms_val)-120+1)
-      # for(i in seq_len(10)) {
-      #   dp <- dist_profile(true_alarms_val, cps$platos[,i])
-      #   anewp <- pmin(anewp, dp)
-      # }
-      # plot.ts(cbind(anewn,anewp))
-      # summary(anewn)
-      # summary(anewp)
-
-      # z <- matrix(0, nrow = length(shapelet_sizes), ncol = length(validate_data[[1]]$contrast_profile))
-
-      # for (i in seq_along(shapelet_sizes)) {
-      #   a <- length(validate_data[[1]]$contrast_profile) - length(validate_data[[i]]$contrast_profile)
-      #   z[i, ] <- c(validate_data[[i]]$contrast_profile, rep(0, a))
-      # }
-
-      # fig <- plot_ly(
-      #   y = nrow(res$cps),
-      #   z = res$cps, type = "heatmap"
-      # )
-
-      # fig
-    },
-    pattern = map(assessment_split),
-    iteration = "list"
-  ),
-  tar_target(
-    #### Pipeline: assessment_split - Subset the training split into assessment split (test) ----
-    # TODO: change to analysis_split
-    cp_second_half,
-    {
-      shapelet_sizes <- var_shapelet_sizes[16:30]
-
-      class(assessment_split) <- c("manual_rset", "rset", class(assessment_split))
-
-      res <- list()
-      for (i in seq_len(var_vfolds)) {
-        fold <- rsample::get_rsplit(assessment_split, i)
-        res[[i]] <- contrastprofile_topk(fold, shapelet_sizes, var_num_shapelets, TRUE)
-      }
-
-      res
-
-      # pt <- plot_topk_distances(true_alarms, res, as.numeric(shapelet_sizes[i]))
-      # pt <- apply(pt, 1, min)
-      # nt <- plot_topk_distances(false_alarms, res, as.numeric(shapelet_sizes[i]))
-      # # nt <- apply(nt, 1, min)
-      # mt <- min(nt)
-      # # plot(nt, type = "l")
-      # # abline(v = seq(0, length(nt), by=2800), col = "red")
-      # plot(pt, type = "l")
-      # abline(v = seq(0, length(pt), by = 2800), col = "red")
-      # abline(h = mt, col = "green")
-      # i <- i + 1
-      # i <- 1
-
-
-      # for (i in shapelet_sizes) {
-      #   pt <- plot_topk_distances(true_alarms_val, res, as.numeric(i))
-      #   plot.ts(pt, nc = 1)
-      #   mpt <- max(apply(pt, 2, min))
-      #   cli::cli_bullets("min true {mpt}")
-      #   nt <- plot_topk_distances(false_alarms_val, res, as.numeric(i))
-      #   mnt <- min(apply(nt, 2, min))
-      #   cli::cli_bullets("min false {mnt}")
-      #   cli::cli_bullets("c {mnt - mpt}")
-      # }
-
-      # z <- matrix(0, nrow = length(shapelet_sizes), ncol = length(validate_data[[1]]$contrast_profile))
-
-      # for (i in seq_along(shapelet_sizes)) {
-      #   a <- length(validate_data[[1]]$contrast_profile) - length(validate_data[[i]]$contrast_profile)
-      #   z[i, ] <- c(validate_data[[i]]$contrast_profile, rep(0, a))
-      # }
-
-      # fig <- plot_ly(
-      #   y = nrow(res$cps),
-      #   z = res$cps, type = "heatmap"
-      # )
-
-      # fig
-    },
-    pattern = map(assessment_split),
-    iteration = "list"
-  ),
-  tar_target(
     contrast_profiles,
     {
+      # TODO: change to analysis_split
+      shapelet_sizes <- var_shapelet_sizes
+
+      class(assessment_split) <- c("manual_rset", "rset", class(assessment_split))
+
       res <- list()
-      for (i in seq_len(length(cp_first_half))) {
-        res[[i]] <- append(cp_first_half[[i]], cp_second_half[[i]])
-        res[[i]] <- res[[i]][order(as.numeric(names(res[[i]])))]
+      for (i in seq_len(var_vfolds)) {
+        fold <- rsample::get_rsplit(assessment_split, i)
+        res[[i]] <- contrastprofile_topk(fold, shapelet_sizes, var_num_shapelets, n_jobs = var_future_workers, TRUE)
       }
 
       res
     },
-    pattern = map(cp_first_half, cp_second_half),
+    pattern = map(assessment_split),
+    iteration = "list"
+  ),
+  tar_target(
+    find_shapelets,
+    {
+      res <- list()
+      for (i in seq_len(var_vfolds)) {
+        cli::cli_alert_info("Scores by segment, fold {i}.")
+        score <- score_by_segment_window(contrast_profiles[[i]]$positive, contrast_profiles[[i]]$negative, contrast_profiles[[i]]$pan)
+        cli::cli_alert_info("Finding solutions, fold {i}.")
+        solutions <- find_solutions(score, cov = 19, n = 10, rep = 100000, red = 10, n_jobs = var_future_workers)
+        cli::cli_alert_info("Filtering best solutions, fold {i}.")
+        res[[i]] <- filter_best_solutions(solutions, 2)
+      }
+      res
+    },
+    pattern = map(contrast_profiles),
     iteration = "list"
   ),
   tar_target(
     plot_profiles,
     {
-      res <- list()
+      branch_name <- tar_name()
+      max_size <- max(var_shapelet_sizes)
+      plots <- list()
       for (i in seq_len(var_vfolds)) {
-        res[[i]] <- get_topk_pan_contrast(contrast_profiles[[i]], 1)
+        plots[[i]] <- plot_best_candidates(find_shapelets, contrast_profiles, fold = i, max_size = max_size)
       }
-      res
+      s <- svglite::svgstring(10, 15,
+        web_fonts = list("https://fonts.googleapis.com/css?family=Roboto:400,400i,700,700i")
+        # fix_text_size = FALSE,
+        # standalone = FALSE
+      )
+
+      plt <- patchwork::wrap_plots(plots) +
+        patchwork::plot_annotation(
+          title = branch_name,
+          theme = ggplot2::theme(plot.title = ggplot2::element_text(family = "Roboto"))
+        )
+      print(plt)
+      dev.off()
+      readr::write_file(s(), file = here::here("output", glue::glue("Shapes_{branch_name}.svg")))
+
+      plt
     },
-    pattern = map(contrast_profiles),
+    pattern = map(find_shapelets, contrast_profiles),
     iteration = "list"
   )
   # tar_target(

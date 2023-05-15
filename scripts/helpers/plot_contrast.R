@@ -55,11 +55,32 @@ plot_topk_contrasts <- function(contrast_profiles, type = c("contour", "heatmap"
 
 # solutions = result of find_solutions
 # contrast_profiles = result of the contrastprofile_topk
-plot_best_candidates <- function(solutions, contrast_profiles) {
+plot_best_candidates <- function(solutions, contrast_profiles, fold = 1, n = 1, max_size = NULL) {
+  checkmate::qassert(solutions, "L+")
+  checkmate::qassert(contrast_profiles, "L+")
+
+  if (length(solutions) != length(contrast_profiles)) {
+    cli::cli_abort("Solutions and contrast_profiles doesn't have the same number of folds.")
+  }
+
+  if (fold > length(solutions)) {
+    fold <- length(solutions)
+    cli::cli_warn("Fold is greater than the number of folds. Using the last fold.")
+  }
+
+  if (n > length(solutions[[fold]]$data)) {
+    n <- length(solutions[[fold]]$data)
+    cli::cli_warn("N is greater than the number of solutions {n}. Using the last solution.")
+  }
+
+  solutions <- solutions[[fold]]$data[[n]]
+  contrast_profiles <- contrast_profiles[[fold]]
+
   solutions <- solutions |> dplyr::arrange(as.numeric(window))
 
   max_len <- max(as.numeric(solutions$window))
   num_platos <- nrow(solutions)
+  ks <- solutions$k
 
   platos <- matrix(NA, ncol = num_platos, nrow = max_len)
 
@@ -69,9 +90,39 @@ plot_best_candidates <- function(solutions, contrast_profiles) {
     platos[seq_along(pl), i] <- pl
   }
 
-  plot.ts(platos, nc = 1)
-  # plt <- plot_best_candidates(bb$data[[22]]$cand, res)
-  return(platos)
+
+  colnames(platos) <- as.character(seq_len(num_platos))
+  platos <- tibble::as_tibble(platos)
+
+  platos <- platos %>%
+    dplyr::mutate(n = dplyr::row_number()) %>%
+    tidyr::pivot_longer(seq_len(num_platos))
+
+
+  gg <- platos %>% ggplot2::ggplot(ggplot2::aes(x = n, y = value)) +
+    ggplot2::geom_line() +
+    ggplot2::facet_wrap(~name,
+      ncol = 1, labeller = ggplot2::as_labeller(
+        function(x) {
+          y <- as.numeric(x)
+          lbl <- glue::glue("k = {ks[y]}")
+          return(lbl)
+        }
+      ),
+      strip.position = "left"
+    )
+
+  gg <- gg + ggplot2::theme_bw(base_family = "Roboto") +
+    ggplot2::ggtitle(glue::glue("Fold {fold}")) +
+    ggplot2::xlab("length") +
+    ggplot2::xlim(0, ifelse(is.null(max_size), 400, max_size)) +
+    ggplot2::theme(
+      axis.ticks.y = ggplot2::element_blank(),
+      axis.title.y = ggplot2::element_blank(),
+      axis.text.y = ggplot2::element_blank()
+    )
+
+  return(invisible(gg))
 }
 
 
