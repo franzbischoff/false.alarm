@@ -265,9 +265,14 @@ list(
         cli::cli_alert_info("Scores by segment, fold {i}.")
         score <- score_by_segment_window(contrast_profiles[[i]]$positive, contrast_profiles[[i]]$negative, contrast_profiles[[i]]$pan)
         cli::cli_alert_info("Finding solutions, fold {i}.")
-        solutions <- find_solutions(score, cov = 19, n = 10, rep = 100000, red = 10, n_jobs = var_future_workers)
-        cli::cli_alert_info("Filtering best solutions, fold {i}.")
-        res[[i]] <- filter_best_solutions(solutions, 2)
+        solutions <- find_solutions(score, cov = 10, n = 10, rep = 100000, red = 10, n_jobs = 2)
+
+        if (length(solutions) == 0) {
+          res[[i]] <- NULL
+        } else {
+          cli::cli_alert_info("Filtering best solutions, fold {i}.")
+          res[[i]] <- filter_best_solutions(solutions, 2)
+        }
       }
       res
     },

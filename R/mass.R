@@ -198,9 +198,12 @@ mass <- function(pre_obj, data, query = data, index = 1L, version = c("v3", "v2"
 dist_profile <- function(data, query) {
   window_size <- length(query)
   pre <- mass_pre(data, window_size, query)
+  pre$data_sd[pre$data_sd <= 0] <- .Machine$double.eps^0.5 # HACK: need to fix mass3_rcpp()
+
   dist_profile <- mass(pre, data, query)$distance_profile
   dist_profile[dist_profile < 0] <- 0
-  return(sqrt(dist_profile))
+  dist_profile <- sqrt(dist_profile)
+  return(dist_profile)
 }
 
 # index <- 1

@@ -156,11 +156,13 @@ score_candidates <- function(score) {
 
 
 filter_best_solutions <- function(solutions, n_sols = 1) {
-  best <- solutions %>%
-    dplyr::filter(coverage == max(coverage), c_median > max(c_median) / 2, c_sd > max(c_sd) / 2) %>%
-    dplyr::filter(redundance == min(redundance)) %>%
-    dplyr::arrange(c_sd) %>%
-    dplyr::filter(samples == min(samples)) %>%
+  best <- solutions |>
+    dplyr::filter(coverage == max(coverage, na.rm = TRUE)) |>
+    dplyr::filter(c_median > max(c_median, na.rm = TRUE) / 2) |>
+    dplyr::filter(c_sd > max(c_sd, na.rm = TRUE) / 2) |>
+    dplyr::filter(redundance == min(redundance, na.rm = TRUE)) |>
+    dplyr::arrange(c_sd) |>
+    dplyr::filter(samples == min(samples, na.rm = TRUE)) |>
     dplyr::slice_head(n = n_sols)
 
   return(best)
@@ -277,12 +279,17 @@ find_solutions <- function(score, n = 5, rep = 2000, red = 5, cov = 17, n_jobs =
     handlers = progressr::handler_progress(format = "[:bar] :percent :eta :message", interval = 10) # intrusiveness = 100,
   )
 
+  # browser()
   sols <- list_dfr(sols)
-  sols <- tidyr::unnest(sols, cols = cand) |>
-    dplyr::distinct_all() |>
-    tidyr::nest(data = c(window, k, contrast, cov_sum, cov_con, cov_idxs))
 
-  cli::cli_alert_info("done.")
+  if (length(sols) == 0) {
+    cli::cli_warn("No solution found. Try decreasing coverage value.")
+  } else {
+    sols <- tidyr::unnest(sols, cols = cand) |>
+      dplyr::distinct_all() |>
+      tidyr::nest(data = c(window, k, contrast, cov_sum, cov_con, cov_idxs))
+    cli::cli_alert_info("done.")
+  }
 
   return(sols)
 }
@@ -324,14 +331,15 @@ topk_distance_profiles <- function(data, contrast_profiles, window_size) {
   dps <- matrix(NA, ncol = ncol(platos), nrow = length(data) - window_size + 1)
 
   for (i in seq_len(ncol(platos))) {
-    # browser()
     query <- (platos[, i] + platos_twin[, i]) / 2
-    # query <- platos[, i]
-    dps[, i] <- sqrt(tsmp::dist_profile(data, query)$distance_profile) # TODO: bug in dist_profile
+
+    dp <- dist_profile(data, query)
+    dps[, i] <- dp
   }
 
   return(dps)
 }
+
 
 # Output:
 #   plato: The subsequence that most distinguishes

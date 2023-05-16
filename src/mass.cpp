@@ -127,7 +127,7 @@ List mass3_rcpp(const NumericVector query_window, const NumericVector data_ref, 
   // data_ref is the data, query_window is the query
   //
 
-  // FIXME: mass3 is throwing error when data std is zero; currently a hack is being used on find_k_neighbors.R
+  // TODO: mass3 is throwing error when data std is zero; currently a hack is being used on find_k_neighbors.R
 
   uint32_t w_size = window_size;
   uint64_t d_size = data_size;
