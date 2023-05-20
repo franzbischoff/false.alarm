@@ -896,6 +896,21 @@ reshape_ds_by_truefalse <- function(dataset, signals, all_signals = TRUE) {
   df_true <- df_true[signals]
   df_false <- df_false[signals]
 
+  df_true <- purrr::map_depth(df_true, 2, function(x) {
+    if (sum(x[1:1000], na.rm = TRUE) == 0) {
+      browser()
+      return(NULL)
+    }
+    return(x)
+  })
+
+  df_false <- purrr::map_depth(df_false, 2, function(x) {
+    if (sum(x[1:1000], na.rm = TRUE) == 0) {
+      return(NULL)
+    }
+    return(x)
+  })
+
   # convert trues and falses into a tibble for later use on `rsample`
   # NOTE: here we create a dummy variable "class_alarm" to stratify the sampling
   # because the `rsample` package does not accept more than one variable for stratification.
@@ -906,7 +921,7 @@ reshape_ds_by_truefalse <- function(dataset, signals, all_signals = TRUE) {
     result <- tibble::tibble(
       file = files, class = classes, values = y, alarm = factor("true", c("true", "false"))
     )
-    result %>% dplyr::mutate(class_alarm = paste0(class, "_", alarm)) # create the dummy variable
+    result |> dplyr::mutate(class_alarm = paste0(class, "_", alarm)) # create the dummy variable
   })
 
   df_false <- purrr::map(df_false, function(x) {
@@ -916,7 +931,7 @@ reshape_ds_by_truefalse <- function(dataset, signals, all_signals = TRUE) {
     result <- tibble::tibble(
       file = files, class = classes, values = y, alarm = factor("false", c("true", "false"))
     )
-    result %>% dplyr::mutate(class_alarm = paste0(class, "_", alarm)) # create the dummy variable
+    result |> dplyr::mutate(class_alarm = paste0(class, "_", alarm)) # create the dummy variable
   })
 
   data <- purrr::map2(df_true, df_false, dplyr::bind_rows)

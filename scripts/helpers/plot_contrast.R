@@ -73,6 +73,9 @@ plot_best_candidates <- function(solutions, contrast_profiles, fold = 1, n = 1, 
     cli::cli_warn("N is greater than the number of solutions {n}. Using the last solution.")
   }
 
+  coverage <- solutions[[fold]]$coverage
+  num_segments <- length(solutions[[fold]]$data[[1]]$cov_idxs[[1]])
+  redundancy <- solutions[[fold]]$redundancy
   solutions <- solutions[[fold]]$data[[n]]
   contrast_profiles <- contrast_profiles[[fold]]
 
@@ -94,12 +97,12 @@ plot_best_candidates <- function(solutions, contrast_profiles, fold = 1, n = 1, 
   colnames(platos) <- as.character(seq_len(num_platos))
   platos <- tibble::as_tibble(platos)
 
-  platos <- platos %>%
-    dplyr::mutate(n = dplyr::row_number()) %>%
+  platos <- platos |>
+    dplyr::mutate(n = dplyr::row_number()) |>
     tidyr::pivot_longer(seq_len(num_platos))
 
 
-  gg <- platos %>% ggplot2::ggplot(ggplot2::aes(x = n, y = value)) +
+  gg <- platos |> ggplot2::ggplot(ggplot2::aes(x = n, y = value)) +
     ggplot2::geom_line() +
     ggplot2::facet_wrap(~name,
       ncol = 1, labeller = ggplot2::as_labeller(
@@ -113,7 +116,7 @@ plot_best_candidates <- function(solutions, contrast_profiles, fold = 1, n = 1, 
     )
 
   gg <- gg + ggplot2::theme_bw(base_family = "Roboto") +
-    ggplot2::ggtitle(glue::glue("Fold {fold}")) +
+    ggplot2::ggtitle(glue::glue("Fold {fold} - Coverage {coverage} of {num_segments} - Redundancy {redundancy}")) +
     ggplot2::xlab("length") +
     ggplot2::xlim(0, ifelse(is.null(max_size), 400, max_size)) +
     ggplot2::theme(
@@ -188,7 +191,7 @@ plot_pan_contrast <- function(pan_cp, plot_type = c("heatmap", "surface"), mode 
         size = 15,
         color = mm
       )
-    ) %>% plotly::layout(
+    ) |> plotly::layout(
       xaxis = list(
         title = "Time",
         range = c(0, ncol(z))
@@ -344,7 +347,7 @@ plot_pan_contrast <- function(pan_cp, plot_type = c("heatmap", "surface"), mode 
         type = "heatmap", ygap = 1, zsmooth = "best",
         z = ~z,
         colorbar = list(title = "Contrast")
-      ) %>% plotly::layout(
+      ) |> plotly::layout(
         annotations = list(
           list(
             x = max_idx,
@@ -392,7 +395,7 @@ plot_pan_contrast <- function(pan_cp, plot_type = c("heatmap", "surface"), mode 
         colorscale = "Jet",
         type = "surface",
         z = ~z
-      ) %>% plotly::layout(
+      ) |> plotly::layout(
         scene = list(
           annotations = list(
             list(
@@ -437,7 +440,7 @@ plot_pan_contrast <- function(pan_cp, plot_type = c("heatmap", "surface"), mode 
         )
       )
     }
-    fig <- fig %>%
+    fig <- fig |>
       plotly::layout(
         sliders = list(
           list(steps = steps, pad = list(t = 30))

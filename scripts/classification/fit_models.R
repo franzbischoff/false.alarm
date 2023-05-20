@@ -25,8 +25,8 @@ fit_models <- function(initial_split, strata = "alarm", arguments) {
     )
 
   # model_specs <-
-  #   discrim::naive_Bayes(smoothness = tune(), Laplace = 0) %>%
-  #   parsnip::set_engine("naivebayes") %>%
+  #   discrim::naive_Bayes(smoothness = tune(), Laplace = 0) |>
+  #   parsnip::set_engine("naivebayes") |>
   #   parsnip::set_mode("classification")
 
   # We can use a custom tune_grid or let the `tune` try by itself

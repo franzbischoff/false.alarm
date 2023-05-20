@@ -29,6 +29,7 @@ validate_data <- function(data, window_size) {
   checkmate::qassert(data, "N+")
   checkmate::qassert(window_size, "X1")
 
+
   windowed_size <- length(data) - window_size + 1
   pad_size <- window_size - 1
   is_finite <- is.finite(data)

@@ -169,15 +169,15 @@ list(
       validation_split <- rsample::vfold_cv(training_split, var_vfolds, var_vfolds_repeats)
       this_split <- NULL
       for (i in seq_along(validation_split$splits)) {
-        this_split <- rsample::analysis(validation_split$splits[[i]]) %>%
-          rsample::apparent() %>%
+        this_split <- rsample::analysis(validation_split$splits[[i]]) |>
+          rsample::apparent() |>
           dplyr::bind_rows(this_split)
       }
 
       result <- NULL
       for (i in seq_len(var_vfolds_repeats)) {
         mask <- seq.int(var_vfolds * (i - 1) + 1, var_vfolds * i)
-        res <- rsample::manual_rset(this_split$splits[mask], id = glue_fmt("Fold{seq_len(var_vfolds):02d}")) %>%
+        res <- rsample::manual_rset(this_split$splits[mask], id = glue_fmt("Fold{seq_len(var_vfolds):02d}")) |>
           dplyr::mutate(
             rep = glue("Repeat{i}")
           )
@@ -185,8 +185,8 @@ list(
       }
 
       # group by repeats, so targets will create multiple branches
-      result <- result %>%
-        dplyr::group_by(rep) %>%
+      result <- result |>
+        dplyr::group_by(rep) |>
         tar_group()
       result
     },
@@ -203,15 +203,15 @@ list(
       validation_split <- rsample::vfold_cv(training_split, var_vfolds, var_vfolds_repeats)
       this_split <- NULL
       for (i in seq_along(validation_split$splits)) {
-        this_split <- rsample::assessment(validation_split$splits[[i]]) %>%
-          rsample::apparent() %>%
+        this_split <- rsample::assessment(validation_split$splits[[i]]) |>
+          rsample::apparent() |>
           dplyr::bind_rows(this_split)
       }
 
       result <- NULL
       for (i in seq_len(var_vfolds_repeats)) {
         mask <- seq.int(var_vfolds * (i - 1) + 1, var_vfolds * i)
-        res <- rsample::manual_rset(this_split$splits[mask], id = glue_fmt("Fold{seq_len(var_vfolds):02d}")) %>%
+        res <- rsample::manual_rset(this_split$splits[mask], id = glue_fmt("Fold{seq_len(var_vfolds):02d}")) |>
           dplyr::mutate(
             rep = glue("Repeat{i}")
           )
@@ -219,8 +219,8 @@ list(
       }
 
       # group by repeats, so targets will create multiple branches
-      result <- result %>%
-        dplyr::group_by(rep) %>%
+      result <- result |>
+        dplyr::group_by(rep) |>
         tar_group()
       result
     },
@@ -245,12 +245,12 @@ list(
             mp_threshold = 0.0,
             regime_threshold = tune::tune(),
             regime_landmark = tune::tune()
-          ) %>%
-          parsnip::set_engine("floss") %>%
+          ) |>
+          parsnip::set_engine("floss") |>
           parsnip::set_mode("regression")
 
         floss_set <- tune::extract_parameter_set_dials(floss_spec)
-        floss_set <- floss_set %>% stats::update(
+        floss_set <- floss_set |> stats::update(
           window_size = window_size_par(c(window_size_map, window_size_map + 1)),
           # mp_threshold = mp_threshold_par(var_mp_threshold_tune),
           # time_constraint = time_constraint_par(var_time_constraint_tune),
@@ -258,9 +258,9 @@ list(
           regime_landmark = regime_landmark_par(var_regime_landmark_tune)
         )
 
-        floss_rec <- recipes::recipe(x = head(analysis_split$splits[[1]]$data, 1)) %>%
-          recipes::update_role(truth, new_role = "outcome") %>%
-          recipes::update_role(id, new_role = "predictor") %>%
+        floss_rec <- recipes::recipe(x = head(analysis_split$splits[[1]]$data, 1)) |>
+          recipes::update_role(truth, new_role = "outcome") |>
+          recipes::update_role(id, new_role = "predictor") |>
           recipes::update_role(ts, new_role = "predictor")
 
         # doMC::registerDoMC(cores = 8)
@@ -269,14 +269,14 @@ list(
         }
 
         # floss_wflow <-
-        #   workflows::workflow() %>%
-        #   workflows::add_model(floss_spec) %>%
+        #   workflows::workflow() |>
+        #   workflows::add_model(floss_spec) |>
         #   workflows::add_recipe(floss_rec)
 
-        # fitted_wflow <- floss_wflow %>% parsnip::fit(analysis_split$splits[[1]]$data)
+        # fitted_wflow <- floss_wflow |> parsnip::fit(analysis_split$splits[[1]]$data)
 
         if (var_grid_search == "tune_grid") {
-          floss_search_res <- floss_spec %>%
+          floss_search_res <- floss_spec |>
             tune::tune_grid(
               preprocessor = floss_rec,
               resamples = analysis_split,
@@ -296,7 +296,7 @@ list(
             tune::expo_decay(iter, start_val = 0.01, limit_val = 0, slope = 0.25)
           }
 
-          floss_search_res <- floss_spec %>%
+          floss_search_res <- floss_spec |>
             tune::tune_bayes(
               preprocessor = floss_rec,
               resamples = analysis_split,
@@ -314,7 +314,7 @@ list(
               )
             )
         } else if (var_grid_search == "tune_race_win_loss") {
-          floss_search_res <- floss_spec %>%
+          floss_search_res <- floss_spec |>
             finetune::tune_race_win_loss(
               preprocessor = floss_rec,
               resamples = analysis_split,
@@ -332,7 +332,7 @@ list(
             )
           # TODO: finetune::plot_race(floss_search_res)
         } else if (var_grid_search == "tune_race_anova") {
-          floss_search_res <- floss_spec %>%
+          floss_search_res <- floss_spec |>
             finetune::tune_race_anova(
               preprocessor = floss_rec,
               resamples = analysis_split,
@@ -350,7 +350,7 @@ list(
             )
           # TODO: finetune::plot_race(floss_search_res)
         } else if (var_grid_search == "tune_sim_anneal") {
-          floss_search_res <- floss_spec %>%
+          floss_search_res <- floss_spec |>
             finetune::tune_sim_anneal(
               preprocessor = floss_rec,
               resamples = analysis_split,
@@ -385,7 +385,7 @@ list(
 
 
         # best_models are the best models from some window_size, and current repeat. sorted by the mean over all folds
-        best_models <- all_fits %>% tune::show_best("floss_error_macro", 5)
+        best_models <- all_fits |> tune::show_best("floss_error_macro", 5)
 
         if (var_dopar_cores > 1) {
           doParallel::registerDoParallel(cores = var_dopar_cores)
@@ -399,16 +399,16 @@ list(
           repet <- best_models$rep[1]
 
           # get only the data from the current fold and repeat
-          resample <- assessment_split %>% dplyr::filter(id == glue::glue("Fold0{fold}"), rep == repet)
+          resample <- assessment_split |> dplyr::filter(id == glue::glue("Fold0{fold}"), rep == repet)
           class(resample) <- class(assessment_split) # fix for fit_resamples
 
           # so we end up with a tibble with all TS from this fold (id, truth and ts)
-          assessment_data <- resample$splits[[1]]$data %>% dplyr::arrange(id)
+          assessment_data <- resample$splits[[1]]$data |> dplyr::arrange(id)
 
           # make a generic recipe, it will be all the same anyway
-          floss_rec <- recipes::recipe(x = head(assessment_data, 1)) %>%
-            recipes::update_role(truth, new_role = "outcome") %>%
-            recipes::update_role(id, new_role = "predictor") %>%
+          floss_rec <- recipes::recipe(x = head(assessment_data, 1)) |>
+            recipes::update_role(truth, new_role = "outcome") |>
+            recipes::update_role(id, new_role = "predictor") |>
             recipes::update_role(ts, new_role = "predictor")
 
           # now, fit the model with the current window_size, don't care the other parameters
@@ -421,16 +421,16 @@ list(
               mp_threshold = 0,
               regime_threshold = model$regime_threshold,
               regime_landmark = model$regime_landmark
-            ) %>%
-            parsnip::set_engine("floss") %>%
+            ) |>
+            parsnip::set_engine("floss") |>
             parsnip::set_mode("regression")
 
           floss_wflow <-
-            workflows::workflow() %>%
-            workflows::add_model(floss_spec) %>%
+            workflows::workflow() |>
+            workflows::add_model(floss_spec) |>
             workflows::add_recipe(floss_rec)
 
-          model_fit <- floss_wflow %>%
+          model_fit <- floss_wflow |>
             parsnip::fit(assessment_data)
 
 
@@ -438,33 +438,33 @@ list(
 
           # now the submodels:
           # multi_pred will contain all the predictions from all best models in all ts from this fold
-          multi_pred <- workflows::extract_fit_parsnip(model_fit) %>%
+          multi_pred <- workflows::extract_fit_parsnip(model_fit) |>
             multi_predict(
               new_data = assessment_data,
               regime_threshold = best_models$regime_threshold,
               regime_landmark = best_models$regime_landmark
             )
 
-          all_preds <- multi_pred %>%
-            tidyr::unnest(.pred) %>%
+          all_preds <- multi_pred |>
+            tidyr::unnest(.pred) |>
             dplyr::arrange(.id)
 
           for (j in seq_len(nrow(best_models))) {
             model <- best_models[j, ]
-            estimates <- all_preds %>% dplyr::filter(
+            estimates <- all_preds |> dplyr::filter(
               regime_threshold == model$regime_threshold,
               regime_landmark == model$regime_landmark
             )
             eval <- floss_error_vec(truth = assessment_data$truth, estimate = estimates$.pred, data_size = estimates$.sizes, estimator = "macro")
             eval <- tibble::tibble(.metric = "floss_error_macro", .estimator = "macro", .estimate = eval)
-            eval <- model %>%
-              dplyr::select(rep, window_size, regime_threshold, regime_landmark, .config) %>%
-              dplyr::mutate(fold = glue::glue("Fold0{fold}")) %>%
+            eval <- model |>
+              dplyr::select(rep, window_size, regime_threshold, regime_landmark, .config) |>
+              dplyr::mutate(fold = glue::glue("Fold0{fold}")) |>
               dplyr::bind_cols(eval)
             result <- dplyr::bind_rows(result, eval)
           }
         }
-        result <- result %>% dplyr::arrange(.estimate)
+        result <- result |> dplyr::arrange(.estimate)
       },
       pattern = map(analysis_fitted),
       iteration = "list" # thus the objects keep their attributes
@@ -481,12 +481,12 @@ list(
     testing_evaluation,
     {
       # source(here::here("scripts", "regimes", "parsnip_model.R"), encoding = "UTF-8")
-      # best_parameters <- purrr::map_dfr(combined, ~ .x %>% dplyr::top_n(n = 3, wt = .estimate))
-      best_parameters <- combined %>%
-        dplyr::group_by(window_size, regime_threshold, regime_landmark) %>%
-        dplyr::summarize(mean = mean(.estimate), sd = sd(.estimate)) %>%
-        dplyr::ungroup() %>%
-        dplyr::arrange(mean, sd) %>%
+      # best_parameters <- purrr::map_dfr(combined, ~ .x |> dplyr::top_n(n = 3, wt = .estimate))
+      best_parameters <- combined |>
+        dplyr::group_by(window_size, regime_threshold, regime_landmark) |>
+        dplyr::summarize(mean = mean(.estimate), sd = sd(.estimate)) |>
+        dplyr::ungroup() |>
+        dplyr::arrange(mean, sd) |>
         dplyr::slice_head(n = 6)
 
 
@@ -503,31 +503,31 @@ list(
             mp_threshold = 0,
             regime_threshold = best_parameters$regime_threshold[i],
             regime_landmark = best_parameters$regime_landmark[i]
-          ) %>%
-          parsnip::set_engine("floss") %>%
+          ) |>
+          parsnip::set_engine("floss") |>
           parsnip::set_mode("regression")
 
-        floss_rec <- recipes::recipe(x = head(testing_split, 1)) %>%
-          recipes::update_role(truth, new_role = "outcome") %>%
-          recipes::update_role(id, new_role = "predictor") %>%
+        floss_rec <- recipes::recipe(x = head(testing_split, 1)) |>
+          recipes::update_role(truth, new_role = "outcome") |>
+          recipes::update_role(id, new_role = "predictor") |>
           recipes::update_role(ts, new_role = "predictor")
 
         floss_wflow <-
-          workflows::workflow() %>%
-          workflows::add_model(floss_spec) %>%
+          workflows::workflow() |>
+          workflows::add_model(floss_spec) |>
           workflows::add_recipe(floss_rec)
 
-        model_fit <- floss_wflow %>%
+        model_fit <- floss_wflow |>
           parsnip::fit(testing_split)
-        model_predicted <- model_fit %>%
-          predict(testing_split) %>%
+        model_predicted <- model_fit |>
+          predict(testing_split) |>
           dplyr::bind_cols(testing_split)
         eval <- floss_error(model_predicted, truth = model_predicted$truth, estimate = model_predicted$.pred, estimator = "macro")
-        eval <- best_parameters[i, ] %>%
-          dplyr::select(window_size, regime_threshold, regime_landmark) %>%
+        eval <- best_parameters[i, ] |>
+          dplyr::select(window_size, regime_threshold, regime_landmark) |>
           dplyr::bind_cols(eval)
 
-        result <- result %>% dplyr::bind_rows(eval)
+        result <- result |> dplyr::bind_rows(eval)
       }
       result
     }
@@ -548,11 +548,11 @@ list(
 # best_model <- select_best(all_fits, metric = "floss_error")
 # best_by_one_std_err <- select_by_one_std_err(all_fits, metric = "floss_error")
 # best_by_pct_loss <- select_by_pct_loss(all_fits, metric = "floss_error", limit = 5)
-# collect_metrics(all_fits, summarize = FALSE) %>%
-#   group_by(id) %>%
+# collect_metrics(all_fits, summarize = FALSE) |>
+#   group_by(id) |>
 #   summarise(mean = mean(.estimate), n = n(), std_err = sd(.estimate))
 
 # best_param <- select_best(ames_iter_search, metric = "rmse")
-# ames_iter_search %>%
-#   filter_parameters(parameters = best_param) %>%
+# ames_iter_search |>
+#   filter_parameters(parameters = best_param) |>
 #   collect_metrics()

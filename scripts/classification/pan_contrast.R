@@ -36,10 +36,10 @@
 # jj <- filter_best_solutions(solutions, 2)
 # plt <- plot_best_candidates(jj$data[[1]], res)
 
-# bb %>% dplyr::select(2:7) %>% dplyr::filter(coverage < 20) %>% ggpairs(aes(alpha = 0.05), lower = list(continuous = "smooth"))
+# bb |> dplyr::select(2:7) |> dplyr::filter(coverage < 20) |> ggpairs(aes(alpha = 0.05), lower = list(continuous = "smooth"))
 
-# samples vs redundance
-# coverage x redundance
+# samples vs redundancy
+# coverage x redundancy
 # sd vs mean
 
 # get_pan_platos <- function(contrast_profiles, position = 1) {
@@ -61,73 +61,90 @@
 #   return(pan_platos)
 # }
 
-score_by_segment_window <- function(true_data, false_data, contrast_profiles) {
+score_by_segment_window <- function(true_data, false_data, contrast_profiles, quantiles = c(0.1, 1 / 3), segment_size = 2800) {
   checkmate::qassert(true_data, "N+")
   checkmate::qassert(false_data, "N+")
   checkmate::qassert(contrast_profiles, "L+")
 
-  # browser()
-
-  w_sizes <- names(contrast_profiles)
-  c_sizes <- as.numeric(w_sizes)
+  w_sizes <- names(contrast_profiles) # retrieve the window sizes that are stored as list labels
+  c_sizes <- as.numeric(w_sizes) # then convert them to numeric
 
   segs <- list()
   cont <- matrix(Inf, ncol = length(w_sizes), nrow = ncol(contrast_profiles[[1]]$cps))
+  thlds <- matrix(Inf, ncol = length(w_sizes), nrow = ncol(contrast_profiles[[1]]$cps))
 
   for (i in seq_along(c_sizes)) {
+    # get all the distance profiles of all top-k platos for the true and false data
     tp <- topk_distance_profiles(true_data, contrast_profiles, c_sizes[i])
     fp <- topk_distance_profiles(false_data, contrast_profiles, c_sizes[i])
 
-    segments <- unique(c(seq(0, nrow(tp), by = 2800), nrow(tp)))
+    # computes the index of each segment
+    segments <- unique(c(seq(0, nrow(tp), by = segment_size), nrow(tp)))
 
+    # number of top-k platos is equal to the ncol of the distance profiles
     knn <- ncol(tp)
 
+    # this matrix is equivalent to "k" vectors of TRUE/FALSE values for each segment
     seg <- matrix(0, ncol = length(segments) - 1, nrow = knn)
 
     for (k in seq_len(knn)) {
+      # get the distance profiles
       tpk <- tp[, k]
-      # if (k > 1) {
-      #   tpk <- apply(tpk, 1, min)
-      # }
       fpk <- fp[, k]
+
+      # get the minimum value on the false data to use as a threshold
       fpk_min <- min(fpk, na.rm = TRUE)
+      thlds[k, i] <- fpk_min
       max_min <- NULL
 
+      # iterate over the segments
       for (j in seq_along(segments)) {
         if (j < length(segments)) {
+          # get just that segment distance profile
           sm <- tpk[seq(segments[j] + 1, segments[j + 1])]
-          sm <- sm[sm < fpk_min] # filter out the ones that are bigger than the min
+          # keep only the ones that are smaller than the threshold
+          sm <- sm[sm < fpk_min]
 
+          # if there are any value left, we can classify the segment
           if (length(sm) > 0) {
             # get the 10% percentile of the values
             # this gives us a hint of how well the shapelet is doing by segment
-            max_min <- c(max_min, quantile(sm, 0.1, na.rm = TRUE))
-            seg[k, j] <- 1
+            max_min <- c(max_min, quantile(sm, quantiles[1], na.rm = TRUE))
+            seg[k, j] <- 1 # store as TRUE, since we have values below the threshold
           }
         }
       }
 
+      # if the plato could classify any segment...
       if (!is.null(max_min)) {
-        # stores the overall contrast of the shapelet across segments
-        cont[k, i] <- (fpk_min - quantile(max_min, 1 / 3, na.rm = TRUE)) / sqrt(2 * c_sizes[i])
+        # computes the overall contrast value using the quantile 1/3 of the max_min values, normalized
+        # by the sqrt(2*w) (same factor used on the contrast profile), so we can compare different window sizes
+        cont[k, i] <- (fpk_min - quantile(max_min, quantiles[2], na.rm = TRUE)) / sqrt(2 * c_sizes[i])
       } else {
+        # if the plato could not classify any segment, we set the contrast to 0
         cont[k, i] <- 0
       }
     }
     segs[[w_sizes[i]]] <- seg
   }
 
+  # here we compute the total number of segments that each plato could classify
   total_counts <- as.matrix(purrr::map_dfr(segs, function(x) apply(x, 1, sum)))
-  colnames(cont) <- w_sizes
+  colnames(cont) <- w_sizes # set the column names on the overall contrast matrix
+  colnames(thlds) <- w_sizes # set the column names on the overall contrast matrix
 
   # NOTE: cont and segs seems to complement each other
   # cont is similar to plot_topk_contrasts (contrasts values by k vs shapelet size)
   # but it is more specific, since it takes into account the segments and not just the
   # best contrast.
 
-  # cont == best overall contrast (specific)
-  # segs == best coverage by segment (sensitive)
-  list(contrast = cont, coverage = segs, cov_counts = total_counts, num_segments = (length(segments) - 1))
+  # cont == best overall contrast (~specificity)
+  # segs == best coverage by segment (~senstivity)
+  list(
+    contrast = cont, coverage = segs,
+    thresholds = thlds, cov_counts = total_counts,
+    num_segments = (length(segments) - 1)
+  )
 }
 
 score_candidates <- function(score) {
@@ -140,6 +157,7 @@ score_candidates <- function(score) {
         window = j,
         k = i,
         contrast = score$contrast[i, j],
+        threshold = score$thresholds[i, j],
         cov_sum = sum(score$coverage[[j]][i, ]),
         cov_idxs = list(score$coverage[[j]][i, ])
       )
@@ -147,6 +165,7 @@ score_candidates <- function(score) {
     }
   }
 
+  # cov_con is a ratio between the coverage and the contrast
   data <- data |>
     dplyr::filter(cov_sum > 1, contrast > 0.1) |>
     dplyr::mutate(cov_con = log10(cov_sum) * (1 / -log(contrast)), .before = cov_idxs)
@@ -155,12 +174,15 @@ score_candidates <- function(score) {
 }
 
 
-filter_best_solutions <- function(solutions, n_sols = 1) {
+filter_best_solutions <- function(
+    solutions, n_sols = 1,
+    c_median = c(0.1, 0.9), c_sd = c(0.1, 0.9),
+    redundancy = c(0, 10), samples = c(1, 10)) {
   best <- solutions |>
     dplyr::filter(coverage == max(coverage, na.rm = TRUE)) |>
     dplyr::filter(c_median > max(c_median, na.rm = TRUE) / 2) |>
     dplyr::filter(c_sd > max(c_sd, na.rm = TRUE) / 2) |>
-    dplyr::filter(redundance == min(redundance, na.rm = TRUE)) |>
+    dplyr::filter(redundancy == min(redundancy, na.rm = TRUE)) |>
     dplyr::arrange(c_sd) |>
     dplyr::filter(samples == min(samples, na.rm = TRUE)) |>
     dplyr::slice_head(n = n_sols)
@@ -168,6 +190,11 @@ filter_best_solutions <- function(solutions, n_sols = 1) {
   return(best)
 }
 
+
+# n = max number of shapelets to use
+# rep = number of sampling repetitions
+# red = maximum redundancy allowed
+# cov = minimum coverage allowed
 
 find_solutions <- function(score, n = 5, rep = 2000, red = 5, cov = 17, n_jobs = 1) {
   if (cov > score$num_segments) {
@@ -198,12 +225,12 @@ find_solutions <- function(score, n = 5, rep = 2000, red = 5, cov = 17, n_jobs =
         sample_data <- matrix(unlist(some_rows$cov_idxs), ncol = n_cols, byrow = TRUE)
         data_coverage <- apply(sample_data, 2, sum)
 
-        redundance <- sum(data_coverage > 1)
-        if (redundance > red) {
+        redundancy <- sum(data_coverage > 1, na.rm = TRUE)
+        if (redundancy > red) {
           return(NULL)
         }
 
-        coverage <- sum(data_coverage > 0)
+        coverage <- sum(data_coverage > 0, na.rm = TRUE)
         if (coverage < cov) {
           return(NULL)
         }
@@ -234,8 +261,8 @@ find_solutions <- function(score, n = 5, rep = 2000, red = 5, cov = 17, n_jobs =
           some_rows <- some_rows[keep_rows[[1]], ]
           samples <- length(keep_rows[[1]])
           data_coverage <- apply(matrix(unlist(some_rows$cov_idxs), ncol = n_cols, byrow = TRUE), 2, sum)
-          redundance <- sum(data_coverage > 1)
-          coverage <- sum(data_coverage > 0)
+          redundancy <- sum(data_coverage > 1, na.rm = TRUE)
+          coverage <- sum(data_coverage > 0, na.rm = TRUE)
         } else if (length(keep_rows) > 1) {
           new_rows <- NULL
           for (j in seq_len(length(keep_rows))) {
@@ -246,7 +273,7 @@ find_solutions <- function(score, n = 5, rep = 2000, red = 5, cov = 17, n_jobs =
           new_rows <- new_rows |>
             dplyr::group_by(idx) |>
             dplyr::summarise(
-              sk = sum(k), mc = median(contrast),
+              sk = sum(k), mc = median(contrast, na.rm = TRUE),
               sid = sum(unlist(cov_idxs)),
               redun = sum(apply(matrix(unlist(cov_idxs), ncol = n_cols, byrow = TRUE), 2, sum) > 1)
             )
@@ -258,19 +285,23 @@ find_solutions <- function(score, n = 5, rep = 2000, red = 5, cov = 17, n_jobs =
 
           samples <- length(keep_rows[[new_idx]])
           data_coverage <- apply(matrix(unlist(some_rows$cov_idxs), ncol = n_cols, byrow = TRUE), 2, sum)
-          redundance <- sum(data_coverage > 1)
-          coverage <- sum(data_coverage > 0)
+          redundancy <- sum(data_coverage > 1, na.rm = TRUE)
+          coverage <- sum(data_coverage > 0, na.rm = TRUE)
         }
 
-        # ties: < sum(k), > median(contrast), < sum(idxs), < sum(data_coverage > 1), < sum(redundance)
+        # ties: < sum(k), > median(contrast), < sum(idxs), < sum(data_coverage > 1), < sum(redundancy)
 
         # cli::cli_alert_info("sols i={i}, length(keep_rows) {length(keep_rows)}, length(keep_rows[[1]]) {length(keep_rows[[1]])}.")
 
         # sols[[i]] <- list(
         list(
-          c_total = sum(some_rows$contrast), c_median = median(some_rows$contrast), c_mean = mean(some_rows$contrast),
-          cov_mean = mean(some_rows$cov_con),
-          c_sd = ifelse(length(some_rows$contrast) > 1, sd(some_rows$contrast, na.rm = TRUE), 0), coverage = coverage, redundance = redundance,
+          c_total = sum(some_rows$contrast, na.rm = TRUE),
+          c_median = median(some_rows$contrast, na.rm = TRUE),
+          c_mean = mean(some_rows$contrast, na.rm = TRUE),
+          cov_con_mean = mean(some_rows$cov_con, na.rm = TRUE),
+          c_sd = ifelse(length(some_rows$contrast) > 1, sd(some_rows$contrast, na.rm = TRUE), 0),
+          coverage = coverage,
+          redundancy = redundancy,
           samples = samples, cand = some_rows
         )
       }, .options = furrr::furrr_options(seed = 2023, scheduling = 1))
@@ -279,7 +310,6 @@ find_solutions <- function(score, n = 5, rep = 2000, red = 5, cov = 17, n_jobs =
     handlers = progressr::handler_progress(format = "[:bar] :percent :eta :message", interval = 10) # intrusiveness = 100,
   )
 
-  # browser()
   sols <- list_dfr(sols)
 
   if (length(sols) == 0) {
@@ -287,7 +317,7 @@ find_solutions <- function(score, n = 5, rep = 2000, red = 5, cov = 17, n_jobs =
   } else {
     sols <- tidyr::unnest(sols, cols = cand) |>
       dplyr::distinct_all() |>
-      tidyr::nest(data = c(window, k, contrast, cov_sum, cov_con, cov_idxs))
+      tidyr::nest(data = c(window, k, contrast, threshold, cov_sum, cov_con, cov_idxs))
     cli::cli_alert_info("done.")
   }
 
@@ -318,23 +348,24 @@ list_dfc <- function(x) {
 topk_distance_profiles <- function(data, contrast_profiles, window_size) {
   checkmate::qassert(contrast_profiles, "L+")
 
-  w_sizes <- names(contrast_profiles)
-  w_size <- as.character(window_size)
+  w_sizes <- names(contrast_profiles) # retrieve the window sizes that are stored as list labels
+  w_size <- as.character(window_size) # convert the numeric window_size to character
 
   if (!(w_size %in% w_sizes)) {
     cli::cli_abort("Invalid window_size.")
   }
 
-  platos <- contrast_profiles[[w_size]]$platos
-  platos_twin <- contrast_profiles[[w_size]]$platos_twin
+  platos <- contrast_profiles[[w_size]]$platos # all top-k platos
+  platos_twin <- contrast_profiles[[w_size]]$platos_twin # and the corresponding twins
 
   dps <- matrix(NA, ncol = ncol(platos), nrow = length(data) - window_size + 1)
 
+  # iterate over all top-k platos
   for (i in seq_len(ncol(platos))) {
-    query <- (platos[, i] + platos_twin[, i]) / 2
+    query <- (platos[, i] + platos_twin[, i]) / 2 # average of the plato and its twin
 
-    dp <- dist_profile(data, query)
-    dps[, i] <- dp
+    dp <- dist_profile(data, query) # compute the distance profile of the plato against the data
+    dps[, i] <- dp # store the distance profile
   }
 
   return(dps)
@@ -406,7 +437,7 @@ contrastprofile_topk <- function(split, shapelet_sizes, num_shapelets, n_jobs = 
         self_mp <- self_mp$matrix_profile
 
         if (!all(is.finite(self_mp))) {
-          cli::cli_warn("self_mp contains non finite values.")
+          cli::cli_warn("self_mp contains non finite values. This may happen for small windows.")
         }
 
         # clip values above sqrt(2 * shapelet_sizes) as they are anti-correlated
@@ -448,7 +479,7 @@ contrastprofile_topk <- function(split, shapelet_sizes, num_shapelets, n_jobs = 
           #  Euclidean distance values above sqrt(2*m) are equivalent to
           #    anti-correlated values
           if (!all(is.finite(join_mp))) {
-            cli::cli_warn("join_mp contains non finite values.")
+            cli::cli_warn("join_mp contains non finite values. This may happen for small windows.")
           }
 
           join_mp[join_mp > clip] <- clip
@@ -459,7 +490,7 @@ contrastprofile_topk <- function(split, shapelet_sizes, num_shapelets, n_jobs = 
           na_idxs <- is.na(join_mp)
 
           self_mp_padded[na_idxs] <- NA
-          join_mp_history <- pmin(join_mp_history, join_mp)
+          join_mp_history <- pmin(join_mp_history, join_mp, na.rm = TRUE)
           #  Contrast Profile
           cp <- join_mp_history - self_mp_padded
 
@@ -468,7 +499,7 @@ contrastprofile_topk <- function(split, shapelet_sizes, num_shapelets, n_jobs = 
 
           # discard negative values. These occur when a subsequence in T+ has a
           # closer nearest neighbor in T-. It's not a behavior of interest here
-          cp <- pmax(0, cp)
+          cp <- pmax(0, cp, na.rm = TRUE)
 
           cps[, ki] <- cp
 
@@ -490,8 +521,8 @@ contrastprofile_topk <- function(split, shapelet_sizes, num_shapelets, n_jobs = 
           platos[, ki] <- plato
           #  setup for next iteration
           exclusion_length <- shapelet_sizes[i]
-          start_index <- max(1, (plato_index - exclusion_length))
-          end_index <- min(length(true_alarms_val), ceiling(plato_index + shapelet_sizes[i] - 1 + exclusion_length))
+          start_index <- max(1, (plato_index - exclusion_length), na.rm = TRUE)
+          end_index <- min(length(true_alarms_val), ceiling(plato_index + shapelet_sizes[i] - 1 + exclusion_length), na.rm = TRUE)
 
           plato_twin_indices[ki] <- self_mpi[plato_index]
           platos_twin[, ki] <- true_alarms_val[plato_twin_indices[ki]:(plato_twin_indices[ki] + shapelet_sizes[i] - 1)]
@@ -516,6 +547,142 @@ contrastprofile_topk <- function(split, shapelet_sizes, num_shapelets, n_jobs = 
 
   return(list(pan = result, positive = true_alarms, negative = false_alarms))
 }
+
+compute_metrics_topk <- function(fold, shapelets, contrast) {
+  tp <- 0
+  fp <- 0
+  tn <- 0
+  fn <- 0
+
+  thresholds <- shapelets$data[[1]]$threshold
+  windows <- shapelets$data[[1]]$window
+  knn <- shapelets$data[[1]]$k
+
+  for (k in seq_along(fold$data$values)) {
+    alarm <- (fold$data$alarm[[k]] == "true")
+
+    if (sum(fold$data$values[[k]][1:1000], na.rm = TRUE) == 0) { # skip if no data
+      next
+    }
+
+    fold$data$values[[k]] <- vctrs::vec_fill_missing(fold$data$values[[k]])
+    data <- validate_data(fold$data$values[[k]], 20)
+
+    class <- NULL
+
+    for (j in seq_along(windows)) {
+      plato <- contrast$pan[[windows[j]]]$platos[, knn[j]]
+      plato_twin <- contrast$pan[[windows[j]]]$platos_twin[, knn[j]]
+      query <- (plato + plato_twin) / 2
+
+      if (anyNA(data)) {
+        cli::cli_warn("NA values in fold data {k}.")
+      }
+
+      dp <- dist_profile(data, query)
+
+      class <- c(class, (min(dp, na.rm = TRUE) < thresholds[j]))
+    }
+
+    class <- any(class)
+
+    if (class == alarm) {
+      # hit
+      if (isTRUE(class)) {
+        # true positive
+        tp <- tp + 1
+      } else {
+        # true negative
+        tn <- tn + 1
+      }
+    } else {
+      # miss
+      if (isTRUE(class)) {
+        # false positive
+        fp <- fp + 1
+      } else {
+        # false negative
+        fn <- fn + 1
+      }
+    }
+  }
+
+  accuracy <- (tp + tn) / (tp + tn + fp + fn)
+  f1 <- 2 * tp / (2 * tp + fp + fn)
+  p4 <- (4 * tp * tn) / (4 * tp * tn + (tp + tn) * (fp + fn))
+  mcc <- (tp * tn - fp * fn) / sqrt((tp + fp) * (tp + fn) * (tn + fp) * (tn + fn))
+  kappa <- 2 * (tp * tn - fp * fn) / ((tp + fn) * (fn + tn) + (tp + fp) * (fp + tn))
+
+  return(list(
+    tp = tp, fp = fp, tn = tn, fn = fn,
+    accuracy = accuracy, f1 = f1,
+    p4 = p4, mcc = mcc, kappa = kappa
+  ))
+}
+
+compute_overall_metric <- function(all_folds) {
+  tp <- fp <- tn <- fn <- acc <- ff <- 0
+
+  for (fold in all_folds) {
+    tp <- tp + fold$tp
+    fp <- fp + fold$fp
+    tn <- tn + fold$tn
+    fn <- fn + fold$fn
+    ff <- ff + fold$f1
+  }
+
+  tm <- (2 * tp) / (2 * tp + fp + fn)
+  fm <- (2 * tn) / (2 * tn + fp + tp)
+  f1_micro <- (tm + fm) / 2
+  f1_macro <- (ff / length(all_folds))
+  f1_weighted <- ((tp + fp) * tm + (fn + tn) * fm) / (tp + tn + fp + fn)
+  acc <- (tp + tn) / (tp + tn + fp + fn)
+  p4 <- (4 * tp * tn) / (4 * tp * tn + (tp + tn) * (fp + fn))
+  mcc <- (tp * tn - fp * fn) / sqrt((tp + fp) * (tp + fn) * (tn + fp) * (tn + fn))
+  kappa <- 2 * (tp * tn - fp * fn) / ((tp + fn) * (fn + tn) + (tp + fp) * (fp + tn))
+
+  return(list(
+    tp = tp, fp = fp, tn = tn, fn = fn,
+    accuracy = acc, f1_micro = f1_micro, f1_macro = f1_macro, f1_weighted = f1_weighted,
+    p4 = p4, mcc = mcc, kappa = kappa
+  ))
+}
+
+
+# tp <- fp <- tn <- fn <- acc <- ff <- 0
+# for (i in 1:5) {
+#   tp <- tp + test_classifiers_self[[1]][[i]]$tp
+#   fp <- fp + test_classifiers_self[[1]][[i]]$fp
+#   tn <- tn + test_classifiers_self[[1]][[i]]$tn
+#   fn <- fn + test_classifiers_self[[1]][[i]]$fn
+#   acc <- acc + test_classifiers_self[[1]][[i]]$accuracy
+#   ff <- ff + test_classifiers_self[[1]][[i]]$f1
+# }
+# tm <- (2 * tp) / (2 * tp + fp + fn)
+# fm <- (2 * tn) / (2 * tn + fp + tp)
+# w <- ((tp + fp) * tm + (fn + tn) * fm) / (tp + tn + fp + fn)
+# p4 <- (4 * tp * tn) / (4 * tp * tn + (tp + tn) * (fp + fn))
+
+# # markedness
+# mk <- (tp / (tp + fp)) + (tn / (tn + fn)) - 1
+# # matthews correlation coefficient
+# mcc <- (tp * tn - fp * fn) / sqrt((tp + fp) * (tp + fn) * (tn + fp) * (tn + fn))
+# # kappa
+# kappa <- 2 * (tp * tn - fp * fn) / ((tp + fn) * (fn + tn) + (tp + fp) * (fp + tn))
+
+# print(tm) # micro true
+# print(fm) # micro false
+# print(w) # weigthed
+# print((tm + fm) / 2) # micro
+# print(ff / 5) # macro
+
+
+
+
+# micro-averaged f1 score
+
+
+
 
 
 

@@ -23,18 +23,18 @@ build_pos_neg <- function(initial_split, signal = "II", shapelet_sizes, positive
     for (shape in seq_along(shapelet_sizes)) {
       if (positive) { # Here, positive are the true alarms
         if (same_class) {
-          data_n <- analysis_set %>% dplyr::filter(class == cl, alarm == "false")
+          data_n <- analysis_set |> dplyr::filter(class == cl, alarm == "false")
         } else {
-          data_n <- analysis_set %>% dplyr::filter(!(class == cl & alarm == "true")) # including other classes "positives"
+          data_n <- analysis_set |> dplyr::filter(!(class == cl & alarm == "true")) # including other classes "positives"
         }
-        data_p <- analysis_set %>% dplyr::filter(class == cl, alarm == "true")
+        data_p <- analysis_set |> dplyr::filter(class == cl, alarm == "true")
       } else { # Here positive are the false alarms (so we try to get shapelets for the False alarm)
         if (same_class) {
-          data_n <- analysis_set %>% dplyr::filter(class == cl, alarm == "true")
+          data_n <- analysis_set |> dplyr::filter(class == cl, alarm == "true")
         } else {
-          data_n <- analysis_set %>% dplyr::filter(!(class == cl & alarm == "false")) # including other classes "negatives"
+          data_n <- analysis_set |> dplyr::filter(!(class == cl & alarm == "false")) # including other classes "negatives"
         }
-        data_p <- analysis_set %>% dplyr::filter(class == cl, alarm == "false")
+        data_p <- analysis_set |> dplyr::filter(class == cl, alarm == "false")
       }
 
       neg_stream <- NULL

@@ -56,8 +56,8 @@ get_minimum_cacs <- function(training_set, params) {
 
     min_global <<- c(min_global, min(min_local))
 
-    # test <- min_cacs %>%
-    #   purrr::flatten() %>%
+    # test <- min_cacs |>
+    #   purrr::flatten() |>
     #   purrr::keep(function(x) length(x) > 1)
     min_cacs
   })

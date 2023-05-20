@@ -123,19 +123,19 @@ plot_regime_predictions <- function(data, truth, pred) {
       type = "scatter",
       line = list(width = 0.5, color = "#1f77b4"),
       name = "Data"
-    ) %>%
+    ) |>
       plotly::add_segments(
         x = truth, xend = truth, y = min(data),
         yend = max(data),
         line = list(width = 1.5, color = "#ff00007f"),
         name = "Truth"
-      ) %>%
+      ) |>
       plotly::add_segments(
         x = pred, xend = pred, y = min(data) * 0.85,
         yend = max(data) * 1.15,
         line = list(width = 1.5, color = "#01c7017f"),
         name = "Predicted"
-      ) %>%
+      ) |>
       plotly::config(
         displaylogo = FALSE, scrollZoom = TRUE,
         toImageButtonOptions = list(format = "svg")

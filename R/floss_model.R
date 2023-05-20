@@ -362,8 +362,8 @@ multi_predict._floss_regime_model <- function(object, new_data, type = NULL, reg
     predict(object,
       new_data = new_data, type = "raw", # for now, using raw
       opts = list(regime_threshold = regime_threshold, regime_landmark = regime_landmark), ...
-    ) %>%
-      dplyr::mutate(regime_threshold = regime_threshold, regime_landmark = regime_landmark, .row = dplyr::row_number()) %>%
+    ) |>
+      dplyr::mutate(regime_threshold = regime_threshold, regime_landmark = regime_landmark, .row = dplyr::row_number()) |>
       dplyr::select(.row, .sizes, .id, regime_threshold, regime_landmark, dplyr::starts_with(".pred"))
   }
 
