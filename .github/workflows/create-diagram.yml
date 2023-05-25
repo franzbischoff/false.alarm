@@ -13,4 +13,6 @@ jobs:
       - name: Update diagram
         uses: githubocto/repo-visualizer@main
         with:
+          output_file: ".github/diagram.svg"
+          excluded_globs: "**/*.{1,2,3,4,5,6,7,8,9};**/site_libs"
           excluded_paths: "_*,.binder,.docker,.trunk,.vscode,renv,.github"
