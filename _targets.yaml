@@ -11,6 +11,11 @@ classifier:
   store: _classifier
   script: scripts/_classifier.R
 
+contrast_profile:
+  inherits: main
+  store: _contrast_profile
+  script: scripts/_contrast_profile.R
+
 regime_change2:
   inherits: main
   store: _regime_change2

@@ -131,7 +131,7 @@ translate.contrast_model <- function(x, engine = x$engine, ...) {
   x <- parsnip::translate.default(x, engine, ...)
 
   if (engine == "contrast_profile") {
-    .check_floss_regime_threshold_fit(x)
+    .check_contrast_profile_fit(x)
   }
   x
 }
@@ -175,43 +175,43 @@ check_args.contrast_model <- function(object) {
 }
 
 
-#' Helper functions for checking the regime_threshold of FLOSS models
+#' Helper functions for checking arguments on fit and predict
 #'
 #' @description
 #' These functions are for developer use.
 #'
-#' `.check_floss_regime_threshold_fit()` checks that the model specification for fitting a
-#' floss model contains a single value.
+#' `.check_contrast_profile_fit()` checks that the model specification for fitting a
+#' model contains a single value.
 #'
-#' `.check_floss_regime_threshold_predict()` checks that the regime_threshold value used for prediction is valid.
+#' `.check_contrast_profile_predict()` checks that the argument value used for prediction is valid.
 #' If called by `predict()`, it needs to be a single value. Multiple values are
 #' allowed for `multi_predict()`.
 #'
 #' @param x An object of class `model_spec`.
-#' @rdname floss_helpers
+#' @rdname contrast_helpers
 #' @keywords internal
 #' @export
 
-.check_floss_regime_threshold_fit <- function(x) {
-  # cli::cli_inform(c("*" = ".check_floss_regime_threshold_fit"))
-  regime_threshold <- rlang::eval_tidy(x$args$regime_threshold)
-  regime_landmark <- rlang::eval_tidy(x$args$regime_landmark)
+.check_contrast_profile_fit <- function(x) {
+  # cli::cli_inform(c("*" = ".check_contrast_profile_fit"))
+  num_shapelets <- rlang::eval_tidy(x$args$num_shapelets)
+  redundance <- rlang::eval_tidy(x$args$redundance)
 
-  if (length(regime_threshold) != 1L) {
+  if (length(num_shapelets) != 1L) {
     rlang::abort(c(
-      "For the floss engine, `regime_threshold` must be a single number (or a value of `tune()`).",
-      glue::glue("There are {length(regime_threshold)} values for `regime_threshold`."),
+      "For the contrast_profile engine, `num_shapelets` must be a single number (or a value of `tune()`).",
+      glue::glue("There are {length(num_shapelets)} values for `num_shapelets`."),
       "To try multiple values for total regularization, use the tune package.",
-      "To predict multiple regime_threshold, use `multi_predict()`"
+      "To predict multiple num_shapelets, use `multi_predict()`"
     ))
   }
 
-  if (length(regime_landmark) != 1L) {
+  if (length(redundance) != 1L) {
     rlang::abort(c(
-      "For the floss engine, `regime_landmark` must be a single number (or a value of `tune()`).",
-      glue::glue("There are {length(regime_landmark)} values for `regime_landmark`."),
+      "For the contrast_profile engine, `redundance` must be a single number (or a value of `tune()`).",
+      glue::glue("There are {length(redundance)} values for `redundance`."),
       "To try multiple values for total regularization, use the tune package.",
-      "To predict multiple regime_landmark, use `multi_predict()`"
+      "To predict multiple redundance, use `multi_predict()`"
     ))
   }
 }

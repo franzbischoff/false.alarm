@@ -14,15 +14,28 @@ register_contrast_model <- function() {
 
   parsnip::set_dependency("contrast_model", eng = "contrast_profile")
 
+  # parsnip::set_fit(
+  #   model = "contrast_model",
+  #   eng = "contrast_profile",
+  #   mode = "classification",
+  #   value = list(
+  #     interface = "formula",
+  #     protect = c("formula", "data"),
+  #     func = c(fun = "contrast_train_model", pkg = "false.alarm"),
+  #     defaults = list()
+  #   )
+  # )
+
   parsnip::set_fit(
     model = "contrast_model",
     eng = "contrast_profile",
     mode = "classification",
     value = list(
-      interface = "formula",
-      protect = c("formula", "data"),
-      func = c(fun = "filter_best_solutions", pkg = "false.alarm"),
-      defaults = list()
+      interface = "data.frame",
+      data = c(x = "ts", y = "truth", id = "id"), # ts$x[[2]][1:10] regimes[[2]]
+      protect = c("ts", "truth"),
+      func = c(fun = "contrast_train_model", pkg = "false.alarm"),
+      defaults = list() # verbose = FALSE
     )
   )
 
