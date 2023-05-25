@@ -14,7 +14,6 @@ register_contrast_model <- function() {
 
   parsnip::set_dependency("contrast_model", eng = "contrast_profile")
 
-
   parsnip::set_fit(
     model = "contrast_model",
     eng = "contrast_profile",
@@ -48,7 +47,7 @@ register_contrast_model <- function() {
     value = parsnip::pred_value_template(
       pre = NULL,
       post = NULL,
-      func = c(fun = "predict"),
+      func = c(fun = "predict"), # predict(object, newdata, type = "class")
       # Now everything else is put into the `args` slot
       object = rlang::expr(object$fit),
       newdata = rlang::expr(new_data),
