@@ -63,7 +63,7 @@ if (Sys.getenv("CI") == "") {
 
     # renv::install("franzbischoff/tune@539e1eea1426e9ace11b4e71ac4dafadddda7f0a")
 
-    options(renv.settings.ignored.packages = c("parsnip", "yardstick", "dials", "finetune", "recipes", "hardhat", "workflowsets", "tune"))
+    # options(renv.settings.ignored.packages = c("parsnip", "yardstick", "dials", "finetune", "recipes", "hardhat", "workflowsets", "tune"))
 
     options(languageserver.formatting_style = function(options) {
       style <- styler::tidyverse_style(scope = "tokens", indent_by = 2)

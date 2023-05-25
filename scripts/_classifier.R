@@ -257,6 +257,26 @@ list(
     iteration = "list"
   ),
   tar_target(
+    #### Pipeline: analysis_fitted - Here we will conduct the parameter optimizations ----
+    analysis_fitted,
+    {
+      # source(here::here("scripts", "classification", "parsnip_model.R"), encoding = "UTF-8")
+
+      contrast_spec <-
+        contrast_model(
+          # coverage_quantiles = tune::tune(), # score_by_segment_window
+          num_shapelets = tune::tune(), # find_solutions
+          redundance = tune::tune() # find_solutions
+        ) |>
+        parsnip::set_engine("contrast_profile") |>
+        parsnip::set_mode("classification")
+
+      # filter_best_solutions
+    },
+    pattern = map(contrast_profiles),
+    iteration = "list" # thus the objects keep their attributes
+  ),
+  tar_target(
     score_by_segment,
     {
       res <- list()
