@@ -97,9 +97,9 @@ register_contrast_model <- function() {
   parsnip::set_model_arg(
     model = "contrast_model",
     eng = "contrast_profile",
-    parsnip = "redundance",
-    original = "redundance",
-    func = list(fun = "redundance_par"),
+    parsnip = "redundancy",
+    original = "redundancy",
+    func = list(fun = "redundancy_par"),
     has_submodel = FALSE
   )
 }

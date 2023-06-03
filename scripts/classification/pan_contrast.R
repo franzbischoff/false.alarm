@@ -70,13 +70,17 @@ score_by_segment_window <- function(true_data, false_data, contrast_profiles, qu
   c_sizes <- as.numeric(w_sizes) # then convert them to numeric
 
   segs <- list()
+  shapes <- list()
   cont <- matrix(Inf, ncol = length(w_sizes), nrow = ncol(contrast_profiles[[1]]$cps))
   thlds <- matrix(Inf, ncol = length(w_sizes), nrow = ncol(contrast_profiles[[1]]$cps))
 
   for (i in seq_along(c_sizes)) {
     # get all the distance profiles of all top-k platos for the true and false data
-    tp <- topk_distance_profiles(true_data, contrast_profiles, c_sizes[i])
-    fp <- topk_distance_profiles(false_data, contrast_profiles, c_sizes[i])
+    temp <- topk_distance_profiles(true_data, contrast_profiles, c_sizes[i])
+    tp <- temp$dps
+    platos <- temp$platos
+    temp <- topk_distance_profiles(false_data, contrast_profiles, c_sizes[i])
+    fp <- temp$dps
 
     # computes the index of each segment
     segments <- unique(c(seq(0, nrow(tp), by = segment_size), nrow(tp)))
@@ -126,6 +130,7 @@ score_by_segment_window <- function(true_data, false_data, contrast_profiles, qu
       }
     }
     segs[[w_sizes[i]]] <- seg
+    shapes[[w_sizes[i]]] <- platos
   }
 
   # here we compute the total number of segments that each plato could classify
@@ -138,11 +143,12 @@ score_by_segment_window <- function(true_data, false_data, contrast_profiles, qu
   # but it is more specific, since it takes into account the segments and not just the
   # best contrast.
 
-  # cont == best overall contrast (~specificity)
-  # segs == best coverage by segment (~senstivity)
   list(
-    contrast = cont, coverage = segs,
-    thresholds = thlds, cov_counts = total_counts,
+    contrast = cont, # cont == overall contrast of each plato (~specificity)
+    coverage = segs, # segs == coverage of each plato (~sensitivity)
+    platos = shapes,
+    thresholds = thlds, # thlds == threshold of each plato
+    cov_counts = total_counts, # sum of segs == 1. Best is sum == num_segments
     num_segments = (length(segments) - 1)
   )
 }
@@ -156,10 +162,11 @@ score_candidates <- function(score) {
       aa <- tibble::tibble_row(
         window = j,
         k = i,
+        plato = list(score$platos[[j]][, i]),
         contrast = score$contrast[i, j],
         threshold = score$thresholds[i, j],
-        cov_sum = sum(score$coverage[[j]][i, ]),
-        cov_idxs = list(score$coverage[[j]][i, ])
+        cov_sum = sum(score$coverage[[j]][i, ]), # same as cov_counts
+        cov_idxs = list(score$coverage[[j]][i, ]) # coverage reshaped
       )
       data <- dplyr::bind_rows(data, aa)
     }
@@ -173,6 +180,19 @@ score_candidates <- function(score) {
   return(data)
 }
 
+# window ~ threshold
+# cov_con ~ cov_sum
+# cov_con ~ cov_sum ~~ threshold
+# samples ~~ redundancy
+# samples ~~ cov_percent ~~ coverage
+# c_sd ~~ c_mean
+# c_mean ~ c_median
+# c_mean ~ c_median ~~ c_total
+# c_total ~ samples
+# k_mean !~~ c_sd
+# k_mean !~~ c_mean
+# cov_mean ! ~~ c_total
+# cov_mean ~ cov_con_mean
 
 filter_best_solutions <- function(
     solutions, n_sols = 1,
@@ -197,8 +217,10 @@ filter_best_solutions <- function(
 # cov = minimum coverage allowed
 
 find_solutions <- function(score, n = 5, rep = 2000, red = 5, cov = 17, n_jobs = 1) {
-  if (cov > score$num_segments) {
-    cov <- score$num_segments
+  segments <- score$num_segments
+
+  if (cov > segments) {
+    cov <- segments
   }
 
   score <- score_candidates(score)
@@ -235,6 +257,7 @@ find_solutions <- function(score, n = 5, rep = 2000, red = 5, cov = 17, n_jobs =
           return(NULL)
         }
 
+        cov_percent <- coverage / segments
         keep_rows <- list()
 
         if (nrow(sample_data) > 2) {
@@ -263,6 +286,7 @@ find_solutions <- function(score, n = 5, rep = 2000, red = 5, cov = 17, n_jobs =
           data_coverage <- apply(matrix(unlist(some_rows$cov_idxs), ncol = n_cols, byrow = TRUE), 2, sum)
           redundancy <- sum(data_coverage > 1, na.rm = TRUE)
           coverage <- sum(data_coverage > 0, na.rm = TRUE)
+          cov_percent <- coverage / segments
         } else if (length(keep_rows) > 1) {
           new_rows <- NULL
           for (j in seq_len(length(keep_rows))) {
@@ -287,20 +311,20 @@ find_solutions <- function(score, n = 5, rep = 2000, red = 5, cov = 17, n_jobs =
           data_coverage <- apply(matrix(unlist(some_rows$cov_idxs), ncol = n_cols, byrow = TRUE), 2, sum)
           redundancy <- sum(data_coverage > 1, na.rm = TRUE)
           coverage <- sum(data_coverage > 0, na.rm = TRUE)
+          cov_percent <- coverage / segments
         }
 
-        # ties: < sum(k), > median(contrast), < sum(idxs), < sum(data_coverage > 1), < sum(redundancy)
 
-        # cli::cli_alert_info("sols i={i}, length(keep_rows) {length(keep_rows)}, length(keep_rows[[1]]) {length(keep_rows[[1]])}.")
-
-        # sols[[i]] <- list(
         list(
           c_total = sum(some_rows$contrast, na.rm = TRUE),
           c_median = median(some_rows$contrast, na.rm = TRUE),
           c_mean = mean(some_rows$contrast, na.rm = TRUE),
-          cov_con_mean = mean(some_rows$cov_con, na.rm = TRUE),
           c_sd = ifelse(length(some_rows$contrast) > 1, sd(some_rows$contrast, na.rm = TRUE), 0),
+          cov_con_mean = mean(some_rows$cov_con, na.rm = TRUE),
+          k_mean = mean(some_rows$k, na.rm = TRUE),
+          cov_mean = mean(some_rows$cov_sum, na.rm = TRUE),
           coverage = coverage,
+          cov_percent = cov_percent,
           redundancy = redundancy,
           samples = samples, cand = some_rows
         )
@@ -317,7 +341,7 @@ find_solutions <- function(score, n = 5, rep = 2000, red = 5, cov = 17, n_jobs =
   } else {
     sols <- tidyr::unnest(sols, cols = cand) |>
       dplyr::distinct_all() |>
-      tidyr::nest(data = c(window, k, contrast, threshold, cov_sum, cov_con, cov_idxs))
+      tidyr::nest(data = c(window, k, contrast, threshold, plato, cov_sum, cov_con, cov_idxs))
     cli::cli_alert_info("done.")
   }
 
@@ -359,16 +383,17 @@ topk_distance_profiles <- function(data, contrast_profiles, window_size) {
   platos_twin <- contrast_profiles[[w_size]]$platos_twin # and the corresponding twins
 
   dps <- matrix(NA, ncol = ncol(platos), nrow = length(data) - window_size + 1)
+  queries <- (platos + platos_twin) / 2 # average of the plato and its twin
 
   # iterate over all top-k platos
   for (i in seq_len(ncol(platos))) {
-    query <- (platos[, i] + platos_twin[, i]) / 2 # average of the plato and its twin
+    query <- queries[, i]
 
     dp <- dist_profile(data, query) # compute the distance profile of the plato against the data
     dps[, i] <- dp # store the distance profile
   }
 
-  return(dps)
+  return(list(dps = dps, platos = queries))
 }
 
 
@@ -392,6 +417,8 @@ contrastprofile_topk <- function(split, shapelet_sizes, num_shapelets, n_jobs = 
 
   true_alarms <- NULL
   false_alarms <- NULL
+
+  split_size <- length(split$data$values[[1]]) + 300
 
   for (i in seq_along(idxs)) {
     if (isTRUE(idxs[i])) {
@@ -545,19 +572,24 @@ contrastprofile_topk <- function(split, shapelet_sizes, num_shapelets, n_jobs = 
 
   result <- purrr::list_flatten(result)
 
-  return(list(pan = result, positive = true_alarms, negative = false_alarms))
+  return(list(pan = result, positive = true_alarms, negative = false_alarms, split_size = split_size))
 }
 
-compute_metrics_topk <- function(fold, shapelets, contrast) {
-  tp <- 0
-  fp <- 0
-  tn <- 0
-  fn <- 0
+compute_metrics_topk <- function(fold, shapelets, n_jobs = 1, progress = FALSE) {
+  checkmate::qassert(fold, "L+")
+  checkmate::qassert(shapelets, "d+")
+  require(doFuture)
 
-  thresholds <- shapelets$data[[1]]$threshold
-  windows <- shapelets$data[[1]]$window
-  knn <- shapelets$data[[1]]$k
+  "!DEBUG Compute Metrics"
 
+  if (n_jobs == 1) {
+    future::plan(future::sequential)
+  } else {
+    future::plan(future::multisession, workers = n_jobs)
+  }
+
+  # prepare data
+  data <- list()
   for (k in seq_along(fold$data$values)) {
     alarm <- (fold$data$alarm[[k]] == "true")
 
@@ -566,59 +598,89 @@ compute_metrics_topk <- function(fold, shapelets, contrast) {
     }
 
     fold$data$values[[k]] <- vctrs::vec_fill_missing(fold$data$values[[k]])
-    data <- validate_data(fold$data$values[[k]], 20)
-
-    class <- NULL
-
-    for (j in seq_along(windows)) {
-      plato <- contrast$pan[[windows[j]]]$platos[, knn[j]]
-      plato_twin <- contrast$pan[[windows[j]]]$platos_twin[, knn[j]]
-      query <- (plato + plato_twin) / 2
-
-      if (anyNA(data)) {
-        cli::cli_warn("NA values in fold data {k}.")
-      }
-
-      dp <- dist_profile(data, query)
-
-      class <- c(class, (min(dp, na.rm = TRUE) < thresholds[j]))
+    vdata <- validate_data(fold$data$values[[k]], 20)
+    if (anyNA(vdata)) {
+      cli::cli_warn("NA values in fold data {k}.")
     }
 
-    class <- any(class)
-
-    if (class == alarm) {
-      # hit
-      if (isTRUE(class)) {
-        # true positive
-        tp <- tp + 1
-      } else {
-        # true negative
-        tn <- tn + 1
-      }
-    } else {
-      # miss
-      if (isTRUE(class)) {
-        # false positive
-        fp <- fp + 1
-      } else {
-        # false negative
-        fn <- fn + 1
-      }
-    }
+    data[[k]] <- list(data = vdata, alarm = alarm)
   }
 
-  accuracy <- (tp + tn) / (tp + tn + fp + fn)
-  f1 <- 2 * tp / (2 * tp + fp + fn)
-  p4 <- (4 * tp * tn) / (4 * tp * tn + (tp + tn) * (fp + fn))
-  mcc <- (tp * tn - fp * fn) / sqrt((tp + fp) * (tp + fn) * (tn + fp) * (tn + fn))
-  kappa <- 2 * (tp * tn - fp * fn) / ((tp + fn) * (fn + tn) + (tp + fp) * (fp + tn))
+  progressr::with_progress(
+    {
+      p <- progressr::progressor(steps = nrow(shapelets))
 
-  return(list(
-    tp = tp, fp = fp, tn = tn, fn = fn,
-    accuracy = accuracy, f1 = f1,
-    p4 = p4, mcc = mcc, kappa = kappa
-  ))
+      res <- foreach(i = seq_len(nrow(shapelets))) %dofuture% {
+        shapelet <- shapelets[i, ]
+
+        tp <- 0
+        fp <- 0
+        tn <- 0
+        fn <- 0
+
+        thresholds <- shapelet$data[[1]]$threshold
+        windows <- shapelet$data[[1]]$window
+        platos <- shapelet$data[[1]]$plato
+
+        for (k in seq_along(data)) {
+          # p(paste("data", k), amount = 0)
+          if (is.null(data[[k]])) {
+            next
+          }
+
+          class <- NULL
+
+          for (j in seq_along(windows)) {
+            dp <- dist_profile(data[[k]]$data, platos[[j]])
+
+            class <- c(class, (min(dp, na.rm = TRUE) < thresholds[j]))
+          }
+
+          class <- any(class)
+
+          if (class == data[[k]]$alarm) {
+            # hit
+            if (isTRUE(class)) {
+              # true positive
+              tp <- tp + 1
+            } else {
+              # true negative
+              tn <- tn + 1
+            }
+          } else {
+            # miss
+            if (isTRUE(class)) {
+              # false positive
+              fp <- fp + 1
+            } else {
+              # false negative
+              fn <- fn + 1
+            }
+          }
+        }
+
+        accuracy <- (tp + tn) / (tp + tn + fp + fn)
+        f1 <- 2 * tp / (2 * tp + fp + fn)
+        p4 <- (4 * tp * tn) / (4 * tp * tn + (tp + tn) * (fp + fn))
+        mcc <- (tp * tn - fp * fn) / sqrt((tp + fp) * (tp + fn) * (tn + fp) * (tn + fn))
+        kappa <- 2 * (tp * tn - fp * fn) / ((tp + fn) * (fn + tn) + (tp + fp) * (fp + tn))
+
+        p(paste("finish", i))
+
+        list(
+          tp = tp, fp = fp, tn = tn, fn = fn,
+          accuracy = accuracy, f1 = f1,
+          p4 = p4, mcc = mcc, kappa = kappa
+        )
+      }
+    },
+    handlers = progressr::handler_progress(format = ":spin [:bar] :percent :eta :message"),
+    enable = progress
+  )
+
+  return(res)
 }
+
 
 compute_overall_metric <- function(all_folds) {
   tp <- fp <- tn <- fn <- acc <- ff <- 0

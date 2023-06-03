@@ -41,7 +41,7 @@ num_shapelets_par <- function(range = c(1L, 10L), trans = NULL) {
 }
 
 #' @export
-redundance_par <- function(range = c(0L, 10L), trans = NULL) {
+redundancy_par <- function(range = c(0L, 10L), trans = NULL) {
   dials::new_quant_param(
     type = "integer",
     range = range,
@@ -49,7 +49,7 @@ redundance_par <- function(range = c(0L, 10L), trans = NULL) {
     trans = trans,
     default = 0L,
     values = seq.int(range[1], range[2]),
-    label = c(redundance = "Redundance"),
+    label = c(redundancy = "redundancy"),
     finalize = NULL
   )
 }

@@ -8,7 +8,7 @@
 contrast_model <- function(
     mode = "classification",
     num_shapelets = NULL,
-    redundance = NULL,
+    redundancy = NULL,
     engine = "contrast_profile") {
   # Check for correct mode
   if (mode != "classification") {
@@ -20,7 +20,7 @@ contrast_model <- function(
   # Capture the arguments in quosures
   args <- list(
     num_shapelets = rlang::enquo(num_shapelets),
-    redundance = rlang::enquo(redundance)
+    redundancy = rlang::enquo(redundancy)
   )
 
   # Save some empty slots for future parts of the specification
@@ -52,7 +52,7 @@ print.contrast_model <- function(x, ...) { # nolint
 update.contrast_model <- function(object,
                                   parameters = NULL,
                                   num_shapelets = NULL,
-                                  redundance = NULL,
+                                  redundancy = NULL,
                                   fresh = FALSE, ...) {
   # nolint
   # cli::cli_inform(c("*" = "update.contrast_model"))
@@ -63,7 +63,7 @@ update.contrast_model <- function(object,
 
   args <- list(
     num_shapelets = rlang::enquo(num_shapelets),
-    redundance = rlang::enquo(redundance)
+    redundancy = rlang::enquo(redundancy)
   )
 
   # function currently not exported by parsnip
@@ -195,7 +195,7 @@ check_args.contrast_model <- function(object) {
 .check_contrast_profile_fit <- function(x) {
   # cli::cli_inform(c("*" = ".check_contrast_profile_fit"))
   num_shapelets <- rlang::eval_tidy(x$args$num_shapelets)
-  redundance <- rlang::eval_tidy(x$args$redundance)
+  redundancy <- rlang::eval_tidy(x$args$redundancy)
 
   if (length(num_shapelets) != 1L) {
     rlang::abort(c(
@@ -206,12 +206,12 @@ check_args.contrast_model <- function(object) {
     ))
   }
 
-  if (length(redundance) != 1L) {
+  if (length(redundancy) != 1L) {
     rlang::abort(c(
-      "For the contrast_profile engine, `redundance` must be a single number (or a value of `tune()`).",
-      glue::glue("There are {length(redundance)} values for `redundance`."),
+      "For the contrast_profile engine, `redundancy` must be a single number (or a value of `tune()`).",
+      glue::glue("There are {length(redundancy)} values for `redundancy`."),
       "To try multiple values for total regularization, use the tune package.",
-      "To predict multiple redundance, use `multi_predict()`"
+      "To predict multiple redundancy, use `multi_predict()`"
     ))
   }
 }

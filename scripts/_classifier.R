@@ -266,7 +266,7 @@ list(
   #       contrast_model(
   #         # coverage_quantiles = tune::tune(), # score_by_segment_window
   #         num_shapelets = tune::tune(), # find_solutions
-  #         redundance = tune::tune() # find_solutions
+  #         redundancy = tune::tune() # find_solutions
   #       ) |>
   #       parsnip::set_engine("contrast_profile") |>
   #       parsnip::set_mode("classification")

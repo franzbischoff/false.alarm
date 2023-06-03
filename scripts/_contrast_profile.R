@@ -256,6 +256,13 @@ list(
     pattern = map(analysis_split),
     iteration = "list"
   ),
+
+  # strOptions(strict.width = "no", digits.d = 3, vec.len = 0.5,
+  #            list.len = 3, deparse.lines = NULL,
+  #            drop.deparse.attr = TRUE)
+
+
+
   # tar_target(
   #   #### Pipeline: analysis_fitted - Here we will conduct the parameter optimizations ----
   #   analysis_fitted,
@@ -266,7 +273,7 @@ list(
   #       contrast_model(
   #         # coverage_quantiles = tune::tune(), # score_by_segment_window
   #         num_shapelets = tune::tune(), # find_solutions
-  #         redundance = tune::tune() # find_solutions
+  #         redundancy = tune::tune() # find_solutions
   #       ) |>
   #       parsnip::set_engine("contrast_profile") |>
   #       parsnip::set_mode("classification")
@@ -304,14 +311,14 @@ list(
         tune3 <- 10
         solutions <- find_solutions(score_by_segment[[i]],
           cov = 10,
-          n = 10,
+          n = 20,
           rep = 10000,
           red = tune3,
           n_jobs = var_future_workers
         )
 
         if (length(solutions) == 0) {
-          res[[i]] <- NULL
+          res[i] <- list(NULL)
         } else {
           res[[i]] <- solutions
         }
@@ -321,70 +328,88 @@ list(
     pattern = map(score_by_segment),
     iteration = "list"
   ),
-  tar_target(
-    best_shapelets,
-    {
-      res <- list()
-      for (i in seq_len(var_vfolds)) {
-        if (is.null(find_shapelets[[i]])) {
-          res[[i]] <- NULL
-        } else {
-          cli::cli_alert_info("Filtering best solutions, fold {i}.")
-          res[[i]] <- filter_best_solutions(find_shapelets[[i]], 2)
-        }
-      }
-      res
-    },
-    pattern = map(find_shapelets),
-    iteration = "list"
-  ),
-  tar_target(
-    plot_profiles,
-    {
-      branch_name <- tar_name()
-      max_size <- max(var_shapelet_sizes)
-      plots <- list()
-      for (i in seq_len(var_vfolds)) {
-        plots[[i]] <- plot_best_candidates(best_shapelets, contrast_profiles, fold = i, max_size = max_size)
-      }
-      s <- svglite::svgstring(12, 15,
-        web_fonts = list("https://fonts.googleapis.com/css?family=Roboto:400,400i,700,700i")
-      )
+  # tar_target(
+  #   best_shapelets,
+  #   {
+  #     res <- list()
+  #     for (i in seq_len(var_vfolds)) {
+  #       if (is.null(find_shapelets[[i]])) {
+  #         res[[i]] <- NULL
+  #       } else {
+  #         cli::cli_alert_info("Filtering best solutions, fold {i}.")
+  #         res[[i]] <- filter_best_solutions(find_shapelets[[i]], 2)
+  #       }
+  #     }
+  #     res
+  #   },
+  #   pattern = map(find_shapelets),
+  #   iteration = "list"
+  # ),
+  # tar_target(
+  #   plot_profiles,
+  #   {
+  #     branch_name <- tar_name()
+  #     max_size <- max(var_shapelet_sizes)
+  #     plots <- list()
+  #     for (i in seq_len(var_vfolds)) {
+  #       plots[[i]] <- plot_best_candidates(best_shapelets, contrast_profiles, fold = i, max_size = max_size)
+  #     }
+  #     s <- svglite::svgstring(12, 15,
+  #       web_fonts = list("https://fonts.googleapis.com/css?family=Roboto:400,400i,700,700i")
+  #     )
 
-      plt <- patchwork::wrap_plots(plots) +
-        patchwork::plot_annotation(
-          title = branch_name,
-          theme = ggplot2::theme(plot.title = ggplot2::element_text(family = "Roboto"))
-        )
-      print(plt)
-      dev.off()
-      readr::write_file(s(), file = here::here("output", glue::glue("Shapes_{branch_name}.svg")))
+  #     plt <- patchwork::wrap_plots(plots) +
+  #       patchwork::plot_annotation(
+  #         title = branch_name,
+  #         theme = ggplot2::theme(plot.title = ggplot2::element_text(family = "Roboto"))
+  #       )
+  #     print(plt)
+  #     dev.off()
+  #     readr::write_file(s(), file = here::here("output", glue::glue("Shapes_{branch_name}.svg")))
 
-      plt
-    },
-    pattern = map(best_shapelets, contrast_profiles),
-    iteration = "list"
-  ),
+  #     plt
+  #   },
+  #   pattern = map(best_shapelets, contrast_profiles),
+  #   iteration = "list"
+  # ),
   tar_target(
     test_classifiers_self,
     {
-      shapelet_sizes <- var_shapelet_sizes
-
       class(analysis_split) <- c("manual_rset", "rset", class(analysis_split))
 
       res <- list()
       for (i in seq_len(var_vfolds)) {
         fold <- rsample::get_rsplit(analysis_split, i)
-        shapelets <- best_shapelets[[i]]
-        contrast <- contrast_profiles[[i]]
 
-        res[[i]] <- compute_metrics_topk(fold, shapelets, contrast)
+        res[[i]] <- list()
+        shapelets <- find_shapelets[[i]]
+
+        res[[i]] <- compute_metrics_topk(fold, shapelets, var_future_workers, TRUE)
       }
-      res
-      overall <- compute_overall_metric(res)
-      list(fold = res, overall = overall)
+
+      # overall <- list()
+      # for (j in seq_len(nrow(shapelets))) {
+      #     map(res[[i]][[j]], j, compute_metrics_topk(fold, shapelets[j, ])
+      # }
+
+      # overall <- compute_overall_metric(res)
+      res # list(fold = res, overall = overall)
+
+
+      # aa <- tibble::as_tibble(purrr::transpose(test_classifiers_self[[1]][[5]]))
+      # aa <- dplyr::mutate_all(aa, as.numeric)
+      # aa <- dplyr::bind_cols(find_shapelets[[1]][[5]], aa) |>
+      #   dplyr::select(-data) |>
+      #   dplyr::mutate(coverage = as.numeric(coverage), redundancy = as.numeric(redundancy))
+      # bb <- dplyr::bind_rows(bb, aa)
+      # summary(aa$cov_percent)
+      # corrgram(bb,
+      #   order = FALSE,
+      #   lower.panel = panel.ellipse, upper.panel = panel.cor,
+      #   text.panel = panel.txt
+      # )
     },
-    pattern = map(best_shapelets, analysis_split, contrast_profiles),
+    pattern = map(find_shapelets, analysis_split),
     iteration = "list"
   ),
   tar_target(

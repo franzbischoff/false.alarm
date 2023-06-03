@@ -76,6 +76,94 @@ contrast_train_model <- function(truth, ts, ..., window_size, regime_threshold, 
 }
 
 #' @export
+
+contrast_evaluate_all_platos <- function(true_data, false_data, contrast_profiles, quantiles = c(0.1, 1 / 3), segment_size = 2800) {
+  checkmate::qassert(true_data, "N+")
+  checkmate::qassert(false_data, "N+")
+  checkmate::qassert(contrast_profiles, "L+")
+
+  w_sizes <- names(contrast_profiles) # retrieve the window sizes that are stored as list labels
+  c_sizes <- as.numeric(w_sizes) # then convert them to numeric
+
+  segs <- list()
+  cont <- matrix(Inf, ncol = length(w_sizes), nrow = ncol(contrast_profiles[[1]]$cps))
+  thlds <- matrix(Inf, ncol = length(w_sizes), nrow = ncol(contrast_profiles[[1]]$cps))
+
+  for (i in seq_along(c_sizes)) {
+    # get all the distance profiles of all top-k platos for the true and false data
+    tp <- topk_distance_profiles(true_data, contrast_profiles, c_sizes[i])
+    fp <- topk_distance_profiles(false_data, contrast_profiles, c_sizes[i])
+
+    # computes the index of each segment
+    segments <- unique(c(seq(0, nrow(tp), by = segment_size), nrow(tp)))
+
+    # number of top-k platos is equal to the ncol of the distance profiles
+    knn <- ncol(tp)
+
+    # this matrix is equivalent to "k" vectors of TRUE/FALSE values for each segment
+    seg <- matrix(0, ncol = length(segments) - 1, nrow = knn)
+
+    for (k in seq_len(knn)) {
+      # get the distance profiles
+      tpk <- tp[, k]
+      fpk <- fp[, k]
+
+      # get the minimum value on the false data to use as a threshold
+      fpk_min <- min(fpk, na.rm = TRUE)
+      thlds[k, i] <- fpk_min
+      max_min <- NULL
+
+      # iterate over the segments
+      for (j in seq_along(segments)) {
+        if (j < length(segments)) {
+          # get just that segment distance profile
+          sm <- tpk[seq(segments[j] + 1, segments[j + 1])]
+          # keep only the ones that are smaller than the threshold
+          sm <- sm[sm < fpk_min]
+
+          # if there are any value left, we can classify the segment
+          if (length(sm) > 0) {
+            # get the 10% percentile of the values
+            # this gives us a hint of how well the shapelet is doing by segment
+            max_min <- c(max_min, quantile(sm, quantiles[1], na.rm = TRUE))
+            seg[k, j] <- 1 # store as TRUE, since we have values below the threshold
+          }
+        }
+      }
+
+      # if the plato could classify any segment...
+      if (!is.null(max_min)) {
+        # computes the overall contrast value using the quantile 1/3 of the max_min values, normalized
+        # by the sqrt(2*w) (same factor used on the contrast profile), so we can compare different window sizes
+        cont[k, i] <- (fpk_min - quantile(max_min, quantiles[2], na.rm = TRUE)) / sqrt(2 * c_sizes[i])
+      } else {
+        # if the plato could not classify any segment, we set the contrast to 0
+        cont[k, i] <- 0
+      }
+    }
+    segs[[w_sizes[i]]] <- seg
+  }
+
+  # here we compute the total number of segments that each plato could classify
+  total_counts <- as.matrix(purrr::map_dfr(segs, function(x) apply(x, 1, sum)))
+  colnames(cont) <- w_sizes # set the column names on the overall contrast matrix
+  colnames(thlds) <- w_sizes # set the column names on the overall contrast matrix
+
+  # NOTE: cont and segs seems to complement each other
+  # cont is similar to plot_topk_contrasts (contrasts values by k vs shapelet size)
+  # but it is more specific, since it takes into account the segments and not just the
+  # best contrast.
+
+  list(
+    contrast = cont, # cont == overall contrast of each plato (~specificity)
+    coverage = segs, # segs == coverage of each plato (~sensitivity)
+    thresholds = thlds, # thlds == threshold of each plato
+    cov_counts = total_counts, # sum of segs == 1. Best is sum == num_segments
+    num_segments = (length(segments) - 1)
+  )
+}
+
+#' @export
 contrast_train_regimes <- function(ecg_data, window_size, mp_threshold, time_constraint,
                                    ez = 0.5, history = 5000L, sample_freq = 250L, batch = 100L) {
   # cli::cli_inform(c("*" = "Training.\n\n"))
