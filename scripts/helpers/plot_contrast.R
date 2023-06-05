@@ -16,7 +16,7 @@ plot_max_contrast <- function(contrast_profiles) {
   graphics::plot(
     x = idxs, y = windows, xlim = c(1, profile_size), type = "p",
     col = scales::alpha("red", values), pch = 19,
-    xlab = "index", ylab = "Subsequence lenght", main = "Max Contrast by subsequence lenght"
+    xlab = "index", ylab = "Subsequence length", main = "Max Contrast by subsequence length"
   )
 }
 
@@ -54,14 +54,8 @@ plot_topk_contrasts <- function(contrast_profiles, type = c("contour", "heatmap"
 
 
 # solutions = result of find_solutions
-# contrast_profiles = result of the contrastprofile_topk
-plot_best_candidates <- function(solutions, contrast_profiles, fold = 1, n = 1, max_size = NULL) {
+plot_best_candidates <- function(solutions, fold = 1, n = 1, max_size = NULL) {
   checkmate::qassert(solutions, "L+")
-  checkmate::qassert(contrast_profiles, "L+")
-
-  if (length(solutions) != length(contrast_profiles)) {
-    cli::cli_abort("Solutions and contrast_profiles doesn't have the same number of folds.")
-  }
 
   if (fold > length(solutions)) {
     fold <- length(solutions)
@@ -73,22 +67,21 @@ plot_best_candidates <- function(solutions, contrast_profiles, fold = 1, n = 1, 
     cli::cli_warn("N is greater than the number of solutions {n}. Using the last solution.")
   }
 
-  coverage <- solutions[[fold]]$coverage
-  num_segments <- length(solutions[[fold]]$data[[1]]$cov_idxs[[1]])
-  redundancy <- solutions[[fold]]$redundancy
+  coverage <- solutions[[fold]]$coverage[n]
+  num_segments <- length(solutions[[fold]]$data[[n]]$cov_idxs[[1]])
+  redundancy <- solutions[[fold]]$redundancy[n]
   solutions <- solutions[[fold]]$data[[n]]
-  contrast_profiles <- contrast_profiles[[fold]]
 
   solutions <- solutions |> dplyr::arrange(as.numeric(window))
 
   max_len <- max(as.numeric(solutions$window))
-  num_platos <- nrow(solutions)
+  num_platos <- length(solutions$plato)
   ks <- solutions$k
 
   platos <- matrix(NA, ncol = num_platos, nrow = max_len)
 
   for (i in seq_len(num_platos)) {
-    pl <- contrast_profiles$pan[[solutions$window[i]]]$platos[, solutions$k[i]]
+    pl <- solutions$plato[[i]]
     pl[is.infinite(pl)] <- NA
     platos[seq_along(pl), i] <- pl
   }

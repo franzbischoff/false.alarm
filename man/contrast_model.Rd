@@ -7,7 +7,7 @@
 contrast_model(
   mode = "classification",
   num_shapelets = NULL,
-  redundance = NULL,
+  redundancy = NULL,
   engine = "contrast_profile"
 )
 }

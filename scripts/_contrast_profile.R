@@ -352,7 +352,7 @@ list(
   #     max_size <- max(var_shapelet_sizes)
   #     plots <- list()
   #     for (i in seq_len(var_vfolds)) {
-  #       plots[[i]] <- plot_best_candidates(best_shapelets, contrast_profiles, fold = i, max_size = max_size)
+  #       plots[[i]] <- plot_best_candidates(best_shapelets, fold = i, max_size = max_size)
   #     }
   #     s <- svglite::svgstring(12, 15,
   #       web_fonts = list("https://fonts.googleapis.com/css?family=Roboto:400,400i,700,700i")
@@ -369,7 +369,7 @@ list(
 
   #     plt
   #   },
-  #   pattern = map(best_shapelets, contrast_profiles),
+  #   pattern = map(best_shapelets),
   #   iteration = "list"
   # ),
   tar_target(
@@ -396,13 +396,14 @@ list(
       res # list(fold = res, overall = overall)
 
 
-      # aa <- tibble::as_tibble(purrr::transpose(test_classifiers_self[[1]][[5]]))
+      # aa <- tibble::as_tibble(purrr::transpose(test_classifiers_self[[1]][[i]]))
       # aa <- dplyr::mutate_all(aa, as.numeric)
-      # aa <- dplyr::bind_cols(find_shapelets[[1]][[5]], aa) |>
+      # aa <- dplyr::bind_cols(find_shapelets[[1]][[i]], aa) |>
       #   dplyr::select(-data) |>
       #   dplyr::mutate(coverage = as.numeric(coverage), redundancy = as.numeric(redundancy))
       # bb <- dplyr::bind_rows(bb, aa)
-      # summary(aa$cov_percent)
+      # i <- i + 1
+      # summary(bb)
       # corrgram(bb,
       #   order = FALSE,
       #   lower.panel = panel.ellipse, upper.panel = panel.cor,
