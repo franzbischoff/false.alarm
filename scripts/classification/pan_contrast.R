@@ -134,7 +134,7 @@ score_by_segment_window <- function(true_data, false_data, contrast_profiles, qu
   }
 
   # here we compute the total number of segments that each plato could classify
-  total_counts <- as.matrix(purrr::map_dfr(segs, function(x) apply(x, 1, sum)))
+  total_counts <- as.matrix(purrr::map_dfr(segs, function(x) apply(x, 1, sum))) # never used
   colnames(cont) <- w_sizes # set the column names on the overall contrast matrix
   colnames(thlds) <- w_sizes # set the column names on the overall contrast matrix
 
@@ -148,9 +148,13 @@ score_by_segment_window <- function(true_data, false_data, contrast_profiles, qu
     coverage = segs, # segs == coverage of each plato (~sensitivity)
     platos = shapes,
     thresholds = thlds, # thlds == threshold of each plato
-    cov_counts = total_counts, # sum of segs == 1. Best is sum == num_segments
+    cov_counts = total_counts, # sum of segs == 1. Best is sum == num_segments  # never used
     num_segments = (length(segments) - 1)
   )
+
+
+  # score <- score_candidates(score)
+  # return(score)
 }
 
 score_candidates <- function(score) {
@@ -686,11 +690,11 @@ compute_overall_metric <- function(all_folds) {
   tp <- fp <- tn <- fn <- acc <- ff <- 0
 
   for (fold in all_folds) {
-    tp <- tp + fold$tp
-    fp <- fp + fold$fp
-    tn <- tn + fold$tn
-    fn <- fn + fold$fn
-    ff <- ff + fold$f1
+    tp <- tp + fold[[1]]$tp
+    fp <- fp + fold[[1]]$fp
+    tn <- tn + fold[[1]]$tn
+    fn <- fn + fold[[1]]$fn
+    ff <- ff + fold[[1]]$f1
   }
 
   tm <- (2 * tp) / (2 * tp + fp + fn)

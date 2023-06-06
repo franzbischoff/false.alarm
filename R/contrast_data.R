@@ -26,6 +26,37 @@ register_contrast_model <- function() {
   #   )
   # )
 
+  # contrasts
+  # coverages -> creates cov_sum and cov_idxs
+  # platos
+  # thresholds
+  # cov_counts # never used
+  # num_segments
+
+  # c_total
+  # c_median
+  # c_mean
+  # c_sd
+  # cov_con_mean
+  # k_mean
+  # cov_mean
+  # coverage
+  # cov_percent
+  # redundancy
+  # samples
+
+  # data {
+  #  window
+  #  k***
+  #  plato
+  #  contrast***
+  #  threshold
+  #  cov_sum (same as cov_counts) ***
+  #  cov_idxs***
+  #  cov_con***
+  # }
+
+
   parsnip::set_fit(
     model = "contrast_model",
     eng = "contrast_profile",

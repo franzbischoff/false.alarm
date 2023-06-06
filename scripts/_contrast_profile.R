@@ -284,11 +284,13 @@ list(
   #   iteration = "list" # thus the objects keep their attributes
   # ),
   tar_target(
+    #### Pipeline: score_by_segment - Preparation of the data: the model's data is the shapelets with metadata ----
     score_by_segment,
     {
       res <- list()
       for (i in seq_len(var_vfolds)) {
         cli::cli_alert_info("Scores by segment, fold {i}.")
+        # These parameter may be tuned on `recipes`
         tune1 <- 0.1
         tune2 <- 1 / 3
         score <- score_by_segment_window(contrast_profiles[[i]]$positive,
@@ -303,8 +305,15 @@ list(
     iteration = "list"
   ),
   tar_target(
+    #### Pipeline: find_shapelets - This is the model fit. ----
     find_shapelets,
     {
+      # Here we can try: fitting all possible solutions and later score them and finally try
+      # to find which metadata is the best to filter the solutions
+      # Or, we can try to use some heuristics to find the best metadata for the solutions
+      # These parameters are tuned on `parsnip`/`tune`
+      # Currently the parameter `n` draws randomically 1 to `n` samples from the pan contrast profile
+      # We can try to use a fixed number of samples during the parameter optimization
       res <- list()
       for (i in seq_len(var_vfolds)) {
         cli::cli_alert_info("Finding solutions, fold {i}.")
@@ -373,8 +382,11 @@ list(
   #   iteration = "list"
   # ),
   tar_target(
+    #### Pipeline: test_classifiers_self - This is the current score function. ----
     test_classifiers_self,
     {
+      # With the results of this step, plus the fitted solutions, we need to find which
+      # metadata is the best to filter the solutions
       class(analysis_split) <- c("manual_rset", "rset", class(analysis_split))
 
       res <- list()
@@ -384,6 +396,9 @@ list(
         res[[i]] <- list()
         shapelets <- find_shapelets[[i]]
 
+        # the `compute_metrics_topk` function may need testing on the `TRUE` criteria
+        # currently, if `ANY` shapelet matches, it is considered a positive
+        # as alternative we can try to use `ALL`, `HALF` or other criteria
         res[[i]] <- compute_metrics_topk(fold, shapelets, var_future_workers, TRUE)
       }
 
@@ -416,33 +431,23 @@ list(
   tar_target(
     test_classifiers,
     {
-      shapelet_sizes <- var_shapelet_sizes
-
+      # Here we test the solutions we chose on the assessment split
+      # The final `model` we need is the shapelet
       class(assessment_split) <- c("manual_rset", "rset", class(assessment_split))
 
       res <- list()
       for (i in seq_len(var_vfolds)) {
         fold <- rsample::get_rsplit(assessment_split, i)
-        shapelets <- best_shapelets[[i]]
-        contrast <- contrast_profiles[[i]]
+        best_shapelets <- purrr::pluck(find_shapelets, i)[1, ]
 
-        res[[i]] <- compute_metrics_topk(fold, shapelets, contrast)
+        res[[i]] <- compute_metrics_topk(fold, best_shapelets, var_future_workers, TRUE)
       }
-      res
       overall <- compute_overall_metric(res)
       list(fold = res, overall = overall)
     },
-    pattern = map(best_shapelets, assessment_split, contrast_profiles),
+    pattern = map(assessment_split, find_shapelets),
     iteration = "list"
   )
-  # tar_target(
-  #   best_shapelets,
-  #   {
-  #     # algorithm for selecting the best shapelet
-  #   },
-  #   pattern = map(contrast_profiles),
-  #   iteration = "list"
-  # ),
   # tar_target(
   #   train_classifier,
   #   {
