@@ -663,6 +663,9 @@ compute_metrics_topk <- function(fold, shapelets, n_jobs = 1, progress = FALSE) 
           }
         }
 
+        precision <- tp / (tp + fp)
+        recall <- tp / (tp + fn)
+        specificity <- tn / (tn + fp)
         accuracy <- (tp + tn) / (tp + tn + fp + fn)
         f1 <- 2 * tp / (2 * tp + fp + fn)
         p4 <- (4 * tp * tn) / (4 * tp * tn + (tp + tn) * (fp + fn))
@@ -673,6 +676,8 @@ compute_metrics_topk <- function(fold, shapelets, n_jobs = 1, progress = FALSE) 
 
         list(
           tp = tp, fp = fp, tn = tn, fn = fn,
+          precision = precision, recall = recall,
+          specificity = specificity,
           accuracy = accuracy, f1 = f1,
           p4 = p4, mcc = mcc, kappa = kappa
         )
@@ -702,6 +707,9 @@ compute_overall_metric <- function(all_folds) {
   f1_micro <- (tm + fm) / 2
   f1_macro <- (ff / length(all_folds))
   f1_weighted <- ((tp + fp) * tm + (fn + tn) * fm) / (tp + tn + fp + fn)
+  pre <- tp / (tp + fp)
+  rec <- tp / (tp + fn)
+  spec <- tn / (tn + fp)
   acc <- (tp + tn) / (tp + tn + fp + fn)
   p4 <- (4 * tp * tn) / (4 * tp * tn + (tp + tn) * (fp + fn))
   mcc <- (tp * tn - fp * fn) / sqrt((tp + fp) * (tp + fn) * (tn + fp) * (tn + fn))
@@ -709,6 +717,7 @@ compute_overall_metric <- function(all_folds) {
 
   return(list(
     tp = tp, fp = fp, tn = tn, fn = fn,
+    precision = pre, recall = rec, specificity = spec,
     accuracy = acc, f1_micro = f1_micro, f1_macro = f1_macro, f1_weighted = f1_weighted,
     p4 = p4, mcc = mcc, kappa = kappa
   ))

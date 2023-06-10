@@ -419,13 +419,39 @@ list(
       # bb <- dplyr::bind_rows(bb, aa)
       # i <- i + 1
       # summary(bb)
+      # library(corrgram)
       # corrgram(bb,
       #   order = FALSE,
       #   lower.panel = panel.ellipse, upper.panel = panel.cor,
       #   text.panel = panel.txt
       # )
+      # GGally::ggpairs(bb, aes(alpha = 0.05), lower = list(continuous = "smooth"))
     },
     pattern = map(find_shapelets, analysis_split),
+    iteration = "list"
+  ),
+  tar_target(
+    best_shapelets,
+    {
+      # Here we test the solutions we chose on the assessment split
+      # The final `model` we need is the shapelet
+
+      res <- list()
+      for (i in seq_len(var_vfolds)) {
+        aa <- tibble::as_tibble(purrr::transpose(test_classifiers_self[[i]]))
+        aa <- dplyr::mutate_all(aa, as.numeric)
+        aa <- dplyr::bind_cols(find_shapelets[[i]], aa) |>
+          # dplyr::select(-data) |>
+          dplyr::mutate(precision = tp / (tp + fp), recall = tp / (tp + fn)) |>
+          dplyr::mutate(coverage = as.numeric(coverage), redundancy = as.numeric(redundancy)) |>
+          dplyr::arrange(desc(precision), desc(recall)) |>
+          dplyr::slice_head(n = 1)
+
+        res[[i]] <- aa
+      }
+      res
+    },
+    pattern = map(test_classifiers_self, find_shapelets),
     iteration = "list"
   ),
   tar_target(
@@ -436,16 +462,15 @@ list(
       class(assessment_split) <- c("manual_rset", "rset", class(assessment_split))
 
       res <- list()
+
       for (i in seq_len(var_vfolds)) {
         fold <- rsample::get_rsplit(assessment_split, i)
-        best_shapelets <- purrr::pluck(find_shapelets, i)[1, ]
-
-        res[[i]] <- compute_metrics_topk(fold, best_shapelets, var_future_workers, TRUE)
+        res[[i]] <- compute_metrics_topk(fold, best_shapelets[[i]], var_future_workers, TRUE)
       }
       overall <- compute_overall_metric(res)
       list(fold = res, overall = overall)
     },
-    pattern = map(assessment_split, find_shapelets),
+    pattern = map(best_shapelets, assessment_split),
     iteration = "list"
   )
   # tar_target(
