@@ -8,11 +8,11 @@ linestretch: 1.5
 indent: true
 # always_allow_html: true
 # header-includes:
-    # - \usepackage{caption}
-    # - \captionsetup{font=footnotesize}
+#     - \usepackage{caption}
+#     - \captionsetup{font=footnotesize}
   # bookdown::pdf_document2:
   #   keep_tex: true
-  #   extra_dependencies: ["svg", "flafter", "subfig"]
+    # extra_dependencies: ["svg", "flafter", "subfig"]
   #   toc: yes
   #   toc_depth: 3
   #   fig_caption: yes
@@ -24,11 +24,14 @@ format:
     toc-title: Contents
     cite-method: citeproc
     citecolor: black
-    margin-bottom: 1in
-    margin-left: 1in
-    margin-right: 1in
-    margin-top: 1in
+    geometry:
+      - top=1in
+      - left=1in
+      - right=1in
+      - bottom=1in
+    keep-tex: true
     documentclass: article
+    extra-dependencies: ["svg", "flafter", "subfig"]
     number-sections: true
     crossref:
       fig-prefix: Fig.
@@ -216,6 +219,8 @@ if (knitr::is_latex_output()) {
   knitr::opts_chunk$set(dev = "svg")
 }
 
+# options(knitr.table.format = "latex")
+
 my_graphics <- function(image_name, base_path = here::here("docs", "figure")) {
   file_path <- glue::glue("{base_path}/{image_name}")
 
@@ -252,7 +257,7 @@ library(glue)
 library(visNetwork)
 library(tibble)
 library(kableExtra)
-library(gridExtra)
+# library(gridExtra)
 library(targets)
 library(ggplot2)
 
@@ -412,7 +417,7 @@ It is also public available the roadmap and tasks status of this thesis on Zenhu
 
 ## Developed software
 
-### Matrix Profile {#matrixprofile}
+### Matrix Profile {#sec-matrixprofile}
 
 Matrix Profile (MP) [@Yeh2017a], is a state-of-the-art [@DePaepe2020; @Feremans2020] time series
 analysis technique that once computed, allows us to derive frameworks to all sorts of tasks, as
@@ -433,6 +438,7 @@ MP and PI respectively). We can have an idea of the relationship of both on @fig
 ```{r fig-thematrix, echo=FALSE}
 #| fig-cap: "A distance matrix (top), and a matrix profile (bottom). The matrix profile stores only
 #|  the minimum values of the distance matrix."
+#| out.width: 33%
 my_graphics("mp_1")
 ```
 
@@ -445,7 +451,7 @@ the Matrix Profile Foundation as co-founder together with contributors from Pyth
 
 This implementation in R is being used for computing the MP and MP-based algorithms of this thesis.
 
-## The data
+## The data {#sec-the-data}
 
 The current dataset used is the CinC/Physionet Challenge 2015 public dataset, modified to include
 only the actual data and the header files in order to be read by the pipeline and is hosted by
@@ -460,7 +466,10 @@ variables like arterial blood pressure, photoplethysmograph readings, and respir
 The _events_ we seek to identify are the life-threatening arrhythmias as defined by Physionet in
 @tbl-alarms.
 
-```{r tbl-alarms, echo=FALSE}
+```{r echo=FALSE}
+#| label: tbl-alarms
+#| tbl-cap: "The alarms we seek to identify."
+
 alarms <- tribble(
   ~Alarm, ~Definition,
   "Asystole", "No QRS for at least 4 seconds",
@@ -470,15 +479,15 @@ alarms <- tribble(
   "Ventricular Flutter/Fibrillation", "Fibrillatory, flutter, or oscillatory waveform for at least 4 seconds"
 )
 
-kbl(alarms,
+kable(alarms,
   booktabs = TRUE,
-  caption = "Definition of the five alarm types used in CinC/Physionet Challenge 2015.",
+  longtable = TRUE,
   align = "ll",
   position = "ht",
-  linesep = "\\addlinespace"
+  linesep = ""
 ) %>%
   row_spec(0, bold = TRUE) %>%
-  kable_styling(full_width = TRUE)
+  column_spec(1:2, width = "22em")
 ```
 
 The fifth minute is precisely where the alarm has been triggered on the original recording set. To
@@ -489,7 +498,9 @@ no other arrhythmias before.
 For comparison, on @tbl-challenge we collected the score of the five best participants
 of the challenge [@plesinger2015; @kalidas2015; @couto2015; @fallet2015; @hoogantink2015].
 
-```{r tbl-challenge, echo=FALSE}
+```{r echo=FALSE}
+#| label: tbl-challenge
+#| tbl-cap: "Challenge Results on real-time data. The scores were multiplied by 100."
 challenge <- tribble(
   ~Score, ~Authors,
   "81.39", "Filip Plesinger, Petr Klimes, Josef Halamek, Pavel Jurak",
@@ -499,29 +510,28 @@ challenge <- tribble(
   "75.55", "Christoph Hoog Antink, Steffen Leonhardt"
 )
 
-kbl(challenge,
+kable(challenge,
   booktabs = TRUE,
-  caption = "Challenge Results on real-time data. The scores were multiplied by 100.",
+  longtable = TRUE,
   align = "cl",
-  position = "ht"
+  position = "ht",
+  linesep = ""
 ) %>%
   row_spec(0, bold = TRUE) %>%
-  # column_spec(1, width = "5em") %>%
-  # column_spec(2, width = "30em") %>%
-  kable_styling(full_width = TRUE)
+  column_spec(1:2, width = "22em")
 ```
 
-The equation used on this challenge to compute the score of the algorithms is in the Equation
-\@ref(eq:score). This equation is the accuracy formula, with penalization of the false negatives.
+The equation used on this challenge to compute the score of the algorithms is in the
+@eq-score. This equation is the accuracy formula, with penalization of the false negatives.
 The reasoning pointed out by the authors [@Clifford2015] is the clinical impact of existing a
 genuine life-threatening event that was considered unimportant. Accuracy is known to be misleading
 when there is a high class imbalance [@Akosa2017].
 
 \
 
-\begin{equation}
-Score = \frac{TP+TN}{TP+TN+FP+5*FN}  (\#eq:score)
-\end{equation}
+$$
+Score = \frac{TP+TN}{TP+TN+FP+5*FN}
+$$ {#eq-score}
 
 \
 
@@ -561,7 +571,10 @@ Google Scholar with the following query (the syntax was adapted for each databas
 
 The inclusion and exclusion criteria were defined as in @tbl-criteria.
 
-```{r tbl-criteria, echo=FALSE}
+```{r echo=FALSE}
+#| label: tbl-criteria
+#| tbl-cap: "Literature review criteria."
+
 criteria <- tribble(
   ~"Inclusion criteria", ~"Exclusion criteria",
   "ECG automatic interpretation", "Manual interpretation",
@@ -571,15 +584,16 @@ criteria <- tribble(
   "Specific diagnosis (like a flutter, hyperkalemia, etc.)", ""
 )
 
-kbl(criteria,
+kable(criteria,
   booktabs = TRUE,
-  caption = "Literature review criteria.",
+  longtable = TRUE,
   align = "ll",
   position = "ht",
   linesep = "\\addlinespace"
 ) %>%
   row_spec(0, bold = TRUE) %>%
-  kable_styling(full_width = TRUE)
+  column_spec(1:2, width = "22em")
+
 ```
 
 
@@ -589,17 +603,19 @@ is currently staled on the Data Extraction phase due to external factors.
 
 @fig-prisma shows the flow diagram of the resulting screening using PRISMA format.
 
-```{r fig-prisma, echo=FALSE, out.width="70%", fig.cap="Flowchart of the literature survey."}
+```{r fig-prisma, echo=FALSE, out.width="70%"}
+#| fig-cap: "Flowchart of the literature survey."
 my_graphics("PRISMA")
 ```
 
 The peer review is being conducted by the author of this thesis together with another coleague, Dr.
 Andrew Van Benschoten from the Matrix Profile Foundation [@mpf2020].
 
-Table. \@ref(tab:kappa) shows the Inter-rater Reliability (IRR) of the screening phases, using Cohen's $\kappa$ statistic.
+@tbl-kappa shows the Inter-rater Reliability (IRR) of the screening phases, using Cohen's $\kappa$ statistic.
 The bottom line shows the estimated accuracy after corrected for possible confounders [@Bakeman2011].
 
-```{r kappa, echo=FALSE, eval=!knitr::is_latex_output()}
+```{r tbl-kappa2, echo=FALSE, eval=FALSE}
+# !knitr::is_latex_output()
 my_kable(
   title = "Inter-rater Reliability on the literature survey process.",
   label = "kappa",
@@ -631,10 +647,12 @@ colspan="2"> 85% </td></tr></tbody>)"
 )
 ```
 \
-```{r kappaa, echo = FALSE, eval=knitr::is_latex_output(), results="asis"}
+```{r echo = FALSE, results="asis"}
+#| label: tbl-kappa
+#| tbl-cap: "Inter-rater Reliability on the literature survey process."
+# knitr::is_latex_output()
 cat(r"(
 \begin{table}[ht]
-\caption{\label{tab:kappa}Inter-rater Reliability on the literature survey process.}
 \centering
 \begin{tabular}{llcclcc}
 \toprule
@@ -683,23 +701,32 @@ computes the estimated accuracy of simulated reviewers.
 In order to better understand the data acquisition, it has been acquired a Single Lead Heart Rate
 Monitor breakout from Sparkfun™ [@sparkfun2021] using the AD8232 [@AnalogDevices2020] microchip
 from Analog Devices Inc., compatible with Arduino^®^ [@arduino2021], for an in-house experiment
-(@fig-ad8232).
+@fig-ad8232.
 
-```{r fig-ad8232, echo=FALSE, out.width="40%", fig.show="hold", fig.cap="Single Lead Heart Rate Monitor"}
-knitr::include_graphics(c(here("docs", "figure/sparkfun.jpg"), here("docs", "figure/FullSetup.jpg")))
-```
+::: {#fig-ad8232 layout-ncol=2}
+
+![](../docs/figure/sparkfun.jpg)
+
+![](../docs/figure/FullSetup.jpg)
+
+Single Lead Heart Rate Monitor
+:::
+
 
 The output gives us a RAW signal, as shown in @fig-rawsignal.
 
-```{r fig-rawsignal, echo=FALSE, out.width="50%", fig.cap="RAW output from Arduino at ~300hz"}
+
+```{r fig-rawsignal, echo=FALSE, out.width="50%"}
+#| fig-cap: "RAW output from Arduino at ~300hz"
 my_graphics("arduino_plot")
 ```
 
 After applying the same settings as the Physionet database (collecting the data at 500hz, resample
 to 250hz, pass-filter, and notch filter), the signal is much better, as shown in Fig.
-\@ref(fig:filtersignal).
+@fig-filtersignal.
 
-```{r fig-filtersignal, echo=FALSE, out.width="90%", fig.cap="Gray is RAW, Red is filtered"}
+```{r fig-filtersignal, echo=FALSE, out.width="90%"}
+#| fig-cap: "Gray is RAW, Red is filtered"
 my_graphics("filtered_ecg")
 ```
 
@@ -724,7 +751,8 @@ $$ {#eq-complex}
 
 The @fig-sqi shows some SQIs and their relation with the data.
 
-```{r fig-sqi, echo=FALSE, out.width="100%", fig.cap="Green line is the \"complexity\" of the signal"}
+```{r fig-sqi, echo=FALSE, out.width="100%"}
+#| fig-cap: "Green line is the \"complexity\" of the signal"
 my_graphics("noise")
 ```
 
@@ -766,7 +794,8 @@ dev.off()
 @fig-datafilter shows that noisy data (probably patient muscle movements) are marked
 with a blue point and thus are ignored by the algorithm.
 
-```{r fig-datafilter, echo=FALSE, out.width="100%", fig.cap="Noisy data marked by the \"complexity\" filter"}
+```{r fig-datafilter, echo=FALSE, out.width="100%"}
+#| fig-cap: "Noisy data marked by the \"complexity\" filter"
 my_graphics("regime_filter")
 ```
 
@@ -779,7 +808,7 @@ The regime change approach will be using the _Arc Counts_ concept, used on the F
 Unipotent Semantic Segmentation) algorithm, as explained by Gharghabi, _et al._,[@gharghabi2018].
 
 The FLUSS (and FLOSS, the on-line version) algorithm is built on top of the Matrix Profile
-(MP)[@Yeh2017a], described on section \@ref(matrixprofile). Recalling that the MP and the companion
+(MP)[@Yeh2017a], described on  @sec-matrixprofile. Recalling that the MP and the companion
 Profile Index (PI) are two vectors holding information about the 1-NN. One can imagine several
 "arcs" starting from one "index" to another. This algorithm is based on the assumption that between
 two regimes, the most similar shape (its nearest neighbor) is located on "the same side", so the
@@ -787,7 +816,8 @@ number of "arcs" decreases when there is a change on the regime, and increases a
 @fig-arcsoriginal. This drop on the _Arc Counts_ is a signal that a change on the shape
 of the signal has happened.
 
-```{r fig-arcsoriginal, echo=FALSE, out.width="100%", fig.cap="FLUSS algorithm, using arc counts."}
+```{r fig-arcsoriginal, echo=FALSE, out.width="100%"}
+#| fig-cap: "FLUSS algorithm, using arc counts."
 my_graphics("fluss_arcs")
 ```
 
@@ -822,10 +852,10 @@ changes, but it is not. The purpose of this algorithm is to find which pattern(s
 the dataset. Also, it is not suitable for streaming data. Lastly, MPdist is quite expensive compared
 to the trivial Euclidean distance.
 
-The regime change detection will be evaluated following the criterias explained on section
-\@ref(evaluation).
+The regime change detection will be evaluated following the criterias explained on
+@sec-evaluation.
 
-### Classification of the new regime {#classregime}
+### Classification of the new regime {#sec-classregime}
 
 The next step towards the objective of this work is to verify if the new regime detected by the
 previous step is indeed a life-threatening pattern that we should trigger the alarm.
@@ -865,12 +895,12 @@ author of CP calls these segments *Plato's*).
 Due to the nature of this approach, the MP's (containing values in Euclidean Distance) are truncated
 for values above $\sqrt{2w}$, where $w$ is the window size. This because values above this threshold
 are negatively correlated in the Pearson Correlation space. Finally, we normalize the values by
-$\sqrt{2w}$. The formula \@ref(eq:contrast) synthesizes this computation.
+$\sqrt{2w}$. The @eq-contrast synthesizes this computation.
 
 \
-\begin{equation}
-CP_w = \frac{MP_{w}^{(+-)} - MP_{w}^{(++)}}{\sqrt{2w}} \quad \text{where}\; w \; \text{is the window size} (\#eq:contrast)
-\end{equation}
+$$
+CP_w = \frac{MP_{w}^{(+-)} - MP_{w}^{(++)}}{\sqrt{2w}} \quad \text{where}\; w \; \text{is the window size}
+$$  {#eq-contrast}
 \
 
 For a more complete understanding of the process, @fig-contrast shows a practical example
@@ -888,12 +918,12 @@ my_graphics("contrast")
 
 
 After extracting candidates for each class signature, a classification algorithm will be fitted and
-evaluated using the criterias explained on section \@ref(evaluation).
+evaluated using the criterias explained on  @sec-evaluation.
 
 ### Summary of the methodology
 
-In order to summarize the steps taken on this thesis to accomplish the main objective, Figs.
-\@ref(fig:regimedetection), \@ref(fig:shapelets) and \@ref(fig:fullmodel) show the overview of the
+In order to summarize the steps taken on this thesis to accomplish the main objective,
+@fig-regimedetection, @fig-shapelets and @fig-fullmodel show the overview of the
 processes involved.
 
 First let us introduce the concept of Nested Resampling [@Bischl2012]. It is known that when
@@ -933,13 +963,13 @@ my_graphics("draw-nested-resampling")
 
 After the understanding of the Nested Resampling [@Bischl2012], the following flowcharts can be
 better interpreted. @fig-regimedetection starts with the "Full Dataset" that contains all
-time series from the dataset described on section \@ref(the-data). Each time series represents one
+time series from the dataset described on  @sec-the-data. Each time series represents one
 file from the database, and represents one patient.
 
 The regime change detection will use subsampling (bootstrapping can lead to substantial bias toward
 more complex models) in the Outer resampling and cross-validation in the Inner resampling. How
-the evaluation will be performed and why the use of cross-validation will be explained on section
-\@ref(evaluation).
+the evaluation will be performed and why the use of cross-validation will be explained on
+@sec-evaluation.
 
 ```{r fig-regimedetection, echo=FALSE, out.width="90%"}
 #| fig-cap: "Pipeline for regime change detection.
@@ -962,7 +992,7 @@ classifier.
 
 This pipeline will use subsampling (for the same reason above) in the Outer resampling and
 cross-validation in the Inner resampling. How the evaluation will be performed and why the use of
-cross-validation will be explained on section \@ref(evaluation).
+cross-validation will be explained on  @sec-evaluation.
 
 ```{r fig-shapelets, echo=FALSE, out.width="60%"}
 #| fig-cap: "Pipeline for alarm classification.
@@ -994,7 +1024,7 @@ my_graphics("draw-global-model")
 ```
 
 
-## Evaluation of the algorithms {#evaluation}
+## Evaluation of the algorithms {#sec-evaluation}
 
 The subsampling method used on both algorithms, regime change and classification, will be
 the Cross Validation, as the learning task will be in batches.
@@ -1049,7 +1079,7 @@ my_graphics("floss_eval")
 
 ### Classification
 
-As described on section \@ref(classregime), the model for classification will use a set of shapelets
+As described on @sec-classregime, the model for classification will use a set of shapelets
 to identify if we have a `TRUE` (life-threatening) regime or a `FALSE` (non life-threatening) regime.
 
 Although the implementation of the final process will be using streaming data, the classification
@@ -1077,11 +1107,11 @@ contained in the retrieved examples. It ranges from [0, 1]. It ignores completel
 items that were not retrieved (usually this set contain lots of items). In classification tasks, its
 main weakness is not evaluate the True Negatives, and if the proportion of a random classifier gets
 towards the `TRUE` class (increasing the False Positives significantly), this score actually gets
-better, thus not suitable to our case. The F~1~ score is defined on equation \@ref(eq:fscore).
+better, thus not suitable to our case. The F~1~ score is defined on  @eq-fscore.
 
-\begin{equation}
-F_1 score = \frac{2 \cdot TP}{2 \cdot TP + FP + FN} = 2 \cdot \frac{precision \cdot recall}{precision + recall} (\#eq:fscore)
-\end{equation}
+$$
+F_1 score = \frac{2 \cdot TP}{2 \cdot TP + FP + FN} = 2 \cdot \frac{precision \cdot recall}{precision + recall}
+$$ {#eq-fscore}
 
 The MCC is a good alternative to the F~1~ when we do care about the True negatives (both were
 considered to "provide more realistic estimates of real-world model performance" [@Dubey2018]). It
@@ -1093,24 +1123,24 @@ has the same behavior, but there are two main differences (1) MCC is *undefined*
 *majority voter* while Cohen's $\kappa$ doesn't discriminates this case from the random classifier
 ($\kappa$ is zero for both cases) (2) It is proven that in an special case when the classifier is
 increasing the False Negatives, Cohen's $\kappa$ doesn't get worse as spected, MCC
-doesn't have this issue [@Delgado2019]. MCC is defined on equation \@ref(eq:mccval).
+doesn't have this issue [@Delgado2019]. MCC is defined on  @eq-mccval.
 
-\begin{equation}
-MCC = \frac{TP \cdot TN - FP \cdot FN}{\sqrt{(TP + FP) \cdot (TP + FN) \cdot (TN + FP) \cdot (TN + FN)}} (\#eq:mccval)
-\end{equation}
+$$
+MCC = \frac{TP \cdot TN - FP \cdot FN}{\sqrt{(TP + FP) \cdot (TP + FN) \cdot (TN + FP) \cdot (TN + FN)}}
+$$ {#eq-mccval}
 
 The $\kappa_m$ statistic [@Bifet2015] is a measure that takes in account not the *random classifier*
 but the *majority voter* (a classifier that only votes on the larger class). It was introduced by
 Bifet *et al.* [@Bifet2015] for being used in online settings, where the class balance may change
-over time. It is defined on equation \@ref(eq:kappam), where $p_0$ is the observed accuracy and
+over time. It is defined on  @eq-kappam, where $p_0$ is the observed accuracy and
 $p_m$ is the accuracy of the majority voter. The score ranges from ($-\infty$, 1], theoretically,
 but in practice you see negative numbers if the classifier is performing worse than the majority voter
 and positive numbers if performing better than the majority number, until the maximum of 1, when the
 classifier is optimal.
 
-\begin{equation}
-\kappa_m = \frac{p_0 - p_m}{1 - p_m} (\#eq:kappam)
-\end{equation}
+$$
+\kappa_m = \frac{p_0 - p_m}{1 - p_m}
+$$ {#eq-kappam}
 
 In the inner resampling (model training/tuning), the classification will be binary, and in our case
 we know that the data is slightly unbalanced (60% false alarms). For this step, the metric for model
@@ -1162,7 +1192,9 @@ using the Contrast Profile.
 
 An example of candidates for ventricular tachycardia is presented on @fig-vtachy.
 
-```{r fig-vtachy, echo=FALSE, out.width="90%", fig.cap="Shapelet candidates for Ventricular Tachycardia.", fig.height=9, fig.width=14}
+```{r fig-vtachy, echo=FALSE, out.width="90%", fig.height=9, fig.width=14}
+#| fig-cap: "Shapelet candidates for Ventricular Tachycardia."
+
 def_par <- graphics::par(no.readonly = TRUE)
 graphics::layout(matrix(1:6, ncol = 2, byrow = TRUE))
 graphics::par(mai = c(0.8, 0.5, 0.6, 0.5), cex = 1)
@@ -1190,7 +1222,9 @@ in the future.
 A brief mentioning, linking back to the objectives of this work, an initial trial was done using an
 ESP32 MCU (@fig-esp32) in order to be sure if such small device can handle the task.
 
-```{r fig-esp32, echo=FALSE, out.width="50%", fig.cap="ESP32 MCU"}
+```{r fig-esp32, echo=FALSE, out.width="50%"}
+#| fig-cap: "ESP32 MCU"
+#|
 my_graphics("esp32")
 ```
 
@@ -1232,7 +1266,7 @@ portable.
 unexplored constraint that we could apply on building the Matrix Profile we are calling _Similarity
 Threshold_ (ST). The original work outputs the similarity values in Euclidean Distance (ED) values,
 while MPX naturally outputs the values in Pearson's correlation coefficients (CC). Both ED and CC
-are interchangeable using the equation \@ref(eq:edcc). However, we may argue that it is easier to
+are interchangeable using the @eq-edcc. However, we may argue that it is easier to
 compare values that do not depend on the window size during an exploratory phase. MPX happens to
 naturally return values in CC, saving a few more computation time. The ST is an interesting factor
 that we can use, especially when detecting pattern changes during time. The FLOSS algorithm relies
@@ -1241,9 +1275,9 @@ references since only similar patterns above a certain threshold are referenced,
 more impact on these counts. The best ST threshold is still to be determined.
 
 \
-\begin{equation}
-CC = 1 - \frac{ED}{(2 \times WindowSize)} (\#eq:edcc)
-\end{equation}
+$$
+CC = 1 - \frac{ED}{(2 \times WindowSize)}
+$$ {#eq-edcc}
 \
 
 ## Regime change detection
@@ -1258,8 +1292,8 @@ data are truncated by the same amount of temporal constraint. This prevents comp
 of a regime change in the last 10 seconds as this thesis requires.
 
 The main contribution of this work on this area is overcoming this issue by computing the
-theoretical distribution using the temporal constraint parameters beforehand. as shown in Fig.
-\@ref(fig:distributions). That gives us enough data to evaluate a regime change accurately utilizing
+theoretical distribution using the temporal constraint parameters beforehand. as shown in
+@fig-distributions. That gives us enough data to evaluate a regime change accurately utilizing
 a minimum of $2 \times WindowSize$ datapoints.
 
 ```{r dist-data, message=FALSE, warning=FALSE, cache=TRUE, include=FALSE}
@@ -1291,7 +1325,9 @@ floss_data_2500 <- get_dist(0, 2500)
 floss_data_1250 <- get_dist(0, 1250)
 ```
 
-```{r distributions, echo=FALSE, fig.cap="1D-IAC distributions for earlier temporal constraint (on Matrix Profile)", message=FALSE, warning=FALSE}
+```{r fig-distributions, echo=FALSE, message=FALSE, warning=FALSE}
+#| fig-cap: "1D-IAC distributions for earlier temporal constraint (on Matrix Profile)"
+
 floss_dist <- ggplot(data_5000, aes(index, counts)) +
   geom_line(size = 0.1) +
   ggtitle("a) No constraint") +
