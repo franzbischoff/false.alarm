@@ -670,6 +670,8 @@ compute_metrics_topk <- function(fold, shapelets, n_jobs = 1, progress = FALSE) 
         f1 <- 2 * tp / (2 * tp + fp + fn)
         p4 <- (4 * tp * tn) / (4 * tp * tn + (tp + tn) * (fp + fn))
         mcc <- (tp * tn - fp * fn) / sqrt((tp + fp) * (tp + fn) * (tn + fp) * (tn + fn))
+        majority <- max(tp + fn, fp + tn) / (tp + fp + tn + fn)
+        km <- (accuracy - majority) / (1 - majority)
         kappa <- 2 * (tp * tn - fp * fn) / ((tp + fn) * (fn + tn) + (tp + fp) * (fp + tn))
 
         p(paste("finish", i))
@@ -679,7 +681,7 @@ compute_metrics_topk <- function(fold, shapelets, n_jobs = 1, progress = FALSE) 
           precision = precision, recall = recall,
           specificity = specificity,
           accuracy = accuracy, f1 = f1,
-          p4 = p4, mcc = mcc, kappa = kappa
+          p4 = p4, mcc = mcc, km = km, kappa = kappa
         )
       }
     },
@@ -690,6 +692,13 @@ compute_metrics_topk <- function(fold, shapelets, n_jobs = 1, progress = FALSE) 
   return(res)
 }
 
+# aaa <- dplyr::bind_rows(list_dfr(test_classifiers_self[[1]][[1]]),
+# list_dfr(test_classifiers_self[[1]][[2]]),
+# list_dfr(test_classifiers_self[[1]][[3]]),
+# list_dfr(test_classifiers_self[[1]][[4]]),
+# list_dfr(test_classifiers_self[[1]][[5]]))
+# GGally::ggpairs(aaa[, 5:13])
+# aaa <- aaa %>% dplyr::mutate(fnr = fn / (tp + fn), fpr = fp / (fp + tn))
 
 compute_overall_metric <- function(all_folds) {
   tp <- fp <- tn <- fn <- acc <- ff <- 0
@@ -713,13 +722,15 @@ compute_overall_metric <- function(all_folds) {
   acc <- (tp + tn) / (tp + tn + fp + fn)
   p4 <- (4 * tp * tn) / (4 * tp * tn + (tp + tn) * (fp + fn))
   mcc <- (tp * tn - fp * fn) / sqrt((tp + fp) * (tp + fn) * (tn + fp) * (tn + fn))
+  majority <- max(tp + fn, fp + tn) / (tp + fp + tn + fn)
+  km <- (acc - majority) / (1 - majority)
   kappa <- 2 * (tp * tn - fp * fn) / ((tp + fn) * (fn + tn) + (tp + fp) * (fp + tn))
 
   return(list(
     tp = tp, fp = fp, tn = tn, fn = fn,
     precision = pre, recall = rec, specificity = spec,
     accuracy = acc, f1_micro = f1_micro, f1_macro = f1_macro, f1_weighted = f1_weighted,
-    p4 = p4, mcc = mcc, kappa = kappa
+    p4 = p4, mcc = mcc, km = km, kappa = kappa
   ))
 }
 

@@ -264,7 +264,6 @@
     "https://json.schemastore.org/github-workflow.json": "file:///workspace/false.alarm/.github/workflows/ci.yaml"
   },
   "PandocCiter.DefaultBib": "papers/references.bib",
-  "terminal.integrated.shellIntegration.enabled": false,
   "grammarly.config.documentDialect": "american",
   "grammarly.config.documentDomain": "academic",
   "grammarly.config.suggestions.ConjunctionAtStartOfSentence": true,

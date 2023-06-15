@@ -442,10 +442,16 @@ list(
         aa <- dplyr::mutate_all(aa, as.numeric)
         aa <- dplyr::bind_cols(find_shapelets[[i]], aa) |>
           # dplyr::select(-data) |>
-          dplyr::mutate(precision = tp / (tp + fp), recall = tp / (tp + fn)) |>
+          dplyr::mutate(
+            precision = tp / (tp + fp), recall = tp / (tp + fn),
+            majority = max(tp + fn, fp + tn) / (tp + fp + tn + fn),
+            FOR = fn / (fn + tn)
+          ) |>
+          dplyr::mutate(km = (accuracy - majority) / (1 - majority)) |>
+          dplyr::select(-majority) |>
           dplyr::mutate(coverage = as.numeric(coverage), redundancy = as.numeric(redundancy)) |>
-          dplyr::arrange(desc(precision), desc(recall)) |>
-          dplyr::slice_head(n = 1)
+          dplyr::arrange(desc(precision), desc(recall)) #|>
+        # dplyr::slice_head(n = 1)
 
         res[[i]] <- aa
       }

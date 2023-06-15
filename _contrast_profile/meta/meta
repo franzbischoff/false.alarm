@@ -1,14 +1,14 @@
 name|type|data|command|depend|seed|path|time|size|bytes|format|repository|iteration|parent|children|seconds|warnings|error
-.Random.seed|object|665340f16c8c2950|||||||||||||||
+.Random.seed|object|e3287740bf5490ed|||||||||||||||
 "%|||%"|function|031bda8ec980931b|||||||||||||||
 "%||NA%"|function|ef771f7e0b2b61dc|||||||||||||||
 activity|function|514ba81c8efb42b6|||||||||||||||
 ampl|function|22bb8917cc3362d0|||||||||||||||
 analysis_split|stem|6d6280eeeeaeaa09|3c9d74acfb239c7d|7d9b918f93b2e8de|1188165946||t19502.5658555796s|c1c66b69f95c736a|19205966|rds|local|group||analysis_split_7829d712*analysis_split_96143f68|0.207||
 assessment_split|stem|5367848bd2900085|1b41fd63223669d1|7d9b918f93b2e8de|-264140407||t19502.5658556953s|54691e044ebfb63d|4805832|rds|local|group||assessment_split_46147acb*assessment_split_ac706e39|0.112||
-best_shapelets|pattern|3e680525b367f463|7a7e14f3c0872aa3||-261715276||||104899|rds|local|list||best_shapelets_082d95cb*best_shapelets_bc5dd927|0.226||
-best_shapelets_082d95cb|branch|c714dc25c4354b50|7a7e14f3c0872aa3|c543aae5458c5cd8|1797514474||t19518.3732832551s|73a2b92a437700aa|52732|rds|local|list|best_shapelets||0.138||
-best_shapelets_bc5dd927|branch|141d89f97104d940|7a7e14f3c0872aa3|b1a9398999af4fb5|893000502||t19518.3733171675s|b75045c6c2af8132|52167|rds|local|list|best_shapelets||0.088||
+best_shapelets|pattern|6698a1096311a230|cb2bb27d9538e54c||-261715276||||250856351|rds|local|list||best_shapelets_082d95cb*best_shapelets_bc5dd927|1.122||
+best_shapelets_082d95cb|branch|3582cfec9a8c512f|cb2bb27d9538e54c|3499c280e2f8efaf|1797514474||t19523.1412875943s|015f289ac938f2a7|122117321|rds|local|list|best_shapelets||0.6||
+best_shapelets_bc5dd927|branch|7fc46b1337cf9e9b|cb2bb27d9538e54c|5c95c3406bedb0fd|893000502||t19523.1415021815s|d23ab3c25103e71c|128739030|rds|local|list|best_shapelets||0.522||
 classify_topk|function|1c48f3523ef2e30a|||||||||||||||
 clean_pred|function|2f000150c7903a2e|||||||||||||||
 clean_splits_data|function|62dff47d87f498a6|||||||||||||||
@@ -19,8 +19,8 @@ compute_arcs|function|1a4a6dc48008b78a|||||||||||||||
 compute_companion_stats|function|76613610273412a9|||||||||||||||
 compute_filters|function|7329a063b58bdd91|||||||||||||||
 compute_floss|function|2b4de81bfe11e55d|||||||||||||||
-compute_metrics_topk|function|696f4c42ab1f1f9d|||||||||||||||
-compute_overall_metric|function|524a4c19544f6bfd|||||||||||||||
+compute_metrics_topk|function|5e0d6bf9d6985bda|||||||||||||||
+compute_overall_metric|function|48f197ea760af3ee|||||||||||||||
 compute_s_profile_with_stats|function|2d5c844d8e0e655f|||||||||||||||
 compute_score_regimes|function|d6926f3b87fe56cf|||||||||||||||
 compute_streaming_profile|function|358c55ef8991349d|||||||||||||||
@@ -446,14 +446,14 @@ score_regimes_precision|function|750133b7a87964d6|||||||||||||||
 sd_r|function|edc210211e6db09c|||||||||||||||
 skip_graphics|object|909013909b1f03d4|||||||||||||||
 sprintf_transformer|function|2199f7feeee38815|||||||||||||||
-test_classifiers|pattern|75d57b445c141bbb|8845c27433287427||-998301253||||1356|rds|local|list||test_classifiers_af14e4a5*test_classifiers_49f44e39|22.753||
+test_classifiers|pattern|b4fccae11d52b6db|8845c27433287427||-998301253||||1442|rds|local|list||test_classifiers_af14e4a5*test_classifiers_49f44e39|21.464||
 test_classifiers_15a0292b|branch|a12935294bc26b52|798e1432bbee03b0|55e770b0922bbfb1|-276228060||t19518.3606179225s|0f05aa39aab40022|347|rds|local|list|test_classifiers||11.069|Unknown or uninitialised column data.. Unknown or uninitialised column data.. Unknown or uninitialised column data.. Unknown or uninitialised column data.. Unknown or uninitialised column data.. Unknown or uninitialised column data.. Unknown or uninitialised column data.. Unknown or uninitialised column data.. Unknown or uninitialised column data.. Unknown or uninitialised column data.. Unknown or uninitialised column data.. Unknown or uninitialised column data.. Unknown or uninitialised column data.. Unknown or uninitialised column data.. Unknown or uninitialised column data.|
 test_classifiers_17e2a881|branch|78c176639587196e|812db5e8ae31b365|87638c71853d35a7|-1714255281||t19499.9332399218s|8144ee769374523f|514|rds|local|list|test_classifiers||3.666||
 test_classifiers_32880978|branch|0f0c89ede3b55b33|11a5c7057a48a0cd|05a3e892e7362247|1439274487||t19518.2718028674s|febc0ae0f71ad275|1093|rds|local|list|test_classifiers||37.525||
 test_classifiers_35489b4b|branch|948b2fe4c59e5de3|798e1432bbee03b0|f15a80049e856b56|1678955518||t19518.3607392328s|7e50109c4a0b197a|346|rds|local|list|test_classifiers||10.2|Unknown or uninitialised column data.. Unknown or uninitialised column data.. Unknown or uninitialised column data.. Unknown or uninitialised column data.. Unknown or uninitialised column data.. Unknown or uninitialised column data.. Unknown or uninitialised column data.. Unknown or uninitialised column data.. Unknown or uninitialised column data.. Unknown or uninitialised column data.. Unknown or uninitialised column data.. Unknown or uninitialised column data.. Unknown or uninitialised column data.. Unknown or uninitialised column data.. Unknown or uninitialised column data.|
-test_classifiers_49f44e39|branch|87d83215102d1a0c|8845c27433287427|e21efbd670e70917|-1318716107||t19518.3735870239s|543b38e1c4e5a97d|671|rds|local|list|test_classifiers||12.936||
+test_classifiers_49f44e39|branch|0377ad04e6e78e53|8845c27433287427|4e2c20aade5654ea|-1318716107||t19520.6911903657s|06f2499ce5dc01d0|718|rds|local|list|test_classifiers||10.212||
 test_classifiers_8b513d75|branch|2132d4b8ea5bc91e|11a5c7057a48a0cd|24b73c53e1559987|-1633378582||t19518.2722385529s|af2be79594b747a3|846|rds|local|list|test_classifiers||30.419||
-test_classifiers_af14e4a5|branch|ff24ec37550a246d|8845c27433287427|4e8fa0472bec340f|-2140311902||t19518.373434298s|f42b1c92efa2e2c7|685|rds|local|list|test_classifiers||9.817||
+test_classifiers_af14e4a5|branch|aa1b7dc7a0efcf34|8845c27433287427|1dcaf95edab7f1f2|-2140311902||t19520.6910692987s|f7f8910159e13ac3|724|rds|local|list|test_classifiers||11.252||
 test_classifiers_c5478cfa|branch|782db239ed983387|812db5e8ae31b365|a17fab4abe701ba7|342121097||t19499.9333528825s|b694c8343349aca9|550|rds|local|list|test_classifiers||3.428||
 test_classifiers_self|pattern|0541fd55870aaf64|0657566555a6166f||1817600917||||523761|rds|local|list||test_classifiers_self_39b962e9*test_classifiers_self_d6d065d7|14401.843||
 test_classifiers_self_39b962e9|branch|728890029868069d|0657566555a6166f|700aba9d80ac1b68|1575096345||t19513.62794029s|8e456d6751ec086f|477454|rds|local|list|test_classifiers_self||24528.014||
