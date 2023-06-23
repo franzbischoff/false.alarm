@@ -99,9 +99,9 @@ alarms <- tribble(
   "Ventricular Flutter/Fibrillation", "Fibrillatory, flutter, or oscillatory waveform for at least 4 seconds"
 )
 
-kbl(alarms, booktabs = TRUE, caption = paste("Table ", ref("tab:alarms"), "- Definition of the 5 alarm types used in CinC/Physionet Challenge 2015 challenge."), align = "ll") %>%
-  kable_styling(full_width = TRUE) %>%
-  column_spec(1, width = "5cm") %>%
+kbl(alarms, booktabs = TRUE, caption = paste("Table ", ref("tab:alarms"), "- Definition of the 5 alarm types used in CinC/Physionet Challenge 2015 challenge."), align = "ll") |>
+  kable_styling(full_width = TRUE) |>
+  column_spec(1, width = "5cm") |>
   row_spec(0, bold = TRUE)
 ```
 
@@ -121,9 +121,9 @@ challenge <- tribble(
   75.55, "Christoph Hoog Antink, Steffen Leonhardt"
 )
 
-kbl(challenge, booktabs = TRUE, caption = paste("Table ", ref("tab:challenge"), "- Challenge Results on Streaming"), align = "cl") %>%
-  kable_styling(full_width = TRUE) %>%
-  column_spec(2, width = "9cm") %>%
+kbl(challenge, booktabs = TRUE, caption = paste("Table ", ref("tab:challenge"), "- Challenge Results on Streaming"), align = "cl") |>
+  kable_styling(full_width = TRUE) |>
+  column_spec(2, width = "9cm") |>
   row_spec(0, bold = TRUE)
 ```
 
@@ -372,7 +372,6 @@ floss_data_1250 <- get_dist(0, 1250)
 ```
 
 ```{r distributions, echo=FALSE, fig.cap=paste0("Fig. ", ref("fig:distributions"), ": 1D-IAC distributions for earlier temporal constraint (on Matrix Profile)")}
-
 offset <- 120
 
 floss_dist <- ggplot(data_5000, aes(index, counts)) +
@@ -416,7 +415,6 @@ in its original form. See Fig. `r ref("fig:floss_dist")`. The theoretical distri
 the constraint value.
 
 ```{r floss_dist, echo=FALSE, fig.cap=paste0("Fig. ", ref("fig:floss_dist"), ": 1D-IAC distributions for later temporal constraint (on FLOSS)")}
-
 offset <- 120
 
 floss_dist <- ggplot(floss_data_5000, aes(index, counts)) +
@@ -477,7 +475,6 @@ floss_data <- tibble(time = seq_along(floss_data$cac), cac = floss_data$cac, iac
 
 
 ```{r constraints, echo=FALSE, fig.cap=paste0("Fig. ", ref("fig:constraints"), ": CAC and Regime detection using early and later IAC")}
-
 landmark <- 5000 - 3 * 250
 mp_cac_landmark <- mp_data$cac[landmark]
 floss_cac_landmark <- floss_data$cac[landmark]
@@ -521,14 +518,15 @@ floss_arcs <- ggplot(floss_data, aes(time, arcs)) +
 
 gg <- gridExtra::grid.arrange(mp_constraint, floss_constraint, mp_arcs, floss_arcs,
   nrow = 2, newpage = TRUE,
-  bottom = grid::textGrob(paste(
-    "The plots on a) show above the Corrected Arc Count (CAC) and below the raw arc counts (black) and the\n",
-    "ideal arc count (IAC) (red) using the temporal constraint earlier on the Matrix Profile.\n",
-    "The plots on b) show above the Corrected Arc Count (CAC) and below the raw arc counts (black) and\n",
-    "the ideal arc count (IAC) (red) using the temporal constraint later on the FLOSS algorithm.\n",
-    "The red vertical line marks the point where the current algorithm watches for regime changes."
-  ),
-  just = "center", gp = grid::gpar(fontsize = 15)
+  bottom = grid::textGrob(
+    paste(
+      "The plots on a) show above the Corrected Arc Count (CAC) and below the raw arc counts (black) and the\n",
+      "ideal arc count (IAC) (red) using the temporal constraint earlier on the Matrix Profile.\n",
+      "The plots on b) show above the Corrected Arc Count (CAC) and below the raw arc counts (black) and\n",
+      "the ideal arc count (IAC) (red) using the temporal constraint later on the FLOSS algorithm.\n",
+      "The red vertical line marks the point where the current algorithm watches for regime changes."
+    ),
+    just = "center", gp = grid::gpar(fontsize = 15)
   )
 )
 ```

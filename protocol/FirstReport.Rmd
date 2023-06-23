@@ -212,8 +212,8 @@ kbl(alarms,
   align = "ll",
   position = "ht",
   linesep = "\\addlinespace"
-) %>%
-  row_spec(0, bold = TRUE) %>%
+) |>
+  row_spec(0, bold = TRUE) |>
   kable_styling(full_width = TRUE)
 ```
 
@@ -273,8 +273,8 @@ kbl(criteria,
   align = "ll",
   position = "ht",
   linesep = "\\addlinespace"
-) %>%
-  row_spec(0, bold = TRUE) %>%
+) |>
+  row_spec(0, bold = TRUE) |>
   kable_styling(full_width = TRUE)
 ```
 

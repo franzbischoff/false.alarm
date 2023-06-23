@@ -196,7 +196,6 @@ Score = \frac{TP+TN}{TP+TN+FP+5*FN}   (\#eq:score)
 The five-best scores (for real-time) in this challenge are described on Table \@ref(tab:challenge):
 
 ```{r challenge, echo=FALSE}
-
 challenge <- tribble(
   ~Score, ~Authors,
   "81.39", "Filip Plesinger, Petr Klimes, Josef Halamek, Pavel Jurak",
@@ -211,10 +210,10 @@ kbl(challenge,
   caption = "Challenge Results on real-time data. The scores were multiplied by 100.",
   align = "cl",
   position = "ht"
-) %>%
-  row_spec(0, bold = TRUE) %>%
-  # column_spec(1, width = "5em") %>%
-  # column_spec(2, width = "30em") %>%
+) |>
+  row_spec(0, bold = TRUE) |>
+  # column_spec(1, width = "5em") |>
+  # column_spec(2, width = "30em") |>
   kable_styling(full_width = FALSE)
 ```
 
@@ -400,8 +399,8 @@ kbl(miles,
   align = "ccll",
   position = "ht",
   linesep = "\\addlinespace"
-) %>%
-  row_spec(0, bold = TRUE) %>%
+) |>
+  row_spec(0, bold = TRUE) |>
   kable_styling(full_width = FALSE)
 ```
 
@@ -428,8 +427,8 @@ kbl(budgets,
   align = "lrlc",
   position = "ht",
   linesep = "\\addlinespace"
-) %>%
-  row_spec(0, bold = TRUE) %>%
+) |>
+  row_spec(0, bold = TRUE) |>
   kable_styling(full_width = FALSE)
 ```
 

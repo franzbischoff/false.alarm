@@ -58,7 +58,7 @@ Last Targets Run network:
 ```{r network, echo=FALSE, fig.width=10}
 library(magrittr)
 network <- readRDS(here("output/network.rds"))
-network <- network %>%
+network <- network |>
   visNetwork::visPhysics(hierarchicalRepulsion = list(
     springLength = 1,
     avoidOverlap = 0.5,

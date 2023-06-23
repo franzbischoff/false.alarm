@@ -303,11 +303,12 @@ list(
         cli::cli_alert_info("Finding solutions, fold {i}.")
         tune3 <- 10
         solutions <- find_solutions(score_by_segment[[i]],
-          cov = 10,
-          n = 10,
-          rep = 10000,
-          red = tune3,
-          n_jobs = var_future_workers
+        min_cov = 10,
+        max_shapelets = 20,  # this can be more than topk
+        rep = 5000,
+        max_red = 10,
+        max_k = tune3,
+        n_jobs = 6
         )
 
         if (length(solutions) == 0) {

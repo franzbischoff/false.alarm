@@ -13,6 +13,11 @@ classifier:
 
 contrast_profile:
   inherits: main
+  store: _contrast_profile_ex
+  script: scripts/_contrast_profile_ex.R
+
+contrast_profile_not:
+  inherits: main
   store: _contrast_profile
   script: scripts/_contrast_profile.R
 

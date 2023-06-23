@@ -32,7 +32,7 @@
 # source("/workspace/false.alarm/scripts/helpers/pan_contrast_helpers.R", encoding = "UTF-8")
 # library(false.alarm)
 # score <- score_by_segment_window(res$positive, res$negative, res$pan)
-# solutions <- find_solutions(score, cov = 18, n = 10, rep = 100000, red = 10, n_jobs = 2); View(solutions)
+# solutions <- find_solutions(score, min_cov = 18, n = 10, rep = 100000, max_red = 10, n_jobs = 2); View(solutions)
 # jj <- filter_best_solutions(solutions, 2)
 # plt <- plot_best_candidates(jj$data[[1]], res)
 
@@ -217,17 +217,35 @@ filter_best_solutions <- function(
 
 # n = max number of shapelets to use
 # rep = number of sampling repetitions
-# red = maximum redundancy allowed
-# cov = minimum coverage allowed
+# max_red = maximum redundancy allowed
+# min_cov = minimum coverage allowed
 
-find_solutions <- function(score, n = 5, rep = 2000, red = 5, cov = 17, n_jobs = 1) {
+# Beam search
+#| graph TD;
+#|  A[Define the problem] --> B[Define the scoring function];
+#|  B --> C[Initialize the set of candidate solutions];
+#|  C --> D[Generate candidate solutions];
+#|  D --> E[Score candidate solutions];
+#|  E --> F[Select top-scoring candidate solutions];
+#|  F --> G[Check for termination];
+#|  G -->|Yes| H[Return the top-scoring solution];
+#|  G -->|No| D;
+
+
+# find_solutions
+# seek high cov_percent(**) and lower red_percent for low FN
+# seek for: lower red_percent(*), and samples(**) for low FP
+
+find_solutions <- function(score, max_shapelets = 5, rep = 2000, max_red = 5, min_cov = 17, max_k = 10, n_jobs = 1) {
   segments <- score$num_segments
 
-  if (cov > segments) {
-    cov <- segments
+  if (min_cov > segments) {
+    min_cov <- segments
   }
 
+  # Convert the score object into a data frame. Also limits the topk to max_k
   score <- score_candidates(score)
+  score <- score |> dplyr::filter(k <= max_k)
 
   if (n_jobs == 1) {
     future::plan(future::sequential)
@@ -245,39 +263,78 @@ find_solutions <- function(score, n = 5, rep = 2000, red = 5, cov = 17, n_jobs =
 
       sols <- furrr::future_map(reps, function(i) {
         p()
-        samples <- round(runif(1, 1, n))
+
+        # sample the data
+        samples <- round(runif(1, 1, max_shapelets))
+
+        ## Generate candidate solutions ## ---------------------------------------
         some_rows <- dplyr::slice_sample(score, n = samples)
+        # get the size of the shapelets from the cov_idxs first row
+        # must match the segments variable
         n_cols <- length(some_rows$cov_idxs[[1]])
+        checkmate::assert_true(n_cols == segments)
+        # reshape the cov_idxs into a matrix
         sample_data <- matrix(unlist(some_rows$cov_idxs), ncol = n_cols, byrow = TRUE)
+
+        # computes the "pre" coverage using a colwise sum. If the column sum is zero, the
+        # selected shapelet is not detecting that segment of the data
         data_coverage <- apply(sample_data, 2, sum)
 
+        # computes the redundancy (rowwise) checking if the column sum is greater than 1.
+        # This means that the segment is detected by more than one shapelet
         redundancy <- sum(data_coverage > 1, na.rm = TRUE)
-        if (redundancy > red) {
+        # early exit if the redundancy is too high
+        if (redundancy > max_red) {
           return(NULL)
         }
 
+        # computes the coverage (rowwise) checking if the column sum is greater than 0.
         coverage <- sum(data_coverage > 0, na.rm = TRUE)
-        if (coverage < cov) {
+        # early exit if the coverage is too low
+        if (coverage < min_cov) {
           return(NULL)
         }
 
         cov_percent <- coverage / segments
+
+        if (cov_percent < 0.5) {
+          return(NULL)
+        }
+
         keep_rows <- list()
+        keep <- NULL
 
-        if (nrow(sample_data) > 2) {
+        ## Prune solutions efficiently ## ---------------------------------------
+        # We try to reduce redudancy only if more than two shapelets were sampled
+        nsamples <- nrow(sample_data)
+        if (nsamples > 2) {
           # test for rows of samples that don't zero the column sum and may be dropped
-          cc <- data_coverage
-          for (j in seq((nrow(sample_data) - 1), 2)) {
-            comb <- combn(seq_len(nrow(sample_data)), j)
+          cc <- data_coverage # this is just to make the code more readable
+          for (j in seq((nsamples - 1), 2)) { # iterates backwards from (nsamples - 1) to 2
+            # creates a matrix with all combinations of the sequence of samples, taken j by j.
+            # we start by ommiting one index, than two, than three, etc.
+            comb <- combn(seq_len(nsamples), j)
 
-            for (k in seq_len(ncol(comb))) {
+            # the algorithm is pretty simple: for each combination of samples, check if the ommited
+            # indexes are zeroing the column sum. If it is not, then we can drop that indexes.
+            for (k in seq_len(ncol(comb))) { # iterates over the combination matrix, columnwise
               rr <- sample_data[comb[, k], , drop = FALSE]
-              rr <- apply(rr, 2, sum)
-              if (!any(rr[(rr & cc)] == cc[(rr & cc)])) {
-                keep <- setdiff(seq_len(nrow(sample_data)), comb[, k])
+              rr <- apply(rr, 2, sum) # here we compute the new "pre" coverage
+
+              # (rr & cc) is an efficient way to check if both arrays are > 0 columnwise
+              dd <- rr & cc
+              # then, we compare the column sums of the new "pre" coverage with the original
+              # if any of the columns have the same sum, we keep searching
+              # if not, we store the ommited indexes, since it is a combination that cannot be dropped
+              if (!any(rr[dd] == cc[dd])) {
+                keep <- setdiff(seq_len(nsamples), comb[, k])
                 keep_rows <- c(keep_rows, list(keep))
               }
             }
+
+            # if we found a combination that cannot be dropped, we can stop searching
+            # this combination is already the smallest combination that reduces redundancy and keeps coverage
+            # we can have more than one combination in this loop. Later, we will select the more appropriate
             if (length(keep_rows) > 0) {
               break
             }
@@ -285,13 +342,12 @@ find_solutions <- function(score, n = 5, rep = 2000, red = 5, cov = 17, n_jobs =
         }
 
         if (length(keep_rows) == 1) {
+          # if we found only one combination that reduces redundancy, we keep only that combination
           some_rows <- some_rows[keep_rows[[1]], ]
           samples <- length(keep_rows[[1]])
-          data_coverage <- apply(matrix(unlist(some_rows$cov_idxs), ncol = n_cols, byrow = TRUE), 2, sum)
-          redundancy <- sum(data_coverage > 1, na.rm = TRUE)
-          coverage <- sum(data_coverage > 0, na.rm = TRUE)
-          cov_percent <- coverage / segments
         } else if (length(keep_rows) > 1) {
+          # if we found more than one combination that reduces redundancy, we keep the combination
+          # that maximizes the score function
           new_rows <- NULL
           for (j in seq_len(length(keep_rows))) {
             temp <- dplyr::bind_cols(idx = j, some_rows[keep_rows[[j]], ])
@@ -301,22 +357,27 @@ find_solutions <- function(score, n = 5, rep = 2000, red = 5, cov = 17, n_jobs =
           new_rows <- new_rows |>
             dplyr::group_by(idx) |>
             dplyr::summarise(
-              sk = sum(k), mc = median(contrast, na.rm = TRUE),
-              sid = sum(unlist(cov_idxs)),
-              redun = sum(apply(matrix(unlist(cov_idxs), ncol = n_cols, byrow = TRUE), 2, sum) > 1)
+              k_mean = mean(k, na.rm = TRUE), c_total = sum(contrast, na.rm = TRUE),
+              c_mean = mean(contrast, na.rm = TRUE)
             )
           new_rows <- new_rows |>
-            dplyr::arrange(sk, desc(mc), sid, redun) |>
+            dplyr::arrange(dplyr::desc(k_mean), dplyr::desc(c_total), c_mean) |>
             dplyr::slice_head(n = 1)
           new_idx <- new_rows |> dplyr::pull(idx)
           some_rows <- some_rows[keep_rows[[new_idx]], ]
 
           samples <- length(keep_rows[[new_idx]])
-          data_coverage <- apply(matrix(unlist(some_rows$cov_idxs), ncol = n_cols, byrow = TRUE), 2, sum)
-          redundancy <- sum(data_coverage > 1, na.rm = TRUE)
-          coverage <- sum(data_coverage > 0, na.rm = TRUE)
-          cov_percent <- coverage / segments
         }
+
+        # else, keep the original sampled rows
+
+        data_coverage <- apply(matrix(unlist(some_rows$cov_idxs), ncol = segments, byrow = TRUE), 2, sum)
+        redundancy <- sum(data_coverage > 1, na.rm = TRUE)
+        coverage <- sum(data_coverage > 0, na.rm = TRUE)
+        # normalize the coverage and redundancy by the number of segments to allow comparison
+        # between different folds.
+        cov_percent <- coverage / segments
+        red_percent <- redundancy / segments
 
 
         list(
@@ -330,6 +391,7 @@ find_solutions <- function(score, n = 5, rep = 2000, red = 5, cov = 17, n_jobs =
           coverage = coverage,
           cov_percent = cov_percent,
           redundancy = redundancy,
+          red_percent = red_percent,
           samples = samples, cand = some_rows
         )
       }, .options = furrr::furrr_options(seed = 2023, scheduling = 1))
@@ -350,6 +412,43 @@ find_solutions <- function(score, n = 5, rep = 2000, red = 5, cov = 17, n_jobs =
   }
 
   return(sols)
+}
+
+
+# The scoring function will try to minimize at first one of the "min" arguments
+# minimizing fp will try to minimize the number of false positives
+# minimizing fn will try to minimize the number of false negatives
+# For minimizing FP, these variables have the following correlation/importance:
+#       - samples: 0.492/1.07
+#       - red_percent: 0.192/0.490
+#       - c_total: 0.470/0.247
+#       - cov_percent: 0.260/0.173
+# For minimizing FN, these variables have the following correlation/importance:
+#       - cov_percent: -0.854 / 7.56  *** score
+#       - c_total: -0.244 / 2.64
+#       - samples: -0.346 / 2.26
+#       - red_percent: -0.402 / 1.79
+#       - k_mean: -0.143 / 0.524
+
+score_solutions <- function(object, min = c("fp", "fn")) {
+  checkmate::qassert(object, "L+")
+  checkmate::qassert(min, "S")
+
+  min <- match.arg(min)
+
+  if (min == "fp") { # hard
+    # minimize false positives
+    object <- object |>
+      dplyr::mutate( # 0.493
+        score = c_total * 0.11609 + cov_percent * 0.04498 + red_percent * 0.09408 + samples * 0.52644
+      )
+  } else if (min == "fn") {
+    # minimize false negatives
+    object <- object |>
+      dplyr::mutate( # 0.5
+        score = c_total * -0.64416 + cov_percent * -6.45624 + red_percent * -0.71958 + k_mean * -0.074932 + samples * -0.78196
+      )
+  }
 }
 
 list_dfr <- function(x) {
@@ -614,7 +713,7 @@ compute_metrics_topk <- function(fold, shapelets, n_jobs = 1, progress = FALSE) 
     {
       p <- progressr::progressor(steps = nrow(shapelets))
 
-      res <- foreach(i = seq_len(nrow(shapelets))) %dofuture% {
+      res <- foreach(i = seq_len(nrow(shapelets)), .options.future = list(seed = TRUE)) %dofuture% {
         shapelet <- shapelets[i, ]
 
         tp <- 0
@@ -666,6 +765,7 @@ compute_metrics_topk <- function(fold, shapelets, n_jobs = 1, progress = FALSE) 
         precision <- tp / (tp + fp)
         recall <- tp / (tp + fn)
         specificity <- tn / (tn + fp)
+        FOR <- fn / (fn + tn)
         accuracy <- (tp + tn) / (tp + tn + fp + fn)
         f1 <- 2 * tp / (2 * tp + fp + fn)
         p4 <- (4 * tp * tn) / (4 * tp * tn + (tp + tn) * (fp + fn))
@@ -679,7 +779,7 @@ compute_metrics_topk <- function(fold, shapelets, n_jobs = 1, progress = FALSE) 
         list(
           tp = tp, fp = fp, tn = tn, fn = fn,
           precision = precision, recall = recall,
-          specificity = specificity,
+          specificity = specificity, FOR = FOR,
           accuracy = accuracy, f1 = f1,
           p4 = p4, mcc = mcc, km = km, kappa = kappa
         )
@@ -698,7 +798,7 @@ compute_metrics_topk <- function(fold, shapelets, n_jobs = 1, progress = FALSE) 
 # list_dfr(test_classifiers_self[[1]][[4]]),
 # list_dfr(test_classifiers_self[[1]][[5]]))
 # GGally::ggpairs(aaa[, 5:13])
-# aaa <- aaa %>% dplyr::mutate(fnr = fn / (tp + fn), fpr = fp / (fp + tn))
+# aaa <- aaa |> dplyr::mutate(fnr = fn / (tp + fn), fpr = fp / (fp + tn))
 
 compute_overall_metric <- function(all_folds) {
   tp <- fp <- tn <- fn <- acc <- ff <- 0

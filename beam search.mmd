@@ -1,0 +1,17 @@
+%%{
+  init: {
+    "securityLevel": "loose",
+    "theme": "dark",
+    "fontFamily": "Fira Code Medium, Trebuchet MS, Verdana, Arial, Sans-Serif"
+  }
+}%%
+
+graph TD;
+  A[Define the problem] --> B[Define the scoring function];
+  B --> C[Initialize the set of candidate solutions];
+  C --> D[Generate candidate solutions];
+  D --> E[Score candidate solutions];
+  E --> F[Select top-scoring candidate solutions];
+  F --> G[Check for termination];
+  G -->|Yes| H[Return the top-scoring solution];
+  G -->|No| D;

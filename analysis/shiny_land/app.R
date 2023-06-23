@@ -122,7 +122,7 @@ server <- function(input, output) {
     dataset <<- readRDS(glue::glue("{input$filename}.rds"))
     scores <<- readRDS(glue::glue("{input$filename}_scores.rds"))
     data <- dataset
-    plot <- data$ecg %>% plot_time_series(
+    plot <- data$ecg |> plot_time_series(
       time, value,
       .title = glue::glue("FLOSS for {input$filename}"),
       .interactive = TRUE,
@@ -132,7 +132,7 @@ server <- function(input, output) {
       .plotly_slider = TRUE
     )
 
-    res <- scores %>%
+    res <- scores |>
       dplyr::arrange(score)
 
     valid_inputs <- list(
@@ -170,7 +170,7 @@ server <- function(input, output) {
 
   scoreResult <- reactive({
     wsize <- input$window_size # hack, dunno why this is necessary
-    res <- scores %>% dplyr::filter(
+    res <- scores |> dplyr::filter(
       window_size == input$window_size,
       time_constraint == input$time_constraint,
       round(mp_threshold * 100) == round(input$mp_threshold * 100),
@@ -191,12 +191,12 @@ server <- function(input, output) {
 
 
   output$distPlot <- renderPlotly(
-    ecgRecord()$plot %>% plotly::add_segments(
+    ecgRecord()$plot |> plotly::add_segments(
       x = scoreResult()$pred[[1]], xend = scoreResult()$pred[[1]], y = ecgRecord()$min,
       yend = ecgRecord()$max * 1.1,
       line = list(width = 2.5, color = "#0108c77f"),
       name = "Predicted"
-    ) %>% plotly::add_segments(
+    ) |> plotly::add_segments(
       x = ecgRecord()$truth, xend = ecgRecord()$truth, y = ecgRecord()$min,
       yend = ecgRecord()$max,
       line = list(width = 2.5, color = "#ff00007f"),

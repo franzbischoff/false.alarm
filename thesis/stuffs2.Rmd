@@ -108,9 +108,9 @@ tl nd for 20
 4.  Ne also the use of the `scale` parameter which is discussed on the next page.
 
 ```{r delaysboxplot, warnings=FALSE, messages=FALSE, fig.cap="Mean Delays by Airline", fig.width=6}
-flights %>%
-  group_by(carrier) %>%
-  summarize(mean_dep_delay = mean(dep_delay)) %>%
+flights |>
+  group_by(carrier) |>
+  summarize(mean_dep_delay = mean(dep_delay)) |>
   ggplot(aes(x = carrier, y = mean_dep_delay)) +
   geom_bar(position = "identity", stat = "identity", fill = "red")
 ```
