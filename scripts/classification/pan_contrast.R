@@ -739,7 +739,7 @@ compute_metrics_topk <- function(fold, shapelets, n_jobs = 1, progress = FALSE) 
             class <- c(class, (min(dp, na.rm = TRUE) < thresholds[j]))
           }
 
-          class <- any(class)
+          class <- any(class) # ((sum(class) / length(windows)) > 0.2)
 
           if (class == data[[k]]$alarm) {
             # hit
@@ -792,6 +792,11 @@ compute_metrics_topk <- function(fold, shapelets, n_jobs = 1, progress = FALSE) 
   return(res)
 }
 
+rrank <- function(x, n, r) {
+  y <- sort(unique(round(abs(x), n))) + (1 / 10^n)
+  y[r]
+}
+
 # aaa <- dplyr::bind_rows(list_dfr(test_classifiers_self[[1]][[1]]),
 # list_dfr(test_classifiers_self[[1]][[2]]),
 # list_dfr(test_classifiers_self[[1]][[3]]),
@@ -803,18 +808,25 @@ compute_metrics_topk <- function(fold, shapelets, n_jobs = 1, progress = FALSE) 
 compute_overall_metric <- function(all_folds) {
   tp <- fp <- tn <- fn <- acc <- ff <- 0
 
+  full_size <- 0
+
   for (fold in all_folds) {
-    tp <- tp + fold[[1]]$tp
-    fp <- fp + fold[[1]]$fp
-    tn <- tn + fold[[1]]$tn
-    fn <- fn + fold[[1]]$fn
-    ff <- ff + fold[[1]]$f1
+    full_size <- full_size + nrow(fold)
+
+    for (i in seq_len(nrow(fold))) {
+      shape <- fold[i, ]
+      tp <- tp + shape$tp
+      fp <- fp + shape$fp
+      tn <- tn + shape$tn
+      fn <- fn + shape$fn
+      ff <- ff + shape$f1
+    }
   }
 
   tm <- (2 * tp) / (2 * tp + fp + fn)
   fm <- (2 * tn) / (2 * tn + fp + tp)
   f1_micro <- (tm + fm) / 2
-  f1_macro <- (ff / length(all_folds))
+  f1_macro <- (ff / full_size)
   f1_weighted <- ((tp + fp) * tm + (fn + tn) * fm) / (tp + tn + fp + fn)
   pre <- tp / (tp + fp)
   rec <- tp / (tp + fn)
@@ -826,13 +838,42 @@ compute_overall_metric <- function(all_folds) {
   km <- (acc - majority) / (1 - majority)
   kappa <- 2 * (tp * tn - fp * fn) / ((tp + fn) * (fn + tn) + (tp + fp) * (fp + tn))
 
-  return(list(
+  return(tibble::tibble(
     tp = tp, fp = fp, tn = tn, fn = fn,
     precision = pre, recall = rec, specificity = spec,
     accuracy = acc, f1_micro = f1_micro, f1_macro = f1_macro, f1_weighted = f1_weighted,
     p4 = p4, mcc = mcc, km = km, kappa = kappa
   ))
 }
+
+combine_metrics <- function(metrics, shapelets) {
+  aa <- tibble::as_tibble(purrr::transpose(metrics))
+  aa <- dplyr::mutate_all(aa, as.numeric)
+  aa <- dplyr::bind_cols(shapelets, aa) |>
+    # dplyr::select(-data) |> ####### The final `model` we need is the shapelet
+    dplyr::mutate(across(!where(is.list), as.numeric))
+
+  sup_spec <- quantile(aa$specificity, 0.75, na.rm = TRUE)
+  sup_prec <- quantile(aa$precision, 0.75, na.rm = TRUE)
+  min_fp <- min(aa$fp, na.rm = TRUE)
+  min_fn <- min(aa$fn, na.rm = TRUE)
+
+  aa <- aa |>
+    dplyr::filter(
+      p4 >= 0.1
+    ) |>
+    tidyr::drop_na() |>
+    dplyr::arrange(fp, fn)
+  # dplyr::filter(
+  #   precision >= sup_prec,
+  #   specificity >= sup_spec
+  # ) |>
+  # dplyr::arrange(fp, fn)
+  # dplyr::slice_head(n = 50)
+
+  return(aa)
+}
+
 
 
 # tp <- fp <- tn <- fn <- acc <- ff <- 0

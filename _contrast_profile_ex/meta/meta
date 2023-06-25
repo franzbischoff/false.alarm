@@ -1,18 +1,18 @@
 name|type|data|command|depend|seed|path|time|size|bytes|format|repository|iteration|parent|children|seconds|warnings|error
-.Random.seed|object|fbe882969501c735|||||||||||||||
+.Random.seed|object|0bc6f3245e3a0b90|||||||||||||||
 "%|||%"|function|031bda8ec980931b|||||||||||||||
 "%||NA%"|function|ef771f7e0b2b61dc|||||||||||||||
 activity|function|514ba81c8efb42b6|||||||||||||||
 ampl|function|22bb8917cc3362d0|||||||||||||||
 analysis_split|stem|280806d638f6257a|3c9d74acfb239c7d|9fe8c079932d5cb0|1188165946||t19530.6896124422s|f1ea2081a4ca0bea|734755|rds|local|group||analysis_split_1210acf9*analysis_split_d7478d53|0.037||
 assessment_split|stem|52e78968a55834c2|1b41fd63223669d1|9fe8c079932d5cb0|-264140407||t19530.6896095486s|227a75896b1a57c9|734108|rds|local|group|||0.051||
-best_shapelets|pattern|9048e953c1526a3e|1c009d3ed0dd0292||-261715276||||43772|rds|local|list||best_shapelets_d9008992*best_shapelets_1b4be4f2|0.084||
-best_shapelets_1b4be4f2|branch|0ddbda491763cd62|1c009d3ed0dd0292|d30f89d8b3f2c411|-631355285||t19530.6961702823s|3381959778bde498|23065|rds|local|list|best_shapelets||0.039||
-best_shapelets_8af6b52c|branch||af821b2a2061fc7e|713037692fee6b1d|143699523||t19524.0978760455s||0|rds|local|list|best_shapelets||0.106||1m22mColumn 1 must be named.Use .name_repair to specify repair.1mCaused by error in repaired_names22m33m39m Names cant be empty.31m39m Empty name found at location 1.
-best_shapelets_d9008992|branch|173cd1d0df1498f6|1c009d3ed0dd0292|f314d453af08f106|7945773||t19530.69616681s|7cf218cce386f5bd|20707|rds|local|list|best_shapelets||0.045||
 clean_pred|function|2f000150c7903a2e|||||||||||||||
 clean_splits_data|function|62dff47d87f498a6|||||||||||||||
 clean_truth|function|566b7692f08c8733|||||||||||||||
+combine_metrics|function|f8956391cf32bf4e|||||||||||||||
+combine_shapelets|pattern|23bb5269a2a49376|89d4c03d7e16deef||-644834951||||8048633|rds|local|list||combine_shapelets_5ce81ed9*combine_shapelets_5a53051f|251.084||
+combine_shapelets_5a53051f|branch|fc054da0ff414b85|89d4c03d7e16deef|5d36991918f6a77c|-210299615||t19532.9144598266s|e61edd702441e4a1|4069990|rds|local|list|combine_shapelets||123.524||
+combine_shapelets_5ce81ed9|branch|5b647f138f8e53cc|89d4c03d7e16deef|e82d83129e96e6de|-1911163695||t19532.9130236457s|01d2592bc5ab26be|3978643|rds|local|list|combine_shapelets||127.56||
 compl|function|1cc0810c2c8fe26b|||||||||||||||
 complexity|function|5fe702a01cef2a6e|||||||||||||||
 compute_arcs|function|1a4a6dc48008b78a|||||||||||||||
@@ -20,7 +20,7 @@ compute_companion_stats|function|76613610273412a9|||||||||||||||
 compute_filters|function|7329a063b58bdd91|||||||||||||||
 compute_floss|function|2b4de81bfe11e55d|||||||||||||||
 compute_metrics_topk|function|7be1c2170ed3e678|||||||||||||||
-compute_overall_metric|function|48f197ea760af3ee|||||||||||||||
+compute_overall_metric|function|b35f2808515fc23b|||||||||||||||
 compute_s_profile_with_stats|function|2d5c844d8e0e655f|||||||||||||||
 compute_score_regimes|function|d6926f3b87fe56cf|||||||||||||||
 compute_streaming_profile|function|358c55ef8991349d|||||||||||||||
@@ -30,7 +30,6 @@ const_signals|object|90e8be76eb583b77|||||||||||||||
 contrast_profiles|pattern|8ea810d80feb870c|334467772a0e266e||-1929489330||||72541974|rds|local|list||contrast_profiles_abdeb381*contrast_profiles_a82e39cb|119.409||
 contrast_profiles_a82e39cb|branch|2497215cdf26af32|334467772a0e266e|5bb714e3c20da8e1|-1652393871||t19530.6910479256s|e23278cc435f1cf6|37327513|rds|local|list|contrast_profiles||58.355|self_mp contains non finite values. This may happen for small windows.. self_mp contains non finite values. This may happen for small windows.. self_mp contains non finite values. This may happen for small windows.. self_mp contains non finite values. This may happen for small windows.. self_mp contains non finite values. This may happen for small windows.. self_mp contains non finite values. This may happen for small windows.. self_mp contains non finite values. This may happen for small windows.. self_mp contains non finite values. This may happen for small windows.|
 contrast_profiles_abdeb381|branch|1632ad0e3c814b87|334467772a0e266e|13039016b63cc2b6|881813762||t19530.6903450048s|149433ddef8a067d|35214461|rds|local|list|contrast_profiles||61.054|self_mp contains non finite values. This may happen for small windows.. self_mp contains non finite values. This may happen for small windows.. self_mp contains non finite values. This may happen for small windows.. self_mp contains non finite values. This may happen for small windows.. self_mp contains non finite values. This may happen for small windows.. self_mp contains non finite values. This may happen for small windows.. self_mp contains non finite values. This may happen for small windows.. self_mp contains non finite values. This may happen for small windows.. self_mp contains non finite values. This may happen for small windows.. self_mp contains non finite values. This may happen for small windows.|
-contrast_profiles_e327ff9d|branch||99a97d46b20453c6|f8db41fc6e0c9dbc|1788068980||t19524.0587254531s||0|rds|local|list|contrast_profiles||0.09|Unknown or uninitialised column splits.|Assertion on split failed. Must be of class list, not NULL.
 contrastprofile_topk|function|07384bc0c436ef7a|||||||||||||||
 dataset|stem|50b98d6e099df34f|aba3c22efecde197|ebe8dca02f56cdbb|914614260||t19524.0559056349s|5f270017c99e1c09|490195|rds|local|vector|||36.41||
 deriv|function|e067b65c68e2da0b|||||||||||||||
@@ -38,6 +37,9 @@ deriv2|function|b26f60bb778048b2|||||||||||||||
 deriv3|function|388b2d63c0e892a5|||||||||||||||
 dev_mode|object|df161ddba3dacc9e|||||||||||||||
 ecg_kurtosis|function|224ebe1546bc6262|||||||||||||||
+extract_metadata|pattern|369b92fb1d67c1cf|3ef92268c8a48d8a||-966511094||||360619|rds|local|list||extract_metadata_289470d8*extract_metadata_c993f884|14.571||
+extract_metadata_289470d8|branch|17b66f1c0164c7fb|3ef92268c8a48d8a|804b58607944dc99|-41936223||t19532.9114513049s|9155146f8f79cbb9|193475|rds|local|list|extract_metadata||7.362||
+extract_metadata_c993f884|branch|34ed29116d53284c|3ef92268c8a48d8a|849ec2ef7595555f|-689378196||t19532.9115406569s|f4f7b0e4e6f07057|167144|rds|local|list|extract_metadata||7.209||
 extract_regime_sample|function|8d677706b0893101|||||||||||||||
 extract_regimes|function|e70966b5d9abe62e|||||||||||||||
 f_score|function|38b2fb4e008f352a|||||||||||||||
@@ -388,11 +390,6 @@ file_paths_files|stem|a3579fc2766a451a|c44d358350220e73|8fb75deda0f036e8|1253326
 filter_best_solutions|function|32670694f6830d9f|||||||||||||||
 filter_data|function|96623b0c421b9dd1|||||||||||||||
 find_all_files|function|6463af0421144fad|||||||||||||||
-find_shapelets|pattern|c6707fe2c86c8c6f|c8f0fdc057954dd2||-1129503597||||8048633|rds|local|list||find_shapelets_21e88cf5*find_shapelets_6852b839|199.679||
-find_shapelets_21e88cf5|branch|5b647f138f8e53cc|c8f0fdc057954dd2|c3ff81c56b681833|-957965849||t19530.692233613s|01d2592bc5ab26be|3978643|rds|local|list|find_shapelets||87.44||
-find_shapelets_49cb1ee5|branch|18710425632c69e5|030d76be38eacacc|daa5417852e0dff3|-763398733||t19530.6038711848s|d87576600223a83f|4758660|rds|local|list|find_shapelets||310.141||
-find_shapelets_4b79072b|branch||61ebafe7fa302917|58f228c3171f3a08|1963156974||t19524.0711582264s||0|rds|local|list|find_shapelets||0.117||operator is invalid for atomic vectors
-find_shapelets_6852b839|branch|fc054da0ff414b85|c8f0fdc057954dd2|d1404198a41dd933|1164592160||t19530.6935397139s|e61edd702441e4a1|4069990|rds|local|list|find_shapelets||112.239||
 find_solutions|function|60abac63439ba648|||||||||||||||
 fit_model|function|f07b8760be6f5b09|||||||||||||||
 gamma_function|function|1429884f4efea59d|||||||||||||||
@@ -429,10 +426,7 @@ read_ecg_csv|function|37ca65c1625b5755|||||||||||||||
 read_ecg_with_atr|function|af525b0ff46cf3ab|||||||||||||||
 reshape_ds_by_truefalse|function|00122e47789973df|||||||||||||||
 rmssd_r|function|d94b973ed64cd2a9|||||||||||||||
-score_by_segment|pattern|39303a0493a5d007|f1553d3ff971c3bc||-1653800725||||360619|rds|local|list||score_by_segment_289470d8*score_by_segment_c993f884|13.114||
-score_by_segment_289470d8|branch|17b66f1c0164c7fb|f1553d3ff971c3bc|804b58607944dc99|1589646323||t19530.691142023s|9155146f8f79cbb9|193475|rds|local|list|score_by_segment||7.34||
-score_by_segment_67b13b4e|branch|eaf643727a8b980f|dfb32833461b67eb|c0f976b2f6781a51|2129449300||t19530.6002727353s|507fcb6fdc85a6bd|56559|rds|local|list|score_by_segment||7.947||
-score_by_segment_c993f884|branch|34ed29116d53284c|f1553d3ff971c3bc|849ec2ef7595555f|-588623498||t19530.6912151708s|f4f7b0e4e6f07057|167144|rds|local|list|score_by_segment||5.774||
+rrank|function|8417f6fe9f0b2347|||||||||||||||
 score_by_segment_window|function|1b390036c1b44577|||||||||||||||
 score_candidates|function|8d31d00234d38174|||||||||||||||
 score_existence|function|28f698c43ad369e2|||||||||||||||
@@ -443,11 +437,15 @@ score_regimes|function|638a62b145cde2b8|||||||||||||||
 score_regimes_precision|function|750133b7a87964d6|||||||||||||||
 score_solutions|function|7b4d0386def41d3b|||||||||||||||
 sd_r|function|edc210211e6db09c|||||||||||||||
+self_optimize_classifier|pattern|ab0c1ccdd10838ad|2bdf723f760ca290||828804313||||8087291|rds|local|list||self_optimize_classifier_cf2ff651*self_optimize_classifier_ef8e95c8|125.723||
+self_optimize_classifier_cf2ff651|branch|d909467041b5f246|2bdf723f760ca290|c47817381d3c3fc2|-286065733||t19532.9152184807s|4ea50290cfd2eace|4000092|rds|local|list|self_optimize_classifier||64.615||
+self_optimize_classifier_ef8e95c8|branch|a9570ef091275c7e|2bdf723f760ca290|aa6244bc22d2ba1e|807916067||t19532.9159355567s|b071c57439beb0ec|4087199|rds|local|list|self_optimize_classifier||61.108||
 skip_graphics|object|909013909b1f03d4|||||||||||||||
 sprintf_transformer|function|2199f7feeee38815|||||||||||||||
-test_classifiers_self|pattern|5816d884d48ce9af|aa1108f63f1f6791||1817600917||||33041|rds|local|list||test_classifiers_self_88343ce0*test_classifiers_self_0d402c0d|122.022||
-test_classifiers_self_0d402c0d|branch|abdcad7796047ba5|aa1108f63f1f6791|05b6cd534cd4b061|504432482||t19530.6949602859s|720a447f18066eb5|14914|rds|local|list|test_classifiers_self||58.524||
-test_classifiers_self_88343ce0|branch|89a27c0c4ec7ed4e|aa1108f63f1f6791|f8b49478c800b59e|1155594481||t19530.6942790026s|1948fe8b40f57e76|18127|rds|local|list|test_classifiers_self||63.498||
+test_classifier|pattern|5d3c2c15909d457c|f700c163f96b6ac4||-564191998||||17106|rds|local|list||test_classifier_6035a7f9*test_classifier_8d46cbb6|113.417||
+test_classifier_6035a7f9|branch|56707945b64bf703|f700c163f96b6ac4|19fca799f36f7de5|-1327951738||t19533.1796791558s|e2a03b78c31aecbe|10962|rds|local|list|test_classifier||62.566||
+test_classifier_8d46cbb6|branch|15f38f3aaa5485b8|f700c163f96b6ac4|8ff35da8e72eb203|-1455901532||t19533.1802714174s|e1befc0c148a1c47|6144|rds|local|list|test_classifier||50.851||
+test_holdout|stem|0b5151a5afd69904|f973ef569daaa912|649252e6e73a4ff1|1685724330||t19533.1918725688s|d5f301c4216c4553|13103|rds|local|vector|||5.113||
 testing_split|stem|d50d3b13a62f03d5|c15f1f750870070b|391ed944dfc56298|184895865||t19524.0978691601s|3db7e9e35ac20187|123790|rds|local|vector|||0.002||
 topk_distance_profiles|function|275ec9c8aa99e412|||||||||||||||
 training_split|stem|77ba96cd3fc7b90d|74d47449a574137b|391ed944dfc56298|708679313||t19524.0562479008s|35e72503cf1ccc8c|366898|rds|local|vector|||0.001||

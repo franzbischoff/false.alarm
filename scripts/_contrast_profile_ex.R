@@ -56,7 +56,7 @@ tar_option_set(
   ),
   format = "rds",
   memory = "transient",
-  # debug = "find_shapelets",
+  # debug = "combine_shapelets",
   garbage_collection = TRUE
 )
 
@@ -288,12 +288,12 @@ list(
   #   iteration = "list" # thus the objects keep their attributes
   # ),
   tar_target(
-    #### Pipeline: score_by_segment - Preparation of the data: the model's data is the shapelets with metadata ----
-    score_by_segment,
+    #### Pipeline: extract_metadata - Preparation of the data: the model's data is the shapelets with metadata ----
+    extract_metadata,
     {
       res <- list()
       for (i in seq_len(var_vfolds)) {
-        cli::cli_alert_info("Scores by segment, fold {i}.")
+        cli::cli_alert_info("Extracting metadata, fold {i}.")
         # These parameter can be tuned on `recipes`. These default values seems to be good enough
         tune1 <- 0.1
         tune2 <- 1 / 3
@@ -309,8 +309,8 @@ list(
     iteration = "list"
   ),
   tar_target(
-    #### Pipeline: find_shapelets - This is the model fit. ----
-    find_shapelets,
+    #### Pipeline: combine_shapelets - This is the model fit. ----
+    combine_shapelets,
     {
       # Here we can try: fitting all possible solutions and later score them and finally try
       # to find which metadata is the best to filter the solutions
@@ -322,7 +322,7 @@ list(
       for (i in seq_len(var_vfolds)) {
         cli::cli_alert_info("Finding solutions, fold {i}.")
         tune3 <- 10 # this could be tuned, but some trials shows that limiting to smaller K's doesn't increase the performance
-        solutions <- find_solutions(score_by_segment[[i]],
+        solutions <- find_solutions(extract_metadata[[i]],
           min_cov = 10,
           max_shapelets = 20, # this can be more than topk
           rep = 5000,
@@ -339,12 +339,12 @@ list(
       }
       res
     },
-    pattern = map(score_by_segment),
+    pattern = map(extract_metadata),
     iteration = "list"
   ),
   tar_target(
-    #### Pipeline: test_classifiers_self - This is the current score function. ----
-    test_classifiers_self,
+    #### Pipeline: self_optimize_classifier - This is the current score function. ----
+    self_optimize_classifier,
     {
       # With the results of this step, plus the fitted solutions, we need to find which
       # metadata is the best to filter the solutions
@@ -353,21 +353,23 @@ list(
       res <- list()
       for (i in seq_len(var_vfolds)) {
         fold <- rsample::get_rsplit(analysis_split, i)
-        res[[i]] <- list()
-        shapelets <- find_shapelets[[i]]
+        shapelets <- combine_shapelets[[i]]
 
         # the `compute_metrics_topk` function may need testing on the `TRUE` criteria
         # currently, if `ANY` shapelet matches, it is considered a positive
         # as alternative we can try to use `ALL`, `HALF` or other criteria
-        res[[i]] <- compute_metrics_topk(fold, shapelets, 6, TRUE)
+
+        training_metrics <- compute_metrics_topk(fold, shapelets, 6, TRUE)
+
+        res[[i]] <- list(training_metrics = training_metrics, shapelets = shapelets)
       }
 
       res # list(fold = res, overall = overall)
 
 
-      # aa <- tibble::as_tibble(purrr::transpose(test_classifiers_self[[1]][[i]]))
+      # aa <- tibble::as_tibble(purrr::transpose(self_optimize_classifier[[1]][[i]]))
       # aa <- dplyr::mutate_all(aa, as.numeric)
-      # aa <- dplyr::bind_cols(find_shapelets[[1]][[i]], aa) |>
+      # aa <- dplyr::bind_cols(combine_shapelets[[1]][[i]], aa) |>
       #   dplyr::select(-data) |>
       #   dplyr::mutate(coverage = as.numeric(coverage), redundancy = as.numeric(redundancy))
       # bb <- dplyr::bind_rows(bb, aa)
@@ -381,41 +383,83 @@ list(
       # )
       # GGally::ggpairs(bb, aes(alpha = 0.05), lower = list(continuous = "smooth"))
     },
-    pattern = map(find_shapelets, analysis_split),
+    pattern = map(combine_shapelets, analysis_split),
     iteration = "list"
   ),
   tar_target(
-    best_shapelets,
+    test_classifier,
     {
       # Here we test the solutions we chose on the assessment split
+      # The final `model` we need is the shapelet
+      class(assessment_split) <- c("manual_rset", "rset", class(assessment_split))
 
       res <- list()
+
       for (i in seq_len(var_vfolds)) {
-        aa <- tibble::as_tibble(purrr::transpose(test_classifiers_self[[i]]))
-        aa <- dplyr::mutate_all(aa, as.numeric)
-        aa <- dplyr::bind_cols(find_shapelets[[i]], aa) |>
-          # dplyr::select(-data) |> ####### The final `model` we need is the shapelet
-          dplyr::mutate(across(!where(is.list), as.numeric))
+        fold <- rsample::get_rsplit(assessment_split, i)
 
-        sup_spec <- quantile(aa$specificity, 0.75, na.rm = TRUE)
-        sup_prec <- quantile(aa$precision, 0.75, na.rm = TRUE)
-        min_fp <- min(aa$fp, na.rm = TRUE)
-        min_fn <- min(aa$fn, na.rm = TRUE)
+        best_shapelets <- combine_metrics(
+          self_optimize_classifier[[i]]$training_metrics,
+          self_optimize_classifier[[i]]$shapelets
+        )
 
-        aa <- aa |>
-          dplyr::filter(
-            precision > sup_prec,
-            specificity > sup_spec
-          ) |>
-          dplyr::arrange(fp, fn) |>
-          dplyr::slice_head(n = 10)
-
-        res[[i]] <- aa
+        bb <- compute_metrics_topk(fold, best_shapelets, 6, TRUE)
+        bb <- list_dfr(bb)
+        aa <- best_shapelets |> dplyr::select(tp:kappa)
+        metadata <- best_shapelets |> dplyr::select(c_total:data)
+        namesmeta <- names(metadata)
+        cc <- tibble::as_tibble(aa - bb)
+        namecols <- names(aa)
+        namecolsa <- glue::glue("{namecols}_aa")
+        namecolsb <- glue::glue("{namecols}_bb")
+        colnames(aa) <- namecolsa
+        colnames(bb) <- namecolsb
+        cc <- dplyr::bind_cols(cc, aa, bb)
+        cc <- cc %>% dplyr::select(sort(names(.)))
+        cc <- cc %>% dplyr::relocate(tp, tp_aa, tp_bb, fp, fp_aa,
+          fp_bb, tn, tn_aa, tn_bb, fn, fn_aa, fn_bb,
+          .before = 1
+        )
+        cc <- dplyr::bind_cols(cc, metadata)
+        metrics <- cc |>
+          dplyr::filter(abs(precision) < rrank(precision, 2, 2)) |>
+          dplyr::arrange(
+            dplyr::desc(precision_bb), dplyr::desc(specificity_bb),
+            dplyr::desc(km_bb), fp_bb, fn_bb
+          )
+        metrics <- metrics |>
+          dplyr::select(c(all_of(namecolsb), all_of(namesmeta))) |>
+          dplyr::rename_with(~ gsub("_bb", "", .x, fixed = TRUE))
+        res[[i]] <- dplyr::slice_head(metrics, n = 1)
       }
-      res
+      overall <- compute_overall_metric(res)
+      list(fold = res, overall = overall)
     },
-    pattern = map(test_classifiers_self, find_shapelets),
+    pattern = map(self_optimize_classifier, assessment_split),
     iteration = "list"
+  ),
+  tar_target(
+    #### Pipeline: test_holdout - This is the current score function. ----
+    test_holdout,
+    {
+      # With the results of this step, plus the fitted solutions, we need to find which
+      # metadata is the best to filter the solutions
+      fold <- list(data = testing_split)
+      res <- list()
+      for (i in seq_len(var_vfolds_repeats)) {
+        shapelets <- list_dfr(test_classifier[[i]]$fold)
+
+        # the `compute_metrics_topk` function may need testing on the `TRUE` criteria
+        # currently, if `ANY` shapelet matches, it is considered a positive
+        # as alternative we can try to use `ALL`, `HALF` or other criteria
+        metric <- list_dfr(compute_metrics_topk(fold, shapelets, 6, TRUE))
+        combined <- dplyr::bind_cols(metric, (shapelets |> dplyr::select(c_total:data)))
+        res[[i]] <- combined
+      }
+
+      overall <- compute_overall_metric(res)
+      list(final = res, overall = overall)
+    }
   )
 )
 
