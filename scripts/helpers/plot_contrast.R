@@ -53,29 +53,34 @@ plot_topk_contrasts <- function(contrast_profiles, type = c("contour", "heatmap"
 }
 
 
+
 # solutions = result of find_solutions
 plot_best_candidates <- function(solutions, fold = 1, n = 1, max_size = NULL) {
-  checkmate::qassert(solutions, "L+")
+  checkmate::qassert(solutions, c("L+", "D"))
 
-  if (fold > length(solutions)) {
-    fold <- length(solutions)
+  if (!is.data.frame(solutions)) {
+    solutions <- list_dfr(solutions)
+  }
+
+  if (fold > nrow(solutions)) {
+    fold <- nrow(solutions)
     cli::cli_warn("Fold is greater than the number of folds. Using the last fold.")
   }
 
-  if (n > length(solutions[[fold]]$data)) {
-    n <- length(solutions[[fold]]$data)
+  if (n > nrow(solutions$data[[fold]])) {
+    n <- nrow(solutions$data[[fold]])
     cli::cli_warn("N is greater than the number of solutions {n}. Using the last solution.")
   }
 
-  coverage <- solutions[[fold]]$coverage[n]
-  num_segments <- length(solutions[[fold]]$data[[n]]$cov_idxs[[1]])
-  redundancy <- solutions[[fold]]$redundancy[n]
-  solutions <- solutions[[fold]]$data[[n]]
+  coverage <- solutions$coverage[[fold]]
+  num_segments <- length(solutions$data[[fold]]$cov_idxs[[n]])
+  redundancy <- solutions$redundancy[[fold]]
+  solutions <- solutions$data[[fold]]
 
   solutions <- solutions |> dplyr::arrange(as.numeric(window))
 
   max_len <- max(as.numeric(solutions$window))
-  num_platos <- length(solutions$plato)
+  num_platos <- nrow(solutions)
   ks <- solutions$k
 
   platos <- matrix(NA, ncol = num_platos, nrow = max_len)

@@ -97,7 +97,9 @@ if (Sys.getenv("CI") == "") {
       })
     )
 
-    conflicted::conflict_prefer("filter", "dplyr")
+    suppressMessages({
+      conflicted::conflict_prefer("filter", "dplyr")
+    })
     options(dplyr.summarise.inform = FALSE)
 
     if (.Platform$OS.type != "windows") {

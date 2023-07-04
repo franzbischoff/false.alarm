@@ -321,7 +321,7 @@ list(
         solutions <- find_solutions(score_by_segment[[i]],
           min_cov = 10,
           max_shapelets = 20, # this can be more than topk
-          rep = 5000,
+          rep = 10000,
           max_red = 10,
           max_k = tune3,
           n_jobs = 6

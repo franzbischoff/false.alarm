@@ -1,10 +1,10 @@
 # Sys.setenv(TAR_PROJECT = "classifier")
-
+# source("renv/activate.R")
 # Errors: data_pos_neg_150_II
 # data_pos_neg_150_PLETH, data_pos_neg_300_II, data_pos_neg_300_PLETH
 # longer object length is not a multiple of shorter object length
 
-# TODO: change pipeline to nested resamplng
+
 
 # Load global config
 source(here::here("scripts", "_globals.R"), local = .GlobalEnv, encoding = "UTF-8") # nolint
@@ -47,18 +47,11 @@ var_signals_exclude <- setdiff(const_signals, var_signals_include)
 # renv::install(c("dplyr", "rlang", "rsample", "tidyr"))
 # use renv::install(".") to update the rcpp functions
 
-tar_option_set(
-  tidy_eval = TRUE,
-  # library = "/workspace/.cache/R/renv/proj_libs/false.alarm-d6f1a0d1/R-4.3/x86_64-pc-linux-gnu",
-  packages = c(
-    "here", "glue", "false.alarm", "dplyr", "rlang", "rsample", "tidyr",
-    "dials", "scales", "tibble", "parsnip", "yardstick", "purrr", "hardhat"
-  ),
-  format = "rds",
-  memory = "transient",
-  # debug = "combine_shapelets",
-  garbage_collection = TRUE
-)
+# controller <- crew::crew_controller_local(
+#   name = "my_controller",
+#   workers = 10,
+#   seconds_idle = 3
+# )
 
 # var_shapelet_size <- c(120, 300, 1000) # c(30, 60, 120, 180, 300) # c(150, 300)
 var_shapelet_sizes <- get_exp_dist_series(20, 400, 20) # c(20, 60, 100, 140, 180, 220, 260, 300)
@@ -91,28 +84,58 @@ var_tune_sim_anneal_no_improve <- var_tune_bayes_no_improve # anneal
 # splits
 # initial split, 3/4 will hold 25% of the data for final, independent, performance.
 var_initial_split_prop <- 3 / 4
-var_vfolds <- 2 # for the inner resample
+var_vfolds <- 5 # for the inner resample
 var_vfolds_repeats <- 2 # for the inner resample
 # parallel
-var_dopar_cores <- 5 # number of cores to use on tuning (inner resample)
-var_future_workers <- 3
+var_dopar_cores <- 2 # number of cores to use on tuning (inner resample)
+var_future_workers <- 4
 
 var_verbose <- TRUE
 var_save_workflow <- FALSE
 var_save_pred <- TRUE
 
 
-# # All configurations used different CPUs while running the code.
-# plan(multisession) # create top-level processes
-# plan(multicore) # create child processes
-future::plan(future.callr::callr, workers = var_future_workers) # create child processes with a child process
+
+library(future)
+library(future.batchtools)
 
 tidymodels::tidymodels_prefer(quiet = TRUE)
+
+plan(
+  strategy = future.batchtools::batchtools_custom,
+  cluster.functions = batchtools::makeClusterFunctionsSSH(
+    list(
+      batchtools::Worker$new("cluster", ncpus = 2)
+    )
+  )
+)
+
+tar_option_set(
+  tidy_eval = TRUE,
+
+  # library = "/workspace/.cache/R/renv/proj_libs/false.alarm-d6f1a0d1/R-4.3/x86_64-pc-linux-gnu",
+  packages = c(
+    "here", "rlang", "glue", "cli", "false.alarm", "dplyr", "rsample", "tidyr", "tibble", "purrr"
+  ),
+   envir = globalenv(),
+  storage = "worker",
+  # resources = tar_resources(
+  #   future = tar_resources_future(
+  #     resources = list(n_cores = 2)
+  #   )
+  # ),
+  # controller = controller,
+  format = "rds"
+  # memory = "transient"
+  # debug = "dataset"
+  # garbage_collection = TRUE
+)
+
 
 
 # start debugme after loading all functions
 # if (dev_mode) {
-debugme::debugme()
+# debugme::debugme()
 # }
 
 # cat(.Random.seed)
@@ -141,8 +164,8 @@ list(
       )
       res <- reshape_ds_by_truefalse(temp, var_signals_include, all_signals = FALSE)
 
-      aa <- round(runif(50, 1, 331))
-      res$II <- res$II[aa, ]
+      # aa <- round(runif(50, 1, 331))
+      # res$II <- res$II[aa, ]
       res
       # headers: file: filename; class: record class (fib, vfib, etc); values: the recording; alarm: true positive or false positive;
       # class_alarm: classcolumn_alarmcolumn // class_alarm is a dummy variable, because the `rsample` package does
@@ -252,13 +275,26 @@ list(
       res <- list()
       for (i in seq_len(var_vfolds)) {
         fold <- rsample::get_rsplit(analysis_split, i)
-        res[[i]] <- contrastprofile_topk(fold, shapelet_sizes, var_num_shapelets, n_jobs = var_future_workers, TRUE)
+        res[[i]] <- contrastprofile_topk(fold, shapelet_sizes, var_num_shapelets, n_jobs = 1, TRUE)
       }
 
       res
     },
     pattern = map(analysis_split),
     iteration = "list"
+    # resources = tar_resources(
+    # future = tar_resources_future(
+    #   plan = future::plan(
+    #     strategy = future.batchtools::batchtools_custom,
+    #     cluster.functions = batchtools::makeClusterFunctionsSSH(
+    #       list(
+    #         batchtools::Worker$new("cluster", ncpus = 2)
+    #       )
+    #     )
+    #   ),
+    #   resources = list(n_cores = 2)
+    # )
+    # )
   ),
 
   # strOptions(strict.width = "no", digits.d = 3, vec.len = 0.5,
@@ -325,10 +361,10 @@ list(
         solutions <- find_solutions(extract_metadata[[i]],
           min_cov = 10,
           max_shapelets = 20, # this can be more than topk
-          rep = 5000,
+          rep = 10000,
           max_red = 10,
           max_k = tune3,
-          n_jobs = 6
+          n_jobs = var_future_workers
         )
 
         if (length(solutions) == 0) {
@@ -359,7 +395,7 @@ list(
         # currently, if `ANY` shapelet matches, it is considered a positive
         # as alternative we can try to use `ALL`, `HALF` or other criteria
 
-        training_metrics <- compute_metrics_topk(fold, shapelets, 6, TRUE)
+        training_metrics <- compute_metrics_topk(fold, shapelets, var_future_workers, TRUE)
 
         res[[i]] <- list(training_metrics = training_metrics, shapelets = shapelets)
       }
@@ -403,62 +439,113 @@ list(
           self_optimize_classifier[[i]]$shapelets
         )
 
-        bb <- compute_metrics_topk(fold, best_shapelets, 6, TRUE)
+        bb <- compute_metrics_topk(fold, best_shapelets, var_future_workers, TRUE)
         bb <- list_dfr(bb)
         aa <- best_shapelets |> dplyr::select(tp:kappa)
-        metadata <- best_shapelets |> dplyr::select(c_total:data)
-        namesmeta <- names(metadata)
-        cc <- tibble::as_tibble(aa - bb)
-        namecols <- names(aa)
+        metadata <- best_shapelets |>
+          dplyr::select(c_total:data)
+
+        res[[i]] <- list(aa = aa, bb = bb, metadata = metadata) # dplyr::slice_head(metrics, n = 3)
+      }
+      # overall <- compute_overall_metric(res)
+      # list(fold = res, overall = overall)
+      list(res = res)
+    },
+    pattern = map(self_optimize_classifier, assessment_split),
+    iteration = "list"
+  ),
+  tar_target(
+    test_classifier_metrics,
+    {
+      res <- list()
+      for (i in seq_len(var_vfolds)) {
+        fold <- test_classifier$res[[i]]
+        namesmeta <- names(fold$metadata)
+        cc <- tibble::as_tibble(fold$aa - fold$bb)
+        namecols <- names(fold$aa)
         namecolsa <- glue::glue("{namecols}_aa")
         namecolsb <- glue::glue("{namecols}_bb")
-        colnames(aa) <- namecolsa
-        colnames(bb) <- namecolsb
-        cc <- dplyr::bind_cols(cc, aa, bb)
+        colnames(fold$aa) <- namecolsa
+        colnames(fold$bb) <- namecolsb
+        cc <- dplyr::bind_cols(cc, fold$aa, fold$bb)
         cc <- cc %>% dplyr::select(sort(names(.)))
         cc <- cc %>% dplyr::relocate(tp, tp_aa, tp_bb, fp, fp_aa,
           fp_bb, tn, tn_aa, tn_bb, fn, fn_aa, fn_bb,
           .before = 1
         )
-        cc <- dplyr::bind_cols(cc, metadata)
+        cc <- dplyr::bind_cols(cc, fold$metadata)
         metrics <- cc |>
-          dplyr::filter(abs(precision) < rrank(precision, 2, 2)) |>
+          # dplyr::filter(abs(precision) < rrank(precision, 2, 3)) |>
+          # dplyr::filter(abs(km) < rrank(km, 2, 3)) |>
           dplyr::arrange(
-            dplyr::desc(precision_bb), dplyr::desc(specificity_bb),
-            dplyr::desc(km_bb), fp_bb, fn_bb
+            dplyr::desc(cov_mean) # dplyr::desc(specificity_bb),
+            # dplyr::desc(precision_bb), # dplyr::desc(specificity_bb),
+            # dplyr::desc(km_bb) # , fp_bb, fn_bb
           )
         metrics <- metrics |>
           dplyr::select(c(all_of(namecolsb), all_of(namesmeta))) |>
           dplyr::rename_with(~ gsub("_bb", "", .x, fixed = TRUE))
-        res[[i]] <- dplyr::slice_head(metrics, n = 1)
+
+        res[[i]] <- metrics # dplyr::slice_head(metrics, n = 13)
       }
-      overall <- compute_overall_metric(res)
-      list(fold = res, overall = overall)
+      list(fold = res)
     },
-    pattern = map(self_optimize_classifier, assessment_split),
+    pattern = map(test_classifier),
     iteration = "list"
   ),
   tar_target(
     #### Pipeline: test_holdout - This is the current score function. ----
     test_holdout,
     {
-      # With the results of this step, plus the fitted solutions, we need to find which
+      # With the results of this step, plus the fitted solutions, we need to find which # < c_total, < red,  > km > orec
       # metadata is the best to filter the solutions
-      fold <- list(data = testing_split)
-      res <- list()
-      for (i in seq_len(var_vfolds_repeats)) {
-        shapelets <- list_dfr(test_classifier[[i]]$fold)
 
-        # the `compute_metrics_topk` function may need testing on the `TRUE` criteria
-        # currently, if `ANY` shapelet matches, it is considered a positive
-        # as alternative we can try to use `ALL`, `HALF` or other criteria
-        metric <- list_dfr(compute_metrics_topk(fold, shapelets, 6, TRUE))
-        combined <- dplyr::bind_cols(metric, (shapelets |> dplyr::select(c_total:data)))
-        res[[i]] <- combined
+      class_metric <- list(metrics = test_classifier_metrics)
+
+      metrics <- NULL
+      for (i in seq_len(var_vfolds_repeats)) {
+        for (j in seq_len(var_vfolds)) {
+          class_metric$metrics[[i]]$fold[[j]] <- dplyr::mutate(class_metric$metrics[[i]]$fold[[j]], fold = j)
+        }
+        mrow <- list_dfr(class_metric$metrics[[i]]$fold) |> dplyr::mutate(repeats = i)
+        metrics <- dplyr::bind_rows(metrics, mrow)
       }
 
-      overall <- compute_overall_metric(res)
-      list(final = res, overall = overall)
+      metrics <- metrics |> dplyr::mutate(idx = dplyr::row_number(), model = glue::glue("{coverage}_{redundancy}_{samples}"))
+
+      models <- metrics |>
+        dplyr::group_by(model) |>
+        dplyr::summarize(across(precision:kappa, ~ mean(.x, na.rm = TRUE)),
+          reps = length(unique(repeats)),
+          folds = length(unique(fold)), n = length(fold)
+        ) |>
+        dplyr::filter(reps > 1, folds > 1, km > 0) |>
+        dplyr::arrange(dplyr::desc(precision))
+
+      mod <- metrics |> dplyr::filter(model == models$model[1])
+      # View(models)
+
+
+      fold <- list(data = testing_split)
+      # res <- list()
+      # for (i in seq_len(var_vfolds_repeats)) {
+      shapelets <- mod |>
+        dplyr::arrange(
+          dplyr::desc(precision)
+        ) |>
+        dplyr::slice_head(n = 5)
+
+      # the `compute_metrics_topk` function may need testing on the `TRUE` criteria
+      # currently, if `ANY` shapelet matches, it is considered a positive
+      # as alternative we can try to use `ALL`, `HALF` or other criteria
+      metric <- list_dfr(compute_metrics_topk(fold, shapelets, var_future_workers, TRUE))
+      # combined <- dplyr::bind_cols(metric, (shapelets |> dplyr::select(c_total:data)))
+      # res[[i]] <- combined
+      # }
+
+      overall <- compute_overall_metric(list(metric))
+
+      list(metric = metric, model = shapelets, overall = overall)
     }
   )
 )

@@ -84,7 +84,7 @@ RUN echo "C.UTF-8 en_US.UTF-8 UTF-8" >> /etc/locale.gen \
   && locale-gen en_US.utf8 \
   && /usr/sbin/update-locale LANG=en_US.UTF-8
 
-ENV R_BASE_VERSION 4.3.0
+ENV R_BASE_VERSION 4.3.1
 ENV RENV_PATHS_ROOT "${HOME_WORK}/.cache/R/renv"
 ENV RENV_PATHS_LIBRARY_ROOT "${HOME_WORK}/.cache/R/renv/library"
 ENV TZ UTC

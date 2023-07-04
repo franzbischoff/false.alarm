@@ -512,7 +512,7 @@ topk_distance_profiles <- function(data, contrast_profiles, window_size) {
 contrastprofile_topk <- function(split, shapelet_sizes, num_shapelets, n_jobs = 1, progress = FALSE) {
   checkmate::qassert(split, "L4")
   checkmate::qassert(shapelet_sizes, "N+")
-  require(doFuture)
+  suppressMessages(require(doFuture))
 
   "!DEBUG Compute Pan CP"
 
