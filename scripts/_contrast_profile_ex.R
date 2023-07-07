@@ -4,10 +4,17 @@
 # data_pos_neg_150_PLETH, data_pos_neg_300_II, data_pos_neg_300_PLETH
 # longer object length is not a multiple of shorter object length
 
+library(targets)
+library(tarchetypes)
 
 
 # Load global config
-source(here::here("scripts", "_globals.R"), local = .GlobalEnv, encoding = "UTF-8") # nolint
+# source(here::here("scripts", "_globals.R"), local = .GlobalEnv, encoding = "UTF-8") # nolint
+script_files <- list.files(here::here("scripts", "common"), pattern = "*.R")
+purrr::walk(here::here("scripts", "common", script_files), source, local = .GlobalEnv, encoding = "UTF-8")
+rm(script_files)
+source(here::here("scripts", "helpers", "glue_fmt.R"), local = .GlobalEnv, encoding = "UTF-8")
+
 source(here::here("scripts", "classification", "pan_contrast.R"), local = .GlobalEnv, encoding = "UTF-8") # nolint
 source(here::here("scripts", "helpers", "plot_contrast.R"), local = .GlobalEnv, encoding = "UTF-8") # nolint
 source(here::here("scripts", "helpers", "pan_contrast_helpers.R"), local = .GlobalEnv, encoding = "UTF-8") # nolint
@@ -54,33 +61,14 @@ var_signals_exclude <- setdiff(const_signals, var_signals_include)
 # )
 
 # var_shapelet_size <- c(120, 300, 1000) # c(30, 60, 120, 180, 300) # c(150, 300)
-var_shapelet_sizes <- get_exp_dist_series(20, 400, 20) # c(20, 60, 100, 140, 180, 220, 260, 300)
+var_shapelet_sizes <- get_exp_dist_series(20, 400, 20) # (20, 400, 20) # c(20, 60, 100, 140, 180, 220, 260, 300)
 var_positive <- TRUE # c(TRUE, FALSE)
 var_num_shapelets <- 10
 var_num_neighbors <- 10
 var_min_corr_neighbors <- 0.85
-var_pan_contrast <- seq(20, 470, by = 50)
 
 ############
 # tuning variables
-# var_window_size_tune <- c(150L, 350L)
-# var_window_size_tune <- c(25L, 26L)
-# var_mp_threshold_tune <- c(0, 1)
-# var_time_constraint_tune <- c(750L, 2000L)
-# The subset that will be keep from the dataset (seq.int(290 * const_sample_freq + 1, 300 * const_sample_freq) means the last 10 seconds)
-var_regime_threshold_tune <- c(0.05, 0.9)
-var_regime_landmark_tune <- c(2, 10)
-var_regime_landmark <- 3
-# which tune algorithm?
-# tune_grid, tune_bayes, tune_sim_anneal, tune_race_anova, tune_race_win_loss
-var_grid_search <- "tune_grid"
-var_grid_size <- 1000 # grid and race_* / can be a previous search result
-var_tune_bayes_iter <- 5 # bayes
-var_tune_bayes_initial <- 200 # bayes / can be a previous search result
-var_tune_bayes_no_improve <- 5 # bayes
-var_tune_sim_anneal_iter <- var_tune_bayes_iter # anneal
-var_tune_sim_anneal_initial <- var_tune_bayes_initial # anneal / can be a previous search result
-var_tune_sim_anneal_no_improve <- var_tune_bayes_no_improve # anneal
 # splits
 # initial split, 3/4 will hold 25% of the data for final, independent, performance.
 var_initial_split_prop <- 3 / 4
@@ -88,27 +76,35 @@ var_vfolds <- 5 # for the inner resample
 var_vfolds_repeats <- 2 # for the inner resample
 # parallel
 var_dopar_cores <- 2 # number of cores to use on tuning (inner resample)
-var_future_workers <- 4
+var_future_workers <- 2
 
 var_verbose <- TRUE
 var_save_workflow <- FALSE
 var_save_pred <- TRUE
 
+# options(
+#   future.batchtools.output = TRUE, # future.cache.path = here::here(".cache"),
+#   future.delete = FALSE
+# ) # nolint
 
 
-library(future)
-library(future.batchtools)
+
 
 tidymodels::tidymodels_prefer(quiet = TRUE)
 
-plan(
-  strategy = future.batchtools::batchtools_custom,
-  cluster.functions = batchtools::makeClusterFunctionsSSH(
-    list(
-      batchtools::Worker$new("cluster", ncpus = 2)
-    )
-  )
-)
+# fx = function(x) {
+#     x |> dplyr::mutate(area = Sepal.Length * Sepal.Width) |> head()
+# }
+
+
+# ssh -o "ExitOnForwardFailure yes" -f \
+#     -R 57109:localhost:6607 \
+#     -R 57110:localhost:6608 \
+#     root@claster \
+#     "R --no-save --no-restore -e \
+#         'clustermq:::ssh_proxy(ctl=57109, job=57110)' \
+#         > ~/test.log 2>&1"
+
 
 tar_option_set(
   tidy_eval = TRUE,
@@ -117,18 +113,12 @@ tar_option_set(
   packages = c(
     "here", "rlang", "glue", "cli", "false.alarm", "dplyr", "rsample", "tidyr", "tibble", "purrr"
   ),
-   envir = globalenv(),
-  storage = "worker",
-  # resources = tar_resources(
-  #   future = tar_resources_future(
-  #     resources = list(n_cores = 2)
-  #   )
-  # ),
-  # controller = controller,
-  format = "rds"
-  # memory = "transient"
+  envir = globalenv(),
+  workspace_on_error = TRUE, # "contrast_profiles",
+  format = "rds",
+  memory = "transient",
   # debug = "dataset"
-  # garbage_collection = TRUE
+  garbage_collection = TRUE
 )
 
 
@@ -137,9 +127,6 @@ tar_option_set(
 # if (dev_mode) {
 # debugme::debugme()
 # }
-
-# cat(.Random.seed)
-# cat("\n\n\n\n")
 
 
 #### Pipeline: Start ----
@@ -268,6 +255,12 @@ list(
     #### Pipeline: assessment_split - Subset the training split into assessment split (test) ----
     contrast_profiles,
     {
+      "!DEBUG Starting contrast_profiles"
+
+      # source(here::here("remote.R"))
+
+      # cat(str(targets::tar_option_get("packages")), "\n")
+
       shapelet_sizes <- var_shapelet_sizes
 
       class(analysis_split) <- c("manual_rset", "rset", class(analysis_split))
@@ -282,47 +275,7 @@ list(
     },
     pattern = map(analysis_split),
     iteration = "list"
-    # resources = tar_resources(
-    # future = tar_resources_future(
-    #   plan = future::plan(
-    #     strategy = future.batchtools::batchtools_custom,
-    #     cluster.functions = batchtools::makeClusterFunctionsSSH(
-    #       list(
-    #         batchtools::Worker$new("cluster", ncpus = 2)
-    #       )
-    #     )
-    #   ),
-    #   resources = list(n_cores = 2)
-    # )
-    # )
   ),
-
-  # strOptions(strict.width = "no", digits.d = 3, vec.len = 0.5,
-  #            list.len = 3, deparse.lines = NULL,
-  #            drop.deparse.attr = TRUE)
-
-
-
-  # tar_target(
-  #   #### Pipeline: analysis_fitted - Here we will conduct the parameter optimizations ----
-  #   analysis_fitted,
-  #   {
-  #     # source(here::here("scripts", "classification", "parsnip_model.R"), encoding = "UTF-8")
-
-  #     contrast_spec <-
-  #       contrast_model(
-  #         # coverage_quantiles = tune::tune(), # score_by_segment_window
-  #         num_shapelets = tune::tune(), # find_solutions
-  #         redundancy = tune::tune() # find_solutions
-  #       ) |>
-  #       parsnip::set_engine("contrast_profile") |>
-  #       parsnip::set_mode("classification")
-
-  #     # filter_best_solutions
-  #   },
-  #   pattern = map(contrast_profiles),
-  #   iteration = "list" # thus the objects keep their attributes
-  # ),
   tar_target(
     #### Pipeline: extract_metadata - Preparation of the data: the model's data is the shapelets with metadata ----
     extract_metadata,
@@ -468,8 +421,8 @@ list(
         colnames(fold$aa) <- namecolsa
         colnames(fold$bb) <- namecolsb
         cc <- dplyr::bind_cols(cc, fold$aa, fold$bb)
-        cc <- cc %>% dplyr::select(sort(names(.)))
-        cc <- cc %>% dplyr::relocate(tp, tp_aa, tp_bb, fp, fp_aa,
+        cc <- cc |> dplyr::select(sort(names(.)))
+        cc <- cc |> dplyr::relocate(tp, tp_aa, tp_bb, fp, fp_aa,
           fp_bb, tn, tn_aa, tn_bb, fn, fn_aa, fn_bb,
           .before = 1
         )

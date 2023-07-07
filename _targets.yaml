@@ -4,7 +4,6 @@ main:
   store: _targets
   shortcut: no
   script: scripts/_targets.R
-  workers: 2
 
 classifier:
   inherits: main
@@ -25,16 +24,13 @@ regime_change2:
   inherits: main
   store: _regime_change2
   script: scripts/_regime_change2.R
-  workers: 2
 
 regime_change:
   inherits: main
   store: _regime_change
   script: scripts/_regime_change.R
-  workers: 2
 
 regime_optimize:
   inherits: main
   store: _regime_optimize
   script: scripts/_regime_optimize.R
-  workers: 2

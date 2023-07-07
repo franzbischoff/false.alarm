@@ -411,36 +411,6 @@
       ],
       "Hash": "0c54cf3a08cc0e550fbd64ad33166143"
     },
-    "batchtools": {
-      "Package": "batchtools",
-      "Version": "0.9.17",
-      "Source": "GitHub",
-      "RemoteType": "github",
-      "RemoteHost": "api.github.com",
-      "RemoteUsername": "franzbischoff",
-      "RemoteRepo": "batchtools",
-      "RemoteRef": "master",
-      "RemoteSha": "150c10820664938d390f83260d719ae646e65b5b",
-      "Requirements": [
-        "R",
-        "R6",
-        "backports",
-        "base64url",
-        "brew",
-        "checkmate",
-        "data.table",
-        "digest",
-        "fs",
-        "parallel",
-        "progress",
-        "rappdirs",
-        "stats",
-        "stringi",
-        "utils",
-        "withr"
-      ],
-      "Hash": "47ec201562b5ac4ab7c52256d1a7848f"
-    },
     "bigD": {
       "Package": "bigD",
       "Version": "0.2.0",
@@ -1372,20 +1342,6 @@
         "utils"
       ],
       "Hash": "ba4be138fe47eac3e16a6deaa4da106e"
-    },
-    "future.batchtools": {
-      "Package": "future.batchtools",
-      "Version": "0.12.0",
-      "Source": "Repository",
-      "Repository": "CRAN",
-      "Requirements": [
-        "R",
-        "batchtools",
-        "future",
-        "parallelly",
-        "utils"
-      ],
-      "Hash": "ca05a29f15b3102e0832c776ae0a0e7a"
     },
     "future.callr": {
       "Package": "future.callr",

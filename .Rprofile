@@ -7,6 +7,17 @@ if (.Platform$OS.type == "windows") {
 
 source("renv/activate.R")
 
+# options(
+#   clustermq.scheduler = "ssh",
+#   clustermq.ssh.host = "claster", # use your user and host, obviously
+#   clustermq.ssh.log = "~/cmq_ssh.log", # log for easier debugging
+#   clustermq.template = "/workspace/false.alarm/inst/SSH.tmpl"
+# )
+
+# options(
+#   clustermq.scheduler = "multiprocess",
+# )
+
 if (Sys.getenv("CI") == "") {
   # not CI
 
