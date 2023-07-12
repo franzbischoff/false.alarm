@@ -771,6 +771,7 @@ compute_metrics_topk <- function(fold, shapelets, n_jobs = 1, progress = FALSE) 
         p4 <- (4 * tp * tn) / (4 * tp * tn + (tp + tn) * (fp + fn))
         mcc <- (tp * tn - fp * fn) / sqrt((tp + fp) * (tp + fn) * (tn + fp) * (tn + fn))
         majority <- max(tp + fn, fp + tn) / (tp + fp + tn + fn)
+        rand <- ((tp + fn) / 2 + (fp + tn) / 2) / (tp + fp + tn + fn)
         km <- (accuracy - majority) / (1 - majority)
         kappa <- 2 * (tp * tn - fp * fn) / ((tp + fn) * (fn + tn) + (tp + fp) * (fp + tn))
 
@@ -781,7 +782,7 @@ compute_metrics_topk <- function(fold, shapelets, n_jobs = 1, progress = FALSE) 
           precision = precision, recall = recall,
           specificity = specificity, FOR = FOR,
           accuracy = accuracy, f1 = f1,
-          p4 = p4, mcc = mcc, km = km, kappa = kappa
+          p4 = p4, mcc = mcc, km = km, kappa = kappa, maj = majority, random = rand
         )
       }
     },
@@ -844,6 +845,54 @@ compute_overall_metric <- function(all_folds) {
     accuracy = acc, f1_micro = f1_micro, f1_macro = f1_macro, f1_weighted = f1_weighted,
     p4 = p4, mcc = mcc, km = km, kappa = kappa
   ))
+}
+
+compute_overall_metric_range <- function(all_folds) {
+  tp <- fp <- tn <- fn <- acc <- ff <- 0
+
+  full_size <- 0
+
+  full_size <- full_size + nrow(all_folds)
+
+  for (i in seq_len(nrow(all_folds))) {
+    shape <- all_folds[i, ]
+    tp <- tp + shape$tp
+    fp <- fp + shape$fp
+    tn <- tn + shape$tn
+    fn <- fn + shape$fn
+    ff <- ff + shape$f1
+  }
+
+  tm <- (2 * tp) / (2 * tp + fp + fn)
+  fm <- (2 * tn) / (2 * tn + fp + tp)
+  f1_micro <- (tm + fm) / 2
+  f1_macro <- (ff / full_size)
+  f1_weighted <- ((tp + fp) * tm + (fn + tn) * fm) / (tp + tn + fp + fn)
+
+  medians <- round(apply(all_folds, 2, median), 3)
+  q25 <- round(apply(all_folds, 2, quantile, probs = 0.25), 3)
+  q75 <- round(apply(all_folds, 2, quantile, probs = 0.75), 3)
+  medians <- dplyr::bind_rows(medians, q25, q75)
+  medians <- medians |>
+    dplyr::select(-FOR, -f1) |>
+    dplyr::mutate(f1_micro = f1_micro, f1_macro = f1_macro, f1_weighted = f1_weighted)
+  medians$tp <- tp
+  medians$fp <- fp
+  medians$tn <- tn
+  medians$fn <- fn
+
+
+  # pre <- tp / (tp + fp)
+  # rec <- tp / (tp + fn)
+  # spec <- tn / (tn + fp)
+  # acc <- (tp + tn) / (tp + tn + fp + fn)
+  # p4 <- (4 * tp * tn) / (4 * tp * tn + (tp + tn) * (fp + fn))
+  # mcc <- (tp * tn - fp * fn) / sqrt((tp + fp) * (tp + fn) * (tn + fp) * (tn + fn))
+  # majority <- max(tp + fn, fp + tn) / (tp + fp + tn + fn)
+  # km <- (acc - majority) / (1 - majority)
+  # kappa <- 2 * (tp * tn - fp * fn) / ((tp + fn) * (fn + tn) + (tp + fp) * (fp + tn))
+
+  return(medians)
 }
 
 combine_metrics <- function(metrics, shapelets) {

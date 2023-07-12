@@ -52,6 +52,84 @@ plot_topk_contrasts <- function(contrast_profiles, type = c("contour", "heatmap"
   }
 }
 
+plot_holdout_models <- function(holdout, model = 1, max_size = NULL) {
+  checkmate::qassert(holdout, c("L+", "D"))
+
+  if (!is.data.frame(holdout$model)) {
+    holdout$model <- list_dfr(holdout$model)
+  }
+
+  if (model > nrow(holdout$model)) {
+    model <- nrow(holdout$model)
+    cli::cli_warn("Model is greater than the number of models. Using the last model.")
+  }
+
+  model_num <- holdout$model$idx[[model]]
+  coverage <- holdout$model$coverage[[model]]
+  num_segments <- length(holdout$model$data[[model]]$cov_idxs[[1]])
+  redundancy <- holdout$model$redundancy[[model]]
+
+  precision <- round(holdout$metric$precision[[model]], 2)
+  specificity <- round(holdout$metric$specificity[[model]], 2)
+  km <- round(holdout$metric$km[[model]], 2)
+
+  holdout <- holdout$model$data[[model]]
+
+  holdout <- holdout |> dplyr::arrange(as.numeric(window))
+
+  max_len <- max(as.numeric(holdout$window))
+  num_platos <- nrow(holdout)
+  ks <- holdout$k
+
+  platos <- matrix(NA, ncol = num_platos, nrow = max_len)
+
+  for (i in seq_len(num_platos)) {
+    pl <- holdout$plato[[i]]
+    pl[is.infinite(pl)] <- NA
+    platos[seq_along(pl), i] <- pl
+  }
+
+
+  colnames(platos) <- as.character(seq_len(num_platos))
+  platos <- tibble::as_tibble(platos)
+
+  platos <- platos |>
+    dplyr::mutate(n = dplyr::row_number()) |>
+    tidyr::pivot_longer(seq_len(num_platos))
+
+
+  gg <-
+    platos |> ggplot2::ggplot(ggplot2::aes(x = n, y = value)) +
+    ggplot2::geom_line() +
+    ggplot2::facet_wrap(~name,
+      ncol = 1, labeller = ggplot2::as_labeller(
+        function(x) {
+          y <- as.numeric(x)
+          lbl <- glue::glue("k = {ks[y]}")
+          return(lbl)
+        }
+      ),
+      strip.position = "left"
+    )
+
+
+  gg <-
+    gg + ggplot2::theme_bw() + # base_family = "Roboto"
+    ggplot2::ggtitle(
+      glue::glue("Model {model_num} - Coverage {coverage} of {num_segments} - Redundancy {redundancy} - Precision {precision} / Specificity {specificity} - Km {km}")
+    ) +
+    ggplot2::xlab("length") +
+    ggplot2::xlim(0, ifelse(is.null(max_size), 400, max_size)) +
+    ggplot2::theme(
+      axis.ticks.y = ggplot2::element_blank(),
+      axis.title.y = ggplot2::element_blank(),
+      axis.text.y = ggplot2::element_blank()
+    )
+
+  gg
+
+  # return(invisible(gg))
+}
 
 
 # solutions = result of find_solutions

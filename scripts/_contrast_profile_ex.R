@@ -421,7 +421,7 @@ list(
         colnames(fold$aa) <- namecolsa
         colnames(fold$bb) <- namecolsb
         cc <- dplyr::bind_cols(cc, fold$aa, fold$bb)
-        cc <- cc |> dplyr::select(sort(names(.)))
+        cc <- cc %>% dplyr::select(sort(names(.)))
         cc <- cc |> dplyr::relocate(tp, tp_aa, tp_bb, fp, fp_aa,
           fp_bb, tn, tn_aa, tn_bb, fn, fn_aa, fn_bb,
           .before = 1
@@ -476,12 +476,8 @@ list(
         dplyr::arrange(dplyr::desc(precision))
 
       mod <- metrics |> dplyr::filter(model == models$model[1])
-      # View(models)
-
 
       fold <- list(data = testing_split)
-      # res <- list()
-      # for (i in seq_len(var_vfolds_repeats)) {
       shapelets <- mod |>
         dplyr::arrange(
           dplyr::desc(precision)
@@ -492,16 +488,27 @@ list(
       # currently, if `ANY` shapelet matches, it is considered a positive
       # as alternative we can try to use `ALL`, `HALF` or other criteria
       metric <- list_dfr(compute_metrics_topk(fold, shapelets, var_future_workers, TRUE))
-      # combined <- dplyr::bind_cols(metric, (shapelets |> dplyr::select(c_total:data)))
-      # res[[i]] <- combined
-      # }
 
-      overall <- compute_overall_metric(list(metric))
+      overall <- compute_overall_metric_range(metric)
 
-      list(metric = metric, model = shapelets, overall = overall)
+      res <- list(model = shapelets, metric = metric, overall = overall)
+
+      plots <- list()
+      for (i in seq_len(nrow(res$model))) {
+        plots[[i]] <- plot_holdout_models(res, i)
+      }
+      res[["plots"]] <- plots
+      res
     }
   )
 )
+
+# plt <- patchwork::wrap_plots(test_holdout$plots, ncol = 1) +
+#   patchwork::plot_annotation(
+#     title = "branch_name",
+#     theme = ggplot2::theme(plot.title = ggplot2::element_text(family = "Roboto"))
+#   )
+# print(plt)
 
 # tar_load(best_shapelets)
 
