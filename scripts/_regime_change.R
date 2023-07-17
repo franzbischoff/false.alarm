@@ -369,8 +369,129 @@ list(
       },
       pattern = map(analysis_split),
       iteration = "list" # thus the objects keep their attributes
-    )
+    ),
+    tar_target(
+    #### Pipeline: analysis_evaluation - Here we select the best from each optimization split and test in a separate split ----
+    analysis_evaluation,
+    {
+      future::plan(future.callr::callr, workers = 6)
+      # source(here::here("scripts", "regimes", "parsnip_model.R"), encoding = "UTF-8")
+
+      # # all_fits <- lst_to_df(analysis_fitted)
+      all_fits <- analysis_fitted
+
+      best_fits <- all_fits %>% tune::show_best("floss_error_macro", 5)
+      folds <- assessment_split %>% dplyr::filter(rep == all_fits$rep[1])
+
+      # # must have var_vfolds^th folds
+      tar_assert_true(nrow(folds) == var_vfolds)
+
+      result <- NULL
+      for (i in seq_len(nrow(best_fits))) {
+        model <- best_fits[i, ]
+
+        floss_spec <-
+          floss_regime_model(
+            window_size = model$window_size,
+            time_constraint = 0L,
+            mp_threshold = 0.8,
+            regime_threshold = model$regime_threshold,
+            regime_landmark = model$regime_landmark
+          ) %>%
+          parsnip::set_engine("floss") %>%
+          parsnip::set_mode("regression")
+
+        floss_rec <- recipes::recipe(x = head(folds$splits[[1]]$data, 1)) %>%
+          recipes::update_role(truth, new_role = "outcome") %>%
+          recipes::update_role(id, new_role = "predictor") %>%
+          recipes::update_role(ts, new_role = "predictor")
+
+        floss_wflow <-
+          workflows::workflow() %>%
+          workflows::add_model(floss_spec) %>%
+          workflows::add_recipe(floss_rec)
+
+        for (j in seq_len(nrow(folds))) {
+          assessment_data <- folds$splits[[j]]$data
+
+          model_fit <- floss_wflow %>%
+            parsnip::fit(assessment_data)
+          model_predicted <- model_fit %>%
+            predict(assessment_data) %>%
+            dplyr::bind_cols(assessment_data)
+          eval <- floss_error_macro(model_predicted, truth = model_predicted$truth, estimate = model_predicted$.pred)
+          eval <- model %>%
+            dplyr::select(window_size, regime_threshold, regime_landmark, .config) %>%
+            dplyr::bind_cols(eval) %>%
+            dplyr::mutate(id = glue::glue("Fold0{j}"))
+          result <- dplyr::bind_rows(result, eval)
+        }
+      }
+
+      result <- result %>% dplyr::arrange(.config, .estimate)
+      result
+    },
+    pattern = map(analysis_fitted),
+    iteration = "list" # thus the objects keep their attributes
+   ),
+   tar_target(
+    #### Pipeline: testing_evaluation - In the end, get the best from the inner resample and test with the testing split ----
+    testing_evaluation,
+    {
+      future::plan(future.callr::callr, workers = 6)
+      # source(here::here("scripts", "regimes", "parsnip_model.R"), encoding = "UTF-8")
+      best_parameters <- analysis_evaluation_25[[1]] %>% # dplyr::bind_rows(analysis_evaluation) %>%
+        dplyr::group_by(
+          window_size, regime_threshold, regime_landmark, .metric, .estimator
+        ) %>%
+        dplyr::summarise(mean = mean(.estimate), std_err = sd(.estimate), n = dplyr::n()) %>%
+        dplyr::ungroup() %>%
+        dplyr::arrange(mean, std_err) %>%
+        dplyr::slice_min(n = 5, order_by = mean)
+
+      result <- NULL
+      for (i in seq_len(nrow(best_parameters))) {
+        floss_spec <-
+          floss_regime_model(
+            window_size = best_parameters$window_size[i],
+            time_constraint = 0L,
+            mp_threshold = 0.8,
+            regime_threshold = best_parameters$regime_threshold[i],
+            regime_landmark = best_parameters$regime_landmark[i]
+          ) %>%
+          parsnip::set_engine("floss") %>%
+          parsnip::set_mode("regression")
+
+        floss_rec <- recipes::recipe(x = head(testing_split, 1)) %>%
+          recipes::update_role(truth, new_role = "outcome") %>%
+          recipes::update_role(id, new_role = "predictor") %>%
+          recipes::update_role(ts, new_role = "predictor")
+
+        floss_wflow <-
+          workflows::workflow() %>%
+          workflows::add_model(floss_spec) %>%
+          workflows::add_recipe(floss_rec)
+
+        model_fit <- floss_wflow %>%
+          parsnip::fit(testing_split)
+        model_predicted <- model_fit %>%
+          predict(testing_split) %>%
+          dplyr::bind_cols(testing_split)
+        eval <- floss_error_macro(model_predicted, truth = model_predicted$truth, estimate = model_predicted$.pred)
+        model_predicted <- model_predicted %>%
+          dplyr::select(.sizes, .id, .pred, truth) %>%
+          tidyr::nest(.predictions = everything())
+        eval <- best_parameters[i, ] %>%
+          dplyr::select(window_size, regime_threshold, regime_landmark) %>%
+          dplyr::bind_cols(eval, model_predicted)
+
+        result <- dplyr::bind_rows(result, eval)
+      }
+      result
+    }
   )
+  )
+
   # tar_target(
   #   #### Pipeline: analysis_evaluation - Here we select the best from each optimization split and test in a separate split ----
   #   analysis_evaluation,

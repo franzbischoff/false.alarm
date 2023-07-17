@@ -115,3 +115,5 @@ mpxtest.RData
 docs/thesis/*.log
 docs/thesis/__*.tex
 **/rsconnect/**
+
+/.luarc.json
