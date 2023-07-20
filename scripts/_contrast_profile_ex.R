@@ -348,7 +348,7 @@ list(
         # currently, if `ANY` shapelet matches, it is considered a positive
         # as alternative we can try to use `ALL`, `HALF` or other criteria
 
-        training_metrics <- compute_metrics_topk(fold, shapelets, var_future_workers, TRUE)
+        training_metrics <- compute_metrics_topk(fold, shapelets, 5, TRUE)
 
         res[[i]] <- list(training_metrics = training_metrics, shapelets = shapelets)
       }
@@ -394,7 +394,7 @@ list(
 
         bb <- compute_metrics_topk(fold, best_shapelets, var_future_workers, TRUE)
         bb <- list_dfr(bb)
-        aa <- best_shapelets |> dplyr::select(tp:kappa)
+        aa <- best_shapelets |> dplyr::select(tp:random)
         metadata <- best_shapelets |>
           dplyr::select(c_total:data)
 

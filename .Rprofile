@@ -5,6 +5,9 @@ if (.Platform$OS.type == "windows") {
   Sys.setenv(LC_CTYPE = "C")
 }
 
+# options(error = renv:::renv_error_handler_call())
+# options(warn = 2L)
+
 source("renv/activate.R")
 
 # options(
