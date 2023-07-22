@@ -1804,6 +1804,18 @@ if (file.exists(here("output", "regime_outputs_holdout.rds"))) {
 
 ## Classification
 
+As described in @sec-classregime, the classification algorithm is based on the Contrast Profile (CP) [@Mercer2021]. The CP allows us
+to detect sequences that at the same time very *similar* to its neighbors in class *A* while is very *different* from the nearest neighbor from class *B*.
+
+The variables parameters we can tune are the following:
+
+-   **`shapelet_size`**: that we will use interchangeably with the term *window_size* as is defines the size of the rolling window used to compute the CP. It was used a series of shapelet sizes with exponential distribution, resulting on `20` values from `21` to `401`.
+-   **`top_k`**: how many shapelets we will select on each CP, being the first one the shapelet with the highest constrast value. It was chosen the default value of `10`.
+-   **`max_shapelets`**: the maximum number of shapelets we will allow on selecting the shapelet set. It was set as `20` to allow more freedom on the selection of shapelets.
+-   **`max_redundance`**: the maximum number of "redundance" we will allow on selecting the shapelet set. The redundance means more than one shapelet can classify correctly the same observation. It was set as `10`, to also allow more freedom on the selection of shapelets.
+
+@fig-classthepipeline shows the workflow using Nested resamplig as described on @sec-methodology.
+
 ```{r class_cached, echo=FALSE, cache=FALSE}
 network <- readRDS(here::here("output", "classification_network.rds"))
 net <- visNetwork::visPhysics(network, hierarchicalRepulsion = list(
@@ -1840,11 +1852,9 @@ The following steps were performed for each fold:
 
 An example of candidates for ventricular tachycardia is presented on @fig-holdout.
 
-TODODO: REVER COVERAGE
-
 ```{r fig-holdout, echo=FALSE, out.width="70%", fig.height=8, fig.width=8}
-#| fig-cap: "Set of shapelets for the classification task. Above shows the model number, the coverage (the proportion of true alarms that were detected),
-#|  The Precision, the Specificity, and the Km."
+#| fig-cap: "Set of shapelets for the classification task. Above shows the model number, the coverage (the proportion of true alarms that were detected) and redundancy during the analysis_split (inner resample),
+#|  The Precision, the Specificity, and the Km during the testing_split (outer resample)."
 
 data <- readRDS(here("output", "classification_holdout.rds"))
 
@@ -1853,15 +1863,14 @@ data$plots[[4]] # + ggplot2::facet_wrap(~name, ncol = 1, scales = "free_y")
 ```
 
 
-After the inner resampling is done, the best set of shapelets are selected evaluated on the test set without computing a new Contrast Profile. Thus assessing the generalization of the shapelet set on new data.
+After the Inner Resampling is done, the best sets of shapelets are selected and evaluated on the Test Set without retraining a new Contrast Profile. Thus assessing the generalization of the shapelet set on new data.
 
-The criteria to select the best set of shapelets was described on @sec-classification-criteria being the Precision the ranking criteria. It was also considered the set being present on more than one fold and in both repetitions. Also, the set of shapelets that had a negative $\kappa_m$ was discarded.
+The criteria to select the best sets of shapelets was described on @sec-classification-criteria being the Precision the ranking criteria. It was also required that the set being present on more than one fold and in both repetitions. Also, the sets of shapelets that had a negative $\kappa_m$ were discarded.
 
 The following results were obtained:
 
-```{r tab-model, echo=FALSE, out.width="70%", fig.height=8, fig.width=8}
-#| tab-cap: "Set of shapelets for the classification task. Above shows the model number, the coverage (the proportion of true alarms that were detected),
-#|  The Precision, the Specificity, and the Km."
+```{r tab-model, echo=FALSE, out.width="70%"}
+#| tbl-cap: "Performance of the best five sets of shapelet on the inner resample."
 
 colnames <- c("tp", "fp", "tn", "fn", "precision", "recall", "specificity", "accuracy", "f1", "mcc", "km", "kappa")
 
@@ -1877,9 +1886,8 @@ kable(data$model %>% dplyr::select(dplyr::all_of(colnames)),
 
 ```
 
-```{r tab-metric, echo=FALSE, out.width="70%", fig.height=8, fig.width=8}
-#| tab-cap: "Set of shapelets for the classification task. Above shows the model number, the coverage (the proportion of true alarms that were detected),
-#|  The Precision, the Specificity, and the Km."
+```{r tab-metric, echo=FALSE, out.width="70%"}
+#| tbl-cap: "Performance of the best five sets of shapelet on outer resample."
 
 kable(data$metric %>% dplyr::select(dplyr::all_of(colnames)),
   booktabs = TRUE,
@@ -1893,11 +1901,10 @@ kable(data$metric %>% dplyr::select(dplyr::all_of(colnames)),
 
 ```
 
-```{r tab-overall, echo=FALSE, out.width="70%", fig.height=8, fig.width=8}
-#| tab-cap: "Set of shapelets for the classification task. Above shows the model number, the coverage (the proportion of true alarms that were detected),
-#|  The Precision, the Specificity, and the Km."
+```{r tab-overall, echo=FALSE, out.width="70%"}
+#| tbl-cap: "The aggregated performance of the best five sets of shapelet on the outer resample. Median, Q25 and Q75"
 
-colnames <- c("tp", "fp", "tn", "fn", "precision", "recall", "specificity", "accuracy", "f1_micro", "f1_macro", "f1_weighted", "mcc", "km", "kappa")
+colnames <- c("precision", "recall", "specificity", "accuracy", "f1_micro", "f1_macro", "mcc", "km", "kappa")
 
 kable(data$overall %>% dplyr::select(dplyr::all_of(colnames)),
   booktabs = TRUE,
@@ -1905,7 +1912,7 @@ kable(data$overall %>% dplyr::select(dplyr::all_of(colnames)),
   # align = "cccccccccc",
   digits = 2,
   position = "ht",
-  linesep = ""
+  linesep = "",
 ) %>%
   row_spec(0, bold = TRUE)
 
