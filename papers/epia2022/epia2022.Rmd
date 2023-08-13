@@ -183,8 +183,8 @@ kbl(alarms,
   caption = "Definition of the five alarm types used in CinC/Physionet Challenge 2015.",
   align = "ll",
   position = "ht"
-) %>%
-  row_spec(0, bold = TRUE) %>%
+) |>
+  row_spec(0, bold = TRUE) |>
   kable_styling(full_width = TRUE)
 ```
 

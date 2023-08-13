@@ -187,3 +187,65 @@ mass <- function(pre_obj, data, query = data, index = 1L, version = c("v3", "v2"
     error = print
   )
 }
+
+#' Lazy wrapper for `mass()`
+#'
+#' @param data The data to be used on the distance profile.
+#' @param query The query to be used on the distance profile.
+#' @export
+#' @rdname mass
+
+dist_profile <- function(data, query) {
+  window_size <- length(query)
+  pre <- mass_pre(data, window_size, query)
+  pre$data_sd[pre$data_sd <= 0] <- .Machine$double.eps^0.5 # HACK: need to fix mass3_rcpp()
+
+  dist_profile <- mass(pre, data, query)$distance_profile
+  dist_profile[dist_profile < 0] <- 0
+  dist_profile <- sqrt(dist_profile)
+  return(dist_profile)
+}
+
+# index <- 1
+# query_window <- query[index:(index + pre_obj$window_size - 1L)]
+#            aa <- false.alarm:::mass3_rcpp(query_window, data, as.integer(pre_obj$data_size), as.integer(pre_obj$window_size), pre_obj$data_mean, pre_obj$data_sd, pre_obj$query_mean[index], pre_obj$query_sd[index], k = 4096L )
+
+#' Find top-k matches
+#'
+#' @param data The data to be searched.
+#' @param query The query.
+#' @param k number of matches to be returned.
+#' @param corr_min minimum correlation of the matches.
+#' @param exclusion_zone exclusion zone.
+#' @export
+#' @rdname mass
+
+find_topk <- function(data, query, k = 10L, corr_min = 0.8, exclusion_zone = 0.5) {
+  checkmate::qassert(data, "N+")
+  checkmate::qassert(query, "N+")
+  checkmate::qassert(k, "X[1,30]")
+  checkmate::qassert(corr_min, "N(0,1]")
+  checkmate::qassert(exclusion_zone, "N(0,)")
+
+  window_size <- length(query)
+  ez <- round(window_size * exclusion_zone + .Machine$double.eps^0.5)
+  pre <- mass_pre(data, window_size, query)
+  dist_profile <- sqrt(mass(pre, data, query)$distance_profile)
+  profile_len <- length(dist_profile)
+  corr <- false.alarm::corr_ed(corr_min, window_size)
+
+  neighbors <- list()
+  for (i in seq_len(k)) {
+    min_idx <- which.min(dist_profile)
+    dist <- dist_profile[min_idx]
+    if (dist > corr) {
+      cli::cli_inform("Only {i-1} neighbors was found within minimum correlation of {corr_min}.")
+      break
+    }
+    subseq <- data[min_idx:(min_idx + window_size - 1)]
+    neighbors[[i]] <- list(neighbor = subseq, dist = dist, idx = min_idx)
+    dist_profile[max(min_idx - ez, 1):min(min_idx + window_size - 1 + ez, profile_len)] <- Inf
+  }
+
+  return(neighbors)
+}

@@ -125,7 +125,7 @@ extract_regimes <- function(floss_list, params, infos) {
 
   if (!is.null(all_regimes_idxs)) {
     regimes <- tibble::as_tibble(list(idxs = all_regimes_idxs, values = all_regimes_values))
-    regimes <- dplyr::distinct(regimes, idxs, .keep_all = TRUE) %>% dplyr::arrange(idxs) # nolint
+    regimes <- dplyr::distinct(regimes, idxs, .keep_all = TRUE) |> dplyr::arrange(idxs) # nolint
   } else {
     regimes <- FALSE
   }

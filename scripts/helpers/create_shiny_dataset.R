@@ -28,19 +28,19 @@ lst_to_df <- function(lst, keep_attributes = TRUE) {
 # Using cached data
 analysis_fitted <- readRDS(here("output", "regime_outputs.rds"))
 all_fitted <- lst_to_df(analysis_fitted$fitted_models)
-scores <- all_fitted %>%
-  dplyr::select(.predictions) %>%
-  tidyr::unnest(.predictions) %>%
+scores <- all_fitted |>
+  dplyr::select(.predictions) |>
+  tidyr::unnest(.predictions) |>
   ## mp_threshold of 1 and time_constraint of 750 are unrealistic, so we filter them out
-  dplyr::filter(mp_threshold <= 0.9, time_constraint >= 800) %>%
-  dplyr::distinct(.id, window_size, time_constraint, mp_threshold, regime_threshold, .keep_all = TRUE) %>%
-  dplyr::mutate(truth = clean_truth(truth, .sizes), .pred = clean_pred(.pred)) %>%
-  dplyr::group_by(.id, window_size, time_constraint, mp_threshold, regime_threshold) %>%
+  dplyr::filter(mp_threshold <= 0.9, time_constraint >= 800) |>
+  dplyr::distinct(.id, window_size, time_constraint, mp_threshold, regime_threshold, .keep_all = TRUE) |>
+  dplyr::mutate(truth = clean_truth(truth, .sizes), .pred = clean_pred(.pred)) |>
+  dplyr::group_by(.id, window_size, time_constraint, mp_threshold, regime_threshold) |>
   dplyr::summarise(
     score = score_regimes(truth[[1]], .pred[[1]], 0),
     pred = .pred
-  ) %>%
-  dplyr::ungroup() %>%
+  ) |>
+  dplyr::ungroup() |>
   dplyr::rename(record = .id)
 
 saveRDS(scores, here::here("analysis", "shiny", "scores.rds"))
@@ -62,7 +62,7 @@ for (data in dataset) {
   time <- seq(1, floor(length(value) * 5), length.out = length(value))
   ecg <- tibble::tibble(time = time, value = value)
   all_data[[data]] <- list(ecg = ecg, truth = truth)
-  # ecg %>% plot_time_series(time, value, .smooth = FALSE, .interactive = TRUE)
+  # ecg |> plot_time_series(time, value, .smooth = FALSE, .interactive = TRUE)
 }
 
 saveRDS(all_data, here::here("analysis", "shiny", "dataset.rds"))
@@ -92,20 +92,20 @@ for (data in dataset) {
   time <- seq(1, floor(length(value) * 5), length.out = length(value))
   ecg <- tibble::tibble(time = time, value = value)
   all_data[[data]] <- list(ecg = ecg, truth = truth)
-  # ecg %>% plot_time_series(time, value, .smooth = FALSE, .interactive = TRUE)
+  # ecg |> plot_time_series(time, value, .smooth = FALSE, .interactive = TRUE)
 }
 
 saveRDS(all_data, here::here("analysis", "shiny_land", "dataset.rds"))
 
 
 a <- readRDS(here::here("analysis", "shiny", "scores.rds"))
-a <- a %>%
-  # group_by(window_size, regime_threshold, regime_landmark) %>%
-  group_by(window_size, time_constraint, mp_threshold, regime_threshold) %>%
-  summarise(mean = mean(score), min = min(score), max = max(score), med = median(score), q25 = quantile(score, .25), q75 = quantile(score, .75), mm_diff = mean(score) - median(score)) %>%
+a <- a |>
+  # group_by(window_size, regime_threshold, regime_landmark) |>
+  group_by(window_size, time_constraint, mp_threshold, regime_threshold) |>
+  summarise(mean = mean(score), min = min(score), max = max(score), med = median(score), q25 = quantile(score, .25), q75 = quantile(score, .75), mm_diff = mean(score) - median(score)) |>
   ungroup()
 a
-# a <- a %>% mutate(mm_diff = abs(mean - med) < 2)
+# a <- a |> mutate(mm_diff = abs(mean - med) < 2)
 
 library(plotly)
 conflict_prefer("layout", "plotly")
@@ -123,10 +123,10 @@ pl_colorscale <- list(
   c(1, "rgba(0,0,230,0.05)")
 )
 
-fig <- a %>%
-  filter(mm_diff <= 1.0) %>%
+fig <- a |>
+  filter(mm_diff <= 1.0) |>
   plot_ly()
-fig <- fig %>%
+fig <- fig |>
   add_trace(
     type = "splom",
     dimensions = list(
@@ -156,7 +156,7 @@ fig <- fig %>%
       )
     )
   )
-fig <- fig %>%
+fig <- fig |>
   layout(
     title = "FLOSS",
     hovermode = "closest",
@@ -170,7 +170,7 @@ fig <- fig %>%
     yaxis2 = axis,
     yaxis3 = axis,
     yaxis4 = axis
-  ) %>%
+  ) |>
   style(diagonal = list(visible = FALSE), showupperhalf = FALSE)
 
 fig

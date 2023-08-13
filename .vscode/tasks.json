@@ -308,10 +308,7 @@
     {
       "type": "process",
       "label": "R: targets: Start watch page",
-      "command": "C:/Program Files/R/R-4.2.0/bin/x64/Rscript.exe",
-      "linux": {
-        "command": "/bin/Rscript"
-      },
+      "command": "/bin/Rscript",
       "args": [
         "-e",
         "targets::tar_watch(targets_only = TRUE, exclude = c('.Random.seed', 'var_window_size', 'var_time_constraint'),  seconds = 30, display = 'graph', browse = FALSE, outdated = FALSE, label = c('time', 'branches', 'size'), port = 55444); Sys.sleep(Inf)"

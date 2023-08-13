@@ -109,7 +109,7 @@ alarms <- tribble(
   "Ventricular Flutter/Fibrillation", "Fibrillatory, flutter, or oscillatory waveform for at least 4 seconds"
 )
 
-kbl(alarms, booktabs = TRUE, caption = paste("Table ", ref("tab:alarms"), "- Definition of the 5 alarm types used in CinC/Physionet Challenge 2015 challenge."), align = "ll") %>%
+kbl(alarms, booktabs = TRUE, caption = paste("Table ", ref("tab:alarms"), "- Definition of the 5 alarm types used in CinC/Physionet Challenge 2015 challenge."), align = "ll") |>
   kable_styling(full_width = TRUE)
 ```
 
@@ -131,8 +131,8 @@ challenge <- tribble(
   75.55, "Christoph Hoog Antink, Steffen Leonhardt"
 )
 
-kbl(challenge, booktabs = TRUE, caption = paste("Table ", ref("tab:challenge"), "- Challenge Results on Streaming"), align = "cl") %>%
-  kable_styling(full_width = TRUE) %>%
+kbl(challenge, booktabs = TRUE, caption = paste("Table ", ref("tab:challenge"), "- Challenge Results on Streaming"), align = "cl") |>
+  kable_styling(full_width = TRUE) |>
   column_spec(2, width = "9cm")
 ```
 
@@ -424,7 +424,6 @@ floss_data_1250 <- get_dist(0, 1250)
 ```
 
 ```{r distributions, echo=FALSE, fig.cap=paste0("Fig. ", ref("fig:distributions"), ": 1D-Ideal Arc Counts (IAC) distributions for temporal constraint")}
-
 offset <- 120
 
 floss_dist <- ggplot(data_5000, aes(index, counts)) +

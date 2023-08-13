@@ -6,7 +6,6 @@
     "RC_INVOKED"
   ],
   "C_Cpp.intelliSenseEngineFallback": "Enabled",
-  "editor.fontFamily": "'Fira Code Retina', Consolas, 'Courier New', monospace",
   "editor.formatOnSave": true,
   "editor.tabCompletion": "on",
   "editor.tabSize": 2,
@@ -193,7 +192,7 @@
   ],
   "markdownlint.run": "onSave",
   "r.alwaysUseActiveTerminal": true,
-  "r.lsp.diagnostics": false,
+  "r.lsp.diagnostics": true,
   "r.rmarkdown.knit.focusOutputChannel": false,
   "r.session.levelOfObjectDetail": "Detailed",
   "reflowMarkdown.preferredLineLength": 120,
@@ -208,25 +207,7 @@
     "problemMatcher"
   ],
   "taskExplorer.enableAnsiconForAnt": false,
-  "taskExplorer.enableAnt": false,
-  "taskExplorer.enableAppPublisher": false,
-  "taskExplorer.enableBash": false,
-  "taskExplorer.enableBatch": false,
-  "taskExplorer.enableComposer": false,
-  "taskExplorer.enableGradle": false,
-  "taskExplorer.enableGrunt": false,
-  "taskExplorer.enableGulp": false,
-  "taskExplorer.enableMake": false,
-  "taskExplorer.enableMaven": false,
-  "taskExplorer.enableNpm": false,
-  "taskExplorer.enableNsis": false,
-  "taskExplorer.enablePerl": false,
-  "taskExplorer.enablePipenv": false,
-  "taskExplorer.enablePowershell": false,
-  "taskExplorer.enablePython": false,
-  "taskExplorer.enableRuby": false,
   "taskExplorer.enableSideBar": true,
-  "taskExplorer.enableTsc": false,
   "taskExplorer.exclude": [
     "**/dist/**",
     "**/log/**",
@@ -237,7 +218,10 @@
     "**/docs/**",
     "**/tmp/**",
     "**/.github/**",
-    "**/dev/**"
+    "**/dev/**",
+    "/workspace/false.alarm/run.sh",
+    "/workspace/false.alarm/.devcontainer/configure_gitpod.sh",
+    "**/.trunk/**"
   ],
   "taskExplorer.groupMaxLevel": 2,
   "taskExplorer.groupSeparator": ": ",
@@ -280,7 +264,6 @@
     "https://json.schemastore.org/github-workflow.json": "file:///workspace/false.alarm/.github/workflows/ci.yaml"
   },
   "PandocCiter.DefaultBib": "papers/references.bib",
-  "terminal.integrated.shellIntegration.enabled": false,
   "grammarly.config.documentDialect": "american",
   "grammarly.config.documentDomain": "academic",
   "grammarly.config.suggestions.ConjunctionAtStartOfSentence": true,
@@ -289,5 +272,23 @@
   "grammarly.config.suggestions.PassiveVoice": false,
   "grammarly.startTextCheckInPausedState": true,
   "grammarly.config.suggestions.PunctuationWithQuotation": false,
-  "svg.preview.background": "editor"
+  "svg.preview.background": "editor",
+  "taskExplorer.enabledTasks": {
+    "ant": false,
+    "bash": false,
+    "batch": false,
+    "composer": false,
+    "gradle": false,
+    "grunt": false,
+    "gulp": false,
+    "make": false,
+    "maven": false,
+    "npm": false,
+    "perl": false,
+    "pipenv": false,
+    "powershell": false,
+    "python": false,
+    "ruby": false,
+    "tsc": false
+  }
 }

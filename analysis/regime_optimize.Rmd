@@ -71,12 +71,13 @@ my_graphics <- function(image_name, base_path = here::here("docs", "figure")) {
 }
 
 my_plot_html <- function(html, options) {
-  structure(paste0(
-    "<div class=\"figure\" style=\"text-align: ",
-    options$fig.align, "\">", html, "<p class=\"caption\">(#",
-    options$fig.lp, options$label, ")", options$fig.cap, "</p></div>"
-  ),
-  class = "knit_asis"
+  structure(
+    paste0(
+      "<div class=\"figure\" style=\"text-align: ",
+      options$fig.align, "\">", html, "<p class=\"caption\">(#",
+      options$fig.lp, options$label, ")", options$fig.cap, "</p></div>"
+    ),
+    class = "knit_asis"
   )
 }
 
@@ -1229,8 +1230,6 @@ my_plot_html(shap_html_test2, knitr::opts_current$get())
 
 
 ```{r tests, eval=FALSE, echo=FALSE, out.width="80%", fig.cap="FLOSS pipeline."}
-
-
 # all_scores2 <- all_scores %>% dplyr::mutate(test = score_regimes_precision(truth, pred, 0,
 #   window = 250,
 #   delta_prec = "flat",

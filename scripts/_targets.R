@@ -413,7 +413,7 @@ list(r_input, r_dataset, r_filters, r_filters2, b_window_sizes)
 
 #### Pipeline: End ----
 
-# res <- test_set %>% keep(function(x) attr(x, "info")$true == TRUE)
+# res <- test_set |> keep(function(x) attr(x, "info")$true == TRUE)
 # tar_make_future(workers = 4)
 # tar_make_clustermq(workers = 4)
 

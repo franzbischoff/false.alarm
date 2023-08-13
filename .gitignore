@@ -102,13 +102,16 @@ workspace.RData
 .DS_Store
 analysis/figure
 analysis/*png
+test.mmd
 analysis/*html
 analysis/*_cache
 analysis/site_libs
 output/*.svg
-# protocol/**/*.pdf
+output/*.rds
+protocol/**/*.html
 # docs/**/*.svg
 protocol/**/*.svg
+protocol/**/*.rmarkdown
 mpxtest.RData
 .devcontainer/git-hours.tgz
 .devcontainer/mathjax.tgz
@@ -118,3 +121,5 @@ docs/thesis/__*.tex
 
 # Temp
 # docs
+
+/.luarc.json

@@ -22,6 +22,15 @@
   vctrs::s3_register("parsnip::multi_predict", "_floss_regime_model")
   vctrs::s3_register("false.alarm::floss_error", "data.frame")
   register_floss_regime_model()
+
+  vctrs::s3_register("stats::predict", "contrast_model")
+  vctrs::s3_register("false.alarm::print", "contrast_model")
+  vctrs::s3_register("generics::min_grid", "contrast_model")
+  vctrs::s3_register("stats::update", "contrast_model")
+  vctrs::s3_register("parsnip::translate", "contrast_model")
+  # vctrs::s3_register("parsnip::multi_predict", "_contrast_model")
+  vctrs::s3_register("false.alarm::contrast_error", "data.frame")
+  register_contrast_model()
   invisible()
 }
 

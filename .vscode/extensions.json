@@ -4,7 +4,6 @@
     "spmeesseman.vscode-taskexplorer",
     "meakbiyik.vscode-r-test-adapter",
     "hbenl.vscode-test-explorer",
-    "cschleiden.vscode-github-actions",
     "editorconfig.editorconfig",
     "donjayamanne.git-extension-pack",
     "codezombiech.gitignore",
@@ -27,8 +26,7 @@
     "usernamehw.errorlens",
     "rdebugger.r-debugger",
     "hediet.vscode-drawio",
-    "serhioromano.vscode-gitflow",
     "reditorsupport.r",
-    "notZaki.pandocciter"
+    "notzaki.pandocciter"
   ]
 }

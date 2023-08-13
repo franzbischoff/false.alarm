@@ -1,0 +1,14 @@
+/inst/
+/dev/
+/_*/
+/docs/
+/tmp/
+/output/
+/.trunk/
+/.devcontainer/
+/.github/
+figures
+logos
+*_files
+css
+csl

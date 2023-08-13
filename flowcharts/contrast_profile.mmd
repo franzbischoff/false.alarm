@@ -1,0 +1,106 @@
+---
+title: Contrast Profile Classifier
+---
+
+%%{
+  init: {
+    "securityLevel": "loose",
+    "theme": "dark",
+    "fontFamily": "Fira Code Medium, Trebuchet MS, Verdana, Arial, Sans-Serif",
+    "flowchart": {
+      "rankSpacing": 70,
+      "nodeSpacing": 70
+    }
+  }
+}%%
+
+classDiagram
+%% <|-- Inheritance (is-a relationship)
+%% ..>  Dependency (needs but not part of)
+%% ..|> Realization (interface implementation)
+%% *--  Composition (both live and die together)
+%% o--  Aggregation (lifecycle is independent)
+%% -->  Association (generic relationship, that may use cardinality)
+%% --   Link (Solid) (Association without arrows)
+%% ..   Link (Dashed) (Association without arrows and not navigable)
+
+
+  Data "*" <.. "1" Contrast
+  Data "*" o-- "1" ShapeletMeta
+  Contrast "1" <.. "1" Shapelet
+  Shapelet "1" <.. "1" ShapeletMeta
+
+  class Data {
+    List~Factor~ classes
+    List~float[]~ ts
+    List~int~ ids
+  }
+
+  %% class is the positive class
+  class Contrast {
+    Factor class*
+    List~int~ window_sizes*
+    List~float[]~ contrast_profiles
+  }
+
+  class Shapelet {
+    Factor class*
+    int num_platos*
+    List~int~ window_sizes*
+    List~int[num_platos]~ platos_indices
+    List~int[num_platos]~ platos_twin_indices
+    List~float[num_platos]~ plato_nary_contrasts
+  }
+
+  %% all Lists have dim m,n where m == num_of_shapelets(k) and n == length(window_sizes)
+  %% except coverages that has dim(m) where m == length(window_sizes) and each element has
+  %% dim(m,n) where m == num_of_shapelets(k) and n == num_segments
+  %% TODO: this need to be reshaped
+  %% TODO: num_segments reflect the number of positive samples
+  class ShapeletMeta {
+    Factor class*
+    int num_segments*
+    int num_platos*
+    List~int~ window_sizes*
+    List~float[num_platos]~ joint_platos
+    List~float[num_platos]~ thresholds
+    List~float[num_platos]~ contrasts
+    List~bool[num_platos]~ coverages
+  }
+
+  ShapeletMeta "n" <|.. "1" Candidate : Optimize
+  Data "*" o-- "1" Score
+  Score "1" <|.. "1" Candidate : Optimize
+  Candidate <|-- Fitted : select
+
+  class Score {
+    float accuracy
+    float f1
+    float precision
+    float recall
+  }
+
+  class Fitted {
+    Factor class*
+    int num_platos*
+    Candidate best_score_canditate*
+    - List~float[num_platos]~ joint_platos
+    - List~float[num_platos]~ thresholds
+  }
+
+  class Candidate {
+    Factor class*
+    Score score*
+    List~ShapeletMeta~ shapelets*
+    float contrast_total
+    float contrast_median
+    float contrast_mean
+    float contrast_std
+    float cov_con_ratio_mean
+    float k_mean
+    float cov_mean
+    float coverage
+    float cov_percent
+      int redundancy
+      int num_shapelets
+  }

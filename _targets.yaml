@@ -4,27 +4,33 @@ main:
   store: _targets
   shortcut: no
   script: scripts/_targets.R
-  workers: 2
 
 classifier:
   inherits: main
   store: _classifier
   script: scripts/_classifier.R
 
+contrast_profile:
+  inherits: main
+  store: _contrast_profile_ex
+  script: scripts/_contrast_profile_ex.R
+
+contrast_profile_not:
+  inherits: main
+  store: _contrast_profile
+  script: scripts/_contrast_profile.R
+
 regime_change2:
   inherits: main
   store: _regime_change2
   script: scripts/_regime_change2.R
-  workers: 2
 
 regime_change:
   inherits: main
   store: _regime_change
   script: scripts/_regime_change.R
-  workers: 2
 
 regime_optimize:
   inherits: main
   store: _regime_optimize
   script: scripts/_regime_optimize.R
-  workers: 2

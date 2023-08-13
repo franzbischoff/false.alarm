@@ -217,8 +217,8 @@ kbl(alarms,
   align = "ll",
   position = "ht",
   linesep = "\\addlinespace"
-) %>%
-  row_spec(0, bold = TRUE) %>%
+) |>
+  row_spec(0, bold = TRUE) |>
   kable_styling(full_width = TRUE)
 ```
 
@@ -231,7 +231,6 @@ For comparison, on Table \@ref(tab:challenge) we collected the score of the five
 of the challenge [@plesinger2015; @kalidas2015; @couto2015; @fallet2015; @hoogantink2015].
 
 ```{r challenge, echo=FALSE}
-
 challenge <- tribble(
   ~Score, ~Authors,
   "81.39", "Filip Plesinger, Petr Klimes, Josef Halamek, Pavel Jurak",
@@ -246,10 +245,10 @@ kbl(challenge,
   caption = "Challenge Results on real-time data. The scores were multiplied by 100.",
   align = "cl",
   position = "ht"
-) %>%
-  row_spec(0, bold = TRUE) %>%
-  # column_spec(1, width = "5em") %>%
-  # column_spec(2, width = "30em") %>%
+) |>
+  row_spec(0, bold = TRUE) |>
+  # column_spec(1, width = "5em") |>
+  # column_spec(2, width = "30em") |>
   kable_styling(full_width = TRUE)
 ```
 
@@ -317,8 +316,8 @@ kbl(criteria,
   align = "ll",
   position = "ht",
   linesep = "\\addlinespace"
-) %>%
-  row_spec(0, bold = TRUE) %>%
+) |>
+  row_spec(0, bold = TRUE) |>
   kable_styling(full_width = TRUE)
 ```
 
@@ -1034,7 +1033,6 @@ floss_data_1250 <- get_dist(0, 1250)
 ```
 
 ```{r distributions, echo=FALSE, fig.cap="1D-IAC distributions for earlier temporal constraint (on Matrix Profile).", message=FALSE, warning=FALSE}
-
 floss_dist <- ggplot(data_5000, aes(index, counts)) +
   geom_line(size = 0.1) +
   ggtitle("a) No constraint") +

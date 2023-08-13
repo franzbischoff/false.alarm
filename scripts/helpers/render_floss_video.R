@@ -166,7 +166,10 @@ plot_ecg_streaming <- function(ecg_data, data_constraint, window_size, mp_time_c
   aa <- ggplot2::ggplot(data.frame(x = data_idxs, y = ecg_data), ggplot2::aes(x, y)) +
     ggplot2::geom_line(size = 0.1)
 
-  aa <- aa + ggplot2::annotate("segment", y = ylim[1], yend = ylim[1], x = data_constraint - window_size, xend = data_constraint, color = "blue", size = 0.1) +
+  aa <- aa + ggplot2::annotate("segment",
+    y = ylim[1], yend = ylim[1], x = data_constraint - window_size,
+    xend = data_constraint, color = "blue", size = 0.1
+  ) +
     ggplot2::annotate("text", x = data_constraint - (window_size / 2), y = ylim[1] + (y_amp * 0.03), label = "Window size", color = "blue", size = 1)
 
   if (!is.null(trigger_abs_idx) && trigger_abs_idx > 0) {
@@ -179,7 +182,10 @@ plot_ecg_streaming <- function(ecg_data, data_constraint, window_size, mp_time_c
   }
 
   aa <- aa + ggplot2::annotate("segment", y = ylim[1], yend = ylim[2], x = last_3_secs, xend = last_3_secs, color = "firebrick", size = 0.1) +
-    ggplot2::annotate("text", x = last_3_secs - 40, y = ylim[1] + (y_amp * 0.13), label = "Detection limit", color = "firebrick", size = 1.2, angle = 90)
+    ggplot2::annotate("text",
+      x = last_3_secs - 40, y = ylim[1] + (y_amp * 0.13), label = "Detection limit",
+      color = "firebrick", size = 1.2, angle = 90
+    )
 
   if (offset > abs_event_line) {
     curr_event_line <- data_constraint - (offset - abs_event_line)
@@ -190,7 +196,10 @@ plot_ecg_streaming <- function(ecg_data, data_constraint, window_size, mp_time_c
   if (mp_time_constraint > 0) {
     curr_ts_constr <- (data_constraint - mp_time_constraint)
     aa <- aa + ggplot2::annotate("segment", y = ylim[1], yend = ylim[2], x = curr_ts_constr, xend = curr_ts_constr, color = "red", size = 0.1) +
-      ggplot2::annotate("text", x = curr_ts_constr - 40, y = ylim[1] + (y_amp * 0.4), label = "Time constraint", color = "red", size = 1.5, angle = 90)
+      ggplot2::annotate("text",
+        x = curr_ts_constr - 40, y = ylim[1] + (y_amp * 0.4), label = "Time constraint",
+        color = "red", size = 1.5, angle = 90
+      )
   }
 
   aa <- aa + ggplot2::theme_grey(base_size = 7) + ggplot2::theme(
@@ -253,14 +262,17 @@ plot_cac_streaming <- function(arcs, data_constraint, window_size, mp_time_const
   bb <- bb + ggplot2::geom_vline(xintercept = cac_min_idx, color = "red", size = 0.1) +
     ggplot2::annotate("text", x = cac_min_idx + 125, y = cac_min + 0.05, label = glue_fmt("{cac_min:.2f}"), color = "red", size = 1.5) +
     ggplot2::annotate("text", x = cac_min_idx + 125, y = 0.05, label = glue::glue("{cac_min_idx}"), color = "red", size = 1.5) +
-    ggplot2::annotate("segment", y = curr_cac_min, yend = curr_cac_min, x = mid_idx - 2 * window_size, xend = mid_idx + 2 * window_size, color = "blue", size = 0.1) +
+    ggplot2::annotate("segment",
+      y = curr_cac_min, yend = curr_cac_min, x = mid_idx - 2 * window_size,
+      xend = mid_idx + 2 * window_size, color = "blue", size = 0.1
+    ) +
     ggplot2::annotate("text", x = mid_idx, y = curr_cac_min + 0.05, label = glue_fmt("{curr_cac_min:.2f}"), color = "blue", size = 1.5)
 
 
   bb <- bb + ggplot2::xlim(0, (data_constraint + batch_size)) +
     ggplot2::ylim(0, cac_max) +
     ggplot2::ggtitle("FLOSS") +
-    ggplot2::ylab("cac/similarity") +
+    ggplot2::ylab("cac - similarity") +
     ggplot2::xlab(glue_fmt("time {offset/rate:4.1f}s"))
 
   bb$curr_cac_min <- curr_cac_min
@@ -290,7 +302,7 @@ plot_raw_arcs <- function(arcs, iac, data_constraint, mp_time_constraint, floss_
     ggplot2::xlim(0, (data_constraint + batch_size)) +
     ggplot2::ylim(0, ymax) +
     ggplot2::ggtitle("FLOSS - ARCS") +
-    ggplot2::ylab("cac/similarity") +
+    ggplot2::ylab("cac - similarity") +
     ggplot2::xlab(glue_fmt("time {offset/rate:4.1f}s"))
 
   return(cc)

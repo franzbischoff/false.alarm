@@ -35,9 +35,9 @@ alarms <- tribble(
   "Ventricular Flutter/Fibrillation", "Fibrillatory, flutter, or oscillatory waveform for at least 4 seconds"
 )
 
-kbl(alarms, booktabs = TRUE, caption = "Definition of the 5 alarm types used in CinC/Physionet Challenge 2015 challenge.", align = "ll") %>%
-  kable_styling(full_width = TRUE) %>%
-  column_spec(1, width = "5cm") %>%
+kbl(alarms, booktabs = TRUE, caption = "Definition of the 5 alarm types used in CinC/Physionet Challenge 2015 challenge.", align = "ll") |>
+  kable_styling(full_width = TRUE) |>
+  column_spec(1, width = "5cm") |>
   row_spec(0, bold = TRUE)
 ```
 
@@ -59,9 +59,9 @@ challenge <- tribble(
   75.55, "Christoph Hoog Antink, Steffen Leonhardt"
 )
 
-kbl(challenge, booktabs = TRUE, caption = "Challenge Results on Streaming", align = "cl") %>%
-  kable_styling(full_width = TRUE) %>%
-  column_spec(2, width = "9cm") %>%
+kbl(challenge, booktabs = TRUE, caption = "Challenge Results on Streaming", align = "cl") |>
+  kable_styling(full_width = TRUE) |>
+  column_spec(2, width = "9cm") |>
   row_spec(0, bold = TRUE)
 ```
 

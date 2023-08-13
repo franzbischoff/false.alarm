@@ -66,7 +66,7 @@ List scrimp_rcpp(const NumericVector data_ref, const NumericVector query_ref, ui
 
     if (pre_scrimp > 0) {
       // initialization
-      int64_t current_step = floor(window_size * pre_scrimp + DBL_EPSILON);
+      int64_t const current_step = floor(window_size * pre_scrimp + DBL_EPSILON);
       IntegerVector pre_scrimp_idxs = seq_by(0, matrix_profile_size - 1, current_step);
       Progress ps(pre_scrimp_idxs.size(), progress);
       // compute the matrix profile
@@ -74,7 +74,8 @@ List scrimp_rcpp(const NumericVector data_ref, const NumericVector query_ref, ui
       NumericVector refine_distance(matrix_profile_size, R_PosInf);
 
       int64_t j = 1;
-      for (int64_t &&i : pre_scrimp_idxs) {
+      for (IntegerVector::iterator it = pre_scrimp_idxs.begin(); it != pre_scrimp_idxs.end(); ++it) {
+        int64_t i = static_cast<int64_t>(*it);
 
         RcppThread::checkUserInterrupt();
         ps.increment();
@@ -211,7 +212,8 @@ List scrimp_rcpp(const NumericVector data_ref, const NumericVector query_ref, ui
     }
 
     uint64_t j = 1;
-    for (int64_t &&i : compute_order) {
+    for (IntegerVector::iterator it = compute_order.begin(); it != compute_order.end(); ++it) {
+      int64_t i = static_cast<int64_t>(*it);
 
       RcppThread::checkUserInterrupt();
       p.increment();
@@ -509,7 +511,9 @@ List scrimpab_rcpp(const NumericVector data_ref, const NumericVector query_ref, 
     NumericVector dist2(mmpb_size, R_PosInf);
 
     int64_t j = 1;
-    for (int64_t &&i : compute_order) {
+
+    for (IntegerVector::iterator it = compute_order.begin(); it != compute_order.end(); ++it) {
+      int64_t i = static_cast<int64_t>(*it);
 
       RcppThread::checkUserInterrupt();
       p.increment();
@@ -569,7 +573,8 @@ List scrimpab_rcpp(const NumericVector data_ref, const NumericVector query_ref, 
     NumericVector dist2(mmpa_size, R_PosInf);
 
     int64_t j = 1;
-    for (int64_t &&i : compute_order) {
+    for (IntegerVector::iterator it = compute_order.begin(); it != compute_order.end(); ++it) {
+      int64_t i = static_cast<int64_t>(*it);
 
       RcppThread::checkUserInterrupt();
       p.increment();

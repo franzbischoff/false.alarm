@@ -5,7 +5,21 @@ if (.Platform$OS.type == "windows") {
   Sys.setenv(LC_CTYPE = "C")
 }
 
+# options(error = renv:::renv_error_handler_call())
+# options(warn = 2L)
+
 source("renv/activate.R")
+
+# options(
+#   clustermq.scheduler = "ssh",
+#   clustermq.ssh.host = "claster", # use your user and host, obviously
+#   clustermq.ssh.log = "~/cmq_ssh.log", # log for easier debugging
+#   clustermq.template = "/workspace/false.alarm/inst/SSH.tmpl"
+# )
+
+# options(
+#   clustermq.scheduler = "multiprocess",
+# )
 
 if (Sys.getenv("CI") == "") {
   # not CI
@@ -61,6 +75,10 @@ if (Sys.getenv("CI") == "") {
       vsc.dev.args = list(width = 1000, height = 700)
     )
 
+    # renv::install("franzbischoff/tune@539e1eea1426e9ace11b4e71ac4dafadddda7f0a")
+
+    # options(renv.settings.ignored.packages = c("parsnip", "yardstick", "dials", "finetune", "recipes", "hardhat", "workflowsets", "tune"))
+
     options(languageserver.formatting_style = function(options) {
       style <- styler::tidyverse_style(scope = "tokens", indent_by = 2)
       style
@@ -93,7 +111,9 @@ if (Sys.getenv("CI") == "") {
       })
     )
 
-    conflicted::conflict_prefer("filter", "dplyr")
+    suppressMessages({
+      conflicted::conflict_prefer("filter", "dplyr")
+    })
     options(dplyr.summarise.inform = FALSE)
 
     if (.Platform$OS.type != "windows") {

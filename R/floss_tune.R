@@ -132,10 +132,10 @@ min_grid.floss_regime_model <- function(x, grid, ...) {
 }
 
 blank_submodels <- function(grid) {
-  grid %>%
+  grid |>
     dplyr::mutate(.submodels = purrr::map(
       seq_len(1L, nrow(grid)),
       ~ list()
-    )) %>%
+    )) |>
     dplyr::mutate_if(is.factor, as.character)
 }

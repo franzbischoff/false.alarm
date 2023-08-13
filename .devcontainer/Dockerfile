@@ -75,16 +75,16 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
   && rm -rf /var/lib/apt/lists/*
 
 RUN curl -sL -o- https://cloud.r-project.org/bin/linux/ubuntu/marutter_pubkey.asc | tee -a /etc/apt/trusted.gpg.d/cran_ubuntu_key.asc \
-  && add-apt-repository "deb https://cloud.r-project.org/bin/linux/ubuntu $(lsb_release -cs)-cran40/" \
-  && add-apt-repository ppa:c2d4u.team/c2d4u4.0+ \
-  && apt-key adv --keyserver keyserver.ubuntu.com --recv-keys E298A3A825C0D65DFD57CBB651716619E084DAB9
+  && add-apt-repository --yes "ppa:marutter/rrutter4.0" \
+  && add-apt-repository --yes "ppa:c2d4u.team/c2d4u4.0+" \
+  && add-apt-repository --yes "ppa:edd/misc"
 
 ## Configure default locale, see https://github.com/rocker-org/rocker/issues/19
 RUN echo "C.UTF-8 en_US.UTF-8 UTF-8" >> /etc/locale.gen \
   && locale-gen en_US.utf8 \
   && /usr/sbin/update-locale LANG=en_US.UTF-8
 
-ENV R_BASE_VERSION 4.2.1
+ENV R_BASE_VERSION 4.3.1
 ENV RENV_PATHS_ROOT "${HOME_WORK}/.cache/R/renv"
 ENV RENV_PATHS_LIBRARY_ROOT "${HOME_WORK}/.cache/R/renv/library"
 ENV TZ UTC
