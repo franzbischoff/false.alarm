@@ -232,7 +232,7 @@ check_importance <- function(model, train_data, test_data, features, type = c("f
       type = "ratio",
       pred_wrapper = function(object, newdata) {
         pred <- predict(object, newdata)
-        pred$.pred
+        pred[1, ]
       },
       nsim = nsim,
       metric = "rmse",
@@ -856,10 +856,12 @@ importance_shap2_plot <- importance_shap2 +
     plot.margin = margin(0, 0, 0, 10)
   )
 
+
 all <- (importance_firm_plot / importance_firm2_plot + plot_layout(tag_level = "new")) |
-  (importance_perm_plot / importance_perm2_plot + plot_layout(tag_level = "new")) |
+  (importance_perm_plot / importance_firm2_plot + plot_layout(tag_level = "new")) |
   (importance_shap_plot / importance_shap2_plot + plot_layout(tag_level = "new")) +
     plot_layout(guides = "collect")
+
 all + plot_annotation(
   title = "Variable importances",
   tag_levels = c("A", "1"),
@@ -876,6 +878,7 @@ Fig. \@ref(fig:importanceshap) and \@ref(fig:importanceshap2) show the effect of
 ```{r importanceshap, message=FALSE, fig.height = 6, fig.width= 10, out.width="100%", cache=FALSE}
 #| fig.cap="This shows the effect each variable has on FLOSS score. This plot doesn't take into account the
 #|  variable interactions."
+
 t1 <- autoplot(shap_fastshap_all_test,
   type = "dependence",
   X = testing_data, feature = predictors_names[2], alpha = 0.2
