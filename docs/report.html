@@ -440,7 +440,7 @@ $(document).ready(function () {
 <button type="button" class="btn btn-default btn-workflowr btn-workflowr-report" data-toggle="collapse" data-target="#workflowr-report">
 <span class="glyphicon glyphicon-list" aria-hidden="true"></span>
 workflowr
-<span class="glyphicon glyphicon-exclamation-sign text-danger" aria-hidden="true"></span>
+<span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span>
 </button>
 </p>
 <div id="workflowr-report" class="collapse">
@@ -450,7 +450,7 @@ workflowr
 </li>
 <li>
 <a data-toggle="tab" href="#checks">
-Checks <span class="glyphicon glyphicon-exclamation-sign text-danger" aria-hidden="true"></span>
+Checks <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span>
 </a>
 </li>
 <li>
@@ -465,9 +465,9 @@ Checks <span class="glyphicon glyphicon-exclamation-sign text-danger" aria-hidde
 <p>
 <strong>Checks:</strong>
 <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span>
-5
+7
 <span class="glyphicon glyphicon-exclamation-sign text-danger" aria-hidden="true"></span>
-2
+0
 </p>
 <p>
 <strong>Knit directory:</strong>
@@ -490,21 +490,16 @@ The <em>Past versions</em> tab lists the development history.
 <div class="panel panel-default">
 <div class="panel-heading">
 <p class="panel-title">
-<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRMarkdownfilestronguncommittedchanges">
-<span class="glyphicon glyphicon-exclamation-sign text-danger" aria-hidden="true"></span>
-<strong>R Markdown file:</strong> uncommitted changes
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRMarkdownfilestronguptodate">
+<span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span>
+<strong>R Markdown file:</strong> up-to-date
 </a>
 </p>
 </div>
-<div id="strongRMarkdownfilestronguncommittedchanges" class="panel-collapse collapse">
+<div id="strongRMarkdownfilestronguptodate" class="panel-collapse collapse">
 <div class="panel-body">
-<p>The R Markdown file has unstaged changes.
-To know which version of the R Markdown file created these
-results, you’ll want to first commit it to the Git repo. If
-you’re still working on the analysis, you can ignore this
-warning. When you’re finished, you can run
-<code>wflow_publish</code> to commit the R Markdown file and
-build the HTML.</p>
+<p>Great! Since the R Markdown file has been committed to the Git repository, you
+know the exact version of the code that produced these results.</p>
 </div>
 </div>
 </div>
@@ -561,25 +556,16 @@ critical for reproducibility.</p>
 <div class="panel panel-default">
 <div class="panel-heading">
 <p class="panel-title">
-<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongCachestrongdetected">
-<span class="glyphicon glyphicon-exclamation-sign text-danger" aria-hidden="true"></span>
-<strong>Cache:</strong> detected
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongCachestrongnone">
+<span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span>
+<strong>Cache:</strong> none
 </a>
 </p>
 </div>
-<div id="strongCachestrongdetected" class="panel-collapse collapse">
+<div id="strongCachestrongnone" class="panel-collapse collapse">
 <div class="panel-body">
-The following chunks had caches available:
-<ul>
-<li>
-dist-data
-</li>
-</ul>
-<p>To ensure reproducibility of the results, delete the cache directory
-<code>report_cache</code>
-and re-run the analysis. To have workflowr automatically delete the cache
-directory prior to building the file, set <code>delete_cache = TRUE</code>
-when running <code>wflow_build()</code> or <code>wflow_publish()</code>.</p>
+<p>Nice! There were no cached chunks for this analysis, so you can be confident
+that you successfully produced the results during this run.</p>
 </div>
 </div>
 </div>
@@ -602,20 +588,20 @@ makes it easier to run your code on other machines.</p>
 <div class="panel panel-default">
 <div class="panel-heading">
 <p class="panel-title">
-<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomfranzbischofffalsealarmtree4437e7acc1ebd7480621fa02431a3c03cb325da8targetblank4437e7aa">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomfranzbischofffalsealarmtree4887954f15bc4d60f69ea0aa6b3a0f66128f0f09targetblank4887954a">
 <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span>
-<strong>Repository version:</strong> <a href="https://github.com/franzbischoff/false.alarm/tree/4437e7acc1ebd7480621fa02431a3c03cb325da8" target="_blank">4437e7a</a>
+<strong>Repository version:</strong> <a href="https://github.com/franzbischoff/false.alarm/tree/4887954f15bc4d60f69ea0aa6b3a0f66128f0f09" target="_blank">4887954</a>
 </a>
 </p>
 </div>
-<div id="strongRepositoryversionstrongahrefhttpsgithubcomfranzbischofffalsealarmtree4437e7acc1ebd7480621fa02431a3c03cb325da8targetblank4437e7aa" class="panel-collapse collapse">
+<div id="strongRepositoryversionstrongahrefhttpsgithubcomfranzbischofffalsealarmtree4887954f15bc4d60f69ea0aa6b3a0f66128f0f09targetblank4887954a" class="panel-collapse collapse">
 <div class="panel-body">
 <p>
 Great! You are using Git for version control. Tracking code development and
 connecting the code version to the results is critical for reproducibility.
 </p>
 <p>
-The results in this page were generated with repository version <a href="https://github.com/franzbischoff/false.alarm/tree/4437e7acc1ebd7480621fa02431a3c03cb325da8" target="_blank">4437e7a</a>.
+The results in this page were generated with repository version <a href="https://github.com/franzbischoff/false.alarm/tree/4887954f15bc4d60f69ea0aa6b3a0f66128f0f09" target="_blank">4887954</a>.
 See the <em>Past versions</em> tab to see a history of the changes made to the
 R Markdown and HTML files.
 </p>
@@ -675,7 +661,7 @@ Ignored files:
     Ignored:    _targets/meta/progress
     Ignored:    _targets/objects/
     Ignored:    _targets/user/
-    Ignored:    analysis/report_cache/
+    Ignored:    analysis/figure/
     Ignored:    analysis/shiny/rsconnect/
     Ignored:    analysis/shiny_land/rsconnect/
     Ignored:    analysis/shiny_ventricular/rsconnect/
@@ -688,13 +674,8 @@ Ignored files:
     Ignored:    presentations/MEDCIDS21/MEDCIDS21_files/
     Ignored:    presentations/Report/Midterm-Report_cache/
     Ignored:    presentations/Report/Midterm-Report_files/
-    Ignored:    protocol/SecondReport_cache/
-    Ignored:    protocol/SecondReport_files/
     Ignored:    protocol/ThirdReport.tex
-    Ignored:    protocol/ThirdReport_cache/
-    Ignored:    protocol/ThirdReport_files/
     Ignored:    protocol/_extensions/
-    Ignored:    protocol/_files/
     Ignored:    protocol/figure/
     Ignored:    renv/staging/
     Ignored:    src/RcppExports.cpp
@@ -712,10 +693,6 @@ Ignored files:
     Ignored:    thesis/Rplots.pdf
     Ignored:    thesis/_bookdown_files/
     Ignored:    tmp/
-
-Unstaged changes:
-    Modified:   analysis/regime_optimize.Rmd
-    Modified:   analysis/report.Rmd
 
 </code></pre>
 <p>
@@ -760,6 +737,40 @@ Message
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+Rmd
+</td>
+<td>
+<a href="https://github.com/franzbischoff/false.alarm/blob/4887954f15bc4d60f69ea0aa6b3a0f66128f0f09/analysis/report.Rmd" target="_blank">4887954</a>
+</td>
+<td>
+Francisco Bischoff
+</td>
+<td>
+2023-08-13
+</td>
+<td>
+update report
+</td>
+</tr>
+<tr>
+<td>
+html
+</td>
+<td>
+<a href="https://rawcdn.githack.com/franzbischoff/false.alarm/4887954f15bc4d60f69ea0aa6b3a0f66128f0f09/docs/report.html" target="_blank">4887954</a>
+</td>
+<td>
+Francisco Bischoff
+</td>
+<td>
+2023-08-13
+</td>
+<td>
+update report
+</td>
+</tr>
 <tr>
 <td>
 Rmd
@@ -2495,6 +2506,17 @@ Date
 <tbody>
 <tr>
 <td>
+<a href="https://github.com/franzbischoff/false.alarm/blob/4887954f15bc4d60f69ea0aa6b3a0f66128f0f09/docs/figure/regime_filter.svg" target="_blank">4887954</a>
+</td>
+<td>
+Francisco Bischoff
+</td>
+<td>
+2023-08-13
+</td>
+</tr>
+<tr>
+<td>
 <a href="https://github.com/franzbischoff/false.alarm/blob/ba671352398d20a09f3cf7f5b505562a0ae584b6/docs/figure/regime_filter.svg" target="_blank">ba67135</a>
 </td>
 <td>
@@ -3249,6 +3271,43 @@ E( score ) &amp;= \alpha + time\_constraint\\
 Figure 4.3: Variable interactions strength using feature importance ranking measure (FIRM) approach<span class="citation"><sup><a href="#ref-Greenwell2018" role="doc-biblioref">60</a></sup></span>. A) Shows strong interaction between <code>regime_threshold</code> and <code>regime_landmark</code>, <code>mp_threshold</code> and <code>window_size</code>, <code>mp_threshold</code> and <code>regime_landmark</code>. B) Refitting the model with these interactions taken into account, the strength is substantially reduced, except for the first, showing that indeed there is a strong correlation between those variables.
 </p>
 </div>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-interaction-1">
+Past versions of interaction-1.svg
+</button>
+</p>
+<div id="fig-interaction-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/franzbischoff/false.alarm/blob/4887954f15bc4d60f69ea0aa6b3a0f66128f0f09/docs/figure/report.Rmd/interaction-1.svg" target="_blank">4887954</a>
+</td>
+<td>
+Francisco Bischoff
+</td>
+<td>
+2023-08-13
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 </div>
 <div id="importance" class="section level3" number="4.1.3">
 <h3><span class="header-section-number">4.1.3</span> Importance</h3>
@@ -3308,6 +3367,43 @@ Figure 4.3: Variable interactions strength using feature importance ranking meas
 Figure 4.4: Variables importances using three different methods. A) Feature Importance Ranking Measure using ICE curves. B) Permutation method. C) SHAP (400 iterations). Line 1 refers to the original fit, and line 2 to the re-fit, taking into account the interactions between variables (<span class="citation"><sup><a href="#ref-fig-interaction" role="doc-biblioref"><strong>fig-interaction?</strong></a></sup></span>).
 </p>
 </div>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-importance-1">
+Past versions of importance-1.svg
+</button>
+</p>
+<div id="fig-importance-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/franzbischoff/false.alarm/blob/4887954f15bc4d60f69ea0aa6b3a0f66128f0f09/docs/figure/report.Rmd/importance-1.svg" target="_blank">4887954</a>
+</td>
+<td>
+Francisco Bischoff
+</td>
+<td>
+2023-08-13
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <p>Fig. <a href="#fig:importanceshap">4.5</a> and Fig. <a href="#fig:importanceshap2">4.6</a> show the effect of each feature on the FLOSS score. The more evident difference is the shape of the effect of <code>time_constraint</code> that initially suggested better results with larger values. However, removing the interactions seems to be a flat line.</p>
 <p>Based on Fig. <a href="#fig:importance">4.4</a> and Fig. <a href="#fig:importanceshap2">4.6</a> we can infer that:</p>
 <ul>
@@ -3324,11 +3420,85 @@ Figure 4.4: Variables importances using three different methods. A) Feature Impo
 Figure 4.5: This shows the effect each variable has on the FLOSS score. This plot doesn’t take into account the variable interactions.
 </p>
 </div>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-importanceshap-1">
+Past versions of importanceshap-1.svg
+</button>
+</p>
+<div id="fig-importanceshap-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/franzbischoff/false.alarm/blob/4887954f15bc4d60f69ea0aa6b3a0f66128f0f09/docs/figure/report.Rmd/importanceshap-1.svg" target="_blank">4887954</a>
+</td>
+<td>
+Francisco Bischoff
+</td>
+<td>
+2023-08-13
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <div class="figure" style="text-align: center"><span style="display:block;" id="fig:importanceshap2"></span>
 <img src="figure/report.Rmd/importanceshap2-1.svg" alt="This shows the effect each variable has on the FLOSS score, taking into account the interactions." width="100%" />
 <p class="caption">
 Figure 4.6: This shows the effect each variable has on the FLOSS score, taking into account the interactions.
 </p>
+</div>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-importanceshap2-1">
+Past versions of importanceshap2-1.svg
+</button>
+</p>
+<div id="fig-importanceshap2-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/franzbischoff/false.alarm/blob/4887954f15bc4d60f69ea0aa6b3a0f66128f0f09/docs/figure/report.Rmd/importanceshap2-1.svg" target="_blank">4887954</a>
+</td>
+<td>
+Francisco Bischoff
+</td>
+<td>
+2023-08-13
+</td>
+</tr>
+</tbody>
+</table>
+</div>
 </div>
 <p>According to the FLOSS paper<span class="citation"><sup><a href="#ref-gharghabi2018" role="doc-biblioref">41</a></sup></span>, the <code>window_size</code> is indeed a feature that can be tuned; nevertheless, the results appear to be similar in a reasonably wide range of window sizes, up to a limit, consistent with our findings.</p>
 </div>
@@ -3346,6 +3516,43 @@ Figure 4.6: This shows the effect each variable has on the FLOSS score, taking i
 Figure 4.7: Violin plot showing the distribution of the FLOSS score achieved by all tested models by recording. The left half shows the recordings that were difficult to predict (10% overall), whereas the right half shows the recordings that at least one model could achieve a good prediction (10% overall). The recordings are sorted (left-right) by the minimum (best) score achieved in descending order, and ties are sorted by the median of all recording scores. The blue color highlights recordings where models had an IQR variability of less than one. As a simple example, a recording with just one regime change, and the model predicts exactly one change, far from the truth, the score will be roughly 1.
 </p>
 </div>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-global-1">
+Past versions of global-1.svg
+</button>
+</p>
+<div id="fig-global-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/franzbischoff/false.alarm/blob/4887954f15bc4d60f69ea0aa6b3a0f66128f0f09/docs/figure/report.Rmd/global-1.svg" target="_blank">4887954</a>
+</td>
+<td>
+Francisco Bischoff
+</td>
+<td>
+2023-08-13
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <p>Fig. <a href="#fig:worst">4.8</a> shows the best effort in predicting the most complex recordings. One information not declared before is that if the model does not predict any change, it will put a mark on the zero position. On the other side, the truth markers positioned at the beginning and the end of the recording were removed, as these locations lack information and do not represent a streaming setting.</p>
 <div class="figure" style="text-align: center"><span style="display:block;" id="fig:worst"></span>
 <img src="figure/report.Rmd/worst-1.png" alt="Prediction of the worst 10% of recordings (red is the truth, blue are the predictions)." width="100%" />
@@ -3353,12 +3560,86 @@ Figure 4.7: Violin plot showing the distribution of the FLOSS score achieved by 
 Figure 4.8: Prediction of the worst 10% of recordings (red is the truth, blue are the predictions).
 </p>
 </div>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-worst-1">
+Past versions of worst-1.png
+</button>
+</p>
+<div id="fig-worst-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/franzbischoff/false.alarm/blob/4887954f15bc4d60f69ea0aa6b3a0f66128f0f09/docs/figure/report.Rmd/worst-1.png" target="_blank">4887954</a>
+</td>
+<td>
+Francisco Bischoff
+</td>
+<td>
+2023-08-13
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <p>Fig. <a href="#fig:best">4.9</a> shows the best performances of the best recordings. Notice that there are recordings with a significant duration and few regime changes, making it hard for a “trivial model” to predict randomly.</p>
 <div class="figure" style="text-align: center"><span style="display:block;" id="fig:best"></span>
 <img src="figure/report.Rmd/best-1.png" alt="Prediction of the best 10% of recordings (red is the truth, blue are the predictions)." width="100%" />
 <p class="caption">
 Figure 4.9: Prediction of the best 10% of recordings (red is the truth, blue are the predictions).
 </p>
+</div>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-best-1">
+Past versions of best-1.png
+</button>
+</p>
+<div id="fig-best-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/franzbischoff/false.alarm/blob/4887954f15bc4d60f69ea0aa6b3a0f66128f0f09/docs/figure/report.Rmd/best-1.png" target="_blank">4887954</a>
+</td>
+<td>
+Francisco Bischoff
+</td>
+<td>
+2023-08-13
+</td>
+</tr>
+</tbody>
+</table>
+</div>
 </div>
 </div>
 <div id="by-model" class="section level4" number="4.1.5.2">
@@ -3370,12 +3651,86 @@ Figure 4.9: Prediction of the best 10% of recordings (red is the truth, blue are
 Figure 4.10: Violin plot showing the distribution of the FLOSS score achieved by all tested models during the inner ressample. The left half shows the models with the worst performances (10% overall), whereas the right half shows the models with the best performances (10% overall). The models are sorted (left-right) by the mean score (top) and by the median (below). Ties are sorted by the SD and IQR, respectively. The bluish colors highlights models with an SD below 3 and IQR below 1.
 </p>
 </div>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-globalmodel-1">
+Past versions of globalmodel-1.svg
+</button>
+</p>
+<div id="fig-globalmodel-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/franzbischoff/false.alarm/blob/4887954f15bc4d60f69ea0aa6b3a0f66128f0f09/docs/figure/report.Rmd/globalmodel-1.svg" target="_blank">4887954</a>
+</td>
+<td>
+Francisco Bischoff
+</td>
+<td>
+2023-08-13
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <p>Fig. <a href="#fig:bestmodels">4.11</a> the performance of the six best models. They are ordered from left to right, from the worst record to the best record. The top model is the one with the lowest mean across the scores. The blue line indicates the mean score, and the red line the median score. The scores above 3 are squished in the plot and colored according to the scale in the legend.</p>
 <div class="figure" style="text-align: center"><span style="display:block;" id="fig:bestmodels"></span>
 <img src="figure/report.Rmd/bestmodels-1.svg" alt="Performances of the best 6 models across all inner resample of recordings. The recordings are ordered by score, from the worst to the best. Each plot shows one model, starting from the best one. The red line indicates the median score of the model. The blue line indicates the mean score of the model. The gray line limits the zero-score region. The plot is limited on the &quot;y&quot; axis, and the scores above this limit are shown in color." width="100%" />
 <p class="caption">
 Figure 4.11: Performances of the best 6 models across all inner resample of recordings. The recordings are ordered by score, from the worst to the best. Each plot shows one model, starting from the best one. The red line indicates the median score of the model. The blue line indicates the mean score of the model. The gray line limits the zero-score region. The plot is limited on the “y” axis, and the scores above this limit are shown in color.
 </p>
+</div>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-bestmodels-1">
+Past versions of bestmodels-1.svg
+</button>
+</p>
+<div id="fig-bestmodels-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/franzbischoff/false.alarm/blob/4887954f15bc4d60f69ea0aa6b3a0f66128f0f09/docs/figure/report.Rmd/bestmodels-1.svg" target="_blank">4887954</a>
+</td>
+<td>
+Francisco Bischoff
+</td>
+<td>
+2023-08-13
+</td>
+</tr>
+</tbody>
+</table>
+</div>
 </div>
 </div>
 <div id="the-holdout" class="section level4" number="4.1.5.3">
@@ -3555,6 +3910,43 @@ Figure 4.12: Classification pipeline.
 <p class="caption">
 Figure 4.13: Set of shapelets for the classification task. Above shows the model number, the coverage (the proportion of true alarms that were detected) and redundancy during the analysis_split (inner resample), The Precision, the Specificity, and the Km during the testing_split (outer resample).
 </p>
+</div>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-holdout-1">
+Past versions of holdout-1.svg
+</button>
+</p>
+<div id="fig-holdout-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/franzbischoff/false.alarm/blob/4887954f15bc4d60f69ea0aa6b3a0f66128f0f09/docs/figure/report.Rmd/holdout-1.svg" target="_blank">4887954</a>
+</td>
+<td>
+Francisco Bischoff
+</td>
+<td>
+2023-08-13
+</td>
+</tr>
+</tbody>
+</table>
+</div>
 </div>
 <p>After the Inner Resampling is done, the best sets of shapelets are selected and evaluated on the Test Set without retraining a new Contrast Profile. Thus assessing the generalization of the shapelet set on new data.</p>
 <p>The criteria to select the best sets of shapelets was described on section <a href="#classification-criteria">3.5.2</a> being the Precision the ranking criteria. It was also required that the set being present on more than one fold and in both repetitions. Also, the sets of shapelets that had a negative <span class="math inline">\(\kappa_m\)</span> were discarded.</p>
@@ -4298,6 +4690,17 @@ Date
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+<a href="https://github.com/franzbischoff/false.alarm/blob/4887954f15bc4d60f69ea0aa6b3a0f66128f0f09/docs/figure/report.Rmd/distributions-1.svg" target="_blank">4887954</a>
+</td>
+<td>
+Francisco Bischoff
+</td>
+<td>
+2023-08-13
+</td>
+</tr>
 <tr>
 <td>
 <a href="https://github.com/franzbischoff/false.alarm/blob/96dd52858fbc172c6f6a598fd6f797ec5749a844/docs/figure/report.Rmd/distributions-1.svg" target="_blank">96dd528</a>
