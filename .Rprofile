@@ -169,6 +169,4 @@ if (Sys.getenv("CI") == "") {
   )
 }
 
-
-
 # nolint end

@@ -186,7 +186,8 @@ if (file.exists(here::here("dev/backtofilters.rds"))) {
 } else {
   filenames <- find_all_files(classes = "asystole", limit_per_class = max(neg, pos))
 
-  # filenames <- find_all_files(here("inst/extdata/afib_regimes"), data_type = "regimes", classes = "paroxysmal_afib", limit_per_class = max(neg, pos))
+  # filenames <- find_all_files(here("inst", "extdata", "afib_regimes"), data_type = "regimes",
+  # classes = "paroxysmal_afib", limit_per_class = max(neg, pos))
 
   pos_files <- list()
   i <- 1
@@ -1283,7 +1284,6 @@ invisible(gc())
 
 
 ```{r posfiles2, warning=FALSE}
-
 values_pos_raw <- values_pos_raw_gain <- values_pos_norm_gain <- values_pos_norm <- list()
 
 for (a in algorithms) {

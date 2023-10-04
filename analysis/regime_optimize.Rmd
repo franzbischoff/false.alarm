@@ -30,6 +30,11 @@ if (knitr::is_latex_output()) {
   knitr::opts_chunk$set(dev = "svg")
 }
 
+# fastshap@0.0.7
+# vip@0.3.2
+# reticulate::py_install("shap")
+# reticulate::py_install("matplotlib")
+
 rlang::check_installed(c(
   "here", "glue", "visNetwork", "tibble", "kableExtra", "gridExtra",
   "ggplot2", "dplyr", "dbarts", "vip", "pdp", "patchwork", "fastshap",
@@ -101,7 +106,7 @@ lst_to_df <- function(lst, keep_attributes = TRUE) {
   if (keep_attributes) {
     nc <- nrow(new_df)
     attributes(new_df) <- attributes(lst[[1]])
-    attr(new_df, "row.names") <- seq.int(1, nc)
+    attr(new_df, "row.names") <- seq.int(1, nc) # nolint
   }
 
   new_df$tar_group <- NULL
@@ -162,15 +167,17 @@ train_models <- function(data, parallel = FALSE, v = 10, rep = 3, grid = 30) {
 }
 
 check_interactions <- function(model, train_data, features, parallel = FALSE) {
+  source(here::here("scripts", "helpers", "interactions.R"))
+
   if (parallel) {
     doParallel::registerDoParallel(cores = parallelly::availableCores())
   }
   # Quantify relative interaction strength
   set.seed(2022)
-  interact <- suppressWarnings(vip::vint(model$fit$fit,
+  interact <- suppressWarnings(vint(model$fit$fit,
     type = "regression", parallel = parallel,
     feature_names = features,
-    train = train_data
+    data = train_data
   ))
   if (parallel) {
     doParallel::stopImplicitCluster()
@@ -220,8 +227,8 @@ check_importance <- function(model, train_data, test_data, features, type = c("f
       parallel = parallel,
       ice = TRUE,
       train = train_data,
-      mapping = aes_string(fill = "Variable"),
-      aesthetics = list(color = "grey35", size = 0.8)
+      mapping = aes(fill = Variable),
+      aesthetics = list(color = "grey35", linewidth = 0.8)
     )
   } else if (type == "permute") {
     importances <- vip::vip(
@@ -232,7 +239,7 @@ check_importance <- function(model, train_data, test_data, features, type = c("f
       type = "ratio",
       pred_wrapper = function(object, newdata) {
         pred <- predict(object, newdata)
-        pred[1, ]
+        pred$.pred
       },
       nsim = nsim,
       metric = "rmse",
@@ -240,8 +247,8 @@ check_importance <- function(model, train_data, test_data, features, type = c("f
       keep = TRUE,
       geom = "boxplot",
       train = train_data,
-      mapping = aes_string(fill = "Variable"),
-      aesthetics = list(color = "grey35", size = 0.5)
+      mapping = aes(fill = Variable),
+      aesthetics = list(color = "grey35", linewidth = 0.5)
     )
     importances$layers[[1]]$data <- importances$layers[[1]]$data %>%
       dplyr::filter(!grepl("int_.*", Variable)) # nolint
@@ -258,8 +265,8 @@ check_importance <- function(model, train_data, test_data, features, type = c("f
       train = as.data.frame(train_data),
       newdata = as.data.frame(test_data),
       .parallel = parallel,
-      mapping = aes_string(fill = "Variable"),
-      aesthetics = list(color = "grey35", size = 0.8)
+      mapping = aes(fill = Variable),
+      aesthetics = list(color = "grey35", linewidth = 0.8)
     )
   }
 
@@ -273,7 +280,7 @@ check_importance <- function(model, train_data, test_data, features, type = c("f
 }
 
 tkplot <- function(object, interactive = FALSE, res = 50) {
-  ecg <- read_ecg_with_atr(here::here("inst/extdata/afib_regimes", object$record), resample_from = 200, resample_to = res)
+  ecg <- read_ecg_with_atr(here::here("inst", "extdata", "afib_regimes", object$record), resample_from = 200, resample_to = res)
   value <- ecg[[1]]$II
   prop <- 250 / res
   mask <- seq.int(50, 100)
@@ -334,15 +341,15 @@ tkplot <- function(object, interactive = FALSE, res = 50) {
         data = tibble::tibble(pre = preds),
         aes(
           x = pre, xend = pre,
-          y = min_data, yend = max_data * 1.1
-        ), size = 1, color = "#0108c77f"
+          y = min_data, yend = max_data + (max_data - min_data) * 0.1
+        ), linewidth = 1, color = "#0108c77f"
       ) +
       ggplot2::geom_segment(
         data = tibble::tibble(tru = truth),
         aes(
           x = tru, xend = tru,
-          y = min_data, yend = max_data
-        ), size = 1, color = "#ff00007f"
+          y = min_data, yend = max_data - (max_data - min_data) * 0.1
+        ), linewidth = 1, color = "#ff00007f"
       ) +
       ggplot2::theme_bw() +
       ggplot2::theme(
@@ -388,7 +395,7 @@ all_scores <- all_fitted %>%
   dplyr::rename(fold = id, size = .sizes, record = .id, model = .config, pred = .pred) %>%
   dplyr::distinct(rep, record, across(all_of(predictors_names)), .keep_all = TRUE) %>%
   dplyr::mutate(truth = clean_truth(truth, size), pred = clean_pred(pred)) %>%
-  dplyr::mutate(score = score_regimes(truth, pred, 0))
+  dplyr::mutate(score = score_regimes_limit(truth, pred, 0, 2500))
 
 holdout_scores <- outputs$final_evaluation %>%
   dplyr::select(
@@ -585,16 +592,30 @@ if (file.exists(here("output", "importances.rds"))) {
   shap_fastshap_all_test <- interactions$shap_fastshap_all_test
   interactions <- interactions$interactions
 } else {
+  cli::cli_alert_info("{round.POSIXt(Sys.time())} - Checking interactions...")
+
   interactions <- check_interactions(best_fit, train_data, predictors_names, parallel = TRUE)
+
+  cli::cli_alert_info("{round.POSIXt(Sys.time())} - Checking importances...")
+
   importance_firm <- check_importance(best_fit, testing_data, testing_data, predictors_names,
     type = "firm", parallel = TRUE
   )
+
+  cli::cli_alert_info("{round.POSIXt(Sys.time())} - Checking permutation importances...")
+
   importance_perm <- check_importance(best_fit, testing_data, testing_data, predictors_names,
     type = "permute", nsim = 100, parallel = TRUE
   )
+
+  cli::cli_alert_info("{round.POSIXt(Sys.time())} - Checking SHAP importances...")
+
   importance_shap <- check_importance(best_fit, train_data, testing_data[, predictors_names], predictors_names,
     type = "shap", nsim = 400, parallel = TRUE
   )
+
+  cli::cli_alert_info("{round.POSIXt(Sys.time())} - Checking SHAP explanations...")
+
   shap_fastshap_all_test <- shap_explain(best_fit, train_data[, predictors_names], testing_data[, predictors_names],
     predictors_names,
     nsim = 400, parallel = TRUE
@@ -606,6 +627,8 @@ if (file.exists(here("output", "importances.rds"))) {
     baseline = mean(preds_test$.pred), display = "html"
   )
   shap_html_test <- stringr::str_remove(shap_html_test, "<meta.+?>")
+
+  cli::cli_alert_info("{round.POSIXt(Sys.time())} - Saving results...")
 
   saveRDS(list(
     interactions = interactions,
@@ -651,20 +674,33 @@ if (file.exists(here("output", "importances2.rds"))) {
   shap_html_test2 <- interactions2$shap_html_test2
   interactions2 <- interactions2$interactions2
 } else {
+  cli::cli_alert_info("{round.POSIXt(Sys.time())} - Checking SHAP importances...")
   importance_shap2 <- check_importance(best_fit2, train_data2[, predictor_names_int], testing_data2[, predictor_names_int], predictor_names_int,
     type = "shap", nsim = 400, parallel = TRUE
   )
+  cli::cli_alert_info("{round.POSIXt(Sys.time())} - Checking interactions...")
   interactions2 <- check_interactions(best_fit2, train_data2, predictors_names, parallel = TRUE)
+  cli::cli_alert_info("{round.POSIXt(Sys.time())} - Checking importances2...")
   importance_firm2 <- check_importance(best_fit2, testing_data2, testing_data2, predictors_names, type = "firm", parallel = TRUE)
+  cli::cli_alert_info("{round.POSIXt(Sys.time())} - Checking permutation importances...")
   importance_perm2 <- check_importance(best_fit2, testing_data2, testing_data2, predictor_names_int,
     type = "permute",
     nsim = 100, parallel = TRUE
   )
-  shap_fastshap_all_test2 <- shap_explain(best_fit2, train_data2[, predictor_names_int], testing_data2[, predictor_names_int], predictors_names, nsim = 400, parallel = TRUE)
+  cli::cli_alert_info("{round.POSIXt(Sys.time())} - Checking SHAP explanations...")
+  shap_fastshap_all_test2 <- shap_explain(best_fit2, train_data2[, predictor_names_int], testing_data2[, predictor_names_int],
+    predictors_names,
+    nsim = 400, parallel = TRUE
+  )
 
   preds_test2 <- predict(best_fit2, testing_data2[, predictor_names_int])
-  shap_html_test2 <- fastshap::force_plot(object = shap_fastshap_all_test2, feature_values = testing_data2[, predictors_names], baseline = mean(preds_test2$.pred), display = "html")
+  shap_html_test2 <- fastshap::force_plot(
+    object = shap_fastshap_all_test2,
+    feature_values = testing_data2[, predictors_names], baseline = mean(preds_test2$.pred), display = "html"
+  )
   shap_html_test2 <- stringr::str_remove(shap_html_test2, "<meta.+?>")
+
+  cli::cli_alert_info("{round.POSIXt(Sys.time())} - Saving results...")
 
   saveRDS(list(
     interactions2 = interactions2,
@@ -687,14 +723,14 @@ interactions_plot <- ggplot2::ggplot(interactions, ggplot2::aes(
   x = reorder(Variables, Interaction),
   y = Interaction, fill = Variables
 )) +
-  ggplot2::geom_col(color = "grey35", size = 0.2) +
+  ggplot2::geom_col(color = "grey35", linewidth = 0.2) +
   ggplot2::coord_flip() +
   ggplot2::labs(
     title = "Normal fit",
     y = ggplot2::element_blank(),
     x = ggplot2::element_blank()
   ) +
-  ggplot2::ylim(0, 1.2) +
+  # ggplot2::ylim(0, 1.2) +
   ggplot2::theme_bw() +
   ggplot2::theme(legend.position = "none")
 
@@ -702,14 +738,14 @@ interactions2_plot <- ggplot2::ggplot(interactions2, ggplot2::aes(
   x = reorder(Variables, Interaction),
   y = Interaction, fill = Variables
 )) +
-  ggplot2::geom_col(color = "grey35", size = 0.2) +
+  ggplot2::geom_col(color = "grey35", linewidth = 0.2) +
   ggplot2::coord_flip() +
   ggplot2::labs(
     title = "Taking into account the interactions",
     y = "Interaction strength",
     x = ggplot2::element_blank()
   ) +
-  ggplot2::ylim(0, 1.2) +
+  # ggplot2::ylim(0, 1.2) +
   ggplot2::theme_bw() +
   ggplot2::theme(legend.position = "none")
 
@@ -791,7 +827,7 @@ importance_firm_plot <- importance_firm +
     subtitle = "Individual Conditional Expectation",
     y = ggplot2::element_blank()
   ) +
-  ggplot2::ylim(0, 4.5) +
+  # ggplot2::ylim(0, 4.5) +
   ggplot2::theme_bw() +
   ggplot2::theme(
     legend.position = "none",
@@ -803,7 +839,7 @@ importance_perm_plot <- importance_perm +
     title = "Permutation-based (100x)",
     y = ggplot2::element_blank()
   ) +
-  ggplot2::ylim(1, 7) +
+  ggplot2::ylim(0, 4.5) +
   ggplot2::theme_bw() +
   ggplot2::theme(
     legend.position = "none",
@@ -815,7 +851,7 @@ importance_shap_plot <- importance_shap +
     title = "SHAP (400 iterations)",
     y = ggplot2::element_blank()
   ) +
-  ggplot2::ylim(0, 2.5) +
+  # ggplot2::ylim(0, 2.5) +
   ggplot2::theme_bw() +
   ggplot2::theme(
     legend.position = "none",
@@ -827,7 +863,7 @@ importance_firm2_plot <- importance_firm2 +
   ggplot2::labs(
     y = "Importance"
   ) +
-  ggplot2::ylim(0, 4.5) +
+  # ggplot2::ylim(0, 4.5) +
   ggplot2::theme_bw() +
   ggplot2::theme(
     legend.position = "none",
@@ -838,7 +874,7 @@ importance_perm2_plot <- importance_perm2 +
   ggplot2::labs(
     y = "Importance"
   ) +
-  ggplot2::ylim(1, 7) +
+  ggplot2::ylim(0, 4.5) +
   ggplot2::theme_bw() +
   ggplot2::theme(
     legend.position = "none",
@@ -849,7 +885,7 @@ importance_shap2_plot <- importance_shap2 +
   ggplot2::labs(
     y = "Importance"
   ) +
-  ggplot2::ylim(0, 2.5) +
+  # ggplot2::ylim(0, 2.5) +
   ggplot2::theme_bw() +
   ggplot2::theme(
     legend.position = "none",
@@ -977,12 +1013,11 @@ Next, we will visualize some of these predictions to understand why some recordi
 scores_stats <- all_scores %>%
   dplyr::select(record, score) %>%
   dplyr::group_by(record) %>%
-  dplyr::summarize(
+  dplyr::reframe(
     score = score, min = min(score), q25 = quantile(score, 0.25),
     median = quantile(score, 0.5), q75 = quantile(score, 0.75),
     mean = mean(score), max = max(score)
-  ) %>%
-  dplyr::ungroup()
+  )
 
 records_factors <- forcats::as_factor(scores_stats$record)
 
@@ -1065,21 +1100,21 @@ A work-in-progress version for the finer grid-search over the `regime_landmark` 
 
 ### By model
 
-Fig. \@ref(fig:globalmodel) shows the distribution of the FLOSS score of the 10% worst (left side) and 10% best models across the recordings (right side). The bluish color highlights the models with SD below 3 and IQR below 1.
+Fig. \@ref(fig:globalmodel) shows the distribution of the FLOSS score of the 10% worst (left side) and 10% best models across the recordings (right side). The bluish color highlights the models with SD below 1 and IQR below 1.
 
 ```{r globalmodel, fig.height=5, fig.width=10, out.width="100%", cache=FALSE}
 #| fig.cap="Violin plot showing the distribution of the FLOSS score achieved by all tested models during the
 #|  inner ressample.  The left half shows the models with the worst performances (10% overall), whereas
 #|  the right half shows the models with the best performances (10% overall).
 #|  The models are sorted (left-right) by the mean score (top) and by the median (below). Ties are
-#|  sorted by the SD and IQR, respectively.  The bluish colors highlights models with an SD below 3
+#|  sorted by the SD and IQR, respectively.  The bluish colors highlights models with an SD below 1
 #|  and IQR below 1."
 
 scores_stats_model <- all_scores %>%
   dplyr::distinct(across(all_of(predictors_names)), record, score) %>%
   dplyr::group_by(across(all_of(predictors_names))) %>%
   dplyr::mutate(model = glue("{window_size}_{time_constraint}_{mp_threshold}_{regime_threshold}")) %>%
-  dplyr::summarize(
+  dplyr::reframe(
     record = record,
     model = model,
     score = score, min = min(score), q25 = quantile(score, 0.25),
@@ -1087,8 +1122,7 @@ scores_stats_model <- all_scores %>%
     iqr = q75 - q25,
     mean = mean(score), max = max(score),
     sd = sd(score)
-  ) %>%
-  dplyr::ungroup()
+  )
 
 
 scores_stats_model$id <- (sprintf("%03d", (as.numeric(as.factor(scores_stats_model$model)))))
@@ -1097,22 +1131,22 @@ scores_stats_model$record <- (sprintf("%02d", (as.numeric(factor(scores_stats_mo
 scores_stats_model <- scores_stats_model %>% dplyr::select(-model)
 
 model_mean <- scores_stats_model %>%
-  dplyr::mutate(low_sd = sd < 3) %>%
+  dplyr::mutate(low_sd = sd < 1) %>%
   dplyr::filter(mean > quantile(mean, 0.9) | mean < quantile(mean, 0.1)) %>%
   ggplot2::ggplot(aes(x = reorder(reorder(id, -sd), -mean), y = score, colour = low_sd)) +
   ggplot2::scale_colour_manual(values = c("FALSE" = "#ff0000c2", "TRUE" = "#0000ffb5")) +
   ggplot2::geom_violin() +
-  ggplot2::coord_cartesian(ylim = c(0, 3)) +
+  ggplot2::coord_cartesian(ylim = c(0, 1)) +
   ggplot2::theme_bw() +
   ggplot2::theme(axis.text.x = element_text(size = 8, angle = 90, vjust = 0.5, hjust = 1)) +
-  ggplot2::labs(subtitle = "Ordered by Mean and SD", colour = "SD < 3", x = ggplot2::element_blank(), y = "Score distribution")
+  ggplot2::labs(subtitle = "Ordered by Mean and SD", colour = "SD < 1", x = ggplot2::element_blank(), y = "Score distribution")
 
 model_median <- scores_stats_model %>%
   dplyr::mutate(low_iqr = q75 - q25 < 1) %>%
   dplyr::filter(median > quantile(median, 0.9) | median < quantile(median, 0.1)) %>%
   ggplot2::ggplot(aes(x = reorder(reorder(id, -iqr), -median), y = score, colour = low_iqr)) +
   ggplot2::geom_violin() +
-  ggplot2::coord_cartesian(ylim = c(0, 3)) +
+  ggplot2::coord_cartesian(ylim = c(0, 1)) +
   ggplot2::theme_bw() +
   ggplot2::theme(axis.text.x = element_text(size = 8, angle = 90, vjust = 0.5, hjust = 1)) +
   ggplot2::labs(subtitle = "Ordered by Median and IQR", colour = "IQR < 1", x = "Model ID", y = "Score distribution")
@@ -1150,7 +1184,7 @@ for (i in seq_len(length(best_models))) {
     ggplot2::geom_hline(aes(yintercept = mean), colour = "blue") +
     ggplot2::geom_hline(aes(yintercept = 0), colour = "gray50") +
     ggplot2::scale_y_continuous(
-      limits = c(0, 3),
+      limits = c(0, 1),
       oob = scales::oob_squish,
       expand = c(0.1, 0.05, 0.1, -0.1)
     ) +

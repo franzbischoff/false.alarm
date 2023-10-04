@@ -1,75 +1,43 @@
+# Directories
 library/
 local/
 cellar/
 lock/
 python/
 staging/
+
+# Files
 .Rhistory*
 .Renviron
 .Rapp.history
 Pprof.out
-Rprof.out
-
-# Session Data files
 .RData
 .RDataTmp
-
-# User-specific files
 .Ruserdata
-
-# Example code in package build process
 *-Ex.R
-
-# Output files from R CMD build
 /*.tar.gz
-
-# Output files from R CMD check
 /*.Rcheck/
-
-# RStudio files
 .Rproj.user/
-
-# produced vignettes
-vignettes/*.html
-vignettes/*.pdf
-
-# OAuth2 token, see https://github.com/hadley/httr/releases/tag/v0.3
+*.html
+*.pdf
 .httr-oauth
 .gitconfig
-
-# knitr and R markdown default cache directories
 *_cache/
 /cache/
-
-# Temporary files created by R markdown
 *.utf8.md
 *.knit.md
-
-# VSCode
-#.vscode/
 .vscode/*.log
 .devcontainer/exts
 .devcontainer/gpg-agent.conf
 .devcontainer/gpg.conf
-
-### R.Bookdown Stack ###
-# R package: bookdown caching files
 /*_files/
-
-# End of https://www.gitignore.io/api/r
-
-# Personalized
 tmp
 /tmp/
 /tmp_*/
 .future
 debugme.log
-
-#Local history plugin
 .history
 .radian_history
-
-# use github-actions to build the webpage
 /.travis.yml
 /R/RcppExports.R
 /code/
@@ -90,15 +58,11 @@ debugme.log
 LOCAL_APPDATA_FONTCONFIG_CACHE/
 README.html
 Rplots.pdf
-dev
 dev/
-dev
 packrat/lib*/
 packrat/src/
 src-*/
 workspace.RData
-
-# Workflowr
 .DS_Store
 analysis/figure
 analysis/*png
@@ -109,7 +73,6 @@ analysis/site_libs
 output/*.svg
 output/*.rds
 protocol/**/*.html
-# docs/**/*.svg
 protocol/**/*.svg
 protocol/**/*.rmarkdown
 mpxtest.RData
@@ -118,8 +81,6 @@ mpxtest.RData
 docs/thesis/*.log
 docs/thesis/__*.tex
 **/rsconnect/**
-
-# Temp
-# docs
-
 /.luarc.json
+.Rhistory
+

@@ -62,7 +62,7 @@ my_kable <- function(title, label, content) {
 }
 
 tkplot <- function(object, interactive = FALSE, res = 50) {
-  ecg <- read_ecg_with_atr(here::here("inst/extdata/afib_regimes", object$record), resample_from = 200, resample_to = res)
+  ecg <- read_ecg_with_atr(here::here("inst", "extdata", "afib_regimes", object$record), resample_from = 200, resample_to = res)
   value <- ecg[[1]]$II
   prop <- 250 / res
   mask <- seq.int(50, 100)

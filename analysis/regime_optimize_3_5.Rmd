@@ -172,7 +172,7 @@ check_interactions <- function(model, train_data, features, parallel = FALSE) {
   }
   # Quantify relative interaction strength
   set.seed(2022)
-  interact <- suppressWarnings(vip::vint(model$fit$fit,
+  interact <- suppressWarnings(vint(model$fit$fit,
     type = "regression", parallel = parallel,
     feature_names = features,
     train = train_data
@@ -225,7 +225,7 @@ check_importance <- function(model, train_data, test_data, features, type = c("f
       parallel = parallel,
       ice = TRUE,
       train = train_data,
-      mapping = aes_string(fill = "Variable"),
+      mapping = aes(fill = Variable),
       aesthetics = list(color = "grey35", size = 0.8)
     )
   } else if (type == "permute") {
@@ -245,7 +245,7 @@ check_importance <- function(model, train_data, test_data, features, type = c("f
       keep = TRUE,
       geom = "boxplot",
       train = train_data,
-      mapping = aes_string(fill = "Variable"),
+      mapping = aes(fill = Variable),
       aesthetics = list(color = "grey35", size = 0.5)
     )
     importances$layers[[1]]$data <- importances$layers[[1]]$data %>%
@@ -263,7 +263,7 @@ check_importance <- function(model, train_data, test_data, features, type = c("f
       train = as.data.frame(train_data),
       newdata = as.data.frame(test_data),
       .parallel = parallel,
-      mapping = aes_string(fill = "Variable"),
+      mapping = aes(fill = Variable),
       aesthetics = list(color = "grey35", size = 0.8)
     )
   }
@@ -278,7 +278,7 @@ check_importance <- function(model, train_data, test_data, features, type = c("f
 }
 
 tkplot <- function(object, interactive = FALSE, res = 50) {
-  ecg <- read_ecg_with_atr(here::here("inst/extdata/malignantventricular", object$record), resample_from = 250, resample_to = res)
+  ecg <- read_ecg_with_atr(here::here("inst", "extdata", "malignantventricular", object$record), resample_from = 250, resample_to = res)
   value <- ecg[[1]]$ECG1
   prop <- 250 / res
   mask <- seq.int(50, 100)

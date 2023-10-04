@@ -5,6 +5,8 @@
   "C_Cpp.default.defines": [
     "RC_INVOKED"
   ],
+  "markdown.validate.enabled": true,
+  "isGitignoreExtActive": true,
   "C_Cpp.intelliSenseEngineFallback": "Enabled",
   "editor.formatOnSave": true,
   "editor.tabCompletion": "on",

@@ -147,6 +147,180 @@ score_regimes <- function(gtruth, reported, data_size) {
   score
 }
 
+score_regimes_limit <- function(gtruth, reported, data_size, max_size = 2500) {
+  # Probably we are receiving a tibble
+  if (is.list(gtruth) && length(gtruth) > 1) {
+    if (length(data_size) == 1) {
+      data_size <- rep(0, length(gtruth))
+    } else {
+      checkmate::assert(length(gtruth) == length(data_size))
+    }
+
+    # Proceed if same size
+    if (length(gtruth) == length(reported)) {
+      scores <- purrr::pmap_dbl(list(gtruth, reported, data_size), score_regimes)
+    }
+
+    return(scores)
+  } else {
+    if (is.list(gtruth) && length(gtruth) == 1) {
+      gtruth <- gtruth[[1]]
+    }
+    if (is.list(reported) && length(reported) == 1) {
+      reported <- reported[[1]]
+    }
+  }
+
+  # browser()
+
+  gtruth <- sort(gtruth[gtruth > 0])
+  reported <- sort(reported[reported > 0])
+
+  truth_len <- length(gtruth)
+  reported_len <- length(reported)
+
+  min_points <- min(truth_len, reported_len)
+
+  minv <- rep(Inf, reported_len)
+
+  k <- 1
+  l <- NULL
+
+  for (j in seq.int(1, reported_len)) {
+    for (i in seq.int(k, truth_len)) {
+      if (abs(gtruth[i] - reported[j]) <= minv[j]) {
+        minv[j] <- abs(gtruth[i] - reported[j])
+        k <- i # pruning, truth and reported must be sorted
+      } else {
+        l <- c(l, k)
+        break # pruning, truth and reported must be sorted
+      }
+    }
+  }
+
+  # If there are truth not referenced by the reported, we reference them to the nearest reported
+  if (truth_len > reported_len) {
+    lefties <- seq_len(truth_len)
+    lefties <- lefties[!(lefties %in% l)]
+    minv_left <- rep(Inf, truth_len)
+    k <- 1
+    for (j in lefties) {
+      for (i in seq.int(k, reported_len)) {
+        if (abs(gtruth[j] - reported[i]) <= minv_left[j]) {
+          minv_left[j] <- abs(gtruth[j] - reported[i])
+          k <- i # pruning, truth and reported must be sorted
+        } else {
+          break # pruning, truth and reported must be sorted
+        }
+      }
+    }
+
+    minv_left <- minv_left[is.finite(minv_left)]
+    minv <- c(minv, minv_left)
+  }
+
+  if (anyNA(minv)) {
+    rlang::abort("Minv is NA")
+  }
+
+  score <- mean(minv) / max_size
+
+  return(score)
+}
+
+# Instead of just using the absolute difference, apply a weighting scheme based on how close a predChange is to a goldTruth.
+# Calculate the weighted difference: diff += weight * abs(predChange - goldTruth).
+# The weight could be a function of the distance, e.g., weight = exp(-distance).
+# Normalize by the sum of the weights.
+# Using this approach, the score varies too much with the number of predictions or gtruth.
+# using -expm1(-distance) gets almost the same as just getting the mean of the distances.
+# Also, there must be a limit to consider, so we can reasonably choose a number of seconds * 250hz
+# for example: 10 seconds * 250hz = 2500
+
+
+score_regimes_weighted <- function(gtruth, reported, data_size) {
+  # Probably we are receiving a tibble
+  if (is.list(gtruth) && length(gtruth) > 1) {
+    if (length(data_size) == 1) {
+      data_size <- rep(0, length(gtruth))
+    } else {
+      checkmate::assert(length(gtruth) == length(data_size))
+    }
+
+    # Proceed if same size
+    if (length(gtruth) == length(reported)) {
+      scores <- purrr::pmap_dbl(list(gtruth, reported, data_size), score_regimes_weighted)
+    }
+
+    return(scores)
+  } else {
+    if (is.list(gtruth) && length(gtruth) == 1) {
+      gtruth <- gtruth[[1]]
+    }
+    if (is.list(reported) && length(reported) == 1) {
+      reported <- reported[[1]]
+    }
+  }
+
+  gtruth <- sort(gtruth[gtruth > 0])
+  reported <- sort(reported[reported > 0])
+
+  truth_len <- length(gtruth)
+  reported_len <- length(reported)
+
+  min_points <- min(truth_len, reported_len)
+
+  minv <- rep(Inf, reported_len)
+
+  k <- 1
+  l <- NULL
+
+  for (j in seq.int(1, reported_len)) {
+    for (i in seq.int(k, truth_len)) {
+      if (abs(gtruth[i] - reported[j]) <= minv[j]) {
+        minv[j] <- abs(gtruth[i] - reported[j])
+        k <- i # pruning, truth and reported must be sorted
+      } else {
+        l <- c(l, k)
+        break # pruning, truth and reported must be sorted
+      }
+    }
+  }
+
+  # If there are truth not referenced by the reported, we reference them to the nearest reported
+  if (truth_len > reported_len) {
+    lefties <- seq_len(truth_len)
+    lefties <- lefties[!(lefties %in% l)]
+    minv_left <- rep(Inf, truth_len)
+    k <- 1
+    for (j in lefties) {
+      for (i in seq.int(k, reported_len)) {
+        if (abs(gtruth[j] - reported[i]) <= minv_left[j]) {
+          minv_left[j] <- abs(gtruth[j] - reported[i])
+          k <- i # pruning, truth and reported must be sorted
+        } else {
+          break # pruning, truth and reported must be sorted
+        }
+      }
+    }
+
+    minv_left <- minv_left[is.finite(minv_left)]
+    minv <- c(minv, minv_left)
+  }
+
+  minv <- minv / 250000 # 250hz * 1000
+
+  weights <- exp(-minv)
+  sum_weights <- sum(weights)
+
+  score <- sum(weights * minv) / (sum_weights)
+
+  if (anyNA(score)) {
+    rlang::abort("Score is NA")
+  }
+
+  score
+}
 
 # window parameter will be used to compute if the prediction is a true positive or not
 # the limit for event detection is 10 seconds, so a prediction flagged after 10 seconds
