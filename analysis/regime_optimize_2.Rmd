@@ -168,23 +168,24 @@ train_models <- function(data, parallel = FALSE, v = 10, rep = 3, grid = 30, tra
 
 check_interactions <- function(model, train_data, features, parallel = FALSE) {
   source(here::here("scripts", "helpers", "interactions.R"))
+  jobs <- 1
   if (parallel) {
-    doParallel::registerDoParallel(cores = parallelly::availableCores())
+    jobs <- parallelly::availableCores()
   }
   # Quantify relative interaction strength
-  set.seed(2022)
+  # set.seed(2022)
   # cut down the number of samples to speed up the process because of the number of features
-  if (nrow(train_data) > 2500 && length(features) > 3) {
-    train_data <- dplyr::slice_sample(train_data, n = 2000)
-  }
+  # if (nrow(train_data) > 2500 && length(features) > 3) {
+  #   train_data <- dplyr::slice_sample(train_data, n = 2000)
+  # }
   interact <- suppressWarnings(vint(model$fit$fit,
-    type = "regression", parallel = parallel,
+    type = "regression", n_jobs = jobs,
     feature_names = features,
     data = train_data
   ))
-  if (parallel) {
-    doParallel::stopImplicitCluster()
-  }
+  # if (parallel) {
+  #   doParallel::stopImplicitCluster()
+  # }
   return(interact)
 }
 
@@ -375,51 +376,55 @@ source(here::here("scripts", "common", "score_floss.R"))
 
 ```{r cached, echo=FALSE, cache=FALSE}
 network_1 <- readRDS(here::here("output", "regime_network.rds"))
-outputs_1 <- readRDS(here::here("output", "regime_outputs.rds"))
+# outputs_1 <- readRDS(here::here("output", "regime_outputs.rds"))
 net_1 <- network_1 %>%
   visNetwork::visPhysics(hierarchicalRepulsion = list(
     springLength = 1,
     avoidOverlap = 0.5,
     nodeDistance = 120
   ))
-fitted1_1 <- outputs_1$fitted_models[[1]]
-fitted2_1 <- outputs_1$fitted_models[[2]]
+# fitted1_1 <- outputs_1$fitted_models[[1]]
+# fitted2_1 <- outputs_1$fitted_models[[2]]
 
-predictors_names_1 <- c("time_constraint", "mp_threshold", "window_size", "regime_threshold")
+# predictors_names_1 <- c("time_constraint", "mp_threshold", "window_size", "regime_threshold")
 predictors_names <- c("time_constraint", "regime_threshold", "mp_threshold", "window_size", "regime_landmark")
 outcome_name <- "mean"
 
-all_fitted_1 <- lst_to_df(outputs_1$fitted_models)
-all_scores_1 <- all_fitted_1 %>%
-  # dplyr::slice_head(n = 10) %>%
-  tidyr::unnest(.predictions) %>%
-  ## mp_threshold of 1 and time_constraint of 750 are unrealistic, so we filter them out
-  dplyr::filter(dplyr::if_any(predictors_names_1[2]) <= 0.9, dplyr::if_any(predictors_names_1[1]) >= 800) %>%
-  dplyr::select(
-    id, rep, .sizes, .id,
-    all_of(predictors_names_1),
-    .config, .pred, truth
-  ) %>%
-  dplyr::rename(fold = id, size = .sizes, record = .id, model = .config, pred = .pred) %>%
-  dplyr::distinct(rep, record, across(all_of(predictors_names_1)), .keep_all = TRUE) %>%
-  dplyr::mutate(truth = clean_truth(truth, size), pred = clean_pred(pred)) %>%
-  dplyr::mutate(score = score_regimes_limit(truth, pred, 0, 2500))
+# all_fitted_1 <- lst_to_df(outputs_1$fitted_models)
+# all_scores_1 <- all_fitted_1 %>%
+#   # dplyr::slice_head(n = 10) %>%
+#   tidyr::unnest(.predictions) %>%
+#   ## mp_threshold of 1 and time_constraint of 750 are unrealistic, so we filter them out
+#   dplyr::filter(dplyr::if_any(predictors_names_1[2]) <= 0.9, dplyr::if_any(predictors_names_1[1]) >= 800) %>%
+#   dplyr::select(
+#     id, rep, .sizes, .id,
+#     all_of(predictors_names_1),
+#     .config, .pred, truth
+#   ) %>%
+#   dplyr::rename(fold = id, size = .sizes, record = .id, model = .config, pred = .pred) %>%
+#   dplyr::distinct(rep, record, across(all_of(predictors_names_1)), .keep_all = TRUE) %>%
+#   dplyr::mutate(truth = clean_truth(truth, size), pred = clean_pred(pred)) %>%
+#   dplyr::mutate(score = score_regimes_limit(truth, pred, 0, 2500))
 
-holdout_scores_1 <- outputs_1$final_evaluation %>%
-  dplyr::select(
-    all_of(predictors_names_1),
-    .estimate
-  ) %>%
-  dplyr::rename(score = .estimate) %>%
-  dplyr::arrange(score) %>%
-  dplyr::mutate(score = round(score, 3)) %>%
-  dplyr::mutate(`#` = dplyr::row_number(), .before = 1)
+# holdout_scores_1 <- outputs_1$final_evaluation %>%
+#   dplyr::select(
+#     all_of(predictors_names_1),
+#     .estimate
+#   ) %>%
+#   dplyr::rename(score = .estimate) %>%
+#   dplyr::arrange(score) %>%
+#   dplyr::mutate(score = round(score, 3)) %>%
+#   dplyr::mutate(`#` = dplyr::row_number(), .before = 1)
 
 # this is a join of the all_scores_1 with the results using the landmark
 all_scores <- readRDS(here::here("output", "regime_outputs_lmk.rds"))
+# If needs recompute the scores
+# all_scores <- all_scores %>%
+# dplyr::mutate(score = score_regimes_limit(truth, pred, 0, 2500))
 
+#####################
+# This is how we added the "truth" column to the all_scores_1
 # recs <- sort(unique(all_scores$record))
-
 # regimes <- list()
 # for (i in recs) {
 #   ecg <- read_ecg_with_atr(here::here("inst", "extdata", "afib_regimes", i),
@@ -427,24 +432,16 @@ all_scores <- readRDS(here::here("output", "regime_outputs_lmk.rds"))
 #     resample_to = 250,
 #     normalize = TRUE
 #   )
-
 #   size <- length(ecg[[1]]$time)
 #   reg <- attr(ecg[[1]], "regimes")
-
 #   regimes[[i]] <- clean_truth(reg, size)
 # }
-
 # truth <- list()
 # for (i in seq_along(all_scores$record)) {
 #   truth[[i]] <- regimes[[all_scores$record[i]]]
 # }
-
 # all_scores$truth <- truth
-
-# all_scores <- all_scores %>%
-#   dplyr::mutate(score = score_regimes_limit(truth, pred, 0, 2500))
-
-# saveRDS(all_scores_2, here::here("output/regime_outputs_lmk.rds"))
+# saveRDS(all_scores, here::here("output", "regime_outputs_lmk.rds"), compress = "xz")
 ```
 
 
@@ -553,6 +550,14 @@ train_data <- trained_model$training_data
 testing_data <- trained_model$testing_data
 set.seed(102)
 best_fit <- generics::fit(trained_model$model, train_data)
+all_data <- dplyr::bind_rows(train_data, testing_data)
+# pred1 <- predict(best_fit, all_data)$.pred
+# yardstick::huber_loss_vec(all_data$mean, pred1)
+# yardstick::huber_loss_vec(testing_data$mean, pred2)
+# yardstick::huber_loss_vec(train_data$mean, pred)
+# yardstick::rmse_vec(all_data$mean, pred3)
+# yardstick::rmse_vec(testing_data$mean, pred2)
+# yardstick::rmse_vec(train_data$mean, pred)
 
 # Caching ===========
 if (file.exists(here("output", "importances_lmk.rds"))) {
@@ -571,18 +576,26 @@ if (file.exists(here("output", "importances_lmk.rds"))) {
 } else {
   cli::cli_alert_info("{round.POSIXt(Sys.time())} - Checking interactions...")
 
-  interactions <- check_interactions(best_fit, train_data, predictors_names, parallel = TRUE)
+  # 5% has acceptable variability for not using the whole datasets
+  split <- all_data %>% filter(time_constraint %in% c(0, 800, 1500), mp_threshold %in% c(0.00, 0.4, 0.6, 0.8), window_size <= 150)
+  set.seed(19746)
+  sample_data <- dplyr::slice_sample(split, n = 3, by = 1:4)
+  interactions <- check_interactions(best_fit, sample_data, predictors_names, parallel = FALSE)
+
+  # saveRDS(interactions, file = here("tmp", "interactions_lmk_new.rds"))
 
   cli::cli_alert_info("{round.POSIXt(Sys.time())} - Checking importances...")
 
-  importance_firm <- check_importance(best_fit, testing_data, testing_data, predictors_names,
+  importance_firm <- check_importance(best_fit, sample_data, sample_data, predictors_names,
     type = "firm", parallel = TRUE
   )
   importance_firm <- ggplot2::ggplot_build(importance_firm)$plot$data
 
+  # saveRDS(importance_firm, file = here("tmp", "importance_firm_lmk_new.rds"))
+
   cli::cli_alert_info("{round.POSIXt(Sys.time())} - Checking permutation importances...")
 
-  importance_perm <- check_importance(best_fit, testing_data, testing_data, predictors_names,
+  importance_perm <- check_importance(best_fit, sample_data, sample_data, predictors_names,
     type = "permute", nsim = 100, parallel = TRUE
   )
   importance_perm <- ggplot2::ggplot_build(importance_perm)$plot$data
@@ -591,26 +604,29 @@ if (file.exists(here("output", "importances_lmk.rds"))) {
     dplyr::select(all_of(predictors_names)) %>%
     tidyr::pivot_longer(everything(), names_to = "Variable", values_to = "Importance")
 
+  # saveRDS(importance_perm, file = here("tmp", "importance_perm_lmk_new.rds"))
+
   cli::cli_alert_info("{round.POSIXt(Sys.time())} - Checking SHAP importances...")
 
-  set.seed(102)
-  trdata <- dplyr::slice_sample(train_data, n = 2000)
-  ttdata <- dplyr::slice_sample(testing_data[, predictors_names], n = 2000)
+  trdata <- sample_data
+  ttdata <- sample_data[, predictors_names]
   importance_shap <- check_importance(best_fit, trdata,
     ttdata, predictors_names,
     type = "shap", nsim = 100, parallel = TRUE
   )
   importance_shap <- ggplot2::ggplot_build(importance_shap)$plot$data
 
+  # saveRDS(importance_shap, file = here("tmp", "importance_shap_lmk_new.rds"))
+
   cli::cli_alert_info("{round.POSIXt(Sys.time())} - Checking SHAP explanations...")
 
-  set.seed(102)
-  trdata <- dplyr::slice_sample(train_data[, predictors_names], n = 2000)
-  ttdata <- dplyr::slice_sample(testing_data[, predictors_names], n = 2000)
-  shap_fastshap_all_test <- shap_explain(best_fit, trdata,
+  shap_fastshap_all_test <- shap_explain(best_fit, ttdata,
     ttdata, predictors_names,
     nsim = 100, parallel = TRUE
   )
+
+  # saveRDS(shap_fastshap_all_test, file = here("tmp", "shap_fastshap_all_test_lmk_new.rds"))
+
   preds_test <- predict(best_fit, ttdata)
   shap_html_test <- fastshap::force_plot(
     object = shap_fastshap_all_test, feature_values = ttdata,
@@ -661,8 +677,9 @@ if (file.exists(here("output", "importances_lmk.rds"))) {
 train_data2 <- train_data %>%
   dplyr::mutate(
     int_rt_rl = regime_threshold * regime_landmark,
-    int_mp_w = mp_threshold * window_size,
     int_mp_rl = mp_threshold * regime_landmark,
+    int_w_rl = window_size * regime_landmark,
+    # int_mp_w = mp_threshold * window_size,
     # int_mp_rt = mp_threshold * regime_threshold
     # int_mp_tc = mp_threshold * time_constraint
     .before = mean
@@ -671,14 +688,15 @@ train_data2 <- train_data %>%
 testing_data2 <- testing_data %>%
   dplyr::mutate(
     int_rt_rl = regime_threshold * regime_landmark,
-    int_mp_w = mp_threshold * window_size,
     int_mp_rl = mp_threshold * regime_landmark,
+    int_w_rl = window_size * regime_landmark,
+    # int_mp_w = mp_threshold * window_size,
     # int_mp_rt = mp_threshold * regime_threshold
     # int_mp_tc = mp_threshold * time_constraint
     .before = mean
   )
 
-predictors_names_int <- c(predictors_names, "int_rt_rl", "int_mp_w", "int_mp_rl")
+predictors_names_int <- c(predictors_names, "int_rt_rl", "int_mp_rl", "int_w_rl")
 
 trained_model2 <- NULL
 # Caching ==========
@@ -693,6 +711,14 @@ train_data2 <- trained_model2$training_data
 testing_data2 <- trained_model2$testing_data
 set.seed(102)
 best_fit2 <- generics::fit(trained_model2$model, train_data2)
+all_data2 <- dplyr::bind_rows(train_data2, testing_data2)
+# pred2 <- predict(best_fit2, all_data2)$.pred
+# yardstick::huber_loss_vec(all_data2$mean, pred2)
+# yardstick::huber_loss_vec(testing_data$mean, pred2)
+# yardstick::huber_loss_vec(train_data$mean, pred)
+# yardstick::rmse_vec(all_data$mean, pred3)
+# yardstick::rmse_vec(testing_data$mean, pred2)
+# yardstick::rmse_vec(train_data$mean, pred)
 
 # Caching ===========
 if (file.exists(here("output", "importances2_lmk.rds"))) {
@@ -705,16 +731,23 @@ if (file.exists(here("output", "importances2_lmk.rds"))) {
   interactions2 <- interactions2$interactions2
 } else {
   cli::cli_alert_info("{round.POSIXt(Sys.time())} - Checking interactions...")
-  interactions2 <- check_interactions(best_fit2, train_data2, predictors_names, parallel = TRUE)
-  # saveRDS(interactions2, file = here("tmp", "interactions2xxx.rds"))
+
+  # 5% has acceptable variability for not using the whole datasets
+  split2 <- all_data2 %>% filter(time_constraint %in% c(0, 800, 1500), mp_threshold %in% c(0.00, 0.4, 0.6, 0.8), window_size <= 150)
+  set.seed(19746)
+  sample_data2 <- dplyr::slice_sample(split2, n = 3, by = 1:4)
+  interactions2 <- check_interactions(best_fit2, sample_data2, predictors_names, parallel = FALSE)
+
+  saveRDS(interactions2, file = here("tmp", "interactions2_lmk_new.rds"))
   # interactions2 <- readRDS(here("tmp", "interactions2xxx.rds"))
   cli::cli_alert_info("{round.POSIXt(Sys.time())} - Checking importances...")
-  importance_firm2 <- check_importance(best_fit2, testing_data2, testing_data2, predictors_names, type = "firm", parallel = TRUE)
+  importance_firm2 <- check_importance(best_fit2, sample_data2, sample_data2, predictors_names, type = "firm", parallel = TRUE)
   importance_firm2 <- ggplot2::ggplot_build(importance_firm2)$plot$data
-  # saveRDS(importance_firm2, file = here("tmp", "importancefirm2xxx.rds"))
+
+  saveRDS(importance_firm2, file = here("tmp", "importance_firm2_lmk_new.rds"))
   # importance_firm2 <- readRDS(here("tmp", "importancefirm2xxx.rds"))
   cli::cli_alert_info("{round.POSIXt(Sys.time())} - Checking permutation importances...")
-  importance_perm2 <- check_importance(best_fit2, testing_data2, testing_data2, predictors_names_int,
+  importance_perm2 <- check_importance(best_fit2, sample_data2, sample_data2, predictors_names_int,
     type = "permute",
     nsim = 100, parallel = TRUE
   )
@@ -723,37 +756,41 @@ if (file.exists(here("output", "importances2_lmk.rds"))) {
   importance_perm2 <- tibble::as_tibble(t(importance_perm2)) %>%
     dplyr::select(all_of(predictors_names)) %>%
     tidyr::pivot_longer(everything(), names_to = "Variable", values_to = "Importance")
-  # saveRDS(importance_perm2, file = here("tmp", "importanceperm2xxx.rds"))
+
+  saveRDS(importance_perm2, file = here("tmp", "importance_perm2_lmk_new.rds"))
+
   # importance_perm2 <- readRDS(here("tmp", "importanceperm2xxx.rds"))
   cli::cli_alert_info("{round.POSIXt(Sys.time())} - Checking SHAP importances...")
-  set.seed(102)
-  trdata2 <- dplyr::slice_sample(train_data2[, predictors_names_int], n = 2000)
-  ttdata2 <- dplyr::slice_sample(testing_data2[, predictors_names_int], n = 2000)
+
+  trdata2 <- sample_data2[, predictors_names_int]
+  ttdata2 <- sample_data2[, predictors_names_int]
   importance_shap2 <- check_importance(best_fit2, trdata2,
     ttdata2, predictors_names_int,
     type = "shap", nsim = 100, parallel = TRUE
   )
   importance_shap2 <- ggplot2::ggplot_build(importance_shap2)$plot$data
-  # importance_shap2 <- readRDS(here("tmp", "importanceshap2xxx.rds"))
+
+  saveRDS(importance_shap2, file = here("tmp", "importance_shap2_lmk_new.rds"))
+
   cli::cli_alert_info("{round.POSIXt(Sys.time())} - Checking SHAP explanations...")
 
-  set.seed(102)
-  trdata2 <- dplyr::slice_sample(train_data2[, predictors_names_int], n = 2000)
-  ttdata2 <- dplyr::slice_sample(testing_data2[, predictors_names_int], n = 2000)
-  shap_fastshap_all_test2 <- shap_explain(best_fit2, trdata2,
+  shap_fastshap_all_test2 <- shap_explain(best_fit2, ttdata2,
     ttdata2, predictors_names,
     nsim = 100, parallel = TRUE
   )
-  # saveRDS(shap_fastshap_all_test2, file = here("tmp", "shapfastshapalltest2xxx.rds"))
+
+  saveRDS(shap_fastshap_all_test2, file = here("tmp", "shap_fastshap_all_test2_lmk_new.rds"))
   # shap_fastshap_all_test2 <- readRDS(here("tmp", "shapfastshapalltest2xxx.rds"))
 
   preds_test2 <- predict(best_fit2, ttdata2)
   shap_html_test2 <- fastshap::force_plot(
     object = shap_fastshap_all_test2,
-    feature_values = ttdata2[, predictors_names], baseline = mean(preds_test2$.pred), display = "html"
+    feature_values = ttdata2[, predictors_names],
+    baseline = mean(preds_test2$.pred), display = "html"
   )
   shap_html_test2 <- stringr::str_remove(shap_html_test2, "<meta.+?>")
   # saveRDS(shap_html_test2, file = here("tmp", "shaphtmltest2xxx.rds"))
+  saveRDS(shap_html_test2, file = here("tmp", "shap_html_test2_lmk_new.rds"))
   # shap_html_test2 <- readRDS(here("tmp", "shaphtmltest2xxx.rds"))
   cli::cli_alert_info("{round.POSIXt(Sys.time())} - Saving results...")
   saveRDS(list(
@@ -786,7 +823,7 @@ interactions_plot <- ggplot2::ggplot(interactions, ggplot2::aes(
     y = ggplot2::element_blank(),
     x = ggplot2::element_blank()
   ) +
-  # ggplot2::ylim(0, 1.65) +
+  ggplot2::ylim(0, 1.65) +
   ggplot2::theme_bw() +
   ggplot2::theme(legend.position = "none")
 
@@ -801,7 +838,7 @@ interactions2_plot <- ggplot2::ggplot(interactions2, ggplot2::aes(
     y = "Interaction strength",
     x = ggplot2::element_blank()
   ) +
-  # ggplot2::ylim(0, 1.65) +
+  ggplot2::ylim(0, 1.65) +
   ggplot2::theme_bw() +
   ggplot2::theme(legend.position = "none")
 
@@ -855,7 +892,7 @@ importance_firm_plot <- ggplot2::ggplot(importance_firm, aes(
     x = "",
     y = ggplot2::element_blank()
   ) +
-  # ggplot2::ylim(0, 3.5) +
+  ggplot2::ylim(0, 2.2) +
   ggplot2::theme_bw() +
   ggplot2::theme(
     legend.position = "none",
@@ -873,7 +910,7 @@ importance_perm_plot <- ggplot2::ggplot(importance_perm, aes(
     x = "",
     y = ggplot2::element_blank()
   ) +
-  ggplot2::ylim(2, 15) +
+  ggplot2::ylim(3, 20) +
   ggplot2::theme_bw() +
   ggplot2::theme(
     legend.position = "none",
@@ -887,11 +924,11 @@ importance_shap_plot <- ggplot2::ggplot(importance_shap, aes(
   ggplot2::geom_col(colour = "grey35", linewidth = 0.8, show.legend = FALSE) +
   ggplot2::coord_flip() +
   ggplot2::labs(
-    title = "SHAP (400 iterations)",
+    title = "SHAP (100 iterations)",
     x = "",
     y = ggplot2::element_blank()
   ) +
-  # ggplot2::ylim(0, 1.6) +
+  ggplot2::ylim(0, 1.5) +
   ggplot2::theme_bw() +
   ggplot2::theme(
     legend.position = "none",
@@ -908,7 +945,7 @@ importance_firm2_plot <- ggplot2::ggplot(importance_firm2, aes(
     x = "",
     y = "Importance"
   ) +
-  # ggplot2::ylim(0, 3.5) +
+  ggplot2::ylim(0, 2.2) +
   ggplot2::theme_bw() +
   ggplot2::theme(
     legend.position = "none",
@@ -925,7 +962,7 @@ importance_perm2_plot <- ggplot2::ggplot(importance_perm2, aes(
     x = "",
     y = "Importance"
   ) +
-  ggplot2::ylim(2, 15) +
+  ggplot2::ylim(3, 20) +
   ggplot2::theme_bw() +
   ggplot2::theme(
     legend.position = "none",
@@ -942,7 +979,7 @@ importance_shap2_plot <- ggplot2::ggplot(importance_shap2, aes(
     x = "",
     y = "Importance"
   ) +
-  # ggplot2::ylim(0, 1.6) +
+  ggplot2::ylim(0, 1.5) +
   ggplot2::theme_bw() +
   ggplot2::theme(
     legend.position = "none",
@@ -1035,10 +1072,15 @@ CCDD
 #   theme = ggplot2::theme_bw()
 # )
 
-set.seed(102)
-ttdata <- dplyr::slice_sample(testing_data, n = 2000)
+# 5% has acceptable variability for not using the whole datasets
+all_data <- dplyr::bind_rows(train_data, testing_data)
+split <- all_data %>% dplyr::filter(time_constraint %in% c(0, 800, 1500), mp_threshold %in% c(0.00, 0.4, 0.6, 0.8), window_size <= 150)
+set.seed(19746)
+sample_data <- dplyr::slice_sample(split, n = 3, by = 1:4)
+ttdata <- sample_data[, predictors_names]
+base_data <- sample_data[, outcome_name]$mean
 
-d1 <- shapviz::shapviz(shap_fastshap_all_test, X = ttdata[, predictors_names], baseline = mean(ttdata[, outcome_name]$mean))
+d1 <- shapviz::shapviz(shap_fastshap_all_test, X = ttdata[, predictors_names], baseline = mean(base_data))
 a1 <- shapviz::sv_dependence(d1, "window_size", color_var = "auto") +
   ggplot2::geom_smooth(method = loess, colour = "#0000ff44", alpha = 0.2) +
   ggplot2::labs(y = ggplot2::element_blank()) +
@@ -1052,7 +1094,7 @@ a3 <- shapviz::sv_dependence(d1, "regime_landmark", color_var = "auto") +
   ggplot2::labs(y = ggplot2::element_blank()) +
   ggplot2::theme_bw()
 a4 <- shapviz::sv_dependence(d1, "mp_threshold", color_var = "auto") +
-  ggplot2::geom_smooth(method = loess, colour = "#0000ff44", alpha = 0.2) +
+  # ggplot2::geom_smooth(method = loess, colour = "#0000ff44", alpha = 0.2) +
   ggplot2::labs(y = ggplot2::element_blank()) +
   ggplot2::theme_bw()
 a5 <- shapviz::sv_dependence(d1, "time_constraint", color_var = "auto") +
@@ -1060,8 +1102,8 @@ a5 <- shapviz::sv_dependence(d1, "time_constraint", color_var = "auto") +
   ggplot2::labs(y = ggplot2::element_blank()) +
   ggplot2::theme_bw()
 
-all2 <- ((a1 + a5 + a3 + a4 + plot_layout(guides = "collect")) + (a2 + plot_layout(guides = "collect")))
-all2 + plot_layout(design = layout) + plot_annotation(title = "Shapley value vs. variable values", theme = ggplot2::theme_bw())
+all1 <- ((a1 + a5 + a3 + a4 + plot_layout(guides = "collect")) + (a2 + plot_layout(guides = "collect")))
+all1 + plot_layout(design = layout) + plot_annotation(title = "Shapley value vs. variable values", theme = ggplot2::theme_bw())
 ```
 
 ```{r importanceshap2, message=FALSE, warning=FALSE, fig.height = 6, fig.width= 10, out.width="100%"}
@@ -1103,10 +1145,10 @@ CCDD
 #   theme = ggplot2::theme_bw()
 # )
 
-set.seed(102)
-ttdata2 <- dplyr::slice_sample(testing_data2, n = 2000)
+ttdata2 <- sample_data[, predictors_names]
+base_data <- sample_data[, outcome_name]$mean
 
-d1 <- shapviz::shapviz(shap_fastshap_all_test2, X = ttdata2[, predictors_names], baseline = mean(ttdata2[, outcome_name]$mean))
+d1 <- shapviz::shapviz(shap_fastshap_all_test2, X = ttdata2[, predictors_names], baseline = mean(base_data))
 a1 <- shapviz::sv_dependence(d1, "window_size", color_var = "auto") +
   ggplot2::geom_smooth(method = loess, colour = "#0000ff44", alpha = 0.2) +
   ggplot2::labs(y = ggplot2::element_blank()) +
@@ -1120,7 +1162,7 @@ a3 <- shapviz::sv_dependence(d1, "regime_landmark", color_var = "auto") +
   ggplot2::labs(y = ggplot2::element_blank()) +
   ggplot2::theme_bw()
 a4 <- shapviz::sv_dependence(d1, "mp_threshold", color_var = "auto") +
-  ggplot2::geom_smooth(method = loess, colour = "#0000ff44", alpha = 0.2) +
+  # ggplot2::geom_smooth(method = loess, colour = "#0000ff44", alpha = 0.2) +
   ggplot2::labs(y = ggplot2::element_blank()) +
   ggplot2::theme_bw()
 a5 <- shapviz::sv_dependence(d1, "time_constraint", color_var = "auto") +
@@ -1299,30 +1341,30 @@ low <- head(sort(unique(scores_stats_model$mean)), 20)
 high <- tail(sort(unique(scores_stats_model$mean)), 20)
 
 model_mean <- scores_stats_model %>%
-  dplyr::mutate(low_sd = sd < 1) %>%
+  dplyr::mutate(low_sd = sd < 3) %>%
   dplyr::filter(mean > high | mean < low) %>%
   ggplot2::ggplot(aes(x = reorder(reorder(id, -sd), -mean), y = score, colour = low_sd)) +
   ggplot2::scale_colour_manual(values = c("FALSE" = "#ff0000c2", "TRUE" = "#0000ffb5")) +
   ggplot2::geom_violin() +
-  ggplot2::coord_cartesian(ylim = c(0, 2)) +
+  ggplot2::coord_cartesian(ylim = c(0, 3)) +
   ggplot2::theme_bw() +
   ggplot2::theme(axis.text.x = element_text(size = 8, angle = 90, vjust = 0.5, hjust = 1)) +
-  ggplot2::labs(subtitle = "Ordered by Mean and SD", colour = "SD < 1", x = ggplot2::element_blank(), y = "Score distribution")
+  ggplot2::labs(subtitle = "Ordered by Mean and SD", colour = "SD < 3", x = ggplot2::element_blank(), y = "Score distribution")
 
-# low <- head(sort(unique(scores_stats_model$median)), 20)
-# high <- tail(sort(unique(scores_stats_model$median)), 20)
+low <- head(sort(unique(scores_stats_model$median)), 20)
+high <- tail(sort(unique(scores_stats_model$median)), 20)
 
-# model_median <- scores_stats_model %>%
-#   dplyr::mutate(low_iqr = q75 - q25 < 1) %>%
-#   dplyr::filter(median > high | median < low) %>%
-#   ggplot2::ggplot(aes(x = reorder(reorder(id, -iqr), -median), y = score, colour = low_iqr)) +
-#   ggplot2::geom_violin() +
-#   ggplot2::coord_cartesian(ylim = c(0, 1)) +
-#   ggplot2::theme_bw() +
-#   ggplot2::theme(axis.text.x = element_text(size = 8, angle = 90, vjust = 0.5, hjust = 1)) +
-#   ggplot2::labs(subtitle = "Ordered by Median and IQR", colour = "IQR < 1", x = "Model ID", y = "Score distribution")
-# / model_median
-(model_mean) + plot_layout(guides = "auto") +
+model_median <- scores_stats_model %>%
+  dplyr::mutate(low_iqr = q75 - q25 < 1) %>%
+  dplyr::filter(median > high | median < low) %>%
+  ggplot2::ggplot(aes(x = reorder(reorder(id, -iqr), -median), y = score, colour = low_iqr)) +
+  ggplot2::geom_violin() +
+  ggplot2::coord_cartesian(ylim = c(0, 3)) +
+  ggplot2::theme_bw() +
+  ggplot2::theme(axis.text.x = element_text(size = 8, angle = 90, vjust = 0.5, hjust = 1)) +
+  ggplot2::labs(subtitle = "Ordered by Median and IQR", colour = "IQR < 1", x = "Model ID", y = "Score distribution")
+#
+(model_mean / model_median) + plot_layout(guides = "auto") +
   plot_annotation(
     title = "Scores grouped by model",
     theme = ggplot2::theme_bw()
