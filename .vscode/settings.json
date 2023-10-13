@@ -5,8 +5,6 @@
   "C_Cpp.default.defines": [
     "RC_INVOKED"
   ],
-  "markdown.validate.enabled": true,
-  "isGitignoreExtActive": true,
   "C_Cpp.intelliSenseEngineFallback": "Enabled",
   "editor.formatOnSave": true,
   "editor.tabCompletion": "on",
@@ -144,6 +142,15 @@
     ".github/workflows/ci.yaml",
     ".github/workflows/binder.yaml"
   ],
+  "grammarly.config.documentDialect": "american",
+  "grammarly.config.documentDomain": "academic",
+  "grammarly.config.suggestions.ConjunctionAtStartOfSentence": true,
+  "grammarly.config.suggestions.InformalPronounsAcademic": false,
+  "grammarly.config.suggestions.OxfordComma": false,
+  "grammarly.config.suggestions.PassiveVoice": false,
+  "grammarly.config.suggestions.PunctuationWithQuotation": false,
+  "grammarly.startTextCheckInPausedState": true,
+  "isGitignoreExtActive": true,
   "json.schemas": [
     {
       "fileMatch": [
@@ -161,6 +168,7 @@
   "latex-workshop.view.pdf.viewer": "tab",
   "markdown.extension.italic.indicator": "_",
   "markdown.extension.preview.autoShowPreviewToSide": true,
+  "markdown.validate.enabled": true,
   "markdownlint.config": {
     "default": true,
     "MD003": {
@@ -193,10 +201,24 @@
     "!**/.git"
   ],
   "markdownlint.run": "onSave",
+  "PandocCiter.DefaultBib": "papers/references.bib",
   "r.alwaysUseActiveTerminal": true,
+  "r.bracketedPaste": true,
+  "r.debugger.timeouts.startup": 15000,
+  "r.helpPanel.cacheIndexFiles": "Workspace",
   "r.lsp.diagnostics": true,
+  "r.plot.useHttpgd": false,
+  "r.rmarkdown.codeLensCommands": [
+    "r.runCurrentChunk",
+    "r.runAboveChunks",
+    "r.runAllChunks",
+    "r.runCurrentAndBelowChunks"
+  ],
   "r.rmarkdown.knit.focusOutputChannel": false,
   "r.session.levelOfObjectDetail": "Detailed",
+  "r.session.objectLengthLimit": 100,
+  "r.useRenvLibPath": true,
+  "r.workspaceViewer.showObjectSize": true,
   "reflowMarkdown.preferredLineLength": 120,
   "search.exclude": {
     "**/_*/": true
@@ -208,7 +230,26 @@
   "sortJSON.orderUnderride": [
     "problemMatcher"
   ],
+  "svg.preview.background": "editor",
   "taskExplorer.enableAnsiconForAnt": false,
+  "taskExplorer.enabledTasks": {
+    "ant": false,
+    "bash": false,
+    "batch": false,
+    "composer": false,
+    "gradle": false,
+    "grunt": false,
+    "gulp": false,
+    "make": false,
+    "maven": false,
+    "npm": false,
+    "perl": false,
+    "pipenv": false,
+    "powershell": false,
+    "python": false,
+    "ruby": false,
+    "tsc": false
+  },
   "taskExplorer.enableSideBar": true,
   "taskExplorer.exclude": [
     "**/dist/**",
@@ -264,33 +305,5 @@
   "todo-tree.tree.showCountsInTree": true,
   "yaml.schemas": {
     "https://json.schemastore.org/github-workflow.json": "file:///workspace/false.alarm/.github/workflows/ci.yaml"
-  },
-  "PandocCiter.DefaultBib": "papers/references.bib",
-  "grammarly.config.documentDialect": "american",
-  "grammarly.config.documentDomain": "academic",
-  "grammarly.config.suggestions.ConjunctionAtStartOfSentence": true,
-  "grammarly.config.suggestions.InformalPronounsAcademic": false,
-  "grammarly.config.suggestions.OxfordComma": false,
-  "grammarly.config.suggestions.PassiveVoice": false,
-  "grammarly.startTextCheckInPausedState": true,
-  "grammarly.config.suggestions.PunctuationWithQuotation": false,
-  "svg.preview.background": "editor",
-  "taskExplorer.enabledTasks": {
-    "ant": false,
-    "bash": false,
-    "batch": false,
-    "composer": false,
-    "gradle": false,
-    "grunt": false,
-    "gulp": false,
-    "make": false,
-    "maven": false,
-    "npm": false,
-    "perl": false,
-    "pipenv": false,
-    "powershell": false,
-    "python": false,
-    "ruby": false,
-    "tsc": false
   }
 }

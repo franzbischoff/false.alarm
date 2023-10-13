@@ -2454,6 +2454,18 @@
       ],
       "Hash": "aa4a7717b5760a769c7fd3d34614f2a2"
     },
+    "packrat": {
+      "Package": "packrat",
+      "Version": "0.9.2",
+      "Source": "Repository",
+      "Repository": "CRAN",
+      "Requirements": [
+        "R",
+        "tools",
+        "utils"
+      ],
+      "Hash": "55ddd2d4a1959535f18393478b0c14a6"
+    },
     "padr": {
       "Package": "padr",
       "Version": "0.6.2",
@@ -2809,6 +2821,16 @@
       ],
       "Hash": "0d8a15c9d000970ada1ab21405387dee"
     },
+    "prompt": {
+      "Package": "prompt",
+      "Version": "1.0.2",
+      "Source": "Repository",
+      "Repository": "CRAN",
+      "Requirements": [
+        "cli"
+      ],
+      "Hash": "076fd4918669daae112d5c6e4919bb9b"
+    },
     "proxy": {
       "Package": "proxy",
       "Version": "0.4-27",
@@ -3023,13 +3045,13 @@
     },
     "renv": {
       "Package": "renv",
-      "Version": "0.17.3",
+      "Version": "1.0.3",
       "Source": "Repository",
       "Repository": "CRAN",
       "Requirements": [
         "utils"
       ],
-      "Hash": "4543b8cd233ae25c6aba8548be9e747e"
+      "Hash": "41b847654f567341725473431dd0d5ab"
     },
     "reticulate": {
       "Package": "reticulate",
@@ -3199,6 +3221,28 @@
         "vctrs"
       ],
       "Hash": "cb0c54ebc268ec382be8e4d4a8c34557"
+    },
+    "rsconnect": {
+      "Package": "rsconnect",
+      "Version": "1.1.1",
+      "Source": "Repository",
+      "Repository": "CRAN",
+      "Requirements": [
+        "R",
+        "cli",
+        "curl",
+        "digest",
+        "jsonlite",
+        "lifecycle",
+        "openssl",
+        "packrat",
+        "renv",
+        "rlang",
+        "rstudioapi",
+        "tools",
+        "yaml"
+      ],
+      "Hash": "672fc66985074d17c86b6335105143b8"
     },
     "rstudioapi": {
       "Package": "rstudioapi",
