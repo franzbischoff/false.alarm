@@ -12,3 +12,6 @@
 *.dvi
 *.txt
 _draft
+ThirdReport.qmd
+Scrapbook.qmd
+**/*_files/**

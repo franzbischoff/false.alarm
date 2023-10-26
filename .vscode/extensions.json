@@ -1,15 +1,8 @@
 {
   "recommendations": [
-    "gruntfuggly.todo-tree",
-    "spmeesseman.vscode-taskexplorer",
-    "meakbiyik.vscode-r-test-adapter",
-    "hbenl.vscode-test-explorer",
     "editorconfig.editorconfig",
     "donjayamanne.git-extension-pack",
     "codezombiech.gitignore",
-    "james-yu.latex-workshop",
-    "mutantdino.resourcemonitor",
-    "natqe.reload",
     "richie5um2.vscode-sort-json",
     "gerane.theme-twilight",
     "visualstudioexptteam.vscodeintellicode",
@@ -17,16 +10,11 @@
     "christian-kohler.path-intellisense",
     "pkief.material-icon-theme",
     "gimly81.matlab",
-    "affenwiesel.matlab-formatter",
     "apommel.matlab-interactive-terminal",
     "bramvanbilsen.matlab-code-run",
     "esbenp.prettier-vscode",
     "alefragnani.project-manager",
     "foxundermoon.shell-format",
-    "usernamehw.errorlens",
-    "rdebugger.r-debugger",
-    "hediet.vscode-drawio",
-    "reditorsupport.r",
     "notzaki.pandocciter"
   ]
 }

@@ -1,0 +1,943 @@
+---
+title: "Research Progress Report"
+author: "Francisco Bischoff"
+link-citations: true
+bibliography: [../references.bib]
+csl: ../../thesis/csl/ama.csl
+linestretch: 1.5
+indent: true
+execute:
+  cache: true
+format:
+  html:
+    theme: darkly
+    date: "2023-08-21"
+    fontsize: "1.0em"
+    # toc: true
+    # toc-depth: 3
+    # toc-location: right
+    citeproc: true
+    # standalone: true
+    # embed-resources: true
+    # number-sections: true
+    # number-depth: 3
+    # keep-tex: true
+    highlight-style: oblivion
+editor:
+  render-on-save: true
+---
+
+# Focus
+
+Article 1 focuses on the detection part of the algorithmic sequence, while Article 2 explores the classification aspect. The methods section in Article 2 should refer back to Article 1 to explain how the entire algorithmic sequence is constructed. Both articles can share similar application scenarios, building a coherent narrative that connects them.
+
+By structuring your research into these two distinct articles, you can comprehensively present your innovative work while clearly defining the respective contributions of detection and classification within your overall algorithmic pipeline.
+
+Focus on (choices):
+
+-   **development and implementation** of the algorithmic pipeline for detecting life-threatening heart rates using the FLUSS/FLOSS algorithm of the Matrix Profile. You can **discuss the challenges and considerations in designing the pipeline to be suitable for low computational power equipment** and low memory devices such as wearable devices. Additionally, you can present the **results of the detection performance** and **discuss the potential applications and implications** of this pipeline in real-time ECG monitoring.
+
+-   the detection of ECG signal change using FLOSS. The article can discuss the challenges in detecting life-threatening heart rate patterns in real-time ECG monitoring and how the Matrix Profile algorithm, specifically FLUSS/FLOSS, can effectively address these challenges. Additionally, the article can highlight the advantages of using low computational power equipment and low memory, such as wearable devices, for point-of-care ECG monitoring.
+
+-   presents a novel algorithmic pipeline for the real-time detection of life-threatening heart rates in Point-of-Care (POC) ECG using the FLUSS/FLOSS algorithm. The pipeline is designed to be used in low computational power equipment and low memory, such as wearable devices. The article discusses the implementation details and performance evaluation of the pipeline, demonstrating its potential for accurate and timely detection of life-threatening cardiac rhythms in POC ECG monitoring.
+
+This article can focus on the foundational aspect of your research, outlining the mechanisms for detecting changes in ECG signals, especially in low computational power environments such as wearables.
+
+This article could discuss the need for arrhythmia detection in wearable devices, as well as the challenges of developing an algorithm that is both accurate and efficient enough to run on a wearable device. The article could then describe your algorithmic pipeline in detail, including the two main steps of regime change detection and classification. The article would conclude by discussing the results of your evaluation, as well as the potential impact of your work on the development of wearable arrhythmia detection devices.
+
+[@kowsar2022] points to the next DOI and says that the MP is too dependent on the window size "In a closely related approach to motif discovery methods, Gharghabi et al. \[31\] designed FLOSS to identify boundaries of repetitive regions in a time series. FLOSS is based on the matrix profile (MP), an algorithm that can detect motifs from time series in an unsupervised manner using a sliding window of size M \[32\]. Mirmomeni et al. \[3\] showed that both MP and FLOSS are highly sensitive to their key input parameter M for finding consecutive repeating regions in a time series. They demonstrated that for each different IoR, we must use a different M , which prevents FLOSS from being a one-pass and real-time algorithm. Mirmomeni et al. \[3\] designed a method for finding the best M to identify a repeating region from a time series. However, we still need to apply their method using multiple passes in order to find all IoR in a time series. Therefore, their method is not suited to real-time online applications where the computation must occur on a resource-constrained device, such as a wearable. See Section IX-A for a detailed explanation of this method."
+
+[@mirmomeni2018] Says that MP is too dependent on the window size \[but, window_size too high, despite. And they dont use a buffer size, they use the whole data!\]
+
+[@lin2016] Proposes evaluation technique F1
+
+# Abstract
+
+asdasd
+
+This article will focus on the use of the Matrix Profile framework, particularly the FLUSS/FLOSS algorithm, in detecting changes in real-time one-lead ECG signals. This serves as the foundation for the subsequent classification of the signal changes in terms of severity. f \# Introduction
+
+# Introduction
+
+> Background of electrocardiogram analysis.
+
+Currently, Point-of-Care (POC) ECG monitoring works either as plot devices or alarms for abnormal cardiac rhythms using predefined normal trigger ranges. Modern devices also incorporate algorithms to analyze arrhythmias improving their specificity. On the other hand, full 12-derivation ECG machines are complex, are not suited to use as simple monitors, and are used with strict techniques for formal diagnostics of hearth electric conduction pathologies. The automatic diagnostics are derived from a complete analysis of the 12-dimension data after it is fully and well collected. Both systems do not handle disconnected leads and patient's motions, being strictly necessary to have a good and stable signal to allow proper diagnosis. These interferences with the data collection frequently originate false alarms increasing both patient and staff's stress; depending on how it is measured, the rate of false alarms (overall) in ICU is estimated at 65 to 95% [@donchin2002].
+
+In February of 2015, the CinC/Physionet Challenge 2015 was about "Reducing False Arrhythmia Alarms in the ICU [@Clifford2015]. The introduction article stated that it had been reported that up to 86% resulting of the alarms are false, and this can lead to decreased staff attention and an increase in patients' delirium [@Lawless1994; @Chambrin2001; @Parthasarathy2004]. This subject draws attention to the importance of correctly identify abnormal hearth electric patterns in order to avoid the overload of clinical staff. Meanwhile, this opens the opportunity of thinking outside the ICU setting, where we still monitoring patients (and ourselves) using devices with low processing power, as for example ward monitors, home devices and wearable devices.
+
+> Importance of real-time detection for severe heart rates.
+
+Real-time monitoring of life-threatening ECG patterns in high-risk patients (for example those with cardiac implantable electronic devices (CIEDs), such as pacemakers, implantable cardioverter defibrillators (ICDs), biventricular pacemakers, and cardiac loop recorders), is a crucial aspect of remote patient monitoring. These devices provide invaluable data regarding a patient's heart activity but often rely on the accuracy of retrospective evaluation of recorded data for any abnormalities. Early detection enables timely intervention, potentially preventing serious complications and reducing morbidity and mortality rates. Furthermore, real-time data transmission from wearable devices to healthcare providers can facilitate rapid decision-making and treatment initiation, particularly when considering the rapid progression and potential life-threatening nature of certain cardiac events. Furthermore, remote patient monitoring systems also provide a valuable source of longitudinal data that can be used for predictive modeling and risk stratification, helping healthcare providers tailor personalized treatment plans for individual patients. Real-time monitoring may not only enhance patient safety but also improve the efficiency and effectiveness of care delivery, making it an essential component of modern cardiovascular management strategies.
+
+> Existing challenges in using low computational power equipment.
+
+The challenge starts on developing an algorithm that not only has acceptable accuracy, but is also efficient to run on constricted environment as a wearable device. Some effort has been taking on analyzing wearable sensors data. Kowsar, *et al.*[@kowsar2022] made use of accelerometers to detect and track repeating patterns in context of exercising. Bhanushali, *et al.*[@bhanushali2020] uses a custom circuit to detect stress/no stress detection using a chest ECG device, Grammatikakis, *et al.*[@grammatikakis2021] uses a Body Gateway sensor to transmit the ECG data for remote processing and analysis and Cheng, *et al.* [@cheng2020] which propose a multi-label classification of arrithmias from pre-compressed ECG signal using Neural Networks.
+
+> Significance of real-time detection in wearable devices Brief introduction to the Matrix Profile framework and the importance of the FLUSS/FLOSS algorithm
+
+Here we propose a method? to monitor a patient ECG in real-time, online (not in batches), using a constricted environment (low-cpu and low memory). This first work will focus on detecting *semantic* changes on patient's ECG. By *semantic* we refer to changes in shape of the streaming data, which can change without obvious effect on statistical properties [@gharghabi2018].
+
+The rest of this paper is organized as follows. In Section II, we provide a summary of the related work along with the necessary definitions. In Section III-A, we introduce a batch algorithm for semantic segmentation before generalizing it to the streaming case in Section III-C. Section 0 illuminates a detailed quantitative and qualitative evaluation of our ideas. Finally, in Section IV, we offer conclusions and directions for future work.
+
+# Definitions and notations
+
+Here, we introduce the necessary definitions and terminology, beginning with the definition of a time series: Definition 1: A time series T = t1, t2, t3, ... ,tn is a continuous ordered sequence of real values in equally spaced time intervals of length n. Our segmentation algorithm will exploit the similarity of local patterns within T, called subsequences: Definition 2: A subsequence Ti,L of a T is a continuous subset of the values from T of length L starting from position i. Ti,L = ti, ti+1,..., ti+L-1, where 1 ≤ i ≤ n-L+1. The time series T is ultimately recorded, because it is measuring some aspect of a system S (perhaps indirectly measuring the phenomenon in some instances). Definition 3: A system S is a physical or logical process containing two or more discrete states separated by one or more boundaries b.
+
+## Definitions
+
+**Definition 1**: A time series $T = t_1, t_2, t_3, … ,t_n$ is a continuous ordered sequence of real values in equally spaced time intervals of length $n$.
+
+**Definition 2**: A subsequence $T_{i,L}$ of a $T$ is a continuous subset of the values from $T$ of length $L$ starting from position $i$. $T_{i,L} = t_i, t_{i+1},…, t_{i+L-1}$, where $1 ≤ i ≤ n-L+1$. The time series $T$ is ultimately recorded, because it is measuring some aspect of a system $S$ (perhaps indirectly measuring the phenomenon in some instances).
+
+**Definition 3**: A system $S$ is a physical or logical process containing two or more discrete states separated by one or more boundaries $b$.
+
+## Matrix Profile Background
+
+Matrix Profile (MP) [@Yeh2017a], is a state-of-the-art [@DePaepe2020; @Feremans2020] time series analysis technique that once computed, allows us to derive frameworks to all sorts of tasks, as motif discovery, anomaly detection, regime change detection and others [@Yeh2017a].
+
+Before MP, time series analysis relied on what is called *distance matrix* (DM), a matrix that stores all the distances between two time series (or itself, in case of a Self-Join). This was very power consuming, and several methods of pruning and dimensionality reduction were researched [@Lin2007].
+
+For brevity, let's just understand that the MP and the companion Profile Index (PI) are two vectors that hold one floating point value and one integer value, respectively, regarding the original time series: (1) the similarity distance between that point on time (let's call these points "indexes") and its first nearest-neighbor (1-NN), (2) The index where this this 1-NN is located. The original paper has more detailed information [@Yeh2017a]. It is computed using a sliding window but instead of creating a whole DM, only the minimum values and the index of these minimum are stored (in the MP and PI respectively). We can have an idea of the relationship of both on @fig-thematrix.
+
+-   Matrix Profile XXIII: Contrast Profile: A Novel Time Series Primitive that Allows Real World Classification
+
+The article could then describe your algorithmic pipeline in detail, including the two main steps of regime change detection and classification. The article would conclude by discussing the results of your evaluation, as well as the potential impact of your work on the development of wearable arrhythmia detection devices.
+
+Therefore, the development and utilization of advanced algorithms and sophisticated algorithms in wearable devices is crucial for effective remote patient monitoring and management of cardiovascular diseases.
+
+The rest of this paper is organized as follows. In Section II, we provide a summary of the background and related work along with the necessary definitions. In Section III-A, we introduce a batch algorithm for semantic segmentation before generalizing it to the streaming case in Section III-C. Section 0 illuminates a detailed quantitative and qualitative evaluation of our ideas. Finally, in Section IV, we offer conclusions and directions for future work.
+
+The rest of this paper is organized as follows. In Section II, we present the necessary definitions and notations. Section III sees a discussion of related work. In Section IV, we present several examples of data mining tasks that can exploit the Contrast Profile before experimentally demonstrating them in Section V. Section VI offers conclusions.
+
+# Background and related work
+
+-   Definitions from FLOSS paper
+
+# Methods and Materials
+
+### Detecting regime changes
+
+The regime change approach will be using the *Arc Counts* concept, used on the FLUSS (Fast Low-cost Unipotent Semantic Segmentation) algorithm, as explained by Gharghabi, *et al.*,[@gharghabi2018].
+
+The FLUSS (and FLOSS, the on-line version) algorithm is built on top of the Matrix Profile (MP)[@Yeh2017a], described on @sec-matrixprofile. Recalling that the MP and the companion Profile Index (PI) are two vectors holding information about the 1-NN. One can imagine several "arcs" starting from one "index" to another. This algorithm is based on the assumption that between two regimes, the most similar shape (its nearest neighbor) is located on "the same side", so the number of "arcs" decreases when there is a change on the regime, and increases again. As show on @fig-arcsoriginal. This drop on the *Arc Counts* is a signal that a change on the shape of the signal has happened.
+
+The choice of the FLOSS algorithm (on-line version of FLUSS) is founded on the following arguments:
+
+-   **Domain Agnosticism:** the algorithm makes no assumptions about the data as opposed to most available algorithms to date.
+-   **Streaming:** the algorithm can provide real-time information.
+-   **Real-World Data Suitability:** the objective is not to *explain* all the data. Therefore, areas marked as "don't know" areas are acceptable.
+-   **FLOSS is not:** a change point detection algorithm [@aminikhanghahi2016]. The interest here is changes in the shapes of a sequence of measurements.
+
+Other algorithms we can cite are based on Hidden Markov Models (HMM) that require at least two parameters to be set by domain experts: cardinality and dimensionality reduction. The most attractive alternative could be the Autoplait [@Matsubara2014], which is also domain agnostic and parameter-free. It segments the time series using Minimum Description Length (MDL) and recursively tests if the region is best modeled by one or two HMM. However, Autoplait is designed for batch operation, not streaming, and also requires discrete data. FLOSS was demonstrated to be superior in several datasets in its original paper. In addition, FLOSS is robust to several changes in data like downsampling, bit depth reduction, baseline wandering, noise, smoothing, and even deleting 3% of the data and filling with simple interpolation. Finally, the most important, the algorithm is light and suitable for low-power devices.
+
+In the MP domain, it is worth also mentioning other possible algorithm: the Time Series Snippets [@Imani2018], based on MPdist [@gharghabi2018b]. The latter measures the distance between two sequences considering how many similar sub-sequences they share, no matter the order of matching. It proved to be a useful measure (not a metric) for meaningfully clustering similar sequences. Time Series Snippets exploits MPdist properties to summarize a dataset extracting the $k$ sequences that represent most of the data. The final result seems to be an alternative for detecting regime changes, but it is not. The purpose of this algorithm is to find which pattern(s) explains most of the dataset. Also, it is not suitable for streaming data. Lastly, MPdist is quite expensive compared to the trivial Euclidean distance.
+
+The regime change detection will be evaluated following the criterias explained on @sec-evaluation.
+
+Description of the Matrix Profile and the FLUSS/FLOSS algorithm, explaining how they detect changes in the ECG signal.
+
+Description of the FLUSS/FLOSS algorithm from the Matrix Profile. Designing the ECG signal change detection system. Implementation and constraints on wearable devices.
+
+Data collection from Electrocardiograms Overview of the Matrix Profile framework In-depth look into the FLUSS/FLOSS algorithm
+
+# Implementation
+
+Details on the development of the algorithmic pipeline, with emphasis on its adaptability for wearable devices.
+
+# Experiments, Results, Validation
+
+## Regime change detection
+
+As we have seen previously, the FLOSS algorithm is built on top of the Matrix Profile (MP). Thus, we have proposed several parameters that may or not impact the FLOSS prediction performance.
+
+The variables for building the MP are:
+
+-   **`mp_threshold`**: the minimum similarity value to be considered for 1-NN.
+-   **`time_constraint`**: the maximum distance to look for the nearest neighbor.
+-   **`window_size`**: the default parameter always used to build an MP.
+
+Later, the FLOSS algorithm also has a parameter that needs tuning to optimize the prediction:
+
+-   **`regime_threshold`**: the threshold below which a regime change is considered.
+-   **`regime_landmark`**: the point in time where the regime threshold is applied.
+
+Using the `tidymodels` framework, we performed a basic grid search on all these parameters.
+
+@fig-thepipeline shows the workflow using Nested resamplig as described on @sec-methodology. @fig-flossregime shows an example of the regime change detection pipeline. The graph on top shows the ECG streaming; the blue line marks the ten seconds before the original alarm was fired; the red line marks the time constraint used on the example; the dark red line marks the limit for taking a decision in this case of Asystole; The blue horizontal line represents the size of the sliding window. The graph on the middle shows the Arc counts as seen by the algorithm (with the corrected distribution); the red line marks the current minimum value and its index; the blue horizontal line shows the minimum value seen until then. The graph on the bottom shows the computed Arc counts (raw) and the red line is the theoretical distribution used for correction.
+
+```{r floss_cached, eval=FALSE, echo=FALSE, cache=FALSE}
+network <- readRDS(here::here("output", "regime_network.rds"))
+net <- network |>
+  visNetwork::visPhysics(hierarchicalRepulsion = list(
+    springLength = 1,
+    avoidOverlap = 0.5,
+    nodeDistance = 120
+  ))
+```
+
+```{r fig-thepipeline, eval=FALSE, out.width="90%", fig.cap="FLOSS pipeline."}
+if (knitr::is_latex_output()) {
+  my_graphics("the-network")
+} else {
+  visNetwork::visInteraction(net, hover = TRUE, multiselect = TRUE, tooltipDelay = 100)
+}
+```
+
+```{r fig-flossregime, eval=FALSE, echo=FALSE, fig.height = 8, fig.width = 5, out.width="70%"}
+#| fig-cap: "Regime change detection example.
+#|  The graph on top shows the ECG streaming; the blue line marks the ten seconds
+#|  before the original alarm was fired; the red line marks the time constraint of 1250;
+#|  the dark red line marks the limit for taking a decision in this case of Asystole
+#|  the blue horizontal line represents the size of the sliding window.
+#|  The graph on the middle shows the Arc counts as seen by the algorithm (with the corrected
+#|  distribution); the red line marks the current minimum value and its index; the blue
+#|  horizontal line shows the minimum value seen until then.
+#|  The graph on the bottom shows the computed Arc counts (raw) and the red line is the
+#|  theoretical distribution used for correction."
+my_graphics("floss_regime")
+```
+
+The dataset used for working with the Regime Change algorithm was the "Paroxysmal Atrial Fibrillation Events Detection from Dynamic ECG Recordings: The 4th China Physiological Signal Challenge 2021" hosted by Zenodo [@bischoff2021afib] under the same license as Physionet.
+
+The selected records were those that contain paroxysmal atrial fibrillation events, a total of 229 records. The records were split in a proportion of 3/4 for the training set (inner resampling) and 1/4 for the test set (outer resampling). The inner resampling was performed using a 5-fold cross-validation, which accounts for 137 records for fitting the models and 92 records for assessing them in the inner resampling.
+
+The following parameters were used:
+
+-   The MP parameters were explored using the following values:
+    -   **`mp_threshold`**: 0.0 to 0.9, by 0.1 steps;
+    -   **`time_constraint`**: 0, 800 and 1500;
+    -   **`window_size`**: 25 to 350, by 25 steps;
+-   The FLOSS parameters were explored using the following values:
+    -   **`regime_threshold`**: 0.05 to 0.90, by 0.05 steps;
+    -   **`regime_landmark`**: 1 to 10, by 0.5 steps.
+
+### Parameters analysis
+
+The above process was an example of parameter tuning seeking the best model for a given set of parameters. It used a nested cross-validation procedure that aims to find the best combination of parameters and avoid overfitting.
+
+While this process is powerful and robust, it does not show us the importance of each parameter. At least one parameter has been introduced by reasoning about the problem (`mp_threshold`), but how important it (and other parameters) is for predicting regime changes?
+
+For example, the process above took 4 days, 20 hours, and 15 minutes to complete the grid search using an Intel(R) Xeon(R) Silver 4210R \@ 2.40 GHz server. Notice that about 133 different combinations of parameters were tested on computing the MP (not FLOSS, the `regime_threshold`), 5 folds, 2 times each. That sums up about 35.2 x 10^9^ all-pairs Euclidean distances computed on less than 5 days (on CPU, not GPU). Not bad.
+
+Another side note on the above process, it is not a "release" environment, so we must consider lots of overhead in computation and memory usage that must be taken into account during these five days of grid search. Thus, much time can be saved if we know what parameters are essential for the problem.
+
+In order to check the effect of the parameters on the model, we need to compute the *importance* of each parameter.
+
+Wei *et al.* published a comprehensive review on variable importance analysis [@Wei2015].
+
+Our case is not a typical case of variable importance analysis, where a set of *features* are tested against an *outcome*. Instead, we have to proxy our analysis by using as *outcome* the FLOSS performance score and as *features* (or *predictors*) the tuning parameters that lead to that score.
+
+That is accomplished by fitting a model using the tuning parameters to predict the FLOSS score and then applying the techniques to compute the importance of each parameter.
+
+For this matter, a Bayesian Additive Regression Trees (BART) model was chosen after an experimental trial with a set of regression models (including glmnet, gbm, mlp) and for its inherent characteristics, which allows being used for model-free variable selection [@Chipman2010]. The best BART model was selected using 10-fold cross-validation repeated 3 times, having great predictive power with an RMSE around 0.2 and an R^2^ around 0.99. With this fitted model, we could evaluate each parameter's importance.
+
+### Interactions
+
+Before starting the parameter importance analysis, we need to consider the parameter interactions since this is usually the weak spot of the analysis techniques.
+
+The first BART model was fitted using the following parameters:
+
+$$
+\begin{aligned}
+E( score ) &= \alpha + time\_constraint\\
+ &\quad + mp\_threshold + window\_size\\
+ &\quad + regime\_threshold + regime\_landmark
+\end{aligned}
+$$ {#eq-first}
+
+After checking the interactions, this is the refitted model:
+
+$$
+\begin{aligned}
+E( score ) &= \alpha + time\_constraint\\
+&\quad + mp\_threshold + window\_size\\
+&\quad + regime\_threshold + regime\_landmark\\
+&\quad + \left(regime\_threshold \times regime\_landmark\right)\\
+&\quad + \left(mp\_threshold \times regime\_landmark\right)\\
+&\quad + \left(mp\_threshold \times window\_size\right)
+\end{aligned}
+$$ {#eq-refitted}
+
+@fig-interaction shows the variable interaction strength between pairs of variables. That allows us to verify if there are any significant interactions between the variables. Using the information from the first model fit, equation @eq-first, we see that `regime_threshold` interacts strongly with `regime_landmark`. This interaction was already expected, and we see that even after refitting the model, equation @eq-refitted, this interaction is still strong.
+
+This is not a problem *per se* but a signal we must be aware of when exploring the parameters.
+
+```{r fig-interaction, eval=FALSE, fig.height = 7, fig.width= 8, out.width="100%"}
+#| fig-cap: "Variable interactions strength using feature importance ranking measure (FIRM) approach [@Greenwell2018].
+#|  A) Shows strong interaction between `regime_threshold` and `regime_landmark`, `mp_threshold` and `window_size`,
+#|     `mp_threshold` and `regime_landmark`.
+#|  B) Refitting the model with these interactions taken into account, the strength is substantially reduced, except
+#|     for the first, showing that indeed there is a strong correlation between those variables."
+
+interactions <- readRDS(here("output", "importances_lmk.rds"))
+importance_firm <- interactions$importance_firm
+importance_perm <- interactions$importance_perm
+importance_shap <- interactions$importance_shap
+shap_html_test <- interactions$shap_html_test
+shap_fastshap_all_test <- interactions$shap_fastshap_all_test
+interactions <- interactions$interactions
+
+interactions2 <- readRDS(here("output", "importances2_lmk.rds"))
+importance_firm2 <- interactions2$importance_firm2
+importance_perm2 <- interactions2$importance_perm2
+importance_shap2 <- interactions2$importance_shap2
+shap_fastshap_all_test2 <- interactions2$shap_fastshap_all_test2
+shap_html_test2 <- interactions2$shap_html_test2
+interactions2 <- interactions2$interactions2
+
+interactions_plot <- ggplot2::ggplot(interactions, ggplot2::aes(
+  x = reorder(Variables, Interaction),
+  y = Interaction, fill = Variables
+)) +
+  ggplot2::geom_col(color = "grey35", linewidth = 0.2) +
+  ggplot2::coord_flip() +
+  ggplot2::labs(
+    title = "Normal fit",
+    y = ggplot2::element_blank(),
+    x = ggplot2::element_blank()
+  ) +
+  ggplot2::ylim(0, 1.65) +
+  ggplot2::theme_bw() +
+  ggplot2::theme(legend.position = "none")
+
+interactions2_plot <- ggplot2::ggplot(interactions2, ggplot2::aes(
+  x = reorder(Variables, Interaction),
+  y = Interaction, fill = Variables
+)) +
+  ggplot2::geom_col(color = "grey35", linewidth = 0.2) +
+  ggplot2::coord_flip() +
+  ggplot2::labs(
+    title = "Taking into account the interactions",
+    y = "Interaction strength",
+    x = ggplot2::element_blank()
+  ) +
+  ggplot2::ylim(0, 1.65) +
+  ggplot2::theme_bw() +
+  ggplot2::theme(legend.position = "none")
+
+inter <- interactions_plot / interactions2_plot
+inter + plot_annotation(
+  title = "Variable Interaction Strength",
+  tag_levels = c("A", "1"),
+  theme = ggplot2::theme_bw()
+)
+```
+
+### Importance
+
+After evaluating the interactions, we then can perform the analysis of the variable importance. The goal is to understand how the FLOSS score behaves when we change the parameters.
+
+Here is a brief overview of the different techniques:
+
+#### Feature Importance Ranking Measure (FIRM)
+
+The FIRM is a variance-based method. This implementation uses the ICE curves to quantify each feature effect which is more robust than partial dependance plots (PDP) [@Greenwell2020].
+
+It is also helpful to inspect the ICE curves to uncover some heterogeneous relationships with the outcome [@Molnar2022].
+
+**Advantages:**
+
+-   Has a causal interpretation (for the model, not for the real world)
+-   ICE curves can uncover heterogeneous relationships
+
+**Disadvantages:**
+
+-   The method does not take into account interactions.
+
+#### Permutation
+
+The Permutation method was introduced by Breiman in 2001 [@Breiman2001] for Random Forest, and the implementation used here is a model-agnostic version introduced by Fisher *et al.* in 2019 [@Fisher2018]. A feature is "unimportant" if shuffling its values leaves the model error unchanged, assuming that the model has ignored the feature for the prediction.
+
+**Advantages:**
+
+-   Easy interpretation: the importance is the increase in model error when the feature's information is destroyed.
+-   No interactions: the interaction effects are also destroyed by permuting the feature values.
+
+**Disadvantages:**
+
+-   It is linked to the model error: not a disadvantage *per se*, but may lead to misinterpretation if the goal is to understand how the output varies, regardless of the model's performance. For example, if we want to measure the robustness of the model when someone tampers the features, we want to know the *model variance* explained by the features. Model variance (explained by the features) and feature importance correlate strongly when the model generalizes well (it is not overfitting).
+-   Correlations: If features are correlated, the permutation feature importance can be biased by unrealistic data instances. Thus we need to be careful if there are strong correlations between features.
+
+#### SHAP
+
+The SHAP feature importance [@Lundberg2017] is an alternative to permutation feature importance. The difference between both is that Permutation feature importance is based on the decrease in model performance, while SHAP is based on the magnitude of feature attributions.
+
+**Advantages:**
+
+-   It is not linked to the model error: as the underlying concept of SHAP is the Shapley value, the value attributed to each feature is related to its contribution to the output value. If a feature is important, its addition will significantly affect the output.
+
+**Disadvantages:**
+
+-   Computer time: Shapley value is a computationally expensive method and usually is computed using Montecarlo simulations.
+-   The Shapley value can be misinterpreted: The Shapley value of a feature value **is not** the difference of the predicted value after removing the feature from the model training. The interpretation of the Shapley value is: "Given the current set of feature values, the contribution of a feature value to the difference between the actual prediction and the mean prediction is the estimated Shapley value" [@Molnar2022].
+-   Correlations: As with other permutation methods, the SHAP feature importance can be biased by unrealistic data instances when features are correlated.
+
+### Importance analysis
+
+Using the three techniques simultaneously allows a broad comparison of the model behavior [@Greenwell2020]. All three methods are model-agnostic (separates interpretation from the model), but as we have seen, each method has its advantages and disadvantages [@Molnar2022].
+
+@fig-importance then shows the variable importance using three methods: Feature Importance Ranking Measure (FIRM) using Individual Conditional Expectation (ICE), Permutation-based, and Shapley Additive explanations (SHAP). The first line of this figure shows an interesting result that probably comes from the main disadvantage of the FIRM method: *the method does not take into account interactions*. We see that FIRM is the only one that disagrees with the other two methods, giving much importance to `window_size`.
+
+In the second line, taking into account the interactions, we see that all methods somewhat agree with each other, accentuating the importance of `regime_threshold`, which makes sense as it is the most evident parameter we need to set to determine if the *Arc Counts* are low enough to indicate a regime change.
+
+```{r fig-importance, eval=FALSE, fig.height = 7, fig.width= 15, out.width="100%"}
+#| fig-cap: "Variables importances using three different methods. A) Feature Importance Ranking Measure
+#|  using ICE curves. B) Permutation method. C) SHAP (400 iterations). Line 1 refers to the original
+#|  fit, and line 2 to the re-fit, taking into account the interactions between variables
+#|  (@fig-interaction)."
+
+
+importance_firm_plot <- ggplot2::ggplot(importance_firm, aes(
+  x = reorder(Variable, Importance),
+  y = Importance, fill = Variable
+)) +
+  ggplot2::geom_col(colour = "grey35", linewidth = 0.8, show.legend = FALSE) +
+  ggplot2::coord_flip() +
+  ggplot2::labs(
+    title = "Feature Importance Ranking Measure",
+    subtitle = "Individual Conditional Expectation",
+    x = "",
+    y = ggplot2::element_blank()
+  ) +
+  ggplot2::ylim(0, 3.5) +
+  ggplot2::theme_bw() +
+  ggplot2::theme(
+    legend.position = "none",
+    plot.margin = margin(0, 0, 0, 10)
+  )
+
+importance_perm_plot <- ggplot2::ggplot(importance_perm, aes(
+  x = reorder(Variable, Importance),
+  y = Importance, fill = Variable
+)) +
+  ggplot2::geom_boxplot(colour = "grey35", linewidth = 0.5, show.legend = FALSE) +
+  ggplot2::coord_flip() +
+  ggplot2::labs(
+    title = "Permutation-based (100x)",
+    x = "",
+    y = ggplot2::element_blank()
+  ) +
+  ggplot2::ylim(2, 15) +
+  ggplot2::theme_bw() +
+  ggplot2::theme(
+    legend.position = "none",
+    plot.margin = margin(0, 0, 0, 10)
+  )
+
+importance_shap_plot <- ggplot2::ggplot(importance_shap, aes(
+  x = reorder(Variable, Importance),
+  y = Importance, fill = Variable
+)) +
+  ggplot2::geom_col(colour = "grey35", linewidth = 0.8, show.legend = FALSE) +
+  ggplot2::coord_flip() +
+  ggplot2::labs(
+    title = "SHAP (400 iterations)",
+    x = "",
+    y = ggplot2::element_blank()
+  ) +
+  ggplot2::ylim(0, 1.6) +
+  ggplot2::theme_bw() +
+  ggplot2::theme(
+    legend.position = "none",
+    plot.margin = margin(0, 0, 0, 10)
+  )
+
+importance_firm2_plot <- ggplot2::ggplot(importance_firm2, aes(
+  x = reorder(Variable, Importance),
+  y = Importance, fill = Variable
+)) +
+  ggplot2::geom_col(colour = "grey35", linewidth = 0.8, show.legend = FALSE) +
+  ggplot2::coord_flip() +
+  ggplot2::labs(
+    x = "",
+    y = "Importance"
+  ) +
+  ggplot2::ylim(0, 3.5) +
+  ggplot2::theme_bw() +
+  ggplot2::theme(
+    legend.position = "none",
+    plot.margin = margin(0, 0, 0, 10)
+  )
+
+importance_perm2_plot <- ggplot2::ggplot(importance_perm2, aes(
+  x = reorder(Variable, Importance),
+  y = Importance, fill = Variable
+)) +
+  ggplot2::geom_boxplot(colour = "grey35", linewidth = 0.5, show.legend = FALSE) +
+  ggplot2::coord_flip() +
+  ggplot2::labs(
+    x = "",
+    y = "Importance"
+  ) +
+  ggplot2::ylim(2, 15) +
+  ggplot2::theme_bw() +
+  ggplot2::theme(
+    legend.position = "none",
+    plot.margin = margin(0, 0, 0, 10)
+  )
+
+importance_shap2_plot <- ggplot2::ggplot(importance_shap2, aes(
+  x = reorder(Variable, Importance),
+  y = Importance, fill = Variable
+)) +
+  ggplot2::geom_col(colour = "grey35", linewidth = 0.8, show.legend = FALSE) +
+  ggplot2::coord_flip() +
+  ggplot2::labs(
+    x = "",
+    y = "Importance"
+  ) +
+  ggplot2::ylim(0, 1.6) +
+  ggplot2::theme_bw() +
+  ggplot2::theme(
+    legend.position = "none",
+    plot.margin = margin(0, 0, 0, 10)
+  )
+
+
+all <- (importance_firm_plot / importance_firm2_plot + plot_layout(tag_level = "new")) |
+  (importance_perm_plot / importance_perm2_plot + plot_layout(tag_level = "new")) |
+  (importance_shap_plot / importance_shap2_plot + plot_layout(tag_level = "new")) +
+    plot_layout(guides = "collect")
+all + plot_annotation(
+  title = "Variable importances",
+  tag_levels = c("A", "1"),
+  theme = ggplot2::theme_bw() + ggplot2::theme(
+    plot.title = ggplot2::element_text(size = 20)
+  )
+)
+```
+
+@fig-importanceshap and @fig-importanceshap2 show the effect of each feature on the FLOSS score. The more evident difference is the shape of the effect of `time_constraint` that initially suggested better results with larger values. However, removing the interactions seems to be a flat line.
+
+Based on @fig-importance and @fig-importanceshap2 we can infer that:
+
+-   **`regime_threshold`**: is the most important feature, has an optimal value to be set, and since the high interaction with the `regime_landmark`, both must be tuned simultaneously. In this setting, high thresholds significantly impact the score, probably due to an increase in false positives starting on \>0.65 the overall impact is mostly negative.
+
+-   **`regime_landmark`**: is not as important as the `regime_threshold,` but since there is a high interaction, it must not be underestimated. It is known that the *Arc Counts* have more uncertainty as we approach the margin of the streaming, and this becomes evident looking at how the score is negatively affected for values below 3.5s.
+
+-   **`window_size`**: has a near zero impact on the score when correctly set. Nevertheless, for higher window values, the score is negatively affected. This high value probably depends on the data domain. In this setting, the model is being tuned towards the changes from atrial fibrillation/non-fibrillation; thus, the "shape of interest" is small compared to the whole heartbeat waveform. Window sizes smaller than 150 are more suitable in this case. As Beyer *et al.* noted, "as dimensionality increases, the distance to the nearest data point approaches the distance to the farthest data point" [@Beyer1999], which means that the bigger the window size, the smaller will be the contrast between different regimes.
+
+-   **`mp_threshold`**: has a fair impact on the score, but primarily by *not using it*. We start to see a negative impact on the score with values above 0.60, while a constant positive impact with lower values.
+
+-   **`time_constraint`**: is a parameter that must be interpreted cautiously. The 0 (zero) value means **no constraint**, which is equivalent to the size of the FLOSS history buffer (in our setting, 5000). We can see that this parameter's impact throughout the possible values is constantly near zero.
+
+In short, for the MP computation, the parameter that is worth tuning is the `window_size`, while for the FLOSS computation, both `regime_threshold` (mainly) and `regime_landmark` shall be tuned.
+
+```{r fig-importanceshap, eval=FALSE, message=FALSE, fig.height = 6, fig.width= 10, out.width="100%"}
+#| fig-cap: "This shows the effect each variable has on the FLOSS score. This plot doesn't take into account the
+#|  variable interactions."
+
+trained_model <- readRDS(here("output", "dbarts_fitted_lmk.rds"))
+train_data <- trained_model$training_data
+testing_data <- trained_model$testing_data
+predictors_names <- c("time_constraint", "regime_threshold", "mp_threshold", "window_size", "regime_landmark")
+outcome_name <- "mean"
+
+testing_data2 <- testing_data %>%
+  dplyr::mutate(
+    int_rt_rl = regime_threshold * regime_landmark,
+    int_mp_w = mp_threshold * window_size,
+    int_mp_rl = mp_threshold * regime_landmark,
+    # int_mp_rt = mp_threshold * regime_threshold
+    # int_mp_tc = mp_threshold * time_constraint
+    .before = mean
+  )
+
+layout <- "
+AABB
+CCDD
+#EE#
+"
+
+# eval=FALSE
+# all <- t1 + t2 + t3 + t4 + t5 +
+#   plot_layout(design = layout, guides = "collect")
+
+# all + plot_annotation(
+#   title = "Shapley value vs. variable values",
+#   subtitle = "Original fit",
+#   theme = ggplot2::theme_bw()
+# )
+
+d1 <- shapviz::shapviz(shap_fastshap_all_test, X = testing_data[, predictors_names], baseline = mean(testing_data[, outcome_name]$mean))
+a1 <- shapviz::sv_dependence(d1, "window_size", color_var = "auto") +
+  ggplot2::geom_smooth(method = loess, colour = "#0000ff44", alpha = 0.2) +
+  ggplot2::labs(y = ggplot2::element_blank()) +
+  ggplot2::theme_bw()
+a2 <- shapviz::sv_dependence(d1, "regime_threshold", color_var = "auto") +
+  ggplot2::geom_smooth(method = loess, colour = "#0000ff44", alpha = 0.2) +
+  ggplot2::labs(y = ggplot2::element_blank()) +
+  ggplot2::theme_bw()
+a3 <- shapviz::sv_dependence(d1, "regime_landmark", color_var = "auto") +
+  ggplot2::geom_smooth(method = loess, colour = "#0000ff44", alpha = 0.2) +
+  ggplot2::labs(y = ggplot2::element_blank()) +
+  ggplot2::theme_bw()
+a4 <- shapviz::sv_dependence(d1, "mp_threshold", color_var = "auto") +
+  ggplot2::geom_smooth(method = loess, colour = "#0000ff44", alpha = 0.2) +
+  ggplot2::labs(y = ggplot2::element_blank()) +
+  ggplot2::theme_bw()
+a5 <- shapviz::sv_dependence(d1, "time_constraint", color_var = "auto") +
+  ggplot2::geom_smooth(method = loess, colour = "#0000ff44", alpha = 0.2) +
+  ggplot2::labs(y = ggplot2::element_blank()) +
+  ggplot2::theme_bw()
+
+all2 <- ((a1 + a5 + a3 + a4 +
+  plot_layout(guides = "collect")) +
+  (a2 + plot_layout(guides = "collect")))
+all2 + plot_layout(design = layout) + plot_annotation(
+  title = "Shapley value vs. variable values",
+  theme = ggplot2::theme_bw()
+)
+```
+
+```{r fig-importanceshap2, eval=FALSE, message=FALSE, fig.height = 6, fig.width= 10, out.width="100%"}
+#| fig-cap: "This shows the effect each variable has on the FLOSS score, taking into account the interactions."
+
+# t1 <- autoplot(shap_fastshap_all_test2,
+#   type = "dependence",
+#   X = testing_data2, feature = predictors_names[2], alpha = 0.2
+# ) + ggplot2::geom_smooth(method = loess) + ggplot2::labs(y = ggplot2::element_blank()) + ggplot2::theme_bw()
+# t2 <- autoplot(shap_fastshap_all_test2,
+#   type = "dependence",
+#   X = testing_data2, feature = predictors_names[1], alpha = 0.2
+# ) + ggplot2::geom_smooth(method = loess) + ggplot2::labs(y = ggplot2::element_blank()) + ggplot2::theme_bw()
+# t3 <- autoplot(shap_fastshap_all_test2,
+#   type = "dependence",
+#   X = testing_data2, feature = predictors_names[4], alpha = 0.2
+# ) + ggplot2::geom_smooth(method = loess) + ggplot2::labs(y = ggplot2::element_blank()) + ggplot2::theme_bw()
+# t4 <- autoplot(shap_fastshap_all_test2,
+#   type = "dependence",
+#   X = testing_data2, feature = predictors_names[3], alpha = 0.2
+# ) + ggplot2::geom_smooth(method = loess) + ggplot2::labs(y = ggplot2::element_blank()) + ggplot2::theme_bw()
+# t5 <- autoplot(shap_fastshap_all_test,
+#   type = "dependence",
+#   X = testing_data2, feature = predictors_names[5], alpha = 0.2
+# ) + ggplot2::geom_smooth(method = loess) + ggplot2::labs(y = ggplot2::element_blank()) + ggplot2::theme_bw()
+
+
+layout <- "
+AABB
+CCDD
+#EE#
+"
+# eval=FALSE
+
+d1 <- shapviz::shapviz(shap_fastshap_all_test2, X = testing_data2[, predictors_names], baseline = mean(testing_data2[, outcome_name]$mean))
+a1 <- shapviz::sv_dependence(d1, "window_size", color_var = "auto") +
+  ggplot2::geom_smooth(method = loess, colour = "#0000ff44", alpha = 0.2) +
+  ggplot2::labs(y = ggplot2::element_blank()) +
+  ggplot2::theme_bw()
+a2 <- shapviz::sv_dependence(d1, "regime_threshold", color_var = "auto") +
+  ggplot2::geom_smooth(method = loess, colour = "#0000ff44", alpha = 0.2) +
+  ggplot2::labs(y = ggplot2::element_blank()) +
+  ggplot2::theme_bw()
+a3 <- shapviz::sv_dependence(d1, "regime_landmark", color_var = "auto") +
+  ggplot2::geom_smooth(method = loess, colour = "#0000ff44", alpha = 0.2) +
+  ggplot2::labs(y = ggplot2::element_blank()) +
+  ggplot2::theme_bw()
+a4 <- shapviz::sv_dependence(d1, "mp_threshold", color_var = "auto") +
+  ggplot2::geom_smooth(method = loess, colour = "#0000ff44", alpha = 0.2) +
+  ggplot2::labs(y = ggplot2::element_blank()) +
+  ggplot2::theme_bw()
+a5 <- shapviz::sv_dependence(d1, "time_constraint", color_var = "auto") +
+  ggplot2::geom_smooth(method = loess, colour = "#0000ff44", alpha = 0.2) +
+  ggplot2::labs(y = ggplot2::element_blank()) +
+  ggplot2::theme_bw()
+
+all2 <- ((a1 + a5 + a3 + a4 +
+  plot_layout(guides = "collect")) +
+  (a2 + plot_layout(guides = "collect")))
+all2 + plot_layout(design = layout) + plot_annotation(
+  title = "Shapley value vs. variable values",
+  theme = ggplot2::theme_bw()
+)
+```
+
+According to the FLOSS paper [@gharghabi2018], the `window_size` is indeed a feature that can be tuned; nevertheless, the results appear to be similar in a reasonably wide range of window sizes, up to a limit, consistent with our findings.
+
+### Visualizing the predictions
+
+At this point, the grid search tested a total of 23,389 models with resulting (individual) scores from 0.0002 to 1669.83 (Q25: 0.9838, Q50: 1.8093, Q75: 3.3890).
+
+#### By recording
+
+First, we will visualize how the models (in general) performed throughout the individual recordings.
+
+@fig-global shows a violin plot of equal areas clipped to the minimum value. The blue color indicates the recordings with a small IQR (interquartile range) of model scores. We see on the left half 10% of the recordings with the worst minimum score, and on the right half, 10% of the recordings with the best minimum score.
+
+Next, we will visualize some of these predictions to understand why some recordings were difficult to segment. For us to have a simple baseline: a recording with just one regime change, and the model predicts exactly one regime change, but far from the truth, the score will be roughly 1.
+
+```{r fig-global, eval=FALSE, fig.height=5, fig.width=10, out.width="100%"}
+#| fig-cap: "Violin plot showing the distribution of the FLOSS score achieved by all tested models by
+#|  recording.  The left half shows the recordings that were difficult to predict (10% overall), whereas
+#|  the right half shows the recordings that at least one model could achieve a good prediction (10%
+#|  overall).  The recordings are sorted (left-right) by the minimum (best) score achieved in descending
+#|  order, and ties are sorted by the median of all recording scores.  The blue color highlights
+#|  recordings where models had an IQR variability of less than one.  As a simple example, a recording
+#|  with just one regime change, and the model predicts exactly one change, far from the truth, the
+#|  score will be roughly 1."
+
+all_scores <- readRDS(here::here("output/regime_outputs_lmk.rds"))
+
+scores_stats <- all_scores %>%
+  dplyr::select(record, score) %>%
+  dplyr::group_by(record) %>%
+  dplyr::reframe(
+    score = score, min = min(score), q25 = quantile(score, 0.25),
+    median = quantile(score, 0.5), q75 = quantile(score, 0.75),
+    mean = mean(score), max = max(score)
+  )
+
+records_factors <- forcats::as_factor(scores_stats$record)
+
+scores_stats$id <- sprintf("%03d", (as.numeric(records_factors)))
+
+scores_stats %>%
+  dplyr::mutate(low_iqr = q75 - q25 < 1) %>%
+  dplyr::filter(min > quantile(min, 0.9) | min < quantile(min, 0.1)) %>%
+  ggplot2::ggplot(aes(x = reorder(reorder(id, -median), -min), y = score, colour = low_iqr)) +
+  ggplot2::geom_violin() +
+  ggplot2::coord_cartesian(ylim = c(0, 5)) +
+  ggplot2::theme_bw() +
+  ggplot2::labs(title = "Scores by recording", colour = "IQR < 1", x = "Recording ID", y = "Score distribution")
+```
+
+@fig-worst shows the best effort in predicting the most complex recordings. One information not declared before is that if the model does not predict any change, it will put a mark on the zero position. On the other side, the truth markers positioned at the beginning and the end of the recording were removed, as these locations lack information and do not represent a streaming setting.
+
+```{r fig-worst, eval=FALSE, fig.height=15, fig.width=12, out.width="100%", dev="png"}
+#| fig-cap: "Prediction of the worst 10% of recordings (red is the truth, blue are the predictions)."
+
+worst <- scores_stats %>%
+  dplyr::filter(min > quantile(min, 0.9)) %>%
+  dplyr::group_by(record) %>%
+  dplyr::slice_head() %>%
+  dplyr::ungroup() %>%
+  dplyr::arrange(desc(min), desc(median)) %>%
+  dplyr::slice_head(n = 10) %>%
+  dplyr::pull(record)
+# "data_25_1.par"  "data_32_12.par" "data_85_1.par"  "data_90_1.par"  "data_68_2.par"
+
+worst_data <- all_scores %>%
+  dplyr::filter(record %in% worst) %>%
+  dplyr::group_by(record) %>%
+  dplyr::slice_min(n = 1, order_by = score, with_ties = FALSE) %>%
+  dplyr::arrange(desc(score)) %>%
+  dplyr::ungroup()
+
+plots <- list()
+for (i in seq_len(nrow(worst_data))) {
+  plots[[i]] <- tkplot(worst_data[i, ], FALSE, 50)
+}
+
+wrap_plots(plots, ncol = 1)
+```
+
+@fig-best shows the best performances of the best recordings. Notice that there are recordings with a significant duration and few regime changes, making it hard for a "trivial model" to predict randomly.
+
+```{r fig-best, eval=FALSE, fig.height=15, fig.width=12, out.width="100%", dev="png"}
+#| fig-cap: "Prediction of the best 10% of recordings (red is the truth, blue are the predictions)."
+
+bests <- scores_stats %>%
+  dplyr::filter(min < quantile(min, 0.1)) %>%
+  dplyr::group_by(record) %>%
+  dplyr::slice_head() %>%
+  dplyr::ungroup() %>%
+  dplyr::arrange(desc(min), desc(median)) %>%
+  dplyr::slice_head(n = 10) %>%
+  dplyr::pull(record)
+
+bests_data <- all_scores %>%
+  dplyr::filter(record %in% bests) %>%
+  dplyr::group_by(record) %>%
+  dplyr::slice_min(n = 1, order_by = score, with_ties = FALSE) %>%
+  dplyr::arrange(desc(score)) %>%
+  dplyr::ungroup()
+
+plots <- list()
+for (i in seq_len(nrow(bests_data))) {
+  plots[[i]] <- tkplot(bests_data[i, ], FALSE, 50)
+}
+
+wrap_plots(plots, ncol = 1)
+```
+
+#### By model
+
+@fig-globalmodel shows the distribution of the FLOSS score of the 10% worst (left side) and 10% best models across the recordings (right side). The bluish color highlights the models with SD below 3 and IQR below 1.
+
+```{r fig-globalmodel, eval=FALSE, fig.height=5, fig.width=10, out.width="100%"}
+#| fig-cap: "Violin plot showing the distribution of the FLOSS score achieved by all tested models during the
+#|  inner ressample.  The left half shows the models with the worst performances (10% overall), whereas
+#|  the right half shows the models with the best performances (10% overall).
+#|  The models are sorted (left-right) by the mean score (top) and by the median (below). Ties are
+#|  sorted by the SD and IQR, respectively.  The bluish colors highlights models with an SD below 3
+#|  and IQR below 1."
+
+# cores_stats_model <- all_scores %>% dplyr::mutate(across(all_of(predictors_names), as.factor, .unpack = FALSE))
+
+if (file.exists(here("output", "scores_stats_model_rep.rds"))) {
+  scores_stats_model <- readRDS(here("output", "scores_stats_model_rep.rds"))
+} else {
+  scores_stats_model <- all_scores %>%
+    dplyr::group_by(across(all_of(predictors_names))) %>%
+    dplyr::mutate(model = glue("{window_size}_{time_constraint}_{mp_threshold}_{regime_threshold}_{regime_landmark}")) %>%
+    dplyr::reframe(
+      record = record,
+      model = model,
+      score = score, min = min(score), q25 = quantile(score, 0.25),
+      median = quantile(score, 0.5), q75 = quantile(score, 0.75),
+      iqr = q75 - q25,
+      mean = mean(score), max = max(score),
+      sd = sd(score)
+    )
+  saveRDS(scores_stats_model, file = here("output", "scores_stats_model_rep.rds"))
+}
+
+
+scores_stats_model$id <- (sprintf("%05d", (as.numeric(as.factor(scores_stats_model$model)))))
+scores_stats_model$id_text <- (sprintf("Model_%05d", (as.numeric(as.factor(scores_stats_model$model)))))
+scores_stats_model$record <- (sprintf("%03d", (as.numeric(factor(scores_stats_model$record, labels = levels(records_factors))))))
+scores_stats_model <- scores_stats_model %>% dplyr::select(-model)
+
+low <- head(sort(unique(scores_stats_model$mean)), 20)
+high <- tail(sort(unique(scores_stats_model$mean)), 20)
+
+model_mean <- scores_stats_model %>%
+  dplyr::mutate(low_sd = sd < 3) %>%
+  dplyr::filter(mean > high | mean < low) %>%
+  ggplot2::ggplot(aes(x = reorder(reorder(id, -sd), -mean), y = score, colour = low_sd)) +
+  ggplot2::scale_colour_manual(values = c("FALSE" = "#ff0000c2", "TRUE" = "#0000ffb5")) +
+  ggplot2::geom_violin() +
+  ggplot2::coord_cartesian(ylim = c(0, 3)) +
+  ggplot2::theme_bw() +
+  ggplot2::theme(axis.text.x = element_text(size = 8, angle = 90, vjust = 0.5, hjust = 1)) +
+  ggplot2::labs(subtitle = "Ordered by Mean and SD", colour = "SD < 3", x = ggplot2::element_blank(), y = "Score distribution")
+
+low <- head(sort(unique(scores_stats_model$median)), 20)
+high <- tail(sort(unique(scores_stats_model$median)), 20)
+
+model_median <- scores_stats_model %>%
+  dplyr::mutate(low_iqr = q75 - q25 < 1) %>%
+  dplyr::filter(median > high | median < low) %>%
+  ggplot2::ggplot(aes(x = reorder(reorder(id, -iqr), -median), y = score, colour = low_iqr)) +
+  ggplot2::geom_violin() +
+  ggplot2::coord_cartesian(ylim = c(0, 3)) +
+  ggplot2::theme_bw() +
+  ggplot2::theme(axis.text.x = element_text(size = 8, angle = 90, vjust = 0.5, hjust = 1)) +
+  ggplot2::labs(subtitle = "Ordered by Median and IQR", colour = "IQR < 1", x = "Model ID", y = "Score distribution")
+
+(model_mean / model_median) + plot_layout(guides = "auto") +
+  plot_annotation(
+    title = "Scores grouped by model",
+    theme = ggplot2::theme_bw()
+  )
+```
+
+@fig-bestmodels the performance of the six best models. They are ordered from left to right, from the worst record to the best record. The top model is the one with the lowest mean across the scores. The blue line indicates the mean score, and the red line the median score. The scores above 3 are squished in the plot and colored according to the scale in the legend.
+
+```{r fig-bestmodels, eval=FALSE, fig.height=22, fig.width=18, out.width="100%"}
+#| fig-cap: "Performances of the best 6 models across all inner resample of recordings.
+#|  The recordings are ordered by score, from the worst to the best.
+#|  Each plot shows one model, starting from the best one.
+#|  The red line indicates the median score of the model. The blue line indicates the mean score of the model.
+#|  The gray line limits the zero-score region. The plot is limited on the \"y\" axis, and the scores above this
+#|  limit are shown in color."
+
+best_models <- scores_stats_model %>%
+  dplyr::filter(mean < quantile(mean, 0.1)) %>%
+  dplyr::arrange(mean, sd) %>%
+  dplyr::pull(id_text) %>%
+  unique() %>%
+  .[1:6]
+
+plots <- list()
+for (i in seq_len(length(best_models))) {
+  dd <- scores_stats_model %>% dplyr::filter(id_text == best_models[i])
+  plots[[i]] <- ggplot2::ggplot(dd, aes(x = reorder(record, -score), y = score, colour = score)) +
+    ggplot2::geom_point(size = 2) +
+    ggplot2::geom_hline(aes(yintercept = median), colour = "red") +
+    ggplot2::geom_hline(aes(yintercept = mean), colour = "blue") +
+    ggplot2::geom_hline(aes(yintercept = 0), colour = "gray50") +
+    ggplot2::scale_y_continuous(
+      limits = c(0, 3),
+      oob = scales::oob_squish,
+      expand = c(0.1, 0.05, 0.1, -0.1)
+    ) +
+    ggplot2::scale_color_gradientn(colors = c("#ffd500db", "#ff8800", "#ff5e00", "#ff0000"), limits = c(3.1, 100)) +
+    ggplot2::theme_bw(base_size = 15) +
+    ggplot2::theme(axis.text.x = element_text(size = 9, angle = 90, vjust = 0.5, hjust = 1)) +
+    ggplot2::labs(
+      title = best_models[i],
+      colour = "Score out\nof bounds",
+      x = ifelse(i == length(best_models), "Record ID", ""),
+      y = ggplot2::element_blank()
+    )
+}
+
+wrap_plots(plots, ncol = 1, guides = "collect") + plot_annotation(
+  title = "Performances of the 6 best models",
+  theme = ggplot2::theme_bw()
+)
+
+```
+
+#### The Holdout
+
+Finally, @tbl-bestparam shows a summary of the best five models across all the inner resample (cross-validation). The column `mean` shows the average score, and column `std_err` shows the standard error of the mean. The column `holdout` shows the final score of this model on the holdout set (outer resample).
+
+```{r eval=FALSE, echo=FALSE}
+#| label: tbl-bestparam
+#| tbl-cap: "Summary of the five best models. The `mean` shows the inner resample average score. The `holdout` shows
+#|  the final score of the model on the holdout set (outer resample)."
+
+if (file.exists(here("output", "regime_outputs_holdout.rds"))) {
+  regime_outputs_holdout <- readRDS(here("output", "regime_outputs_holdout.rds"))
+
+  best_parameters <- regime_outputs_holdout$combined %>%
+    dplyr::group_by(
+      window_size, regime_threshold, regime_landmark, .metric, .estimator
+    ) %>%
+    dplyr::summarise(mean = mean(.estimate), std_err = sd(.estimate), n = dplyr::n()) %>%
+    dplyr::ungroup() %>%
+    dplyr::arrange(mean, std_err) %>%
+    dplyr::slice_min(n = 5, order_by = mean) %>%
+    dplyr::select(-.metric, -.estimator, -n)
+
+  holdout <- regime_outputs_holdout$results %>%
+    dplyr::select(.estimate) %>%
+    dplyr::rename(holdout = .estimate)
+
+  best_parameters <- dplyr::bind_cols(best_parameters, holdout)
+
+  kable(best_parameters,
+    booktabs = TRUE,
+    longtable = TRUE,
+    align = "cccccc",
+    digits = 2,
+    position = "ht",
+    linesep = ""
+  ) %>%
+    row_spec(0, bold = TRUE) %>%
+    column_spec(6, bold = TRUE)
+}
+```
+
+Presentation of the test cases and evaluation metrics, showcasing the effectiveness of the approach.
+
+Results of the detection. Comparison with existing methods. Validity of the system on different datasets, including Physionet Challenges.
+
+Performance of the FLUSS/FLOSS algorithm in detecting ECG signal changes Comparison with other existing techniques, if any
+
+# Discussion
+
+Comparison with existing techniques, potential applications, and future directions.
+
+Benefits of the proposed system. Potential applications in healthcare and wearable technology. Future enhancements and integrations.
+
+Implications of the results Challenges faced and potential improvements
+
+# Conclusion and Future Work
+
+Summary of the article and the potential of integrating it with the classification system discussed in the second article.
+
+Summary of the findings and the potential impacts.

@@ -1,77 +1,53 @@
 // For format details, see https://aka.ms/devcontainer.json. For config options, see the
 // README at: https://github.com/rocker-org/devcontainer-templates/tree/main/src/r-ver
 {
-  "name": "false.alarm devcontainer",
-  // Or use a Dockerfile or Docker Compose file. More info: https://containers.dev/guide/dockerfile
-  "image": "ghcr.io/rocker-org/devcontainer/r-ver:4.3",
-  "features": {
-    "ghcr.io/dhoeric/features/hadolint:1": {
-      "version": "latest"
-    },
-    "ghcr.io/rocker-org/devcontainer-features/apt-packages:1": {
-      "packages": [
-        "curl",
-        "gnupg",
-        "less",
-        "locales",
-        "procps",
-        "tzdata",
-        "libzmq3-dev",
-        "libudunits2-dev",
-        "libgdal-dev",
-        "libmagick++-dev"
-      ]
-    },
-    "ghcr.io/rocker-org/devcontainer-features/r-packages:1": {
-      "packages": "jsonlite,languageserver,prompt"
-    },
-    "ghcr.io/rocker-org/devcontainer-features/pandoc:1": {
-      "version": "latest"
-    },
-    "ghcr.io/rocker-org/devcontainer-features/quarto-cli:1": {
-      "installTinyTex": true,
-      "installChromium": true,
-      "version": "latest"
-    },
-    "ghcr.io/rocker-org/devcontainer-features/renv-cache:0": {}
-  },
   "containerEnv": {
     "DEBUGME": "R_GlobalEnv",
-    "PUID": "1000",
     "PGID": "1000",
+    "PUID": "1000",
     "TZ": "Europe/Lisbon"
   },
   "customizations": {
     "vscode": {
       "extensions": [
-        "ms-vscode-remote.remote-containers",
+        "affenwiesel.matlab-formatter",
+        "alefragnani.project-manager",
+        "christian-kohler.path-intellisense",
+        "eamodio.gitlens",
         "EditorConfig.EditorConfig",
-        "usernamehw.errorlens",
-        "mitchdenny.ecdc",
-        "github.vscode-github-actions",
-        "GitHub.copilot",
+        "gerane.Theme-Twilight",
         "GitHub.copilot-chat",
         "GitHub.copilot-labs",
-        "eamodio.gitlens",
-        "PKief.material-icon-theme",
-        "alefragnani.project-manager",
-        "quarto.quarto",
-        "REditorSupport.r",
-        "RDebugger.r-debugger",
-        "mechatroner.rainbow-csv",
+        "GitHub.copilot",
+        "github.vscode-github-actions",
+        "hediet.vscode-drawio",
+        "james-yu.latex-workshop",
         "marvhen.reflow-markdown",
-        "natqe.reload",
+        "mechatroner.rainbow-csv",
+        "mitchdenny.ecdc",
+        "ms-vscode-remote.remote-containers",
+        "ms-vscode-remote.remote-wsl",
         "mutantdino.resourcemonitor",
+        "natqe.reload",
+        "PKief.material-icon-theme",
+        "quarto.quarto",
+        "RDebugger.r-debugger",
+        "REditorSupport.r",
+        "reditorsupport.r",
+        "richie5um2.vscode-sort-json",
         "spmeesseman.vscode-taskexplorer",
-        "gerane.Theme-Twilight",
-        "ms-vscode-remote.remote-wsl"
+        "usernamehw.errorlens"
       ],
       "settings": {
-        "markdown.validate.enabled": true,
         "editor.formatOnSave": true,
         "editor.tabCompletion": "on",
         "editor.tabSize": 2,
         "editor.wordWrapColumn": 120,
+        "files.associations": {
+          ".whitesource": "jsonc",
+          "*.cls": "latex",
+          "*.sty": "latex"
+        },
         "files.exclude": {
           "**/.DS_Store": true,
           "**/.git": true,
@@ -119,6 +95,15 @@
             "url": "https://raw.githubusercontent.com/codemeta/codemeta/master/codemeta.jsonld"
           }
         ],
+        "latex-workshop.bibtex-format.sort.enabled": true,
+        "latex-workshop.bibtex-format.sortby": [
+          "key",
+          "title"
+        ],
+        "latex-workshop.latex.autoBuild.run": "never",
+        "latex-workshop.view.pdf.viewer": "tab",
+        "markdown.validate.enabled": true,
+        "quarto.zotero.library": "web",
         "r.alwaysUseActiveTerminal": true,
         "r.bracketedPaste": true,
         "r.debugger.timeouts.startup": 15000,
@@ -141,12 +126,24 @@
         "search.exclude": {
           "**/_*/": true
         },
-        "files.associations": {
-          ".whitesource": "jsonc",
-          "*.cls": "latex",
-          "*.sty": "latex"
-        },
         "taskExplorer.enableAnsiconForAnt": false,
+        "taskExplorer.enabledTasks": {
+          "ant": false,
+          "bash": false,
+          "composer": false,
+          "gradle": false,
+          "grunt": false,
+          "gulp": false,
+          "make": false,
+          "maven": false,
+          "npm": false,
+          "perl": false,
+          "pipenv": false,
+          "powershell": false,
+          "python": false,
+          "ruby": false,
+          "tsc": false
+        },
         "taskExplorer.enableSideBar": true,
         "taskExplorer.exclude": [
           "**/dist/**",
@@ -165,27 +162,44 @@
         ],
         "taskExplorer.groupMaxLevel": 2,
         "taskExplorer.groupSeparator": ": ",
-        "taskExplorer.showLastTasks": false,
-        "taskExplorer.enabledTasks": {
-          "ant": false,
-          "bash": false,
-          "composer": false,
-          "gradle": false,
-          "grunt": false,
-          "gulp": false,
-          "make": false,
-          "maven": false,
-          "npm": false,
-          "perl": false,
-          "pipenv": false,
-          "powershell": false,
-          "python": false,
-          "ruby": false,
-          "tsc": false
-        }
+        "taskExplorer.showLastTasks": false
       }
     }
   },
+  "features": {
+    "ghcr.io/dhoeric/features/hadolint:1": {
+      "version": "latest"
+    },
+    "ghcr.io/rocker-org/devcontainer-features/apt-packages:1": {
+      "packages": [
+        "curl",
+        "gnupg",
+        "less",
+        "locales",
+        "procps",
+        "tzdata",
+        "libzmq3-dev",
+        "libudunits2-dev",
+        "libgdal-dev",
+        "libmagick++-dev"
+      ]
+    },
+    "ghcr.io/rocker-org/devcontainer-features/pandoc:1": {
+      "version": "latest"
+    },
+    "ghcr.io/rocker-org/devcontainer-features/quarto-cli:1": {
+      "installChromium": true,
+      "installTinyTex": true,
+      "version": "latest"
+    },
+    "ghcr.io/rocker-org/devcontainer-features/r-packages:1": {
+      "packages": "jsonlite,languageserver,prompt"
+    },
+    "ghcr.io/rocker-org/devcontainer-features/renv-cache:0": {}
+  },
+  // Or use a Dockerfile or Docker Compose file. More info: https://containers.dev/guide/dockerfile
+  "image": "ghcr.io/rocker-org/devcontainer/r-ver:4.3",
+  "name": "false.alarm devcontainer",
   // Features to add to the dev container. More info: https://containers.dev/features.
   // "features": {},
   // Use 'forwardPorts' to make a list of ports inside the container available locally.

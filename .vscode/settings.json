@@ -305,5 +305,7 @@
   "todo-tree.tree.showCountsInTree": true,
   "yaml.schemas": {
     "https://json.schemastore.org/github-workflow.json": "file:///workspace/false.alarm/.github/workflows/ci.yaml"
-  }
+  },
+  "doi-adder.refName": "authorYear",
+  "quarto.zotero.library": "web"
 }
