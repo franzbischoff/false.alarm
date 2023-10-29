@@ -61,27 +61,27 @@ This article will focus on the use of the Matrix Profile framework, particularly
 
 > Background of electrocardiogram analysis.
 
-Currently, Point-of-Care (POC) ECG monitoring works either as plot devices or alarms for abnormal cardiac rhythms using predefined normal trigger ranges. Modern devices also incorporate algorithms to analyze arrhythmias improving their specificity. On the other hand, full 12-derivation ECG machines are complex, are not suited to use as simple monitors, and are used with strict techniques for formal diagnostics of hearth electric conduction pathologies. The automatic diagnostics are derived from a complete analysis of the 12-dimension data after it is fully and well collected. Both systems do not handle disconnected leads and patient's motions, being strictly necessary to have a good and stable signal to allow proper diagnosis. These interferences with the data collection frequently originate false alarms increasing both patient and staff's stress; depending on how it is measured, the rate of false alarms (overall) in ICU is estimated at 65 to 95% [@donchin2002].
+Currently, Point-of-Care (POC) ECG monitoring works either as plot devices or alarms for abnormal cardiac rhythms using predefined normal trigger ranges. Modern devices also incorporate algorithms to analyze arrhythmias, improving their specificity. On the other hand, full 12-derivation ECG machines are complex, are not suited to use as simple monitors, and are used with strict techniques for formal diagnostics of hearth electric conduction pathologies. The automatic diagnostics are derived from a complete analysis of the 12-dimension data after it is fully and well collected. Both systems do not handle disconnected leads and patient's motions, being strictly necessary to have a good and stable signal to allow proper diagnosis. These interferences with the data collection frequently originate false alarms, increasing both patient and staff's stress; depending on how it is measured, the rate of false alarms (overall) in ICU is estimated at 65 to 95% [@donchin2002].
 
-In February of 2015, the CinC/Physionet Challenge 2015 was about "Reducing False Arrhythmia Alarms in the ICU [@Clifford2015]. The introduction article stated that it had been reported that up to 86% resulting of the alarms are false, and this can lead to decreased staff attention and an increase in patients' delirium [@Lawless1994; @Chambrin2001; @Parthasarathy2004]. This subject draws attention to the importance of correctly identify abnormal hearth electric patterns in order to avoid the overload of clinical staff. Meanwhile, this opens the opportunity of thinking outside the ICU setting, where we still monitoring patients (and ourselves) using devices with low processing power, as for example ward monitors, home devices and wearable devices.
+In February of 2015, the CinC/Physionet Challenge 2015 was about "Reducing False Arrhythmia Alarms in the ICU" [@Clifford2015]. The introduction article stated that it had been reported that up to 86% of the alarms are false, and this can lead to decreased staff attention and an increase in patients' delirium [@Lawless1994; @Chambrin2001; @Parthasarathy2004]. This subject draws attention to the importance of correctly identifying abnormal heart electric patterns in order to avoid the overload of clinical staff. Meanwhile, this opens the opportunity to think outside the ICU setting, where we still monitor patients (and ourselves) using devices with low processing power, for example ward monitors, home devices and wearable devices.
 
 > Importance of real-time detection for severe heart rates.
 
-Real-time monitoring of life-threatening ECG patterns in high-risk patients (for example those with cardiac implantable electronic devices (CIEDs), such as pacemakers, implantable cardioverter defibrillators (ICDs), biventricular pacemakers, and cardiac loop recorders), is a crucial aspect of remote patient monitoring. These devices provide invaluable data regarding a patient's heart activity but often rely on the accuracy of retrospective evaluation of recorded data for any abnormalities. Early detection enables timely intervention, potentially preventing serious complications and reducing morbidity and mortality rates. Furthermore, real-time data transmission from wearable devices to healthcare providers can facilitate rapid decision-making and treatment initiation, particularly when considering the rapid progression and potential life-threatening nature of certain cardiac events. Furthermore, remote patient monitoring systems also provide a valuable source of longitudinal data that can be used for predictive modeling and risk stratification, helping healthcare providers tailor personalized treatment plans for individual patients. Real-time monitoring may not only enhance patient safety but also improve the efficiency and effectiveness of care delivery, making it an essential component of modern cardiovascular management strategies.
+Real-time monitoring of life-threatening ECG patterns in high-risk patients (for example, those with cardiac implantable electronic devices (CIEDs), such as pacemakers, implantable cardioverter defibrillators (ICDs), biventricular pacemakers, and cardiac loop recorders), is a crucial aspect of remote patient monitoring. These devices provide invaluable data regarding a patient's heart activity but often rely on the accuracy of retrospective evaluation of recorded data for any abnormalities. Early detection enables timely intervention, potentially preventing serious complications and reducing morbidity and mortality rates. Furthermore, real-time data transmission from wearable devices to healthcare providers can facilitate rapid decision-making and treatment initiation, particularly when considering the rapid progression and potentially life-threatening nature of certain cardiac events. Furthermore, remote patient monitoring systems also provide a valuable source of longitudinal data that can be used for predictive modeling and risk stratification, helping healthcare providers tailor personalized treatment plans for individual patients. Real-time monitoring may not only enhance patient safety but also improve the efficiency and effectiveness of care delivery, making it an essential component of modern cardiovascular management strategies.
 
 > Existing challenges in using low computational power equipment.
 
-The challenge starts on developing an algorithm that not only has acceptable accuracy, but is also efficient to run on constricted environment as a wearable device. Some effort has been taking on analyzing wearable sensors data. Kowsar, *et al.*[@kowsar2022] made use of accelerometers to detect and track repeating patterns in context of exercising. Bhanushali, *et al.*[@bhanushali2020] uses a custom circuit to detect stress/no stress detection using a chest ECG device, Grammatikakis, *et al.*[@grammatikakis2021] uses a Body Gateway sensor to transmit the ECG data for remote processing and analysis and Cheng, *et al.* [@cheng2020] which propose a multi-label classification of arrithmias from pre-compressed ECG signal using Neural Networks.
+The challenge starts with developing an algorithm that not only has acceptable accuracy but is also efficient to run in the constricted environment of a wearable device. Some effort has been taken to analyze wearable sensor data. Kowsar, *et al.*[@kowsar2022] made use of accelerometers to detect and track repeating patterns in the context of exercising. Bhanushali, *et al.*[@bhanushali2020] uses a custom circuit to detect stress/no stress detection using a chest ECG device, Grammatikakis, *et al.*[@grammatikakis2021] uses a Body Gateway sensor to transmit the ECG data for remote processing and analysis and Cheng, *et al.* [@cheng2020] which proposes a multi-label classification of arrhythmias from pre-compressed ECG signal using Neural Networks.
 
 > Significance of real-time detection in wearable devices Brief introduction to the Matrix Profile framework and the importance of the FLUSS/FLOSS algorithm
 
-Here we propose a method? to monitor a patient ECG in real-time, online (not in batches), using a constricted environment (low-cpu and low memory). This first work will focus on detecting *semantic* changes on patient's ECG. By *semantic* we refer to changes in shape of the streaming data, which can change without obvious effect on statistical properties [@gharghabi2018].
+Here, we propose a procedure to monitor a patient's ECG in real-time, online (not in batches), using a constricted environment (low CPU and low memory). This first work will focus on detecting *semantic* changes in patients' ECG. By *semantic*, we refer to changes in the shape of the streaming data, which can change without obvious effect on statistical properties [@gharghabi2018].
 
 The rest of this paper is organized as follows. In Section II, we provide a summary of the related work along with the necessary definitions. In Section III-A, we introduce a batch algorithm for semantic segmentation before generalizing it to the streaming case in Section III-C. Section 0 illuminates a detailed quantitative and qualitative evaluation of our ideas. Finally, in Section IV, we offer conclusions and directions for future work.
 
 # Definitions and notations
 
-Here, we introduce the necessary definitions and terminology, beginning with the definition of a time series: Definition 1: A time series T = t1, t2, t3, ... ,tn is a continuous ordered sequence of real values in equally spaced time intervals of length n. Our segmentation algorithm will exploit the similarity of local patterns within T, called subsequences: Definition 2: A subsequence Ti,L of a T is a continuous subset of the values from T of length L starting from position i. Ti,L = ti, ti+1,..., ti+L-1, where 1 ≤ i ≤ n-L+1. The time series T is ultimately recorded, because it is measuring some aspect of a system S (perhaps indirectly measuring the phenomenon in some instances). Definition 3: A system S is a physical or logical process containing two or more discrete states separated by one or more boundaries b.
+Here, we introduce the necessary definitions and terminology, beginning with the definition of a time series:
 
 ## Definitions
 
@@ -97,31 +97,21 @@ Matrix Profile (MP) [@Yeh2017a], is a state-of-the-art [@DePaepe2020; @Feremans2
 
 Before MP, time series analysis relied on what is called *distance matrix* (DM), a matrix that stores all the distances between two time series (or itself, in case of a Self-Join). This was very power consuming, and several methods of pruning and dimensionality reduction were researched [@Lin2007].
 
-For brevity, let's just understand that the MP and the companion Profile Index (PI) are two vectors that hold one floating point value and one integer value, respectively, regarding the original time series: (1) the similarity distance between that point on time (let's call these points "indexes") and its first nearest-neighbor (1-NN), (2) The index where this this 1-NN is located. The original paper has more detailed information [@Yeh2017a]. It is computed using a sliding window but instead of creating a whole DM, only the minimum values and the index of these minimum are stored (in the MP and PI respectively). We can have an idea of the relationship of both on @fig-thematrix.
+For brevity, let's just understand that the MP and the companion Profile Index (PI) are two vectors that hold one floating point value and one integer value, respectively, regarding the original time series: (1) the similarity distance between that point on time (let's call these points "indexes") and its first nearest-neighbor (1-NN), (2) The index where this this 1-NN is located. The original paper has more detailed information [@Yeh2017a]. It is computed using a sliding window but instead of creating a whole DM, only the minimum values and the index of these minimum are stored (in the MP and PI respectively). We can have an idea of the relationship of both on @fig-thematrix .
 
--   Matrix Profile XXIII: Contrast Profile: A Novel Time Series Primitive that Allows Real World Classification
+::: {layout="[1,2,1]"}
+![A distance matrix (top), and a matrix profile (bottom). The matrix profile stores only the minimum values of the distance matrix.](images/mp_1.png){#fig-thematrix}
+:::
 
-The article could then describe your algorithmic pipeline in detail, including the two main steps of regime change detection and classification. The article would conclude by discussing the results of your evaluation, as well as the potential impact of your work on the development of wearable arrhythmia detection devices.
+## Semantic Segmentation
 
-Therefore, the development and utilization of advanced algorithms and sophisticated algorithms in wearable devices is crucial for effective remote patient monitoring and management of cardiovascular diseases.
+The regime change approach will be using the FLOSS (Fast Lowcost Online Semantic Segmentation) algorithm which uses the *Arc Counts* concept, as explained by Gharghabi, *et al.*,[@gharghabi2018].
 
-The rest of this paper is organized as follows. In Section II, we provide a summary of the background and related work along with the necessary definitions. In Section III-A, we introduce a batch algorithm for semantic segmentation before generalizing it to the streaming case in Section III-C. Section 0 illuminates a detailed quantitative and qualitative evaluation of our ideas. Finally, in Section IV, we offer conclusions and directions for future work.
+The FLOSS algorithm is built on top of the Matrix Profile (MP)[@Yeh2017a], introduced above. Recalling that the MP and the companion Profile Index are two vectors holding information about the 1-NN. One can imagine several "arcs" starting from one "index" to another. This algorithm is based on the assumption that between two regimes, the most similar shape (its nearest neighbor) is located on the same *semantic* segment. As the number of "arcs" decreases, we can infer that the regime is changing (in this case the ECG waves, or another bio-signal). As show on @fig-arcsoriginal. This drop on the *Arc Counts* is a signal that a change on the shape of the signal has happened.
 
-The rest of this paper is organized as follows. In Section II, we present the necessary definitions and notations. Section III sees a discussion of related work. In Section IV, we present several examples of data mining tasks that can exploit the Contrast Profile before experimentally demonstrating them in Section V. Section VI offers conclusions.
+![FLOSS algorithm, using arc counts. The black dashed line shows a toy example where the arc count equals to four.](images/fluss_arcs.svg){#fig-arcsoriginal}
 
-# Background and related work
-
--   Definitions from FLOSS paper
-
-# Methods and Materials
-
-### Detecting regime changes
-
-The regime change approach will be using the *Arc Counts* concept, used on the FLUSS (Fast Low-cost Unipotent Semantic Segmentation) algorithm, as explained by Gharghabi, *et al.*,[@gharghabi2018].
-
-The FLUSS (and FLOSS, the on-line version) algorithm is built on top of the Matrix Profile (MP)[@Yeh2017a], described on @sec-matrixprofile. Recalling that the MP and the companion Profile Index (PI) are two vectors holding information about the 1-NN. One can imagine several "arcs" starting from one "index" to another. This algorithm is based on the assumption that between two regimes, the most similar shape (its nearest neighbor) is located on "the same side", so the number of "arcs" decreases when there is a change on the regime, and increases again. As show on @fig-arcsoriginal. This drop on the *Arc Counts* is a signal that a change on the shape of the signal has happened.
-
-The choice of the FLOSS algorithm (on-line version of FLUSS) is founded on the following arguments:
+The choice of the FLOSS algorithm is founded on the following arguments:
 
 -   **Domain Agnosticism:** the algorithm makes no assumptions about the data as opposed to most available algorithms to date.
 -   **Streaming:** the algorithm can provide real-time information.
@@ -130,21 +120,41 @@ The choice of the FLOSS algorithm (on-line version of FLUSS) is founded on the f
 
 Other algorithms we can cite are based on Hidden Markov Models (HMM) that require at least two parameters to be set by domain experts: cardinality and dimensionality reduction. The most attractive alternative could be the Autoplait [@Matsubara2014], which is also domain agnostic and parameter-free. It segments the time series using Minimum Description Length (MDL) and recursively tests if the region is best modeled by one or two HMM. However, Autoplait is designed for batch operation, not streaming, and also requires discrete data. FLOSS was demonstrated to be superior in several datasets in its original paper. In addition, FLOSS is robust to several changes in data like downsampling, bit depth reduction, baseline wandering, noise, smoothing, and even deleting 3% of the data and filling with simple interpolation. Finally, the most important, the algorithm is light and suitable for low-power devices.
 
+The above cited researches [@kowsar2022; @bhanushali2020; @grammatikakis2021; @cheng2020] differ from this work on the following aspects: (1) the aim is to find and track any repeating pattern [@kowsar2022], (2) the aim is to infer a physiological condition of the patient, in batches ranging from 1 minute to 5 minutes, and uses a highly customized hardware to make the computations [@bhanushali2020], (3) the aim is to transmit the data to a remote server for processing [@grammatikakis2021], (4) the aim is to classify an arrhythmia, not to detect it; also uses compressed data and a pre-trained Neural Network [@cheng2020].
+
 In the MP domain, it is worth also mentioning other possible algorithm: the Time Series Snippets [@Imani2018], based on MPdist [@gharghabi2018b]. The latter measures the distance between two sequences considering how many similar sub-sequences they share, no matter the order of matching. It proved to be a useful measure (not a metric) for meaningfully clustering similar sequences. Time Series Snippets exploits MPdist properties to summarize a dataset extracting the $k$ sequences that represent most of the data. The final result seems to be an alternative for detecting regime changes, but it is not. The purpose of this algorithm is to find which pattern(s) explains most of the dataset. Also, it is not suitable for streaming data. Lastly, MPdist is quite expensive compared to the trivial Euclidean distance.
 
-The regime change detection will be evaluated following the criterias explained on @sec-evaluation.
+> The article could then describe your algorithmic pipeline in detail, including the two main steps of regime change detection and classification. The article would conclude by discussing the results of your evaluation, as well as the potential impact of your work on the development of wearable arrhythmia detection devices.
 
-Description of the Matrix Profile and the FLUSS/FLOSS algorithm, explaining how they detect changes in the ECG signal.
+# Methods and Materials
 
-Description of the FLUSS/FLOSS algorithm from the Matrix Profile. Designing the ECG signal change detection system. Implementation and constraints on wearable devices.
+First let us introduce the concept of Nested Resampling [@Bischl2012]. It is known that when increasing model complexity, overfitting on the training set becomes more likely to happen [@Hastie2009]. This is an issue that this work has to countermeasure as there are many steps that requires parameter tuning, even for algorithms that are almost parameter-free like the MP.
 
-Data collection from Electrocardiograms Overview of the Matrix Profile framework In-depth look into the FLUSS/FLOSS algorithm
+The rule that must be followed is simple: *do not* evaluate a model on the same resampling split used to perform its own parameter tuning. Using simple cross-validation, the information about the test set "leaks" into the evaluation, which leads to overfitting/overtuning, and gives us an optimistic biased estimative of the performance. Bernd Bischl, 2012 [@Bischl2012] describes more deeply these factors, and also gives us a countermeasure for that: (1) from preprocessing the data to model selection use the training set; (2) the test set should be touched once, on the evaluation step; (3) repeat. This guarantees that a "new" separated data is only used *after* the model is trained/tuned.
 
-# Implementation
+@fig-nestedresampling shows us this principle. The steps (1) and (2) described above are part of the **Outer resampling**, which in each loop splits the data in two sets: the training set and the test set. The training set is then used in the **Inner resampling** where, for example, the usual cross-validation may be used (creating an *Analysis set* and an *Assessment set*, to avoid conflict of terminology), and the best model/parameters is selected. Then, this best model is evaluated against the unseen test set that was created for this resampling.
 
-Details on the development of the algorithmic pipeline, with emphasis on its adaptability for wearable devices.
+![Nested resampling. The full dataset is resampled several times (outer resampling), so each branch has its own Test set (yellow). On each branch, the Training set is used as if it were a full dataset, being resampled again (inner resampling); here the Assessment set (blue) is used to test the learning model and tune parameters. The best model then, is finally evaluated on its own Test set.](images/draw-nested-resampling.svg){#fig-nestedresampling}
 
-# Experiments, Results, Validation
+The resulting (aggregated) performance of all outer samples gives us a more honest estimative of the expected performance on new data.
+
+## Dataset
+
+> And other datasets. Need to explain the parameters first, then the datasets.
+
+The dataset used for working with the Regime Change algorithm was the "Paroxysmal Atrial Fibrillation Events Detection from Dynamic ECG Recordings: The 4th China Physiological Signal Challenge 2021" hosted by Zenodo [@bischoff2021afib] under the same license as Physionet.
+
+The selected records were those that contain paroxysmal atrial fibrillation events, a total of 229 records. The records were split in a proportion of 3/4 for the training set (inner resampling) and 1/4 for the test set (outer resampling). The inner resampling was performed using a 5-fold cross-validation, which accounts for 137 records for fitting the models and 92 records for assessing them in the inner resampling.
+
+The following parameters were used:
+
+-   The MP parameters were explored using the following values:
+    -   **`mp_threshold`**: 0.0 to 0.9, by 0.1 steps;
+    -   **`time_constraint`**: 0, 800 and 1500;
+    -   **`window_size`**: 25 to 350, by 25 steps;
+-   The FLOSS parameters were explored using the following values:
+    -   **`regime_threshold`**: 0.05 to 0.90, by 0.05 steps;
+    -   **`regime_landmark`**: 1 to 10, by 0.5 steps.
 
 ## Regime change detection
 
@@ -163,53 +173,15 @@ Later, the FLOSS algorithm also has a parameter that needs tuning to optimize th
 
 Using the `tidymodels` framework, we performed a basic grid search on all these parameters.
 
-@fig-thepipeline shows the workflow using Nested resamplig as described on @sec-methodology. @fig-flossregime shows an example of the regime change detection pipeline. The graph on top shows the ECG streaming; the blue line marks the ten seconds before the original alarm was fired; the red line marks the time constraint used on the example; the dark red line marks the limit for taking a decision in this case of Asystole; The blue horizontal line represents the size of the sliding window. The graph on the middle shows the Arc counts as seen by the algorithm (with the corrected distribution); the red line marks the current minimum value and its index; the blue horizontal line shows the minimum value seen until then. The graph on the bottom shows the computed Arc counts (raw) and the red line is the theoretical distribution used for correction.
+> FIX
 
-```{r floss_cached, eval=FALSE, echo=FALSE, cache=FALSE}
-network <- readRDS(here::here("output", "regime_network.rds"))
-net <- network |>
-  visNetwork::visPhysics(hierarchicalRepulsion = list(
-    springLength = 1,
-    avoidOverlap = 0.5,
-    nodeDistance = 120
-  ))
-```
+@fig-thepipeline shows the workflow using Nested resamplig in order to evaluate the FLOSS algorithm on the ECG datasets. @fig-flossregime shows a snapshot of the regime change detection on running pipeline. The graph on top shows the ECG streaming; the blue line marks the ten seconds before the original alarm was fired; the red line marks the time constraint used on the example; the dark red line marks the limit for taking a decision in this case of Asystole; The blue horizontal line represents the size of the sliding window. The graph on the middle shows the Arc counts as seen by the algorithm (with the corrected distribution); the red line marks the current minimum value and its index; the blue horizontal line shows the minimum value seen until then. The graph on the bottom shows the computed Arc counts (raw) and the red line is the theoretical distribution used for correction.
 
-```{r fig-thepipeline, eval=FALSE, out.width="90%", fig.cap="FLOSS pipeline."}
-if (knitr::is_latex_output()) {
-  my_graphics("the-network")
-} else {
-  visNetwork::visInteraction(net, hover = TRUE, multiselect = TRUE, tooltipDelay = 100)
-}
-```
+![Pipeline used to evaluate the FLOSS algorithm.](images/floss_net.svg){#fig-thepipeline fig-align="center"}
 
-```{r fig-flossregime, eval=FALSE, echo=FALSE, fig.height = 8, fig.width = 5, out.width="70%"}
-#| fig-cap: "Regime change detection example.
-#|  The graph on top shows the ECG streaming; the blue line marks the ten seconds
-#|  before the original alarm was fired; the red line marks the time constraint of 1250;
-#|  the dark red line marks the limit for taking a decision in this case of Asystole
-#|  the blue horizontal line represents the size of the sliding window.
-#|  The graph on the middle shows the Arc counts as seen by the algorithm (with the corrected
-#|  distribution); the red line marks the current minimum value and its index; the blue
-#|  horizontal line shows the minimum value seen until then.
-#|  The graph on the bottom shows the computed Arc counts (raw) and the red line is the
-#|  theoretical distribution used for correction."
-my_graphics("floss_regime")
-```
+> FIX
 
-The dataset used for working with the Regime Change algorithm was the "Paroxysmal Atrial Fibrillation Events Detection from Dynamic ECG Recordings: The 4th China Physiological Signal Challenge 2021" hosted by Zenodo [@bischoff2021afib] under the same license as Physionet.
-
-The selected records were those that contain paroxysmal atrial fibrillation events, a total of 229 records. The records were split in a proportion of 3/4 for the training set (inner resampling) and 1/4 for the test set (outer resampling). The inner resampling was performed using a 5-fold cross-validation, which accounts for 137 records for fitting the models and 92 records for assessing them in the inner resampling.
-
-The following parameters were used:
-
--   The MP parameters were explored using the following values:
-    -   **`mp_threshold`**: 0.0 to 0.9, by 0.1 steps;
-    -   **`time_constraint`**: 0, 800 and 1500;
-    -   **`window_size`**: 25 to 350, by 25 steps;
--   The FLOSS parameters were explored using the following values:
-    -   **`regime_threshold`**: 0.05 to 0.90, by 0.05 steps;
-    -   **`regime_landmark`**: 1 to 10, by 0.5 steps.
+![Regime change detection example. The graph on top shows the ECG streaming; the blue line marks the ten seconds before the original alarm was fired; the red line marks the time constraint of 1250; the dark red line marks the limit for taking a decision in this case of Asystole the blue horizontal line represents the size of the sliding window. The graph on the middle shows the Arc counts as seen by the algorithm (with the corrected distribution); the red line marks the current minimum value and its index; the blue horizontal line shows the minimum value seen until then. The graph on the bottom shows the computed Arc counts (raw) and the red line is the theoretical distribution used for correction.](images/graph_regime_floss.svg){#fig-flossregime fig-align="center"}
 
 ### Parameters analysis
 
