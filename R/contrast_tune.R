@@ -67,7 +67,7 @@ min_grid.contrast_model <- function(x, grid, ...) {
 
   # # This is basically `fit_max_value()` with an extra error trap
   gr_nms <- names(grid)
-  param_info <- tune:::get_submodel_info(x)
+  param_info <- tune:::get_submodel_info(x) # nolint
   sub_nm <- param_info$id[param_info$has_submodel]
 
   if (length(sub_nm) == 0L || !any(names(grid) %in% sub_nm)) {
@@ -79,15 +79,15 @@ min_grid.contrast_model <- function(x, grid, ...) {
 
   if (length(fixed_args) == 0L) {
     if (length(sub_nm) > 1L) {
-      res <- tune:::submod_only_multi(grid)
+      res <- tune:::submod_only_multi(grid) # nolint
     } else {
-      res <- tune:::submod_only(grid)
+      res <- tune:::submod_only(grid) # nolint
     }
   } else {
     if (length(sub_nm) > 1L) {
-      res <- tune:::submod_and_others_multi(grid, fixed_args)
+      res <- tune:::submod_and_others_multi(grid, fixed_args) # nolint
     } else {
-      res <- tune:::submod_and_others(grid, fixed_args)
+      res <- tune:::submod_and_others(grid, fixed_args) # nolint
     }
   }
   res

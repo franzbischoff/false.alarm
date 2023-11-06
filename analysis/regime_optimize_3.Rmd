@@ -1004,8 +1004,8 @@ model_median_best <- scores_stats_model %>%
 ```
 
 Fig.  \@ref(fig:bestmodels) the performance of the six best models.  They are ordered from left to right, from the worst
-record to the best record.  The top model is the one with the lowest mean across the scores.  The blue line indicates
-the mean score, and the red line the median score.  The scores above 3 are squished in the plot and colored according to
+record to the best record.  The top model is the one with the lowest mean across the scores.  The red line indicates
+the median score.  The scores above 3 are squished in the plot and colored according to
 the scale in the legend. Notice the improvement on the blue and red lines compared to the [previous article](regime_optimize.html).
 
 
@@ -1013,7 +1013,7 @@ the scale in the legend. Notice the improvement on the blue and red lines compar
 #| fig.cap="Performances of the best 6 models across all inner resample of recordings.
 #|  The recordings are ordered by score, from the worst to the best.
 #|  Each plot shows one model, starting from the best one.
-#|  The red line indicates the median score of the model. The blue line indicates the mean score of the model.
+#|  The red line indicates the median score of the model.
 #|  The gray line limits the zero-score region."
 
 best_models <- scores_stats_model %>%
@@ -1029,7 +1029,7 @@ for (i in seq_len(length(best_models))) {
   plots[[i]] <- ggplot2::ggplot(dd, aes(x = reorder(record, -score), y = score, colour = score)) +
     ggplot2::geom_point(size = 2) +
     ggplot2::geom_hline(aes(yintercept = median), colour = "red") +
-    ggplot2::geom_hline(aes(yintercept = mean), colour = "blue") +
+    # ggplot2::geom_hline(aes(yintercept = mean), colour = "blue") +
     ggplot2::geom_hline(aes(yintercept = 0), colour = "gray50") +
     ggplot2::scale_y_continuous(
       limits = c(0, 1),

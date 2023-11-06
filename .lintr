@@ -39,5 +39,5 @@ linters: linters_with_defaults(
   unused_import_linter(),
   yoda_test_linter()
   )
-exclusions: list("dev", "renv", "R/RcppExports.R", "README.Rmd")
+exclusions: list("dev", "renv", "R/RcppExports.R", "README.Rmd", "papers")
 

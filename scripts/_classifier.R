@@ -107,7 +107,7 @@ var_save_pred <- TRUE
 # plan(multicore) # create child processes
 future::plan(future.callr::callr, workers = var_future_workers) # create child processes with a child process
 
-tidymodels::tidymodels_prefer(quiet = TRUE)
+# tidymodels::tidymodels_prefer(quiet = TRUE)
 
 
 # start debugme after loading all functions
@@ -303,12 +303,12 @@ list(
         cli::cli_alert_info("Finding solutions, fold {i}.")
         tune3 <- 10
         solutions <- find_solutions(score_by_segment[[i]],
-        min_cov = 10,
-        max_shapelets = 20,  # this can be more than topk
-        rep = 5000,
-        max_red = 10,
-        max_k = tune3,
-        n_jobs = 6
+          min_cov = 10,
+          max_shapelets = 20, # this can be more than topk
+          rep = 5000,
+          max_red = 10,
+          max_k = tune3,
+          n_jobs = 6
         )
 
         if (length(solutions) == 0) {

@@ -95,7 +95,7 @@ var_save_pred <- TRUE
 # plan(multicore) # create child processes
 future::plan(future.callr::callr, workers = 10) # create child processes with a child process
 
-tidymodels::tidymodels_prefer(quiet = TRUE)
+# tidymodels::tidymodels_prefer(quiet = TRUE)
 
 
 # start debugme after loading all functions

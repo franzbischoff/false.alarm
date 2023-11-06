@@ -6,15 +6,6 @@
 
 `%||NA%` <- tarchetypes:::`%||NA%` # nolint
 
-
-# Language
-
-# as_symbols <- tarchetypes:::as_symbols
-
-# call_ns <- tarchetypes:::call_ns
-
-# call_function <- tarchetypes:::call_function
-
 # Hacks
 
 lst_to_df <- function(lst, keep_attributes = TRUE) {
@@ -23,7 +14,7 @@ lst_to_df <- function(lst, keep_attributes = TRUE) {
   if (keep_attributes) {
     nc <- nrow(new_df)
     attributes(new_df) <- attributes(lst[[1L]])
-    attr(new_df, "row.names") <- seq.int(1L, nc)
+    attr(new_df, "row.names") <- seq.int(1L, nc) # nolint
   }
 
   return(new_df)
@@ -39,6 +30,6 @@ clean_splits_data <- function(object) {
   object
 }
 
-pbFinished <- function(msg) {
+pbFinished <- function(msg) { # nolint
   RPushbullet::pbPost("note", "Alert", msg)
 }

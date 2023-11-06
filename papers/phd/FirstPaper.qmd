@@ -1,31 +1,153 @@
 ---
-title: "Research Progress Report"
-author: "Francisco Bischoff"
+title: "Real-time Detection of ECG Signal Change for Low-Resource Environments: Utilizing the FLOSS Algorithm of the Matrix Profile"
+author: ["Francisco Bischoff", "Pedro Rodrigues", "Eamonn Keogh"]
 link-citations: true
 bibliography: [../references.bib]
 csl: ../../thesis/csl/ama.csl
 linestretch: 1.5
 indent: true
+reference-location: document
+citation-location: document
 execute:
   cache: true
 format:
   html:
     theme: darkly
-    date: "2023-08-21"
-    fontsize: "1.0em"
-    # toc: true
-    # toc-depth: 3
-    # toc-location: right
-    citeproc: true
-    # standalone: true
-    # embed-resources: true
-    # number-sections: true
-    # number-depth: 3
-    # keep-tex: true
     highlight-style: oblivion
+    date: '2023-11-02'
+    fontsize: "1.0em"
+    code-fold: true
+    html-math-method: katex
+    toc: true
+    toc-title: Contents
+    toc-expand: 2
+    toc-depth: 3
+    # toc-location: right
+    # css: style.css
+    citeproc: true
+    standalone: true
+    embed-resources: true
+    number-sections: true
+    number-depth: 3
+    # keep-tex: true
+    link-external-icon: true
+    link-external-newwindow: true
+    anchor-sections: true
+    smooth-scroll: true
 editor:
   render-on-save: true
+  markdown:
+    wrap: none
+    canonical: true
 ---
+
+```{r setup, include=FALSE}
+
+tkplot <- function(object, interactive = FALSE, res = 50, dataset = c("afib", "magvent", "vtachy")) {
+  # fixed configurations
+  if (dataset == "afib") {
+    basedir <- here::here("inst", "extdata", "afib_regimes")
+    rsam_from <- 200
+    track <- "II"
+  } else if (dataset == "magvent") {
+    basedir <- here::here("inst", "extdata", "malignantventricular")
+    rsam_from <- 250
+    track <- "ECG1"
+  } else if (dataset == "vtachy") {
+    basedir <- here::here("inst", "extdata", "vtachyarrhythmias")
+    rsam_from <- 250
+    track <- "ECG"
+  }
+
+  ecg <- read_ecg_with_atr(glue::glue(basedir, "/", object$record), resample_from = rsam_from, resample_to = res)
+  value <- ecg[[1]][[track]]
+  prop <- 250 / res
+  mask <- seq.int(50, 100)
+  value[1:5] <- median(value[mask])
+  value[(length(value) - 5):length(value)] <- median(value[mask])
+  time <- seq(1, floor(length(value) * prop), length.out = length(value))
+  data <- tibble::tibble(time = time, value = value)
+  min_data <- min(data$value)
+  max_data <- max(data$value)
+  truth <- clean_truth(floor(attr(ecg[[1]], "regimes") * prop), floor(length(value) * prop)) # object$truth[[1]]
+  preds <- object$pred[[1]]
+
+  title <- glue::glue(
+    "Recording: {object$record} ",
+    "#truth: {length(truth)}, ",
+    "#preds: {length(preds)}, ",
+    "length: {floor(length(value)*prop)} ",
+    "FLOSS Score: {round(object$score, 3)}"
+  )
+
+  subtitle <- glue::glue(
+    "Parameters: ",
+    "MP window: {object$window_size}, ",
+    ifelse(!is.null(object$mp_threshold), "MP threshold: {object$mp_threshold}, ", ""),
+    ifelse(!is.null(object$time_constraint), "Time constraint: {object$time_constraint}, ", ""),
+    ifelse(!is.null(object$regime_threshold), "Regime threshold: {object$regime_threshold}, ", ""),
+    ifelse(!is.null(object$regime_landmark), "Regime landmark: {object$regime_landmark}", "")
+  )
+
+  plot <- data |>
+    timetk::plot_time_series(
+      time, value,
+      .title = glue::glue(title, "<br><sup>{subtitle}</sup>"),
+      .interactive = interactive,
+      .smooth = FALSE,
+      .line_alpha = 0.3,
+      .line_size = 0.2,
+      .plotly_slider = interactive
+    )
+
+  if (interactive) {
+    plot <- plot |>
+      plotly::add_segments(
+        x = preds, xend = preds, y = min_data,
+        yend = max_data + (max_data - min_data) * 0.1,
+        line = list(width = 2.5, color = "#0108c77f"),
+        name = "Predicted"
+      ) |>
+      plotly::add_segments(
+        x = truth, xend = truth, y = min_data,
+        yend = max_data,
+        line = list(width = 2.5, color = "#ff00007f"),
+        name = "Truth"
+      )
+  } else {
+    sci <- getOption("scipen")
+    options(scipen = 999)
+    plot <- plot +
+      ggplot2::geom_segment(
+        data = tibble::tibble(pre = preds),
+        ggplot2::aes(
+          x = pre, xend = pre,
+          y = min_data, yend = max_data + (max_data - min_data) * 0.1
+        ), linewidth = 1, color = "#0108c77f"
+      ) +
+      ggplot2::geom_segment(
+        data = tibble::tibble(tru = truth),
+        ggplot2::aes(
+          x = tru, xend = tru,
+          y = min_data, yend = max_data - (max_data - min_data) * 0.1
+        ), linewidth = 1, color = "#ff00007f"
+      ) +
+      ggplot2::theme_bw() +
+      ggplot2::theme(
+        axis.ticks.y = ggplot2::element_blank(),
+        axis.text.y = ggplot2::element_blank(),
+        legend.position = "none",
+        plot.margin = ggplot2::margin(0, 0, 0, 10)
+      ) + ggplot2::scale_x_continuous(n.breaks = 6, labels = scales::label_number(scale = 0.004, suffix = "s")) +
+      ggplot2::labs(title = title, subtitle = subtitle, y = ggplot2::element_blank())
+    options(scipen = sci)
+  }
+  plot
+}
+
+source(here::here("scripts", "common", "read_ecg.R"))
+source(here::here("scripts", "common", "score_floss.R"))
+```
 
 # Focus
 
@@ -35,19 +157,19 @@ By structuring your research into these two distinct articles, you can comprehen
 
 Focus on (choices):
 
--   **development and implementation** of the algorithmic pipeline for detecting life-threatening heart rates using the FLUSS/FLOSS algorithm of the Matrix Profile. You can **discuss the challenges and considerations in designing the pipeline to be suitable for low computational power equipment** and low memory devices such as wearable devices. Additionally, you can present the **results of the detection performance** and **discuss the potential applications and implications** of this pipeline in real-time ECG monitoring.
+-   **development and implementation** of the algorithmic pipeline for detecting life-threatening heart rates using the FLOSS algorithm of the Matrix Profile. You can **discuss the challenges and considerations in designing the pipeline to be suitable for low computational power equipment** and low memory devices such as wearable devices. Additionally, you can present the **results of the detection performance** and **discuss the potential applications and implications** of this pipeline in real-time ECG monitoring.
 
--   the detection of ECG signal change using FLOSS. The article can discuss the challenges in detecting life-threatening heart rate patterns in real-time ECG monitoring and how the Matrix Profile algorithm, specifically FLUSS/FLOSS, can effectively address these challenges. Additionally, the article can highlight the advantages of using low computational power equipment and low memory, such as wearable devices, for point-of-care ECG monitoring.
+-   the detection of ECG signal change using FLOSS. The article can discuss the challenges in detecting life-threatening heart rate patterns in real-time ECG monitoring and how the Matrix Profile algorithm, specifically FLOSS, can effectively address these challenges. Additionally, the article can highlight the advantages of using low computational power equipment and low memory, such as wearable devices, for point-of-care ECG monitoring.
 
--   presents a novel algorithmic pipeline for the real-time detection of life-threatening heart rates in Point-of-Care (POC) ECG using the FLUSS/FLOSS algorithm. The pipeline is designed to be used in low computational power equipment and low memory, such as wearable devices. The article discusses the implementation details and performance evaluation of the pipeline, demonstrating its potential for accurate and timely detection of life-threatening cardiac rhythms in POC ECG monitoring.
+-   presents a novel algorithmic pipeline for the real-time detection of life-threatening heart rates in Point-of-Care (POC) ECG using the FLOSS algorithm. The pipeline is designed to be used in low computational power equipment and low memory, such as wearable devices. The article discusses the implementation details and performance evaluation of the pipeline, demonstrating its potential for accurate and timely detection of life-threatening cardiac rhythms in POC ECG monitoring.
 
 This article can focus on the foundational aspect of your research, outlining the mechanisms for detecting changes in ECG signals, especially in low computational power environments such as wearables.
 
 This article could discuss the need for arrhythmia detection in wearable devices, as well as the challenges of developing an algorithm that is both accurate and efficient enough to run on a wearable device. The article could then describe your algorithmic pipeline in detail, including the two main steps of regime change detection and classification. The article would conclude by discussing the results of your evaluation, as well as the potential impact of your work on the development of wearable arrhythmia detection devices.
 
-[@kowsar2022] points to the next DOI and says that the MP is too dependent on the window size "In a closely related approach to motif discovery methods, Gharghabi et al. \[31\] designed FLOSS to identify boundaries of repetitive regions in a time series. FLOSS is based on the matrix profile (MP), an algorithm that can detect motifs from time series in an unsupervised manner using a sliding window of size M \[32\]. Mirmomeni et al. \[3\] showed that both MP and FLOSS are highly sensitive to their key input parameter M for finding consecutive repeating regions in a time series. They demonstrated that for each different IoR, we must use a different M , which prevents FLOSS from being a one-pass and real-time algorithm. Mirmomeni et al. \[3\] designed a method for finding the best M to identify a repeating region from a time series. However, we still need to apply their method using multiple passes in order to find all IoR in a time series. Therefore, their method is not suited to real-time online applications where the computation must occur on a resource-constrained device, such as a wearable. See Section IX-A for a detailed explanation of this method."
+[@kowsar2022] points to the next DOI and says that the MP is too dependent on the window size "In a closely related approach to motif discovery methods, Gharghabi *et al*. [@gharghabi2018] designed FLOSS to identify boundaries of repetitive regions in a time series. FLOSS is based on the matrix profile (MP), an algorithm that can detect motifs from time series in an unsupervised manner using a sliding window of size M. Mirmomeni *et al*. [@mirmomeni2018] showed that both MP and FLOSS are highly sensitive to their key input parameter M for finding consecutive repeating regions in a time series. They demonstrated that for each different IoR, we must use a different M , which prevents FLOSS from being a one-pass and real-time algorithm. Mirmomeni *et al*. [@mirmomeni2018] designed a method for finding the best M to identify a repeating region from a time series. However, we still need to apply their method using multiple passes in order to find all IoR in a time series. Therefore, their method is not suited to real-time online applications where the computation must occur on a resource-constrained device, such as a wearable. See Section IX-A for a detailed explanation of this method."
 
-[@mirmomeni2018] Says that MP is too dependent on the window size \[but, window_size too high, despite. And they dont use a buffer size, they use the whole data!\]
+[@mirmomeni2018] Says that MP is too dependent on the window size \[but, window_size too high, despite. And they don't use a buffer size, they use the whole data!\]
 
 [@lin2016] Proposes evaluation technique F1
 
@@ -55,7 +177,7 @@ This article could discuss the need for arrhythmia detection in wearable devices
 
 asdasd
 
-This article will focus on the use of the Matrix Profile framework, particularly the FLUSS/FLOSS algorithm, in detecting changes in real-time one-lead ECG signals. This serves as the foundation for the subsequent classification of the signal changes in terms of severity. f \# Introduction
+This article will focus on the use of the Matrix Profile framework, particularly the FLOSS algorithm, in detecting changes in real-time one-lead ECG signals. This serves as the foundation for the subsequent classification of the signal changes in terms of severity. f \# Introduction
 
 # Introduction
 
@@ -73,7 +195,7 @@ Real-time monitoring of life-threatening ECG patterns in high-risk patients (for
 
 The challenge starts with developing an algorithm that not only has acceptable accuracy but is also efficient to run in the constricted environment of a wearable device. Some effort has been taken to analyze wearable sensor data. Kowsar, *et al.*[@kowsar2022] made use of accelerometers to detect and track repeating patterns in the context of exercising. Bhanushali, *et al.*[@bhanushali2020] uses a custom circuit to detect stress/no stress detection using a chest ECG device, Grammatikakis, *et al.*[@grammatikakis2021] uses a Body Gateway sensor to transmit the ECG data for remote processing and analysis and Cheng, *et al.* [@cheng2020] which proposes a multi-label classification of arrhythmias from pre-compressed ECG signal using Neural Networks.
 
-> Significance of real-time detection in wearable devices Brief introduction to the Matrix Profile framework and the importance of the FLUSS/FLOSS algorithm
+> Significance of real-time detection in wearable devices Brief introduction to the Matrix Profile framework and the importance of the FLOSS algorithm
 
 Here, we propose a procedure to monitor a patient's ECG in real-time, online (not in batches), using a constricted environment (low CPU and low memory). This first work will focus on detecting *semantic* changes in patients' ECG. By *semantic*, we refer to changes in the shape of the streaming data, which can change without obvious effect on statistical properties [@gharghabi2018].
 
@@ -85,11 +207,27 @@ Here, we introduce the necessary definitions and terminology, beginning with the
 
 ## Definitions
 
-**Definition 1**: A time series $T = t_1, t_2, t_3, … ,t_n$ is a continuous ordered sequence of real values in equally spaced time intervals of length $n$.
+::: {#def-ts}
+: A time series $T \in \mathbb{R}^n$ is a sequence of real-valued numbers $t_i \in \mathbb{R}: T=\left[t_1, t_2, \ldots, t_n\right]$, in equally spaced time intervals where $n$ is the length of $T$.
+:::
 
-**Definition 2**: A subsequence $T_{i,L}$ of a $T$ is a continuous subset of the values from $T$ of length $L$ starting from position $i$. $T_{i,L} = t_i, t_{i+1},…, t_{i+L-1}$, where $1 ≤ i ≤ n-L+1$. The time series $T$ is ultimately recorded, because it is measuring some aspect of a system $S$ (perhaps indirectly measuring the phenomenon in some instances).
+A local region of time series is called a subsequence (or a window) and is defined as follows:
 
-**Definition 3**: A system $S$ is a physical or logical process containing two or more discrete states separated by one or more boundaries $b$.
+::: {#def-subseq}
+: A subsequence $T_{i,m} \in \mathbb{R}^m$ of a time series $T$ is a continuous subset of the values from $T$ of length $m$ starting from position $i$. Formally $T_{i, m}=\left[t_i, t_{i+1}, \ldots, t_{i+m-1}\right]$.
+:::
+
+If we take a subsequence and compute its distance to all subsequences in the same time series, we get a distance profile:
+
+::: {#def-distprof}
+: A distance profile $D \in \mathbb{R}^{n-m+1}$ of a time series $T$ and a subsequence $T_{i,m}$ is a vector stores $\operatorname{dist}\left(T_{i, m}, T_{j, m}\right) \forall j \in [1, 2, \ldots, n − m + 1]$ , where $i \neq j$.
+:::
+
+Combining all distance profiles of a time series we get the matrix profile:
+
+::: {#def-matrprof}
+: A matrix profile $MP \in \mathbb{R}^{n-m+1}$ of a time series $T$ is a meta time series that stores the z-normalized Euclidean distance between each subsequence and its nearest neighbor where $n$ is the length of $T$ and $m$ is the given subsequence length.
+:::
 
 ## Matrix Profile Background
 
@@ -97,11 +235,14 @@ Matrix Profile (MP) [@Yeh2017a], is a state-of-the-art [@DePaepe2020; @Feremans2
 
 Before MP, time series analysis relied on what is called *distance matrix* (DM), a matrix that stores all the distances between two time series (or itself, in case of a Self-Join). This was very power consuming, and several methods of pruning and dimensionality reduction were researched [@Lin2007].
 
-For brevity, let's just understand that the MP and the companion Profile Index (PI) are two vectors that hold one floating point value and one integer value, respectively, regarding the original time series: (1) the similarity distance between that point on time (let's call these points "indexes") and its first nearest-neighbor (1-NN), (2) The index where this this 1-NN is located. The original paper has more detailed information [@Yeh2017a]. It is computed using a sliding window but instead of creating a whole DM, only the minimum values and the index of these minimum are stored (in the MP and PI respectively). We can have an idea of the relationship of both on @fig-thematrix .
+For brevity, let's just understand that the MP and the companion Profile Index (PI) are two vectors that hold one floating point value and one integer value, respectively, regarding the original time series: (1) the similarity distance between that point on time (let's call these points "indexes") and its first nearest-neighbor (1-NN), (2) The index where this this 1-NN is located. The original paper has more detailed information [@Yeh2017a]. It is computed using a sliding window (@def-subseq) but instead of creating a whole DM, only the minimum values and the index of these minimum are stored (in the MP and PI respectively). We can have an idea of the relationship of both on @fig-thematrix .
 
-::: {layout="[1,2,1]"}
 ![A distance matrix (top), and a matrix profile (bottom). The matrix profile stores only the minimum values of the distance matrix.](images/mp_1.png){#fig-thematrix}
-:::
+
+> There are several ways to compute the MP. talk about the one suitable for small devices (MPX) that uses covariance instead of FFT, which is more suitable to constricted environment and short length TS. Code formulas are by Kaveh Kamgar.
+> References
+> Phillippe Pebay, Formulas for Robust, One-Pass Parallel Computation of Covariances and Arbitrary-Order Statistical Moments
+> Knuth, semi-numerical algorithms, vol 2
 
 ## Semantic Segmentation
 
@@ -138,6 +279,39 @@ The rule that must be followed is simple: *do not* evaluate a model on the same 
 
 The resulting (aggregated) performance of all outer samples gives us a more honest estimative of the expected performance on new data.
 
+<!-- @fig-regimemodel shows the pipeline used on this paper to evaluate the regime change detection algorithm.
+
+![Pipeline for regime change detection. The full dataset (containing several patients) is divided into a Training set and a Test set. The Training set is then resampled in an Analysis set and an Assessment set. The former is used for training/parameter tuning and the latter for assessing the result. The best parameters are then used for evaluation on the Test set. This may be repeated several times.](images/draw-regime-model.svg){#fig-regimemodel} -->
+
+## Regime change detection
+
+As we have seen previously, the FLOSS algorithm is built on top of the Matrix Profile (MP). Thus, we have proposed several parameters that may or not impact the FLOSS prediction performance. Worth to mention that the only parameter needed to compute the MP is the window size, the others were introduced by us to see if they could improve the prediction performance.
+
+The variables for building the MP are:
+
+-   **`window_size`**: the only parameter needed to compute the MP.
+-   **`mp_threshold`**: the minimum similarity value to be considered for 1-NN.
+-   **`time_constraint`**: the maximum distance to look for the nearest neighbor.
+
+Later, the FLOSS algorithm also has parameters that can be tuned to optimize the prediction:
+
+-   **`regime_threshold`**: the threshold below which a regime change is considered.
+-   **`regime_landmark`**: the point in time where the regime threshold is applied (introduced later).
+
+Using the `tidymodels` framework [@tidymodels2020] and the `targets` framework (for reproducibility) [@landau2021], we performed a basic grid search on all these parameters.
+
+
+@fig-thepipeline shows the workflow using Nested resamplig in order to evaluate the FLOSS algorithm on the ECG datasets. @fig-flossregime shows a snapshot of the regime change detection on running pipeline. The graph on top shows the ECG streaming; the blue line marks the ten seconds before the original alarm was fired; the red line marks the time constraint used on the example; the dark red line marks the limit for taking a decision in this case of Asystole; The blue horizontal line represents the size of the sliding window. The graph on the middle shows the Arc counts as seen by the algorithm (with the corrected distribution); the red line marks the current minimum value and its index; the blue horizontal line shows the minimum value seen until then. The graph on the bottom shows the computed Arc counts (raw) and the red line is the theoretical distribution used for correction.
+
+![Pipeline used to evaluate the FLOSS algorithm.](images/floss_net.svg){#fig-thepipeline fig-align="center"}
+
+@fig-flossregime shows a snapshot of the regime change detection on running pipeline. The graph on top shows the last 60s of an ECG streaming. As we will explain later, the algorithm only stores a buffer of 20s of data. The green line marks the 10s window (which is a standard defined by ANSI/AAMI EC13 Cardiac Monitor Standards[@AAMI2002]) within the event must be located. I this example, the event is an Asystole that is technically defined as "No QRS for at least 4 seconds" (depicted by the red line). The yellow line(s) mark the detection of a regime change by FLOSS. The blue dash in the lower-right shows the size of the sliding window for a visual reference. The graph below shows the Arc counts as seen by the algorithm (with the corrected distribution); the red line marks the current minimum value.
+
+![Regime change detection example. The graph on top shows the last 60s of an ECG streaming. As we will explain later, the algorithm only stores a buffer of 20s of data. The green line marks the 10s window (which is a standard defined by ANSI/AAMI EC13 Cardiac Monitor Standards[@AAMI2002]) within the event must be located. I this example, the event is an Asystole that is technically defined as "No QRS for at least 4 seconds" (depicted by the red line). The yellow line(s) mark the detection of a regime change by FLOSS. The blue dash in the lower-right shows the size of the sliding window for a visual reference. The graph below shows the Arc counts as seen by the algorithm (with the corrected distribution); the red line marks the current minimum value.](images/graph_regime_floss.svg){#fig-flossregime fig-align="center"}
+
+
+| CAC on constraint: https://franzbischoff.github.io/false.alarm/blog-202110.html
+
 ## Dataset
 
 > And other datasets. Need to explain the parameters first, then the datasets.
@@ -156,32 +330,7 @@ The following parameters were used:
     -   **`regime_threshold`**: 0.05 to 0.90, by 0.05 steps;
     -   **`regime_landmark`**: 1 to 10, by 0.5 steps.
 
-## Regime change detection
 
-As we have seen previously, the FLOSS algorithm is built on top of the Matrix Profile (MP). Thus, we have proposed several parameters that may or not impact the FLOSS prediction performance.
-
-The variables for building the MP are:
-
--   **`mp_threshold`**: the minimum similarity value to be considered for 1-NN.
--   **`time_constraint`**: the maximum distance to look for the nearest neighbor.
--   **`window_size`**: the default parameter always used to build an MP.
-
-Later, the FLOSS algorithm also has a parameter that needs tuning to optimize the prediction:
-
--   **`regime_threshold`**: the threshold below which a regime change is considered.
--   **`regime_landmark`**: the point in time where the regime threshold is applied.
-
-Using the `tidymodels` framework, we performed a basic grid search on all these parameters.
-
-> FIX
-
-@fig-thepipeline shows the workflow using Nested resamplig in order to evaluate the FLOSS algorithm on the ECG datasets. @fig-flossregime shows a snapshot of the regime change detection on running pipeline. The graph on top shows the ECG streaming; the blue line marks the ten seconds before the original alarm was fired; the red line marks the time constraint used on the example; the dark red line marks the limit for taking a decision in this case of Asystole; The blue horizontal line represents the size of the sliding window. The graph on the middle shows the Arc counts as seen by the algorithm (with the corrected distribution); the red line marks the current minimum value and its index; the blue horizontal line shows the minimum value seen until then. The graph on the bottom shows the computed Arc counts (raw) and the red line is the theoretical distribution used for correction.
-
-![Pipeline used to evaluate the FLOSS algorithm.](images/floss_net.svg){#fig-thepipeline fig-align="center"}
-
-> FIX
-
-![Regime change detection example. The graph on top shows the ECG streaming; the blue line marks the ten seconds before the original alarm was fired; the red line marks the time constraint of 1250; the dark red line marks the limit for taking a decision in this case of Asystole the blue horizontal line represents the size of the sliding window. The graph on the middle shows the Arc counts as seen by the algorithm (with the corrected distribution); the red line marks the current minimum value and its index; the blue horizontal line shows the minimum value seen until then. The graph on the bottom shows the computed Arc counts (raw) and the red line is the theoretical distribution used for correction.](images/graph_regime_floss.svg){#fig-flossregime fig-align="center"}
 
 ### Parameters analysis
 
@@ -234,14 +383,16 @@ $$ {#eq-refitted}
 
 This is not a problem *per se* but a signal we must be aware of when exploring the parameters.
 
-```{r fig-interaction, eval=FALSE, fig.height = 7, fig.width= 8, out.width="100%"}
+```{r fig-interaction, echo=FALSE, eval=TRUE, fig.height = 7, fig.width= 8, out.width="100%"}
 #| fig-cap: "Variable interactions strength using feature importance ranking measure (FIRM) approach [@Greenwell2018].
 #|  A) Shows strong interaction between `regime_threshold` and `regime_landmark`, `mp_threshold` and `window_size`,
 #|     `mp_threshold` and `regime_landmark`.
 #|  B) Refitting the model with these interactions taken into account, the strength is substantially reduced, except
 #|     for the first, showing that indeed there is a strong correlation between those variables."
 
-interactions <- readRDS(here("output", "importances_lmk.rds"))
+library(patchwork)
+
+interactions <- readRDS(here::here("output", "importances_lmk.rds"))
 importance_firm <- interactions$importance_firm
 importance_perm <- interactions$importance_perm
 importance_shap <- interactions$importance_shap
@@ -249,7 +400,7 @@ shap_html_test <- interactions$shap_html_test
 shap_fastshap_all_test <- interactions$shap_fastshap_all_test
 interactions <- interactions$interactions
 
-interactions2 <- readRDS(here("output", "importances2_lmk.rds"))
+interactions2 <- readRDS(here::here("output", "importances2_lmk.rds"))
 importance_firm2 <- interactions2$importance_firm2
 importance_perm2 <- interactions2$importance_perm2
 importance_shap2 <- interactions2$importance_shap2
@@ -303,7 +454,7 @@ Here is a brief overview of the different techniques:
 
 #### Feature Importance Ranking Measure (FIRM)
 
-The FIRM is a variance-based method. This implementation uses the ICE curves to quantify each feature effect which is more robust than partial dependance plots (PDP) [@Greenwell2020].
+The FIRM is a variance-based method. This implementation uses the ICE curves to quantify each feature effect which is more robust than partial dependence plots (PDP) [@Greenwell2020].
 
 It is also helpful to inspect the ICE curves to uncover some heterogeneous relationships with the outcome [@Molnar2022].
 
@@ -352,14 +503,15 @@ Using the three techniques simultaneously allows a broad comparison of the model
 
 In the second line, taking into account the interactions, we see that all methods somewhat agree with each other, accentuating the importance of `regime_threshold`, which makes sense as it is the most evident parameter we need to set to determine if the *Arc Counts* are low enough to indicate a regime change.
 
-```{r fig-importance, eval=FALSE, fig.height = 7, fig.width= 15, out.width="100%"}
+```{r fig-importance, eval=TRUE, echo=FALSE, warning=FALSE, fig.height = 7, fig.width= 15, out.width="100%"}
 #| fig-cap: "Variables importances using three different methods. A) Feature Importance Ranking Measure
-#|  using ICE curves. B) Permutation method. C) SHAP (400 iterations). Line 1 refers to the original
+#|  using ICE curves. B) Permutation method. C) SHAP (100 iterations). Line 1 refers to the original
 #|  fit, and line 2 to the re-fit, taking into account the interactions between variables
 #|  (@fig-interaction)."
 
+library(patchwork)
 
-importance_firm_plot <- ggplot2::ggplot(importance_firm, aes(
+importance_firm_plot <- ggplot2::ggplot(importance_firm, ggplot2::aes(
   x = reorder(Variable, Importance),
   y = Importance, fill = Variable
 )) +
@@ -371,14 +523,14 @@ importance_firm_plot <- ggplot2::ggplot(importance_firm, aes(
     x = "",
     y = ggplot2::element_blank()
   ) +
-  ggplot2::ylim(0, 3.5) +
+  ggplot2::ylim(0, 2.2) +
   ggplot2::theme_bw() +
   ggplot2::theme(
     legend.position = "none",
-    plot.margin = margin(0, 0, 0, 10)
+    plot.margin = ggplot2::margin(0, 0, 0, 10)
   )
 
-importance_perm_plot <- ggplot2::ggplot(importance_perm, aes(
+importance_perm_plot <- ggplot2::ggplot(importance_perm, ggplot2::aes(
   x = reorder(Variable, Importance),
   y = Importance, fill = Variable
 )) +
@@ -389,32 +541,32 @@ importance_perm_plot <- ggplot2::ggplot(importance_perm, aes(
     x = "",
     y = ggplot2::element_blank()
   ) +
-  ggplot2::ylim(2, 15) +
+  ggplot2::ylim(3, 20) +
   ggplot2::theme_bw() +
   ggplot2::theme(
     legend.position = "none",
-    plot.margin = margin(0, 0, 0, 10)
+    plot.margin = ggplot2::margin(0, 0, 0, 10)
   )
 
-importance_shap_plot <- ggplot2::ggplot(importance_shap, aes(
+importance_shap_plot <- ggplot2::ggplot(importance_shap, ggplot2::aes(
   x = reorder(Variable, Importance),
   y = Importance, fill = Variable
 )) +
   ggplot2::geom_col(colour = "grey35", linewidth = 0.8, show.legend = FALSE) +
   ggplot2::coord_flip() +
   ggplot2::labs(
-    title = "SHAP (400 iterations)",
+    title = "SHAP (100 iterations)",
     x = "",
     y = ggplot2::element_blank()
   ) +
-  ggplot2::ylim(0, 1.6) +
+  ggplot2::ylim(0, 1.5) +
   ggplot2::theme_bw() +
   ggplot2::theme(
     legend.position = "none",
-    plot.margin = margin(0, 0, 0, 10)
+    plot.margin = ggplot2::margin(0, 0, 0, 10)
   )
 
-importance_firm2_plot <- ggplot2::ggplot(importance_firm2, aes(
+importance_firm2_plot <- ggplot2::ggplot(importance_firm2, ggplot2::aes(
   x = reorder(Variable, Importance),
   y = Importance, fill = Variable
 )) +
@@ -424,14 +576,14 @@ importance_firm2_plot <- ggplot2::ggplot(importance_firm2, aes(
     x = "",
     y = "Importance"
   ) +
-  ggplot2::ylim(0, 3.5) +
+  ggplot2::ylim(0, 2.2) +
   ggplot2::theme_bw() +
   ggplot2::theme(
     legend.position = "none",
-    plot.margin = margin(0, 0, 0, 10)
+    plot.margin = ggplot2::margin(0, 0, 0, 10)
   )
 
-importance_perm2_plot <- ggplot2::ggplot(importance_perm2, aes(
+importance_perm2_plot <- ggplot2::ggplot(importance_perm2, ggplot2::aes(
   x = reorder(Variable, Importance),
   y = Importance, fill = Variable
 )) +
@@ -441,14 +593,14 @@ importance_perm2_plot <- ggplot2::ggplot(importance_perm2, aes(
     x = "",
     y = "Importance"
   ) +
-  ggplot2::ylim(2, 15) +
+  ggplot2::ylim(3, 20) +
   ggplot2::theme_bw() +
   ggplot2::theme(
     legend.position = "none",
-    plot.margin = margin(0, 0, 0, 10)
+    plot.margin = ggplot2::margin(0, 0, 0, 10)
   )
 
-importance_shap2_plot <- ggplot2::ggplot(importance_shap2, aes(
+importance_shap2_plot <- ggplot2::ggplot(importance_shap2, ggplot2::aes(
   x = reorder(Variable, Importance),
   y = Importance, fill = Variable
 )) +
@@ -458,11 +610,11 @@ importance_shap2_plot <- ggplot2::ggplot(importance_shap2, aes(
     x = "",
     y = "Importance"
   ) +
-  ggplot2::ylim(0, 1.6) +
+  ggplot2::ylim(0, 1.5) +
   ggplot2::theme_bw() +
   ggplot2::theme(
     legend.position = "none",
-    plot.margin = margin(0, 0, 0, 10)
+    plot.margin = ggplot2::margin(0, 0, 0, 10)
   )
 
 
@@ -495,17 +647,20 @@ Based on @fig-importance and @fig-importanceshap2 we can infer that:
 
 In short, for the MP computation, the parameter that is worth tuning is the `window_size`, while for the FLOSS computation, both `regime_threshold` (mainly) and `regime_landmark` shall be tuned.
 
-```{r fig-importanceshap, eval=FALSE, message=FALSE, fig.height = 6, fig.width= 10, out.width="100%"}
+```{r fig-importanceshap, eval=TRUE, echo=FALSE, message=FALSE, warning=FALSE, fig.height = 6, fig.width= 10, out.width="100%"}
 #| fig-cap: "This shows the effect each variable has on the FLOSS score. This plot doesn't take into account the
 #|  variable interactions."
 
-trained_model <- readRDS(here("output", "dbarts_fitted_lmk.rds"))
+library(dplyr)
+library(patchwork)
+
+trained_model <- readRDS(here::here("output", "dbarts_fitted_lmk.rds"))
 train_data <- trained_model$training_data
 testing_data <- trained_model$testing_data
 predictors_names <- c("time_constraint", "regime_threshold", "mp_threshold", "window_size", "regime_landmark")
 outcome_name <- "mean"
 
-testing_data2 <- testing_data %>%
+testing_data2 <- testing_data |>
   dplyr::mutate(
     int_rt_rl = regime_threshold * regime_landmark,
     int_mp_w = mp_threshold * window_size,
@@ -520,18 +675,15 @@ AABB
 CCDD
 #EE#
 "
+# 5% has acceptable variability for not using the whole datasets
+all_data <- dplyr::bind_rows(train_data, testing_data)
+split <- all_data |> dplyr::filter(time_constraint %in% c(0, 800, 1500), mp_threshold %in% c(0.00, 0.4, 0.6, 0.8), window_size <= 150)
+set.seed(19746)
+sample_data <- dplyr::slice_sample(split, n = 3, by = 1:4)
+ttdata <- sample_data[, predictors_names]
+base_data <- sample_data[, outcome_name]$mean
 
-# eval=FALSE
-# all <- t1 + t2 + t3 + t4 + t5 +
-#   plot_layout(design = layout, guides = "collect")
-
-# all + plot_annotation(
-#   title = "Shapley value vs. variable values",
-#   subtitle = "Original fit",
-#   theme = ggplot2::theme_bw()
-# )
-
-d1 <- shapviz::shapviz(shap_fastshap_all_test, X = testing_data[, predictors_names], baseline = mean(testing_data[, outcome_name]$mean))
+d1 <- shapviz::shapviz(shap_fastshap_all_test, X = ttdata[, predictors_names], baseline = mean(base_data))
 a1 <- shapviz::sv_dependence(d1, "window_size", color_var = "auto") +
   ggplot2::geom_smooth(method = loess, colour = "#0000ff44", alpha = 0.2) +
   ggplot2::labs(y = ggplot2::element_blank()) +
@@ -545,7 +697,7 @@ a3 <- shapviz::sv_dependence(d1, "regime_landmark", color_var = "auto") +
   ggplot2::labs(y = ggplot2::element_blank()) +
   ggplot2::theme_bw()
 a4 <- shapviz::sv_dependence(d1, "mp_threshold", color_var = "auto") +
-  ggplot2::geom_smooth(method = loess, colour = "#0000ff44", alpha = 0.2) +
+  # ggplot2::geom_smooth(method = loess, colour = "#0000ff44", alpha = 0.2) +
   ggplot2::labs(y = ggplot2::element_blank()) +
   ggplot2::theme_bw()
 a5 <- shapviz::sv_dependence(d1, "time_constraint", color_var = "auto") +
@@ -553,16 +705,11 @@ a5 <- shapviz::sv_dependence(d1, "time_constraint", color_var = "auto") +
   ggplot2::labs(y = ggplot2::element_blank()) +
   ggplot2::theme_bw()
 
-all2 <- ((a1 + a5 + a3 + a4 +
-  plot_layout(guides = "collect")) +
-  (a2 + plot_layout(guides = "collect")))
-all2 + plot_layout(design = layout) + plot_annotation(
-  title = "Shapley value vs. variable values",
-  theme = ggplot2::theme_bw()
-)
+all1 <- ((a1 + a5 + a3 + a4 + plot_layout(guides = "collect")) + (a2 + plot_layout(guides = "collect")))
+all1 + plot_layout(design = layout) + plot_annotation(title = "Shapley value vs. variable values", theme = ggplot2::theme_bw())
 ```
 
-```{r fig-importanceshap2, eval=FALSE, message=FALSE, fig.height = 6, fig.width= 10, out.width="100%"}
+```{r fig-importanceshap2, eval=TRUE, echo=FALSE, message=FALSE, warning=FALSE, fig.height = 6, fig.width= 10, out.width="100%"}
 #| fig-cap: "This shows the effect each variable has on the FLOSS score, taking into account the interactions."
 
 # t1 <- autoplot(shap_fastshap_all_test2,
@@ -586,15 +733,16 @@ all2 + plot_layout(design = layout) + plot_annotation(
 #   X = testing_data2, feature = predictors_names[5], alpha = 0.2
 # ) + ggplot2::geom_smooth(method = loess) + ggplot2::labs(y = ggplot2::element_blank()) + ggplot2::theme_bw()
 
-
 layout <- "
 AABB
 CCDD
 #EE#
 "
-# eval=FALSE
+# 5% has acceptable variability for not using the whole datasets
+ttdata2 <- sample_data[, predictors_names]
+base_data <- sample_data[, outcome_name]$mean
 
-d1 <- shapviz::shapviz(shap_fastshap_all_test2, X = testing_data2[, predictors_names], baseline = mean(testing_data2[, outcome_name]$mean))
+d1 <- shapviz::shapviz(shap_fastshap_all_test2, X = ttdata2[, predictors_names], baseline = mean(base_data))
 a1 <- shapviz::sv_dependence(d1, "window_size", color_var = "auto") +
   ggplot2::geom_smooth(method = loess, colour = "#0000ff44", alpha = 0.2) +
   ggplot2::labs(y = ggplot2::element_blank()) +
@@ -608,7 +756,7 @@ a3 <- shapviz::sv_dependence(d1, "regime_landmark", color_var = "auto") +
   ggplot2::labs(y = ggplot2::element_blank()) +
   ggplot2::theme_bw()
 a4 <- shapviz::sv_dependence(d1, "mp_threshold", color_var = "auto") +
-  ggplot2::geom_smooth(method = loess, colour = "#0000ff44", alpha = 0.2) +
+  # ggplot2::geom_smooth(method = loess, colour = "#0000ff44", alpha = 0.2) +
   ggplot2::labs(y = ggplot2::element_blank()) +
   ggplot2::theme_bw()
 a5 <- shapviz::sv_dependence(d1, "time_constraint", color_var = "auto") +
@@ -616,13 +764,8 @@ a5 <- shapviz::sv_dependence(d1, "time_constraint", color_var = "auto") +
   ggplot2::labs(y = ggplot2::element_blank()) +
   ggplot2::theme_bw()
 
-all2 <- ((a1 + a5 + a3 + a4 +
-  plot_layout(guides = "collect")) +
-  (a2 + plot_layout(guides = "collect")))
-all2 + plot_layout(design = layout) + plot_annotation(
-  title = "Shapley value vs. variable values",
-  theme = ggplot2::theme_bw()
-)
+all2 <- ((a1 + a5 + a3 + a4 + plot_layout(guides = "collect")) + (a2 + plot_layout(guides = "collect")))
+all2 + plot_layout(design = layout) + plot_annotation(title = "Shapley value vs. variable values", theme = ggplot2::theme_bw())
 ```
 
 According to the FLOSS paper [@gharghabi2018], the `window_size` is indeed a feature that can be tuned; nevertheless, the results appear to be similar in a reasonably wide range of window sizes, up to a limit, consistent with our findings.
@@ -639,7 +782,7 @@ First, we will visualize how the models (in general) performed throughout the in
 
 Next, we will visualize some of these predictions to understand why some recordings were difficult to segment. For us to have a simple baseline: a recording with just one regime change, and the model predicts exactly one regime change, but far from the truth, the score will be roughly 1.
 
-```{r fig-global, eval=FALSE, fig.height=5, fig.width=10, out.width="100%"}
+```{r fig-global, eval=TRUE, echo=FALSE, fig.height=5, fig.width=10, out.width="100%"}
 #| fig-cap: "Violin plot showing the distribution of the FLOSS score achieved by all tested models by
 #|  recording.  The left half shows the recordings that were difficult to predict (10% overall), whereas
 #|  the right half shows the recordings that at least one model could achieve a good prediction (10%
@@ -649,11 +792,11 @@ Next, we will visualize some of these predictions to understand why some recordi
 #|  with just one regime change, and the model predicts exactly one change, far from the truth, the
 #|  score will be roughly 1."
 
-all_scores <- readRDS(here::here("output/regime_outputs_lmk.rds"))
+all_scores <- readRDS(here::here("output", "regime_outputs_lmk.rds"))
 
-scores_stats <- all_scores %>%
-  dplyr::select(record, score) %>%
-  dplyr::group_by(record) %>%
+scores_stats <- all_scores |>
+  dplyr::select(record, score) |>
+  dplyr::group_by(record) |>
   dplyr::reframe(
     score = score, min = min(score), q25 = quantile(score, 0.25),
     median = quantile(score, 0.5), q75 = quantile(score, 0.75),
@@ -664,10 +807,10 @@ records_factors <- forcats::as_factor(scores_stats$record)
 
 scores_stats$id <- sprintf("%03d", (as.numeric(records_factors)))
 
-scores_stats %>%
-  dplyr::mutate(low_iqr = q75 - q25 < 1) %>%
-  dplyr::filter(min > quantile(min, 0.9) | min < quantile(min, 0.1)) %>%
-  ggplot2::ggplot(aes(x = reorder(reorder(id, -median), -min), y = score, colour = low_iqr)) +
+scores_stats |>
+  dplyr::mutate(low_iqr = q75 - q25 < 1) |>
+  dplyr::filter(min > quantile(min, 0.9) | min < quantile(min, 0.1)) |>
+  ggplot2::ggplot(ggplot2::aes(x = reorder(reorder(id, -median), -min), y = score, colour = low_iqr)) +
   ggplot2::geom_violin() +
   ggplot2::coord_cartesian(ylim = c(0, 5)) +
   ggplot2::theme_bw() +
@@ -676,29 +819,29 @@ scores_stats %>%
 
 @fig-worst shows the best effort in predicting the most complex recordings. One information not declared before is that if the model does not predict any change, it will put a mark on the zero position. On the other side, the truth markers positioned at the beginning and the end of the recording were removed, as these locations lack information and do not represent a streaming setting.
 
-```{r fig-worst, eval=FALSE, fig.height=15, fig.width=12, out.width="100%", dev="png"}
+```{r fig-worst, eval=TRUE, echo=FALSE, fig.height=15, fig.width=12, out.width="100%", dev="png"}
 #| fig-cap: "Prediction of the worst 10% of recordings (red is the truth, blue are the predictions)."
 
-worst <- scores_stats %>%
-  dplyr::filter(min > quantile(min, 0.9)) %>%
-  dplyr::group_by(record) %>%
-  dplyr::slice_head() %>%
-  dplyr::ungroup() %>%
-  dplyr::arrange(desc(min), desc(median)) %>%
-  dplyr::slice_head(n = 10) %>%
+worst <- scores_stats |>
+  dplyr::filter(min > quantile(min, 0.9)) |>
+  dplyr::group_by(record) |>
+  dplyr::slice_head() |>
+  dplyr::ungroup() |>
+  dplyr::arrange(desc(min), desc(median)) |>
+  dplyr::slice_head(n = 10) |>
   dplyr::pull(record)
 # "data_25_1.par"  "data_32_12.par" "data_85_1.par"  "data_90_1.par"  "data_68_2.par"
 
-worst_data <- all_scores %>%
-  dplyr::filter(record %in% worst) %>%
-  dplyr::group_by(record) %>%
-  dplyr::slice_min(n = 1, order_by = score, with_ties = FALSE) %>%
-  dplyr::arrange(desc(score)) %>%
+worst_data <- all_scores |>
+  dplyr::filter(record %in% worst) |>
+  dplyr::group_by(record) |>
+  dplyr::slice_min(n = 1, order_by = score, with_ties = FALSE) |>
+  dplyr::arrange(desc(score)) |>
   dplyr::ungroup()
 
 plots <- list()
 for (i in seq_len(nrow(worst_data))) {
-  plots[[i]] <- tkplot(worst_data[i, ], FALSE, 50)
+  plots[[i]] <- tkplot(worst_data[i, ], FALSE, 50, dataset = "afib")
 }
 
 wrap_plots(plots, ncol = 1)
@@ -706,28 +849,28 @@ wrap_plots(plots, ncol = 1)
 
 @fig-best shows the best performances of the best recordings. Notice that there are recordings with a significant duration and few regime changes, making it hard for a "trivial model" to predict randomly.
 
-```{r fig-best, eval=FALSE, fig.height=15, fig.width=12, out.width="100%", dev="png"}
+```{r fig-best, eval=TRUE, echo=FALSE, fig.height=15, fig.width=12, out.width="100%", dev="png"}
 #| fig-cap: "Prediction of the best 10% of recordings (red is the truth, blue are the predictions)."
 
-bests <- scores_stats %>%
-  dplyr::filter(min < quantile(min, 0.1)) %>%
-  dplyr::group_by(record) %>%
-  dplyr::slice_head() %>%
-  dplyr::ungroup() %>%
-  dplyr::arrange(desc(min), desc(median)) %>%
-  dplyr::slice_head(n = 10) %>%
+bests <- scores_stats |>
+  dplyr::filter(min < quantile(min, 0.1)) |>
+  dplyr::group_by(record) |>
+  dplyr::slice_head() |>
+  dplyr::ungroup() |>
+  dplyr::arrange(desc(min), desc(median)) |>
+  dplyr::slice_head(n = 10) |>
   dplyr::pull(record)
 
-bests_data <- all_scores %>%
-  dplyr::filter(record %in% bests) %>%
-  dplyr::group_by(record) %>%
-  dplyr::slice_min(n = 1, order_by = score, with_ties = FALSE) %>%
-  dplyr::arrange(desc(score)) %>%
+bests_data <- all_scores |>
+  dplyr::filter(record %in% bests) |>
+  dplyr::group_by(record) |>
+  dplyr::slice_min(n = 1, order_by = score, with_ties = FALSE) |>
+  dplyr::arrange(desc(score)) |>
   dplyr::ungroup()
 
 plots <- list()
 for (i in seq_len(nrow(bests_data))) {
-  plots[[i]] <- tkplot(bests_data[i, ], FALSE, 50)
+  plots[[i]] <- tkplot(bests_data[i, ], FALSE, 50, dataset = "afib")
 }
 
 wrap_plots(plots, ncol = 1)
@@ -737,7 +880,7 @@ wrap_plots(plots, ncol = 1)
 
 @fig-globalmodel shows the distribution of the FLOSS score of the 10% worst (left side) and 10% best models across the recordings (right side). The bluish color highlights the models with SD below 3 and IQR below 1.
 
-```{r fig-globalmodel, eval=FALSE, fig.height=5, fig.width=10, out.width="100%"}
+```{r fig-globalmodel, eval=TRUE, echo=FALSE, fig.height=5, fig.width=10, out.width="100%"}
 #| fig-cap: "Violin plot showing the distribution of the FLOSS score achieved by all tested models during the
 #|  inner ressample.  The left half shows the models with the worst performances (10% overall), whereas
 #|  the right half shows the models with the best performances (10% overall).
@@ -745,14 +888,14 @@ wrap_plots(plots, ncol = 1)
 #|  sorted by the SD and IQR, respectively.  The bluish colors highlights models with an SD below 3
 #|  and IQR below 1."
 
-# cores_stats_model <- all_scores %>% dplyr::mutate(across(all_of(predictors_names), as.factor, .unpack = FALSE))
+# cores_stats_model <- all_scores |> dplyr::mutate(across(all_of(predictors_names), as.factor, .unpack = FALSE))
 
-if (file.exists(here("output", "scores_stats_model_rep.rds"))) {
-  scores_stats_model <- readRDS(here("output", "scores_stats_model_rep.rds"))
+if (file.exists(here::here("output", "scores_stats_model_rep.rds"))) {
+  scores_stats_model <- readRDS(here::here("output", "scores_stats_model_rep.rds"))
 } else {
-  scores_stats_model <- all_scores %>%
-    dplyr::group_by(across(all_of(predictors_names))) %>%
-    dplyr::mutate(model = glue("{window_size}_{time_constraint}_{mp_threshold}_{regime_threshold}_{regime_landmark}")) %>%
+  scores_stats_model <- all_scores |>
+    dplyr::group_by(dplyr::across(dplyr::all_of(predictors_names))) |>
+    dplyr::mutate(model = glue::glue("{window_size}_{time_constraint}_{mp_threshold}_{regime_threshold}_{regime_landmark}")) |>
     dplyr::reframe(
       record = record,
       model = model,
@@ -762,40 +905,40 @@ if (file.exists(here("output", "scores_stats_model_rep.rds"))) {
       mean = mean(score), max = max(score),
       sd = sd(score)
     )
-  saveRDS(scores_stats_model, file = here("output", "scores_stats_model_rep.rds"))
+  saveRDS(scores_stats_model, file = here::here("output", "scores_stats_model_rep.rds"))
 }
 
 
 scores_stats_model$id <- (sprintf("%05d", (as.numeric(as.factor(scores_stats_model$model)))))
 scores_stats_model$id_text <- (sprintf("Model_%05d", (as.numeric(as.factor(scores_stats_model$model)))))
 scores_stats_model$record <- (sprintf("%03d", (as.numeric(factor(scores_stats_model$record, labels = levels(records_factors))))))
-scores_stats_model <- scores_stats_model %>% dplyr::select(-model)
+scores_stats_model <- scores_stats_model |> dplyr::select(-model)
 
 low <- head(sort(unique(scores_stats_model$mean)), 20)
 high <- tail(sort(unique(scores_stats_model$mean)), 20)
 
-model_mean <- scores_stats_model %>%
-  dplyr::mutate(low_sd = sd < 3) %>%
-  dplyr::filter(mean > high | mean < low) %>%
-  ggplot2::ggplot(aes(x = reorder(reorder(id, -sd), -mean), y = score, colour = low_sd)) +
+model_mean <- scores_stats_model |>
+  dplyr::mutate(low_sd = sd < 3) |>
+  dplyr::filter(mean > high | mean < low) |>
+  ggplot2::ggplot(ggplot2::aes(x = reorder(reorder(id, -sd), -mean), y = score, colour = low_sd)) +
   ggplot2::scale_colour_manual(values = c("FALSE" = "#ff0000c2", "TRUE" = "#0000ffb5")) +
   ggplot2::geom_violin() +
   ggplot2::coord_cartesian(ylim = c(0, 3)) +
   ggplot2::theme_bw() +
-  ggplot2::theme(axis.text.x = element_text(size = 8, angle = 90, vjust = 0.5, hjust = 1)) +
+  ggplot2::theme(axis.text.x = ggplot2::element_text(size = 8, angle = 90, vjust = 0.5, hjust = 1)) +
   ggplot2::labs(subtitle = "Ordered by Mean and SD", colour = "SD < 3", x = ggplot2::element_blank(), y = "Score distribution")
 
 low <- head(sort(unique(scores_stats_model$median)), 20)
 high <- tail(sort(unique(scores_stats_model$median)), 20)
 
-model_median <- scores_stats_model %>%
-  dplyr::mutate(low_iqr = q75 - q25 < 1) %>%
-  dplyr::filter(median > high | median < low) %>%
-  ggplot2::ggplot(aes(x = reorder(reorder(id, -iqr), -median), y = score, colour = low_iqr)) +
+model_median <- scores_stats_model |>
+  dplyr::mutate(low_iqr = q75 - q25 < 1) |>
+  dplyr::filter(median > high | median < low) |>
+  ggplot2::ggplot(ggplot2::aes(x = reorder(reorder(id, -iqr), -median), y = score, colour = low_iqr)) +
   ggplot2::geom_violin() +
   ggplot2::coord_cartesian(ylim = c(0, 3)) +
   ggplot2::theme_bw() +
-  ggplot2::theme(axis.text.x = element_text(size = 8, angle = 90, vjust = 0.5, hjust = 1)) +
+  ggplot2::theme(axis.text.x = ggplot2::element_text(size = 8, angle = 90, vjust = 0.5, hjust = 1)) +
   ggplot2::labs(subtitle = "Ordered by Median and IQR", colour = "IQR < 1", x = "Model ID", y = "Score distribution")
 
 (model_mean / model_median) + plot_layout(guides = "auto") +
@@ -805,31 +948,31 @@ model_median <- scores_stats_model %>%
   )
 ```
 
-@fig-bestmodels the performance of the six best models. They are ordered from left to right, from the worst record to the best record. The top model is the one with the lowest mean across the scores. The blue line indicates the mean score, and the red line the median score. The scores above 3 are squished in the plot and colored according to the scale in the legend.
+@fig-bestmodels the performance of the six best models. They are ordered from left to right, from the worst record to the best record. The top model is the one with the lowest mean across the scores. The red line indicates the median score. The scores above 3 are squished in the plot and colored according to the scale in the legend.
 
-```{r fig-bestmodels, eval=FALSE, fig.height=22, fig.width=18, out.width="100%"}
+```{r fig-bestmodels, eval=TRUE, echo=FALSE, fig.height=22, fig.width=18, out.width="100%"}
 #| fig-cap: "Performances of the best 6 models across all inner resample of recordings.
 #|  The recordings are ordered by score, from the worst to the best.
 #|  Each plot shows one model, starting from the best one.
-#|  The red line indicates the median score of the model. The blue line indicates the mean score of the model.
+#|  The red line indicates the median score of the model.
 #|  The gray line limits the zero-score region. The plot is limited on the \"y\" axis, and the scores above this
 #|  limit are shown in color."
 
-best_models <- scores_stats_model %>%
-  dplyr::filter(mean < quantile(mean, 0.1)) %>%
-  dplyr::arrange(mean, sd) %>%
-  dplyr::pull(id_text) %>%
-  unique() %>%
-  .[1:6]
+best_models <- scores_stats_model |>
+  dplyr::filter(mean < quantile(mean, 0.1)) |>
+  dplyr::arrange(mean, sd) |>
+  dplyr::pull(id_text) |>
+  unique()
+best_models <- best_models[1:6]
 
 plots <- list()
 for (i in seq_len(length(best_models))) {
-  dd <- scores_stats_model %>% dplyr::filter(id_text == best_models[i])
-  plots[[i]] <- ggplot2::ggplot(dd, aes(x = reorder(record, -score), y = score, colour = score)) +
+  dd <- scores_stats_model |> dplyr::filter(id_text == best_models[i])
+  plots[[i]] <- ggplot2::ggplot(dd, ggplot2::aes(x = reorder(record, -score), y = score, colour = score)) +
     ggplot2::geom_point(size = 2) +
-    ggplot2::geom_hline(aes(yintercept = median), colour = "red") +
-    ggplot2::geom_hline(aes(yintercept = mean), colour = "blue") +
-    ggplot2::geom_hline(aes(yintercept = 0), colour = "gray50") +
+    ggplot2::geom_hline(ggplot2::aes(yintercept = median), colour = "red") +
+    # ggplot2::geom_hline(ggplot2::aes(yintercept = mean), colour = "blue") +
+    ggplot2::geom_hline(ggplot2::aes(yintercept = 0), colour = "gray50") +
     ggplot2::scale_y_continuous(
       limits = c(0, 3),
       oob = scales::oob_squish,
@@ -857,40 +1000,40 @@ wrap_plots(plots, ncol = 1, guides = "collect") + plot_annotation(
 
 Finally, @tbl-bestparam shows a summary of the best five models across all the inner resample (cross-validation). The column `mean` shows the average score, and column `std_err` shows the standard error of the mean. The column `holdout` shows the final score of this model on the holdout set (outer resample).
 
-```{r eval=FALSE, echo=FALSE}
+```{r eval=TRUE, echo=FALSE, message=FALSE, warning=FALSE}
 #| label: tbl-bestparam
 #| tbl-cap: "Summary of the five best models. The `mean` shows the inner resample average score. The `holdout` shows
 #|  the final score of the model on the holdout set (outer resample)."
 
-if (file.exists(here("output", "regime_outputs_holdout.rds"))) {
-  regime_outputs_holdout <- readRDS(here("output", "regime_outputs_holdout.rds"))
+if (file.exists(here::here("output", "regime_outputs_holdout.rds"))) {
+  regime_outputs_holdout <- readRDS(here::here("output", "regime_outputs_holdout.rds"))
 
-  best_parameters <- regime_outputs_holdout$combined %>%
+  best_parameters <- regime_outputs_holdout$combined |>
     dplyr::group_by(
       window_size, regime_threshold, regime_landmark, .metric, .estimator
-    ) %>%
-    dplyr::summarise(mean = mean(.estimate), std_err = sd(.estimate), n = dplyr::n()) %>%
-    dplyr::ungroup() %>%
-    dplyr::arrange(mean, std_err) %>%
-    dplyr::slice_min(n = 5, order_by = mean) %>%
+    ) |>
+    dplyr::summarise(mean = mean(.estimate), std_err = sd(.estimate), n = dplyr::n()) |>
+    dplyr::ungroup() |>
+    dplyr::arrange(mean, std_err) |>
+    dplyr::slice_min(n = 5, order_by = mean) |>
     dplyr::select(-.metric, -.estimator, -n)
 
-  holdout <- regime_outputs_holdout$results %>%
-    dplyr::select(.estimate) %>%
+  holdout <- regime_outputs_holdout$results |>
+    dplyr::select(.estimate) |>
     dplyr::rename(holdout = .estimate)
 
   best_parameters <- dplyr::bind_cols(best_parameters, holdout)
 
-  kable(best_parameters,
+  kableExtra::kable(best_parameters,
     booktabs = TRUE,
     longtable = TRUE,
     align = "cccccc",
     digits = 2,
     position = "ht",
     linesep = ""
-  ) %>%
-    row_spec(0, bold = TRUE) %>%
-    column_spec(6, bold = TRUE)
+  ) |>
+    kableExtra::row_spec(0, bold = TRUE) |>
+    kableExtra::column_spec(6, bold = TRUE)
 }
 ```
 
@@ -898,7 +1041,7 @@ Presentation of the test cases and evaluation metrics, showcasing the effectiven
 
 Results of the detection. Comparison with existing methods. Validity of the system on different datasets, including Physionet Challenges.
 
-Performance of the FLUSS/FLOSS algorithm in detecting ECG signal changes Comparison with other existing techniques, if any
+Performance of the FLOSS algorithm in detecting ECG signal changes Comparison with other existing techniques, if any
 
 # Discussion
 

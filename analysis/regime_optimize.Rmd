@@ -198,7 +198,7 @@ shap_explain <- function(model, train_data, test_data, features, nsim = 20, para
       pred$.pred
     }, adjust = TRUE,
     newdata = data.matrix(test_data),
-    .parallel = parallel
+    parallel = parallel
   )
   if (parallel) {
     doParallel::stopImplicitCluster()
@@ -618,7 +618,7 @@ if (file.exists(here("output", "importances.rds"))) {
 
   shap_fastshap_all_test <- shap_explain(best_fit, train_data[, predictors_names], testing_data[, predictors_names],
     predictors_names,
-    nsim = 400, parallel = TRUE
+    nsim = 100, parallel = TRUE
   )
 
   preds_test <- predict(best_fit, testing_data[, predictors_names])
@@ -839,7 +839,7 @@ importance_perm_plot <- importance_perm +
     title = "Permutation-based (100x)",
     y = ggplot2::element_blank()
   ) +
-  ggplot2::ylim(0, 4.5) +
+  ggplot2::ylim(0, 9) +
   ggplot2::theme_bw() +
   ggplot2::theme(
     legend.position = "none",
@@ -874,7 +874,7 @@ importance_perm2_plot <- importance_perm2 +
   ggplot2::labs(
     y = "Importance"
   ) +
-  ggplot2::ylim(0, 4.5) +
+  ggplot2::ylim(0, 9) +
   ggplot2::theme_bw() +
   ggplot2::theme(
     legend.position = "none",
@@ -894,7 +894,7 @@ importance_shap2_plot <- importance_shap2 +
 
 
 all <- (importance_firm_plot / importance_firm2_plot + plot_layout(tag_level = "new")) |
-  (importance_perm_plot / importance_firm2_plot + plot_layout(tag_level = "new")) |
+  (importance_perm_plot / importance_perm2_plot + plot_layout(tag_level = "new")) |
   (importance_shap_plot / importance_shap2_plot + plot_layout(tag_level = "new")) +
     plot_layout(guides = "collect")
 
@@ -911,7 +911,7 @@ all + plot_annotation(
 Fig. \@ref(fig:importanceshap) and \@ref(fig:importanceshap2) show the effect of each feature on the FLOSS score. The main differences before and after removing the interactions are the magnitude of the less important features and the shape of `time_constraint` that initially had a valley around 1600. However, it seems that it flats out.
 
 
-```{r importanceshap, message=FALSE, fig.height = 6, fig.width= 10, out.width="100%", cache=FALSE}
+```{r importanceshap_old, eval = FALSE, message=FALSE, fig.height = 6, fig.width= 10, out.width="100%", cache=FALSE}
 #| fig.cap="This shows the effect each variable has on FLOSS score. This plot doesn't take into account the
 #|  variable interactions."
 
@@ -942,7 +942,37 @@ all + plot_annotation(
 )
 ```
 
-```{r importanceshap2, message=FALSE, fig.height = 6, fig.width= 10, out.width="100%", cache=FALSE}
+```{r importanceshap, message=FALSE, warning=FALSE, fig.height = 6, fig.width= 10, out.width="100%"}
+#| fig.cap="This shows the effect each variable has on FLOSS score. This plot doesn't take into account the
+#|  variable interactions."
+
+ttdata <- testing_data[, predictors_names]
+base_data <- testing_data[, outcome_name]$mean
+
+d1 <- shapviz::shapviz(shap_fastshap_all_test, X = ttdata[, predictors_names], baseline = mean(base_data))
+a1 <- shapviz::sv_dependence(d1, "mp_threshold", color_var = "auto") +
+  ggplot2::geom_smooth(method = loess, colour = "#0000ff44", alpha = 0.2) +
+  ggplot2::labs(y = ggplot2::element_blank()) +
+  ggplot2::theme_bw()
+a2 <- shapviz::sv_dependence(d1, "window_size", color_var = "auto") +
+  ggplot2::geom_smooth(method = loess, colour = "#0000ff44", alpha = 0.2) +
+  ggplot2::labs(y = ggplot2::element_blank()) +
+  ggplot2::theme_bw()
+a3 <- shapviz::sv_dependence(d1, "time_constraint", color_var = "auto") +
+  ggplot2::geom_smooth(method = loess, colour = "#0000ff44", alpha = 0.2) +
+  ggplot2::labs(y = ggplot2::element_blank()) +
+  ggplot2::theme_bw()
+a4 <- shapviz::sv_dependence(d1, "regime_threshold", color_var = "auto") +
+  ggplot2::geom_smooth(method = loess, colour = "#0000ff44", alpha = 0.2) +
+  ggplot2::labs(y = ggplot2::element_blank()) +
+  ggplot2::theme_bw()
+set.seed(2023)
+all1 <- (a1 + a2) / (a3 + a4 + plot_layout(guides = "collect")) +
+  plot_annotation(title = "Shapley value vs. variable values", subtitle = "Original fit", theme = ggplot2::theme_bw())
+all1
+```
+
+```{r importanceshap2_old, eval=FALSE, message=FALSE, fig.height = 6, fig.width= 10, out.width="100%", cache=FALSE}
 #| fig.cap="This shows the effect each variable has on FLOSS score taking into account the interactions."
 t1 <- autoplot(shap_fastshap_all_test2,
   type = "dependence",
@@ -969,6 +999,36 @@ all + plot_annotation(
   subtitle = "Re-fit for iteractions",
   theme = ggplot2::theme_bw()
 )
+```
+
+```{r importanceshap2, message=FALSE, warning=FALSE, fig.height = 6, fig.width= 10, out.width="100%"}
+#| fig.cap="This shows the effect each variable has on FLOSS score. This plot doesn't take into account the
+#|  variable interactions."
+
+ttdata <- testing_data2[, predictors_names]
+base_data <- testing_data2[, outcome_name]$mean
+
+d1 <- shapviz::shapviz(shap_fastshap_all_test2, X = ttdata[, predictors_names], baseline = mean(base_data))
+a1 <- shapviz::sv_dependence(d1, "mp_threshold", color_var = "auto") +
+  ggplot2::geom_smooth(colour = "#0000ff44", alpha = 0.2) +
+  ggplot2::labs(method = loess, y = ggplot2::element_blank()) +
+  ggplot2::theme_bw()
+a2 <- shapviz::sv_dependence(d1, "window_size", color_var = "auto") +
+  ggplot2::geom_smooth(colour = "#0000ff44", alpha = 0.2) +
+  ggplot2::labs(method = loess, y = ggplot2::element_blank()) +
+  ggplot2::theme_bw()
+a3 <- shapviz::sv_dependence(d1, "time_constraint", color_var = "auto") +
+  ggplot2::geom_smooth(colour = "#0000ff44", alpha = 0.2) +
+  ggplot2::labs(method = loess, y = ggplot2::element_blank()) +
+  ggplot2::theme_bw()
+a4 <- shapviz::sv_dependence(d1, "regime_threshold", color_var = "auto") +
+  ggplot2::geom_smooth(colour = "#0000ff44", alpha = 0.2) +
+  ggplot2::labs(method = loess, y = ggplot2::element_blank()) +
+  ggplot2::theme_bw()
+set.seed(2023)
+all2 <- (a1 + a2) / (a3 + a4 + plot_layout(guides = "collect")) +
+  plot_annotation(title = "Shapley value vs. variable values", subtitle = "Re-fit for iteractions", theme = ggplot2::theme_bw())
+all2
 ```
 
 We then can see that in this setting, the only variables worthing tuning are the `window_size` that is a required parameter for the Matrix Profile and seems to give better results with lower window sizes, and the `regime_threshold` that is a required parameter for FLOSS and seems to have a better performance around 0.4. As `time_constraint` flats out, this parameter can be, at this moment, removed from the model. `mp_threshold` also seems not to be a good parameter to keep so that we can leave it at its default of zero.
@@ -1158,13 +1218,13 @@ model_median <- scores_stats_model %>%
   )
 ```
 
-Fig. \@ref(fig:bestmodels) the performance of the six best models across all inner resamples. They are ordered from left to right, from the worst record to the best record. The top model is the one with the lowest mean across the scores. The blue line indicates the mean score, and the red line the median score. The scores above 3 are squished in the plot and colored according to the scale in the legend.
+Fig. \@ref(fig:bestmodels) the performance of the six best models across all inner resamples. They are ordered from left to right, from the worst record to the best record. The top model is the one with the lowest mean across the scores. The red line indicates the median score. The scores above 3 are squished in the plot and colored according to the scale in the legend.
 
 ```{r bestmodels, fig.height=22, fig.width=18, out.width="100%", cache=FALSE}
 #| fig.cap="Performances of the best 6 models across all inner resample of recordings.
 #|  The recordings are ordered by score, from the worst to the best.
 #|  Each plot shows one model, starting from the best one.
-#|  The red line indicates the median score of the model. The blue line indicates the mean score of the model.
+#|  The red line indicates the median score of the model.
 #|  The gray line limits the zero-score region. The plot is limited on the \"y\" axis, and the scores above this
 #|  limit are shown in color."
 
@@ -1181,7 +1241,7 @@ for (i in seq_len(length(best_models))) {
   plots[[i]] <- ggplot2::ggplot(dd, aes(x = reorder(record, -score), y = score, colour = score)) +
     ggplot2::geom_point(size = 2) +
     ggplot2::geom_hline(aes(yintercept = median), colour = "red") +
-    ggplot2::geom_hline(aes(yintercept = mean), colour = "blue") +
+    # ggplot2::geom_hline(aes(yintercept = mean), colour = "blue") +
     ggplot2::geom_hline(aes(yintercept = 0), colour = "gray50") +
     ggplot2::scale_y_continuous(
       limits = c(0, 1),

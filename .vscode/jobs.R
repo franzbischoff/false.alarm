@@ -39,7 +39,7 @@ r_tasks_jobs <- function(job_name) {
       }
     },
     style_project = {
-      styler:::style_dir(
+      styler::style_dir(
         filetype = c("R", "Rmd"),
         recursive = TRUE,
         exclude_files = "R/RcppExports.R",
