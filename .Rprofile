@@ -113,6 +113,8 @@ if (Sys.getenv("CI") == "") {
 
     suppressMessages({
       conflicted::conflict_prefer("filter", "dplyr")
+      conflicted::conflict_prefer("box", "shinydashboard")
+      conflicted::conflict_prefer("notificationItem", "shinydashboard")
     })
     options(dplyr.summarise.inform = FALSE)
 
