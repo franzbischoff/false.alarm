@@ -178,6 +178,7 @@
         "locales",
         "procps",
         "tzdata",
+        "librsvg2-bin",
         "libzmq3-dev",
         "libudunits2-dev",
         "libgdal-dev",

@@ -1,3 +1,824 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
-<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" width="714px" height="500px" viewBox="-0.5 -0.5 714 500"><defs/><g><path d="M 234 1 L 344 1 Q 314 46 344 91 L 234 91 Q 204 46 234 1 Z" fill="#ffffcc" stroke="rgb(0, 0, 0)" stroke-width="3" stroke-miterlimit="10" pointer-events="all"/><g transform="translate(-0.5 -0.5)"><switch><foreignObject pointer-events="none" width="100%" height="100%" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility" style="overflow: visible; text-align: left;"><div xmlns="http://www.w3.org/1999/xhtml" style="display: flex; align-items: unsafe center; justify-content: unsafe center; width: 123px; height: 1px; padding-top: 46px; margin-left: 220px;"><div data-drawio-colors="color: rgb(0, 0, 0); " style="box-sizing: border-box; font-size: 0px; text-align: center;"><div style="display: inline-block; font-size: 12px; font-family: Helvetica; color: rgb(0, 0, 0); line-height: 1.2; pointer-events: all; font-weight: bold; white-space: normal; overflow-wrap: normal;">Full<br />Dataset<br />(all patients)</div></div></div></foreignObject><text x="282" y="50" fill="rgb(0, 0, 0)" font-family="Helvetica" font-size="12px" text-anchor="middle" font-weight="bold">Full...</text></switch></g><path d="M 501 201 C 501 209.28 514.43 216 531 216 C 547.57 216 561 209.28 561 201 L 561 422.22 C 561 430.5 547.57 437.22 531 437.22 C 514.43 437.22 501 430.5 501 422.22 Z" fill="#d5e8d4" stroke="#000000" stroke-width="3" stroke-miterlimit="10" pointer-events="none"/><path d="M 501 358.48 C 501 366.76 514.43 373.48 531 373.48 C 547.57 373.48 561 366.76 561 358.48 L 561 422.22 C 561 430.5 547.57 437.22 531 437.22 C 514.43 437.22 501 430.5 501 422.22 Z" fill="#ffffcc" stroke="rgb(0, 0, 0)" stroke-width="3" stroke-miterlimit="10" pointer-events="none"/><g transform="translate(-0.5 -0.5)"><switch><foreignObject pointer-events="none" width="100%" height="100%" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility" style="overflow: visible; text-align: left;"><div xmlns="http://www.w3.org/1999/xhtml" style="display: flex; align-items: unsafe center; justify-content: unsafe center; width: 58px; height: 1px; padding-top: 404px; margin-left: 502px;"><div data-drawio-colors="color: rgb(0, 0, 0); " style="box-sizing: border-box; font-size: 0px; text-align: center;"><div style="display: inline-block; font-size: 12px; font-family: Helvetica; color: rgb(0, 0, 0); line-height: 1.2; pointer-events: none; font-weight: bold; white-space: normal; overflow-wrap: normal;">Test Set</div></div></div></foreignObject><text x="531" y="408" fill="rgb(0, 0, 0)" font-family="Helvetica" font-size="12px" text-anchor="middle" font-weight="bold">Test Set</text></switch></g><path d="M 571 201 C 571 209.28 580.45 216 592.11 216 C 603.77 216 613.22 209.28 613.22 201 L 613.22 352.22 C 613.22 356.2 610.99 360.01 607.04 362.83 C 603.08 365.64 597.71 367.22 592.11 367.22 C 580.45 367.22 571 360.5 571 352.22 Z" fill="#ccffcc" stroke="#000000" stroke-width="3" stroke-miterlimit="10" pointer-events="none"/><path d="M 571 201 C 571 209.28 580.45 216 592.11 216 C 603.77 216 613.22 209.28 613.22 201 L 613.22 241.41 C 613.22 245.38 610.99 249.2 607.04 252.01 C 603.08 254.83 597.71 256.41 592.11 256.41 C 580.45 256.41 571 249.69 571 241.41 Z" fill="#99ccff" stroke="rgb(0, 0, 0)" stroke-width="3" stroke-miterlimit="10" pointer-events="none"/><g transform="translate(-0.5 -0.5)"><switch><foreignObject pointer-events="none" width="100%" height="100%" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility" style="overflow: visible; text-align: left;"><div xmlns="http://www.w3.org/1999/xhtml" style="display: flex; align-items: unsafe center; justify-content: unsafe center; width: 40px; height: 1px; padding-top: 235px; margin-left: 572px;"><div data-drawio-colors="color: rgb(0, 0, 0); " style="box-sizing: border-box; font-size: 0px; text-align: center;"><div style="display: inline-block; font-size: 12px; font-family: Helvetica; color: rgb(0, 0, 0); line-height: 1.2; pointer-events: none; font-weight: bold; white-space: normal; overflow-wrap: normal;"><font style="font-size: 9px">Assess.<br />set</font></div></div></div></foreignObject><text x="592" y="239" fill="rgb(0, 0, 0)" font-family="Helvetica" font-size="12px" text-anchor="middle" font-weight="bold">Assess....</text></switch></g><path d="M 620.26 201 C 620.26 209.28 629.71 216 641.37 216 C 653.02 216 662.47 209.28 662.47 201 L 662.47 352.22 C 662.47 356.2 660.25 360.01 656.29 362.83 C 652.33 365.64 646.96 367.22 641.37 367.22 C 629.71 367.22 620.26 360.5 620.26 352.22 Z" fill="#ccffcc" stroke="#000000" stroke-width="3" stroke-miterlimit="10" pointer-events="none"/><path d="M 620.26 254.3 C 620.26 262.58 629.71 269.3 641.37 269.3 C 653.02 269.3 662.47 262.58 662.47 254.3 L 662.47 294.7 C 662.47 298.68 660.25 302.5 656.29 305.31 C 652.33 308.12 646.96 309.7 641.37 309.7 C 629.71 309.7 620.26 302.99 620.26 294.7 Z" fill="#99ccff" stroke="rgb(0, 0, 0)" stroke-width="3" stroke-miterlimit="10" pointer-events="none"/><g transform="translate(-0.5 -0.5)"><switch><foreignObject pointer-events="none" width="100%" height="100%" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility" style="overflow: visible; text-align: left;"><div xmlns="http://www.w3.org/1999/xhtml" style="display: flex; align-items: unsafe center; justify-content: unsafe center; width: 40px; height: 1px; padding-top: 288px; margin-left: 621px;"><div data-drawio-colors="color: rgb(0, 0, 0); " style="box-sizing: border-box; font-size: 0px; text-align: center;"><div style="display: inline-block; font-size: 12px; font-family: Helvetica; color: rgb(0, 0, 0); line-height: 1.2; pointer-events: none; font-weight: bold; white-space: normal; overflow-wrap: normal;"><span style="font-size: 9px">Assess.</span><br style="font-size: 9px" /><span style="font-size: 9px">set</span></div></div></div></foreignObject><text x="641" y="292" fill="rgb(0, 0, 0)" font-family="Helvetica" font-size="12px" text-anchor="middle" font-weight="bold">Assess....</text></switch></g><path d="M 669.51 201 C 669.51 209.28 678.96 216 690.62 216 C 702.28 216 711.73 209.28 711.73 201 L 711.73 352.22 C 711.73 356.2 709.51 360.01 705.55 362.83 C 701.59 365.64 696.22 367.22 690.62 367.22 C 678.96 367.22 669.51 360.5 669.51 352.22 Z" fill="#ccffcc" stroke="#000000" stroke-width="3" stroke-miterlimit="10" pointer-events="none"/><path d="M 669.51 311.81 C 669.51 320.1 678.96 326.81 690.62 326.81 C 702.28 326.81 711.73 320.1 711.73 311.81 L 711.73 352.22 C 711.73 356.2 709.51 360.01 705.55 362.83 C 701.59 365.64 696.22 367.22 690.62 367.22 C 678.96 367.22 669.51 360.5 669.51 352.22 Z" fill="#99ccff" stroke="rgb(0, 0, 0)" stroke-width="3" stroke-miterlimit="10" pointer-events="none"/><g transform="translate(-0.5 -0.5)"><switch><foreignObject pointer-events="none" width="100%" height="100%" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility" style="overflow: visible; text-align: left;"><div xmlns="http://www.w3.org/1999/xhtml" style="display: flex; align-items: unsafe center; justify-content: unsafe center; width: 40px; height: 1px; padding-top: 346px; margin-left: 671px;"><div data-drawio-colors="color: rgb(0, 0, 0); " style="box-sizing: border-box; font-size: 0px; text-align: center;"><div style="display: inline-block; font-size: 12px; font-family: Helvetica; color: rgb(0, 0, 0); line-height: 1.2; pointer-events: none; font-weight: bold; white-space: normal; overflow-wrap: normal;"><span style="font-size: 9px">Assess.</span><br style="font-size: 9px" /><span style="font-size: 9px">set</span></div></div></div></foreignObject><text x="691" y="350" fill="rgb(0, 0, 0)" font-family="Helvetica" font-size="12px" text-anchor="middle" font-weight="bold">Assess....</text></switch></g><g transform="translate(-0.5 -0.5)"><switch><foreignObject pointer-events="none" width="100%" height="100%" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility" style="overflow: visible; text-align: left;"><div xmlns="http://www.w3.org/1999/xhtml" style="display: flex; align-items: unsafe center; justify-content: unsafe center; width: 88px; height: 1px; padding-top: 390px; margin-left: 597px;"><div data-drawio-colors="color: rgb(0, 0, 0); " style="box-sizing: border-box; font-size: 0px; text-align: center;"><div style="display: inline-block; font-size: 9px; font-family: Helvetica; color: rgb(0, 0, 0); line-height: 1.2; pointer-events: none; white-space: normal; overflow-wrap: normal;"><b>Inner resampling</b><br />Tune parameters</div></div></div></foreignObject><text x="641" y="393" fill="rgb(0, 0, 0)" font-family="Helvetica" font-size="9px" text-anchor="middle">Inner resampling...</text></switch></g><path d="M 251 201 C 251 209.28 264.43 216 281 216 C 297.57 216 311 209.28 311 201 L 311 422.22 C 311 430.5 297.57 437.22 281 437.22 C 264.43 437.22 251 430.5 251 422.22 Z" fill="#d5e8d4" stroke="#000000" stroke-width="3" stroke-miterlimit="10" pointer-events="none"/><path d="M 251 276.74 C 251 285.02 264.43 291.74 281 291.74 C 297.57 291.74 311 285.02 311 276.74 L 311 340.48 C 311 348.76 297.57 355.48 281 355.48 C 264.43 355.48 251 348.76 251 340.48 Z" fill="#ffffcc" stroke="rgb(0, 0, 0)" stroke-width="3" stroke-miterlimit="10" pointer-events="none"/><g transform="translate(-0.5 -0.5)"><switch><foreignObject pointer-events="none" width="100%" height="100%" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility" style="overflow: visible; text-align: left;"><div xmlns="http://www.w3.org/1999/xhtml" style="display: flex; align-items: unsafe center; justify-content: unsafe center; width: 58px; height: 1px; padding-top: 323px; margin-left: 252px;"><div data-drawio-colors="color: rgb(0, 0, 0); " style="box-sizing: border-box; font-size: 0px; text-align: center;"><div style="display: inline-block; font-size: 12px; font-family: Helvetica; color: rgb(0, 0, 0); line-height: 1.2; pointer-events: none; font-weight: bold; white-space: normal; overflow-wrap: normal;">Test Set</div></div></div></foreignObject><text x="281" y="326" fill="rgb(0, 0, 0)" font-family="Helvetica" font-size="12px" text-anchor="middle" font-weight="bold">Test Set</text></switch></g><path d="M 321 236 C 321 244.28 330.45 251 342.11 251 C 353.77 251 363.22 244.28 363.22 236 L 363.22 387.22 C 363.22 391.2 360.99 395.01 357.04 397.83 C 353.08 400.64 347.71 402.22 342.11 402.22 C 330.45 402.22 321 395.5 321 387.22 Z" fill="#ccffcc" stroke="#000000" stroke-width="3" stroke-miterlimit="10" pointer-events="none"/><path d="M 321 236 C 321 244.28 330.45 251 342.11 251 C 353.77 251 363.22 244.28 363.22 236 L 363.22 276.41 C 363.22 280.38 360.99 284.2 357.04 287.01 C 353.08 289.83 347.71 291.41 342.11 291.41 C 330.45 291.41 321 284.69 321 276.41 Z" fill="#99ccff" stroke="rgb(0, 0, 0)" stroke-width="3" stroke-miterlimit="10" pointer-events="none"/><g transform="translate(-0.5 -0.5)"><switch><foreignObject pointer-events="none" width="100%" height="100%" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility" style="overflow: visible; text-align: left;"><div xmlns="http://www.w3.org/1999/xhtml" style="display: flex; align-items: unsafe center; justify-content: unsafe center; width: 40px; height: 1px; padding-top: 270px; margin-left: 322px;"><div data-drawio-colors="color: rgb(0, 0, 0); " style="box-sizing: border-box; font-size: 0px; text-align: center;"><div style="display: inline-block; font-size: 12px; font-family: Helvetica; color: rgb(0, 0, 0); line-height: 1.2; pointer-events: none; font-weight: bold; white-space: normal; overflow-wrap: normal;"><font style="font-size: 9px">Assess.<br />set</font></div></div></div></foreignObject><text x="342" y="274" fill="rgb(0, 0, 0)" font-family="Helvetica" font-size="12px" text-anchor="middle" font-weight="bold">Assess....</text></switch></g><path d="M 370.26 236 C 370.26 244.28 379.71 251 391.37 251 C 403.02 251 412.47 244.28 412.47 236 L 412.47 387.22 C 412.47 391.2 410.25 395.01 406.29 397.83 C 402.33 400.64 396.96 402.22 391.37 402.22 C 379.71 402.22 370.26 395.5 370.26 387.22 Z" fill="#ccffcc" stroke="#000000" stroke-width="3" stroke-miterlimit="10" pointer-events="none"/><path d="M 370.26 289.3 C 370.26 297.58 379.71 304.3 391.37 304.3 C 403.02 304.3 412.47 297.58 412.47 289.3 L 412.47 329.7 C 412.47 333.68 410.25 337.5 406.29 340.31 C 402.33 343.12 396.96 344.7 391.37 344.7 C 379.71 344.7 370.26 337.99 370.26 329.7 Z" fill="#99ccff" stroke="rgb(0, 0, 0)" stroke-width="3" stroke-miterlimit="10" pointer-events="none"/><g transform="translate(-0.5 -0.5)"><switch><foreignObject pointer-events="none" width="100%" height="100%" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility" style="overflow: visible; text-align: left;"><div xmlns="http://www.w3.org/1999/xhtml" style="display: flex; align-items: unsafe center; justify-content: unsafe center; width: 40px; height: 1px; padding-top: 323px; margin-left: 371px;"><div data-drawio-colors="color: rgb(0, 0, 0); " style="box-sizing: border-box; font-size: 0px; text-align: center;"><div style="display: inline-block; font-size: 12px; font-family: Helvetica; color: rgb(0, 0, 0); line-height: 1.2; pointer-events: none; font-weight: bold; white-space: normal; overflow-wrap: normal;"><span style="font-size: 9px">Assess.</span><br style="font-size: 9px" /><span style="font-size: 9px">set</span></div></div></div></foreignObject><text x="391" y="327" fill="rgb(0, 0, 0)" font-family="Helvetica" font-size="12px" text-anchor="middle" font-weight="bold">Assess....</text></switch></g><path d="M 419.51 236 C 419.51 244.28 428.96 251 440.62 251 C 452.28 251 461.73 244.28 461.73 236 L 461.73 387.22 C 461.73 391.2 459.51 395.01 455.55 397.83 C 451.59 400.64 446.22 402.22 440.62 402.22 C 428.96 402.22 419.51 395.5 419.51 387.22 Z" fill="#ccffcc" stroke="#000000" stroke-width="3" stroke-miterlimit="10" pointer-events="none"/><path d="M 419.51 346.81 C 419.51 355.1 428.96 361.81 440.62 361.81 C 452.28 361.81 461.73 355.1 461.73 346.81 L 461.73 387.22 C 461.73 391.2 459.51 395.01 455.55 397.83 C 451.59 400.64 446.22 402.22 440.62 402.22 C 428.96 402.22 419.51 395.5 419.51 387.22 Z" fill="#99ccff" stroke="rgb(0, 0, 0)" stroke-width="3" stroke-miterlimit="10" pointer-events="none"/><g transform="translate(-0.5 -0.5)"><switch><foreignObject pointer-events="none" width="100%" height="100%" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility" style="overflow: visible; text-align: left;"><div xmlns="http://www.w3.org/1999/xhtml" style="display: flex; align-items: unsafe center; justify-content: unsafe center; width: 40px; height: 1px; padding-top: 381px; margin-left: 421px;"><div data-drawio-colors="color: rgb(0, 0, 0); " style="box-sizing: border-box; font-size: 0px; text-align: center;"><div style="display: inline-block; font-size: 12px; font-family: Helvetica; color: rgb(0, 0, 0); line-height: 1.2; pointer-events: none; font-weight: bold; white-space: normal; overflow-wrap: normal;"><span style="font-size: 9px">Assess.</span><br style="font-size: 9px" /><span style="font-size: 9px">set</span></div></div></div></foreignObject><text x="441" y="385" fill="rgb(0, 0, 0)" font-family="Helvetica" font-size="12px" text-anchor="middle" font-weight="bold">Assess....</text></switch></g><g transform="translate(-0.5 -0.5)"><switch><foreignObject pointer-events="none" width="100%" height="100%" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility" style="overflow: visible; text-align: left;"><div xmlns="http://www.w3.org/1999/xhtml" style="display: flex; align-items: unsafe center; justify-content: unsafe center; width: 88px; height: 1px; padding-top: 422px; margin-left: 347px;"><div data-drawio-colors="color: rgb(0, 0, 0); " style="box-sizing: border-box; font-size: 0px; text-align: center;"><div style="display: inline-block; font-size: 9px; font-family: Helvetica; color: rgb(0, 0, 0); line-height: 1.2; pointer-events: none; white-space: normal; overflow-wrap: normal;"><b>Inner resampling</b><br />Tune parameters</div></div></div></foreignObject><text x="391" y="425" fill="rgb(0, 0, 0)" font-family="Helvetica" font-size="9px" text-anchor="middle">Inner resampling...</text></switch></g><path d="M 1 201 C 1 209.28 14.43 216 31 216 C 47.57 216 61 209.28 61 201 L 61 422.22 C 61 430.5 47.57 437.22 31 437.22 C 14.43 437.22 1 430.5 1 422.22 Z" fill="#d5e8d4" stroke="#000000" stroke-width="3" stroke-miterlimit="10" pointer-events="none"/><path d="M 1 201 C 1 209.28 14.43 216 31 216 C 47.57 216 61 209.28 61 201 L 61 264.74 C 61 273.02 47.57 279.74 31 279.74 C 14.43 279.74 1 273.02 1 264.74 Z" fill="#ffffcc" stroke="rgb(0, 0, 0)" stroke-width="3" stroke-miterlimit="10" pointer-events="none"/><g transform="translate(-0.5 -0.5)"><switch><foreignObject pointer-events="none" width="100%" height="100%" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility" style="overflow: visible; text-align: left;"><div xmlns="http://www.w3.org/1999/xhtml" style="display: flex; align-items: unsafe center; justify-content: unsafe center; width: 58px; height: 1px; padding-top: 247px; margin-left: 2px;"><div data-drawio-colors="color: rgb(0, 0, 0); " style="box-sizing: border-box; font-size: 0px; text-align: center;"><div style="display: inline-block; font-size: 12px; font-family: Helvetica; color: rgb(0, 0, 0); line-height: 1.2; pointer-events: none; font-weight: bold; white-space: normal; overflow-wrap: normal;">Test Set</div></div></div></foreignObject><text x="31" y="250" fill="rgb(0, 0, 0)" font-family="Helvetica" font-size="12px" text-anchor="middle" font-weight="bold">Test Set</text></switch></g><path d="M 71 271 C 71 279.28 80.45 286 92.11 286 C 103.77 286 113.22 279.28 113.22 271 L 113.22 422.22 C 113.22 426.2 110.99 430.01 107.04 432.83 C 103.08 435.64 97.71 437.22 92.11 437.22 C 80.45 437.22 71 430.5 71 422.22 Z" fill="#ccffcc" stroke="#000000" stroke-width="3" stroke-miterlimit="10" pointer-events="none"/><path d="M 71 271 C 71 279.28 80.45 286 92.11 286 C 103.77 286 113.22 279.28 113.22 271 L 113.22 311.41 C 113.22 315.38 110.99 319.2 107.04 322.01 C 103.08 324.83 97.71 326.41 92.11 326.41 C 80.45 326.41 71 319.69 71 311.41 Z" fill="#99ccff" stroke="rgb(0, 0, 0)" stroke-width="3" stroke-miterlimit="10" pointer-events="none"/><g transform="translate(-0.5 -0.5)"><switch><foreignObject pointer-events="none" width="100%" height="100%" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility" style="overflow: visible; text-align: left;"><div xmlns="http://www.w3.org/1999/xhtml" style="display: flex; align-items: unsafe center; justify-content: unsafe center; width: 40px; height: 1px; padding-top: 305px; margin-left: 72px;"><div data-drawio-colors="color: rgb(0, 0, 0); " style="box-sizing: border-box; font-size: 0px; text-align: center;"><div style="display: inline-block; font-size: 12px; font-family: Helvetica; color: rgb(0, 0, 0); line-height: 1.2; pointer-events: none; font-weight: bold; white-space: normal; overflow-wrap: normal;"><font style="font-size: 9px">Assess.<br />set</font></div></div></div></foreignObject><text x="92" y="309" fill="rgb(0, 0, 0)" font-family="Helvetica" font-size="12px" text-anchor="middle" font-weight="bold">Assess....</text></switch></g><path d="M 120.26 271 C 120.26 279.28 129.71 286 141.37 286 C 153.02 286 162.47 279.28 162.47 271 L 162.47 422.22 C 162.47 426.2 160.25 430.01 156.29 432.83 C 152.33 435.64 146.96 437.22 141.37 437.22 C 129.71 437.22 120.26 430.5 120.26 422.22 Z" fill="#ccffcc" stroke="#000000" stroke-width="3" stroke-miterlimit="10" pointer-events="none"/><path d="M 120.26 324.3 C 120.26 332.58 129.71 339.3 141.37 339.3 C 153.02 339.3 162.47 332.58 162.47 324.3 L 162.47 364.7 C 162.47 368.68 160.25 372.5 156.29 375.31 C 152.33 378.12 146.96 379.7 141.37 379.7 C 129.71 379.7 120.26 372.99 120.26 364.7 Z" fill="#99ccff" stroke="rgb(0, 0, 0)" stroke-width="3" stroke-miterlimit="10" pointer-events="none"/><g transform="translate(-0.5 -0.5)"><switch><foreignObject pointer-events="none" width="100%" height="100%" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility" style="overflow: visible; text-align: left;"><div xmlns="http://www.w3.org/1999/xhtml" style="display: flex; align-items: unsafe center; justify-content: unsafe center; width: 40px; height: 1px; padding-top: 358px; margin-left: 121px;"><div data-drawio-colors="color: rgb(0, 0, 0); " style="box-sizing: border-box; font-size: 0px; text-align: center;"><div style="display: inline-block; font-size: 12px; font-family: Helvetica; color: rgb(0, 0, 0); line-height: 1.2; pointer-events: none; font-weight: bold; white-space: normal; overflow-wrap: normal;"><span style="font-size: 9px">Assess.</span><br style="font-size: 9px" /><span style="font-size: 9px">set</span></div></div></div></foreignObject><text x="141" y="362" fill="rgb(0, 0, 0)" font-family="Helvetica" font-size="12px" text-anchor="middle" font-weight="bold">Assess....</text></switch></g><path d="M 169.51 271 C 169.51 279.28 178.96 286 190.62 286 C 202.28 286 211.73 279.28 211.73 271 L 211.73 422.22 C 211.73 426.2 209.51 430.01 205.55 432.83 C 201.59 435.64 196.22 437.22 190.62 437.22 C 178.96 437.22 169.51 430.5 169.51 422.22 Z" fill="#ccffcc" stroke="#000000" stroke-width="3" stroke-miterlimit="10" pointer-events="none"/><path d="M 169.51 381.81 C 169.51 390.1 178.96 396.81 190.62 396.81 C 202.28 396.81 211.73 390.1 211.73 381.81 L 211.73 422.22 C 211.73 426.2 209.51 430.01 205.55 432.83 C 201.59 435.64 196.22 437.22 190.62 437.22 C 178.96 437.22 169.51 430.5 169.51 422.22 Z" fill="#99ccff" stroke="rgb(0, 0, 0)" stroke-width="3" stroke-miterlimit="10" pointer-events="none"/><g transform="translate(-0.5 -0.5)"><switch><foreignObject pointer-events="none" width="100%" height="100%" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility" style="overflow: visible; text-align: left;"><div xmlns="http://www.w3.org/1999/xhtml" style="display: flex; align-items: unsafe center; justify-content: unsafe center; width: 40px; height: 1px; padding-top: 416px; margin-left: 171px;"><div data-drawio-colors="color: rgb(0, 0, 0); " style="box-sizing: border-box; font-size: 0px; text-align: center;"><div style="display: inline-block; font-size: 12px; font-family: Helvetica; color: rgb(0, 0, 0); line-height: 1.2; pointer-events: none; font-weight: bold; white-space: normal; overflow-wrap: normal;"><span style="font-size: 9px">Assess.</span><br style="font-size: 9px" /><span style="font-size: 9px">set</span></div></div></div></foreignObject><text x="191" y="420" fill="rgb(0, 0, 0)" font-family="Helvetica" font-size="12px" text-anchor="middle" font-weight="bold">Assess....</text></switch></g><path d="M 26 456.72 L 15.5 456.72 L 31 437.72 L 46.5 456.72 L 36 456.72 L 36 476 L 131 476 L 131 467.72 L 141 467.72 L 141 476 Q 141 486 131 486 L 36 486 Q 26 486 26 476 Z" fill="rgb(255, 255, 255)" stroke="rgb(0, 0, 0)" stroke-linejoin="round" stroke-miterlimit="10" pointer-events="none"/><path d="M 26 456.72 L 15.5 456.72 L 31 437.72 L 46.5 456.72 L 36 456.72" fill="none" stroke="rgb(0, 0, 0)" stroke-linejoin="flat" stroke-miterlimit="4" pointer-events="none"/><g transform="translate(-0.5 -0.5)"><switch><foreignObject pointer-events="none" width="100%" height="100%" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility" style="overflow: visible; text-align: left;"><div xmlns="http://www.w3.org/1999/xhtml" style="display: flex; align-items: unsafe flex-start; justify-content: unsafe center; width: 1px; height: 1px; padding-top: 488px; margin-left: 86px;"><div data-drawio-colors="color: rgb(0, 0, 0); background-color: rgb(255, 255, 255); " style="box-sizing: border-box; font-size: 0px; text-align: center;"><div style="display: inline-block; font-size: 9px; font-family: Helvetica; color: rgb(0, 0, 0); line-height: 1.2; pointer-events: none; background-color: rgb(255, 255, 255); white-space: nowrap;">Use tuned parameters</div></div></div></foreignObject><text x="86" y="497" fill="rgb(0, 0, 0)" font-family="Helvetica" font-size="9px" text-anchor="middle">Use tuned parameters</text></switch></g><path d="M 276 456.72 L 265.5 456.72 L 281 437.72 L 296.5 456.72 L 286 456.72 L 286 476 L 386.37 476 L 386.37 437.72 L 396.37 437.72 L 396.37 476 Q 396.37 486 386.37 486 L 286 486 Q 276 486 276 476 Z" fill="rgb(255, 255, 255)" stroke="rgb(0, 0, 0)" stroke-linejoin="round" stroke-miterlimit="10" pointer-events="none"/><path d="M 276 456.72 L 265.5 456.72 L 281 437.72 L 296.5 456.72 L 286 456.72" fill="none" stroke="rgb(0, 0, 0)" stroke-linejoin="flat" stroke-miterlimit="4" pointer-events="none"/><g transform="translate(-0.5 -0.5)"><switch><foreignObject pointer-events="none" width="100%" height="100%" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility" style="overflow: visible; text-align: left;"><div xmlns="http://www.w3.org/1999/xhtml" style="display: flex; align-items: unsafe flex-start; justify-content: unsafe center; width: 1px; height: 1px; padding-top: 488px; margin-left: 337px;"><div data-drawio-colors="color: rgb(0, 0, 0); background-color: rgb(255, 255, 255); " style="box-sizing: border-box; font-size: 0px; text-align: center;"><div style="display: inline-block; font-size: 9px; font-family: Helvetica; color: rgb(0, 0, 0); line-height: 1.2; pointer-events: none; background-color: rgb(255, 255, 255); white-space: nowrap;">Use tuned parameters</div></div></div></foreignObject><text x="337" y="497" fill="rgb(0, 0, 0)" font-family="Helvetica" font-size="9px" text-anchor="middle">Use tuned parameters</text></switch></g><path d="M 526 456.72 L 515.5 456.72 L 531 437.72 L 546.5 456.72 L 536 456.72 L 536 476 L 636.36 476 L 636.36 405.5 L 646.36 405.5 L 646.36 476 Q 646.36 486 636.36 486 L 536 486 Q 526 486 526 476 Z" fill="rgb(255, 255, 255)" stroke="rgb(0, 0, 0)" stroke-linejoin="round" stroke-miterlimit="10" pointer-events="none"/><path d="M 526 456.72 L 515.5 456.72 L 531 437.72 L 546.5 456.72 L 536 456.72" fill="none" stroke="rgb(0, 0, 0)" stroke-linejoin="flat" stroke-miterlimit="4" pointer-events="none"/><g transform="translate(-0.5 -0.5)"><switch><foreignObject pointer-events="none" width="100%" height="100%" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility" style="overflow: visible; text-align: left;"><div xmlns="http://www.w3.org/1999/xhtml" style="display: flex; align-items: unsafe flex-start; justify-content: unsafe center; width: 1px; height: 1px; padding-top: 488px; margin-left: 587px;"><div data-drawio-colors="color: rgb(0, 0, 0); background-color: rgb(255, 255, 255); " style="box-sizing: border-box; font-size: 0px; text-align: center;"><div style="display: inline-block; font-size: 9px; font-family: Helvetica; color: rgb(0, 0, 0); line-height: 1.2; pointer-events: none; background-color: rgb(255, 255, 255); white-space: nowrap;">Use tuned parameters</div></div></div></foreignObject><text x="587" y="497" fill="rgb(0, 0, 0)" font-family="Helvetica" font-size="9px" text-anchor="middle">Use tuned parameters</text></switch></g><g transform="translate(-0.5 -0.5)"><switch><foreignObject pointer-events="none" width="100%" height="100%" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility" style="overflow: visible; text-align: left;"><div xmlns="http://www.w3.org/1999/xhtml" style="display: flex; align-items: unsafe center; justify-content: unsafe center; width: 88px; height: 1px; padding-top: 452px; margin-left: 92px;"><div data-drawio-colors="color: rgb(0, 0, 0); " style="box-sizing: border-box; font-size: 0px; text-align: center;"><div style="display: inline-block; font-size: 9px; font-family: Helvetica; color: rgb(0, 0, 0); line-height: 1.2; pointer-events: none; white-space: normal; overflow-wrap: normal;"><b>Inner resampling</b><br />Tune parameters</div></div></div></foreignObject><text x="136" y="455" fill="rgb(0, 0, 0)" font-family="Helvetica" font-size="9px" text-anchor="middle">Inner resampling...</text></switch></g><path d="M 281.5 156 L 281.5 146 L 526 146 Q 536 146 536 156 L 536 171.5 L 546.5 171.5 L 531 190.5 L 515.5 171.5 L 526 171.5 L 526 156 Z" fill="rgb(255, 255, 255)" stroke="rgb(0, 0, 0)" stroke-linejoin="round" stroke-miterlimit="10" pointer-events="none"/><path d="M 536 171.5 L 546.5 171.5 L 531 190.5 L 515.5 171.5 L 526 171.5" fill="none" stroke="rgb(0, 0, 0)" stroke-linejoin="flat" stroke-miterlimit="4" pointer-events="none"/><path d="M 280.5 146 L 280.5 156 L 36 156 L 36 171.5 L 46.5 171.5 L 31 190.5 L 15.5 171.5 L 26 171.5 L 26 156 Q 26 146 36 146 Z" fill="rgb(255, 255, 255)" stroke="rgb(0, 0, 0)" stroke-linejoin="round" stroke-miterlimit="10" pointer-events="none"/><path d="M 36 171.5 L 46.5 171.5 L 31 190.5 L 15.5 171.5 L 26 171.5" fill="none" stroke="rgb(0, 0, 0)" stroke-linejoin="flat" stroke-miterlimit="4" pointer-events="none"/><path d="M 276 121.5 L 286 121.5 L 286 171.5 L 296.5 171.5 L 281 190.5 L 265.5 171.5 L 276 171.5 Z" fill="rgb(255, 255, 255)" stroke="rgb(0, 0, 0)" stroke-linejoin="round" stroke-miterlimit="10" pointer-events="none"/><g transform="translate(-0.5 -0.5)"><switch><foreignObject pointer-events="none" width="100%" height="100%" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility" style="overflow: visible; text-align: left;"><div xmlns="http://www.w3.org/1999/xhtml" style="display: flex; align-items: unsafe center; justify-content: unsafe center; width: 108px; height: 1px; padding-top: 106px; margin-left: 227px;"><div data-drawio-colors="color: rgb(0, 0, 0); " style="box-sizing: border-box; font-size: 0px; text-align: center;"><div style="display: inline-block; font-size: 9px; font-family: Helvetica; color: rgb(0, 0, 0); line-height: 1.2; pointer-events: none; white-space: normal; overflow-wrap: normal;"><b>Outer resampling</b><br />Estimate performance</div></div></div></foreignObject><text x="281" y="109" fill="rgb(0, 0, 0)" font-family="Helvetica" font-size="9px" text-anchor="middle">Outer resampling...</text></switch></g><rect x="273.2" y="146.47" width="15.75" height="9.02" fill="rgb(255, 255, 255)" stroke="none" pointer-events="none"/></g><switch><g requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"/><a transform="translate(0,-5)" xlink:href="https://www.diagrams.net/doc/faq/svg-export-text-problems" target="_blank"><text text-anchor="middle" font-size="10px" x="50%" y="100%">Text is not SVG - cannot display</text></a></switch></svg>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+  width="189.93362mm"
+  height="131.97115mm"
+  viewBox="0 0 189.93362 131.97115"
+  version="1.1"
+  id="svg1"
+  xmlns="http://www.w3.org/2000/svg"
+  xmlns:svg="http://www.w3.org/2000/svg"
+  xmlns:xhtml="http://www.w3.org/1999/xhtml">
+  <defs
+    id="defs1" />
+  <g
+    id="layer1"
+    transform="translate(-38.364583,-19.579166)">
+    <rect
+      width="100%"
+      height="100%"
+      style="fill:#ffffff;stroke-width:0.264583"
+      id="rect1"
+      x="38.496876"
+      y="19.711458" />
+    <g
+      id="g37"
+      transform="matrix(0.26458333,0,0,0.26458333,38.496875,19.711458)">
+      <path
+        d="m 234,1 h 110 q -30,45 0,90 H 234 Q 204,46 234,1 Z"
+        fill="#ffffcc"
+        stroke="#000000"
+        stroke-width="3"
+        stroke-miterlimit="10"
+        pointer-events="all"
+        id="path1" />
+      <g
+        transform="translate(-0.5,-0.5)"
+        id="g2">
+        <switch
+          id="switch1">
+          <text
+            x="282"
+            y="33.156025"
+            fill="#000000"
+            font-family="Helvetica"
+            font-size="12px"
+            text-anchor="middle"
+            font-weight="bold"
+            id="text1">
+            <tspan
+              id="tspan1"
+              x="282"
+              y="33.156025">Full</tspan>
+            <tspan
+              id="tspan2"
+              x="282"
+              y="48.156025">Dataset</tspan>
+            <tspan
+              x="282"
+              y="63.156025"
+              id="tspan3">(all patients)</tspan>
+          </text>
+        </switch>
+      </g>
+      <path
+        d="m 501,201 c 0,8.28 13.43,15 30,15 16.57,0 30,-6.72 30,-15 v 221.22 c 0,8.28 -13.43,15 -30,15 -16.57,0 -30,-6.72 -30,-15 z"
+        fill="#d5e8d4"
+        stroke="#000000"
+        stroke-width="3"
+        stroke-miterlimit="10"
+        pointer-events="none"
+        id="path2" />
+      <path
+        d="m 501,358.48 c 0,8.28 13.43,15 30,15 16.57,0 30,-6.72 30,-15 v 63.74 c 0,8.28 -13.43,15 -30,15 -16.57,0 -30,-6.72 -30,-15 z"
+        fill="#ffffcc"
+        stroke="#000000"
+        stroke-width="3"
+        stroke-miterlimit="10"
+        pointer-events="none"
+        id="path3" />
+      <g
+        transform="translate(-0.5,-0.5)"
+        id="g3">
+        <switch
+          id="switch3">
+          <text
+            x="531"
+            y="408"
+            fill="#000000"
+            font-family="Helvetica"
+            font-size="12px"
+            text-anchor="middle"
+            font-weight="bold"
+            id="text3">Test Set</text>
+        </switch>
+      </g>
+      <path
+        d="m 571,201 c 0,8.28 9.45,15 21.11,15 11.66,0 21.11,-6.72 21.11,-15 v 151.22 c 0,3.98 -2.23,7.79 -6.18,10.61 -3.96,2.81 -9.33,4.39 -14.93,4.39 -11.66,0 -21.11,-6.72 -21.11,-15 z"
+        fill="#ccffcc"
+        stroke="#000000"
+        stroke-width="3"
+        stroke-miterlimit="10"
+        pointer-events="none"
+        id="path4" />
+      <path
+        d="m 571,201 c 0,8.28 9.45,15 21.11,15 11.66,0 21.11,-6.72 21.11,-15 v 40.41 c 0,3.97 -2.23,7.79 -6.18,10.6 -3.96,2.82 -9.33,4.4 -14.93,4.4 -11.66,0 -21.11,-6.72 -21.11,-15 z"
+        fill="#99ccff"
+        stroke="#000000"
+        stroke-width="3"
+        stroke-miterlimit="10"
+        pointer-events="none"
+        id="path5" />
+      <path
+        d="m 620.26,201 c 0,8.28 9.45,15 21.11,15 11.65,0 21.1,-6.72 21.1,-15 v 151.22 c 0,3.98 -2.22,7.79 -6.18,10.61 -3.96,2.81 -9.33,4.39 -14.92,4.39 -11.66,0 -21.11,-6.72 -21.11,-15 z"
+        fill="#ccffcc"
+        stroke="#000000"
+        stroke-width="3"
+        stroke-miterlimit="10"
+        pointer-events="none"
+        id="path6" />
+      <path
+        d="m 620.26,254.3 c 0,8.28 9.45,15 21.11,15 11.65,0 21.1,-6.72 21.1,-15 v 40.4 c 0,3.98 -2.22,7.8 -6.18,10.61 -3.96,2.81 -9.33,4.39 -14.92,4.39 -11.66,0 -21.11,-6.71 -21.11,-15 z"
+        fill="#99ccff"
+        stroke="#000000"
+        stroke-width="3"
+        stroke-miterlimit="10"
+        pointer-events="none"
+        id="path7" />
+      <path
+        d="m 669.51,201 c 0,8.28 9.45,15 21.11,15 11.66,0 21.11,-6.72 21.11,-15 v 151.22 c 0,3.98 -2.22,7.79 -6.18,10.61 -3.96,2.81 -9.33,4.39 -14.93,4.39 -11.66,0 -21.11,-6.72 -21.11,-15 z"
+        fill="#ccffcc"
+        stroke="#000000"
+        stroke-width="3"
+        stroke-miterlimit="10"
+        pointer-events="none"
+        id="path8" />
+      <path
+        d="m 669.51,311.81 c 0,8.29 9.45,15 21.11,15 11.66,0 21.11,-6.71 21.11,-15 v 40.41 c 0,3.98 -2.22,7.79 -6.18,10.61 -3.96,2.81 -9.33,4.39 -14.93,4.39 -11.66,0 -21.11,-6.72 -21.11,-15 z"
+        fill="#99ccff"
+        stroke="#000000"
+        stroke-width="3"
+        stroke-miterlimit="10"
+        pointer-events="none"
+        id="path9" />
+      <path
+        d="m 251,201 c 0,8.28 13.43,15 30,15 16.57,0 30,-6.72 30,-15 v 221.22 c 0,8.28 -13.43,15 -30,15 -16.57,0 -30,-6.72 -30,-15 z"
+        fill="#d5e8d4"
+        stroke="#000000"
+        stroke-width="3"
+        stroke-miterlimit="10"
+        pointer-events="none"
+        id="path10" />
+      <path
+        d="m 251,276.74 c 0,8.28 13.43,15 30,15 16.57,0 30,-6.72 30,-15 v 63.74 c 0,8.28 -13.43,15 -30,15 -16.57,0 -30,-6.72 -30,-15 z"
+        fill="#ffffcc"
+        stroke="#000000"
+        stroke-width="3"
+        stroke-miterlimit="10"
+        pointer-events="none"
+        id="path11" />
+      <g
+        transform="translate(-0.5,-0.5)"
+        id="g11">
+        <switch
+          id="switch11">
+          <text
+            x="281"
+            y="326"
+            fill="#000000"
+            font-family="Helvetica"
+            font-size="12px"
+            text-anchor="middle"
+            font-weight="bold"
+            id="text11">Test Set</text>
+        </switch>
+      </g>
+      <path
+        d="m 321,236 c 0,8.28 9.45,15 21.11,15 11.66,0 21.11,-6.72 21.11,-15 v 151.22 c 0,3.98 -2.23,7.79 -6.18,10.61 -3.96,2.81 -9.33,4.39 -14.93,4.39 -11.66,0 -21.11,-6.72 -21.11,-15 z"
+        fill="#ccffcc"
+        stroke="#000000"
+        stroke-width="3"
+        stroke-miterlimit="10"
+        pointer-events="none"
+        id="path12" />
+      <path
+        d="m 321,236 c 0,8.28 9.45,15 21.11,15 11.66,0 21.11,-6.72 21.11,-15 v 40.41 c 0,3.97 -2.23,7.79 -6.18,10.6 -3.96,2.82 -9.33,4.4 -14.93,4.4 -11.66,0 -21.11,-6.72 -21.11,-15 z"
+        fill="#99ccff"
+        stroke="#000000"
+        stroke-width="3"
+        stroke-miterlimit="10"
+        pointer-events="none"
+        id="path13" />
+      <path
+        d="m 370.26,236 c 0,8.28 9.45,15 21.11,15 11.65,0 21.1,-6.72 21.1,-15 v 151.22 c 0,3.98 -2.22,7.79 -6.18,10.61 -3.96,2.81 -9.33,4.39 -14.92,4.39 -11.66,0 -21.11,-6.72 -21.11,-15 z"
+        fill="#ccffcc"
+        stroke="#000000"
+        stroke-width="3"
+        stroke-miterlimit="10"
+        pointer-events="none"
+        id="path14" />
+      <path
+        d="m 370.26,289.3 c 0,8.28 9.45,15 21.11,15 11.65,0 21.1,-6.72 21.1,-15 v 40.4 c 0,3.98 -2.22,7.8 -6.18,10.61 -3.96,2.81 -9.33,4.39 -14.92,4.39 -11.66,0 -21.11,-6.71 -21.11,-15 z"
+        fill="#99ccff"
+        stroke="#000000"
+        stroke-width="3"
+        stroke-miterlimit="10"
+        pointer-events="none"
+        id="path15" />
+      <path
+        d="m 419.51,236 c 0,8.28 9.45,15 21.11,15 11.66,0 21.11,-6.72 21.11,-15 v 151.22 c 0,3.98 -2.22,7.79 -6.18,10.61 -3.96,2.81 -9.33,4.39 -14.93,4.39 -11.66,0 -21.11,-6.72 -21.11,-15 z"
+        fill="#ccffcc"
+        stroke="#000000"
+        stroke-width="3"
+        stroke-miterlimit="10"
+        pointer-events="none"
+        id="path16" />
+      <path
+        d="m 419.51,346.81 c 0,8.29 9.45,15 21.11,15 11.66,0 21.11,-6.71 21.11,-15 v 40.41 c 0,3.98 -2.22,7.79 -6.18,10.61 -3.96,2.81 -9.33,4.39 -14.93,4.39 -11.66,0 -21.11,-6.72 -21.11,-15 z"
+        fill="#99ccff"
+        stroke="#000000"
+        stroke-width="3"
+        stroke-miterlimit="10"
+        pointer-events="none"
+        id="path17" />
+      <g
+        transform="translate(-0.5,-4.5)"
+        id="g18">
+        <switch
+          id="switch18">
+          <text
+            x="391"
+            y="425"
+            fill="#000000"
+            font-family="Helvetica"
+            font-size="9px"
+            text-anchor="middle"
+            id="text18">
+            <tspan
+              id="tspan8"
+              x="391"
+              y="425"
+              style="font-weight:bold">Inner resampling</tspan>
+            <tspan
+              id="tspan9"
+              x="391"
+              y="436.25">Tune parameters</tspan>
+          </text>
+        </switch>
+      </g>
+      <g
+        transform="translate(250.15506,-38.891681)"
+        id="g18-0">
+        <switch
+          id="switch18-2">
+          <text
+            x="391"
+            y="425"
+            fill="#000000"
+            font-family="Helvetica"
+            font-size="9px"
+            text-anchor="middle"
+            id="text18-1">
+            <tspan
+              id="tspan8-8"
+              x="391"
+              y="425"
+              style="font-weight:bold">Inner resampling</tspan>
+            <tspan
+              id="tspan9-3"
+              x="391"
+              y="436.25">Tune parameters</tspan>
+          </text>
+        </switch>
+      </g>
+      <path
+        d="m 1,201 c 0,8.28 13.43,15 30,15 16.57,0 30,-6.72 30,-15 v 221.22 c 0,8.28 -13.43,15 -30,15 -16.57,0 -30,-6.72 -30,-15 z"
+        fill="#d5e8d4"
+        stroke="#000000"
+        stroke-width="3"
+        stroke-miterlimit="10"
+        pointer-events="none"
+        id="path18" />
+      <path
+        d="m 1,201 c 0,8.28 13.43,15 30,15 16.57,0 30,-6.72 30,-15 v 63.74 c 0,8.28 -13.43,15 -30,15 -16.57,0 -30,-6.72 -30,-15 z"
+        fill="#ffffcc"
+        stroke="#000000"
+        stroke-width="3"
+        stroke-miterlimit="10"
+        pointer-events="none"
+        id="path19" />
+      <g
+        transform="translate(-0.5,-0.5)"
+        id="g19">
+        <switch
+          id="switch19">
+          <text
+            x="31"
+            y="250"
+            fill="#000000"
+            font-family="Helvetica"
+            font-size="12px"
+            text-anchor="middle"
+            font-weight="bold"
+            id="text19">Test Set</text>
+        </switch>
+      </g>
+      <path
+        d="m 71,271 c 0,8.28 9.45,15 21.11,15 11.66,0 21.11,-6.72 21.11,-15 v 151.22 c 0,3.98 -2.23,7.79 -6.18,10.61 -3.96,2.81 -9.33,4.39 -14.93,4.39 -11.66,0 -21.11,-6.72 -21.11,-15 z"
+        fill="#ccffcc"
+        stroke="#000000"
+        stroke-width="3"
+        stroke-miterlimit="10"
+        pointer-events="none"
+        id="path20" />
+      <path
+        d="m 71,271 c 0,8.28 9.45,15 21.11,15 11.66,0 21.11,-6.72 21.11,-15 v 40.41 c 0,3.97 -2.23,7.79 -6.18,10.6 -3.96,2.82 -9.33,4.4 -14.93,4.4 -11.66,0 -21.11,-6.72 -21.11,-15 z"
+        fill="#99ccff"
+        stroke="#000000"
+        stroke-width="3"
+        stroke-miterlimit="10"
+        pointer-events="none"
+        id="path21" />
+      <path
+        d="m 120.26,271 c 0,8.28 9.45,15 21.11,15 11.65,0 21.1,-6.72 21.1,-15 v 151.22 c 0,3.98 -2.22,7.79 -6.18,10.61 -3.96,2.81 -9.33,4.39 -14.92,4.39 -11.66,0 -21.11,-6.72 -21.11,-15 z"
+        fill="#ccffcc"
+        stroke="#000000"
+        stroke-width="3"
+        stroke-miterlimit="10"
+        pointer-events="none"
+        id="path22" />
+      <path
+        d="m 120.26,324.3 c 0,8.28 9.45,15 21.11,15 11.65,0 21.1,-6.72 21.1,-15 v 40.4 c 0,3.98 -2.22,7.8 -6.18,10.61 -3.96,2.81 -9.33,4.39 -14.92,4.39 -11.66,0 -21.11,-6.71 -21.11,-15 z"
+        fill="#99ccff"
+        stroke="#000000"
+        stroke-width="3"
+        stroke-miterlimit="10"
+        pointer-events="none"
+        id="path23" />
+      <path
+        d="m 169.51,271 c 0,8.28 9.45,15 21.11,15 11.66,0 21.11,-6.72 21.11,-15 v 151.22 c 0,3.98 -2.22,7.79 -6.18,10.61 -3.96,2.81 -9.33,4.39 -14.93,4.39 -11.66,0 -21.11,-6.72 -21.11,-15 z"
+        fill="#ccffcc"
+        stroke="#000000"
+        stroke-width="3"
+        stroke-miterlimit="10"
+        pointer-events="none"
+        id="path24" />
+      <path
+        d="m 169.51,381.81 c 0,8.29 9.45,15 21.11,15 11.66,0 21.11,-6.71 21.11,-15 v 40.41 c 0,3.98 -2.22,7.79 -6.18,10.61 -3.96,2.81 -9.33,4.39 -14.93,4.39 -11.66,0 -21.11,-6.72 -21.11,-15 z"
+        fill="#99ccff"
+        stroke="#000000"
+        stroke-width="3"
+        stroke-miterlimit="10"
+        pointer-events="none"
+        id="path25" />
+      <path
+        d="M 26,456.72 H 15.5 l 15.5,-19 15.5,19 H 36 V 476 h 95 v -8.28 h 10 V 476 q 0,10 -10,10 H 36 q -10,0 -10,-10 z"
+        fill="#ffffff"
+        stroke="#000000"
+        stroke-linejoin="round"
+        stroke-miterlimit="10"
+        pointer-events="none"
+        id="path26" />
+      <path
+        d="M 26,456.72 H 15.5 l 15.5,-19 15.5,19 H 36"
+        fill="none"
+        stroke="#000000"
+        stroke-linejoin="flat"
+        stroke-miterlimit="4"
+        pointer-events="none"
+        id="path27" />
+      <g
+        transform="translate(-0.5,-0.5)"
+        id="g27">
+        <switch
+          id="switch27">
+          <text
+            x="86"
+            y="497"
+            fill="#000000"
+            font-family="Helvetica"
+            font-size="9px"
+            text-anchor="middle"
+            id="text27">Use tuned parameters</text>
+        </switch>
+      </g>
+      <path
+        d="m 276,456.72 h -10.5 l 15.5,-19 15.5,19 H 286 V 476 h 100.37 v -38.28 h 10 V 476 q 0,10 -10,10 H 286 q -10,0 -10,-10 z"
+        fill="#ffffff"
+        stroke="#000000"
+        stroke-linejoin="round"
+        stroke-miterlimit="10"
+        pointer-events="none"
+        id="path28" />
+      <path
+        d="m 276,456.72 h -10.5 l 15.5,-19 15.5,19 H 286"
+        fill="none"
+        stroke="#000000"
+        stroke-linejoin="flat"
+        stroke-miterlimit="4"
+        pointer-events="none"
+        id="path29" />
+      <g
+        transform="translate(-0.5,-0.5)"
+        id="g29">
+        <switch
+          id="switch29">
+          <text
+            x="337"
+            y="497"
+            fill="#000000"
+            font-family="Helvetica"
+            font-size="9px"
+            text-anchor="middle"
+            id="text29">Use tuned parameters</text>
+        </switch>
+      </g>
+      <path
+        d="m 526,456.72 h -10.5 l 15.5,-19 15.5,19 H 536 V 476 h 100.36 v -70.5 h 10 V 476 q 0,10 -10,10 H 536 q -10,0 -10,-10 z"
+        fill="#ffffff"
+        stroke="#000000"
+        stroke-linejoin="round"
+        stroke-miterlimit="10"
+        pointer-events="none"
+        id="path30" />
+      <path
+        d="m 526,456.72 h -10.5 l 15.5,-19 15.5,19 H 536"
+        fill="none"
+        stroke="#000000"
+        stroke-linejoin="flat"
+        stroke-miterlimit="4"
+        pointer-events="none"
+        id="path31" />
+      <g
+        transform="translate(-0.5,-0.5)"
+        id="g31">
+        <switch
+          id="switch31">
+          <text
+            x="587"
+            y="497"
+            fill="#000000"
+            font-family="Helvetica"
+            font-size="9px"
+            text-anchor="middle"
+            id="text31">Use tuned parameters</text>
+        </switch>
+      </g>
+      <path
+        d="M 281.5,156 V 146 H 526 q 10,0 10,10 v 15.5 h 10.5 l -15.5,19 -15.5,-19 H 526 V 156 Z"
+        fill="#ffffff"
+        stroke="#000000"
+        stroke-linejoin="round"
+        stroke-miterlimit="10"
+        pointer-events="none"
+        id="path32" />
+      <path
+        d="m 536,171.5 h 10.5 l -15.5,19 -15.5,-19 H 526"
+        fill="none"
+        stroke="#000000"
+        stroke-linejoin="flat"
+        stroke-miterlimit="4"
+        pointer-events="none"
+        id="path33" />
+      <path
+        d="m 280.5,146 v 10 H 36 v 15.5 h 10.5 l -15.5,19 -15.5,-19 H 26 V 156 q 0,-10 10,-10 z"
+        fill="#ffffff"
+        stroke="#000000"
+        stroke-linejoin="round"
+        stroke-miterlimit="10"
+        pointer-events="none"
+        id="path34" />
+      <path
+        d="m 36,171.5 h 10.5 l -15.5,19 -15.5,-19 H 26"
+        fill="none"
+        stroke="#000000"
+        stroke-linejoin="flat"
+        stroke-miterlimit="4"
+        pointer-events="none"
+        id="path35" />
+      <path
+        d="m 276,121.5 h 10 v 50 h 10.5 l -15.5,19 -15.5,-19 H 276 Z"
+        fill="#ffffff"
+        stroke="#000000"
+        stroke-linejoin="round"
+        stroke-miterlimit="10"
+        pointer-events="none"
+        id="path36" />
+      <g
+        transform="translate(-0.5,-6.2949461)"
+        id="g36">
+        <switch
+          id="switch36">
+          <text
+            x="281"
+            y="109"
+            fill="#000000"
+            font-family="Helvetica"
+            font-size="9px"
+            text-anchor="middle"
+            id="text36">
+            <tspan
+              id="tspan4"
+              x="281"
+              y="109"
+              style="font-weight:bold">Outer resampling</tspan>
+            <tspan
+              id="tspan5"
+              x="281"
+              y="120.25">Estimate performance</tspan>
+          </text>
+        </switch>
+      </g>
+      <rect
+        x="273.20001"
+        y="146.47"
+        width="15.75"
+        height="9.0200005"
+        fill="#ffffff"
+        stroke="none"
+        pointer-events="none"
+        id="rect36" />
+      <g
+        id="g8">
+        <g
+          transform="matrix(0.96926247,0,0,0.96926247,2.3151551,3.0985727)"
+          id="g21"
+          style="stroke-width:1.03171">
+          <switch
+            id="switch21"
+            style="stroke-width:1.03171">
+            <text
+              x="92"
+              y="309"
+              fill="#000000"
+              font-family="Helvetica"
+              font-size="12px"
+              text-anchor="middle"
+              font-weight="bold"
+              id="text21"
+              style="font-size:9.62931px;stroke-width:1.03171">
+              <tspan
+                id="tspan6"
+                x="92"
+                y="309"
+                style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:9.62931px;font-family:Helvetica;-inkscape-font-specification:Helvetica;stroke-width:1.03171">
+                Assess.</tspan>
+              <tspan
+                id="tspan7"
+                x="92"
+                y="321.03665"
+                style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:9.62931px;font-family:Helvetica;-inkscape-font-specification:Helvetica;stroke-width:1.03171">
+                set</tspan>
+            </text>
+          </switch>
+        </g>
+        <text
+          x="92"
+          y="309"
+          fill="#000000"
+          font-family="Helvetica"
+          font-size="12px"
+          text-anchor="middle"
+          font-weight="bold"
+          id="text21-2"
+          style="stroke-width:1.03171;font-size:9.62931px"
+          transform="matrix(0.96926247,0,0,0.96926247,52.064397,54.591393)">
+          <tspan
+            id="tspan6-4"
+            x="92"
+            y="309"
+            style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:9.62931px;font-family:Helvetica;-inkscape-font-specification:Helvetica;stroke-width:1.03171">
+            Assess.</tspan>
+          <tspan
+            id="tspan7-0"
+            x="92"
+            y="321.03665"
+            style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:9.62931px;font-family:Helvetica;-inkscape-font-specification:Helvetica;stroke-width:1.03171">
+            set</tspan>
+        </text>
+        <g
+          transform="matrix(0.96926247,0,0,0.96926247,100.69064,112.16592)"
+          id="g21-7"
+          style="stroke-width:1.03171">
+          <switch
+            id="switch21-5"
+            style="stroke-width:1.03171">
+            <text
+              x="92"
+              y="309"
+              fill="#000000"
+              font-family="Helvetica"
+              font-size="12px"
+              text-anchor="middle"
+              font-weight="bold"
+              id="text21-3"
+              style="font-size:9.62931px;stroke-width:1.03171">
+              <tspan
+                id="tspan6-5"
+                x="92"
+                y="309"
+                style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:9.62931px;font-family:Helvetica;-inkscape-font-specification:Helvetica;stroke-width:1.03171">
+                Assess.</tspan>
+              <tspan
+                id="tspan7-03"
+                x="92"
+                y="321.03665"
+                style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:9.62931px;font-family:Helvetica;-inkscape-font-specification:Helvetica;stroke-width:1.03171">
+                set</tspan>
+            </text>
+          </switch>
+        </g>
+      </g>
+      <g
+        id="g8-3"
+        transform="translate(250.42838,-35.366796)">
+        <g
+          transform="matrix(0.96926247,0,0,0.96926247,2.3151551,3.0985727)"
+          id="g21-1"
+          style="stroke-width:1.03171">
+          <switch
+            id="switch21-7"
+            style="stroke-width:1.03171">
+            <text
+              x="92"
+              y="309"
+              fill="#000000"
+              font-family="Helvetica"
+              font-size="12px"
+              text-anchor="middle"
+              font-weight="bold"
+              id="text21-5"
+              style="font-size:9.62931px;stroke-width:1.03171">
+              <tspan
+                id="tspan6-3"
+                x="92"
+                y="309"
+                style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:9.62931px;font-family:Helvetica;-inkscape-font-specification:Helvetica;stroke-width:1.03171">
+                Assess.</tspan>
+              <tspan
+                id="tspan7-6"
+                x="92"
+                y="321.03665"
+                style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:9.62931px;font-family:Helvetica;-inkscape-font-specification:Helvetica;stroke-width:1.03171">
+                set</tspan>
+            </text>
+          </switch>
+        </g>
+        <text
+          x="92"
+          y="309"
+          fill="#000000"
+          font-family="Helvetica"
+          font-size="12px"
+          text-anchor="middle"
+          font-weight="bold"
+          id="text21-2-6"
+          style="font-size:9.62931px;stroke-width:1.03171"
+          transform="matrix(0.96926247,0,0,0.96926247,52.064397,54.591393)">
+          <tspan
+            id="tspan6-4-5"
+            x="92"
+            y="309"
+            style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:9.62931px;font-family:Helvetica;-inkscape-font-specification:Helvetica;stroke-width:1.03171">
+            Assess.</tspan>
+          <tspan
+            id="tspan7-0-5"
+            x="92"
+            y="321.03665"
+            style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:9.62931px;font-family:Helvetica;-inkscape-font-specification:Helvetica;stroke-width:1.03171">
+            set</tspan>
+        </text>
+        <g
+          transform="matrix(0.96926247,0,0,0.96926247,100.69064,112.16592)"
+          id="g21-7-1"
+          style="stroke-width:1.03171">
+          <switch
+            id="switch21-5-3"
+            style="stroke-width:1.03171">
+            <text
+              x="92"
+              y="309"
+              fill="#000000"
+              font-family="Helvetica"
+              font-size="12px"
+              text-anchor="middle"
+              font-weight="bold"
+              id="text21-3-9"
+              style="font-size:9.62931px;stroke-width:1.03171">
+              <tspan
+                id="tspan6-5-7"
+                x="92"
+                y="309"
+                style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:9.62931px;font-family:Helvetica;-inkscape-font-specification:Helvetica;stroke-width:1.03171">
+                Assess.</tspan>
+              <tspan
+                id="tspan7-03-1"
+                x="92"
+                y="321.03665"
+                style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:9.62931px;font-family:Helvetica;-inkscape-font-specification:Helvetica;stroke-width:1.03171">
+                set</tspan>
+            </text>
+          </switch>
+        </g>
+      </g>
+      <g
+        id="g8-2"
+        transform="translate(499.95354,-70.215984)">
+        <g
+          transform="matrix(0.96926247,0,0,0.96926247,2.3151551,3.0985727)"
+          id="g21-14"
+          style="stroke-width:1.03171">
+          <switch
+            id="switch21-3"
+            style="stroke-width:1.03171">
+            <text
+              x="92"
+              y="309"
+              fill="#000000"
+              font-family="Helvetica"
+              font-size="12px"
+              text-anchor="middle"
+              font-weight="bold"
+              id="text21-33"
+              style="font-size:9.62931px;stroke-width:1.03171">
+              <tspan
+                id="tspan6-9"
+                x="92"
+                y="309"
+                style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:9.62931px;font-family:Helvetica;-inkscape-font-specification:Helvetica;stroke-width:1.03171">
+                Assess.</tspan>
+              <tspan
+                id="tspan7-9"
+                x="92"
+                y="321.03665"
+                style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:9.62931px;font-family:Helvetica;-inkscape-font-specification:Helvetica;stroke-width:1.03171">
+                set</tspan>
+            </text>
+          </switch>
+        </g>
+        <text
+          x="92"
+          y="309"
+          fill="#000000"
+          font-family="Helvetica"
+          font-size="12px"
+          text-anchor="middle"
+          font-weight="bold"
+          id="text21-2-7"
+          style="font-size:9.62931px;stroke-width:1.03171"
+          transform="matrix(0.96926247,0,0,0.96926247,52.064397,54.591393)">
+          <tspan
+            id="tspan6-4-7"
+            x="92"
+            y="309"
+            style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:9.62931px;font-family:Helvetica;-inkscape-font-specification:Helvetica;stroke-width:1.03171">
+            Assess.</tspan>
+          <tspan
+            id="tspan7-0-1"
+            x="92"
+            y="321.03665"
+            style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:9.62931px;font-family:Helvetica;-inkscape-font-specification:Helvetica;stroke-width:1.03171">
+            set</tspan>
+        </text>
+        <g
+          transform="matrix(0.96926247,0,0,0.96926247,100.69064,112.16592)"
+          id="g21-7-6"
+          style="stroke-width:1.03171">
+          <switch
+            id="switch21-5-6"
+            style="stroke-width:1.03171">
+            <text
+              x="92"
+              y="309"
+              fill="#000000"
+              font-family="Helvetica"
+              font-size="12px"
+              text-anchor="middle"
+              font-weight="bold"
+              id="text21-3-7"
+              style="font-size:9.62931px;stroke-width:1.03171">
+              <tspan
+                id="tspan6-5-1"
+                x="92"
+                y="309"
+                style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:9.62931px;font-family:Helvetica;-inkscape-font-specification:Helvetica;stroke-width:1.03171">
+                Assess.</tspan>
+              <tspan
+                id="tspan7-03-8"
+                x="92"
+                y="321.03665"
+                style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:9.62931px;font-family:Helvetica;-inkscape-font-specification:Helvetica;stroke-width:1.03171">
+                set</tspan>
+            </text>
+          </switch>
+        </g>
+      </g>
+      <g
+        transform="translate(-254.84202,25.584923)"
+        id="g18-8">
+        <switch
+          id="switch18-3">
+          <text
+            x="391"
+            y="425"
+            fill="#000000"
+            font-family="Helvetica"
+            font-size="9px"
+            text-anchor="middle"
+            id="text18-9">
+            <tspan
+              id="tspan8-1"
+              x="391"
+              y="425"
+              style="font-weight:bold">Inner resampling</tspan>
+            <tspan
+              id="tspan9-36"
+              x="391"
+              y="436.25">Tune parameters</tspan>
+          </text>
+        </switch>
+      </g>
+    </g>
+  </g>
+</svg>
