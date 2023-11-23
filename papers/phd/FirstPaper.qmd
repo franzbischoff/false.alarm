@@ -320,7 +320,7 @@ E( score ) &= \alpha + time\_constraint\\
 &\quad + regime\_threshold + regime\_landmark\\
 &\quad + \left(regime\_threshold \times regime\_landmark\right)\\
 &\quad + \left(mp\_threshold \times regime\_landmark\right)\\
-&\quad + \left(mp\_threshold \times window\_size\right)
+&\quad + \left(window\_size \times regime\_landmark\right)
 \end{aligned}
 $$ {#eq-refitted}
 
@@ -381,18 +381,16 @@ Using the three techniques simultaneously allows a broad comparison of the model
 
 ### Interactions
 
-
-
-@fig-interaction shows the variable interaction strength between pairs of variables. That allows us to verify if there are any significant interactions between the variables. Using the information from the first model fit, equation @eq-first, we see that `regime_threshold` interacts strongly with `regime_landmark`. This interaction was already expected, and we see that even after refitting the model, equation @eq-refitted, this interaction is still strong.
+@fig-interaction shows the variable interaction strength between pairs of variables in the first dataset, which from all datasets has the more difficult scenario (which is the presence or not of a synusal rythm). This dataset, shows us that after refitting the model, `window_size` and `regime_landmark` would be a great confounding factor if we did not take into account the interactions. `regime_threshold`/`mp_threshold` and `regime_landmark` also show a strong interaction that could lead to misinterpretation if not taken into account.
 
 This is not a problem *per se* but a signal we must be aware of when exploring the parameters.
 
 ```{r fig-interaction, echo=FALSE, eval=TRUE, fig.height = 7, fig.width= 8, out.width="100%"}
 #| fig-cap: "Variable interactions strength using feature importance ranking measure (FIRM) approach [@Greenwell2018].
-#|  A) Shows strong interaction between `regime_threshold` and `regime_landmark`, `mp_threshold` and `window_size`,
+#|  A) Shows strong interaction between `window_size` and `regime_landmark`, `regime_threshold` and `regime_landmark`,
 #|     `mp_threshold` and `regime_landmark`.
 #|  B) Refitting the model with these interactions taken into account, the strength is substantially reduced, except
-#|     for the first, showing that indeed there is a strong correlation between those variables."
+#|     for the second, showing that indeed there is a strong correlation between those variables."
 
 library(patchwork)
 
@@ -451,14 +449,9 @@ inter + plot_annotation(
 ```
 
 
-
 ### Importance analysis
 
-
-
-@fig-importance then shows the variable importance using three methods: Feature Importance Ranking Measure (FIRM) using Individual Conditional Expectation (ICE), Permutation-based, and Shapley Additive explanations (SHAP). The first line of this figure shows an interesting result that probably comes from the main disadvantage of the FIRM method: *the method does not take into account interactions*. We see that FIRM is the only one that disagrees with the other two methods, giving much importance to `window_size`.
-
-In the second line, taking into account the interactions, we see that all methods somewhat agree with each other, accentuating the importance of `regime_threshold`, which makes sense as it is the most evident parameter we need to set to determine if the *Arc Counts* are low enough to indicate a regime change.
+@fig-importance shows the variable importance using three methods for the first dataset. All methods agrees that `regime_threshold` is the most important parameter, followed by `regime_landmark`. The `window_size` is the least important parameter. The accentuating importance of `regime_threshold`, makes sense as it is the most evident parameter we need to set to determine if the *Arc Counts* are low enough to indicate a regime change.
 
 ```{r fig-importance, eval=TRUE, echo=FALSE, warning=FALSE, fig.height = 7, fig.width= 15, out.width="100%"}
 #| fig-cap: "Variables importances using three different methods. A) Feature Importance Ranking Measure
@@ -588,21 +581,11 @@ all + plot_annotation(
 )
 ```
 
-@fig-importanceshap and @fig-importanceshap2 show the effect of each feature on the FLOSS score. The more evident difference is the shape of the effect of `time_constraint` that initially suggested better results with larger values. However, removing the interactions seems to be a flat line.
+@fig-importanceshap and @fig-importanceshap2 show the effect of each feature on the FLOSS score. The more evident information we can defer from both figures is the effect of `time_constraint` that initially is basically a flat line, conditioned by the nicely distributed `regime_threshold`. `window_size` follows a similar pattern and `mp_threshold` also has a flat line, behind of what seems some random noise, nevertheless suggests that keeping it at zero (the same as removing it), will not change the final result.
 
-Based on @fig-importance and @fig-importanceshap2 we can infer that:
+From this first database's results, we can infer that the most interesting parameters to tune in the FLOSS algorithm are the `regime_threshold` and `regime_landmark`. The `window_size`, as the only parameter needed to compute the MP may be explored sparsely in other databases, and the `mp_threshold` and `time_constraint` can be removed.
 
--   **`regime_threshold`**: is the most important feature, has an optimal value to be set, and since the high interaction with the `regime_landmark`, both must be tuned simultaneously. In this setting, high thresholds significantly impact the score, probably due to an increase in false positives starting on \>0.65 the overall impact is mostly negative.
-
--   **`regime_landmark`**: is not as important as the `regime_threshold,` but since there is a high interaction, it must not be underestimated. It is known that the *Arc Counts* have more uncertainty as we approach the margin of the streaming, and this becomes evident looking at how the score is negatively affected for values below 3.5s.
-
--   **`window_size`**: has a near zero impact on the score when correctly set. Nevertheless, for higher window values, the score is negatively affected. This high value probably depends on the data domain. In this setting, the model is being tuned towards the changes from atrial fibrillation/non-fibrillation; thus, the "shape of interest" is small compared to the whole heartbeat waveform. Window sizes smaller than 150 are more suitable in this case. As Beyer *et al.* noted, "as dimensionality increases, the distance to the nearest data point approaches the distance to the farthest data point" [@Beyer1999], which means that the bigger the window size, the smaller will be the contrast between different regimes.
-
--   **`mp_threshold`**: has a fair impact on the score, but primarily by *not using it*. We start to see a negative impact on the score with values above 0.60, while a constant positive impact with lower values.
-
--   **`time_constraint`**: is a parameter that must be interpreted cautiously. The 0 (zero) value means **no constraint**, which is equivalent to the size of the FLOSS history buffer (in our setting, 5000). We can see that this parameter's impact throughout the possible values is constantly near zero.
-
-In short, for the MP computation, the parameter that is worth tuning is the `window_size`, while for the FLOSS computation, both `regime_threshold` (mainly) and `regime_landmark` shall be tuned.
+> Dataset 1
 
 ```{r fig-importanceshap, eval=TRUE, echo=FALSE, message=FALSE, warning=FALSE, fig.height = 6, fig.width= 10, out.width="100%"}
 #| fig-cap: "This shows the effect each variable has on the FLOSS score. This plot doesn't take into account the
@@ -666,29 +649,10 @@ all1 <- ((a1 + a5 + a3 + a4 + plot_layout(guides = "collect")) + (a2 + plot_layo
 all1 + plot_layout(design = layout) + plot_annotation(title = "Shapley value vs. variable values", theme = ggplot2::theme_bw())
 ```
 
+> Dataset 1
+
 ```{r fig-importanceshap2, eval=TRUE, echo=FALSE, message=FALSE, warning=FALSE, fig.height = 6, fig.width= 10, out.width="100%"}
 #| fig-cap: "This shows the effect each variable has on the FLOSS score, taking into account the interactions."
-
-# t1 <- autoplot(shap_fastshap_all_test2,
-#   type = "dependence",
-#   X = testing_data2, feature = predictors_names[2], alpha = 0.2
-# ) + ggplot2::geom_smooth(method = loess) + ggplot2::labs(y = ggplot2::element_blank()) + ggplot2::theme_bw()
-# t2 <- autoplot(shap_fastshap_all_test2,
-#   type = "dependence",
-#   X = testing_data2, feature = predictors_names[1], alpha = 0.2
-# ) + ggplot2::geom_smooth(method = loess) + ggplot2::labs(y = ggplot2::element_blank()) + ggplot2::theme_bw()
-# t3 <- autoplot(shap_fastshap_all_test2,
-#   type = "dependence",
-#   X = testing_data2, feature = predictors_names[4], alpha = 0.2
-# ) + ggplot2::geom_smooth(method = loess) + ggplot2::labs(y = ggplot2::element_blank()) + ggplot2::theme_bw()
-# t4 <- autoplot(shap_fastshap_all_test2,
-#   type = "dependence",
-#   X = testing_data2, feature = predictors_names[3], alpha = 0.2
-# ) + ggplot2::geom_smooth(method = loess) + ggplot2::labs(y = ggplot2::element_blank()) + ggplot2::theme_bw()
-# t5 <- autoplot(shap_fastshap_all_test,
-#   type = "dependence",
-#   X = testing_data2, feature = predictors_names[5], alpha = 0.2
-# ) + ggplot2::geom_smooth(method = loess) + ggplot2::labs(y = ggplot2::element_blank()) + ggplot2::theme_bw()
 
 layout <- "
 AABB
@@ -725,7 +689,71 @@ all2 <- ((a1 + a5 + a3 + a4 + plot_layout(guides = "collect")) + (a2 + plot_layo
 all2 + plot_layout(design = layout) + plot_annotation(title = "Shapley value vs. variable values", theme = ggplot2::theme_bw())
 ```
 
-According to the FLOSS paper [@gharghabi2018], the `window_size` is indeed a feature that can be tuned; nevertheless, the results appear to be similar in a reasonably wide range of window sizes, up to a limit, consistent with our findings.
+> Dataset 2
+
+```{r importanceshap3, eval=TRUE, echo=FALSE, message=FALSE, fig.height = 6, fig.width= 10, out.width="100%"}
+#| fig.cap: "This shows the effect each variable has on the FLOSS score."
+trained_model <- readRDS(here("output", "dbarts_fitted_mvds.rds"))
+testing_data <- trained_model$testing_data
+int <- readRDS(here("output", "importances_mvds.rds"))
+shap_fastshap_all_test <- int$shap_fastshap_all_test
+predictors_names <- c("regime_threshold", "window_size", "regime_landmark")
+outcome_name <- "mean"
+
+d1 <- shapviz::shapviz(shap_fastshap_all_test, X = testing_data[, predictors_names], baseline = mean(testing_data[, outcome_name]$mean))
+a1 <- shapviz::sv_dependence(d1, "window_size", color_var = "auto") +
+  ggplot2::geom_smooth(method = loess, colour = "#0000ff44", alpha = 0.2) +
+  ggplot2::labs(y = ggplot2::element_blank()) +
+  ggplot2::theme_bw()
+a2 <- shapviz::sv_dependence(d1, "regime_threshold", color_var = "auto") +
+  ggplot2::geom_smooth(method = loess, colour = "#0000ff44", alpha = 0.2) +
+  ggplot2::labs(y = ggplot2::element_blank()) +
+  ggplot2::theme_bw()
+a3 <- shapviz::sv_dependence(d1, "regime_landmark", color_var = "auto") +
+  ggplot2::geom_smooth(method = loess, colour = "#0000ff44", alpha = 0.2) +
+  ggplot2::labs(y = ggplot2::element_blank()) +
+  ggplot2::theme_bw()
+
+all2 <- (a1 + a3 + plot_layout(design = "AABB", guides = "collect")) / a2
+all2 + plot_annotation(
+  title = "Shapley value vs. variable values",
+  theme = ggplot2::theme_bw()
+)
+```
+
+> Dataset 3
+
+```{r importanceshap4, eval=TRUE, echo=FALSE, message=FALSE, fig.height = 6, fig.width= 10, out.width="100%"}
+#| fig.cap: "This shows the effect each variable has on the FLOSS score."
+int <- readRDS(here("output", "importances_vtds.rds"))
+
+shap_fastshap_all_test <- int$shap_fastshap_all_test
+trained_model <- readRDS(here("output", "dbarts_fitted_vtds.rds"))
+testing_data <- trained_model$testing_data
+
+predictors_names <- c("regime_threshold", "window_size", "regime_landmark")
+outcome_name <- "mean"
+
+d1 <- shapviz::shapviz(shap_fastshap_all_test, X = testing_data[, predictors_names], baseline = mean(testing_data[, outcome_name]$mean))
+a1 <- shapviz::sv_dependence(d1, "window_size", color_var = "auto") +
+  ggplot2::geom_smooth(method = loess, colour = "#0000ff44", alpha = 0.2) +
+  ggplot2::labs(y = ggplot2::element_blank()) +
+  ggplot2::theme_bw()
+a2 <- shapviz::sv_dependence(d1, "regime_threshold", color_var = "auto") +
+  ggplot2::geom_smooth(method = loess, colour = "#0000ff44", alpha = 0.2) +
+  ggplot2::labs(y = ggplot2::element_blank()) +
+  ggplot2::theme_bw()
+a3 <- shapviz::sv_dependence(d1, "regime_landmark", color_var = "auto") +
+  ggplot2::geom_smooth(method = loess, colour = "#0000ff44", alpha = 0.2) +
+  ggplot2::labs(y = ggplot2::element_blank()) +
+  ggplot2::theme_bw()
+
+all2 <- (a1 + a3 + plot_layout(design = "AABB", guides = "collect")) / a2
+all2 + plot_annotation(
+  title = "Shapley value vs. variable values",
+  theme = ggplot2::theme_bw()
+)
+```
 
 ### Visualizing the predictions
 
