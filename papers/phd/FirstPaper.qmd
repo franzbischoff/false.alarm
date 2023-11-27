@@ -373,8 +373,6 @@ The SHAP feature importance [@Lundberg2017] is an alternative to permutation fea
 -   The Shapley value can be misinterpreted: The Shapley value of a feature value **is not** the difference of the predicted value after removing the feature from the model training. The interpretation of the Shapley value is: "Given the current set of feature values, the contribution of a feature value to the difference between the actual prediction and the mean prediction is the estimated Shapley value" [@Molnar2022].
 -   Correlations: As with other permutation methods, the SHAP feature importance can be biased by unrealistic data instances when features are correlated.
 
-
-
 Using the three techniques simultaneously allows a broad comparison of the model behavior [@Greenwell2020]. All three methods are model-agnostic (separates interpretation from the model), but as we have seen, each method has its advantages and disadvantages [@Molnar2022].
 
 # Results {#sec-results}
@@ -447,7 +445,6 @@ inter + plot_annotation(
   theme = ggplot2::theme_bw()
 )
 ```
-
 
 ### Importance analysis
 
@@ -689,7 +686,7 @@ all2 <- ((a1 + a5 + a3 + a4 + plot_layout(guides = "collect")) + (a2 + plot_layo
 all2 + plot_layout(design = layout) + plot_annotation(title = "Shapley value vs. variable values", theme = ggplot2::theme_bw())
 ```
 
-@fig-importanceshap3 shows the parameter importances of the second dataset [@bischoff2023malig]. Here we see that the `window_size` has a low bondary where the FLOSS score degrades (high values mean worse performance). The `regime_threshold` shows this same behavior. The `regime_landmark` has a more linear behavior as in the first dataset.
+@fig-importance2 shows the parameters importances of the second dataset [@bischoff2023malig]. The parameter `regime_threshold` shows a clear importance on the correctness of the FLOSS. @fig-importanceshap3 shows the behavior of the parameters. We see that the `window_size` has a low bondary where the FLOSS score degrades (high values mean worse performance). The `regime_threshold` shows this same behavior. The `regime_landmark` has a more linear behavior as in the first dataset.
 
 > Dataset 2
 
@@ -775,8 +772,6 @@ all + plot_annotation(
 )
 ```
 
-
-
 ```{r fig-importanceshap3, eval=TRUE, echo=FALSE, message=FALSE, fig.height = 6, fig.width= 10, out.width="100%"}
 #| fig.cap: "This shows the effect each variable has on the FLOSS score."
 trained_model <- readRDS(here("output", "dbarts_fitted_mvds.rds"))
@@ -807,7 +802,7 @@ all2 + plot_annotation(
 )
 ```
 
-@fig-importanceshap4 shows the parameter importances of the third dataset [@bischoff2023vtachy]. Here we still see that the `regime_landmark` keeps a linear behavior, while `window_size` and `regime_threshold` show a mirrored pattern in comparison with the second dataset, nevertheless, `regime_threshold` resemble the pattern seen in the first dataset.
+@fig-importance3 shows the parameters importances of the third dataset [@bischoff2023vtachy]. The parameter `regime_threshold` still shows a clear importance on the correctness of the FLOSS. @fig-importanceshap4 shows behavior of the parameters on this dataset. Here we still see that the `regime_landmark` keeps a linear behavior, while `window_size` and `regime_threshold` show a mirrored pattern in comparison with the second dataset, nevertheless, `regime_threshold` resemble the pattern seen in the first dataset.
 
 > Dataset 3
 
@@ -893,7 +888,6 @@ all + plot_annotation(
 )
 ```
 
-
 ```{r fig-importanceshap4, eval=TRUE, echo=FALSE, message=FALSE, fig.height = 6, fig.width= 10, out.width="100%"}
 #| fig.cap: "This shows the effect each variable has on the FLOSS score."
 int <- readRDS(here("output", "importances_vtds.rds"))
@@ -928,6 +922,10 @@ all2 + plot_annotation(
 
 ### Visualizing the predictions
 
+In order to the reader visualize how the models behaves in different datasets, we provide an interactive app for each dataset that can be accesses respectively on: <https://franzbischoff.shinyapps.io/FLOSS_land/> , <https://franzbischoff.shinyapps.io/FLOSS_ventricular/> and <https://franzbischoff.shinyapps.io/FLOSS_vtachy/> .
+
+The global assessment of the algorithm is shown in two forms, by recording (aggregating the performance of all tested models) and by model (aggregating the performance over the recordings of the datasets).
+
 At this point, the grid search tested a total of 23,389 models with resulting (individual) scores from 0.0002 to 1669.83 (Q25: 0.9838, Q50: 1.8093, Q75: 3.3890).
 
 #### By recording
@@ -938,7 +936,129 @@ First, we will visualize how the models (in general) performed throughout the in
 
 Next, we will visualize some of these predictions to understand why some recordings were difficult to segment. For us to have a simple baseline: a recording with just one regime change, and the model predicts exactly one regime change, but far from the truth, the score will be roughly 1.
 
-```{r fig-global, eval=TRUE, echo=FALSE, fig.height=5, fig.width=10, out.width="100%"}
+```{r scores, eval=TRUE, echo=FALSE}
+all_scores <- readRDS(here::here("output", "regime_outputs_lmk.rds"))
+
+predictors_names2 <- c("regime_threshold", "window_size", "regime_landmark")
+outcome_name <- "mean"
+all_fitted_mvds <- readRDS(here::here("output", "regime_outputs_mvds.rds"))
+all_scores_mvds <- all_fitted_mvds |>
+  tidyr::unnest(.predictions) |>
+  dplyr::filter(regime_landmark < 10) |>
+  dplyr::select(
+    id, rep, .sizes, .id,
+    all_of(predictors_names2),
+    .config, .pred, truth
+  ) |>
+  dplyr::rename(fold = id, size = .sizes, record = .id, model = .config, pred = .pred) |>
+  dplyr::distinct(rep, record, across(all_of(predictors_names2)), .keep_all = TRUE) |>
+  dplyr::mutate(truth = clean_truth(truth, size), pred = clean_pred(pred)) |>
+  dplyr::mutate(score = score_regimes_weighted(truth, pred, 0))
+
+all_fitted_vtds <- readRDS(here::here("output", "regime_outputs_vtds.rds"))
+all_scores_vtds <- all_fitted_vtds |>
+  tidyr::unnest(.predictions) |>
+  dplyr::filter(regime_landmark < 10) |>
+  dplyr::select(
+    id, rep, .sizes, .id,
+    all_of(predictors_names2),
+    .config, .pred, truth
+  ) |>
+  dplyr::rename(fold = id, size = .sizes, record = .id, model = .config, pred = .pred) |>
+  dplyr::distinct(rep, record, across(all_of(predictors_names2)), .keep_all = TRUE) |>
+  dplyr::mutate(truth = clean_truth(truth, size), pred = clean_pred(pred)) |>
+  dplyr::mutate(score = score_regimes_weighted(truth, pred, 0))
+
+```
+
+```{r scores-plot-ds1, eval=TRUE, echo=FALSE}
+scores_stats <- all_scores |>
+  dplyr::select(record, score) |>
+  dplyr::group_by(record) |>
+  dplyr::reframe(
+    score = score, min = min(score), q25 = quantile(score, 0.25),
+    median = quantile(score, 0.5), q75 = quantile(score, 0.75),
+    mean = mean(score), max = max(score), size = dplyr::n()
+  )
+#
+records_factors <- forcats::as_factor(scores_stats$record)
+
+scores_stats$id <- sprintf("%03d", (as.numeric(records_factors)))
+
+scores1 <- scores_stats |>
+  dplyr::mutate(low_iqr = q75 - q25 < 0.1) |>
+  dplyr::filter(median > quantile(median, 0.9) | median < quantile(median, 0.1)) |>
+  ggplot2::ggplot(ggplot2::aes(
+    x = reorder(id, -median),
+    y = score, colour = low_iqr
+  )) +
+  ggplot2::geom_violin(scale = "width") +
+  ggplot2::theme_bw() +
+  ggplot2::labs(
+    title = glue::glue("First dataset; {floor(mean(scores_stats$size))} models by recording"),
+    colour = "IQR < 0.1", x = ggplot2::element_blank(), y = ggplot2::element_blank()
+  )
+```
+
+```{r scores-plot-ds2, eval=TRUE, echo=FALSE}
+scores_stats_mvds <- all_scores_mvds |>
+  dplyr::select(record, score) |>
+  dplyr::group_by(record) |>
+  dplyr::reframe(
+    score = score, min = min(score), q25 = quantile(score, 0.25),
+    median = quantile(score, 0.5), q75 = quantile(score, 0.75),
+    mean = mean(score), max = max(score), size = dplyr::n()
+  )
+
+records_factors_mvds <- forcats::as_factor(scores_stats_mvds$record)
+
+scores_stats_mvds$id <- sprintf("%02d", (as.numeric(records_factors_mvds)))
+
+scores2 <- scores_stats_mvds |>
+  dplyr::mutate(low_iqr = q75 - q25 < 0.1) |>
+  ggplot2::ggplot(aes(
+    x = reorder(id, -median),
+    y = score, colour = low_iqr
+  )) +
+  ggplot2::geom_violin(scale = "width") +
+  ggplot2::theme_bw() +
+  ggplot2::labs(
+    title = glue::glue("Second dataset; {floor(mean(scores_stats_mvds$size))} models by recording"),
+    colour = "IQR < 0.1",
+    x = ggplot2::element_blank(), y = "Score distribution"
+  )
+```
+
+```{r scores-plot-ds3, eval=TRUE, echo=FALSE}
+scores_stats_vtds <- all_scores_vtds |>
+  dplyr::select(record, score) |>
+  dplyr::group_by(record) |>
+  dplyr::reframe(
+    score = score, min = min(score), q25 = quantile(score, 0.25),
+    median = quantile(score, 0.5), q75 = quantile(score, 0.75),
+    mean = mean(score), max = max(score), size = dplyr::n()
+  )
+
+records_factors_vtds <- forcats::as_factor(scores_stats_vtds$record)
+
+scores_stats_vtds$id <- sprintf("%02d", (as.numeric(records_factors_vtds)))
+
+scores3 <- scores_stats_vtds |>
+  dplyr::mutate(low_iqr = q75 - q25 < 0.1) |>
+  ggplot2::ggplot(aes(
+    x = reorder(id, -median),
+    y = score, colour = low_iqr
+  )) +
+  ggplot2::geom_violin(scale = "width") +
+  ggplot2::theme_bw() +
+  ggplot2::labs(
+    title = glue::glue("Third dataset; {floor(mean(scores_stats_vtds$size))} models by recording"),
+    colour = "IQR < 0.1",
+    x = "Recording ID", y = ggplot2::element_blank()
+  )
+```
+
+```{r fig-global, eval=TRUE, cache=FALSE, echo=FALSE, fig.height=6, fig.width=10, out.width="100%"}
 #| fig-cap: "Violin plot showing the distribution of the FLOSS score achieved by all tested models by
 #|  recording.  The left half shows the recordings that were difficult to predict (10% overall), whereas
 #|  the right half shows the recordings that at least one model could achieve a good prediction (10%
@@ -948,30 +1068,34 @@ Next, we will visualize some of these predictions to understand why some recordi
 #|  with just one regime change, and the model predicts exactly one change, far from the truth, the
 #|  score will be roughly 1."
 
-all_scores <- readRDS(here::here("output", "regime_outputs_lmk.rds"))
+library(patchwork)
 
-scores_stats <- all_scores |>
-  dplyr::select(record, score) |>
-  dplyr::group_by(record) |>
-  dplyr::reframe(
-    score = score, min = min(score), q25 = quantile(score, 0.25),
-    median = quantile(score, 0.5), q75 = quantile(score, 0.75),
-    mean = mean(score), max = max(score)
+scores1 <- scores1 +
+  ggplot2::scale_y_continuous(
+    labels = scales::label_number(),
+    breaks = scales::trans_breaks("log10", function(x) 10^x)
+  ) + ggplot2::coord_trans(y = "log10", ylim = c(0.00001, 10))
+scores2 <- scores2 +
+  ggplot2::scale_y_continuous(
+    labels = scales::label_number(),
+    breaks = scales::trans_breaks("log10", function(x) 10^x)
+  ) + ggplot2::coord_trans(y = "log10", ylim = c(0.00001, 10))
+scores3 <- scores3 +
+  ggplot2::scale_y_continuous(
+    labels = scales::label_number(),
+    breaks = scales::trans_breaks("log10", function(x) 10^x)
+  ) + ggplot2::coord_trans(y = "log10", ylim = c(0.00001, 10))
+
+all <- (scores1 / scores2 / scores3) + plot_layout(guides = "collect")
+all + plot_annotation(
+  title = "Scores all",
+  theme = ggplot2::theme_bw() + ggplot2::theme(
+    plot.title = ggplot2::element_text(size = 20)
   )
+)
 
-records_factors <- forcats::as_factor(scores_stats$record)
-
-scores_stats$id <- sprintf("%03d", (as.numeric(records_factors)))
-
-scores_stats |>
-  dplyr::mutate(low_iqr = q75 - q25 < 1) |>
-  dplyr::filter(min > quantile(min, 0.9) | min < quantile(min, 0.1)) |>
-  ggplot2::ggplot(ggplot2::aes(x = reorder(reorder(id, -median), -min), y = score, colour = low_iqr)) +
-  ggplot2::geom_violin() +
-  ggplot2::coord_cartesian(ylim = c(0, 5)) +
-  ggplot2::theme_bw() +
-  ggplot2::labs(title = "Scores by recording", colour = "IQR < 1", x = "Recording ID", y = "Score distribution")
 ```
+
 
 @fig-worst shows the best effort in predicting the most complex recordings. One information not declared before is that if the model does not predict any change, it will put a mark on the zero position. On the other side, the truth markers positioned at the beginning and the end of the recording were removed, as these locations lack information and do not represent a streaming setting.
 
