@@ -158,7 +158,7 @@ score_regimes_limit <- function(gtruth, reported, data_size, max_size = 2500) {
 
     # Proceed if same size
     if (length(gtruth) == length(reported)) {
-      scores <- purrr::pmap_dbl(list(gtruth, reported, data_size), score_regimes)
+      scores <- purrr::pmap_dbl(list(gtruth, reported, data_size), score_regimes_limit)
     }
 
     return(scores)
