@@ -410,7 +410,7 @@ all_scores <- all_fitted %>%
   dplyr::rename(fold = id, size = .sizes, record = .id, model = .config, pred = .pred) %>%
   dplyr::distinct(rep, record, across(all_of(predictors_names)), .keep_all = TRUE) %>%
   dplyr::mutate(truth = clean_truth(truth, size), pred = clean_pred(pred)) %>%
-  dplyr::mutate(score = score_regimes_limit(truth, pred, 0, 2500))
+  dplyr::mutate(score = score_regimes_weighted(truth, pred, 0))
 ```
 
 
@@ -540,7 +540,7 @@ if (file.exists(here("output", "importances_vtds.rds"))) {
   cli::cli_alert_info("{round.POSIXt(Sys.time())} - Checking SHAP importances...")
 
   importance_shap <- check_importance(best_fit, train_data, testing_data[, predictors_names], predictors_names,
-    type = "shap", nsim = 400, parallel = TRUE
+    type = "shap", nsim = 100, parallel = TRUE
   )
   importance_shap <- ggplot2::ggplot_build(importance_shap)$plot$data
 
