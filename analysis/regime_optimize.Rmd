@@ -395,7 +395,7 @@ all_scores <- all_fitted %>%
   dplyr::rename(fold = id, size = .sizes, record = .id, model = .config, pred = .pred) %>%
   dplyr::distinct(rep, record, across(all_of(predictors_names)), .keep_all = TRUE) %>%
   dplyr::mutate(truth = clean_truth(truth, size), pred = clean_pred(pred)) %>%
-  dplyr::mutate(score = score_regimes_weighted(truth, pred, 0))
+  dplyr::mutate(score = score_regimes_weighted(truth, pred, 250, 10))
 
 holdout_scores <- outputs$final_evaluation %>%
   dplyr::select(

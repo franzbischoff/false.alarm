@@ -410,7 +410,7 @@ all_scores <- all_fitted %>%
   dplyr::rename(fold = id, size = .sizes, record = .id, model = .config, pred = .pred) %>%
   dplyr::distinct(rep, record, across(all_of(predictors_names)), .keep_all = TRUE) %>%
   dplyr::mutate(truth = clean_truth(truth, size), pred = clean_pred(pred)) %>%
-  dplyr::mutate(score = score_regimes_weighted(truth, pred, 0))
+  dplyr::mutate(score = score_regimes_weighted(truth, pred, 250, 10))
 ```
 
 
@@ -559,7 +559,7 @@ if (file.exists(here("output", "importances_vtds.rds"))) {
 
   shap_fastshap_all_test <- shap_explain(best_fit, train_data[, predictors_names], testing_data[, predictors_names],
     predictors_names,
-    nsim = 400, parallel = TRUE
+    nsim = 100, parallel = TRUE
   )
   shap_html_test <- NA
   # preds_test <- predict(best_fit, testing_data[, predictors_names])
@@ -775,11 +775,10 @@ far from the truth, the score will be roughly 1.
 #| fig.cap="Violin plot showing the distribution of the FLOSS score achieved by all tested models by
 #|  recording.  The left half shows the recordings that were difficult to predict (50% overall), whereas
 #|  the right half shows the recordings that at least one model could achieve a good prediction (50%
-#|  overall).  The recordings are sorted (left-right) by the minimum (best) score achieved in descending
-#|  order, and ties are sorted by the median of all recording scores.  The blue color highlights
-#|  recordings where models had an IQR variability of less than one.  As a simple example, a recording
-#|  with just one regime change, and the model predicts exactly one change, far from the truth, the
-#|  score will be roughly 1."
+#|  overall).  The recordings are sorted (left-right) by the median (best) score achieved in descending
+#|  order.  The blue color highlights recordings where models had an IQR variability of less than 10.
+#|  As a simple example, a recording with just one regime change, and the model predicts exactly one change,
+#|  10s far from the truth, the score will be roughly 1."
 
 scores_stats <- all_scores %>%
   dplyr::select(record, score) %>%
@@ -796,19 +795,18 @@ records_factors <- forcats::as_factor(scores_stats$record)
 scores_stats$id <- sprintf("%02d", (as.numeric(records_factors)))
 
 scores_stats %>%
-  dplyr::mutate(low_iqr = q75 - q25 < 1) %>%
-  dplyr::filter(min > quantile(min, 0.5) | min < quantile(min, 0.5)) %>%
-  ggplot2::ggplot(aes(
-    x = reorder(reorder(id, -median), -min),
+  dplyr::mutate(low_iqr = q75 - q25 < 10) |>
+  dplyr::filter(min > quantile(min, 0.5) | min < quantile(min, 0.5)) |>
+  ggplot2::ggplot(ggplot2::aes(
+    x = reorder(reorder(id, -min), -median),
     y = score, colour = low_iqr
   )) +
   ggplot2::geom_violin(scale = "width") +
-  ggplot2::coord_cartesian(ylim = c(0, 1)) +
   ggplot2::theme_bw() +
   ggplot2::labs(
     title = "Scores by recording",
     subtitle = glue::glue("{floor(mean(scores_stats$size))} models by recording"),
-    colour = "IQR < 1",
+    colour = "IQR < 10",
     x = "Recording ID", y = "Score distribution"
   )
 ```
@@ -893,8 +891,8 @@ as the models present lower SD and IQR.
 #|  inner ressample.  The left half shows the models with the worst performances (top 10), whereas
 #|  the right half shows the models with the best performances (top 10).
 #|  The models are sorted (left-right) by the mean score (top) and by the median (below). Ties are
-#|  sorted by the SD and IQR, respectively.  The bluish colors highlights models with an SD below 1
-#|  and IQR below 1."
+#|  sorted by the SD and IQR, respectively.  The bluish colors highlights models with an SD below 10
+#|  and IQR below 10."
 
 if (file.exists(here("output", "scores_stats_model_4.rds"))) {
   scores_stats_model <- readRDS(here("output", "scores_stats_model_4.rds"))
@@ -940,7 +938,7 @@ worst_mean <- scores_stats_model %>%
   dplyr::pull(id)
 
 model_mean_worst <- scores_stats_model %>%
-  dplyr::mutate(low_sd = sd < 1) %>%
+  dplyr::mutate(low_sd = sd < 10) %>%
   dplyr::filter(id %in% worst_mean) %>%
   ggplot2::ggplot(aes(x = reorder(reorder(id, -sd), -mean), y = score, colour = low_sd)) +
   ggplot2::scale_colour_manual(values = c("FALSE" = "#ff0000c2", "TRUE" = "#0000ffb5")) +
@@ -950,14 +948,14 @@ model_mean_worst <- scores_stats_model %>%
   ggplot2::labs(subtitle = "Ordered by Mean and SD", x = ggplot2::element_blank(), y = "Score distribution")
 
 model_mean_best <- scores_stats_model %>%
-  dplyr::mutate(low_sd = sd < 1) %>%
+  dplyr::mutate(low_sd = sd < 10) %>%
   dplyr::filter(id %in% best_mean) %>%
   ggplot2::ggplot(aes(x = reorder(reorder(id, -sd), -mean), y = score, colour = low_sd)) +
   ggplot2::scale_colour_manual(values = c("FALSE" = "#ff0000c2", "TRUE" = "#0000ffb5")) +
   ggplot2::geom_violin() +
   ggplot2::theme_bw() +
   ggplot2::theme(axis.text.x = element_text(size = 8, angle = 90, vjust = 0.5, hjust = 1)) +
-  ggplot2::labs(subtitle = "Ordered by Mean and SD", colour = "SD < 1", x = ggplot2::element_blank(), y = "Score distribution")
+  ggplot2::labs(subtitle = "Ordered by Mean and SD", colour = "SD < 10", x = ggplot2::element_blank(), y = "Score distribution")
 
 low <- sort(unique(scores_stats_model$median))[10]
 high <- tail(sort(unique(scores_stats_model$median)), 10)[1]
@@ -979,7 +977,7 @@ worst_median <- scores_stats_model %>%
   dplyr::pull(id)
 
 model_median_worst <- scores_stats_model %>%
-  dplyr::mutate(low_iqr = q75 - q25 < 1) %>%
+  dplyr::mutate(low_iqr = q75 - q25 < 10) %>%
   dplyr::filter(id %in% worst_median) %>%
   ggplot2::ggplot(aes(x = reorder(reorder(id, -iqr), -median), y = score, colour = low_iqr)) +
   ggplot2::scale_colour_manual(values = c("FALSE" = "#ff0000c2", "TRUE" = "#0000ffb5")) +
@@ -989,14 +987,14 @@ model_median_worst <- scores_stats_model %>%
   ggplot2::labs(subtitle = "Ordered by Median and IQR", x = "Model ID", y = "Score distribution")
 
 model_median_best <- scores_stats_model %>%
-  dplyr::mutate(low_iqr = q75 - q25 < 1) %>%
+  dplyr::mutate(low_iqr = q75 - q25 < 10) %>%
   dplyr::filter(id %in% best_median) %>%
   ggplot2::ggplot(aes(x = reorder(reorder(id, -iqr), -median), y = score, colour = low_iqr)) +
   ggplot2::scale_colour_manual(values = c("FALSE" = "#ff0000c2", "TRUE" = "#0000ffb5")) +
   ggplot2::geom_violin() +
   ggplot2::theme_bw() +
   ggplot2::theme(axis.text.x = element_text(size = 8, angle = 90, vjust = 0.5, hjust = 1)) +
-  ggplot2::labs(subtitle = "Ordered by Median and IQR", colour = "IQR < 1", x = "Model ID", y = "Score distribution")
+  ggplot2::labs(subtitle = "Ordered by Median and IQR", colour = "IQR < 10", x = "Model ID", y = "Score distribution")
 
 ((model_mean_worst + model_mean_best) / (model_median_worst + model_median_best)) + plot_layout(guides = "auto") +
   plot_annotation(
@@ -1034,7 +1032,7 @@ for (i in seq_len(length(best_models))) {
     ggplot2::geom_hline(aes(yintercept = mean), colour = "blue") +
     ggplot2::geom_hline(aes(yintercept = 0), colour = "gray50") +
     ggplot2::scale_y_continuous(
-      limits = c(0, 1),
+      limits = c(0, 10),
       oob = scales::oob_squish,
       expand = c(0.1, 0.05, 0.1, -0.1)
     ) +
