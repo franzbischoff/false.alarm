@@ -238,18 +238,18 @@ score_regimes_limit <- function(gtruth, reported, data_size, max_size = 2500) {
 # for example: 10 seconds * 250hz = 2500
 
 
-score_regimes_weighted <- function(gtruth, reported, data_size) {
+score_regimes_weighted <- function(gtruth, reported, data_freq = 250, window = 10) {
   # Probably we are receiving a tibble
   if (is.list(gtruth) && length(gtruth) > 1) {
-    if (length(data_size) == 1) {
-      data_size <- rep(0, length(gtruth))
+    if (length(data_freq) == 1) {
+      data_freq <- rep(250, length(gtruth))
     } else {
       checkmate::assert(length(gtruth) == length(data_size))
     }
 
     # Proceed if same size
     if (length(gtruth) == length(reported)) {
-      scores <- purrr::pmap_dbl(list(gtruth, reported, data_size), score_regimes_weighted)
+      scores <- purrr::pmap_dbl(list(gtruth, reported, data_freq, window), score_regimes_weighted)
     }
 
     return(scores)
@@ -308,7 +308,7 @@ score_regimes_weighted <- function(gtruth, reported, data_size) {
     minv <- c(minv, minv_left)
   }
 
-  minv <- minv / 250000 # 250hz * 1000
+  minv <- minv / (data_freq * 1000) # 250hz * 1000, to avoid exponential errors
 
   weights <- exp(-minv)
   sum_weights <- sum(weights)
@@ -319,7 +319,8 @@ score_regimes_weighted <- function(gtruth, reported, data_size) {
     rlang::abort("Score is NA")
   }
 
-  score
+  score <- (score * 1000) / window # x1000 to return to seconds
+  return(score)
 }
 
 # window parameter will be used to compute if the prediction is a true positive or not

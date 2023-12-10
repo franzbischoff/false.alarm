@@ -67,11 +67,29 @@ editor:
     canonical: true
 ---
 
-```{r setup, include=FALSE}
+```{r setup, include=FALSE, cache=FALSE}
+
+rlang::check_installed(c(
+  "here", "glue", "kableExtra", "ggplot2", "dplyr", "vip", "pdp", "patchwork", "fastshap"
+))
 
 source(here::here("scripts", "common", "read_ecg.R"))
 source(here::here("scripts", "common", "score_floss.R"))
 source(here::here("scripts", "helpers", "plot_fluss.R"))
+
+
+mdplyr <- function(data, libs = NULL, vars = NULL) {
+  # conflicts_prefer(testthat::matches)
+  cluster <- multidplyr::new_cluster(parallelly::availableCores())
+  for (i in libs) {
+    multidplyr::cluster_library(cluster, i)
+  }
+  for (i in vars) {
+    multidplyr::cluster_copy(cluster, i)
+  }
+
+  multidplyr::partition(data, cluster)
+}
 ```
 
 # Focus {.unnumbered}
@@ -388,7 +406,7 @@ This is not a problem *per se* but a signal we must be aware of when exploring t
 #|  A) Shows strong interaction between `window_size` and `regime_landmark`, `regime_threshold` and `regime_landmark`,
 #|     `mp_threshold` and `regime_landmark`.
 #|  B) Refitting the model with these interactions taken into account, the strength is substantially reduced, except
-#|     for the second, showing that indeed there is a strong correlation between those variables."
+#|     for the second, showing that indeed there is a strong correlation between those variables.."
 
 library(patchwork)
 
@@ -454,7 +472,7 @@ inter + plot_annotation(
 #| fig-cap: "Variables importances using three different methods. A) Feature Importance Ranking Measure
 #|  using ICE curves. B) Permutation method. C) SHAP (100 iterations). Line 1 refers to the original
 #|  fit, and line 2 to the re-fit, taking into account the interactions between variables
-#|  (@fig-interaction)."
+#|  (@fig-interaction).."
 
 library(patchwork)
 
@@ -586,7 +604,7 @@ From this first dataset's results, we can infer that the most interesting parame
 
 ```{r fig-importanceshap, eval=TRUE, echo=FALSE, message=FALSE, warning=FALSE, fig.height = 6, fig.width= 10, out.width="100%"}
 #| fig-cap: "This shows the effect each variable has on the FLOSS score. This plot doesn't take into account the
-#|  variable interactions."
+#|  variable interactions.."
 
 library(dplyr)
 library(patchwork)
@@ -649,7 +667,7 @@ all1 + plot_layout(design = layout) + plot_annotation(title = "Shapley value vs.
 > Dataset 1
 
 ```{r fig-importanceshap2, eval=TRUE, echo=FALSE, message=FALSE, warning=FALSE, fig.height = 6, fig.width= 10, out.width="100%"}
-#| fig-cap: "This shows the effect each variable has on the FLOSS score, taking into account the interactions."
+#| fig-cap: "This shows the effect each variable has on the FLOSS score, taking into account the interactions.."
 
 layout <- "
 AABB
@@ -697,7 +715,6 @@ all2 + plot_layout(design = layout) + plot_annotation(title = "Shapley value vs.
 #|  (@fig-interaction)."
 
 library(patchwork)
-
 interactions <- readRDS(here::here("output", "importances_mvds.rds"))
 importance_firm <- interactions$importance_firm
 importance_perm <- interactions$importance_perm
@@ -892,7 +909,9 @@ all + plot_annotation(
 #| fig.cap: "This shows the effect each variable has on the FLOSS score."
 int <- readRDS(here("output", "importances_vtds.rds"))
 
+ckeep <- class(int$shap_fastshap_all_test)
 shap_fastshap_all_test <- int$shap_fastshap_all_test
+class(shap_fastshap_all_test) <- ckeep
 trained_model <- readRDS(here("output", "dbarts_fitted_vtds.rds"))
 testing_data <- trained_model$testing_data
 
@@ -908,7 +927,7 @@ a2 <- shapviz::sv_dependence(d1, "regime_threshold", color_var = "auto") +
   ggplot2::geom_smooth(method = loess, colour = "#0000ff44", alpha = 0.2) +
   ggplot2::labs(y = ggplot2::element_blank()) +
   ggplot2::theme_bw()
-a3 <- shapviz::sv_dependence(d1, "regime_landmark", color_var = "auto") +
+a3 <- shapviz::sv_dependence(d1, "regime_landmark", color_var = "regime_threshold") +
   ggplot2::geom_smooth(method = loess, colour = "#0000ff44", alpha = 0.2) +
   ggplot2::labs(y = ggplot2::element_blank()) +
   ggplot2::theme_bw()
@@ -953,7 +972,7 @@ all_scores_mvds <- all_fitted_mvds |>
   dplyr::rename(fold = id, size = .sizes, record = .id, model = .config, pred = .pred) |>
   dplyr::distinct(rep, record, across(all_of(predictors_names2)), .keep_all = TRUE) |>
   dplyr::mutate(truth = clean_truth(truth, size), pred = clean_pred(pred)) |>
-  dplyr::mutate(score = score_regimes_weighted(truth, pred, 0))
+  dplyr::mutate(score = score_regimes_weighted(truth, pred, 250, 10))
 
 all_fitted_vtds <- readRDS(here::here("output", "regime_outputs_vtds.rds"))
 all_scores_vtds <- all_fitted_vtds |>
@@ -967,7 +986,7 @@ all_scores_vtds <- all_fitted_vtds |>
   dplyr::rename(fold = id, size = .sizes, record = .id, model = .config, pred = .pred) |>
   dplyr::distinct(rep, record, across(all_of(predictors_names2)), .keep_all = TRUE) |>
   dplyr::mutate(truth = clean_truth(truth, size), pred = clean_pred(pred)) |>
-  dplyr::mutate(score = score_regimes_weighted(truth, pred, 0))
+  dplyr::mutate(score = score_regimes_weighted(truth, pred, 250, 10))
 
 ```
 
@@ -1016,7 +1035,7 @@ scores_stats_mvds$id <- sprintf("%02d", (as.numeric(records_factors_mvds)))
 
 scores2 <- scores_stats_mvds |>
   dplyr::mutate(low_iqr = q75 - q25 < 0.1) |>
-  ggplot2::ggplot(aes(
+  ggplot2::ggplot(ggplot2::aes(
     x = reorder(id, -median),
     y = score, colour = low_iqr
   )) +
@@ -1045,7 +1064,7 @@ scores_stats_vtds$id <- sprintf("%02d", (as.numeric(records_factors_vtds)))
 
 scores3 <- scores_stats_vtds |>
   dplyr::mutate(low_iqr = q75 - q25 < 0.1) |>
-  ggplot2::ggplot(aes(
+  ggplot2::ggplot(ggplot2::aes(
     x = reorder(id, -median),
     y = score, colour = low_iqr
   )) +
