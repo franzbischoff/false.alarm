@@ -1,5 +1,3 @@
-
-
 plot_fluss <- function(ecg_data, type = c("data", "matrix"),
                        main = "Fast Low-cost Unipotent Semantic Segmentation", xlab = "index",
                        ylab = "", ...) {
@@ -82,4 +80,106 @@ plot_fluss <- function(ecg_data, type = c("data", "matrix"),
     readr::write_file(s(), file = here::here("output", glue::glue("Fluss_{file}_{n}.svg")))
   }
   return(ecg_data)
+}
+
+tkplot <- function(object, interactive = FALSE, res = 50, dataset = c("afib", "magvent", "vtachy")) {
+  # fixed configurations
+  if (dataset == "afib") {
+    basedir <- here::here("inst", "extdata", "afib_regimes")
+    rsam_from <- 200
+    track <- "II"
+  } else if (dataset == "magvent") {
+    basedir <- here::here("inst", "extdata", "malignantventricular")
+    rsam_from <- 250
+    track <- "ECG1"
+  } else if (dataset == "vtachy") {
+    basedir <- here::here("inst", "extdata", "vtachyarrhythmias")
+    rsam_from <- 250
+    track <- "ECG"
+  }
+
+  ecg <- read_ecg_with_atr(glue::glue(basedir, "/", object$record), resample_from = rsam_from, resample_to = res)
+  value <- ecg[[1]][[track]]
+  prop <- 250 / res
+  mask <- seq.int(50, 100)
+  value[1:5] <- median(value[mask])
+  value[(length(value) - 5):length(value)] <- median(value[mask])
+  time <- seq(1, floor(length(value) * prop), length.out = length(value))
+  data <- tibble::tibble(time = time, value = value)
+  min_data <- min(data$value)
+  max_data <- max(data$value)
+  truth <- clean_truth(floor(attr(ecg[[1]], "regimes") * prop), floor(length(value) * prop)) # object$truth[[1]]
+  preds <- object$pred[[1]]
+
+  title <- glue::glue(
+    "Recording: {object$record} ",
+    "#truth: {length(truth)}, ",
+    "#preds: {length(preds)}, ",
+    "length: {floor(length(value)*prop)} ",
+    "FLOSS Score: {round(object$score, 3)}"
+  )
+
+  subtitle <- suppressWarnings(glue::glue(
+    "Parameters: ",
+    "MP window: {object$window_size}, ",
+    ifelse(!is.null(object$mp_threshold), "MP threshold: {object$mp_threshold}, ", ""),
+    ifelse(!is.null(object$time_constraint), "Time constraint: {object$time_constraint}, ", ""),
+    ifelse(!is.null(object$regime_threshold), "Regime threshold: {object$regime_threshold}, ", ""),
+    ifelse(!is.null(object$regime_landmark), "Regime landmark: {object$regime_landmark}", "")
+  ))
+
+  plot <- data |>
+    timetk::plot_time_series(
+      time, value,
+      .title = glue::glue(title, "<br><sup>{subtitle}</sup>"),
+      .interactive = interactive,
+      .smooth = FALSE,
+      .line_alpha = 0.3,
+      .line_size = 0.2,
+      .plotly_slider = interactive
+    )
+
+  if (interactive) {
+    plot <- plot |>
+      plotly::add_segments(
+        x = preds, xend = preds, y = min_data,
+        yend = max_data + (max_data - min_data) * 0.1,
+        line = list(width = 2.5, color = "#0108c77f"),
+        name = "Predicted"
+      ) |>
+      plotly::add_segments(
+        x = truth, xend = truth, y = min_data,
+        yend = max_data,
+        line = list(width = 2.5, color = "#ff00007f"),
+        name = "Truth"
+      )
+  } else {
+    sci <- getOption("scipen")
+    options(scipen = 999)
+    plot <- plot +
+      ggplot2::geom_segment(
+        data = tibble::tibble(pre = preds),
+        ggplot2::aes(
+          x = pre, xend = pre,
+          y = min_data, yend = max_data + (max_data - min_data) * 0.1
+        ), linewidth = 1, color = "#0108c77f"
+      ) +
+      ggplot2::geom_segment(
+        data = tibble::tibble(tru = truth),
+        ggplot2::aes(
+          x = tru, xend = tru,
+          y = min_data, yend = max_data - (max_data - min_data) * 0.1
+        ), linewidth = 1, color = "#ff00007f"
+      ) +
+      ggplot2::theme_bw() +
+      ggplot2::theme(
+        axis.ticks.y = ggplot2::element_blank(),
+        axis.text.y = ggplot2::element_blank(),
+        legend.position = "none",
+        plot.margin = ggplot2::margin(0, 0, 0, 10)
+      ) + ggplot2::scale_x_continuous(n.breaks = 6, labels = scales::label_number(scale = 0.004, suffix = "s")) +
+      ggplot2::labs(title = title, subtitle = subtitle, y = ggplot2::element_blank())
+    options(scipen = sci)
+  }
+  plot
 }
