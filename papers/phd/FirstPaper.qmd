@@ -437,7 +437,7 @@ interactions_plot <- ggplot2::ggplot(interactions, ggplot2::aes(
     y = ggplot2::element_blank(),
     x = ggplot2::element_blank()
   ) +
-  ggplot2::ylim(0, 1.65) +
+  ggplot2::ylim(0, 6) +
   ggplot2::theme_bw() +
   ggplot2::theme(legend.position = "none")
 
@@ -452,7 +452,7 @@ interactions2_plot <- ggplot2::ggplot(interactions2, ggplot2::aes(
     y = "Interaction strength",
     x = ggplot2::element_blank()
   ) +
-  ggplot2::ylim(0, 1.65) +
+  ggplot2::ylim(0, 6) +
   ggplot2::theme_bw() +
   ggplot2::theme(legend.position = "none")
 
@@ -472,7 +472,7 @@ inter + plot_annotation(
 #| fig-cap: "Variables importances using three different methods. A) Feature Importance Ranking Measure
 #|  using ICE curves. B) Permutation method. C) SHAP (100 iterations). Line 1 refers to the original
 #|  fit, and line 2 to the re-fit, taking into account the interactions between variables
-#|  (@fig-interaction).."
+#|  (@fig-interaction)."
 
 library(patchwork)
 
@@ -488,7 +488,7 @@ importance_firm_plot <- ggplot2::ggplot(importance_firm, ggplot2::aes(
     x = "",
     y = ggplot2::element_blank()
   ) +
-  ggplot2::ylim(0, 2.2) +
+  ggplot2::ylim(0, 9) +
   ggplot2::theme_bw() +
   ggplot2::theme(
     legend.position = "none",
@@ -506,7 +506,7 @@ importance_perm_plot <- ggplot2::ggplot(importance_perm, ggplot2::aes(
     x = "",
     y = ggplot2::element_blank()
   ) +
-  ggplot2::ylim(3, 20) +
+  ggplot2::ylim(0, 17) +
   ggplot2::theme_bw() +
   ggplot2::theme(
     legend.position = "none",
@@ -524,7 +524,7 @@ importance_shap_plot <- ggplot2::ggplot(importance_shap, ggplot2::aes(
     x = "",
     y = ggplot2::element_blank()
   ) +
-  ggplot2::ylim(0, 1.5) +
+  ggplot2::ylim(0, 7.5) +
   ggplot2::theme_bw() +
   ggplot2::theme(
     legend.position = "none",
@@ -541,7 +541,7 @@ importance_firm2_plot <- ggplot2::ggplot(importance_firm2, ggplot2::aes(
     x = "",
     y = "Importance"
   ) +
-  ggplot2::ylim(0, 2.2) +
+  ggplot2::ylim(0, 9) +
   ggplot2::theme_bw() +
   ggplot2::theme(
     legend.position = "none",
@@ -558,7 +558,7 @@ importance_perm2_plot <- ggplot2::ggplot(importance_perm2, ggplot2::aes(
     x = "",
     y = "Importance"
   ) +
-  ggplot2::ylim(3, 20) +
+  ggplot2::ylim(0, 17) +
   ggplot2::theme_bw() +
   ggplot2::theme(
     legend.position = "none",
@@ -575,7 +575,7 @@ importance_shap2_plot <- ggplot2::ggplot(importance_shap2, ggplot2::aes(
     x = "",
     y = "Importance"
   ) +
-  ggplot2::ylim(0, 1.5) +
+  ggplot2::ylim(0, 7.5) +
   ggplot2::theme_bw() +
   ggplot2::theme(
     legend.position = "none",
@@ -617,11 +617,8 @@ outcome_name <- "mean"
 
 testing_data2 <- testing_data |>
   dplyr::mutate(
-    int_rt_rl = regime_threshold * regime_landmark,
-    int_mp_w = mp_threshold * window_size,
-    int_mp_rl = mp_threshold * regime_landmark,
-    # int_mp_rt = mp_threshold * regime_threshold
-    # int_mp_tc = mp_threshold * time_constraint
+    int_tc_rl = time_constraint * regime_landmark,
+    int_tc_rt = time_constraint * regime_threshold,
     .before = mean
   )
 
@@ -630,37 +627,59 @@ AABB
 CCDD
 #EE#
 "
-# 5% has acceptable variability for not using the whole datasets
-all_data <- dplyr::bind_rows(train_data, testing_data)
-split <- all_data |> dplyr::filter(time_constraint %in% c(0, 800, 1500), mp_threshold %in% c(0.00, 0.4, 0.6, 0.8), window_size <= 150)
-set.seed(19746)
-sample_data <- dplyr::slice_sample(split, n = 3, by = 1:4)
-ttdata <- sample_data[, predictors_names]
-base_data <- sample_data[, outcome_name]$mean
 
-d1 <- shapviz::shapviz(shap_fastshap_all_test, X = ttdata[, predictors_names], baseline = mean(base_data))
-a1 <- shapviz::sv_dependence(d1, "window_size", color_var = "auto") +
+sample_train_data <- train_data |>
+  dplyr::filter(
+    time_constraint %in% c(0, 800, 1500),
+    mp_threshold %in% c(0.00, 0.4, 0.6, 0.8), window_size <= 150
+  )
+sample_testing_data <- testing_data |>
+  dplyr::filter(
+    time_constraint %in% c(0, 800, 1500),
+    mp_threshold %in% c(0.00, 0.4, 0.6, 0.8), window_size <= 150
+  )
+
+sample_testing_data2 <- testing_data2 |>
+  dplyr::filter(
+    time_constraint %in% c(0, 800, 1500),
+    mp_threshold %in% c(0.00, 0.4, 0.6, 0.8), window_size <= 150
+  )
+
+ttdata <- sample_testing_data[, predictors_names]
+base_data <- sample_testing_data[, outcome_name]$mean
+
+
+# 5% has acceptable variability for not using the whole datasets
+# all_data <- dplyr::bind_rows(train_data, testing_data)
+# split <- all_data |> dplyr::filter(time_constraint %in% c(0, 800, 1500), mp_threshold %in% c(0.00, 0.4, 0.6, 0.8), window_size <= 150)
+# set.seed(19746)
+# sample_data <- dplyr::slice_sample(split, n = 3, by = 1:4)
+# ttdata <- sample_data[, predictors_names]
+# base_data <- sample_data[, outcome_name]$mean
+
+d1 <- shapviz::shapviz(shap_fastshap_all_test, X = ttdata, baseline = mean(base_data))
+a1 <- shapviz::sv_dependence(d1, "window_size", color_var = "regime_threshold", alpha = 0.05) +
   ggplot2::geom_smooth(method = loess, colour = "#0000ff44", alpha = 0.2) +
   ggplot2::labs(y = ggplot2::element_blank()) +
   ggplot2::theme_bw()
-a2 <- shapviz::sv_dependence(d1, "regime_threshold", color_var = "auto") +
+a2 <- shapviz::sv_dependence(d1, "regime_threshold", color_var = "window_size", alpha = 0.05) +
   ggplot2::geom_smooth(method = loess, colour = "#0000ff44", alpha = 0.2) +
   ggplot2::labs(y = ggplot2::element_blank()) +
   ggplot2::theme_bw()
-a3 <- shapviz::sv_dependence(d1, "regime_landmark", color_var = "auto") +
+a3 <- shapviz::sv_dependence(d1, "regime_landmark", color_var = "regime_threshold", alpha = 0.05) +
   ggplot2::geom_smooth(method = loess, colour = "#0000ff44", alpha = 0.2) +
   ggplot2::labs(y = ggplot2::element_blank()) +
   ggplot2::theme_bw()
-a4 <- shapviz::sv_dependence(d1, "mp_threshold", color_var = "auto") +
+a4 <- shapviz::sv_dependence(d1, "mp_threshold", color_var = "regime_threshold", alpha = 0.05) +
   # ggplot2::geom_smooth(method = loess, colour = "#0000ff44", alpha = 0.2) +
   ggplot2::labs(y = ggplot2::element_blank()) +
   ggplot2::theme_bw()
-a5 <- shapviz::sv_dependence(d1, "time_constraint", color_var = "auto") +
+a5 <- shapviz::sv_dependence(d1, "time_constraint", color_var = "regime_threshold", alpha = 0.05) +
   ggplot2::geom_smooth(method = loess, colour = "#0000ff44", alpha = 0.2) +
   ggplot2::labs(y = ggplot2::element_blank()) +
   ggplot2::theme_bw()
 
-all1 <- ((a1 + a5 + a3 + a4 + plot_layout(guides = "collect")) + (a2 + plot_layout(guides = "collect")))
+all1 <- ((a4 + a5 + a1 + a3 + plot_layout(guides = "collect")) + (a2 + plot_layout(guides = "collect")))
 all1 + plot_layout(design = layout) + plot_annotation(title = "Shapley value vs. variable values", theme = ggplot2::theme_bw())
 ```
 
@@ -674,33 +693,33 @@ AABB
 CCDD
 #EE#
 "
-# 5% has acceptable variability for not using the whole datasets
-ttdata2 <- sample_data[, predictors_names]
-base_data <- sample_data[, outcome_name]$mean
 
-d1 <- shapviz::shapviz(shap_fastshap_all_test2, X = ttdata2[, predictors_names], baseline = mean(base_data))
-a1 <- shapviz::sv_dependence(d1, "window_size", color_var = "auto") +
+ttdata2 <- sample_testing_data2[, predictors_names]
+base_data <- sample_testing_data2[, outcome_name]$mean
+
+d1 <- shapviz::shapviz(shap_fastshap_all_test2[, predictors_names], X = ttdata2, baseline = mean(base_data))
+a1 <- shapviz::sv_dependence(d1, "window_size", color_var = "regime_threshold", alpha = 0.05) +
   ggplot2::geom_smooth(method = loess, colour = "#0000ff44", alpha = 0.2) +
   ggplot2::labs(y = ggplot2::element_blank()) +
   ggplot2::theme_bw()
-a2 <- shapviz::sv_dependence(d1, "regime_threshold", color_var = "auto") +
+a2 <- shapviz::sv_dependence(d1, "regime_threshold", color_var = "window_size", alpha = 0.05) +
   ggplot2::geom_smooth(method = loess, colour = "#0000ff44", alpha = 0.2) +
   ggplot2::labs(y = ggplot2::element_blank()) +
   ggplot2::theme_bw()
-a3 <- shapviz::sv_dependence(d1, "regime_landmark", color_var = "auto") +
+a3 <- shapviz::sv_dependence(d1, "regime_landmark", color_var = "regime_threshold", alpha = 0.05) +
   ggplot2::geom_smooth(method = loess, colour = "#0000ff44", alpha = 0.2) +
   ggplot2::labs(y = ggplot2::element_blank()) +
   ggplot2::theme_bw()
-a4 <- shapviz::sv_dependence(d1, "mp_threshold", color_var = "auto") +
+a4 <- shapviz::sv_dependence(d1, "mp_threshold", color_var = "regime_threshold", alpha = 0.05) +
   # ggplot2::geom_smooth(method = loess, colour = "#0000ff44", alpha = 0.2) +
   ggplot2::labs(y = ggplot2::element_blank()) +
   ggplot2::theme_bw()
-a5 <- shapviz::sv_dependence(d1, "time_constraint", color_var = "auto") +
+a5 <- shapviz::sv_dependence(d1, "time_constraint", color_var = "regime_threshold", alpha = 0.05) +
   ggplot2::geom_smooth(method = loess, colour = "#0000ff44", alpha = 0.2) +
   ggplot2::labs(y = ggplot2::element_blank()) +
   ggplot2::theme_bw()
 
-all2 <- ((a1 + a5 + a3 + a4 + plot_layout(guides = "collect")) + (a2 + plot_layout(guides = "collect")))
+all2 <- ((a4 + a5 + a1 + a3 + plot_layout(guides = "collect")) + (a2 + plot_layout(guides = "collect")))
 all2 + plot_layout(design = layout) + plot_annotation(title = "Shapley value vs. variable values", theme = ggplot2::theme_bw())
 ```
 
@@ -799,15 +818,15 @@ predictors_names <- c("regime_threshold", "window_size", "regime_landmark")
 outcome_name <- "mean"
 
 d1 <- shapviz::shapviz(shap_fastshap_all_test, X = testing_data[, predictors_names], baseline = mean(testing_data[, outcome_name]$mean))
-a1 <- shapviz::sv_dependence(d1, "window_size", color_var = "auto") +
+a1 <- shapviz::sv_dependence(d1, "window_size", color_var = "regime_threshold", alpha = 0.1) +
   ggplot2::geom_smooth(method = loess, colour = "#0000ff44", alpha = 0.2) +
   ggplot2::labs(y = ggplot2::element_blank()) +
   ggplot2::theme_bw()
-a2 <- shapviz::sv_dependence(d1, "regime_threshold", color_var = "auto") +
+a2 <- shapviz::sv_dependence(d1, "regime_threshold", color_var = "window_size", alpha = 0.1) +
   ggplot2::geom_smooth(method = loess, colour = "#0000ff44", alpha = 0.2) +
   ggplot2::labs(y = ggplot2::element_blank()) +
   ggplot2::theme_bw()
-a3 <- shapviz::sv_dependence(d1, "regime_landmark", color_var = "auto") +
+a3 <- shapviz::sv_dependence(d1, "regime_landmark", color_var = "regime_threshold", alpha = 0.1) +
   ggplot2::geom_smooth(method = loess, colour = "#0000ff44", alpha = 0.2) +
   ggplot2::labs(y = ggplot2::element_blank()) +
   ggplot2::theme_bw()
@@ -919,15 +938,15 @@ predictors_names <- c("regime_threshold", "window_size", "regime_landmark")
 outcome_name <- "mean"
 
 d1 <- shapviz::shapviz(shap_fastshap_all_test, X = testing_data[, predictors_names], baseline = mean(testing_data[, outcome_name]$mean))
-a1 <- shapviz::sv_dependence(d1, "window_size", color_var = "auto") +
+a1 <- shapviz::sv_dependence(d1, "window_size", color_var = "regime_threshold", alpha = 0.1) +
   ggplot2::geom_smooth(method = loess, colour = "#0000ff44", alpha = 0.2) +
   ggplot2::labs(y = ggplot2::element_blank()) +
   ggplot2::theme_bw()
-a2 <- shapviz::sv_dependence(d1, "regime_threshold", color_var = "auto") +
+a2 <- shapviz::sv_dependence(d1, "regime_threshold", color_var = "window_size", alpha = 0.1) +
   ggplot2::geom_smooth(method = loess, colour = "#0000ff44", alpha = 0.2) +
   ggplot2::labs(y = ggplot2::element_blank()) +
   ggplot2::theme_bw()
-a3 <- shapviz::sv_dependence(d1, "regime_landmark", color_var = "regime_threshold") +
+a3 <- shapviz::sv_dependence(d1, "regime_landmark", color_var = "regime_threshold", alpha = 0.1) +
   ggplot2::geom_smooth(method = loess, colour = "#0000ff44", alpha = 0.2) +
   ggplot2::labs(y = ggplot2::element_blank()) +
   ggplot2::theme_bw()
@@ -990,7 +1009,42 @@ all_scores_vtds <- all_fitted_vtds |>
 
 ```
 
+Based on your description and the plots:
+
+In the top left plot for window_size, the color gradient indicates that as the window_size increases, the corresponding regime_threshold generally increases as well, moving from purple to yellow. This suggests a correlation between a larger window_size and a higher regime_threshold. The downward trend in Shapley values with increasing window_size implies that larger windows tend to improve the model's performance.
+
+In the top right plot for regime_landmark, the dots are also colored based on regime_threshold. It seems that there is no clear pattern or gradient, which suggests that the regime_landmark does not have a strong interaction with regime_threshold in terms of affecting the Shapley value.
+
+The bottom plot for regime_threshold uses window_size for coloring, from purple (low window_size) to yellow (high window_size). This plot shows that lower regime_threshold values tend to have higher (worse) Shapley values, but as regime_threshold increases, the performance improves, indicated by lower Shapley values. The color gradient shows that this effect is consistent across different window_size values.
+
+Considering that low Shapley values indicate better performance, we can conclude that a model with a larger window_size and a higher regime_threshold tends to perform better. The effect of regime_landmark is less clear, as the Shapley values do not show a significant change across its range.
+
+------------------------------------------------------------------------
+
+The new image you uploaded, Figure 12, appears to be similar to the previous one, showing variable importance using three different methods, while Figure 13 seems to show the effect of these variables on the FLOSS score, akin to the lower plots in the previous image.
+
+In Figure 12:
+
+Feature Importance Ranking Measure using ICE curves (A): As with the previous figure, this plot shows regime_threshold having a higher importance than window_size and regime_landmark, with a similar pattern of variable importance. This reaffirms the previous interpretation that regime_threshold is a more influential variable in the model.
+
+Permutation-based method (B): The importance of regime_threshold is again confirmed with a large error bar, indicating variability in the measurement. Window_size and regime_landmark show relatively lower importance and variability.
+
+SHAP (C): This plot also indicates that regime_threshold has the highest importance, much greater than window_size and regime_landmark.
+
+For Figure 13, the effects on the FLOSS score are as follows:
+
+Shapley value vs. window_size: The left plot shows a nonlinear relationship, where the Shapley value decreases as window_size increases up to a point and then increases. This suggests that there is an optimal range of window_size values that contribute positively to the model's performance.
+
+Shapley value vs. regime_landmark: The middle plot displays a broad distribution of Shapley values across the range of regime_landmark values, with no clear trend. The coloring by regime_threshold doesn't indicate a consistent pattern, which suggests that regime_landmark does not have a strong or consistent effect on the model's performance, or that its effect is highly dependent on the combination of regime_landmark with regime_threshold.
+
+Shapley value vs. regime_threshold: The right plot shows a clear negative correlation between regime_threshold and the Shapley value, meaning that as regime_threshold increases, the model's performance improves significantly. The color gradient shows that this effect is consistent across different window_size values.
+
+Overall, these plots confirm the previous interpretations: regime_threshold is a significant predictor of the model's performance, with a clear and consistent effect. The window_size seems to have an optimal range for performance, and regime_landmark does not exhibit a clear influence on the model's predictions. The interaction between regime_threshold and window_size appears to be an important factor in determining the model's performance.
+
+""In conclusion, regime_threshold remains the most important variable influencing the model's performance, with a higher threshold generally leading to better results (lower Shapley values). The effect of window_size on Shapley values is now positive, suggesting a negative impact on model performance as window_size increases, which is a contrast to the previous figure's implication. Regime_landmark still shows no clear pattern, indicating a minimal or inconsistent effect on the FLOSS score.""
+
 ```{r scores-plot-ds1, eval=TRUE, echo=FALSE}
+# new stats
 scores_stats <- all_scores |>
   dplyr::select(record, score) |>
   dplyr::group_by(record) |>
@@ -1005,18 +1059,25 @@ records_factors <- forcats::as_factor(scores_stats$record)
 scores_stats$id <- sprintf("%03d", (as.numeric(records_factors)))
 
 scores1 <- scores_stats |>
-  dplyr::mutate(low_iqr = q75 - q25 < 0.1) |>
-  dplyr::filter(median > quantile(median, 0.9) | median < quantile(median, 0.1)) |>
+  dplyr::mutate(low_iqr = q75 - q25 < 10) |>
+  dplyr::filter(median > quantile(median, 0.9)) |>
   ggplot2::ggplot(ggplot2::aes(
     x = reorder(id, -median),
     y = score, colour = low_iqr
   )) +
   ggplot2::geom_violin(scale = "width") +
-  ggplot2::theme_bw() +
-  ggplot2::labs(
-    title = glue::glue("First dataset; {floor(mean(scores_stats$size))} models by recording"),
-    colour = "IQR < 0.1", x = ggplot2::element_blank(), y = ggplot2::element_blank()
-  )
+  ggplot2::theme_bw()
+
+
+scores11 <- scores_stats |>
+  dplyr::mutate(low_iqr = q75 - q25 < 10) |>
+  dplyr::filter(median < quantile(median, 0.1)) |>
+  ggplot2::ggplot(ggplot2::aes(
+    x = reorder(id, -median),
+    y = score, colour = low_iqr
+  )) +
+  ggplot2::geom_violin(scale = "width") +
+  ggplot2::theme_bw()
 ```
 
 ```{r scores-plot-ds2, eval=TRUE, echo=FALSE}
@@ -1034,18 +1095,24 @@ records_factors_mvds <- forcats::as_factor(scores_stats_mvds$record)
 scores_stats_mvds$id <- sprintf("%02d", (as.numeric(records_factors_mvds)))
 
 scores2 <- scores_stats_mvds |>
-  dplyr::mutate(low_iqr = q75 - q25 < 0.1) |>
+  dplyr::mutate(low_iqr = q75 - q25 < 10) |>
+  dplyr::filter(median > quantile(median, 0.5)) |>
   ggplot2::ggplot(ggplot2::aes(
     x = reorder(id, -median),
     y = score, colour = low_iqr
   )) +
   ggplot2::geom_violin(scale = "width") +
-  ggplot2::theme_bw() +
-  ggplot2::labs(
-    title = glue::glue("Second dataset; {floor(mean(scores_stats_mvds$size))} models by recording"),
-    colour = "IQR < 0.1",
-    x = ggplot2::element_blank(), y = "Score distribution"
-  )
+  ggplot2::theme_bw()
+
+scores22 <- scores_stats_mvds |>
+  dplyr::mutate(low_iqr = q75 - q25 < 10) |>
+  dplyr::filter(median <= quantile(median, 0.5)) |>
+  ggplot2::ggplot(ggplot2::aes(
+    x = reorder(id, -median),
+    y = score, colour = low_iqr
+  )) +
+  ggplot2::geom_violin(scale = "width") +
+  ggplot2::theme_bw()
 ```
 
 ```{r scores-plot-ds3, eval=TRUE, echo=FALSE}
@@ -1063,51 +1130,105 @@ records_factors_vtds <- forcats::as_factor(scores_stats_vtds$record)
 scores_stats_vtds$id <- sprintf("%02d", (as.numeric(records_factors_vtds)))
 
 scores3 <- scores_stats_vtds |>
-  dplyr::mutate(low_iqr = q75 - q25 < 0.1) |>
+  dplyr::mutate(low_iqr = q75 - q25 < 10) |>
+  dplyr::filter(median > quantile(median, 0.5)) |>
   ggplot2::ggplot(ggplot2::aes(
     x = reorder(id, -median),
     y = score, colour = low_iqr
   )) +
   ggplot2::geom_violin(scale = "width") +
-  ggplot2::theme_bw() +
-  ggplot2::labs(
-    title = glue::glue("Third dataset; {floor(mean(scores_stats_vtds$size))} models by recording"),
-    colour = "IQR < 0.1",
-    x = "Recording ID", y = ggplot2::element_blank()
-  )
+  ggplot2::theme_bw()
+
+scores33 <- scores_stats_vtds |>
+  dplyr::mutate(low_iqr = q75 - q25 < 10) |>
+  dplyr::filter(median <= quantile(median, 0.5)) |>
+  ggplot2::ggplot(ggplot2::aes(
+    x = reorder(id, -median),
+    y = score, colour = low_iqr
+  )) +
+  ggplot2::geom_violin(scale = "width") +
+  ggplot2::theme_bw()
 ```
 
-```{r fig-global, eval=TRUE, cache=FALSE, echo=FALSE, fig.height=6, fig.width=10, out.width="100%"}
+```{r fig-global, eval=TRUE, cache=FALSE, echo=FALSE, warning=FALSE, fig.height=6, fig.width=10, out.width="100%"}
 #| fig-cap: "Violin plot showing the distribution of the FLOSS score achieved by all tested models by
-#|  recording.  The left half shows the recordings that were difficult to predict (10% overall), whereas
-#|  the right half shows the recordings that at least one model could achieve a good prediction (10%
-#|  overall).  The recordings are sorted (left-right) by the minimum (best) score achieved in descending
-#|  order, and ties are sorted by the median of all recording scores.  The blue color highlights
-#|  recordings where models had an IQR variability of less than one.  As a simple example, a recording
-#|  with just one regime change, and the model predicts exactly one change, far from the truth, the
-#|  score will be roughly 1."
+#|  recording.  The left half shows the recordings that were difficult to predict, whereas the right half shows
+#|  the recordings that had better predictions. The recordings are sorted (left-right) by the median
+#|  score in descending order.  The blue color highlights recordings where models had an IQR variability
+#|  of less than 10.  As a simple approximation, if we have a recording with just one regime change, and the
+#|  the model predicts exactly one change, about 10s far from the truth, the score will be roughly 1."
 
 library(patchwork)
 
-scores1 <- scores1 +
-  ggplot2::scale_y_continuous(
-    labels = scales::label_number(),
-    breaks = scales::trans_breaks("log10", function(x) 10^x)
-  ) + ggplot2::coord_trans(y = "log10", ylim = c(0.00001, 10))
-scores2 <- scores2 +
-  ggplot2::scale_y_continuous(
-    labels = scales::label_number(),
-    breaks = scales::trans_breaks("log10", function(x) 10^x)
-  ) + ggplot2::coord_trans(y = "log10", ylim = c(0.00001, 10))
-scores3 <- scores3 +
-  ggplot2::scale_y_continuous(
-    labels = scales::label_number(),
-    breaks = scales::trans_breaks("log10", function(x) 10^x)
-  ) + ggplot2::coord_trans(y = "log10", ylim = c(0.00001, 10))
+sc1 <- ggplot2::ggplot_build(scores1)$plot$data$score
+sc2 <- ggplot2::ggplot_build(scores2)$plot$data$score
+sc3 <- ggplot2::ggplot_build(scores3)$plot$data$score
+sc11 <- ggplot2::ggplot_build(scores11)$plot$data$score
+sc22 <- ggplot2::ggplot_build(scores22)$plot$data$score
+sc33 <- ggplot2::ggplot_build(scores33)$plot$data$score
+max_y <- floor(max(sc1))
+max_y2 <- floor(max(sc2, sc3, sc11, sc22, sc33))
 
-all <- (scores1 / scores2 / scores3) + plot_layout(guides = "collect")
-all + plot_annotation(
-  title = "Scores all",
+scores1 <- scores1 + ggplot2::scale_y_continuous(
+  limits = c(0, max_y2)
+  # oob = scales::oob_squish,
+  # expand = c(0.1, 0.05, 0.1, -0.1)
+) + ggplot2::labs(
+  title = "Worst*", x = ggplot2::element_blank(), y = "Score distribution"
+) + ggplot2::guides(colour = "none")
+
+scores11 <- scores11 + ggplot2::scale_y_continuous(
+  limits = c(0, max_y2)
+  # oob = scales::oob_squish,
+  # expand = c(0.1, 0.05, 0.1, -0.1)
+) + ggplot2::labs(
+  title = "Best", x = ggplot2::element_blank(), y = ggplot2::element_blank(), colour = "IQR < 10"
+)
+
+scores2 <- scores2 + ggplot2::scale_y_continuous(
+  limits = c(0, max_y2)
+  # oob = scales::oob_squish,
+  # expand = c(0.1, 0.05, 0.1, -0.1)
+) + ggplot2::labs(
+  title = "Worst", x = ggplot2::element_blank(), y = "Score distribution"
+) + ggplot2::guides(colour = "none")
+
+scores22 <- scores22 + ggplot2::scale_y_continuous(
+  limits = c(0, max_y2)
+  # oob = scales::oob_squish,
+  # expand = c(0.1, 0.05, 0.1, -0.1)
+) + ggplot2::labs(
+  title = "Best", x = ggplot2::element_blank(), y = ggplot2::element_blank(), colour = "IQR < 10"
+)
+
+scores3 <- scores3 + ggplot2::scale_y_continuous(
+  limits = c(0, max_y2)
+  # oob = scales::oob_squish,
+  # expand = c(0.1, 0.05, 0.1, -0.1)
+) + ggplot2::labs(
+  title = "Worst", x = ggplot2::element_blank(), y = "Score distribution"
+) + ggplot2::guides(colour = "none")
+
+scores33 <- scores33 + ggplot2::scale_y_continuous(
+  limits = c(0, max_y2)
+  # oob = scales::oob_squish,
+  # expand = c(0.1, 0.05, 0.1, -0.1)
+) + ggplot2::labs(
+  title = "Best", x = ggplot2::element_blank(), y = ggplot2::element_blank(), colour = "IQR < 10"
+)
+
+first_title <- glue::glue("First dataset; {floor(mean(scores_stats$size))} models by recording")
+
+second_title <- glue::glue("Second dataset; {floor(mean(scores_stats_mvds$size))} models by recording")
+
+third_title <- glue::glue("Third dataset; {floor(mean(scores_stats_vtds$size))} models by recording")
+
+all <- wrap_elements(full = (scores1 | scores11) + plot_annotation(title = first_title)) /
+  wrap_elements(full = (scores2 | scores22) + plot_annotation(title = second_title)) /
+  wrap_elements(full = (scores3 | scores33) + plot_annotation(title = third_title))
+all + plot_layout(guides = "collect") + plot_annotation(
+  title = "Scores distribution by recording",
+  caption = glue::glue("* Violin plot was clipped to {max_y2} for better visualization. The worst score reaches about {max_y}."),
   theme = ggplot2::theme_bw() + ggplot2::theme(
     plot.title = ggplot2::element_text(size = 20)
   )
@@ -1116,20 +1237,23 @@ all + plot_annotation(
 ```
 
 
+
 @fig-worst shows the best effort in predicting the most complex recordings. One information not declared before is that if the model does not predict any change, it will put a mark on the zero position. On the other side, the truth markers positioned at the beginning and the end of the recording were removed, as these locations lack information and do not represent a streaming setting.
 
-```{r fig-worst, eval=TRUE, echo=FALSE, fig.height=15, fig.width=12, out.width="100%", dev="png"}
-#| fig-cap: "Prediction of the worst 10% of recordings (red is the truth, blue are the predictions)."
+Notice that there are recordings with a significant duration and few regime changes, making it hard for a "trivial model" to predict randomly.
+
+```{r fig-worst, eval=TRUE, echo=FALSE, fig.height=8, fig.width=12, out.width="100%", dev="png"}
+#| fig-cap: "Prediction of the \"difficult\" recordings of the first dataset (red is the truth, blue are the predictions)."
 
 worst <- scores_stats |>
-  dplyr::filter(min > quantile(min, 0.9)) |>
+  dplyr::filter(median > quantile(median, 0.9)) |>
   dplyr::group_by(record) |>
   dplyr::slice_head() |>
   dplyr::ungroup() |>
-  dplyr::arrange(desc(min), desc(median)) |>
-  dplyr::slice_head(n = 10) |>
+  dplyr::arrange(desc(median)) |>
+  dplyr::slice_head(n = 5) |>
   dplyr::pull(record)
-# "data_25_1.par"  "data_32_12.par" "data_85_1.par"  "data_90_1.par"  "data_68_2.par"
+# "data_25_1.par"   "data_32_12.par"  "data_68_2.par"   "data_104_19.par" "data_39_1.par"
 
 worst_data <- all_scores |>
   dplyr::filter(record %in% worst) |>
@@ -1137,28 +1261,35 @@ worst_data <- all_scores |>
   dplyr::slice_min(n = 1, order_by = score, with_ties = FALSE) |>
   dplyr::arrange(desc(score)) |>
   dplyr::ungroup()
+# "data_32_12.par"  "data_104_19.par" "data_39_1.par"   "data_68_2.par"   "data_25_1.par"
 
 plots <- list()
 for (i in seq_len(nrow(worst_data))) {
   plots[[i]] <- tkplot(worst_data[i, ], FALSE, 50, dataset = "afib")
 }
 
-wrap_plots(plots, ncol = 1)
+wrap_plots(plots, ncol = 1) + plot_annotation(
+  title = "Best effort in predicting the difficult recordings",
+  theme = ggplot2::theme_bw() + ggplot2::theme(
+    plot.title = ggplot2::element_text(size = 20)
+  )
+)
 ```
 
-@fig-best shows the best performances of the best recordings. Notice that there are recordings with a significant duration and few regime changes, making it hard for a "trivial model" to predict randomly.
+@fig-best shows the best performances of the "easiest" recordings.
 
-```{r fig-best, eval=TRUE, echo=FALSE, fig.height=15, fig.width=12, out.width="100%", dev="png"}
-#| fig-cap: "Prediction of the best 10% of recordings (red is the truth, blue are the predictions)."
+```{r fig-best, eval=TRUE, echo=FALSE, fig.height=8, fig.width=12, out.width="100%", dev="png"}
+#| fig-cap: "Prediction of the \"easiest\" recordings of the first dataset (red is the truth, blue are the predictions)."
 
 bests <- scores_stats |>
-  dplyr::filter(min < quantile(min, 0.1)) |>
+  dplyr::filter(median < quantile(median, 0.1)) |>
   dplyr::group_by(record) |>
   dplyr::slice_head() |>
   dplyr::ungroup() |>
-  dplyr::arrange(desc(min), desc(median)) |>
-  dplyr::slice_head(n = 10) |>
+  dplyr::arrange(desc(median)) |>
+  dplyr::slice_tail(n = 5) |>
   dplyr::pull(record)
+# "data_68_23.par"  "data_96_19.par"  "data_104_17.par" "data_64_8.par"   "data_92_22.par"
 
 bests_data <- all_scores |>
   dplyr::filter(record %in% bests) |>
@@ -1166,13 +1297,19 @@ bests_data <- all_scores |>
   dplyr::slice_min(n = 1, order_by = score, with_ties = FALSE) |>
   dplyr::arrange(desc(score)) |>
   dplyr::ungroup()
+# "data_64_8.par"   "data_104_17.par" "data_92_22.par"  "data_68_23.par"  "data_96_19.par"
 
 plots <- list()
 for (i in seq_len(nrow(bests_data))) {
   plots[[i]] <- tkplot(bests_data[i, ], FALSE, 50, dataset = "afib")
 }
 
-wrap_plots(plots, ncol = 1)
+wrap_plots(plots, ncol = 1) + plot_annotation(
+  title = "Best effort in predicting the easiest recordings",
+  theme = ggplot2::theme_bw() + ggplot2::theme(
+    plot.title = ggplot2::element_text(size = 20)
+  )
+)
 ```
 
 #### By model
