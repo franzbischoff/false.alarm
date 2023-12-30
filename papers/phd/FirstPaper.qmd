@@ -1317,18 +1317,17 @@ wrap_plots(plots, ncol = 1) + plot_annotation(
 @fig-globalmodel shows the distribution of the FLOSS score of the 10% worst (left side) and 10% best models across the recordings (right side). The bluish color highlights the models with SD below 3 and IQR below 1.
 
 ```{r fig-globalmodel, eval=TRUE, echo=FALSE, fig.height=5, fig.width=10, out.width="100%"}
-#| fig-cap: "Violin plot showing the distribution of the FLOSS score achieved by all tested models during the
-#|  inner ressample.  The left half shows the models with the worst performances (10% overall), whereas
-#|  the right half shows the models with the best performances (10% overall).
-#|  The models are sorted (left-right) by the mean score (top) and by the median (below). Ties are
-#|  sorted by the SD and IQR, respectively.  The bluish colors highlights models with an SD below 3
-#|  and IQR below 1."
+#| fig-cap: "Violin plot showing the distribution of the FLOSS score achieved by
+#| the worst (left) and the best (right) models in the inner ressample.
+#| The models are sorted descending (left-right) by the median score.
+#| The bluish colors highlights models with an IQR below 10."
 
-# cores_stats_model <- all_scores |> dplyr::mutate(across(all_of(predictors_names), as.factor, .unpack = FALSE))
+library(patchwork)
 
 if (file.exists(here::here("output", "scores_stats_model_rep.rds"))) {
   scores_stats_model <- readRDS(here::here("output", "scores_stats_model_rep.rds"))
 } else {
+  predictors_names <- c("time_constraint", "regime_threshold", "mp_threshold", "window_size", "regime_landmark")
   scores_stats_model <- all_scores |>
     dplyr::group_by(dplyr::across(dplyr::all_of(predictors_names))) |>
     dplyr::mutate(model = glue::glue("{window_size}_{time_constraint}_{mp_threshold}_{regime_threshold}_{regime_landmark}")) |>
@@ -1341,7 +1340,7 @@ if (file.exists(here::here("output", "scores_stats_model_rep.rds"))) {
       mean = mean(score), max = max(score),
       sd = sd(score)
     )
-  saveRDS(scores_stats_model, file = here::here("output", "scores_stats_model_rep.rds"))
+  saveRDS(scores_stats_model, file = here::here("output", "scores_stats_model_rep.rds"), compress = "xz")
 }
 
 
@@ -1350,37 +1349,66 @@ scores_stats_model$id_text <- (sprintf("Model_%05d", (as.numeric(as.factor(score
 scores_stats_model$record <- (sprintf("%03d", (as.numeric(factor(scores_stats_model$record, labels = levels(records_factors))))))
 scores_stats_model <- scores_stats_model |> dplyr::select(-model)
 
-low <- head(sort(unique(scores_stats_model$mean)), 20)
-high <- tail(sort(unique(scores_stats_model$mean)), 20)
+worst_models <- scores_stats_model |>
+  dplyr::filter(median > quantile(median, 0.9)) |>
+  dplyr::group_by(id) |>
+  dplyr::slice_head() |>
+  dplyr::ungroup() |>
+  dplyr::arrange(desc(median)) |>
+  dplyr::slice_head(n = 5) |>
+  dplyr::pull(id)
 
-model_mean <- scores_stats_model |>
-  dplyr::mutate(low_sd = sd < 3) |>
-  dplyr::filter(mean > high | mean < low) |>
-  ggplot2::ggplot(ggplot2::aes(x = reorder(reorder(id, -sd), -mean), y = score, colour = low_sd)) +
-  ggplot2::scale_colour_manual(values = c("FALSE" = "#ff0000c2", "TRUE" = "#0000ffb5")) +
-  ggplot2::geom_violin() +
-  ggplot2::coord_cartesian(ylim = c(0, 3)) +
+worst_models_scores <- scores_stats_model |>
+  dplyr::mutate(low_iqr = factor(q75 - q25 < 10)) |>
+  dplyr::filter(id %in% worst_models) |>
+  ggplot2::ggplot(ggplot2::aes(
+    x = reorder(id, -median),
+    y = score, colour = low_iqr
+  )) +
+  ggplot2::geom_violin(scale = "width") +
   ggplot2::theme_bw() +
   ggplot2::theme(axis.text.x = ggplot2::element_text(size = 8, angle = 90, vjust = 0.5, hjust = 1)) +
-  ggplot2::labs(subtitle = "Ordered by Mean and SD", colour = "SD < 3", x = ggplot2::element_blank(), y = "Score distribution")
+  ggplot2::labs(subtitle = "Ordered by Median", colour = "IQR < 10", x = "Model ID", y = "Score distribution") +
+  ggplot2::scale_color_manual(values = c("#f2706d", "#3ec5c7")) +
+  ggplot2::scale_y_continuous(
+    limits = c(0, 110),
+    oob = scales::oob_keep
+    # expand = c(0.1, 0.05, 0.1, -0.1)
+  )
 
-low <- head(sort(unique(scores_stats_model$median)), 20)
-high <- tail(sort(unique(scores_stats_model$median)), 20)
+best_models <- scores_stats_model |>
+  dplyr::filter(median < quantile(median, 0.1)) |>
+  dplyr::group_by(id) |>
+  dplyr::slice_head() |>
+  dplyr::ungroup() |>
+  dplyr::arrange(desc(median)) |>
+  dplyr::slice_tail(n = 5) |>
+  dplyr::pull(id)
 
-model_median <- scores_stats_model |>
-  dplyr::mutate(low_iqr = q75 - q25 < 1) |>
-  dplyr::filter(median > high | median < low) |>
-  ggplot2::ggplot(ggplot2::aes(x = reorder(reorder(id, -iqr), -median), y = score, colour = low_iqr)) +
-  ggplot2::geom_violin() +
-  ggplot2::coord_cartesian(ylim = c(0, 3)) +
+best_models_scores <- scores_stats_model |>
+  dplyr::mutate(low_iqr = factor(q75 - q25 < 10)) |>
+  dplyr::filter(id %in% best_models) |>
+  ggplot2::ggplot(ggplot2::aes(
+    x = reorder(id, -median),
+    y = score, colour = low_iqr
+  )) +
+  ggplot2::geom_violin(scale = "width") +
   ggplot2::theme_bw() +
   ggplot2::theme(axis.text.x = ggplot2::element_text(size = 8, angle = 90, vjust = 0.5, hjust = 1)) +
-  ggplot2::labs(subtitle = "Ordered by Median and IQR", colour = "IQR < 1", x = "Model ID", y = "Score distribution")
+  ggplot2::labs(subtitle = "Ordered by Median", colour = "IQR < 10", x = "Model ID", y = "Score distribution") +
+  ggplot2::scale_color_manual(values = c("#3ec5c7", "#f2706d")) +
+  ggplot2::scale_y_continuous(
+    limits = c(0, 110)
+    # oob = scales::oob_squish,
+    # expand = c(0.1, 0.05, 0.1, -0.1)
+  )
 
-(model_mean / model_median) + plot_layout(guides = "auto") +
+worst_models_scores + best_models_scores + plot_layout(guides = "collect") +
   plot_annotation(
     title = "Scores grouped by model",
-    theme = ggplot2::theme_bw()
+    theme = ggplot2::theme_bw() + ggplot2::theme(
+      plot.title = ggplot2::element_text(size = 20)
+    )
   )
 ```
 
