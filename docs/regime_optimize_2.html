@@ -372,7 +372,7 @@ $(document).ready(function () {
 
 <h1 class="title toc-ignore">Regime changes 2.0</h1>
 <h4 class="author">Francisco Bischoff</h4>
-<h4 class="date">on October 10, 2023</h4>
+<h4 class="date">on January 02, 2024</h4>
 
 </div>
 
@@ -423,7 +423,7 @@ Checks <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></sp
 <div class="tab-content">
 <div id="summary" class="tab-pane fade in active">
 <p>
-<strong>Last updated:</strong> 2023-10-10
+<strong>Last updated:</strong> 2024-01-02
 </p>
 <p>
 <strong>Checks:</strong>
@@ -551,20 +551,20 @@ makes it easier to run your code on other machines.</p>
 <div class="panel panel-default">
 <div class="panel-heading">
 <p class="panel-title">
-<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomfranzbischofffalsealarmtreece6606628357dd8b5e063bebffeadd7e6acd20d2targetblankce66066a">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomfranzbischofffalsealarmtreedc13c05a8e0303f847e49658a7534a5315a37edctargetblankdc13c05a">
 <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span>
-<strong>Repository version:</strong> <a href="https://github.com/franzbischoff/false.alarm/tree/ce6606628357dd8b5e063bebffeadd7e6acd20d2" target="_blank">ce66066</a>
+<strong>Repository version:</strong> <a href="https://github.com/franzbischoff/false.alarm/tree/dc13c05a8e0303f847e49658a7534a5315a37edc" target="_blank">dc13c05</a>
 </a>
 </p>
 </div>
-<div id="strongRepositoryversionstrongahrefhttpsgithubcomfranzbischofffalsealarmtreece6606628357dd8b5e063bebffeadd7e6acd20d2targetblankce66066a" class="panel-collapse collapse">
+<div id="strongRepositoryversionstrongahrefhttpsgithubcomfranzbischofffalsealarmtreedc13c05a8e0303f847e49658a7534a5315a37edctargetblankdc13c05a" class="panel-collapse collapse">
 <div class="panel-body">
 <p>
 Great! You are using Git for version control. Tracking code development and
 connecting the code version to the results is critical for reproducibility.
 </p>
 <p>
-The results in this page were generated with repository version <a href="https://github.com/franzbischoff/false.alarm/tree/ce6606628357dd8b5e063bebffeadd7e6acd20d2" target="_blank">ce66066</a>.
+The results in this page were generated with repository version <a href="https://github.com/franzbischoff/false.alarm/tree/dc13c05a8e0303f847e49658a7534a5315a37edc" target="_blank">dc13c05</a>.
 See the <em>Past versions</em> tab to see a history of the changes made to the
 R Markdown and HTML files.
 </p>
@@ -582,20 +582,12 @@ Ignored files:
     Ignored:    .Rhistory
     Ignored:    .docker/
     Ignored:    .luarc.json
+    Ignored:    analysis/shiny/rsconnect/
+    Ignored:    analysis/shiny_land/rsconnect/
+    Ignored:    analysis/shiny_ventricular/rsconnect/
+    Ignored:    analysis/shiny_vtachy/rsconnect/
     Ignored:    dev/
     Ignored:    inst/extdata/
-    Ignored:    output/dbarts_fitted.bak.rds
-    Ignored:    output/dbarts_fitted2.bak.rds
-    Ignored:    output/dbarts_fitted2_lmk.bak.rds
-    Ignored:    output/dbarts_fitted_lmk.bak.rds
-    Ignored:    output/dbarts_fitted_mvds.bak.rds
-    Ignored:    output/dbarts_fitted_vtds.bak.rds
-    Ignored:    output/importances.bak.rds
-    Ignored:    output/importances2.bak.rds
-    Ignored:    output/importances2_lmk.bak.rds
-    Ignored:    output/importances_lmk.bak.rds
-    Ignored:    output/importances_mvds.bak.rds
-    Ignored:    output/importances_vtds.bak.rds
     Ignored:    renv/staging/
     Ignored:    tmp/
 
@@ -642,6 +634,40 @@ Message
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+Rmd
+</td>
+<td>
+<a href="https://github.com/franzbischoff/false.alarm/blob/dc13c05a8e0303f847e49658a7534a5315a37edc/analysis/regime_optimize_2.Rmd" target="_blank">dc13c05</a>
+</td>
+<td>
+Francisco Bischoff
+</td>
+<td>
+2024-01-02
+</td>
+<td>
+Refine predictive model and significance
+</td>
+</tr>
+<tr>
+<td>
+html
+</td>
+<td>
+<a href="https://rawcdn.githack.com/franzbischoff/false.alarm/b149bf44b22c6b20896f234f81fd36126d3405cb/docs/regime_optimize_2.html" target="_blank">b149bf4</a>
+</td>
+<td>
+Francisco Bischoff
+</td>
+<td>
+2023-10-10
+</td>
+<td>
+re-rendered
+</td>
+</tr>
 <tr>
 <td>
 Rmd
@@ -890,22 +916,25 @@ E( score ) &amp;= \alpha + time\_constraint\\
 E( score ) &amp;= \alpha + time\_constraint\\
 &amp;\quad + mp\_threshold + window\_size\\
 &amp;\quad + regime\_threshold + regime\_landmark\\
-&amp;\quad + \left(regime\_threshold \times regime\_landmark\right)\\
-&amp;\quad + \left(mp\_threshold \times regime\_landmark\right)\\
-&amp;\quad + \left(mp\_threshold \times window\_size\right)
+&amp;\quad + \left(time\_constraint \times regime\_landmark\right)\\
+&amp;\quad + \left(time\_constraint \times regime\_threshold\right)
 \end{aligned}
 \tag{1.2}
 \end{equation}\]</span></p>
 <p>Fig. <a href="#fig:interaction">1.2</a> shows the variable interaction strength between pairs of variables. That allows us to
 verify if there are any significant interactions between the variables. Using the information from the first model fit,
-equation <a href="#eq:first">(1.1)</a>, we see that <code>regime_threshold</code> interacts strongly with <code>regime_landmark</code>. This interaction
-was already expected, and we see that even after refitting the model, equation <a href="#eq:refitted">(1.2)</a>, this interaction is
-still strong.</p>
+equation <a href="#eq:first">(1.1)</a>, we see that <code>time_constraint</code> interacts strongly with <code>regime_landmark</code> and <code>regime_threshold</code>.
+Also it seems that <code>regime_landmark</code> and <code>regime_threshold</code> interacts strongly with each other.</p>
+<p>Knowing how the model is built, we already can antecipate that the <code>regime_landmark</code> can indeed have a strong relation
+with <code>regime_threshold</code> since the landmark is the point in time where the threshold is applied.</p>
 <p>This is not a problem <em>per se</em> but a signal we must be aware of when exploring the parameters.</p>
+<p>In order to explore the interactions, we chose to refit the model adding the first two interactions, equation <a href="#eq:refitted">(1.2)</a>.
+Here we see at the lower plot of Fig. <a href="#fig:interaction">1.2</a> that accounting for these interactions, the global strength of
+the variables visibly changes, with <code>regime_landmark</code> and <code>regime_threshold</code> losing strength.</p>
 <div class="figure" style="text-align: center"><span style="display:block;" id="fig:interaction"></span>
-<img src="figure/regime_optimize_2.Rmd/interaction-1.svg" alt="Variable interactions strength using feature importance ranking measure (FIRM) approach [@Greenwell2018]. A) Shows strong interaction between `regime_threshold` and `regime_landmark`, `mp_threshold` and `window_size`,    `mp_threshold` and `regime_landmark`. B) Refitting the model with these interactions taken into account, the strength is substantially reduced, except    for the first, showing that indeed there is a strong correlation between those variables." width="100%" />
+<img src="figure/regime_optimize_2.Rmd/interaction-1.svg" alt="Variable interactions strength using feature importance ranking measure (FIRM) approach [@Greenwell2018]. A) Shows strong interaction between `time_constraint` and `regime_landmark` and `regime_threshold`. Also we see    a expected strong interaction between `regime_landmark` and `regime_threshold`. B) Refitting the model with the first two interactions taken into account, the overall strength is substantially    changed, notably for `regime_landmark` and `regime_threshold`." width="100%" />
 <p class="caption">
-Figure 1.2: Variable interactions strength using feature importance ranking measure (FIRM) approach<span class="citation"><sup><a href="#ref-Greenwell2018" role="doc-biblioref">2</a></sup></span>. A) Shows strong interaction between <code>regime_threshold</code> and <code>regime_landmark</code>, <code>mp_threshold</code> and <code>window_size</code>, <code>mp_threshold</code> and <code>regime_landmark</code>. B) Refitting the model with these interactions taken into account, the strength is substantially reduced, except for the first, showing that indeed there is a strong correlation between those variables.
+Figure 1.2: Variable interactions strength using feature importance ranking measure (FIRM) approach<span class="citation"><sup><a href="#ref-Greenwell2018" role="doc-biblioref">2</a></sup></span>. A) Shows strong interaction between <code>time_constraint</code> and <code>regime_landmark</code> and <code>regime_threshold</code>. Also we see a expected strong interaction between <code>regime_landmark</code> and <code>regime_threshold</code>. B) Refitting the model with the first two interactions taken into account, the overall strength is substantially changed, notably for <code>regime_landmark</code> and <code>regime_threshold</code>.
 </p>
 </div>
 <p>
@@ -930,6 +959,17 @@ Date
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+<a href="https://github.com/franzbischoff/false.alarm/blob/b149bf44b22c6b20896f234f81fd36126d3405cb/docs/figure/regime_optimize_2.Rmd/interaction-1.svg" target="_blank">b149bf4</a>
+</td>
+<td>
+Francisco Bischoff
+</td>
+<td>
+2023-10-10
+</td>
+</tr>
 <tr>
 <td>
 <a href="https://github.com/franzbischoff/false.alarm/blob/56364658dd95ceba3db9128083175f92ee1ad329/docs/figure/regime_optimize_2.Rmd/interaction-1.svg" target="_blank">5636465</a>
@@ -970,7 +1010,8 @@ Francisco Bischoff
 </div>
 <div id="importance" class="section level3" number="1.3.2">
 <h3><span class="header-section-number">1.3.2</span> Importance</h3>
-<p>After evaluating the interactions, we can then perform the analysis of the variable importance. The goal is to understand how the FLOSS score behaves when we change the parameters.</p>
+<p>After evaluating the interactions, we can then perform the analysis of the variable importance. The goal is to understand
+how the FLOSS score behaves when we change the parameters.</p>
 <p>The techniques for evaluating the variable importances were described in the <a href="regime_optimize.html">previous article</a>.</p>
 </div>
 <div id="importance-analysis" class="section level3" number="1.3.3">
@@ -979,17 +1020,16 @@ Francisco Bischoff
 three methods are model-agnostic (separates interpretation from the model), but as we have seen, each method has
 its advantages and disadvantages<span class="citation"><sup><a href="#ref-Molnar2022" role="doc-biblioref">4</a></sup></span>.</p>
 <p>Fig. <a href="#fig:importance">1.3</a> then shows the variable importance using three methods: Feature Importance Ranking Measure
-(FIRM) using Individual Conditional Expectation (ICE), Permutation-based, and Shapley Additive explanations (SHAP). The
-first line of this figure shows an interesting result that probably comes from the main disadvantage of the FIRM method:
-<em>the method does not take into account interactions</em>. We see that FIRM is the only one that disagrees with the other
-two methods, giving much importance to <code>window_size</code>.</p>
-<p>In the second line, taking into account the interactions, we see that all methods somewhat agree with each other,
-accentuating the importance of <code>regime_threshold</code>, which makes sense as it is the most evident parameter we need to set
-to determine if the <em>Arc Counts</em> are low enough to indicate a regime change.</p>
+(FIRM) using Individual Conditional Expectation (ICE), Permutation-based, and Shapley Additive explanations (SHAP).
+The first line shows the original fit, and the second line shows the refit, taking into account the interactions.</p>
+<p>Interestingly, the three methods agree with each other, and the interactions didn’t change the overall importance of
+the variables. This can probably be explained by the magnitude of the x-axis, which may lead us to overestimate the
+importance of the interactions in this model since there is no formal threshold for saying that an interaction is
+important or not.</p>
 <div class="figure" style="text-align: center"><span style="display:block;" id="fig:importance"></span>
-<img src="figure/regime_optimize_2.Rmd/importance-1.svg" alt="Variables importances using three different methods. A) Feature Importance Ranking Measure using ICE curves. B) Permutation method. C) SHAP (400 iterations). Line 1 refers to the original fit, and line 2 to the re-fit, taking into account the interactions between variables (Fig. \@ref(fig:interaction))." width="100%" />
+<img src="figure/regime_optimize_2.Rmd/importance-1.svg" alt="Variables importances using three different methods. A) Feature Importance Ranking Measure using ICE curves. B) Permutation method (100x). C) SHAP (100 iterations). Line 1 refers to the original fit, and line 2 to the re-fit, taking into account the interactions between variables (Fig. \@ref(fig:interaction)). Notice that all methods agree with each other, and the interactions didn't change the overall importance of the variables." width="100%" />
 <p class="caption">
-Figure 1.3: Variables importances using three different methods. A) Feature Importance Ranking Measure using ICE curves. B) Permutation method. C) SHAP (400 iterations). Line 1 refers to the original fit, and line 2 to the re-fit, taking into account the interactions between variables (Fig. <a href="#fig:interaction">1.2</a>).
+Figure 1.3: Variables importances using three different methods. A) Feature Importance Ranking Measure using ICE curves. B) Permutation method (100x). C) SHAP (100 iterations). Line 1 refers to the original fit, and line 2 to the re-fit, taking into account the interactions between variables (Fig. <a href="#fig:interaction">1.2</a>). Notice that all methods agree with each other, and the interactions didn’t change the overall importance of the variables.
 </p>
 </div>
 <p>
@@ -1014,6 +1054,17 @@ Date
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+<a href="https://github.com/franzbischoff/false.alarm/blob/b149bf44b22c6b20896f234f81fd36126d3405cb/docs/figure/regime_optimize_2.Rmd/importance-1.svg" target="_blank">b149bf4</a>
+</td>
+<td>
+Francisco Bischoff
+</td>
+<td>
+2023-10-10
+</td>
+</tr>
 <tr>
 <td>
 <a href="https://github.com/franzbischoff/false.alarm/blob/56364658dd95ceba3db9128083175f92ee1ad329/docs/figure/regime_optimize_2.Rmd/importance-1.svg" target="_blank">5636465</a>
@@ -1052,34 +1103,35 @@ Francisco Bischoff
 </div>
 </div>
 <p>Fig. <a href="#fig:importanceshap">1.4</a> and <a href="#fig:importanceshap2">1.5</a> show the effect of each feature on the FLOSS score. The
-more evident difference is the shape of the effect of <code>time_constraint</code> that initially suggested better results with
-larger values. However, removing the interactions seems to be a flat line.</p>
+more evident difference is the shape of the effect of <code>time_constraint</code> which we will delve carefully below.
+Notice however that the refitted model produces a cleaner plot in Fig. <a href="#fig:importanceshap2">1.5</a>.</p>
 <p>Based on Figures <a href="#fig:importance">1.3</a> and <a href="#fig:importanceshap2">1.5</a> we can infer that:</p>
 <ul>
-<li><p><strong><code>regime_threshold</code></strong>: is the most important feature, has an optimal value to be set, and since the high interaction with the <code>regime_landmark</code>, both must be tuned simultaneously.
-In this setting, high thresholds significantly impact the score, probably due to an increase in false positives starting on &gt;0.65 the overall impact is mostly negative.</p></li>
-<li><p><strong><code>regime_landmark</code></strong>: is not as important as the <code>regime_threshold,</code> but since there is a high interaction, it must
-not be underestimated. It is known that the <em>Arc Counts</em> have more uncertainty as we approach the margin of the
-streaming, and this becomes evident looking at how the score is negatively affected for values below 3.5s.</p></li>
-<li><p><strong><code>window_size</code></strong>: has a near zero impact on the score when correctly set. Nevertheless, for higher window values,
-the score is negatively affected. This high value probably depends on the data domain. In this setting, the model is
-being tuned towards the changes from atrial fibrillation/non-fibrillation; thus, the “shape of interest” is small
-compared to the whole heartbeat waveform. Window sizes smaller than 150 are more suitable in this case. As Beyer <em>et
-al.</em> noted, “as dimensionality increases, the distance to the nearest data point approaches the distance to the
+<li><p><strong><code>regime_landmark</code></strong>: is the “second” most important feature, however it shows a clear interaction with
+the <code>regime_threshold</code> if we look at the color scale, so both must be tuned simultaneously.
+In both plots, it seems to improve the model score when landmark is &lt;5.0s.</p></li>
+<li><p><strong><code>regime_threshold</code></strong>: seems not as important as the <code>regime_landmark,</code> but since there is a high interaction, it must
+not be underestimated, and by prior knowledge we understand that there must be <em>some kind</em> of threshold to mark a regime change.</p></li>
+<li><p><strong><code>window_size</code></strong>: has a low importance. Nevertheless, it seems to have an optimal value, around 80-120
+In this setting, the model is being tuned towards the changes from atrial fibrillation/non-fibrillation;
+thus, the “shape of interest” is small compared to the whole heartbeat waveform. As Beyer <em>et al.</em> noted,
+“as dimensionality increases, the distance to the nearest data point approaches the distance to the
 farthest data point”<span class="citation"><sup><a href="#ref-Beyer1999" role="doc-biblioref">5</a></sup></span>, which means that the bigger the window size, the smaller will be the contrast
-between different regimes.</p></li>
-<li><p><strong><code>mp_threshold</code></strong>: has a fair impact on the score, but primarily by <em>not using it</em>. We start to see a negative
-impact on the score with values above 0.60, while a constant positive impact with lower values.</p></li>
+between different regimesm, thus the final objective of the model may influence the optimal window size.</p></li>
+<li><p><strong><code>mp_threshold</code></strong>: has the lowest impact on the score, and the plot shows that this parameter has virtually no
+influence on the model performance.</p></li>
 <li><p><strong><code>time_constraint</code></strong>: is a parameter that must be interpreted cautiously. The 0 (zero) value means <strong>no
-constraint</strong>, which is equivalent to the size of the FLOSS history buffer (in our setting, 5000). We can see that
-this parameter’s impact throughout the possible values is constantly near zero.</p></li>
+constraint</strong>, which is equivalent to the size of the FLOSS history buffer (in our setting, 5000). This allows
+us to understand that the model doesn’t need this paramenter, and further adjusts in performance can be achieved
+by setting the size of the history buffer.</p></li>
 </ul>
-<p>In short, for the MP computation, the parameter that is worth tuning is the <code>window_size</code>, while for the FLOSS
-computation, both <code>regime_threshold</code> (mainly) and <code>regime_landmark</code> shall be tuned.</p>
+<p>In short, for the MP computation (the most expensive in terms of complexity), the parameter that is worth tuning
+is only the <code>window_size</code>, while for the FLOSS computation, both <code>regime_threshold</code> (mainly) and <code>regime_landmark</code>
+shall be tuned.</p>
 <div class="figure" style="text-align: center"><span style="display:block;" id="fig:importanceshap"></span>
-<img src="figure/regime_optimize_2.Rmd/importanceshap-1.svg" alt="This shows the effect each variable has on the FLOSS score. This plot doesn't take into account the variable interactions." width="100%" />
+<img src="figure/regime_optimize_2.Rmd/importanceshap-1.svg" alt="This shows the Shapley value distribution for each variable. Smaller values means a better FLOSS score since &quot;zero&quot; is a perfect prediction. This plot doesn't take into account the variable interactions." width="100%" />
 <p class="caption">
-Figure 1.4: This shows the effect each variable has on the FLOSS score. This plot doesn’t take into account the variable interactions.
+Figure 1.4: This shows the Shapley value distribution for each variable. Smaller values means a better FLOSS score since “zero” is a perfect prediction. This plot doesn’t take into account the variable interactions.
 </p>
 </div>
 <p>
@@ -1104,6 +1156,17 @@ Date
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+<a href="https://github.com/franzbischoff/false.alarm/blob/b149bf44b22c6b20896f234f81fd36126d3405cb/docs/figure/regime_optimize_2.Rmd/importanceshap-1.svg" target="_blank">b149bf4</a>
+</td>
+<td>
+Francisco Bischoff
+</td>
+<td>
+2023-10-10
+</td>
+</tr>
 <tr>
 <td>
 <a href="https://github.com/franzbischoff/false.alarm/blob/56364658dd95ceba3db9128083175f92ee1ad329/docs/figure/regime_optimize_2.Rmd/importanceshap-1.svg" target="_blank">5636465</a>
@@ -1153,9 +1216,9 @@ Francisco Bischoff
 </div>
 </div>
 <div class="figure" style="text-align: center"><span style="display:block;" id="fig:importanceshap2"></span>
-<img src="figure/regime_optimize_2.Rmd/importanceshap2-1.svg" alt="This shows the effect each variable has on the FLOSS score, taking into account the interactions." width="100%" />
+<img src="figure/regime_optimize_2.Rmd/importanceshap2-1.svg" alt="This shows the Shapley value distribution for each variable. Smaller values means a better FLOSS score since &quot;zero&quot; is a perfect prediction. This plot is taking into account the variable interactions, which appears to result in a cleaner plot." width="100%" />
 <p class="caption">
-Figure 1.5: This shows the effect each variable has on the FLOSS score, taking into account the interactions.
+Figure 1.5: This shows the Shapley value distribution for each variable. Smaller values means a better FLOSS score since “zero” is a perfect prediction. This plot is taking into account the variable interactions, which appears to result in a cleaner plot.
 </p>
 </div>
 <p>
@@ -1180,6 +1243,17 @@ Date
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+<a href="https://github.com/franzbischoff/false.alarm/blob/b149bf44b22c6b20896f234f81fd36126d3405cb/docs/figure/regime_optimize_2.Rmd/importanceshap2-1.svg" target="_blank">b149bf4</a>
+</td>
+<td>
+Francisco Bischoff
+</td>
+<td>
+2023-10-10
+</td>
+</tr>
 <tr>
 <td>
 <a href="https://github.com/franzbischoff/false.alarm/blob/56364658dd95ceba3db9128083175f92ee1ad329/docs/figure/regime_optimize_2.Rmd/importanceshap2-1.svg" target="_blank">5636465</a>
@@ -1275,6 +1349,17 @@ Date
 <tbody>
 <tr>
 <td>
+<a href="https://github.com/franzbischoff/false.alarm/blob/b149bf44b22c6b20896f234f81fd36126d3405cb/docs/figure/regime_optimize_2.Rmd/global-1.svg" target="_blank">b149bf4</a>
+</td>
+<td>
+Francisco Bischoff
+</td>
+<td>
+2023-10-10
+</td>
+</tr>
+<tr>
+<td>
 <a href="https://github.com/franzbischoff/false.alarm/blob/56364658dd95ceba3db9128083175f92ee1ad329/docs/figure/regime_optimize_2.Rmd/global-1.svg" target="_blank">5636465</a>
 </td>
 <td>
@@ -1356,6 +1441,17 @@ Date
 <tbody>
 <tr>
 <td>
+<a href="https://github.com/franzbischoff/false.alarm/blob/b149bf44b22c6b20896f234f81fd36126d3405cb/docs/figure/regime_optimize_2.Rmd/worst-1.png" target="_blank">b149bf4</a>
+</td>
+<td>
+Francisco Bischoff
+</td>
+<td>
+2023-10-10
+</td>
+</tr>
+<tr>
+<td>
 <a href="https://github.com/franzbischoff/false.alarm/blob/56364658dd95ceba3db9128083175f92ee1ad329/docs/figure/regime_optimize_2.Rmd/worst-1.png" target="_blank">5636465</a>
 </td>
 <td>
@@ -1432,6 +1528,17 @@ Date
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+<a href="https://github.com/franzbischoff/false.alarm/blob/b149bf44b22c6b20896f234f81fd36126d3405cb/docs/figure/regime_optimize_2.Rmd/best-1.png" target="_blank">b149bf4</a>
+</td>
+<td>
+Francisco Bischoff
+</td>
+<td>
+2023-10-10
+</td>
+</tr>
 <tr>
 <td>
 <a href="https://github.com/franzbischoff/false.alarm/blob/56364658dd95ceba3db9128083175f92ee1ad329/docs/figure/regime_optimize_2.Rmd/best-1.png" target="_blank">5636465</a>
@@ -1519,6 +1626,17 @@ Date
 <tbody>
 <tr>
 <td>
+<a href="https://github.com/franzbischoff/false.alarm/blob/b149bf44b22c6b20896f234f81fd36126d3405cb/docs/figure/regime_optimize_2.Rmd/globalmodel-1.svg" target="_blank">b149bf4</a>
+</td>
+<td>
+Francisco Bischoff
+</td>
+<td>
+2023-10-10
+</td>
+</tr>
+<tr>
+<td>
 <a href="https://github.com/franzbischoff/false.alarm/blob/56364658dd95ceba3db9128083175f92ee1ad329/docs/figure/regime_optimize_2.Rmd/globalmodel-1.svg" target="_blank">5636465</a>
 </td>
 <td>
@@ -1566,13 +1684,13 @@ Francisco Bischoff
 </div>
 </div>
 <p>Fig. <a href="#fig:bestmodels">1.10</a> the performance of the six best models. They are ordered from left to right, from the worst
-record to the best record. The top model is the one with the lowest mean across the scores. The blue line indicates
-the mean score, and the red line the median score. The scores above 3 are squished in the plot and colored according to
+record to the best record. The top model is the one with the lowest mean across the scores. The red line indicates
+the median score. The scores above 3 are squished in the plot and colored according to
 the scale in the legend. Notice the improvement on the blue and red lines compared to the <a href="regime_optimize.html">previous article</a>.</p>
 <div class="figure" style="text-align: center"><span style="display:block;" id="fig:bestmodels"></span>
-<img src="figure/regime_optimize_2.Rmd/bestmodels-1.svg" alt="Performances of the best 6 models across all inner resample of recordings. The recordings are ordered by score, from the worst to the best. Each plot shows one model, starting from the best one. The red line indicates the median score of the model. The blue line indicates the mean score of the model. The gray line limits the zero-score region. The plot is limited on the &quot;y&quot; axis, and the scores above this limit are shown in color." width="100%" />
+<img src="figure/regime_optimize_2.Rmd/bestmodels-1.svg" alt="Performances of the best 6 models across all inner resample of recordings. The recordings are ordered by score, from the worst to the best. Each plot shows one model, starting from the best one. The red line indicates the median score of the model. The gray line limits the zero-score region. The plot is limited on the &quot;y&quot; axis, and the scores above this limit are shown in color." width="100%" />
 <p class="caption">
-Figure 1.10: Performances of the best 6 models across all inner resample of recordings. The recordings are ordered by score, from the worst to the best. Each plot shows one model, starting from the best one. The red line indicates the median score of the model. The blue line indicates the mean score of the model. The gray line limits the zero-score region. The plot is limited on the “y” axis, and the scores above this limit are shown in color.
+Figure 1.10: Performances of the best 6 models across all inner resample of recordings. The recordings are ordered by score, from the worst to the best. Each plot shows one model, starting from the best one. The red line indicates the median score of the model. The gray line limits the zero-score region. The plot is limited on the “y” axis, and the scores above this limit are shown in color.
 </p>
 </div>
 <p>
@@ -1597,6 +1715,17 @@ Date
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+<a href="https://github.com/franzbischoff/false.alarm/blob/b149bf44b22c6b20896f234f81fd36126d3405cb/docs/figure/regime_optimize_2.Rmd/bestmodels-1.svg" target="_blank">b149bf4</a>
+</td>
+<td>
+Francisco Bischoff
+</td>
+<td>
+2023-10-10
+</td>
+</tr>
 <tr>
 <td>
 <a href="https://github.com/franzbischoff/false.alarm/blob/56364658dd95ceba3db9128083175f92ee1ad329/docs/figure/regime_optimize_2.Rmd/bestmodels-1.svg" target="_blank">5636465</a>
@@ -1694,7 +1823,7 @@ Session information
 <div id="workflowr-sessioninfo" class="collapse">
 <pre><code>─ Session info ───────────────────────────────────────────────────────────────
  setting  value
- version  R version 4.3.1 (2023-06-16)
+ version  R version 4.3.2 (2023-10-31)
  os       Ubuntu 22.04.3 LTS
  system   x86_64, linux-gnu
  ui       X11
@@ -1702,7 +1831,7 @@ Session information
  collate  en_US.UTF-8
  ctype    en_US.UTF-8
  tz       Europe/Lisbon
- date     2023-10-10
+ date     2024-01-02
  pandoc   2.17.0.1 @ /usr/bin/ (via rmarkdown)
 
 ─ Packages ───────────────────────────────────────────────────────────────────
@@ -1773,7 +1902,7 @@ Session information
  knitr          1.43        2023-05-25 [1] CRAN (R 4.3.0)
  labeling       0.4.2       2020-10-20 [1] CRAN (R 4.3.0)
  later          1.3.1       2023-05-02 [1] CRAN (R 4.3.1)
- lattice        0.21-9      2023-10-01 [2] CRAN (R 4.3.1)
+ lattice        0.22-5      2023-10-24 [2] CRAN (R 4.3.1)
  lava           1.7.2.1     2023-02-27 [1] CRAN (R 4.3.0)
  lhs            1.1.6       2022-12-17 [1] CRAN (R 4.3.0)
  lifecycle      1.0.3       2022-10-07 [1] CRAN (R 4.3.1)
@@ -1781,9 +1910,9 @@ Session information
  lubridate      1.9.2       2023-02-10 [1] CRAN (R 4.3.0)
  magrittr       2.0.3       2022-03-30 [1] CRAN (R 4.3.1)
  MASS           7.3-60      2023-05-04 [2] CRAN (R 4.3.1)
- Matrix         1.6-1.1     2023-09-18 [2] CRAN (R 4.3.1)
+ Matrix         1.6-3       2023-11-14 [2] CRAN (R 4.3.2)
  memoise        2.0.1       2021-11-26 [1] CRAN (R 4.3.0)
- mgcv           1.9-0       2023-07-11 [2] CRAN (R 4.3.1)
+ mgcv           1.9-1       2023-12-21 [2] CRAN (R 4.3.2)
  mime           0.12        2021-09-28 [1] CRAN (R 4.3.0)
  miniUI         0.1.1.1     2018-05-18 [1] CRAN (R 4.3.0)
  modelenv       0.1.1       2023-03-08 [1] CRAN (R 4.3.0)
@@ -1813,8 +1942,8 @@ Session information
  remotes        2.4.2.1     2023-07-18 [1] CRAN (R 4.3.1)
  renv           0.17.3      2023-04-06 [1] CRAN (R 4.3.1)
  rlang          1.1.1       2023-04-28 [1] CRAN (R 4.3.0)
- rmarkdown      2.23.4      2023-08-13 [1] Github (rstudio/rmarkdown@054d735)
- rpart          4.1.19      2022-10-21 [2] CRAN (R 4.3.0)
+ rmarkdown      2.25.1      2023-10-10 [1] Github (rstudio/rmarkdown@65a352e)
+ rpart          4.1.23      2023-12-05 [2] CRAN (R 4.3.2)
  rprojroot      2.0.3       2022-04-02 [1] CRAN (R 4.3.1)
  rsample        1.1.1       2022-12-07 [1] CRAN (R 4.3.0)
  rstudioapi     0.15.0      2023-07-07 [1] CRAN (R 4.3.1)
