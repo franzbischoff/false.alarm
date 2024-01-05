@@ -336,9 +336,8 @@ $$
 E( score ) &= \alpha + time\_constraint\\
 &\quad + mp\_threshold + window\_size\\
 &\quad + regime\_threshold + regime\_landmark\\
-&\quad + \left(regime\_threshold \times regime\_landmark\right)\\
-&\quad + \left(mp\_threshold \times regime\_landmark\right)\\
-&\quad + \left(window\_size \times regime\_landmark\right)
+&\quad + \left(time\_constraint \times regime\_landmark\right)\\
+&\quad + \left(time\_constraint \times regime\_threshold\right)
 \end{aligned}
 $$ {#eq-refitted}
 
@@ -395,18 +394,26 @@ Using the three techniques simultaneously allows a broad comparison of the model
 
 # Results {#sec-results}
 
+## Parameter analysis
+
 ### Interactions
 
-@fig-interaction shows the variable interaction strength between pairs of variables in the first dataset, which from all datasets has the more difficult scenario (which is the presence or not of a synusal rythm). This dataset, shows us that after refitting the model, `window_size` and `regime_landmark` would be a great confounding factor if we did not take into account the interactions. `regime_threshold`/`mp_threshold` and `regime_landmark` also show a strong interaction that could lead to misinterpretation if not taken into account.
+@fig-interaction shows the variable interaction strength between pairs of variables in the first dataset, which from all datasets has the more difficult scenario (which is the presence or not of a synusal rythm). This dataset, shows us that that `time_constraint` interacts strongly with `regime_landmark` and `regime_threshold`. Also it seems that `regime_landmark` and `regime_threshold` interacts strongly with each other.
+
+Knowing how the model is built, we already can antecipate that the `regime_landmark` can indeed have a strong relation
+with `regime_threshold` since the landmark is the point in time where the threshold is applied.
 
 This is not a problem *per se* but a signal we must be aware of when exploring the parameters.
 
+In order to explore the interactions, we chose to refit the model adding the first two interactions, @eq-refitted. Here we see at the lower plot of @fig-interaction that accounting for these interactions, the global strength of the variables visibly changes, with `regime_landmark` and `regime_threshold` losing strength.
+
+
 ```{r fig-interaction, echo=FALSE, eval=TRUE, fig.height = 7, fig.width= 8, out.width="100%"}
-#| fig-cap: "Variable interactions strength using feature importance ranking measure (FIRM) approach [@Greenwell2018].
-#|  A) Shows strong interaction between `window_size` and `regime_landmark`, `regime_threshold` and `regime_landmark`,
-#|     `mp_threshold` and `regime_landmark`.
-#|  B) Refitting the model with these interactions taken into account, the strength is substantially reduced, except
-#|     for the second, showing that indeed there is a strong correlation between those variables.."
+#| fig.cap: "Variable interactions strength using feature importance ranking measure (FIRM) approach [@Greenwell2018].
+#|  A) Shows strong interaction between `time_constraint` and `regime_landmark` and `regime_threshold`. Also we see
+#|     a expected strong interaction between `regime_landmark` and `regime_threshold`.
+#|  B) Refitting the model with the first two interactions taken into account, the overall strength is substantially
+#|     changed, notably for `regime_landmark` and `regime_threshold`."
 
 library(patchwork)
 
@@ -466,13 +473,14 @@ inter + plot_annotation(
 
 ### Importance analysis
 
-@fig-importance shows the variable importance using three methods for the first dataset. All methods agrees that `regime_threshold` is the most important parameter, followed by `regime_landmark`. The `window_size` is the least important parameter. The accentuating importance of `regime_threshold`, makes sense as it is the most evident parameter we need to set to determine if the *Arc Counts* are low enough to indicate a regime change.
+@fig-importance shows the variable importance using three methods for the first dataset. Interestingly, all three methods agree with each other, and looking in the lower plot, the interactions didn't change the overall importance of the variables. This can probably be explained by the magnitude of the x-axis, which may lead us to overestimate the importance of the interactions in this model since there is no formal threshold for saying that an interaction is important or not.
 
 ```{r fig-importance, eval=TRUE, echo=FALSE, warning=FALSE, fig.height = 7, fig.width= 15, out.width="100%"}
-#| fig-cap: "Variables importances using three different methods. A) Feature Importance Ranking Measure
-#|  using ICE curves. B) Permutation method. C) SHAP (100 iterations). Line 1 refers to the original
+#| fig.cap: "Variables importances using three different methods. A) Feature Importance Ranking Measure
+#|  using ICE curves. B) Permutation method (100x). C) SHAP (100 iterations). Line 1 refers to the original
 #|  fit, and line 2 to the re-fit, taking into account the interactions between variables
-#|  (@fig-interaction)."
+#|  (@fig-interaction). Notice that all methods agree with each other, and the interactions
+#|  didn't change the overall importance of the variables."
 
 library(patchwork)
 
@@ -596,11 +604,9 @@ all + plot_annotation(
 )
 ```
 
-@fig-importanceshap and @fig-importanceshap2 show the effect of each feature on the FLOSS score. The more evident information we can defer from both figures is the effect of `time_constraint` that initially is basically a flat line, conditioned by the nicely distributed `regime_threshold`. `window_size` follows a similar pattern and `mp_threshold` also has a flat line, behind of what seems some random noise, nevertheless suggests that keeping it at zero (the same as removing it), will not change the final result.
+@fig-importanceshap and @fig-importanceshap2 show the effect of each feature on the FLOSS score. The more evident difference is the shape of the effect of `time_constraint` which we will delve carefully below. Notice however that the refitted model produces a cleaner plot in @fig-importanceshap2.
 
-From this first dataset's results, we can infer that the most interesting parameters to tune in the FLOSS algorithm are the `regime_threshold` and `regime_landmark`. The `window_size`, the only parameter needed to compute, the MP may be explored sparsely in other datasets, while the `mp_threshold` and `time_constraint` can be removed.
-
-> Dataset 1
+#### Dataset 1
 
 ```{r fig-importanceshap, eval=TRUE, echo=FALSE, message=FALSE, warning=FALSE, fig.height = 6, fig.width= 10, out.width="100%"}
 #| fig-cap: "This shows the effect each variable has on the FLOSS score. This plot doesn't take into account the
@@ -683,8 +689,6 @@ all1 <- ((a4 + a5 + a1 + a3 + plot_layout(guides = "collect")) + (a2 + plot_layo
 all1 + plot_layout(design = layout) + plot_annotation(title = "Shapley value vs. variable values", theme = ggplot2::theme_bw())
 ```
 
-> Dataset 1
-
 ```{r fig-importanceshap2, eval=TRUE, echo=FALSE, message=FALSE, warning=FALSE, fig.height = 6, fig.width= 10, out.width="100%"}
 #| fig-cap: "This shows the effect each variable has on the FLOSS score, taking into account the interactions.."
 
@@ -723,15 +727,28 @@ all2 <- ((a4 + a5 + a1 + a3 + plot_layout(guides = "collect")) + (a2 + plot_layo
 all2 + plot_layout(design = layout) + plot_annotation(title = "Shapley value vs. variable values", theme = ggplot2::theme_bw())
 ```
 
-@fig-importance2 shows the parameters importances of the second dataset [@bischoff2023malig]. The parameter `regime_threshold` shows a clear importance on the correctness of the FLOSS. @fig-importanceshap3 shows the behavior of the parameters. We see that the `window_size` has a low bondary where the FLOSS score degrades (high values mean worse performance). The `regime_threshold` shows this same behavior. The `regime_landmark` has a more linear behavior as in the first dataset.
+Based on @fig-importance, @fig-importanceshap and @fig-importanceshap2 we can infer that:
 
-> Dataset 2
+- **`regime_landmark`**: is the "second" most important feature, however it shows a clear interaction with the `regime_threshold` looking at the color scale, so both must be tuned simultaneously. In both plots, it seems to improve the model score when landmark is <5.0s.
+
+- **`regime_threshold`**: seems not as important as the `regime_landmark,` but since there is a high interaction between both variables, it must not be interpreted alone. By prior knowledge we understand that there must be _some kind_ of threshold to mark a regime change.
+
+- **`window_size`**: has a low importance. Nevertheless, it seems to have an optimal value, around 80-120 (one third to one half of the heartbeat waveform). In this setting, the model is being tuned towards the changes from atrial fibrillation/non-fibrillation; thus, the "shape of interest" is small compared to the whole heartbeat waveform. As Beyer _et al._ noted, "as dimensionality increases, the distance to the nearest data point approaches the distance to the farthest data point" [@Beyer1999], which means that the bigger the window size, the smaller will be the contrast between different regimes, thus the final objective of the model may influence the optimal window size.
+
+- **`mp_threshold`**: has the lowest impact on the score, and the plot shows that this parameter has virtually no influence on the model performance.
+
+- **`time_constraint`**: is a parameter that must be interpreted cautiously.  The 0 (zero) value means **no constraint**, which is equivalent to the size of the FLOSS history buffer (in our setting, 5000). Since we only explored three values, what we may be seeing is ciclic behavior of the score. The size of the history buffer may be indeed related to the model performance, allowing the model to "forget" the past and focus on more recent data. As the exploration of this paramenter would be computationally too expensive, we will not explore it further and consider it as the size of the history bufffer.
+
+From this first dataset's results, we can infer that the most interesting parameters to tune in the FLOSS algorithm are the `regime_threshold` and `regime_landmark`. The `window_size`, the only parameter needed to compute, the MP may be explored sparsely in other datasets, while the `mp_threshold` and `time_constraint` can be removed.
+
+#### Dataset 2
+
+@fig-importance2 shows the parameters importances of the second dataset [@bischoff2023malig]. The parameter `regime_threshold` shows now a clear importance on the correctness of the FLOSS. @fig-importanceshap3 shows the behavior of the parameters. We see that the `window_size` has a low bondary where the FLOSS score degrades (high SHAP values mean worse performance). The `regime_threshold` shows this same behavior as in the first dataset. The `regime_landmark` has a more linear behavior.
+
 
 ```{r fig-importance2, eval=TRUE, echo=FALSE, warning=FALSE, fig.height = 4, fig.width= 15, out.width="100%"}
-#| fig-cap: "Variables importances using three different methods. A) Feature Importance Ranking Measure
-#|  using ICE curves. B) Permutation method. C) SHAP (100 iterations). Line 1 refers to the original
-#|  fit, and line 2 to the re-fit, taking into account the interactions between variables
-#|  (@fig-interaction)."
+#| fig-cap: "Variables importances using three different methods. From left to right: Feature Importance Ranking Measure
+#|  using ICE curves, Permutation method (100x) and SHAP (100 iterations)."
 
 library(patchwork)
 interactions <- readRDS(here::here("output", "importances_mvds.rds"))
@@ -838,15 +855,15 @@ all2 + plot_annotation(
 )
 ```
 
-@fig-importance3 shows the parameters importances of the third dataset [@bischoff2023vtachy]. The parameter `regime_threshold` still shows a clear importance on the correctness of the FLOSS. @fig-importanceshap4 shows behavior of the parameters on this dataset. Here we still see that the `regime_landmark` keeps a linear behavior, while `window_size` and `regime_threshold` show a mirrored pattern in comparison with the second dataset, nevertheless, `regime_threshold` resemble the pattern seen in the first dataset.
 
-> Dataset 3
+#### Dataset 3
+
+@fig-importance3 shows the parameters importances of the third dataset [@bischoff2023vtachy]. The parameter `regime_threshold` still shows a clear importance on the correctness of the FLOSS. @fig-importanceshap4 shows the behavior of the parameters on this dataset. In this dataset we see that the `regime_landmark` presents a low influence, while `window_size` and `regime_threshold` show a more defined optimal values. The overall shape of @fig-importanceshap4 is compatible with the one of @fig-importanceshap3, which gives us a hint of where the model can be generalized.
+
 
 ```{r fig-importance3, eval=TRUE, echo=FALSE, warning=FALSE, fig.height = 4, fig.width= 15, out.width="100%"}
-#| fig-cap: "Variables importances using three different methods. A) Feature Importance Ranking Measure
-#|  using ICE curves. B) Permutation method. C) SHAP (100 iterations). Line 1 refers to the original
-#|  fit, and line 2 to the re-fit, taking into account the interactions between variables
-#|  (@fig-interaction)."
+#| fig-cap: "Variables importances using three different methods. From left to right: Feature Importance Ranking Measure
+#|  using ICE curves, Permutation method (100x) and SHAP (100 iterations)."
 
 library(patchwork)
 
@@ -958,7 +975,7 @@ all2 + plot_annotation(
 )
 ```
 
-### Visualizing the predictions
+## Visualizing the predictions
 
 In order to the reader visualize how the models behaves in different datasets, we provide an interactive app for each dataset that can be accesses respectively on: <https://franzbischoff.shinyapps.io/FLOSS_land/> , <https://franzbischoff.shinyapps.io/FLOSS_ventricular/> and <https://franzbischoff.shinyapps.io/FLOSS_vtachy/> .
 
@@ -966,7 +983,7 @@ The global assessment of the algorithm is shown in two forms, by recording (aggr
 
 At this point, the grid search tested a total of 23,389 models with resulting (individual) scores from 0.0002 to 1669.83 (Q25: 0.9838, Q50: 1.8093, Q75: 3.3890).
 
-#### By recording
+### By recording
 
 First, we will visualize how the models (in general) performed throughout the individual recordings.
 
@@ -1150,7 +1167,7 @@ scores33 <- scores_stats_vtds |>
   ggplot2::theme_bw()
 ```
 
-```{r fig-global, eval=TRUE, cache=FALSE, echo=FALSE, warning=FALSE, fig.height=6, fig.width=10, out.width="100%"}
+```{r fig-global, eval=TRUE, cache=TRUE, echo=FALSE, warning=FALSE, fig.height=6, fig.width=10, out.width="100%"}
 #| fig-cap: "Violin plot showing the distribution of the FLOSS score achieved by all tested models by
 #|  recording.  The left half shows the recordings that were difficult to predict, whereas the right half shows
 #|  the recordings that had better predictions. The recordings are sorted (left-right) by the median
@@ -1312,15 +1329,15 @@ wrap_plots(plots, ncol = 1) + plot_annotation(
 )
 ```
 
-#### By model
+### By model
 
-@fig-globalmodel shows the distribution of the FLOSS score of the 10% worst (left side) and 10% best models across the recordings (right side). The bluish color highlights the models with SD below 3 and IQR below 1.
+@fig-globalmodel shows the distribution of the FLOSS score of the 10% worst (left side) and 10% best models across the recordings (right side). The bluish color highlights the models with IQR below 10.
 
 ```{r fig-globalmodel, eval=TRUE, echo=FALSE, fig.height=5, fig.width=10, out.width="100%"}
 #| fig-cap: "Violin plot showing the distribution of the FLOSS score achieved by
-#| the worst (left) and the best (right) models in the inner ressample.
-#| The models are sorted descending (left-right) by the median score.
-#| The bluish colors highlights models with an IQR below 10."
+#|  the worst (left) and the best (right) models in the inner ressample.
+#|  The models are sorted descending (left-right) by the median score.
+#|  The bluish colors highlights models with an IQR below 10."
 
 library(patchwork)
 
@@ -1371,7 +1388,7 @@ worst_models_scores <- scores_stats_model |>
   ggplot2::labs(subtitle = "Ordered by Median", colour = "IQR < 10", x = "Model ID", y = "Score distribution") +
   ggplot2::scale_color_manual(values = c("#f2706d", "#3ec5c7")) +
   ggplot2::scale_y_continuous(
-    limits = c(0, 110),
+    # limits = c(0, 110),
     oob = scales::oob_keep
     # expand = c(0.1, 0.05, 0.1, -0.1)
   )
@@ -1412,22 +1429,24 @@ worst_models_scores + best_models_scores + plot_layout(guides = "collect") +
   )
 ```
 
-@fig-bestmodels the performance of the six best models. They are ordered from left to right, from the worst record to the best record. The top model is the one with the lowest mean across the scores. The red line indicates the median score. The scores above 3 are squished in the plot and colored according to the scale in the legend.
+@fig-bestmodels the performance of the three best models. They are ordered from left to right, from the worst record to the best record. The top model is the one with the lowest median across the scores. The red line indicates the median score. The scores above 10 are squished in the plot and colored according to the scale in the legend.
 
-```{r fig-bestmodels, eval=TRUE, echo=FALSE, fig.height=22, fig.width=18, out.width="100%"}
-#| fig-cap: "Performances of the best 6 models across all inner resample of recordings.
+```{r fig-bestmodels, eval=TRUE, echo=FALSE, fig.height=11, fig.width=18, out.width="100%"}
+#| fig-cap: "Performances of the best 3 models across all inner resample of recordings.
 #|  The recordings are ordered by score, from the worst to the best.
 #|  Each plot shows one model, starting from the best one.
 #|  The red line indicates the median score of the model.
 #|  The gray line limits the zero-score region. The plot is limited on the \"y\" axis, and the scores above this
 #|  limit are shown in color."
 
+library(patchwork)
+
 best_models <- scores_stats_model |>
-  dplyr::filter(mean < quantile(mean, 0.1)) |>
-  dplyr::arrange(mean, sd) |>
+  dplyr::filter(median < quantile(median, 0.1)) |>
+  dplyr::arrange(median) |>
   dplyr::pull(id_text) |>
   unique()
-best_models <- best_models[1:6]
+best_models <- best_models[1:3]
 
 plots <- list()
 for (i in seq_len(length(best_models))) {
@@ -1438,11 +1457,11 @@ for (i in seq_len(length(best_models))) {
     # ggplot2::geom_hline(ggplot2::aes(yintercept = mean), colour = "blue") +
     ggplot2::geom_hline(ggplot2::aes(yintercept = 0), colour = "gray50") +
     ggplot2::scale_y_continuous(
-      limits = c(0, 3),
+      limits = c(0, 10),
       oob = scales::oob_squish,
       expand = c(0.1, 0.05, 0.1, -0.1)
     ) +
-    ggplot2::scale_color_gradientn(colors = c("#ffd500db", "#ff8800", "#ff5e00", "#ff0000"), limits = c(3.1, 100)) +
+    ggplot2::scale_color_gradientn(colors = c("#ffd500db", "#ff8800", "#ff5e00", "#ff0000"), limits = c(10.1, 100)) +
     ggplot2::theme_bw(base_size = 15) +
     ggplot2::theme(axis.text.x = ggplot2::element_text(size = 9, angle = 90, vjust = 0.5, hjust = 1)) +
     ggplot2::labs(
@@ -1454,13 +1473,165 @@ for (i in seq_len(length(best_models))) {
 }
 
 wrap_plots(plots, ncol = 1, guides = "collect") + plot_annotation(
-  title = "Performances of the 6 best models",
-  theme = ggplot2::theme_bw()
+  title = "Performances of the 3 best models",
+  theme = ggplot2::theme_bw() + ggplot2::theme(
+    plot.title = ggplot2::element_text(size = 20)
+  )
 )
 
 ```
 
-#### The Holdout
+```{r fig-bestmodels3, eval=TRUE, echo=FALSE, fig.height=11, fig.width=18, out.width="100%"}
+#| fig-cap: "Performances of the best 3 models across all inner resample of recordings.
+#|  The recordings are ordered by score, from the worst to the best.
+#|  Each plot shows one model, starting from the best one.
+#|  The red line indicates the median score of the model.
+#|  The gray line limits the zero-score region. The plot is limited on the \"y\" axis, and the scores above this
+#|  limit are shown in color."
+
+library(patchwork)
+
+if (file.exists(here("output", "scores_stats_model_3.rds"))) {
+  scores_stats_model_mvds <- readRDS(here("output", "scores_stats_model_3.rds"))
+} else {
+  predictors_names_mvds <- c("regime_threshold", "window_size", "regime_landmark")
+  scores_stats_model_mvds <- all_scores_mvds |>
+    dplyr::group_by(across(all_of(predictors_names_mvds))) |>
+    dplyr::mutate(model = glue::glue("{window_size}_{regime_threshold}_{regime_landmark}")) |>
+    dplyr::reframe(
+      record = record,
+      model = model,
+      score = score, min = min(score), q25 = quantile(score, 0.25),
+      median = quantile(score, 0.5), q75 = quantile(score, 0.75),
+      iqr = q75 - q25,
+      mean = mean(score), max = max(score),
+      sd = sd(score)
+    )
+  saveRDS(scores_stats_model_mvds, file = here::here("output", "scores_stats_model_3.rds"))
+}
+
+scores_stats_model_mvds$id <- (sprintf("%04d", (as.numeric(as.factor(scores_stats_model_mvds$model)))))
+scores_stats_model_mvds$id_text <- (sprintf("Model_%04d", (as.numeric(as.factor(scores_stats_model_mvds$model)))))
+scores_stats_model_mvds$record <- (sprintf("%02d", (as.numeric(factor(scores_stats_model_mvds$record, labels = levels(records_factors_mvds))))))
+scores_stats_model_mvds <- scores_stats_model_mvds |> dplyr::select(-model)
+
+
+best_models_mvds <- scores_stats_model_mvds |>
+  dplyr::filter(median < quantile(median, 0.1)) |>
+  dplyr::arrange(median) |>
+  dplyr::pull(id_text) |>
+  unique()
+best_models_mvds <- best_models_mvds[1:3]
+
+plots <- list()
+for (i in seq_len(length(best_models_mvds))) {
+  dd <- scores_stats_model_mvds |> dplyr::filter(id_text == best_models_mvds[i])
+  plots[[i]] <- ggplot2::ggplot(dd, ggplot2::aes(x = reorder(record, -score), y = score, colour = score)) +
+    ggplot2::geom_point(size = 2) +
+    ggplot2::geom_hline(ggplot2::aes(yintercept = median), colour = "red") +
+    # ggplot2::geom_hline(ggplot2::aes(yintercept = mean), colour = "blue") +
+    ggplot2::geom_hline(ggplot2::aes(yintercept = 0), colour = "gray50") +
+    ggplot2::scale_y_continuous(
+      limits = c(0, 10),
+      oob = scales::oob_squish,
+      expand = c(0.1, 0.05, 0.1, -0.1)
+    ) +
+    ggplot2::scale_color_gradientn(colors = c("#ffd500db", "#ff8800", "#ff5e00", "#ff0000"), limits = c(10.1, 100)) +
+    ggplot2::theme_bw(base_size = 15) +
+    ggplot2::theme(axis.text.x = ggplot2::element_text(size = 9, angle = 90, vjust = 0.5, hjust = 1)) +
+    ggplot2::labs(
+      title = best_models_mvds[i],
+      colour = "Score out\nof bounds",
+      x = ifelse(i == length(best_models_mvds), "Record ID", ""),
+      y = ggplot2::element_blank()
+    )
+}
+
+wrap_plots(plots, ncol = 1, guides = "collect") + plot_annotation(
+  title = "Performances of the 3 best models",
+  theme = ggplot2::theme_bw() + ggplot2::theme(
+    plot.title = ggplot2::element_text(size = 20)
+  )
+)
+
+```
+
+```{r fig-bestmodels4, eval=TRUE, echo=FALSE, fig.height=11, fig.width=18, out.width="100%"}
+#| fig-cap: "Performances of the best 3 models across all inner resample of recordings.
+#|  The recordings are ordered by score, from the worst to the best.
+#|  Each plot shows one model, starting from the best one.
+#|  The red line indicates the median score of the model.
+#|  The gray line limits the zero-score region. The plot is limited on the \"y\" axis, and the scores above this
+#|  limit are shown in color."
+
+library(patchwork)
+
+if (file.exists(here("output", "scores_stats_model_4.rds"))) {
+  scores_stats_model_vtds <- readRDS(here("output", "scores_stats_model_4.rds"))
+} else {
+  predictors_names_vtds <- c("regime_threshold", "window_size", "regime_landmark")
+  scores_stats_model_vtds <- all_scores_vtds |>
+    dplyr::group_by(across(all_of(predictors_names_vtds))) |>
+    dplyr::mutate(model = glue::glue("{window_size}_{regime_threshold}_{regime_landmark}")) |>
+    dplyr::reframe(
+      record = record,
+      model = model,
+      score = score, min = min(score), q25 = quantile(score, 0.25),
+      median = quantile(score, 0.5), q75 = quantile(score, 0.75),
+      iqr = q75 - q25,
+      mean = mean(score), max = max(score),
+      sd = sd(score)
+    )
+  saveRDS(scores_stats_model_vtds, file = here::here("output", "scores_stats_model_4.rds"))
+}
+
+scores_stats_model_vtds$id <- (sprintf("%04d", (as.numeric(as.factor(scores_stats_model_vtds$model)))))
+scores_stats_model_vtds$id_text <- (sprintf("Model_%04d", (as.numeric(as.factor(scores_stats_model_vtds$model)))))
+scores_stats_model_vtds$record <- (sprintf("%02d", (as.numeric(factor(scores_stats_model_vtds$record, labels = levels(records_factors_vtds))))))
+scores_stats_model_vtds <- scores_stats_model_vtds |> dplyr::select(-model)
+
+
+best_models_vtds <- scores_stats_model_vtds |>
+  dplyr::filter(median < quantile(median, 0.1)) |>
+  dplyr::arrange(median) |>
+  dplyr::pull(id_text) |>
+  unique()
+best_models_vtds <- best_models_vtds[1:3]
+
+plots <- list()
+for (i in seq_len(length(best_models_vtds))) {
+  dd <- scores_stats_model_vtds |> dplyr::filter(id_text == best_models_vtds[i])
+  plots[[i]] <- ggplot2::ggplot(dd, ggplot2::aes(x = reorder(record, -score), y = score, colour = score)) +
+    ggplot2::geom_point(size = 2) +
+    ggplot2::geom_hline(ggplot2::aes(yintercept = median), colour = "red") +
+    # ggplot2::geom_hline(ggplot2::aes(yintercept = mean), colour = "blue") +
+    ggplot2::geom_hline(ggplot2::aes(yintercept = 0), colour = "gray50") +
+    ggplot2::scale_y_continuous(
+      limits = c(0, 10),
+      oob = scales::oob_squish,
+      expand = c(0.1, 0.05, 0.1, -0.1)
+    ) +
+    ggplot2::scale_color_gradientn(colors = c("#ffd500db", "#ff8800", "#ff5e00", "#ff0000"), limits = c(10.1, 100)) +
+    ggplot2::theme_bw(base_size = 15) +
+    ggplot2::theme(axis.text.x = ggplot2::element_text(size = 9, angle = 90, vjust = 0.5, hjust = 1)) +
+    ggplot2::labs(
+      title = best_models_vtds[i],
+      colour = "Score out\nof bounds",
+      x = ifelse(i == length(best_models_vtds), "Record ID", ""),
+      y = ggplot2::element_blank()
+    )
+}
+
+wrap_plots(plots, ncol = 1, guides = "collect") + plot_annotation(
+  title = "Performances of the 3 best models",
+  theme = ggplot2::theme_bw() + ggplot2::theme(
+    plot.title = ggplot2::element_text(size = 20)
+  )
+)
+
+```
+
+### The Holdout
 
 Finally, @tbl-bestparam shows a summary of the best five models across all the inner resample (cross-validation). The column `mean` shows the average score, and column `std_err` shows the standard error of the mean. The column `holdout` shows the final score of this model on the holdout set (outer resample).
 
