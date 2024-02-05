@@ -9,7 +9,7 @@ indent: true
 reference-location: document
 citation-location: document
 execute:
-  cache: true
+  cache: false
 format:
   html:
     theme:
@@ -78,9 +78,8 @@ source(here::here("scripts", "common", "score_floss.R"))
 source(here::here("scripts", "helpers", "plot_fluss.R"))
 
 
-mdplyr <- function(data, libs = NULL, vars = NULL) {
-  # conflicts_prefer(testthat::matches)
-  cluster <- multidplyr::new_cluster(parallelly::availableCores())
+mdplyr <- function(data, libs = NULL, vars = NULL, nworkers = parallelly::availableCores()) {
+  cluster <- multidplyr::new_cluster(nworkers)
   for (i in libs) {
     multidplyr::cluster_library(cluster, i)
   }
@@ -417,7 +416,7 @@ In order to explore the interactions, we chose to refit the model adding the fir
 
 library(patchwork)
 
-interactions <- readRDS(here::here("output", "importances_lmk.rds"))
+interactions <- readRDS(here::here("output", "importances_lmk_prnew.rds"))
 importance_firm <- interactions$importance_firm
 importance_perm <- interactions$importance_perm
 importance_shap <- interactions$importance_shap
@@ -425,7 +424,7 @@ shap_html_test <- interactions$shap_html_test
 shap_fastshap_all_test <- interactions$shap_fastshap_all_test
 interactions <- interactions$interactions
 
-interactions2 <- readRDS(here::here("output", "importances2_lmk.rds"))
+interactions2 <- readRDS(here::here("output", "importances2_lmk_prnew.rds"))
 importance_firm2 <- interactions2$importance_firm2
 importance_perm2 <- interactions2$importance_perm2
 importance_shap2 <- interactions2$importance_shap2
@@ -615,16 +614,17 @@ all + plot_annotation(
 library(dplyr)
 library(patchwork)
 
-trained_model <- readRDS(here::here("output", "dbarts_fitted_lmk.rds"))
+trained_model <- readRDS(here::here("output", "dbarts_fitted_lmk_prnew.rds"))
 train_data <- trained_model$training_data
 testing_data <- trained_model$testing_data
 predictors_names <- c("time_constraint", "regime_threshold", "mp_threshold", "window_size", "regime_landmark")
+predictors_names_int <- c(predictors_names, "int_tc_rt", "int_rt_rl")
 outcome_name <- "mean"
 
 testing_data2 <- testing_data |>
   dplyr::mutate(
-    int_tc_rl = time_constraint * regime_landmark,
     int_tc_rt = time_constraint * regime_threshold,
+    int_rt_rl = regime_threshold * regime_landmark,
     .before = mean
   )
 
@@ -751,7 +751,7 @@ From this first dataset's results, we can infer that the most interesting parame
 #|  using ICE curves, Permutation method (100x) and SHAP (100 iterations)."
 
 library(patchwork)
-interactions <- readRDS(here::here("output", "importances_mvds.rds"))
+interactions <- readRDS(here::here("output", "importances_mvds_prnew.rds"))
 importance_firm <- interactions$importance_firm
 importance_perm <- interactions$importance_perm
 importance_shap <- interactions$importance_shap
@@ -827,9 +827,12 @@ all + plot_annotation(
 
 ```{r fig-importanceshap3, eval=TRUE, echo=FALSE, message=FALSE, fig.height = 6, fig.width= 10, out.width="100%"}
 #| fig.cap: "This shows the effect each variable has on the FLOSS score."
-trained_model <- readRDS(here("output", "dbarts_fitted_mvds.rds"))
-testing_data <- trained_model$testing_data
-int <- readRDS(here("output", "importances_mvds.rds"))
+trained_model <- readRDS(here::here("output", "dbarts_fitted_mvds_prnew.rds"))
+testing_data <- trained_model$testing_data |>
+  dplyr::filter(
+    window_size <= 150
+  )
+int <- readRDS(here::here("output", "importances_mvds_prnew.rds"))
 shap_fastshap_all_test <- int$shap_fastshap_all_test
 predictors_names <- c("regime_threshold", "window_size", "regime_landmark")
 outcome_name <- "mean"
@@ -867,7 +870,7 @@ all2 + plot_annotation(
 
 library(patchwork)
 
-interactions <- readRDS(here::here("output", "importances_vtds.rds"))
+interactions <- readRDS(here::here("output", "importances_vtds_prnew.rds"))
 importance_firm <- interactions$importance_firm
 importance_perm <- interactions$importance_perm
 importance_shap <- interactions$importance_shap
@@ -943,13 +946,16 @@ all + plot_annotation(
 
 ```{r fig-importanceshap4, eval=TRUE, echo=FALSE, message=FALSE, fig.height = 6, fig.width= 10, out.width="100%"}
 #| fig.cap: "This shows the effect each variable has on the FLOSS score."
-int <- readRDS(here("output", "importances_vtds.rds"))
+int <- readRDS(here::here("output", "importances_vtds_prnew.rds"))
 
 ckeep <- class(int$shap_fastshap_all_test)
 shap_fastshap_all_test <- int$shap_fastshap_all_test
 class(shap_fastshap_all_test) <- ckeep
-trained_model <- readRDS(here("output", "dbarts_fitted_vtds.rds"))
-testing_data <- trained_model$testing_data
+trained_model <- readRDS(here::here("output", "dbarts_fitted_vtds_prnew.rds"))
+testing_data <- trained_model$testing_data |>
+  dplyr::filter(
+    window_size <= 150
+  )
 
 predictors_names <- c("regime_threshold", "window_size", "regime_landmark")
 outcome_name <- "mean"
@@ -981,84 +987,112 @@ In order to the reader visualize how the models behaves in different datasets, w
 
 The global assessment of the algorithm is shown in two forms, by recording (aggregating the performance of all tested models) and by model (aggregating the performance over the recordings of the datasets).
 
-At this point, the grid search tested a total of 23,389 models with resulting (individual) scores from 0.0002 to 1669.83 (Q25: 0.9838, Q50: 1.8093, Q75: 3.3890).
-
 ### By recording
 
 First, we will visualize how the models (in general) performed throughout the individual recordings.
 
-@fig-global shows a violin plot of equal areas clipped to the minimum value. The blue color indicates the recordings with a small IQR (interquartile range) of model scores. We see on the left half 10% of the recordings with the worst minimum score, and on the right half, 10% of the recordings with the best minimum score.
+@fig-global shows a violin plot of equal areas of the FLOSS score across all tested models, by recording.
+The left side of the plot shows the recordings that were difficult to predict. The right side of the plot
+shows the recordings that had better predictions across the models.
 
-Next, we will visualize some of these predictions to understand why some recordings were difficult to segment. For us to have a simple baseline: a recording with just one regime change, and the model predicts exactly one regime change, but far from the truth, the score will be roughly 1.
+
+The blue color indicates the recordings with a small IQR (interquartile range) of model scores. TODO: explain the figure.
 
 ```{r scores, eval=TRUE, echo=FALSE}
-all_scores <- readRDS(here::here("output", "regime_outputs_lmk.rds"))
 
+predictors_names <- c("time_constraint", "regime_threshold", "mp_threshold", "window_size", "regime_landmark")
+predictors_names_int <- c(predictors_names, "int_tc_rt", "int_rt_rl")
+outcome_name <- "mean"
+
+all_scores <- readRDS(here::here("output", "regime_outputs_lmk_prnew.rds"))
+
+#     int_tc_rt = time_constraint * regime_threshold,
+#     int_rt_rl = regime_threshold * regime_landmark,
+
+## 2nd and 3rd datasets
 predictors_names2 <- c("regime_threshold", "window_size", "regime_landmark")
 outcome_name <- "mean"
-all_fitted_mvds <- readRDS(here::here("output", "regime_outputs_mvds.rds"))
-all_scores_mvds <- all_fitted_mvds |>
-  tidyr::unnest(.predictions) |>
-  dplyr::filter(regime_landmark < 10) |>
-  dplyr::select(
-    id, rep, .sizes, .id,
-    all_of(predictors_names2),
-    .config, .pred, truth
-  ) |>
-  dplyr::rename(fold = id, size = .sizes, record = .id, model = .config, pred = .pred) |>
-  dplyr::distinct(rep, record, across(all_of(predictors_names2)), .keep_all = TRUE) |>
-  dplyr::mutate(truth = clean_truth(truth, size), pred = clean_pred(pred)) |>
-  dplyr::mutate(score = score_regimes_weighted(truth, pred, 250, 10))
 
-all_fitted_vtds <- readRDS(here::here("output", "regime_outputs_vtds.rds"))
-all_scores_vtds <- all_fitted_vtds |>
+## read the 2nd dataset
+all_fitted_mvds <- readRDS(here::here("output", "regime_outputs_mvds.rds"))
+
+##
+# - extract predictions
+# - keep only the recordings with a landmark < 10
+# - select the columns of interest
+# - rename the columns
+# - remove duplicates if any
+all_scores_pre <- all_fitted_mvds |>
   tidyr::unnest(.predictions) |>
   dplyr::filter(regime_landmark < 10) |>
   dplyr::select(
     id, rep, .sizes, .id,
-    all_of(predictors_names2),
+    dplyr::all_of(predictors_names2),
     .config, .pred, truth
   ) |>
   dplyr::rename(fold = id, size = .sizes, record = .id, model = .config, pred = .pred) |>
-  dplyr::distinct(rep, record, across(all_of(predictors_names2)), .keep_all = TRUE) |>
-  dplyr::mutate(truth = clean_truth(truth, size), pred = clean_pred(pred)) |>
-  dplyr::mutate(score = score_regimes_weighted(truth, pred, 250, 10))
+  dplyr::distinct(rep, record, dplyr::across(dplyr::all_of(predictors_names2)), .keep_all = TRUE)
+
+## enforce the correct data types
+all_scores_pre$regime_threshold <- round(all_scores_pre$regime_threshold, 2)
+all_scores_pre$regime_landmark <- round(all_scores_pre$regime_landmark, 1)
+all_scores_pre$window_size <- as.integer(all_scores_pre$window_size)
+
+##
+# - clean the truth and predictions
+# - calculate the score
+# - collect the results (since we are using a parallel backend)
+# - invert the score, so the lower the better
+all_scores_mvds <- all_scores_pre |>
+  mdplyr(vars = c(
+    "clean_truth", "clean_pred", "score_pr"
+  ), nworkers = 2) |>
+  dplyr::mutate(truth = clean_truth(truth, size), pred = clean_pred(pred, 200, TRUE)) |>
+  dplyr::mutate(score = score_pr(truth, pred, 250, 10, 4)) |>
+  dplyr::collect()
+all_scores_mvds$score <- 1 - all_scores_mvds$score
+
+## read the 3nd dataset
+all_fitted_vtds <- readRDS(here::here("output", "regime_outputs_vtds.rds"))
+
+##
+# - extract predictions
+# - keep only the recordings with a landmark < 10
+# - select the columns of interest
+# - rename the columns
+# - remove duplicates if any
+all_scores_pre <- all_fitted_vtds |>
+  tidyr::unnest(.predictions) |>
+  dplyr::filter(regime_landmark < 10) |>
+  dplyr::select(
+    id, rep, .sizes, .id,
+    dplyr::all_of(predictors_names2),
+    .config, .pred, truth
+  ) |>
+  dplyr::rename(fold = id, size = .sizes, record = .id, model = .config, pred = .pred) |>
+  dplyr::distinct(rep, record, dplyr::across(dplyr::all_of(predictors_names2)), .keep_all = TRUE)
+
+## enforce the correct data types
+all_scores_pre$regime_threshold <- round(all_scores_pre$regime_threshold, 2)
+all_scores_pre$regime_landmark <- round(all_scores_pre$regime_landmark, 1)
+all_scores_pre$window_size <- as.integer(all_scores_pre$window_size)
+
+##
+# - clean the truth and predictions
+# - calculate the score
+# - collect the results (since we are using a parallel backend)
+# - invert the score, so the lower the better
+all_scores_vtds <- all_scores_pre |>
+  mdplyr(vars = c(
+    "clean_truth", "clean_pred", "score_pr"
+  ), nworkers = 2) |>
+  dplyr::mutate(truth = clean_truth(truth, size), pred = clean_pred(pred, 200, TRUE)) |>
+  dplyr::mutate(score = score_pr(truth, pred, 250, 10, 4)) |>
+  dplyr::collect()
+all_scores_vtds$score <- 1 - all_scores_vtds$score
 
 ```
 
-Based on your description and the plots:
-
-In the top left plot for window_size, the color gradient indicates that as the window_size increases, the corresponding regime_threshold generally increases as well, moving from purple to yellow. This suggests a correlation between a larger window_size and a higher regime_threshold. The downward trend in Shapley values with increasing window_size implies that larger windows tend to improve the model's performance.
-
-In the top right plot for regime_landmark, the dots are also colored based on regime_threshold. It seems that there is no clear pattern or gradient, which suggests that the regime_landmark does not have a strong interaction with regime_threshold in terms of affecting the Shapley value.
-
-The bottom plot for regime_threshold uses window_size for coloring, from purple (low window_size) to yellow (high window_size). This plot shows that lower regime_threshold values tend to have higher (worse) Shapley values, but as regime_threshold increases, the performance improves, indicated by lower Shapley values. The color gradient shows that this effect is consistent across different window_size values.
-
-Considering that low Shapley values indicate better performance, we can conclude that a model with a larger window_size and a higher regime_threshold tends to perform better. The effect of regime_landmark is less clear, as the Shapley values do not show a significant change across its range.
-
-------------------------------------------------------------------------
-
-The new image you uploaded, Figure 12, appears to be similar to the previous one, showing variable importance using three different methods, while Figure 13 seems to show the effect of these variables on the FLOSS score, akin to the lower plots in the previous image.
-
-In Figure 12:
-
-Feature Importance Ranking Measure using ICE curves (A): As with the previous figure, this plot shows regime_threshold having a higher importance than window_size and regime_landmark, with a similar pattern of variable importance. This reaffirms the previous interpretation that regime_threshold is a more influential variable in the model.
-
-Permutation-based method (B): The importance of regime_threshold is again confirmed with a large error bar, indicating variability in the measurement. Window_size and regime_landmark show relatively lower importance and variability.
-
-SHAP (C): This plot also indicates that regime_threshold has the highest importance, much greater than window_size and regime_landmark.
-
-For Figure 13, the effects on the FLOSS score are as follows:
-
-Shapley value vs. window_size: The left plot shows a nonlinear relationship, where the Shapley value decreases as window_size increases up to a point and then increases. This suggests that there is an optimal range of window_size values that contribute positively to the model's performance.
-
-Shapley value vs. regime_landmark: The middle plot displays a broad distribution of Shapley values across the range of regime_landmark values, with no clear trend. The coloring by regime_threshold doesn't indicate a consistent pattern, which suggests that regime_landmark does not have a strong or consistent effect on the model's performance, or that its effect is highly dependent on the combination of regime_landmark with regime_threshold.
-
-Shapley value vs. regime_threshold: The right plot shows a clear negative correlation between regime_threshold and the Shapley value, meaning that as regime_threshold increases, the model's performance improves significantly. The color gradient shows that this effect is consistent across different window_size values.
-
-Overall, these plots confirm the previous interpretations: regime_threshold is a significant predictor of the model's performance, with a clear and consistent effect. The window_size seems to have an optimal range for performance, and regime_landmark does not exhibit a clear influence on the model's predictions. The interaction between regime_threshold and window_size appears to be an important factor in determining the model's performance.
-
-""In conclusion, regime_threshold remains the most important variable influencing the model's performance, with a higher threshold generally leading to better results (lower Shapley values). The effect of window_size on Shapley values is now positive, suggesting a negative impact on model performance as window_size increases, which is a contrast to the previous figure's implication. Regime_landmark still shows no clear pattern, indicating a minimal or inconsistent effect on the FLOSS score.""
 
 ```{r scores-plot-ds1, eval=TRUE, echo=FALSE}
 # new stats
@@ -1076,7 +1110,7 @@ records_factors <- forcats::as_factor(scores_stats$record)
 scores_stats$id <- sprintf("%03d", (as.numeric(records_factors)))
 
 scores1 <- scores_stats |>
-  dplyr::mutate(low_iqr = q75 - q25 < 10) |>
+  dplyr::mutate(low_iqr = q75 - q25 < 0.5) |>
   dplyr::filter(median > quantile(median, 0.9)) |>
   ggplot2::ggplot(ggplot2::aes(
     x = reorder(id, -median),
@@ -1087,7 +1121,7 @@ scores1 <- scores_stats |>
 
 
 scores11 <- scores_stats |>
-  dplyr::mutate(low_iqr = q75 - q25 < 10) |>
+  dplyr::mutate(low_iqr = q75 - q25 < 0.5) |>
   dplyr::filter(median < quantile(median, 0.1)) |>
   ggplot2::ggplot(ggplot2::aes(
     x = reorder(id, -median),
@@ -1112,7 +1146,7 @@ records_factors_mvds <- forcats::as_factor(scores_stats_mvds$record)
 scores_stats_mvds$id <- sprintf("%02d", (as.numeric(records_factors_mvds)))
 
 scores2 <- scores_stats_mvds |>
-  dplyr::mutate(low_iqr = q75 - q25 < 10) |>
+  dplyr::mutate(low_iqr = q75 - q25 < 0.5) |>
   dplyr::filter(median > quantile(median, 0.5)) |>
   ggplot2::ggplot(ggplot2::aes(
     x = reorder(id, -median),
@@ -1122,7 +1156,7 @@ scores2 <- scores_stats_mvds |>
   ggplot2::theme_bw()
 
 scores22 <- scores_stats_mvds |>
-  dplyr::mutate(low_iqr = q75 - q25 < 10) |>
+  dplyr::mutate(low_iqr = q75 - q25 < 0.5) |>
   dplyr::filter(median <= quantile(median, 0.5)) |>
   ggplot2::ggplot(ggplot2::aes(
     x = reorder(id, -median),
@@ -1147,7 +1181,7 @@ records_factors_vtds <- forcats::as_factor(scores_stats_vtds$record)
 scores_stats_vtds$id <- sprintf("%02d", (as.numeric(records_factors_vtds)))
 
 scores3 <- scores_stats_vtds |>
-  dplyr::mutate(low_iqr = q75 - q25 < 10) |>
+  dplyr::mutate(low_iqr = q75 - q25 < 0.5) |>
   dplyr::filter(median > quantile(median, 0.5)) |>
   ggplot2::ggplot(ggplot2::aes(
     x = reorder(id, -median),
@@ -1157,7 +1191,7 @@ scores3 <- scores_stats_vtds |>
   ggplot2::theme_bw()
 
 scores33 <- scores_stats_vtds |>
-  dplyr::mutate(low_iqr = q75 - q25 < 10) |>
+  dplyr::mutate(low_iqr = q75 - q25 < 0.5) |>
   dplyr::filter(median <= quantile(median, 0.5)) |>
   ggplot2::ggplot(ggplot2::aes(
     x = reorder(id, -median),
@@ -1167,71 +1201,58 @@ scores33 <- scores_stats_vtds |>
   ggplot2::theme_bw()
 ```
 
-```{r fig-global, eval=TRUE, cache=TRUE, echo=FALSE, warning=FALSE, fig.height=6, fig.width=10, out.width="100%"}
+```{r fig-global, eval=TRUE, echo=FALSE, warning=FALSE, fig.height=6, fig.width=10, out.width="100%"}
 #| fig-cap: "Violin plot showing the distribution of the FLOSS score achieved by all tested models by
-#|  recording.  The left half shows the recordings that were difficult to predict, whereas the right half shows
+#|  recording.  The left side shows the recordings that were difficult to predict, whereas the right side shows
 #|  the recordings that had better predictions. The recordings are sorted (left-right) by the median
 #|  score in descending order.  The blue color highlights recordings where models had an IQR variability
-#|  of less than 10.  As a simple approximation, if we have a recording with just one regime change, and the
-#|  the model predicts exactly one change, about 10s far from the truth, the score will be roughly 1."
+#|  of less than 10."
 
 library(patchwork)
 
-sc1 <- ggplot2::ggplot_build(scores1)$plot$data$score
-sc2 <- ggplot2::ggplot_build(scores2)$plot$data$score
-sc3 <- ggplot2::ggplot_build(scores3)$plot$data$score
-sc11 <- ggplot2::ggplot_build(scores11)$plot$data$score
-sc22 <- ggplot2::ggplot_build(scores22)$plot$data$score
-sc33 <- ggplot2::ggplot_build(scores33)$plot$data$score
-max_y <- floor(max(sc1))
-max_y2 <- floor(max(sc2, sc3, sc11, sc22, sc33))
+# sc1 <- ggplot2::ggplot_build(scores1)$plot$data$score
+# sc2 <- ggplot2::ggplot_build(scores2)$plot$data$score
+# sc3 <- ggplot2::ggplot_build(scores3)$plot$data$score
+# sc11 <- ggplot2::ggplot_build(scores11)$plot$data$score
+# sc22 <- ggplot2::ggplot_build(scores22)$plot$data$score
+# sc33 <- ggplot2::ggplot_build(scores33)$plot$data$score
+# max_y <- floor(max(sc1))
+# max_y2 <- floor(max(sc2, sc3, sc11, sc22, sc33))
 
 scores1 <- scores1 + ggplot2::scale_y_continuous(
-  limits = c(0, max_y2)
-  # oob = scales::oob_squish,
-  # expand = c(0.1, 0.05, 0.1, -0.1)
+  limits = c(0, 1)
 ) + ggplot2::labs(
-  title = "Worst*", x = ggplot2::element_blank(), y = "Score distribution"
+  title = "Worst", x = ggplot2::element_blank(), y = "Score distribution"
 ) + ggplot2::guides(colour = "none")
 
 scores11 <- scores11 + ggplot2::scale_y_continuous(
-  limits = c(0, max_y2)
-  # oob = scales::oob_squish,
-  # expand = c(0.1, 0.05, 0.1, -0.1)
+  limits = c(0, 1)
 ) + ggplot2::labs(
-  title = "Best", x = ggplot2::element_blank(), y = ggplot2::element_blank(), colour = "IQR < 10"
+  title = "Best", x = ggplot2::element_blank(), y = ggplot2::element_blank(), colour = "IQR < 0.5"
 )
 
 scores2 <- scores2 + ggplot2::scale_y_continuous(
-  limits = c(0, max_y2)
-  # oob = scales::oob_squish,
-  # expand = c(0.1, 0.05, 0.1, -0.1)
+  limits = c(0, 1)
 ) + ggplot2::labs(
   title = "Worst", x = ggplot2::element_blank(), y = "Score distribution"
 ) + ggplot2::guides(colour = "none")
 
 scores22 <- scores22 + ggplot2::scale_y_continuous(
-  limits = c(0, max_y2)
-  # oob = scales::oob_squish,
-  # expand = c(0.1, 0.05, 0.1, -0.1)
+  limits = c(0, 1)
 ) + ggplot2::labs(
-  title = "Best", x = ggplot2::element_blank(), y = ggplot2::element_blank(), colour = "IQR < 10"
+  title = "Best", x = ggplot2::element_blank(), y = ggplot2::element_blank(), colour = "IQR < 0.5"
 )
 
 scores3 <- scores3 + ggplot2::scale_y_continuous(
-  limits = c(0, max_y2)
-  # oob = scales::oob_squish,
-  # expand = c(0.1, 0.05, 0.1, -0.1)
+  limits = c(0, 1)
 ) + ggplot2::labs(
   title = "Worst", x = ggplot2::element_blank(), y = "Score distribution"
 ) + ggplot2::guides(colour = "none")
 
 scores33 <- scores33 + ggplot2::scale_y_continuous(
-  limits = c(0, max_y2)
-  # oob = scales::oob_squish,
-  # expand = c(0.1, 0.05, 0.1, -0.1)
+  limits = c(0, 1)
 ) + ggplot2::labs(
-  title = "Best", x = ggplot2::element_blank(), y = ggplot2::element_blank(), colour = "IQR < 10"
+  title = "Best", x = ggplot2::element_blank(), y = ggplot2::element_blank(), colour = "IQR < 0.5"
 )
 
 first_title <- glue::glue("First dataset; {floor(mean(scores_stats$size))} models by recording")
@@ -1245,7 +1266,6 @@ all <- wrap_elements(full = (scores1 | scores11) + plot_annotation(title = first
   wrap_elements(full = (scores3 | scores33) + plot_annotation(title = third_title))
 all + plot_layout(guides = "collect") + plot_annotation(
   title = "Scores distribution by recording",
-  caption = glue::glue("* Violin plot was clipped to {max_y2} for better visualization. The worst score reaches about {max_y}."),
   theme = ggplot2::theme_bw() + ggplot2::theme(
     plot.title = ggplot2::element_text(size = 20)
   )
@@ -1253,7 +1273,7 @@ all + plot_layout(guides = "collect") + plot_annotation(
 
 ```
 
-
+Next, we will visualize some of these predictions to understand why some recordings were difficult to segment.
 
 @fig-worst shows the best effort in predicting the most complex recordings. One information not declared before is that if the model does not predict any change, it will put a mark on the zero position. On the other side, the truth markers positioned at the beginning and the end of the recording were removed, as these locations lack information and do not represent a streaming setting.
 
@@ -1263,11 +1283,11 @@ Notice that there are recordings with a significant duration and few regime chan
 #| fig-cap: "Prediction of the \"difficult\" recordings of the first dataset (red is the truth, blue are the predictions)."
 
 worst <- scores_stats |>
-  dplyr::filter(median > quantile(median, 0.9)) |>
+  dplyr::filter(mean > quantile(mean, 0.7)) |>
   dplyr::group_by(record) |>
   dplyr::slice_head() |>
   dplyr::ungroup() |>
-  dplyr::arrange(desc(median)) |>
+  dplyr::arrange(desc(mean)) |>
   dplyr::slice_head(n = 5) |>
   dplyr::pull(record)
 # "data_25_1.par"   "data_32_12.par"  "data_68_2.par"   "data_104_19.par" "data_39_1.par"
@@ -1299,11 +1319,11 @@ wrap_plots(plots, ncol = 1) + plot_annotation(
 #| fig-cap: "Prediction of the \"easiest\" recordings of the first dataset (red is the truth, blue are the predictions)."
 
 bests <- scores_stats |>
-  dplyr::filter(median < quantile(median, 0.1)) |>
+  dplyr::filter(mean < quantile(mean, 0.3)) |>
   dplyr::group_by(record) |>
   dplyr::slice_head() |>
   dplyr::ungroup() |>
-  dplyr::arrange(desc(median)) |>
+  dplyr::arrange(desc(mean)) |>
   dplyr::slice_tail(n = 5) |>
   dplyr::pull(record)
 # "data_68_23.par"  "data_96_19.par"  "data_104_17.par" "data_64_8.par"   "data_92_22.par"
@@ -1335,9 +1355,10 @@ wrap_plots(plots, ncol = 1) + plot_annotation(
 
 ```{r fig-globalmodel, eval=TRUE, echo=FALSE, fig.height=5, fig.width=10, out.width="100%"}
 #| fig-cap: "Violin plot showing the distribution of the FLOSS score achieved by
-#|  the worst (left) and the best (right) models in the inner ressample.
-#|  The models are sorted descending (left-right) by the median score.
-#|  The bluish colors highlights models with an IQR below 10."
+#|  the worst (left) and the best (right) models in the inner resample.
+#|  The worst models are sorted descending (left-right) by the mean score since median are all 1.0.
+#|  The best models are sorted descending (left-right) by the median score.
+#|  The bluish colors highlights models with an IQR below 0.5 (FIXME)."
 
 library(patchwork)
 
@@ -1347,10 +1368,11 @@ if (file.exists(here::here("output", "scores_stats_model_rep.rds"))) {
   predictors_names <- c("time_constraint", "regime_threshold", "mp_threshold", "window_size", "regime_landmark")
   scores_stats_model <- all_scores |>
     dplyr::group_by(dplyr::across(dplyr::all_of(predictors_names))) |>
-    dplyr::mutate(model = glue::glue("{window_size}_{time_constraint}_{mp_threshold}_{regime_threshold}_{regime_landmark}")) |>
     dplyr::reframe(
       record = record,
-      model = model,
+      model = dplyr::cur_group_id(),
+      pred_num = sapply(pred, length),
+      truth_num = sapply(truth, length),
       score = score, min = min(score), q25 = quantile(score, 0.25),
       median = quantile(score, 0.5), q75 = quantile(score, 0.75),
       iqr = q75 - q25,
@@ -1360,14 +1382,16 @@ if (file.exists(here::here("output", "scores_stats_model_rep.rds"))) {
   saveRDS(scores_stats_model, file = here::here("output", "scores_stats_model_rep.rds"), compress = "xz")
 }
 
+records_factors <- unique(sort(scores_stats_model$record))
 
-scores_stats_model$id <- (sprintf("%05d", (as.numeric(as.factor(scores_stats_model$model)))))
-scores_stats_model$id_text <- (sprintf("Model_%05d", (as.numeric(as.factor(scores_stats_model$model)))))
-scores_stats_model$record <- (sprintf("%03d", (as.numeric(factor(scores_stats_model$record, labels = levels(records_factors))))))
+scores_stats_model$id <- (sprintf("%05d", scores_stats_model$model))
+scores_stats_model$id_text <- (sprintf("Model_%05d", scores_stats_model$model))
+scores_stats_model$record <- (sprintf("%03d", (as.numeric(factor(scores_stats_model$record, labels = records_factors)))))
 scores_stats_model <- scores_stats_model |> dplyr::select(-model)
 
+# worst models with at least one good result
 worst_models <- scores_stats_model |>
-  dplyr::filter(median > quantile(median, 0.9)) |>
+  dplyr::filter(min < 0.01) |>
   dplyr::group_by(id) |>
   dplyr::slice_head() |>
   dplyr::ungroup() |>
@@ -1375,49 +1399,49 @@ worst_models <- scores_stats_model |>
   dplyr::slice_head(n = 5) |>
   dplyr::pull(id)
 
+# ordered by mean, since medians are all 1
 worst_models_scores <- scores_stats_model |>
-  dplyr::mutate(low_iqr = factor(q75 - q25 < 10)) |>
+  dplyr::mutate(low_iqr = factor(q75 - q25 < 0.5)) |>
   dplyr::filter(id %in% worst_models) |>
   ggplot2::ggplot(ggplot2::aes(
-    x = reorder(id, -median),
+    x = reorder(id, -mean), # median is all 1, so we use mean to order
     y = score, colour = low_iqr
   )) +
-  ggplot2::geom_violin(scale = "width") +
+  ggplot2::geom_violin(scale = "area") +
   ggplot2::theme_bw() +
   ggplot2::theme(axis.text.x = ggplot2::element_text(size = 8, angle = 90, vjust = 0.5, hjust = 1)) +
-  ggplot2::labs(subtitle = "Ordered by Median", colour = "IQR < 10", x = "Model ID", y = "Score distribution") +
+  ggplot2::labs(subtitle = "Ordered by Mean", colour = "IQR < 0.5", x = "Model ID", y = "Score distribution") +
   ggplot2::scale_color_manual(values = c("#f2706d", "#3ec5c7")) +
   ggplot2::scale_y_continuous(
-    # limits = c(0, 110),
-    oob = scales::oob_keep
-    # expand = c(0.1, 0.05, 0.1, -0.1)
+    limits = c(0, 1),
+    expand = c(0.1, 0.05, 0.1, -0.1)
   )
 
+# best models with best medians, untied by best iqrs
 best_models <- scores_stats_model |>
   dplyr::filter(median < quantile(median, 0.1)) |>
   dplyr::group_by(id) |>
   dplyr::slice_head() |>
   dplyr::ungroup() |>
-  dplyr::arrange(desc(median)) |>
+  dplyr::arrange(desc(median), desc(iqr)) |>
   dplyr::slice_tail(n = 5) |>
   dplyr::pull(id)
 
 best_models_scores <- scores_stats_model |>
-  dplyr::mutate(low_iqr = factor(q75 - q25 < 10)) |>
+  dplyr::mutate(low_iqr = factor(q75 - q25 < 0.5)) |>
   dplyr::filter(id %in% best_models) |>
   ggplot2::ggplot(ggplot2::aes(
-    x = reorder(id, -median),
+    x = reorder(reorder(id, -iqr), -median), # ordered by median, untied by iqr
     y = score, colour = low_iqr
   )) +
-  ggplot2::geom_violin(scale = "width") +
+  ggplot2::geom_violin(scale = "area") +
   ggplot2::theme_bw() +
   ggplot2::theme(axis.text.x = ggplot2::element_text(size = 8, angle = 90, vjust = 0.5, hjust = 1)) +
-  ggplot2::labs(subtitle = "Ordered by Median", colour = "IQR < 10", x = "Model ID", y = "Score distribution") +
+  ggplot2::labs(subtitle = "Ordered by Median", colour = "IQR < 0.5", x = "Model ID", y = "Score distribution") +
   ggplot2::scale_color_manual(values = c("#3ec5c7", "#f2706d")) +
   ggplot2::scale_y_continuous(
-    limits = c(0, 110)
-    # oob = scales::oob_squish,
-    # expand = c(0.1, 0.05, 0.1, -0.1)
+    limits = c(0, 1),
+    expand = c(0.1, 0.05, 0.1, -0.1)
   )
 
 worst_models_scores + best_models_scores + plot_layout(guides = "collect") +
@@ -1429,44 +1453,41 @@ worst_models_scores + best_models_scores + plot_layout(guides = "collect") +
   )
 ```
 
-@fig-bestmodels the performance of the three best models. They are ordered from left to right, from the worst record to the best record. The top model is the one with the lowest median across the scores. The red line indicates the median score. The scores above 10 are squished in the plot and colored according to the scale in the legend.
+@fig-bestmodels the performance of the three best models. The top model is the one with the lowest median across the scores. The red line indicates the median score.
+The records are ordered from left to right, from the worst score to the best score.
 
 ```{r fig-bestmodels, eval=TRUE, echo=FALSE, fig.height=11, fig.width=18, out.width="100%"}
 #| fig-cap: "Performances of the best 3 models across all inner resample of recordings.
-#|  The recordings are ordered by score, from the worst to the best.
-#|  Each plot shows one model, starting from the best one.
+#|  From top to bottom, the first model is the one with the highest median across the scores.
 #|  The red line indicates the median score of the model.
-#|  The gray line limits the zero-score region. The plot is limited on the \"y\" axis, and the scores above this
-#|  limit are shown in color."
+#|  The recordings are ordered left to right by score, from the worst to the best."
 
 library(patchwork)
 
 best_models <- scores_stats_model |>
   dplyr::filter(median < quantile(median, 0.1)) |>
-  dplyr::arrange(median) |>
-  dplyr::pull(id_text) |>
-  unique()
-best_models <- best_models[1:3]
+  dplyr::group_by(id) |>
+  dplyr::slice_head() |>
+  dplyr::ungroup() |>
+  dplyr::arrange(desc(median), desc(iqr)) |>
+  dplyr::slice_tail(n = 3) |>
+  dplyr::pull(id_text)
 
 plots <- list()
 for (i in seq_len(length(best_models))) {
   dd <- scores_stats_model |> dplyr::filter(id_text == best_models[i])
-  plots[[i]] <- ggplot2::ggplot(dd, ggplot2::aes(x = reorder(record, -score), y = score, colour = score)) +
+  plots[[i]] <- ggplot2::ggplot(dd, ggplot2::aes(x = reorder(record, -score), y = score)) +
     ggplot2::geom_point(size = 2) +
     ggplot2::geom_hline(ggplot2::aes(yintercept = median), colour = "red") +
-    # ggplot2::geom_hline(ggplot2::aes(yintercept = mean), colour = "blue") +
     ggplot2::geom_hline(ggplot2::aes(yintercept = 0), colour = "gray50") +
     ggplot2::scale_y_continuous(
-      limits = c(0, 10),
-      oob = scales::oob_squish,
-      expand = c(0.1, 0.05, 0.1, -0.1)
+      limits = c(0, 1),
+      expand = c(0.1, 0.05, 0.2, -0.1)
     ) +
-    ggplot2::scale_color_gradientn(colors = c("#ffd500db", "#ff8800", "#ff5e00", "#ff0000"), limits = c(10.1, 100)) +
     ggplot2::theme_bw(base_size = 15) +
     ggplot2::theme(axis.text.x = ggplot2::element_text(size = 9, angle = 90, vjust = 0.5, hjust = 1)) +
     ggplot2::labs(
       title = best_models[i],
-      colour = "Score out\nof bounds",
       x = ifelse(i == length(best_models), "Record ID", ""),
       y = ggplot2::element_blank()
     )
@@ -1483,65 +1504,61 @@ wrap_plots(plots, ncol = 1, guides = "collect") + plot_annotation(
 
 ```{r fig-bestmodels3, eval=TRUE, echo=FALSE, fig.height=11, fig.width=18, out.width="100%"}
 #| fig-cap: "Performances of the best 3 models across all inner resample of recordings.
-#|  The recordings are ordered by score, from the worst to the best.
-#|  Each plot shows one model, starting from the best one.
+#|  From top to bottom, the first model is the one with the lowest median across the scores.
 #|  The red line indicates the median score of the model.
-#|  The gray line limits the zero-score region. The plot is limited on the \"y\" axis, and the scores above this
-#|  limit are shown in color."
+#|  The recordings are ordered left to right by score, from the worst to the best."
 
 library(patchwork)
 
-if (file.exists(here("output", "scores_stats_model_3.rds"))) {
-  scores_stats_model_mvds <- readRDS(here("output", "scores_stats_model_3.rds"))
+if (file.exists(here::here("output", "scores_stats_model_3.rds"))) {
+  scores_stats_model_mvds <- readRDS(here::here("output", "scores_stats_model_3.rds"))
 } else {
   predictors_names_mvds <- c("regime_threshold", "window_size", "regime_landmark")
   scores_stats_model_mvds <- all_scores_mvds |>
-    dplyr::group_by(across(all_of(predictors_names_mvds))) |>
-    dplyr::mutate(model = glue::glue("{window_size}_{regime_threshold}_{regime_landmark}")) |>
+    dplyr::group_by(dplyr::across(dplyr::all_of(predictors_names_mvds))) |>
     dplyr::reframe(
       record = record,
-      model = model,
+      model = dplyr::cur_group_id(),
       score = score, min = min(score), q25 = quantile(score, 0.25),
       median = quantile(score, 0.5), q75 = quantile(score, 0.75),
       iqr = q75 - q25,
       mean = mean(score), max = max(score),
       sd = sd(score)
     )
-  saveRDS(scores_stats_model_mvds, file = here::here("output", "scores_stats_model_3.rds"))
+  saveRDS(scores_stats_model_mvds, file = here::here("output", "scores_stats_model_3.rds"), compress = "xz")
 }
 
-scores_stats_model_mvds$id <- (sprintf("%04d", (as.numeric(as.factor(scores_stats_model_mvds$model)))))
-scores_stats_model_mvds$id_text <- (sprintf("Model_%04d", (as.numeric(as.factor(scores_stats_model_mvds$model)))))
-scores_stats_model_mvds$record <- (sprintf("%02d", (as.numeric(factor(scores_stats_model_mvds$record, labels = levels(records_factors_mvds))))))
-scores_stats_model_mvds <- scores_stats_model_mvds |> dplyr::select(-model)
+records_factors_mvds <- unique(sort(scores_stats_model_mvds$record))
 
+scores_stats_model_mvds$id <- (sprintf("%04d", scores_stats_model_mvds$model))
+scores_stats_model_mvds$id_text <- (sprintf("Model_%04d", scores_stats_model_mvds$model))
+scores_stats_model_mvds$record <- (sprintf("%02d", (as.numeric(factor(scores_stats_model_mvds$record, labels = records_factors_mvds)))))
+scores_stats_model_mvds <- scores_stats_model_mvds |> dplyr::select(-model)
 
 best_models_mvds <- scores_stats_model_mvds |>
   dplyr::filter(median < quantile(median, 0.1)) |>
-  dplyr::arrange(median) |>
-  dplyr::pull(id_text) |>
-  unique()
-best_models_mvds <- best_models_mvds[1:3]
+  dplyr::group_by(id) |>
+  dplyr::slice_head() |>
+  dplyr::ungroup() |>
+  dplyr::arrange(desc(median), desc(iqr)) |>
+  dplyr::slice_tail(n = 3) |>
+  dplyr::pull(id_text)
 
 plots <- list()
 for (i in seq_len(length(best_models_mvds))) {
   dd <- scores_stats_model_mvds |> dplyr::filter(id_text == best_models_mvds[i])
-  plots[[i]] <- ggplot2::ggplot(dd, ggplot2::aes(x = reorder(record, -score), y = score, colour = score)) +
+  plots[[i]] <- ggplot2::ggplot(dd, ggplot2::aes(x = reorder(record, -score), y = score)) +
     ggplot2::geom_point(size = 2) +
     ggplot2::geom_hline(ggplot2::aes(yintercept = median), colour = "red") +
-    # ggplot2::geom_hline(ggplot2::aes(yintercept = mean), colour = "blue") +
     ggplot2::geom_hline(ggplot2::aes(yintercept = 0), colour = "gray50") +
     ggplot2::scale_y_continuous(
-      limits = c(0, 10),
-      oob = scales::oob_squish,
-      expand = c(0.1, 0.05, 0.1, -0.1)
+      limits = c(0, 1),
+      expand = c(0.1, 0.05, 0.2, -0.1)
     ) +
-    ggplot2::scale_color_gradientn(colors = c("#ffd500db", "#ff8800", "#ff5e00", "#ff0000"), limits = c(10.1, 100)) +
     ggplot2::theme_bw(base_size = 15) +
     ggplot2::theme(axis.text.x = ggplot2::element_text(size = 9, angle = 90, vjust = 0.5, hjust = 1)) +
     ggplot2::labs(
       title = best_models_mvds[i],
-      colour = "Score out\nof bounds",
       x = ifelse(i == length(best_models_mvds), "Record ID", ""),
       y = ggplot2::element_blank()
     )
@@ -1558,65 +1575,61 @@ wrap_plots(plots, ncol = 1, guides = "collect") + plot_annotation(
 
 ```{r fig-bestmodels4, eval=TRUE, echo=FALSE, fig.height=11, fig.width=18, out.width="100%"}
 #| fig-cap: "Performances of the best 3 models across all inner resample of recordings.
-#|  The recordings are ordered by score, from the worst to the best.
-#|  Each plot shows one model, starting from the best one.
+#|  From top to bottom, the first model is the one with the lowest median across the scores.
 #|  The red line indicates the median score of the model.
-#|  The gray line limits the zero-score region. The plot is limited on the \"y\" axis, and the scores above this
-#|  limit are shown in color."
+#|  The recordings are ordered left to right by score, from the worst to the best."
 
 library(patchwork)
 
-if (file.exists(here("output", "scores_stats_model_4.rds"))) {
-  scores_stats_model_vtds <- readRDS(here("output", "scores_stats_model_4.rds"))
+if (file.exists(here::here("output", "scores_stats_model_4.rds"))) {
+  scores_stats_model_vtds <- readRDS(here::here("output", "scores_stats_model_4.rds"))
 } else {
   predictors_names_vtds <- c("regime_threshold", "window_size", "regime_landmark")
   scores_stats_model_vtds <- all_scores_vtds |>
-    dplyr::group_by(across(all_of(predictors_names_vtds))) |>
-    dplyr::mutate(model = glue::glue("{window_size}_{regime_threshold}_{regime_landmark}")) |>
+    dplyr::group_by(dplyr::across(dplyr::all_of(predictors_names_vtds))) |>
     dplyr::reframe(
       record = record,
-      model = model,
+      model = dplyr::cur_group_id(),
       score = score, min = min(score), q25 = quantile(score, 0.25),
       median = quantile(score, 0.5), q75 = quantile(score, 0.75),
       iqr = q75 - q25,
       mean = mean(score), max = max(score),
       sd = sd(score)
     )
-  saveRDS(scores_stats_model_vtds, file = here::here("output", "scores_stats_model_4.rds"))
+  saveRDS(scores_stats_model_vtds, file = here::here("output", "scores_stats_model_4.rds"), compress = "xz")
 }
 
-scores_stats_model_vtds$id <- (sprintf("%04d", (as.numeric(as.factor(scores_stats_model_vtds$model)))))
-scores_stats_model_vtds$id_text <- (sprintf("Model_%04d", (as.numeric(as.factor(scores_stats_model_vtds$model)))))
-scores_stats_model_vtds$record <- (sprintf("%02d", (as.numeric(factor(scores_stats_model_vtds$record, labels = levels(records_factors_vtds))))))
-scores_stats_model_vtds <- scores_stats_model_vtds |> dplyr::select(-model)
+records_factors_vtds <- unique(sort(scores_stats_model_vtds$record))
 
+scores_stats_model_vtds$id <- (sprintf("%04d", scores_stats_model_vtds$model))
+scores_stats_model_vtds$id_text <- (sprintf("Model_%04d", scores_stats_model_vtds$model))
+scores_stats_model_vtds$record <- (sprintf("%02d", (as.numeric(factor(scores_stats_model_vtds$record, labels = records_factors_vtds)))))
+scores_stats_model_vtds <- scores_stats_model_vtds |> dplyr::select(-model)
 
 best_models_vtds <- scores_stats_model_vtds |>
   dplyr::filter(median < quantile(median, 0.1)) |>
-  dplyr::arrange(median) |>
-  dplyr::pull(id_text) |>
-  unique()
-best_models_vtds <- best_models_vtds[1:3]
+  dplyr::group_by(id) |>
+  dplyr::slice_head() |>
+  dplyr::ungroup() |>
+  dplyr::arrange(desc(median), desc(iqr)) |>
+  dplyr::slice_tail(n = 3) |>
+  dplyr::pull(id_text)
 
 plots <- list()
 for (i in seq_len(length(best_models_vtds))) {
   dd <- scores_stats_model_vtds |> dplyr::filter(id_text == best_models_vtds[i])
-  plots[[i]] <- ggplot2::ggplot(dd, ggplot2::aes(x = reorder(record, -score), y = score, colour = score)) +
+  plots[[i]] <- ggplot2::ggplot(dd, ggplot2::aes(x = reorder(record, -score), y = score)) +
     ggplot2::geom_point(size = 2) +
     ggplot2::geom_hline(ggplot2::aes(yintercept = median), colour = "red") +
-    # ggplot2::geom_hline(ggplot2::aes(yintercept = mean), colour = "blue") +
     ggplot2::geom_hline(ggplot2::aes(yintercept = 0), colour = "gray50") +
     ggplot2::scale_y_continuous(
-      limits = c(0, 10),
-      oob = scales::oob_squish,
-      expand = c(0.1, 0.05, 0.1, -0.1)
+      limits = c(0, 1),
+      expand = c(0.1, 0.05, 0.2, -0.1)
     ) +
-    ggplot2::scale_color_gradientn(colors = c("#ffd500db", "#ff8800", "#ff5e00", "#ff0000"), limits = c(10.1, 100)) +
     ggplot2::theme_bw(base_size = 15) +
     ggplot2::theme(axis.text.x = ggplot2::element_text(size = 9, angle = 90, vjust = 0.5, hjust = 1)) +
     ggplot2::labs(
       title = best_models_vtds[i],
-      colour = "Score out\nof bounds",
       x = ifelse(i == length(best_models_vtds), "Record ID", ""),
       y = ggplot2::element_blank()
     )

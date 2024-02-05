@@ -939,14 +939,17 @@ reshape_ds_by_truefalse <- function(dataset, signals, all_signals = TRUE) {
   return(data)
 }
 
-
-clean_pred <- function(pred, threshold = 100) {
+clean_pred <- function(pred, threshold = 100, last = TRUE) {
   if (is.list(pred)) {
     pred <- purrr::map(pred, clean_pred, threshold)
     return(pred)
   }
   pred <- sort(pred)
-  mask <- c(diff(pred) > threshold, TRUE)
+  if (isTRUE(last)) {
+    mask <- c(diff(pred) > threshold, TRUE)
+  } else {
+    mask <- c(TRUE, diff(pred) > threshold)
+  }
   pred[mask]
 }
 
@@ -959,6 +962,10 @@ clean_truth <- function(truth, data_size = NULL, first = TRUE, last = TRUE) {
     truth <- purrr::map2(truth, data_size, clean_truth, first, last)
     return(truth)
   }
+
+  truth <- sort(truth)
+  mask <- c(diff(truth) > 15, TRUE)
+  truth <- truth[mask]
 
   if (isTRUE(first) && (truth[1] <= 10)) {
     if (length(truth) == 1) {

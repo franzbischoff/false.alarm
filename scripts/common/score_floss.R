@@ -323,6 +323,91 @@ score_regimes_weighted <- function(gtruth, reported, data_freq = 250, window = 1
   return(score)
 }
 
+#' Calculate the F-score for precision and recall
+#'
+#' This function calculates the F-score, a measure of precision and recall, for a given ground truth and reported values.
+#'
+#' @param gtruth A numeric vector or list of numeric vectors representing the ground truth values.
+#' @param reported A numeric vector or list of numeric vectors representing the reported values.
+#' @param freq The frequency of the data points (default is 250).
+#' @param window The window size in seconds for matching the reported values with the ground truth values (default is 10).
+#' @param beta The beta value for balancing precision and recall (default is 4).
+#'
+#' @details This is a simpler version of the previous function. The recall delta is computed from freq * window.
+#' Delta is then used to compute the overlap window between the ground truth and reported values. Half of delta is used
+#' for earlier predictions, and full delta is used for later predictions. If this window contains several
+#' reported values, just one is accounted as a true positive. If this window contains no reported values,
+#' it is accounted as a false negative. The precision is computed as the number of using the previous tp and fn
+#' while the false positives are computed as the number of reported values (all of them) that are not in any window.
+#'
+#' The parameter `beta` is used to balance precision and recall. The default value is 4, which means that recall is
+#' 4 times more important than precision. If `beta` is 1, then precision and recall are equally important.
+#' If `beta` is 0.25, then precision is 4 times more important than recall.
+#'
+#' @return The F-score, a value between 0 and 1, representing the balance between precision and recall.
+#'
+#' @examples
+#' # Calculate the F-score for a single ground truth and reported values
+#' score_pr(c(1000, 2000, 3000, 4000), c(2000, 3000, 4000, 5000), window = 1) # 0.75
+#'
+#' # Calculate the F-score for multiple ground truth and reported values
+#' score_pr(list(c(1000, 2000, 3000, 4000), c(5000, 6000, 7000, 8000)),
+#'   list(c(2000, 3000, 4000, 5000), c(6000, 7000, 8000, 9000)),
+#'   window = 1
+#' ) # 0.75 0.75
+#'
+#' @references
+#' For more information on the F-score, see: https://en.wikipedia.org/wiki/F1_score
+#'
+
+score_pr <- function(gtruth, reported, freq = 250, window = 10, beta = 4) {
+  # This is a list of scores
+  if (is.list(gtruth) && length(gtruth) > 1) {
+    # Proceed if same size
+    if (length(gtruth) == length(reported)) {
+      scores <- purrr::pmap_dbl(list(gtruth, reported, freq, window, beta), score_pr)
+    }
+
+    return(scores)
+  } else {
+    if (is.list(gtruth) && length(gtruth) == 1) {
+      gtruth <- gtruth[[1]]
+    }
+    if (is.list(reported) && length(reported) == 1) {
+      reported <- reported[[1]]
+    }
+  }
+
+  delta <- freq * window
+  gtruth <- gtruth[gtruth > 1]
+  reported <- reported[reported > 1]
+
+  if (length(gtruth) == 0 || length(reported) == 0) {
+    return(0)
+  }
+
+  win <- list()
+  tp <- 0
+  fn <- 0
+  for (i in seq_len(length(gtruth))) {
+    win[[i]] <- seq.int(gtruth[i] - floor(delta / 2), gtruth[i] + floor(delta))
+    if (any(reported %in% win[[i]])) {
+      tp <- tp + 1
+    } else {
+      fn <- fn + 1
+    }
+  }
+
+  win <- unique(unlist(win))
+  win <- win[win > 1]
+
+  fp <- sum(!(reported %in% win))
+
+  fscore <- ((1 + beta^2) * tp) / ((1 + beta^2) * tp + beta^2 * fn + fp + .Machine$double.eps)
+
+  return(fscore)
+}
+
 # window parameter will be used to compute if the prediction is a true positive or not
 # the limit for event detection is 10 seconds, so a prediction flagged after 10 seconds
 # from the gold truth is a true positive. For balance, we will use half of this window
@@ -348,11 +433,11 @@ score_regimes_precision <- function(gtruth, reported, data_size, window = 1000, 
       checkmate::assert(length(gtruth) == length(data_size))
     }
 
-    future::plan(future.callr::callr)
+    # future::plan(future.callr::callr)
 
     # Proceed if same size
     if (length(gtruth) == length(reported)) {
-      scores <- furrr::future_pmap(list(gtruth, reported, data_size, window, delta_prec, delta_rec, gamma, alpha, beta), score_regimes_precision)
+      scores <- purrr::pmap(list(gtruth, reported, data_size, window, delta_prec, delta_rec, gamma, alpha, beta), score_regimes_precision)
     }
 
     # # Proceed if same size
@@ -360,7 +445,7 @@ score_regimes_precision <- function(gtruth, reported, data_size, window = 1000, 
     #   scores <- purrr::pmap(list(gtruth, reported, data_size, window), score_regimes_precision)
     # }
 
-    return(scores)
+    return(unlist(scores))
   } else {
     if (is.list(gtruth) && length(gtruth) == 1) {
       gtruth <- gtruth[[1]]
@@ -374,7 +459,8 @@ score_regimes_precision <- function(gtruth, reported, data_size, window = 1000, 
   reported <- reported[reported > 1]
 
   if (length(gtruth) == 0 || length(reported) == 0) {
-    return(tibble::tibble(precision = 0, recall = 0, f1 = 0))
+    # return(tibble::tibble(precision = 0, recall = 0, f1 = 0))
+    return(0)
   }
 
   gtruth <- sort(gtruth)
@@ -384,8 +470,8 @@ score_regimes_precision <- function(gtruth, reported, data_size, window = 1000, 
   recall <- score_recall(gtruth, reported, floor(window / 2), delta = delta_rec, gamma = gamma, alpha = alpha)
   fscore <- f_score(precision, recall, beta)
 
-  return(tibble::tibble(precision = precision, recall = recall, fscore = fscore))
-  # return(f1)
+  # return(tibble::tibble(precision = precision, recall = recall, fscore = fscore))
+  return(fscore)
 }
 
 
