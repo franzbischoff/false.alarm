@@ -9,7 +9,7 @@ indent: true
 reference-location: document
 citation-location: document
 execute:
-  cache: false
+  cache: true
 format:
   html:
     theme:
@@ -256,7 +256,9 @@ Using the `tidymodels` framework [@tidymodels2020] and the `targets` framework (
 
 Althought the CinC/Physionet Challenge 2015 [@Clifford2015] has triggered the motivation for this work, the dataset provided by them is not suitable for showing the potential of the FLOSS algorithm.
 
-In order to "overcharge" the FLOSS algorithm, we have chosen a dataset that contains several patients with paroxysmal atrial fibrillation events. The dataset used for working with the FLOSS algorithm was the "Paroxysmal Atrial Fibrillation Events Detection from Dynamic ECG Recordings: The 4th China Physiological Signal Challenge 2021" hosted by Zenodo [@bischoff2021afib] under the same license as Physionet.
+In order to "overcharge (FIXME)" the FLOSS algorithm, we have chosen a dataset that contains several patients with paroxysmal atrial fibrillation events. The dataset used for working with the FLOSS algorithm was the "Paroxysmal Atrial Fibrillation Events Detection from Dynamic ECG Recordings: The 4th China Physiological Signal Challenge 2021" hosted by Zenodo [@bischoff2021afib] under the same license as Physionet.
+
+All datasets were resampled to 250Hz, if not already, and only one ECG lead was used, mostly the lead II.
 
 ### Atrial Fibrillation
 
@@ -335,8 +337,8 @@ $$
 E( score ) &= \alpha + time\_constraint\\
 &\quad + mp\_threshold + window\_size\\
 &\quad + regime\_threshold + regime\_landmark\\
-&\quad + \left(time\_constraint \times regime\_landmark\right)\\
-&\quad + \left(time\_constraint \times regime\_threshold\right)
+&\quad + \left(time\_constraint \times regime\_threshold\right)\\
+&\quad + \left(regime\_threshold \times regime\_landmark\right)
 \end{aligned}
 $$ {#eq-refitted}
 
@@ -443,7 +445,7 @@ interactions_plot <- ggplot2::ggplot(interactions, ggplot2::aes(
     y = ggplot2::element_blank(),
     x = ggplot2::element_blank()
   ) +
-  ggplot2::ylim(0, 6) +
+  ggplot2::ylim(0, 0.2) +
   ggplot2::theme_bw() +
   ggplot2::theme(legend.position = "none")
 
@@ -458,7 +460,7 @@ interactions2_plot <- ggplot2::ggplot(interactions2, ggplot2::aes(
     y = "Interaction strength",
     x = ggplot2::element_blank()
   ) +
-  ggplot2::ylim(0, 6) +
+  ggplot2::ylim(0, 0.2) +
   ggplot2::theme_bw() +
   ggplot2::theme(legend.position = "none")
 
@@ -495,7 +497,7 @@ importance_firm_plot <- ggplot2::ggplot(importance_firm, ggplot2::aes(
     x = "",
     y = ggplot2::element_blank()
   ) +
-  ggplot2::ylim(0, 9) +
+  ggplot2::ylim(0, 0.2) +
   ggplot2::theme_bw() +
   ggplot2::theme(
     legend.position = "none",
@@ -513,7 +515,7 @@ importance_perm_plot <- ggplot2::ggplot(importance_perm, ggplot2::aes(
     x = "",
     y = ggplot2::element_blank()
   ) +
-  ggplot2::ylim(0, 17) +
+  ggplot2::ylim(0, 35) +
   ggplot2::theme_bw() +
   ggplot2::theme(
     legend.position = "none",
@@ -531,7 +533,7 @@ importance_shap_plot <- ggplot2::ggplot(importance_shap, ggplot2::aes(
     x = "",
     y = ggplot2::element_blank()
   ) +
-  ggplot2::ylim(0, 7.5) +
+  ggplot2::ylim(0, 0.15) +
   ggplot2::theme_bw() +
   ggplot2::theme(
     legend.position = "none",
@@ -548,7 +550,7 @@ importance_firm2_plot <- ggplot2::ggplot(importance_firm2, ggplot2::aes(
     x = "",
     y = "Importance"
   ) +
-  ggplot2::ylim(0, 9) +
+  ggplot2::ylim(0, 0.2) +
   ggplot2::theme_bw() +
   ggplot2::theme(
     legend.position = "none",
@@ -565,7 +567,7 @@ importance_perm2_plot <- ggplot2::ggplot(importance_perm2, ggplot2::aes(
     x = "",
     y = "Importance"
   ) +
-  ggplot2::ylim(0, 17) +
+  ggplot2::ylim(0, 35) +
   ggplot2::theme_bw() +
   ggplot2::theme(
     legend.position = "none",
@@ -582,7 +584,7 @@ importance_shap2_plot <- ggplot2::ggplot(importance_shap2, ggplot2::aes(
     x = "",
     y = "Importance"
   ) +
-  ggplot2::ylim(0, 7.5) +
+  ggplot2::ylim(0, 0.15) +
   ggplot2::theme_bw() +
   ggplot2::theme(
     legend.position = "none",
@@ -609,7 +611,7 @@ all + plot_annotation(
 
 ```{r fig-importanceshap, eval=TRUE, echo=FALSE, message=FALSE, warning=FALSE, fig.height = 6, fig.width= 10, out.width="100%"}
 #| fig-cap: "This shows the effect each variable has on the FLOSS score. This plot doesn't take into account the
-#|  variable interactions.."
+#|  variable interactions."
 
 library(dplyr)
 library(patchwork)
@@ -699,9 +701,9 @@ CCDD
 "
 
 ttdata2 <- sample_testing_data2[, predictors_names]
-base_data <- sample_testing_data2[, outcome_name]$mean
+base_data2 <- sample_testing_data2[, outcome_name]$mean
 
-d1 <- shapviz::shapviz(shap_fastshap_all_test2[, predictors_names], X = ttdata2, baseline = mean(base_data))
+d1 <- shapviz::shapviz(shap_fastshap_all_test2[, predictors_names], X = ttdata2, baseline = mean(base_data2))
 a1 <- shapviz::sv_dependence(d1, "window_size", color_var = "regime_threshold", alpha = 0.05) +
   ggplot2::geom_smooth(method = loess, colour = "#0000ff44", alpha = 0.2) +
   ggplot2::labs(y = ggplot2::element_blank()) +
@@ -769,7 +771,7 @@ importance_firm_plot <- ggplot2::ggplot(importance_firm, ggplot2::aes(
     x = "",
     y = ggplot2::element_blank()
   ) +
-  # ggplot2::ylim(0, 2.2) +
+  ggplot2::ylim(0, 0.25) +
   ggplot2::theme_bw() +
   ggplot2::theme(
     legend.position = "none",
@@ -787,7 +789,7 @@ importance_perm_plot <- ggplot2::ggplot(importance_perm, ggplot2::aes(
     x = "",
     y = ggplot2::element_blank()
   ) +
-  # ggplot2::ylim(3, 20) +
+  ggplot2::ylim(0, 40) +
   ggplot2::theme_bw() +
   ggplot2::theme(
     legend.position = "none",
@@ -805,7 +807,7 @@ importance_shap_plot <- ggplot2::ggplot(importance_shap, ggplot2::aes(
     x = "",
     y = ggplot2::element_blank()
   ) +
-  # ggplot2::ylim(0, 1.5) +
+  ggplot2::ylim(0, 0.2) +
   ggplot2::theme_bw() +
   ggplot2::theme(
     legend.position = "none",
@@ -888,7 +890,7 @@ importance_firm_plot <- ggplot2::ggplot(importance_firm, ggplot2::aes(
     x = "",
     y = ggplot2::element_blank()
   ) +
-  # ggplot2::ylim(0, 2.2) +
+  ggplot2::ylim(0, 0.2) +
   ggplot2::theme_bw() +
   ggplot2::theme(
     legend.position = "none",
@@ -906,7 +908,7 @@ importance_perm_plot <- ggplot2::ggplot(importance_perm, ggplot2::aes(
     x = "",
     y = ggplot2::element_blank()
   ) +
-  # ggplot2::ylim(3, 20) +
+  ggplot2::ylim(0, 25) +
   ggplot2::theme_bw() +
   ggplot2::theme(
     legend.position = "none",
@@ -924,7 +926,7 @@ importance_shap_plot <- ggplot2::ggplot(importance_shap, ggplot2::aes(
     x = "",
     y = ggplot2::element_blank()
   ) +
-  # ggplot2::ylim(0, 1.5) +
+  ggplot2::ylim(0, 0.15) +
   ggplot2::theme_bw() +
   ggplot2::theme(
     legend.position = "none",
@@ -998,7 +1000,7 @@ shows the recordings that had better predictions across the models.
 
 The blue color indicates the recordings with a small IQR (interquartile range) of model scores. TODO: explain the figure.
 
-```{r scores, eval=TRUE, echo=FALSE}
+```{r scores, eval=TRUE, echo=FALSE, cache=TRUE}
 
 predictors_names <- c("time_constraint", "regime_threshold", "mp_threshold", "window_size", "regime_landmark")
 predictors_names_int <- c(predictors_names, "int_tc_rt", "int_rt_rl")
@@ -1104,16 +1106,15 @@ scores_stats <- all_scores |>
     median = quantile(score, 0.5), q75 = quantile(score, 0.75),
     mean = mean(score), max = max(score), size = dplyr::n()
   )
-#
-records_factors <- forcats::as_factor(scores_stats$record)
 
-scores_stats$id <- sprintf("%03d", (as.numeric(records_factors)))
+scores_stats$id <- gsub("data_(\\d+)_(\\d+).par", "\\1_\\2", scores_stats$record)
+# scores_stats$id <- scores_stats$record # sprintf("%03d", (as.numeric(records_factors)))
 
 scores1 <- scores_stats |>
   dplyr::mutate(low_iqr = q75 - q25 < 0.5) |>
-  dplyr::filter(median > quantile(median, 0.9)) |>
+  dplyr::filter(mean > quantile(mean, 0.9)) |>
   ggplot2::ggplot(ggplot2::aes(
-    x = reorder(id, -median),
+    x = reorder(id, -mean),
     y = score, colour = low_iqr
   )) +
   ggplot2::geom_violin(scale = "width") +
@@ -1122,9 +1123,9 @@ scores1 <- scores_stats |>
 
 scores11 <- scores_stats |>
   dplyr::mutate(low_iqr = q75 - q25 < 0.5) |>
-  dplyr::filter(median < quantile(median, 0.1)) |>
+  dplyr::filter(mean < quantile(mean, 0.1)) |>
   ggplot2::ggplot(ggplot2::aes(
-    x = reorder(id, -median),
+    x = reorder(id, -mean),
     y = score, colour = low_iqr
   )) +
   ggplot2::geom_violin(scale = "width") +
@@ -1141,9 +1142,9 @@ scores_stats_mvds <- all_scores_mvds |>
     mean = mean(score), max = max(score), size = dplyr::n()
   )
 
-records_factors_mvds <- forcats::as_factor(scores_stats_mvds$record)
+# records_factors_mvds <- forcats::as_factor(scores_stats_mvds$record)
 
-scores_stats_mvds$id <- sprintf("%02d", (as.numeric(records_factors_mvds)))
+scores_stats_mvds$id <- scores_stats_mvds$record # sprintf("%02d", (as.numeric(records_factors_mvds)))
 
 scores2 <- scores_stats_mvds |>
   dplyr::mutate(low_iqr = q75 - q25 < 0.5) |>
@@ -1176,9 +1177,10 @@ scores_stats_vtds <- all_scores_vtds |>
     mean = mean(score), max = max(score), size = dplyr::n()
   )
 
-records_factors_vtds <- forcats::as_factor(scores_stats_vtds$record)
+# records_factors_vtds <- forcats::as_factor(scores_stats_vtds$record)
 
-scores_stats_vtds$id <- sprintf("%02d", (as.numeric(records_factors_vtds)))
+scores_stats_vtds$id <- gsub("cu(\\d+)", "\\1", scores_stats_vtds$record)
+# scores_stats_vtds$id <- scores_stats_vtds$record # sprintf("%02d", (as.numeric(records_factors_vtds)))
 
 scores3 <- scores_stats_vtds |>
   dplyr::mutate(low_iqr = q75 - q25 < 0.5) |>
@@ -1201,7 +1203,7 @@ scores33 <- scores_stats_vtds |>
   ggplot2::theme_bw()
 ```
 
-```{r fig-global, eval=TRUE, echo=FALSE, warning=FALSE, fig.height=6, fig.width=10, out.width="100%"}
+```{r fig-global, eval=TRUE, echo=FALSE, warning=FALSE, fig.height=6, fig.width=10, out.width="100%", cache=FALSE}
 #| fig-cap: "Violin plot showing the distribution of the FLOSS score achieved by all tested models by
 #|  recording.  The left side shows the recordings that were difficult to predict, whereas the right side shows
 #|  the recordings that had better predictions. The recordings are sorted (left-right) by the median
@@ -1220,42 +1222,42 @@ library(patchwork)
 # max_y2 <- floor(max(sc2, sc3, sc11, sc22, sc33))
 
 scores1 <- scores1 + ggplot2::scale_y_continuous(
-  limits = c(0, 1)
+  # limits = c(0, 1)
 ) + ggplot2::labs(
   title = "Worst", x = ggplot2::element_blank(), y = "Score distribution"
-) + ggplot2::guides(colour = "none")
+) + ggplot2::guides(colour = "none") + ggplot2::theme(axis.text.x = ggplot2::element_text(angle = 45, vjust = 1, hjust = 1))
 
 scores11 <- scores11 + ggplot2::scale_y_continuous(
-  limits = c(0, 1)
+  # limits = c(0, 1)
 ) + ggplot2::labs(
   title = "Best", x = ggplot2::element_blank(), y = ggplot2::element_blank(), colour = "IQR < 0.5"
-)
+) + ggplot2::theme(axis.text.x = ggplot2::element_text(angle = 45, vjust = 1, hjust = 1))
 
 scores2 <- scores2 + ggplot2::scale_y_continuous(
-  limits = c(0, 1)
+  # limits = c(0, 1)
 ) + ggplot2::labs(
   title = "Worst", x = ggplot2::element_blank(), y = "Score distribution"
 ) + ggplot2::guides(colour = "none")
 
 scores22 <- scores22 + ggplot2::scale_y_continuous(
-  limits = c(0, 1)
+  # limits = c(0, 1)
 ) + ggplot2::labs(
   title = "Best", x = ggplot2::element_blank(), y = ggplot2::element_blank(), colour = "IQR < 0.5"
 )
 
 scores3 <- scores3 + ggplot2::scale_y_continuous(
-  limits = c(0, 1)
+  # limits = c(0, 1)
 ) + ggplot2::labs(
   title = "Worst", x = ggplot2::element_blank(), y = "Score distribution"
 ) + ggplot2::guides(colour = "none")
 
 scores33 <- scores33 + ggplot2::scale_y_continuous(
-  limits = c(0, 1)
+  # limits = c(0, 1)
 ) + ggplot2::labs(
   title = "Best", x = ggplot2::element_blank(), y = ggplot2::element_blank(), colour = "IQR < 0.5"
 )
 
-first_title <- glue::glue("First dataset; {floor(mean(scores_stats$size))} models by recording")
+first_title <- glue::glue("First dataseta; {floor(mean(scores_stats$size))} models by recording")
 
 second_title <- glue::glue("Second dataset; {floor(mean(scores_stats_mvds$size))} models by recording")
 
@@ -1382,11 +1384,10 @@ if (file.exists(here::here("output", "scores_stats_model_rep.rds"))) {
   saveRDS(scores_stats_model, file = here::here("output", "scores_stats_model_rep.rds"), compress = "xz")
 }
 
-records_factors <- unique(sort(scores_stats_model$record))
-
 scores_stats_model$id <- (sprintf("%05d", scores_stats_model$model))
 scores_stats_model$id_text <- (sprintf("Model_%05d", scores_stats_model$model))
-scores_stats_model$record <- (sprintf("%03d", (as.numeric(factor(scores_stats_model$record, labels = records_factors)))))
+scores_stats_model$record <- gsub("data_(\\d+)_(\\d+).par", "\\1_\\2", scores_stats_model$record)
+# scores_stats_model$record <- (sprintf("%03d", (as.numeric(factor(scores_stats_model$record, labels = records_factors)))))
 scores_stats_model <- scores_stats_model |> dplyr::select(-model)
 
 # worst models with at least one good result
@@ -1487,7 +1488,7 @@ for (i in seq_len(length(best_models))) {
     ggplot2::theme_bw(base_size = 15) +
     ggplot2::theme(axis.text.x = ggplot2::element_text(size = 9, angle = 90, vjust = 0.5, hjust = 1)) +
     ggplot2::labs(
-      title = best_models[i],
+      title = glue::glue("{best_models[i]} - MP window: {dd$window_size[1]}, MP threshold: {dd$mp_threshold[1]}, Time constraint: {dd$time_constraint[1]}, Regime threshold: {dd$regime_threshold[1]}, Regime landmark: {dd$regime_landmark[1]}"),
       x = ifelse(i == length(best_models), "Record ID", ""),
       y = ggplot2::element_blank()
     )
@@ -1528,11 +1529,11 @@ if (file.exists(here::here("output", "scores_stats_model_3.rds"))) {
   saveRDS(scores_stats_model_mvds, file = here::here("output", "scores_stats_model_3.rds"), compress = "xz")
 }
 
-records_factors_mvds <- unique(sort(scores_stats_model_mvds$record))
+# records_factors_mvds <- unique(sort(scores_stats_model_mvds$record))
 
 scores_stats_model_mvds$id <- (sprintf("%04d", scores_stats_model_mvds$model))
 scores_stats_model_mvds$id_text <- (sprintf("Model_%04d", scores_stats_model_mvds$model))
-scores_stats_model_mvds$record <- (sprintf("%02d", (as.numeric(factor(scores_stats_model_mvds$record, labels = records_factors_mvds)))))
+# scores_stats_model_mvds$record <- (sprintf("%02d", (as.numeric(factor(scores_stats_model_mvds$record, labels = records_factors_mvds)))))
 scores_stats_model_mvds <- scores_stats_model_mvds |> dplyr::select(-model)
 
 best_models_mvds <- scores_stats_model_mvds |>
@@ -1558,7 +1559,7 @@ for (i in seq_len(length(best_models_mvds))) {
     ggplot2::theme_bw(base_size = 15) +
     ggplot2::theme(axis.text.x = ggplot2::element_text(size = 9, angle = 90, vjust = 0.5, hjust = 1)) +
     ggplot2::labs(
-      title = best_models_mvds[i],
+      title = glue::glue("{best_models_mvds[i]} - MP window: {dd$window_size[1]}, Regime threshold: {dd$regime_threshold[1]}, Regime landmark: {dd$regime_landmark[1]}"),
       x = ifelse(i == length(best_models_mvds), "Record ID", ""),
       y = ggplot2::element_blank()
     )
@@ -1603,7 +1604,8 @@ records_factors_vtds <- unique(sort(scores_stats_model_vtds$record))
 
 scores_stats_model_vtds$id <- (sprintf("%04d", scores_stats_model_vtds$model))
 scores_stats_model_vtds$id_text <- (sprintf("Model_%04d", scores_stats_model_vtds$model))
-scores_stats_model_vtds$record <- (sprintf("%02d", (as.numeric(factor(scores_stats_model_vtds$record, labels = records_factors_vtds)))))
+# scores_stats_model_vtds$record <- (sprintf("%02d", (as.numeric(factor(scores_stats_model_vtds$record, labels = records_factors_vtds)))))
+scores_stats_model_vtds$record <- gsub("cu(\\d+)", "\\1", scores_stats_model_vtds$record)
 scores_stats_model_vtds <- scores_stats_model_vtds |> dplyr::select(-model)
 
 best_models_vtds <- scores_stats_model_vtds |>
@@ -1629,7 +1631,7 @@ for (i in seq_len(length(best_models_vtds))) {
     ggplot2::theme_bw(base_size = 15) +
     ggplot2::theme(axis.text.x = ggplot2::element_text(size = 9, angle = 90, vjust = 0.5, hjust = 1)) +
     ggplot2::labs(
-      title = best_models_vtds[i],
+      title = glue::glue("{best_models_vtds[i]} - MP window: {dd$window_size[1]}, Regime threshold: {dd$regime_threshold[1]}, Regime landmark: {dd$regime_landmark[1]}"),
       x = ifelse(i == length(best_models_vtds), "Record ID", ""),
       y = ggplot2::element_blank()
     )
@@ -1645,6 +1647,8 @@ wrap_plots(plots, ncol = 1, guides = "collect") + plot_annotation(
 ```
 
 ### The Holdout
+
+(FIXME new evaluation)
 
 Finally, @tbl-bestparam shows a summary of the best five models across all the inner resample (cross-validation). The column `mean` shows the average score, and column `std_err` shows the standard error of the mean. The column `holdout` shows the final score of this model on the holdout set (outer resample).
 
@@ -1704,3 +1708,4 @@ Implications of the results Challenges faced and potential improvements
 Summary of the article and the potential of integrating it with the classification system discussed in the second article.
 
 Summary of the findings and the potential impacts.
+

@@ -9,7 +9,7 @@
       "command": "echo 'MingW does not support ASAN/UBSAN'",
       "linux": {
         "type": "process",
-        "command": "/bin/Rscript",
+        "command": "Rscript",
         "args": [
           "dev/check_asan.R"
         ]
@@ -76,7 +76,7 @@
       "label": "R: misc: knit and view",
       "command": "C:/Program Files/R/R-4.2.0/bin/x64/Rscript.exe",
       "linux": {
-        "command": "/bin/Rscript"
+        "command": "Rscript"
       },
       "args": [
         "-e",
@@ -102,7 +102,7 @@
       "label": "R: routine: Style project",
       "command": "C:/Program Files/R/R-4.2.0/bin/x64/Rscript.exe",
       "linux": {
-        "command": "/bin/Rscript"
+        "command": "Rscript"
       },
       "args": [
         "-e",
@@ -124,7 +124,7 @@
       "label": "R: targets: gittargets",
       "command": "C:/Program Files/R/R-4.2.0/bin/x64/Rscript.exe",
       "linux": {
-        "command": "/bin/Rscript"
+        "command": "Rscript"
       },
       "args": [
         "dev/gittargets.R"
@@ -145,7 +145,7 @@
       "label": "R: routine: Update codemeta",
       "command": "C:/Program Files/R/R-4.2.0/bin/x64/Rscript.exe",
       "linux": {
-        "command": "/bin/Rscript"
+        "command": "Rscript"
       },
       "args": [
         "-e",
@@ -168,7 +168,7 @@
       "label": "R: routine: Update docs and self install",
       "command": "C:/Program Files/R/R-4.2.0/bin/x64/Rscript.exe",
       "linux": {
-        "command": "/bin/Rscript"
+        "command": "Rscript"
       },
       "args": [
         "-e",
@@ -212,7 +212,7 @@
       "label": "R: routine: Lint project",
       "command": "C:/Program Files/R/R-4.2.0/bin/x64/Rscript.exe",
       "linux": {
-        "command": "/bin/Rscript"
+        "command": "Rscript"
       },
       "args": [
         "-e",
@@ -237,7 +237,7 @@
       "label": "R: routine: Test units",
       "command": "C:/Program Files/R/R-4.2.0/bin/x64/Rscript.exe",
       "linux": {
-        "command": "/bin/Rscript"
+        "command": "Rscript"
       },
       "args": [
         "-e",
@@ -262,7 +262,7 @@
       "label": "R: routine: Update renv and isolate",
       "command": "C:/Program Files/R/R-4.2.0/bin/x64/Rscript.exe",
       "linux": {
-        "command": "/bin/Rscript"
+        "command": "Rscript"
       },
       "args": [
         "-e",
@@ -288,7 +288,7 @@
       "dependsOn": "R: routine: test units",
       "command": "C:/Program Files/R/R-4.2.0/bin/x64/Rscript.exe",
       "linux": {
-        "command": "/bin/Rscript"
+        "command": "Rscript"
       },
       "args": [
         "-e",
@@ -308,7 +308,7 @@
     {
       "type": "process",
       "label": "R: targets: Start watch page",
-      "command": "/bin/Rscript",
+      "command": "Rscript",
       "args": [
         "-e",
         "targets::tar_watch(targets_only = TRUE, exclude = c('.Random.seed', 'var_window_size', 'var_time_constraint'),  seconds = 30, display = 'graph', browse = FALSE, outdated = FALSE, label = c('time', 'branches', 'size'), port = 55444); Sys.sleep(Inf)"
@@ -329,7 +329,7 @@
       "label": "R: targets: zDESTROY targets",
       "command": "C:/Program Files/R/R-4.2.0/bin/x64/Rscript.exe",
       "linux": {
-        "command": "/bin/Rscript"
+        "command": "Rscript"
       },
       "args": [
         "-e",
@@ -354,7 +354,7 @@
       "label": "R: targets: zPRUNE targets",
       "command": "C:/Program Files/R/R-4.2.0/bin/x64/Rscript.exe",
       "linux": {
-        "command": "/bin/Rscript"
+        "command": "Rscript"
       },
       "args": [
         "-e",
@@ -379,7 +379,7 @@
       "label": "R: targets: zPROFILE targets",
       "command": "C:/Program Files/R/R-4.2.0/bin/x64/Rscript.exe",
       "linux": {
-        "command": "/bin/Rscript"
+        "command": "Rscript"
       },
       "args": [
         "-e",
@@ -452,7 +452,7 @@
       "label": "R: workflowr: Render thesisdown",
       "command": "C:/Program Files/R/R-4.2.0/bin/x64/Rscript.exe",
       "linux": {
-        "command": "/bin/Rscript"
+        "command": "Rscript"
       },
       "args": [
         "-e",
@@ -477,7 +477,7 @@
       "label": "R: workflowr: Live-preview thesisdown",
       "command": "C:/Program Files/R/R-4.2.0/bin/x64/Rscript.exe",
       "linux": {
-        "command": "/bin/Rscript"
+        "command": "Rscript"
       },
       "args": [
         "-e",
@@ -502,7 +502,7 @@
       "label": "R: workflowr: Live-preview workflowr",
       "command": "C:/Program Files/R/R-4.2.0/bin/x64/Rscript.exe",
       "linux": {
-        "command": "/bin/Rscript"
+        "command": "Rscript"
       },
       "args": [
         "-e",
@@ -528,7 +528,7 @@
       "label": "R: workflowr: Pre-build workflowr", // Used while editing. Only project .Rprofile is used.
       "command": "C:/Program Files/R/R-4.2.0/bin/x64/Rscript.exe",
       "linux": {
-        "command": "/bin/Rscript"
+        "command": "Rscript"
       },
       "args": [
         "-e",
@@ -549,7 +549,7 @@
       "label": "R: targets: Run main pipeline",
       "command": "C:/Program Files/R/R-4.2.0/bin/x64/Rscript.exe",
       "linux": {
-        "command": "/bin/Rscript"
+        "command": "Rscript"
       },
       "args": [
         "-e",
@@ -574,7 +574,7 @@
       "label": "R: targets: Run classifier pipeline",
       "command": "C:/Program Files/R/R-4.2.0/bin/x64/Rscript.exe",
       "linux": {
-        "command": "/bin/Rscript"
+        "command": "Rscript"
       },
       "args": [
         "-e",
@@ -599,7 +599,7 @@
       "label": "R: targets: Run regime pipeline",
       "command": "C:/Program Files/R/R-4.2.0/bin/x64/Rscript.exe",
       "linux": {
-        "command": "/bin/Rscript"
+        "command": "Rscript"
       },
       "args": [
         "-e",
