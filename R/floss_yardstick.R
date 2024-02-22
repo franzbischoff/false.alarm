@@ -1,4 +1,3 @@
-
 #' @export
 floss_error <- function(data, ...) {
   # cli::cli_alert(c("*" = "floss_error <<- work here"))
@@ -37,15 +36,51 @@ floss_error.data.frame <- function(data, truth, estimate, na_rm = TRUE, estimato
   )
 }
 
-clean_pred <- function(data, threshold = 100L) {
+clean_pred <- function(data, threshold = 100L, last = TRUE) {
   if (is.list(data)) {
     data <- purrr::map(data, clean_pred, threshold)
     return(data)
   }
-
   data <- sort(data)
-  mask <- c(diff(data) > threshold, TRUE)
+  if (isTRUE(last)) {
+    mask <- c(diff(data) > threshold, TRUE)
+  } else {
+    mask <- c(TRUE, diff(data) > threshold)
+  }
   data[mask]
+}
+
+clean_truth <- function(truth, data_size = NULL, first = TRUE, last = TRUE) {
+  if (!checkmate::test_true(isTRUE(last) && !is.null(data_size))) {
+    cli::cli_abort("If `last` is TRUE, `data_size` must not be NULL.")
+  }
+
+  if (is.list(truth)) {
+    truth <- purrr::map2(truth, data_size, clean_truth, first, last)
+    return(truth)
+  }
+
+  truth <- sort(truth)
+  mask <- c(diff(truth) > 15, TRUE)
+  truth <- truth[mask]
+
+  if (isTRUE(first) && (truth[1] <= 10)) {
+    if (length(truth) == 1) {
+      truth <- 1
+    } else {
+      truth <- tail(truth, -1)
+    }
+  }
+
+  if (isTRUE(last) && (tail(truth, 1) >= (data_size - 10))) {
+    if (length(truth) == 1) {
+      truth <- data_size
+    } else {
+      truth <- head(truth, -1)
+    }
+  }
+
+  return(truth)
 }
 
 #' @export
@@ -61,14 +96,17 @@ floss_error_vec <- function(truth, estimate, data_size, na_rm = TRUE, estimator 
   # cli::cli_inform(c("*" = "Evaluating model: number of recordings {length(estimate)}."))
 
   floss_error_impl <- function(truth, estimate, data_size, ...) {
-    res <- floss_score(truth, estimate, data_size)
+    # res <- floss_score(truth, estimate, data_size)
+    res <- floss_score_pr(truth, estimate, 250, 10, 4)
+    res <- 1 - res # invert F-1 score to match original error where lower is better
     return(res)
   }
 
   # if (length(data_size) <= 2L) {
   #   cli::cli_abort(c("x" = "data_size len: {length(data_size)}"))
   # }
-  estimate <- clean_pred(estimate)
+  estimate <- clean_pred(estimate, 200, TRUE)
+  truth <- clean_truth(truth, data_size)
   # 100L is the batch size, this removes the redundant regime changes
 
   for (i in seq.int(1L, length(estimate))) {
@@ -232,6 +270,88 @@ floss_error_vec <- function(truth, estimate, data_size, na_rm = TRUE, estimator 
   }
 }
 
+#' Calculate the F-score for precision and recall
+#'
+#' This function calculates the F-score, a measure of precision and recall, for a given ground truth and reported values.
+#'
+#' @param gtruth A numeric vector or list of numeric vectors representing the ground truth values.
+#' @param reported A numeric vector or list of numeric vectors representing the reported values.
+#' @param freq The frequency of the data points (default is 250).
+#' @param window The window size in seconds for matching the reported values with the ground truth values (default is 10).
+#' @param beta The beta value for balancing precision and recall (default is 4).
+#'
+#' @details This is a simpler version of the previous function. The recall delta is computed from freq * window.
+#' Delta is then used to compute the overlap window between the ground truth and reported values. Half of delta is used
+#' for earlier predictions, and full delta is used for later predictions. If this window contains several
+#' reported values, just one is accounted as a true positive. If this window contains no reported values,
+#' it is accounted as a false negative. The precision is computed as the number of using the previous tp and fn
+#' while the false positives are computed as the number of reported values (all of them) that are not in any window.
+#'
+#' The parameter `beta` is used to balance precision and recall. The default value is 4, which means that recall is
+#' 4 times more important than precision. If `beta` is 1, then precision and recall are equally important.
+#' If `beta` is 0.25, then precision is 4 times more important than recall.
+#'
+#' @return The F-score, a value between 0 and 1, representing the balance between precision and recall.
+#'
+#' @examples
+#' # Calculate the F-score for a single ground truth and reported values
+#' score_pr(c(1000, 2000, 3000, 4000), c(2000, 3000, 4000, 5000), window = 1) # 0.75
+#'
+#' # Calculate the F-score for multiple ground truth and reported values
+#' score_pr(list(c(1000, 2000, 3000, 4000), c(5000, 6000, 7000, 8000)),
+#'   list(c(2000, 3000, 4000, 5000), c(6000, 7000, 8000, 9000)),
+#'   window = 1
+#' ) # 0.75 0.75
+#'
+#' @references
+#' For more information on the F-score, see: https://en.wikipedia.org/wiki/F1_score
+#'
+
+floss_score_pr <- function(gtruth, reported, freq = 250, window = 10, beta = 4) {
+  delta <- freq * window
+  gtruth <- sort(gtruth[gtruth > 0L])
+  reported <- sort(reported[reported > 0L])
+  gtruth <- gtruth[gtruth > 1]
+  reported <- reported[reported > 1]
+
+  if (length(gtruth) == 0 || length(reported) == 0) {
+    return(0)
+  }
+
+  win <- list()
+  tp <- 0
+  fn <- 0
+
+  fscore <- rlang::try_fetch(
+    {
+      for (i in seq_len(length(gtruth))) {
+        win[[i]] <- seq.int(gtruth[i] - floor(delta / 2), gtruth[i] + floor(delta))
+        if (any(reported %in% win[[i]])) {
+          tp <- tp + 1
+        } else {
+          fn <- fn + 1
+        }
+      }
+
+      win <- unique(unlist(win))
+      win <- win[win > 1]
+
+      fp <- sum(!(reported %in% win))
+
+      fscore <- ((1 + beta^2) * tp) / ((1 + beta^2) * tp + beta^2 * fn + fp + .Machine$double.eps)
+      fscore
+    },
+    error = function(cnd) {
+      cli::cli_warn("Something wrong.")
+      cli::cli_warn("gtruth = {gtruth}.")
+      cli::cli_warn("reported = {reported}.")
+      cli::cli_warn("minv = {minv}.")
+      fscore <- 0
+      fscore
+    }
+  )
+  return(fscore)
+}
 
 floss_score <- function(gtruth, reported, data_size) {
   gtruth <- sort(gtruth[gtruth > 0L])
