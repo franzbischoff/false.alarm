@@ -17,6 +17,8 @@ lst_to_df <- function(lst, keep_attributes = TRUE) {
     attr(new_df, "row.names") <- seq.int(1L, nc) # nolint
   }
 
+  new_df$tar_group <- NULL
+
   return(new_df)
 }
 

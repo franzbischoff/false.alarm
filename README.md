@@ -7,10 +7,6 @@ on March 10, 2022
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 <!-- badges: start -->
 
-[![Gitpod
-Ready-to-Code](https://img.shields.io/badge/Gitpod-Ready--to--Code-blue?logo=gitpod)](https://gitpod.io/#https://github.com/franzbischoff/false.alarm/tree/develop)
-[![Launch
-binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/franzbischoff/false.alarm/master?urlpath=rstudio)
 [![Read
 Thesis](https://img.shields.io/badge/read-thesis__down-brightgreen)](https://franzbischoff.github.io/false.alarm/)
 [![](https://zenodo.org/badge/261530912.svg)](https://zenodo.org/badge/latestdoi/261530912)

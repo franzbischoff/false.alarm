@@ -8,7 +8,6 @@
   "C_Cpp.intelliSenseEngineFallback": "Enabled",
   "editor.formatOnSave": true,
   "editor.tabCompletion": "on",
-  "editor.tabSize": 2,
   "editor.wordWrapColumn": 120,
   "files.associations": {
     ".whitesource": "jsonc",
@@ -133,14 +132,13 @@
     "**/renv/**": true,
     "**/tmp/**": true
   },
-  "git.enableCommitSigning": true,
-  "git.inputValidation": "always",
+  "git.enableCommitSigning": false,
+  "git.inputValidation": true,
   "github-actions.workflows.pinned.refresh.enabled": true,
   "github-actions.workflows.pinned.refresh.interval": 500,
   "github-actions.workflows.pinned.workflows": [
     ".github/workflows/test-coverage.yaml",
     ".github/workflows/ci.yaml",
-    ".github/workflows/binder.yaml"
   ],
   "grammarly.config.documentDialect": "american",
   "grammarly.config.documentDomain": "academic",
@@ -263,7 +261,6 @@
     "**/.github/**",
     "**/dev/**",
     "/workspace/false.alarm/run.sh",
-    "/workspace/false.alarm/.devcontainer/configure_gitpod.sh",
     "**/.trunk/**"
   ],
   "taskExplorer.groupMaxLevel": 2,
@@ -307,5 +304,8 @@
     "https://json.schemastore.org/github-workflow.json": "file:///workspace/false.alarm/.github/workflows/ci.yaml"
   },
   "doi-adder.refName": "authorYear",
-  "quarto.zotero.library": "web"
+  "editor.bracketPairColorization.enabled": false,
+  "editor.tabSize": 2,
+  "r.rterm.linux": "/usr/local/bin/radian",
+  "r.rpath.linux": "/usr/local/bin/R"
 }

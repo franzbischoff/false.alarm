@@ -17,7 +17,6 @@
 ^\.Rhistory$
 ^\.Rprofile$
 ^\.Rproj\.user$
-^\.binder$
 ^\.clang-format$
 ^\.covrignore$
 ^\.devcontainer$
@@ -26,7 +25,6 @@
 ^\.gitattributes$
 ^\.github$
 ^\.gitignore$
-^\.gitpod\.yml$
 ^\.history$
 ^\.httr-oauth$
 ^\.lintr$

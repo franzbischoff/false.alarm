@@ -24,32 +24,6 @@ source("renv/activate.R")
 if (Sys.getenv("CI") == "") {
   # not CI
 
-  # a <- NULL
-  # suppressMessages(if (requireNamespace("languageserver", quietly = TRUE)) {
-  #   a <- try(suppressWarnings(source(file.path(
-  #     Sys.getenv(if (.Platform$OS.type == "windows") {
-  #       "USERPROFILE"
-  #     } else {
-  #       "HOME"
-  #     }),
-  #     ".vscode-R",
-  #     "init.R"
-  #   ))),
-  #   silent = TRUE
-  #   ) # if this fails we (probably) are in Binder
-  # })
-
-  # if (class(a) == "try-error") { # we are in Binder session (hopefully)
-  #   message("Starting Binder Session")
-  #   setHook("rstudio.sessionInit", function(newSession) {
-  #     if (newSession & is.null(rstudioapi::getActiveProject())) {
-  #       rstudioapi::openProject("false.alarm.Rproj")
-  #     }
-  #   }, action = "append")
-  # }
-
-  # rm(a)
-
   if (interactive() && Sys.getenv("RSTUDIO") == "") {
     options(
       warnPartialMatchArgs = FALSE,

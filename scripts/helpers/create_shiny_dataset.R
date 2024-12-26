@@ -11,7 +11,7 @@ lst_to_df <- function(lst, keep_attributes = TRUE) {
   if (keep_attributes) {
     nc <- nrow(new_df)
     attributes(new_df) <- attributes(lst[[1]])
-    attr(new_df, "row.names") <- seq.int(1, nc)
+    attr(new_df, "row.names") <- seq.int(1, nc) # nolint
   }
 
   new_df$tar_group <- NULL
