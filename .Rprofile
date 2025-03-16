@@ -8,6 +8,7 @@ if (.Platform$OS.type == "windows") {
 # options(error = renv:::renv_error_handler_call())
 # options(warn = 2L)
 
+# Activate renv for all kind of environments
 source("renv/activate.R")
 
 # options(
@@ -23,126 +24,144 @@ source("renv/activate.R")
 
 if (Sys.getenv("CI") == "") {
   # not CI
+  if (interactive()) {
+    if (Sys.getenv("RSTUDIO") == "") {
+      # interactive and not RSTUDIO ENV
+      # This is the default terminal environment
+      cat("INTERACTIVE; no RSTUDIO\n")
+      options(
+        warnPartialMatchArgs = FALSE,
+        warnPartialMatchDollar = FALSE,
+        warnPartialMatchAttr = FALSE,
+        usethis.protocol = "https",
+        warn = 1 # warnings appear immediately, not in the end
+        # error = recover
+      )
+      options(
+        vsc.rstudioapi = TRUE,
+        max.print = 1000,
+        width = 200,
+        # vsc.browser = "Two",
+        # vsc.viewer = "Two",
+        # vsc.page_viewer = "Two",
+        # vsc.view = "Two",
+        # vsc.plot = "Two",
+        # vsc.helpPanel = "Two",
+        # vsc.str.max.level = 2,
+        vsc.show_object_size = TRUE,
+        vsc.globalenv = TRUE,
+        vsc.dev.args = list(width = 1000, height = 700)
+      )
 
-  if (interactive() && Sys.getenv("RSTUDIO") == "") {
-    options(
-      warnPartialMatchArgs = FALSE,
-      warnPartialMatchDollar = FALSE,
-      warnPartialMatchAttr = FALSE,
-      usethis.protocol = "https",
-      warn = 1 # warnings appear immediately, not in the end
-      # error = recover
-    )
-    options(
-      vsc.rstudioapi = TRUE,
-      max.print = 1000,
-      width = 200,
-      # vsc.browser = "Two",
-      # vsc.viewer = "Two",
-      # vsc.page_viewer = "Two",
-      # vsc.view = "Two",
-      # vsc.plot = "Two",
-      # vsc.helpPanel = "Two",
-      # vsc.str.max.level = 2,
-      vsc.show_object_size = TRUE,
-      vsc.globalenv = TRUE,
-      vsc.dev.args = list(width = 1000, height = 700)
-    )
+      # renv::install("franzbischoff/tune@539e1eea1426e9ace11b4e71ac4dafadddda7f0a")
 
-    # renv::install("franzbischoff/tune@539e1eea1426e9ace11b4e71ac4dafadddda7f0a")
+      # options(renv.settings.ignored.packages = c("parsnip", "yardstick", "dials", "finetune", "recipes", "hardhat", "workflowsets", "tune"))
 
-    # options(renv.settings.ignored.packages = c("parsnip", "yardstick", "dials", "finetune", "recipes", "hardhat", "workflowsets", "tune"))
-
-    options(languageserver.formatting_style = function(options) {
-      style <- styler::tidyverse_style(scope = "tokens", indent_by = 2)
-      style
-    })
-
-    # if httpgd is installed, let's use it
-    # This breaks rendering video
-    # if ("httpgd" %in% .packages(all.available = TRUE)) {
-    #   options(vsc.plot = FALSE)
-    #   options(device = function(...) {
-    #     httpgd::hgd(silent = TRUE)
-    #     .vsc.browser(httpgd::hgd_url(history = FALSE), viewer = "Beside")
-    #   })
-    # }
-
-    suppressMessages(
-      suppressWarnings({
-        require("testthat", quietly = TRUE)
-        require("devtools", quietly = TRUE)
-        require("usethis", quietly = TRUE)
-        require("conflicted", quietly = TRUE)
-        # require("tidyverse", quietly = TRUE)
-        # require("tidymodels", quietly = TRUE)
-        require("here", quietly = TRUE)
-        require("glue", quietly = TRUE)
-        require("workflowr", quietly = TRUE)
-        require("targets", quietly = TRUE)
-        require("gittargets", quietly = TRUE)
-        require("tarchetypes", quietly = TRUE)
+      options(languageserver.formatting_style = function(options) {
+        style <- styler::tidyverse_style(scope = "tokens", indent_by = 2)
+        style
       })
-    )
 
-    suppressMessages({
-      conflicted::conflict_prefer("filter", "dplyr")
-      conflicted::conflict_prefer("box", "shinydashboard")
-      conflicted::conflict_prefer("notificationItem", "shinydashboard")
-    })
-    options(dplyr.summarise.inform = FALSE)
+      # if httpgd is installed, let's use it
+      # This breaks rendering video
+      # if ("httpgd" %in% .packages(all.available = TRUE)) {
+      #   options(vsc.plot = FALSE)
+      #   options(device = function(...) {
+      #     httpgd::hgd(silent = TRUE)
+      #     .vsc.browser(httpgd::hgd_url(history = FALSE), viewer = "Beside")
+      #   })
+      # }
 
-    if (.Platform$OS.type != "windows") {
-      if (suppressMessages(requireNamespace("prettycode", quietly = TRUE))) {
-        suppressMessages(prettycode::prettycode())
+      suppressMessages(
+        suppressWarnings({
+          require("testthat", quietly = TRUE)
+          require("devtools", quietly = TRUE)
+          require("usethis", quietly = TRUE)
+          require("conflicted", quietly = TRUE)
+          # require("tidyverse", quietly = TRUE)
+          # require("tidymodels", quietly = TRUE)
+          require("here", quietly = TRUE)
+          require("glue", quietly = TRUE)
+          require("workflowr", quietly = TRUE)
+          require("targets", quietly = TRUE)
+          require("gittargets", quietly = TRUE)
+          require("tarchetypes", quietly = TRUE)
+        })
+      )
+
+      suppressMessages({
+        conflicted::conflict_prefer("filter", "dplyr")
+        conflicted::conflict_prefer("box", "shinydashboard")
+        conflicted::conflict_prefer("notificationItem", "shinydashboard")
+      })
+      options(dplyr.summarise.inform = FALSE)
+
+      if (.Platform$OS.type != "windows") {
+        if (suppressMessages(requireNamespace("prettycode", quietly = TRUE))) {
+          suppressMessages(prettycode::prettycode())
+        }
       }
-    }
 
-    # if (suppressMessages(requireNamespace("prompt", quietly = TRUE))) {
-    # prompt::set_prompt(function(...) {
-    #   paste0(
-    #     "[",
-    #     prompt::git_branch(),
-    #     prompt::git_dirty(),
-    #     prompt::git_arrows(),
-    #     "] ",
-    #     prompt::prompt_runtime()
-    #   )
-    # })
-    # }
+      # if (suppressMessages(requireNamespace("prompt", quietly = TRUE))) {
+      # prompt::set_prompt(function(...) {
+      #   paste0(
+      #     "[",
+      #     prompt::git_branch(),
+      #     prompt::git_dirty(),
+      #     prompt::git_arrows(),
+      #     "] ",
+      #     prompt::prompt_runtime()
+      #   )
+      # })
+      # }
 
-    if (Sys.getenv("RADIAN_VERSION") == "") {
-      loadhistory() # if no file, no problem.
+      if (Sys.getenv("RADIAN_VERSION") == "") {
+        loadhistory() # if no file, no problem.
 
-      # Cleaning up function
-      .Last <- function() {
-        savehistory() # comment this line if you don't want to save history
-        cat("bye bye...\n") # print this so we see if any non-interactive session is lost here
+        # Cleaning up function
+        .Last <- function() {
+          savehistory() # comment this line if you don't want to save history
+          cat("bye bye...\n") # print this so we see if any non-interactive session is lost here
+        }
       }
+    } else {
+      # interactive and RSTUDIO ENV
+      # This is supposed to be the RSTUDIO terminal
+      cat("INTERACTIVE; RSTUDIO\n")
+      # is RSTUDIO
+      # suppressMessages(
+      #   suppressWarnings({
+      #     require("here", quietly = TRUE)
+      #     require("workflowr", quietly = TRUE)
+      #     require("targets", quietly = TRUE)
+      #     require("tarchetypes", quietly = TRUE)
+      #     require("gittargets", quietly = TRUE)
+      #   })
+      # )
     }
   } else {
-    # is RSTUDIO
-    suppressMessages(
-      suppressWarnings({
-        require("here", quietly = TRUE)
-        require("workflowr", quietly = TRUE)
-        require("targets", quietly = TRUE)
-        require("tarchetypes", quietly = TRUE)
-        require("gittargets", quietly = TRUE)
-      })
-    )
+    if (Sys.getenv("RSTUDIO") == "") {
+      # non-interactive and not RSTUDIO ENV
+      # This is the default non-interactive environment
+      cat("NON-INTERACTIVE; no RSTUDIO\n")
+    } else {
+      # non-interactive and RSTUDIO ENV
+      # This is the supposed to be the background RSTUDIO environment
+      cat("NON-INTERACTIVE; RSTUDIO\n")
+    }
   }
 } else {
+  cat("CI ENV\n")
   # is CI
-  suppressMessages(
-    suppressWarnings({
-      require("here", quietly = TRUE)
-      require("workflowr", quietly = TRUE)
-      require("targets", quietly = TRUE)
-      require("tarchetypes", quietly = TRUE)
-      require("gittargets", quietly = TRUE)
-    })
-  )
+  # suppressMessages(
+  #   suppressWarnings({
+  #     require("here", quietly = TRUE)
+  #     require("workflowr", quietly = TRUE)
+  #     require("targets", quietly = TRUE)
+  #     require("tarchetypes", quietly = TRUE)
+  #     require("gittargets", quietly = TRUE)
+  #   })
+  # )
 }
 
 # nolint end

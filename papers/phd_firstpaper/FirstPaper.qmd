@@ -10,67 +10,66 @@ reference-location: document
 citation-location: document
 execute:
   cache: true
-format:
-  html:
-    theme:
-      dark: [darkly, dark.scss]
-      light: [flatly, light.scss]
-    highlight-style: oblivion
-    date: '2023-11-22'
-    fontsize: "1.0em"
-    code-fold: true
-    html-math-method: katex
-    toc: true
-    toc-title: Contents
-    toc-expand: 2
-    toc-depth: 3
-    # toc-location: right
-    # css: style.css
-    citeproc: true
-    standalone: true
-    embed-resources: true
-    number-sections: true
-    number-depth: 3
-    # keep-tex: true
-    link-external-icon: true
-    link-external-newwindow: true
-    anchor-sections: true
-    smooth-scroll: true
-  pdf:
-    theme:
-      dark: [darkly, dark.scss]
-      light: [flatly, light.scss]
-    date: '2023-11-22'
-    toc: true
-    toc-title: Contents
-    toc-depth: 3
-    fig-pos: "H"
-    citeproc: true
-    citecolor: black
-    geometry:
-      - top=1in
-      - left=1in
-      - right=1in
-      - bottom=1in
-    documentclass: scrartcl
-    number-sections: true
-    crossref:
-      fig-prefix: Fig.
-    number-depth: 3
-    colorlinks: true
-    highlight-style: tango
+# format:
+#   html:
+#     theme:
+#       dark: [darkly, dark.scss]
+#       light: [flatly, light.scss]
+#     highlight-style: oblivion
+#     date: '2023-11-22'
+#     fontsize: "1.0em"
+#     code-fold: true
+#     html-math-method: katex
+#     toc: true
+#     toc-title: Contents
+#     toc-expand: 2
+#     toc-depth: 3
+#     # toc-location: right
+#     # css: style.css
+#     citeproc: true
+#     standalone: true
+#     embed-resources: true
+#     number-sections: true
+#     number-depth: 3
+#     # keep-tex: true
+#     link-external-icon: true
+#     link-external-newwindow: true
+#     anchor-sections: true
+#     smooth-scroll: true
+#   pdf:
+#     theme:
+#       dark: [darkly, dark.scss]
+#       light: [flatly, light.scss]
+#     date: '2023-11-22'
+#     toc: true
+#     toc-title: Contents
+#     toc-depth: 3
+#     fig-pos: "H"
+#     citeproc: true
+#     citecolor: black
+#     geometry:
+#       - top=1in
+#       - left=1in
+#       - right=1in
+#       - bottom=1in
+#     documentclass: scrartcl
+#     number-sections: true
+#     crossref:
+#       fig-prefix: Fig.
+#     number-depth: 3
+#     colorlinks: true
+#     highlight-style: tango
 
-editor:
-  render-on-save: true
-  markdown:
-    wrap: none
-    canonical: true
+# editor:
+#   render-on-save: true
+#   markdown:
+#     wrap: none
+#     canonical: true
 ---
 
 ```{r setup, include=FALSE, cache=FALSE}
-
 rlang::check_installed(c(
-  "here", "glue", "kableExtra", "ggplot2", "dplyr", "vip", "pdp", "patchwork", "fastshap"
+  "here", "glue", "kableExtra", "ggplot2", "dplyr", "multidplyr", "vip", "pdp", "patchwork", "fastshap", "shapviz", "signal", "workflowr"
 ))
 
 source(here::here("scripts", "common", "read_ecg.R"))
@@ -1203,7 +1202,7 @@ scores33 <- scores_stats_vtds |>
   ggplot2::theme_bw()
 ```
 
-```{r fig-global, eval=TRUE, echo=FALSE, warning=FALSE, fig.height=6, fig.width=10, out.width="100%", cache=FALSE}
+```{r fig-global, eval=TRUE, echo=FALSE, warning=FALSE, fig.height=6, fig.width=10, out.width="100%"}
 #| fig-cap: "Violin plot showing the distribution of the FLOSS score achieved by all tested models by
 #|  recording.  The left side shows the recordings that were difficult to predict, whereas the right side shows
 #|  the recordings that had better predictions. The recordings are sorted (left-right) by the median

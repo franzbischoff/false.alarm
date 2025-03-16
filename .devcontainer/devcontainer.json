@@ -16,9 +16,6 @@
         "eamodio.gitlens",
         "EditorConfig.EditorConfig",
         "gerane.Theme-Twilight",
-        "GitHub.copilot-chat",
-        "GitHub.copilot-labs",
-        "GitHub.copilot",
         "github.vscode-github-actions",
         "hediet.vscode-drawio",
         "james-yu.latex-workshop",
@@ -193,19 +190,19 @@
       "version": "latest"
     },
     "ghcr.io/rocker-org/devcontainer-features/r-packages:1": {
-      "packages": "jsonlite,languageserver,prompt"
+      "packages": "jsonlite,languageserver,prompt,here,readr"
     },
     "ghcr.io/rocker-org/devcontainer-features/renv-cache:0": {}
   },
   // Or use a Dockerfile or Docker Compose file. More info: https://containers.dev/guide/dockerfile
   "image": "ghcr.io/rocker-org/devcontainer/r-ver:4.4",
-  "name": "false.alarm devcontainer",
+  "name": "false.alarm devcontainer"
   // Features to add to the dev container. More info: https://containers.dev/features.
   // "features": {},
   // Use 'forwardPorts' to make a list of ports inside the container available locally.
   // "forwardPorts": [],
   // Use 'postCreateCommand' to run commands after the container is created.
-  "updateContentCommand": "Rscript -e 'renv::restore()'"
+  // "updateContentCommand": "Rscript -e 'renv::restore()'"
   // cd ${workspaceFolder} && Rscript -e \\'renv::restore()\\''"
   // Configure tool-specific properties.
   // "customizations": {},

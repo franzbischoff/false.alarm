@@ -1,0 +1,24 @@
+project:
+  type: default
+
+# project:
+#   type: manuscript
+
+# manuscript:
+#   article: FirstPaper.qmd
+
+# format:
+#   html:
+#     comments:
+#       hypothesis: true
+#   docx: default
+#   jats: default
+
+  # (other formats)
+  # pdf: default
+
+execute:
+  freeze: false
+
+
+
