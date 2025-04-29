@@ -1,4 +1,4 @@
-# Sys.setenv(TAR_PROJECT = "regime_change")
+# Sys.setenv(TAR_PROJECT = "regime_change2")
 
 source(here::here("scripts", "_globals.R"), local = .GlobalEnv, encoding = "UTF-8") # nolint
 
@@ -7,7 +7,7 @@ source(here::here("scripts", "_globals.R"), local = .GlobalEnv, encoding = "UTF-
 
 
 # options(target_ds_path = here("inst", "extdata", "malignantventricular")) # nolint
-options(target_ds_path = here("inst", "extdata", "vtachyarrhythmias")) # nolint
+options(target_ds_path = here::here("inst", "extdata", "vtachyarrhythmias")) # nolint
 options(tidymodels.dark = TRUE) # nolint
 options(progressr.enable = TRUE) # nolint
 

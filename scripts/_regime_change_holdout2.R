@@ -6,7 +6,7 @@ source(here::here("scripts", "_globals.R"), local = .GlobalEnv, encoding = "UTF-
 # source(here("regimes", "tar_outer_resample.R"))
 
 
-options(target_ds_path = here("inst", "extdata", "malignantventricular")) # nolint
+options(target_ds_path = here::here("inst", "extdata", "malignantventricular")) # nolint
 # options(target_ds_path = here("inst", "extdata", "vtachyarrhythmias")) # nolint
 options(tidymodels.dark = TRUE) # nolint
 options(progressr.enable = TRUE) # nolint

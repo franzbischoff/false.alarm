@@ -7,7 +7,7 @@ linters: linters_with_defaults(
   commented_code_linter = NULL,
   condition_message_linter(),
   consecutive_assertion_linter(),
-  cyclocomp_linter(50),
+  # cyclocomp_linter(50),
   duplicate_argument_linter(),
   fixed_regex_linter(),
   ifelse_censor_linter(),

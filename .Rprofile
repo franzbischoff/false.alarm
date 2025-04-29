@@ -28,7 +28,7 @@ if (Sys.getenv("CI") == "") {
     if (Sys.getenv("RSTUDIO") == "") {
       # interactive and not RSTUDIO ENV
       # This is the default terminal environment
-      cat("INTERACTIVE; no RSTUDIO\n")
+      # cat("INTERACTIVE; no RSTUDIO\n")
       options(
         warnPartialMatchArgs = FALSE,
         warnPartialMatchDollar = FALSE,
@@ -121,13 +121,13 @@ if (Sys.getenv("CI") == "") {
         # Cleaning up function
         .Last <- function() {
           savehistory() # comment this line if you don't want to save history
-          cat("bye bye...\n") # print this so we see if any non-interactive session is lost here
+          # cat("bye bye...\n") # print this so we see if any non-interactive session is lost here
         }
       }
     } else {
       # interactive and RSTUDIO ENV
       # This is supposed to be the RSTUDIO terminal
-      cat("INTERACTIVE; RSTUDIO\n")
+      # cat("INTERACTIVE; RSTUDIO\n")
       # is RSTUDIO
       # suppressMessages(
       #   suppressWarnings({
@@ -143,15 +143,15 @@ if (Sys.getenv("CI") == "") {
     if (Sys.getenv("RSTUDIO") == "") {
       # non-interactive and not RSTUDIO ENV
       # This is the default non-interactive environment
-      cat("NON-INTERACTIVE; no RSTUDIO\n")
+      # cat("NON-INTERACTIVE; no RSTUDIO\n")
     } else {
       # non-interactive and RSTUDIO ENV
       # This is the supposed to be the background RSTUDIO environment
-      cat("NON-INTERACTIVE; RSTUDIO\n")
+      # cat("NON-INTERACTIVE; RSTUDIO\n")
     }
   }
 } else {
-  cat("CI ENV\n")
+  # cat("CI ENV\n")
   # is CI
   # suppressMessages(
   #   suppressWarnings({

@@ -17,13 +17,13 @@ URL: https://github.com/franzbischoff/false.alarm
 BugReports: https://github.com/franzbischoff/false.alarm/issues
 Depends:
     R (>= 4.3),
-    parsnip (== 1.1.0)
+    parsnip (>= 1.1.0)
 Imports:
     Rcpp (>= 1.0.10),
     RcppParallel (>= 5.1.7),
     bookdown (>= 0.33.3),
     checkmate (>= 2.2.0),
-    dials (== 1.2.0),
+    dials (>= 1.2.0),
     finetune (== 0.2.0),
     future (>= 1.32.0),
     ggplot2 (>= 3.4.2),
@@ -33,20 +33,19 @@ Imports:
     here (>= 1.0.1),
     kableExtra (>= 1.3.4),
     magrittr (>= 2.0.3),
-    parsnip (== 1.1.0),
+    parsnip (>= 1.1.0),
     plotly (>= 4.10.1),
     purrr (>= 1.0.1),
-    recipes (== 1.0.6),
+    recipes (>= 1.0.6),
     rmarkdown (>= 2.21.3),
     tarchetypes (>= 0.7.6),
     targets (>= 1.1.3),
-    thesisdown (>= 0.2.0),
     tibble (>= 3.2.1),
-    tune (== 1.0.0.9000),
+    tune (>= 1.0.0.9000),
     visNetwork (>= 2.1.2),
     workflowr (>= 1.7.0),
-    workflows (== 1.1.3),
-    workflowsets (== 1.0.0),
+    workflows (>= 1.1.3),
+    workflowsets (>= 1.0.0),
     yardstick (>= 1.0.0.9000)
 Suggests:
     DT (>= 0.18),
@@ -78,15 +77,6 @@ LinkingTo:
     RcppThread (>= 2.1.1)
 VignetteBuilder:
     knitr
-Remotes:
-    ismayc/thesisdown,
-    r-lib/styler,
-    r-lib/testthat,
-    rstudio/bookdown,
-    rstudio/rmarkdown,
-    wlandau/gittargets,
-    tidymodels/yardstick@90ab794f7b8d882c52dee5de1607ea8061bc18ff,
-    franzbischoff/tune@539e1eea1426e9ace11b4e71ac4dafadddda7f0a
 Config/testthat/edition: 3
 Config/testthat/parallel: false
 Encoding: UTF-8

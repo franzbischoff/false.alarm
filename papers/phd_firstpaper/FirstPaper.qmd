@@ -163,13 +163,13 @@ A local region of time series is called a subsequence (or a window) and is defin
 If we take a subsequence and compute its distance to all subsequences in the same time series, we get a distance profile:
 
 ::: {#def-distprof}
-: A distance profile $D \in \mathbb{R}^{n-m+1}$ of a time series $T$ and a subsequence $T_{i,m}$ is a vector stores $\operatorname{dist}\left(T_{i, m}, T_{j, m}\right) \forall j \in [1, 2, \ldots, n − m + 1]$ , where $i \neq j$.
+: A distance profile $D \in \mathbb{R}^{n-m+1}$ of a time series $T$ and a subsequence $T_{i,m}$ is a vector that stores $\operatorname{dist}\left(T_{i, m}, T_{j, m}\right) \forall j \in [1, 2, \ldots, n − m + 1]$ , where $i \neq j$.
 :::
 
 Combining all distance profiles of a time series we get the matrix profile:
 
 ::: {#def-matrprof}
-: A matrix profile $MP \in \mathbb{R}^{n-m+1}$ of a time series $T$ is a meta time series that stores the z-normalized Euclidean distance between each subsequence and its nearest neighbor where $n$ is the length of $T$ and $m$ is the given subsequence length.
+: A matrix profile $MP \in \mathbb{R}^{n-m+1}$ of a time series $T$ is a meta time series that stores the z-normalized Euclidean distance between each subsequence and its nearest neighbor (within the all subsequence set of $T$), where $n$ is the length of $T$ and $m$ is the given subsequence length.
 :::
 
 ## Matrix Profile Background {#sec-matrixprofile}
@@ -241,27 +241,28 @@ Later, the FLOSS algorithm also has parameters that can be tuned to optimize the
 
 Using the `tidymodels` framework [@tidymodels2020] and the `targets` framework (for reproducibility) [@landau2021], we performed a basic grid search on all these parameters.
 
-@fig-thepipeline shows the workflow using Nested resamplig in order to evaluate the FLOSS algorithm on the ECG datasets. @fig-flossregime shows a snapshot of the regime change detection on running pipeline. The graph on top shows the ECG streaming; the blue line marks the ten seconds before the original alarm was fired; the red line marks the time constraint used on the example; the dark red line marks the limit for taking a decision in this case of Asystole; The blue horizontal line represents the size of the sliding window. The graph on the middle shows the Arc counts as seen by the algorithm (with the corrected distribution); the red line marks the current minimum value and its index; the blue horizontal line shows the minimum value seen until then. The graph on the bottom shows the computed Arc counts (raw) and the red line is the theoretical distribution used for correction.
+@fig-thepipeline shows the workflow using Nested resamplig in order to evaluate the FLOSS algorithm on the ECG datasets.
 
 ![Pipeline used to evaluate the FLOSS algorithm.](images/floss_net.svg){#fig-thepipeline fig-align="center"}
 
-@fig-flossregime shows a snapshot of the regime change detection on running pipeline. The graph on top shows the last 60s of an ECG streaming. As we will explain later, the algorithm only stores a buffer of 20s of data. The green line marks the 10s window (which is a standard defined by ANSI/AAMI EC13 Cardiac Monitor Standards[@AAMI2002]) within the event must be located. I this example, the event is an Asystole that is technically defined as "No QRS for at least 4 seconds" (depicted by the red line). The yellow line(s) mark the detection of a regime change by FLOSS. The blue dash in the lower-right shows the size of the sliding window for a visual reference. The graph below shows the Arc counts as seen by the algorithm (with the corrected distribution); the red line marks the current minimum value.
+@fig-flossregime shows a snapshot of the regime change detection on running pipeline. The graph on top shows the last 60s of an ECG streaming. As we will explain later, the algorithm only stores a buffer of 20s of data. The green line marks the 10s window (which is a standard defined by ANSI/AAMI EC13 Cardiac Monitor Standards[@AAMI2002]) within the event must be located. I this example, the event is an Asystole that is technically defined as "No QRS for at least 4 seconds" (depicted by the red line). The yellow line(s) mark the detection of a regime change by FLOSS. The blue dash in the lower-right shows the size of the sliding window for a visual reference. The graph below shows the Arc counts as seen by the algorithm (with the corrected distribution); the red line marks the position of the current minimum value.
 
-![Regime change detection example. The graph on top shows the last 60s of an ECG streaming. As we will explain later, the algorithm only stores a buffer of 20s of data. The green line marks the 10s window (which is a standard defined by ANSI/AAMI EC13 Cardiac Monitor Standards[@AAMI2002]) within the event must be located. I this example, the event is an Asystole that is technically defined as "No QRS for at least 4 seconds" (depicted by the red line). The yellow line(s) mark the detection of a regime change by FLOSS. The blue dash in the lower-right shows the size of the sliding window for a visual reference. The graph below shows the Arc counts as seen by the algorithm (with the corrected distribution); the red line marks the current minimum value.](images/graph_regime_floss.svg){#fig-flossregime fig-align="center"}
+![Regime change detection example. The graph on top shows the last 60s of an ECG streaming. The algorithm only stores a buffer of 20s of data. The green line marks the 10s window (which is a standard defined by ANSI/AAMI EC13 Cardiac Monitor Standards[@AAMI2002]) within the event must be located. I this example, the event is an Asystole that is technically defined as "No QRS for at least 4 seconds" (depicted by the red line). The yellow line(s) mark the detection of a regime change by FLOSS. The blue dash in the lower-right shows the size of the sliding window for a visual reference. The graph below shows the Arc counts as seen by the algorithm (with the corrected distribution); the red line marks the position of the current minimum value.](images/graph_regime_floss.svg){#fig-flossregime fig-align="center"}
 
-| CAC on constraint: https://franzbischoff.github.io/false.alarm/blog-202110.html
+> CAC on constraint: https://franzbischoff.github.io/false.alarm/blog-202110.html
 
 ## Datasets {#sec-datasets}
 
 Althought the CinC/Physionet Challenge 2015 [@Clifford2015] has triggered the motivation for this work, the dataset provided by them is not suitable for showing the potential of the FLOSS algorithm.
 
-In order to "overcharge (FIXME)" the FLOSS algorithm, we have chosen a dataset that contains several patients with paroxysmal atrial fibrillation events. The dataset used for working with the FLOSS algorithm was the "Paroxysmal Atrial Fibrillation Events Detection from Dynamic ECG Recordings: The 4th China Physiological Signal Challenge 2021" hosted by Zenodo [@bischoff2021afib] under the same license as Physionet.
+To evaluate the FLOSS algorithm performance under challenging conditions, we have chosen three datasets which include multiple patients with paroxysmal atrial fibrillation events, malignant ventricular ectopy and ventricular tachyarrhythmia[@bischoff2021afib; @bischoff2023malig; @bischoff2023vtachy]. The records were split in a proportion of approximately 3/4 for the training set (inner resampling) and 1/4 for the test set (outer resampling). The inner resampling was performed using a 5-fold cross-validation.
+
 
 All datasets were resampled to 250Hz, if not already, and only one ECG lead was used, mostly the lead II.
 
 ### Atrial Fibrillation
 
-The selected records were those that contain paroxysmal atrial fibrillation events, a total of 229 records. The records were split in a proportion of 3/4 for the training set (inner resampling) and 1/4 for the test set (outer resampling). The inner resampling was performed using a 5-fold cross-validation, which accounts for 137 records for fitting the models and 92 records for assessing them in the inner resampling.
+The dataset used was the "Paroxysmal Atrial Fibrillation Events Detection from Dynamic ECG Recordings: The 4th China Physiological Signal Challenge 2021" hosted by Zenodo [@bischoff2021afib] under the same license as Physionet. The selected records were those that contain paroxysmal atrial fibrillation events, a total of 229 records.
 
 The following parameters values were explored:
 
@@ -303,7 +304,7 @@ The following parameters values were explored:
 
 The above methodology allows us to explore a wide combination of parameters, find the best model and reduces the chance of overfitting.
 
-While this process is powerful and robust, it does not show us the importance of each parameter. This aspect is important for two reasons: (1) it allows us to reduce the search space for the next dataset, and (2) it allows us to understand the impact of each parameter on the model.
+While this process is powerful and robust, it does not show us the importance of each parameter. This aspect is important for two reasons: (1) it allows us to reduce the search space for further datasets, and (2) it allows us to understand the impact of each parameter on the model.
 
 In order to check the effect of the parameters on the model, we need to compute the *importance* of each parameter.
 
@@ -329,7 +330,7 @@ E( score ) &= \alpha + time\_constraint\\
 \end{aligned}
 $$ {#eq-first}
 
-After checking the interactions, this is the refitted model:
+After checking the interactions (later in @fig-interaction), this is the refitted model:
 
 $$
 \begin{aligned}
@@ -738,13 +739,13 @@ Based on @fig-importance, @fig-importanceshap and @fig-importanceshap2 we can in
 
 - **`mp_threshold`**: has the lowest impact on the score, and the plot shows that this parameter has virtually no influence on the model performance.
 
-- **`time_constraint`**: is a parameter that must be interpreted cautiously.  The 0 (zero) value means **no constraint**, which is equivalent to the size of the FLOSS history buffer (in our setting, 5000). Since we only explored three values, what we may be seeing is ciclic behavior of the score. The size of the history buffer may be indeed related to the model performance, allowing the model to "forget" the past and focus on more recent data. As the exploration of this paramenter would be computationally too expensive, we will not explore it further and consider it as the size of the history bufffer.
+- **`time_constraint`**: is a parameter that must be interpreted cautiously.  The 0 (zero) value means **no constraint**, which is equivalent to the size of the FLOSS history buffer (in our setting, 5000). Since we only explored three values, what we may be seeing is cyclic behavior of the score. The size of the history buffer may be indeed related to the model performance, allowing the model to "forget" the past and focus on more recent data. As the exploration of this paramenter would be computationally too expensive, we will not explore it further and consider it as the size of the history bufffer.
 
-From this first dataset's results, we can infer that the most interesting parameters to tune in the FLOSS algorithm are the `regime_threshold` and `regime_landmark`. The `window_size`, the only parameter needed to compute, the MP may be explored sparsely in other datasets, while the `mp_threshold` and `time_constraint` can be removed.
+From this first dataset's results, we can infer that the most interesting parameters to tune in the FLOSS algorithm are the `regime_threshold` and `regime_landmark`. The `window_size`, the only parameter needed to compute the MP, may be explored sparsely in other datasets, while the `mp_threshold` and `time_constraint` can be removed.
 
 #### Dataset 2
 
-@fig-importance2 shows the parameters importances of the second dataset [@bischoff2023malig]. The parameter `regime_threshold` shows now a clear importance on the correctness of the FLOSS. @fig-importanceshap3 shows the behavior of the parameters. We see that the `window_size` has a low bondary where the FLOSS score degrades (high SHAP values mean worse performance). The `regime_threshold` shows this same behavior as in the first dataset. The `regime_landmark` has a more linear behavior.
+@fig-importance2 shows the parameters importances of the second dataset [@bischoff2023malig]. The parameter `regime_threshold` shows now a clear importance on the correctness of the FLOSS. @fig-importanceshap3 shows the behavior of the parameters. We see that the `window_size` has a low boundary where the FLOSS score degrades (high SHAP values mean worse performance). The `regime_threshold` shows this same behavior as in the first dataset. The `regime_landmark` has a more linear behavior.
 
 
 ```{r fig-importance2, eval=TRUE, echo=FALSE, warning=FALSE, fig.height = 4, fig.width= 15, out.width="100%"}
@@ -984,7 +985,7 @@ all2 + plot_annotation(
 
 ## Visualizing the predictions
 
-In order to the reader visualize how the models behaves in different datasets, we provide an interactive app for each dataset that can be accesses respectively on: <https://franzbischoff.shinyapps.io/FLOSS_land/> , <https://franzbischoff.shinyapps.io/FLOSS_ventricular/> and <https://franzbischoff.shinyapps.io/FLOSS_vtachy/> .
+In order to the reader visualize how the models behaves in different datasets, we provide an interactive app for each dataset that can be accesses respectively on: <https://franzbischoff.shinyapps.io/FLOSS_land/> , <https://franzbischoff.shinyapps.io/FLOSS_ventricular/> and <https://franzbischoff.shinyapps.io/FLOSS_vtachy/>.
 
 The global assessment of the algorithm is shown in two forms, by recording (aggregating the performance of all tested models) and by model (aggregating the performance over the recordings of the datasets).
 
@@ -997,7 +998,11 @@ The left side of the plot shows the recordings that were difficult to predict. T
 shows the recordings that had better predictions across the models.
 
 
-The blue color indicates the recordings with a small IQR (interquartile range) of model scores. TODO: explain the figure.
+The blue color indicates the recordings with a small IQR (interquartile range) of model scores.
+
+> TODO: explain the figure.
+> Vemos que o primeiro dataset é realmente mais complicado que os outros 2
+> Nos outros 2 vemos que vários conjuntos de parametros (= 1 modelo) conseguem ter um bom score
 
 ```{r scores, eval=TRUE, echo=FALSE, cache=TRUE}
 
@@ -1047,7 +1052,7 @@ all_scores_pre$window_size <- as.integer(all_scores_pre$window_size)
 all_scores_mvds <- all_scores_pre |>
   mdplyr(vars = c(
     "clean_truth", "clean_pred", "score_pr"
-  ), nworkers = 2) |>
+  ), nworkers = 10) |>
   dplyr::mutate(truth = clean_truth(truth, size), pred = clean_pred(pred, 200, TRUE)) |>
   dplyr::mutate(score = score_pr(truth, pred, 250, 10, 4)) |>
   dplyr::collect()
@@ -1086,7 +1091,7 @@ all_scores_pre$window_size <- as.integer(all_scores_pre$window_size)
 all_scores_vtds <- all_scores_pre |>
   mdplyr(vars = c(
     "clean_truth", "clean_pred", "score_pr"
-  ), nworkers = 2) |>
+  ), nworkers = 10) |>
   dplyr::mutate(truth = clean_truth(truth, size), pred = clean_pred(pred, 200, TRUE)) |>
   dplyr::mutate(score = score_pr(truth, pred, 250, 10, 4)) |>
   dplyr::collect()
@@ -1353,6 +1358,13 @@ wrap_plots(plots, ncol = 1) + plot_annotation(
 ### By model
 
 @fig-globalmodel shows the distribution of the FLOSS score of the 10% worst (left side) and 10% best models across the recordings (right side). The bluish color highlights the models with IQR below 10.
+
+> Talvez esta figura possa ser removida visto que a @fig-bestmodels (e demais) já mostra o desempenho de todos os datasets
+
+> TODO: explain the figure.
+> Aqui vemos que alguns modelos conseguiram um bom score na maioria dos conjuntos de dados
+> Mostrar nos outros datasets também
+> A legenda está errada, aparece duas vezes 'IQR < 0.5' e true para vermelho e azul. Precisa corrigir no codigo da figura
 
 ```{r fig-globalmodel, eval=TRUE, echo=FALSE, fig.height=5, fig.width=10, out.width="100%"}
 #| fig-cap: "Violin plot showing the distribution of the FLOSS score achieved by
@@ -1647,7 +1659,7 @@ wrap_plots(plots, ncol = 1, guides = "collect") + plot_annotation(
 
 ### The Holdout
 
-(FIXME new evaluation)
+> TODO: preciso refazer esta tabela com os valores de score atualizados.
 
 Finally, @tbl-bestparam shows a summary of the best five models across all the inner resample (cross-validation). The column `mean` shows the average score, and column `std_err` shows the standard error of the mean. The column `holdout` shows the final score of this model on the holdout set (outer resample).
 
