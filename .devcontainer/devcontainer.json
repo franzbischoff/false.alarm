@@ -169,6 +169,7 @@
     "ghcr.io/rocker-org/devcontainer-features/apt-packages:1": {
       "packages": [
         "curl",
+        "xclip",
         "gnupg",
         "less",
         "locales",

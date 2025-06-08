@@ -189,6 +189,7 @@ final_dataset$window_size <- as.integer(final_dataset$window_size)
 tac <- Sys.time()
 cli::cli_inform(c("!" = "Time taken to compute scores: {round(difftime(tac, tic, units = 'mins'), 2)} minutes"))
 
+final_dataset <- final_dataset |> dplyr::rename(record = id)
 saveRDS(final_dataset, file = here::here("output", glue::glue("{dataname}-{split}.rds")), compress = "xz")
 
 # final_dataset <- readRDS(here::here("output", glue::glue("{dataname}-1.rds")))
