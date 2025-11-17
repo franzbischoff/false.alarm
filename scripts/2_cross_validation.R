@@ -8,7 +8,7 @@
 # source(here::here("scripts", "common", "score_floss.R"), local = .GlobalEnv, encoding = "UTF-8") # nolint
 
 # "afib_regimes", "vtachyarrhythmias", "malignantventricular"
-dataname <- "afib_regimes"
+dataname <- "vtachyarrhythmias"
 
 data <- readRDS(here("output", glue("{dataname}.rds")))
 

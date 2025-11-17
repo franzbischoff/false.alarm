@@ -36,7 +36,12 @@ floss_error.data.frame <- function(data, truth, estimate, na_rm = TRUE, estimato
   )
 }
 
-clean_pred <- function(data, threshold = 100L, last = TRUE) {
+# Cleans repeated alerts within a threshold (250 = 1 second; 100 = 1 batch)
+clean_pred <- function(data, threshold = 100L, last = FALSE) {
+  if (isTRUE(last)) {
+    cli::cli_warn("The most used value is last=FALSE that keeps the first detection. Make sure you chose this correctly.")
+  }
+
   if (is.list(data)) {
     data <- purrr::map(data, clean_pred, threshold)
     return(data)

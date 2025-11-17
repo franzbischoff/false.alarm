@@ -939,7 +939,12 @@ reshape_ds_by_truefalse <- function(dataset, signals, all_signals = TRUE) {
   return(data)
 }
 
+# Cleans repeated alerts within a threshold (250 = 1 second; 100 = 1 batch)
 clean_pred <- function(pred, threshold = 100, last = TRUE) {
+  if (isTRUE(last)) {
+    cli::cli_warn("The most used value is last=FALSE that keeps the first detection. Make sure you chose this correctly.")
+  }
+
   if (is.list(pred)) {
     pred <- purrr::map(pred, clean_pred, threshold)
     return(pred)

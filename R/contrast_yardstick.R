@@ -36,6 +36,7 @@ contrast_error.data.frame <- function(data, truth, estimate, na_rm = TRUE, estim
   )
 }
 
+# Cleans repeated alerts within a threshold (250 = 1 second; 100 = 1 batch)
 clean_pred <- function(data, threshold = 100L) {
   if (is.list(data)) {
     data <- purrr::map(data, clean_pred, threshold)
