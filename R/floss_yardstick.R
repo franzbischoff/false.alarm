@@ -36,24 +36,47 @@ floss_error.data.frame <- function(data, truth, estimate, na_rm = TRUE, estimato
   )
 }
 
-# Cleans repeated alerts within a threshold (250 = 1 second; 100 = 1 batch)
-clean_pred <- function(data, threshold = 100L, last = FALSE) {
-  if (isTRUE(last)) {
-    cli::cli_warn("The most used value is last=FALSE that keeps the first detection. Make sure you chose this correctly.")
+# Cleans repeated alerts within a threshold (minimum gap between detections)
+# Implements timeout from LAST ACCEPTED detection, not consecutive differences
+# Examples: threshold=1000 samples = 4s @ 250Hz, threshold=250 = 1s @ 250Hz
+clean_pred <- function(pred, threshold = 100L) {
+  if (is.list(pred)) {
+    pred <- purrr::map(pred, clean_pred, threshold)
+    return(pred)
   }
 
-  if (is.list(data)) {
-    data <- purrr::map(data, clean_pred, threshold)
-    return(data)
+  if (length(pred) == 0) {
+    return(numeric(0))
   }
-  data <- sort(data)
-  if (isTRUE(last)) {
-    mask <- c(diff(data) > threshold, TRUE)
-  } else {
-    mask <- c(TRUE, diff(data) > threshold)
+
+  # Remove NA values before processing
+  pred <- pred[!is.na(pred)]
+
+  if (length(pred) == 0) {
+    return(numeric(0))
   }
-  data[mask]
+
+  pred <- sort(pred)
+
+  # Keep first detection of each group
+  # A new group starts when distance from last accepted > threshold
+  result <- pred[1] # First detection always accepted
+
+  if (length(pred) == 1) {
+    return(result)
+  }
+
+  for (i in 2:length(pred)) {
+    # Check distance from LAST ACCEPTED detection (not consecutive)
+    last_accepted <- tail(result, 1)
+    if (!is.na(pred[i]) && !is.na(last_accepted) && (pred[i] - last_accepted) > threshold) {
+      result <- c(result, pred[i])
+    }
+  }
+
+  return(result)
 }
+
 
 clean_truth <- function(truth, data_size = NULL, first = TRUE, last = TRUE) {
   if (!checkmate::test_true(isTRUE(last) && !is.null(data_size))) {
