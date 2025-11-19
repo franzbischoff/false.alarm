@@ -52,6 +52,9 @@ input_dir <- here("output", "regime_detection", dataname, "generation")
 output_dir <- here("output", "regime_detection", dataname, "prediction")
 tidy_file <- file.path(input_dir, "tidy_dataset.rds")
 output_file <- file.path(output_dir, "predictions_grid.rds")
+intermediate_dir <- file.path(output_dir, "intermediate_predictions")
+dir.create(output_dir, recursive = TRUE, showWarnings = FALSE)
+dir.create(intermediate_dir, recursive = TRUE, showWarnings = FALSE)
 
 # Comment: Memory management - process in batches
 batch_size <- 4 # Comment: Process 4 window sizes at a time to manage memory
@@ -104,7 +107,6 @@ cli::cli_inform(c("i" = "Parallel workers: {n_workers}"))
 # Comment: Set up parallel processing
 future::plan(future::multicore, workers = n_workers)
 
-all_predictions <- list()
 prediction_counter <- 0
 
 total_tic <- Sys.time()
@@ -119,6 +121,12 @@ for (batch_idx in seq_along(window_batches)) {
   batch_tic <- Sys.time()
 
   for (w in batch_windows) {
+    window_file <- file.path(intermediate_dir, glue::glue("predictions_w{w}.rds"))
+    if (file.exists(window_file)) {
+      cli::cli_alert_info("Window {w}: Intermediate file already exists, skipping")
+      next
+    }
+
     # Comment: Load Matrix Profile for this window size
     mp_file <- file.path(input_dir, glue::glue("matrix_profiles_w{w}.rds"))
     if (!file.exists(mp_file)) {
@@ -129,52 +137,78 @@ for (batch_idx in seq_along(window_batches)) {
     mp_dataset <- readRDS(mp_file)
     cli::cli_inform(c("i" = "Window {w}: Loaded {nrow(mp_dataset)} Matrix Profiles"))
 
-    # Comment: Process all records in parallel
-    batch_predictions <- furrr::future_map(seq_len(nrow(mp_dataset)), function(record_idx) {
-      record_id <- mp_dataset$record[record_idx]
-      floss_obj <- mp_dataset$floss[[record_idx]]
-      truth <- tidy_dataset$truth[[which(tidy_dataset$record == record_id)]]
+    # Comment: Extract only the necessary components to minimize globals size
+    records_vec <- mp_dataset$record
+    floss_list <- mp_dataset$floss
+    truth_list <- tidy_dataset$truth
+    truth_records <- tidy_dataset$record
 
-      record_results <- list()
-      counter <- 0
+    # Comment: Process all records in parallel (pass only small vectors/lists as arguments)
+    batch_predictions <- furrr::future_map(
+      seq_len(nrow(mp_dataset)),
+      function(record_idx,
+               records_vec,
+               floss_list,
+               truth_list,
+               truth_records,
+               base_grid,
+               var_min_gap_samples,
+               w) {
+        record_id <- records_vec[record_idx]
+        floss_obj <- floss_list[[record_idx]]
+        truth <- truth_list[[which(truth_records == record_id)]]
 
-      # Comment: Apply all threshold × landmark combinations
-      for (grid_idx in seq_len(nrow(base_grid))) {
-        rt <- base_grid$regime_threshold[grid_idx]
-        rl <- base_grid$regime_landmark[grid_idx]
+        record_results <- list()
+        counter <- 0
 
-        # Comment: Generate RAW predictions (without clean_pred)
-        raw_pred <- floss_predict(floss_obj, w, 0, rt, rl)
+        # Comment: Apply all threshold × landmark combinations
+        for (grid_idx in seq_len(nrow(base_grid))) {
+          rt <- base_grid$regime_threshold[grid_idx]
+          rl <- base_grid$regime_landmark[grid_idx]
 
-        # Comment: Now apply each min_gap_samples value
-        for (min_gap in var_min_gap_samples) {
-          # Comment: Apply clean_pred with this specific min_gap_samples
-          # Comment: Keeps first detection within each gap (timeout behavior)
-          cleaned_pred <- clean_pred(raw_pred, min_gap)
+          # Comment: Generate RAW predictions (without clean_pred)
+          raw_pred <- floss_predict(floss_obj, w, 0, rt, rl)
 
-          counter <- counter + 1
-          record_results[[counter]] <- tibble::tibble(
-            record = record_id,
-            window_size = w,
-            regime_threshold = rt,
-            regime_landmark = rl,
-            min_gap_samples = min_gap,
-            truth = list(truth),
-            pred = list(cleaned_pred)
-          )
+          # Comment: Now apply each min_gap_samples value
+          for (min_gap in var_min_gap_samples) {
+            # Comment: Apply clean_pred with this specific min_gap_samples
+            # Comment: Keeps first detection within each gap (timeout behavior)
+            cleaned_pred <- clean_pred(raw_pred, min_gap)
+
+            counter <- counter + 1
+            record_results[[counter]] <- tibble::tibble(
+              record = record_id,
+              window_size = w,
+              regime_threshold = rt,
+              regime_landmark = rl,
+              min_gap_samples = min_gap,
+              truth = list(truth),
+              pred = list(cleaned_pred)
+            )
+          }
         }
-      }
 
-      dplyr::bind_rows(record_results)
-    }, .options = furrr::furrr_options(seed = NULL))
+        dplyr::bind_rows(record_results)
+      },
+      records_vec = records_vec,
+      floss_list = floss_list,
+      truth_list = truth_list,
+      truth_records = truth_records,
+      base_grid = base_grid,
+      var_min_gap_samples = var_min_gap_samples,
+      w = w,
+      .options = furrr::furrr_options(seed = NULL)
+    )
 
-    # Comment: Combine all record results
-    for (pred_df in batch_predictions) {
-      for (i in seq_len(nrow(pred_df))) {
-        prediction_counter <- prediction_counter + 1
-        all_predictions[[prediction_counter]] <- pred_df[i, ]
-      }
-    }
+    # Comment: Combine all record results for this window
+    window_predictions <- dplyr::bind_rows(batch_predictions)
+    prediction_counter <- prediction_counter + nrow(window_predictions)
+    saveRDS(window_predictions, file = window_file, compress = "xz")
+    cli::cli_alert_success("Window {w}: Saved {nrow(window_predictions)} rows to {window_file}")
+
+    # Comment: Free memory after persisting this window
+    rm(window_predictions, batch_predictions)
+    gc()
 
     # Comment: Free memory after each window size
     rm(mp_dataset)
@@ -191,9 +225,35 @@ total_tac <- Sys.time()
 total_elapsed <- round(difftime(total_tac, total_tic, units = "mins"), 2)
 # endregion Step 3
 
+rm(tidy_dataset)
+gc()
+
 # region Step 4 - Combine and Save
 cli::cli_h2("Step 4: Combining predictions")
-predictions_grid <- dplyr::bind_rows(all_predictions)
+intermediate_files <- list.files(intermediate_dir,
+  pattern = "predictions_w.*\\.rds$",
+  full.names = TRUE
+)
+
+if (length(intermediate_files) == 0) {
+  cli::cli_abort(c(
+    "x" = "Nenhum ficheiro intermédio encontrado em {intermediate_dir}",
+    "i" = "Execute novamente o processamento para gerar os resultados por janela"
+  ))
+}
+
+extract_window_id <- function(path) {
+  as.numeric(gsub("[^0-9]", "", basename(path)))
+}
+intermediate_files <- intermediate_files[order(vapply(
+  intermediate_files,
+  extract_window_id,
+  numeric(1)
+))]
+rm(extract_window_id)
+
+cli::cli_inform(c("i" = "Ficheiros intermédios encontrados: {length(intermediate_files)}"))
+predictions_grid <- purrr::map_dfr(intermediate_files, readRDS)
 cli::cli_inform(c("i" = "Total rows: {nrow(predictions_grid)}"))
 
 # Comment: Format hyperparameters

@@ -36,7 +36,6 @@ linters: linters_with_defaults(
   undesirable_operator_linter(all_undesirable_operators),
   unnecessary_concatenation_linter(),
   unreachable_code_linter(),
-  unused_import_linter(),
   yoda_test_linter()
   )
 exclusions: list("dev", "renv", "R/RcppExports.R", "README.Rmd", "papers")

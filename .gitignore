@@ -70,8 +70,8 @@ test.mmd
 analysis/*html
 analysis/*_cache
 analysis/site_libs
-output/*.svg
-output/*.rds
+output/**/*.svg
+output/**/*.rds
 protocol/**/*.html
 protocol/**/*.svg
 protocol/**/*.rmarkdown

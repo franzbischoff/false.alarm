@@ -49,7 +49,7 @@ var_signals_include <- "II"
 
 # Comment: ----- Common Configuration -----
 var_subset <- NULL # NULL = use entire signal
-var_limit_per_class <- 10 # Set to NULL for all files, 10 for testing
+var_limit_per_class <- NULL # Set to NULL for all files, 10 for testing
 
 # Comment: Compute derived values
 if (!is.null(const_classes)) {
@@ -67,6 +67,12 @@ output_file <- file.path(output_dir, "tidy_dataset.rds")
 cli::cli_h1("Regime Detection - Data Preparation")
 cli::cli_inform(c("i" = "Dataset: {dataname}"))
 cli::cli_inform(c("i" = "Output directory: {output_dir}"))
+
+# Comment: Create output directory if it doesn't exist
+if (!dir.exists(output_dir)) {
+  dir.create(output_dir, recursive = TRUE, showWarnings = FALSE)
+  cli::cli_inform(c("v" = "Created output directory"))
+}
 
 # region Step 1 - Find Files
 cli::cli_h2("Step 1: Finding ECG files")
