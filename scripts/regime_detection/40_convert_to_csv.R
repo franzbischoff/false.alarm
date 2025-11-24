@@ -1,29 +1,32 @@
 # region Convert FLOSS Results to CSV Format
-# Comment: This script converts FLOSS results to Python-compatible CSV format
-# Comment: Reads from new modular pipeline structure
-# Comment: Input: predictions_grid.rds (from step 30)
-# Comment: Output: {dataname}_predictions.csv
+# This script converts FLOSS results to Python-compatible CSV format
+# Reads from new modular pipeline structure
+# Input: predictions_grid.rds (from step 30)
+# Output: {dataname}_predictions.csv
 
-library(dplyr)
-library(purrr)
-library(readr)
-library(jsonlite)
-library(here)
-library(glue)
-library(cli)
-library(tibble)
+suppressPackageStartupMessages({
+  library(dplyr, quietly = TRUE, warn.conflicts = FALSE)
+  library(purrr, quietly = TRUE, warn.conflicts = FALSE)
+  library(readr, quietly = TRUE, warn.conflicts = FALSE)
+  library(jsonlite, quietly = TRUE, warn.conflicts = FALSE)
+  library(here, quietly = TRUE, warn.conflicts = FALSE)
+  library(glue, quietly = TRUE, warn.conflicts = FALSE)
+  library(cli, quietly = TRUE, warn.conflicts = FALSE)
+  library(tibble, quietly = TRUE, warn.conflicts = FALSE)
+})
 
 # region Configuration
-# Comment: ===== DATASET SELECTION =====
-# Comment: Must match dataset from scripts 10, 20, and 30
-
-dataname <- "afib_regimes"
-# dataname <- "vtachyarrhythmias"
-# dataname <- "malignantventricular"
+# ===== DATASET SELECTION =====
+# Must match dataset from scripts 10, 20, and 30
+# CLI override: Rscript 40_convert_to_csv.R <dataname>
+default_dataname <- "afib_regimes"
+cli_args <- commandArgs(trailingOnly = TRUE)
+dataname <- if (length(cli_args) >= 1L && nzchar(cli_args[1L])) cli_args[1L] else default_dataname
+cli::cli_alert_info("Dataset selected: {dataname}")
 
 const_sample_freq <- 250 # Hz
 
-# Comment: Input/Output paths
+# Input/Output paths
 input_dir <- here("output", "regime_detection", dataname, "prediction")
 generation_dir <- here("output", "regime_detection", dataname, "generation")
 output_dir <- here("output", "regime_detection", dataname)
@@ -31,7 +34,7 @@ input_file <- file.path(input_dir, "predictions_grid.rds")
 tidy_file <- file.path(generation_dir, "tidy_dataset.rds")
 output_file <- file.path(output_dir, glue("{dataname}_predictions.csv"))
 
-# Comment: Test mode configuration
+# Test mode configuration
 test_mode <- FALSE # Set to TRUE to export sample, FALSE for full dataset
 test_rows <- 1000
 # endregion Configuration
@@ -57,17 +60,22 @@ if (!file.exists(tidy_file)) {
   ))
 }
 
+if (file.exists(output_file) && !test_mode) {
+  cli::cli_alert_info("Output already exists, skipping: {output_file}")
+  quit(status = 0)
+}
+
 data <- readRDS(input_file)
 cli::cli_inform(c("v" = "Loaded {nrow(data)} predictions"))
 
-# Comment: Load signal lengths from tidy dataset
+# Load signal lengths from tidy dataset
 tidy_dataset <- readRDS(tidy_file)
 record_lengths <- tibble::tibble(
   record = tidy_dataset$record,
   length = tidy_dataset$length
 )
 
-# Comment: Add signal lengths to predictions
+# Add signal lengths to predictions
 data <- data |>
   dplyr::left_join(record_lengths, by = "record")
 
@@ -86,7 +94,7 @@ cli::cli_h2("Step 2: Converting to CSV format")
 
 csv_data <- data |>
   dplyr::mutate(
-    # Comment: Calculate duration in seconds
+    # Calculate duration in seconds
     duration_seconds = length / const_sample_freq
   ) |>
   dplyr::select(
@@ -106,8 +114,8 @@ cli::cli_inform(c("v" = "Data transformed"))
 # region Step 4 - Convert Lists to JSON
 cli::cli_h2("Step 3: Converting lists to JSON format")
 
-# Comment: Convert sample indices to time in seconds
-# Comment: Format as JSON arrays for Python compatibility
+# Convert sample indices to time in seconds
+# Format as JSON arrays for Python compatibility
 csv_data <- csv_data |>
   dplyr::mutate(
     gt_times = purrr::map_chr(truth, function(x) {
@@ -165,7 +173,7 @@ cli::cli_inform(c("v" = "Metadata added"))
 # region Step 6 - Validate Data
 cli::cli_h2("Step 5: Validating data")
 
-# Comment: Check for NAs in critical columns
+# Check for NAs in critical columns
 na_counts <- csv_data |>
   dplyr::summarise(dplyr::across(dplyr::everything(), ~ sum(is.na(.))))
 
@@ -174,7 +182,7 @@ if (any(na_counts > 0)) {
   print(na_counts)
 }
 
-# Comment: Check for negative values
+# Check for negative values
 if (any(csv_data$duration_seconds < 0, na.rm = TRUE)) {
   cli::cli_alert_warning("Found negative duration_seconds")
 }

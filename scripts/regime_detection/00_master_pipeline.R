@@ -1,23 +1,31 @@
 # region Master Pipeline - Regime Detection
-# Comment: This is the master script that documents the complete pipeline
-# Comment: Run scripts in order: 10 -> 20 -> 30 -> 40
+# This is the master script that documents the complete pipeline
+# Run scripts in order: 10 -> 20 -> 30 -> 40
 
 # region Pipeline Overview
-# Comment: PHASE 1: GENERATION (Memory-intensive Matrix Profile computation)
-# Comment:   10_prepare_data.R - Load and prepare ECG data
-# Comment:   20_generate_matrix_profiles.R - Compute Matrix Profiles (one window size at a time)
+# PHASE 1: GENERATION (Memory-intensive Matrix Profile computation)
+#   10_prepare_data.R - Load and prepare ECG data
+#   20_generate_matrix_profiles.R - Compute Matrix Profiles (one window size at a time)
 #
-# Comment: PHASE 2: PREDICTION (Exhaustive grid search and export)
-# Comment:   30_predict_grid_search.R - Generate predictions with full grid search
-# Comment:   40_convert_to_csv.R - Export to Python-compatible CSV format
+# PHASE 2: PREDICTION (Exhaustive grid search and export)
+#   30_predict_grid_search.R - Generate predictions with full grid search
+#   40_convert_to_csv.R - Export to Python-compatible CSV format
 # endregion Pipeline Overview
 
-library(cli)
-library(here)
+suppressPackageStartupMessages({
+  library(cli, quietly = TRUE, warn.conflicts = FALSE)
+  library(here, quietly = TRUE, warn.conflicts = FALSE)
+})
 
 # region Configuration
-dataname <- "afib_regimes"
-run_all <- FALSE # Set to TRUE to run all scripts sequentially
+default_dataname <- "afib_regimes"
+cli_args <- commandArgs(trailingOnly = TRUE)
+dataname <- if (length(cli_args) >= 1L && nzchar(cli_args[1L])) cli_args[1L] else default_dataname
+rscript_bin <- if (nzchar(Sys.which("Rscript"))) {
+  Sys.which("Rscript")
+} else {
+  file.path(R.home("bin"), "Rscript")
+}
 # endregion Configuration
 
 # region Script Paths
@@ -51,32 +59,51 @@ cli::cli_rule()
 # endregion Display Pipeline
 
 # region Run Scripts
-if (run_all) {
-  cli::cli_alert_info("Running all scripts sequentially...")
-  total_tic <- Sys.time()
+run_script <- function(script_name, description) {
+  script_path <- here("scripts", "regime_detection", script_name)
 
-  for (i in seq_along(scripts)) {
-    script_path <- here("scripts", "regime_detection", scripts[i])
-
-    cli::cli_h2("Running {scripts[i]}")
-    tic <- Sys.time()
-    source(script_path, encoding = "UTF-8")
-    tac <- Sys.time()
-    elapsed <- round(difftime(tac, tic, units = "mins"), 2)
-    cli::cli_alert_success("{scripts[i]} completed in {elapsed} minutes")
-    cli::cli_rule()
+  if (!file.exists(script_path)) {
+    cli::cli_abort(c(
+      "x" = "Script not found: {script_path}",
+      "i" = "Check the scripts/regime_detection directory"
+    ))
   }
 
-  total_tac <- Sys.time()
-  total_elapsed <- round(difftime(total_tac, total_tic, units = "hours"), 2)
-  cli::cli_alert_success("All scripts completed in {total_elapsed} hours!")
-} else {
-  cli::cli_alert_info("To run all scripts, set run_all = TRUE")
-  cli::cli_inform(c("i" = "Or run individual scripts:"))
-  for (i in seq_along(scripts)) {
-    cli::cli_inform(c("*" = "source('{here('scripts', 'regime_detection', scripts[i])}')"))
+  cli::cli_h2("{script_name}")
+  cli::cli_inform(c(" " = description))
+
+  tic <- Sys.time()
+  status <- system2(
+    command = rscript_bin,
+    args = c(script_path, dataname),
+    stdout = "",
+    stderr = ""
+  )
+  tac <- Sys.time()
+  elapsed <- round(difftime(tac, tic, units = "mins"), 2)
+
+  if (!identical(status, 0L)) {
+    cli::cli_abort(c(
+      "x" = "{script_name} failed with status {status}",
+      "i" = "Inspect the log above and fix the issue before continuing"
+    ))
   }
+
+  cli::cli_alert_success("{script_name} completed in {elapsed} minutes")
+  cli::cli_rule()
 }
+
+cli::cli_alert_info("Running all scripts sequentially...")
+cli::cli_inform(c("i" = "Dataset: {dataname}"))
+cli::cli_inform(c("i" = "Rscript binary: {rscript_bin}"))
+
+total_tic <- Sys.time()
+for (i in seq_along(scripts)) {
+  run_script(scripts[i], script_descriptions[i])
+}
+total_tac <- Sys.time()
+total_elapsed <- round(difftime(total_tac, total_tic, units = "hours"), 2)
+cli::cli_alert_success("All scripts completed in {total_elapsed} hours!")
 # endregion Run Scripts
 
 # region Output Structure

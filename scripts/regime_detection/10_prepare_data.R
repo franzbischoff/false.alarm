@@ -1,57 +1,76 @@
 # region Prepare ECG Data for Regime Detection
-# Comment: This script loads ECG data, resamples, normalizes, and extracts ground truth
-# Comment: Output: tidy dataset with one row per record containing truth and time series
+# This script loads ECG data, resamples, normalizes, and extracts ground truth
+# Output: tidy dataset with one row per record containing truth and time series
 
-# Comment: Load all helper functions
-script_files <- list.files(here::here("scripts", "common"), pattern = "*.R")
-purrr::walk(here::here("scripts", "common", script_files), source, local = .GlobalEnv, encoding = "UTF-8")
-rm(script_files)
+source(here::here("scripts", "common", "read_ecg.R"), local = .GlobalEnv, encoding = "UTF-8")
 
-library(cli)
-library(dplyr)
-library(purrr)
-library(tibble)
-library(here)
+suppressPackageStartupMessages({
+  library(cli, quietly = TRUE, warn.conflicts = FALSE)
+  library(dplyr, quietly = TRUE, warn.conflicts = FALSE)
+  library(purrr, quietly = TRUE, warn.conflicts = FALSE)
+  library(tibble, quietly = TRUE, warn.conflicts = FALSE)
+  library(here, quietly = TRUE, warn.conflicts = FALSE)
+})
 
 # region Configuration
-# Comment: ===== DATASET SELECTION =====
-# Comment: Uncomment ONE dataset configuration below
+# ===== DATASET SELECTION =====
+# CLI override: Rscript 10_prepare_data.R <dataname>
+default_dataname <- "malignantventricular"
+cli_args <- commandArgs(trailingOnly = TRUE)
+dataname <- if (length(cli_args) >= 1L && nzchar(cli_args[1L])) cli_args[1L] else default_dataname
+cli::cli_alert_info("Dataset selected: {dataname}")
 
-# Comment: ----- AFib Regimes (Paroxysmal Atrial Fibrillation) -----
-dataname <- "afib_regimes"
-const_sample_freq <- 250
-const_signals <- c("time", "I", "II")
-const_classes <- c("persistent_afib", "paroxysmal_afib", "non_afib")
-var_resample_from <- 200
-var_resample_to <- const_sample_freq
-var_classes_include <- "paroxysmal_afib"
-var_signals_include <- "II"
+dataset_configs <- list(
+  afib_regimes = list(
+    const_sample_freq = 250,
+    const_signals = c("time", "I", "II"),
+    const_classes = c("persistent_afib", "paroxysmal_afib", "non_afib"),
+    var_resample_from = 200,
+    var_resample_to = 250,
+    var_classes_include = "paroxysmal_afib",
+    var_signals_include = "II"
+  ),
+  vtachyarrhythmias = list(
+    const_sample_freq = 250,
+    const_signals = c("time", "ECG"),
+    const_classes = NULL, # No class filtering needed
+    var_resample_from = 0, # No resampling
+    var_resample_to = 0,
+    var_classes_include = NULL,
+    var_signals_include = "ECG"
+  ),
+  malignantventricular = list(
+    const_sample_freq = 250,
+    const_signals = c("time", "ECG1"),
+    const_classes = NULL, # No class filtering needed
+    var_resample_from = 0, # No resampling
+    var_resample_to = 0,
+    var_classes_include = NULL,
+    var_signals_include = "ECG1"
+  )
+)
 
-# Comment: ----- VTach Arrhythmias -----
-# dataname <- "vtachyarrhythmias"
-# const_sample_freq <- 250
-# const_signals <- c("time", "ECG")
-# const_classes <- NULL  # No class filtering needed
-# var_resample_from <- 0  # No resampling
-# var_resample_to <- 0
-# var_classes_include <- NULL
-# var_signals_include <- "ECG"
+if (!dataname %in% names(dataset_configs)) {
+  cli::cli_abort(c(
+    "x" = "Unknown dataset: {dataname}",
+    "i" = "Available options: {paste(names(dataset_configs), collapse = ', ')}"
+  ))
+}
 
-# Comment: ----- Malignant Ventricular -----
-# dataname <- "malignantventricular"
-# const_sample_freq <- 250
-# const_signals <- c("time", "ECG1")
-# const_classes <- NULL  # No class filtering needed
-# var_resample_from <- 0  # No resampling
-# var_resample_to <- 0
-# var_classes_include <- NULL
-# var_signals_include <- "ECG1"
+cfg <- dataset_configs[[dataname]]
+const_sample_freq <- cfg$const_sample_freq
+const_signals <- cfg$const_signals
+const_classes <- cfg$const_classes
+var_resample_from <- cfg$var_resample_from
+var_resample_to <- cfg$var_resample_to
+var_classes_include <- cfg$var_classes_include
+var_signals_include <- cfg$var_signals_include
 
-# Comment: ----- Common Configuration -----
+# ----- Common Configuration -----
 var_subset <- NULL # NULL = use entire signal
 var_limit_per_class <- NULL # Set to NULL for all files, 10 for testing
 
-# Comment: Compute derived values
+# Compute derived values
 if (!is.null(const_classes)) {
   var_classes_exclude <- setdiff(const_classes, var_classes_include)
 } else {
@@ -59,16 +78,22 @@ if (!is.null(const_classes)) {
 }
 var_signals_exclude <- setdiff(const_signals, var_signals_include)
 
-# Comment: Output configuration
+# Output configuration
 output_dir <- here("output", "regime_detection", dataname, "generation")
 output_file <- file.path(output_dir, "tidy_dataset.rds")
 # endregion Configuration
+
+# Skip if already processed
+if (file.exists(output_file)) {
+  cli::cli_alert_info("Output already exists, skipping: {output_file}")
+  quit(status = 0)
+}
 
 cli::cli_h1("Regime Detection - Data Preparation")
 cli::cli_inform(c("i" = "Dataset: {dataname}"))
 cli::cli_inform(c("i" = "Output directory: {output_dir}"))
 
-# Comment: Create output directory if it doesn't exist
+# Create output directory if it doesn't exist
 if (!dir.exists(output_dir)) {
   dir.create(output_dir, recursive = TRUE, showWarnings = FALSE)
   cli::cli_inform(c("v" = "Created output directory"))
@@ -76,12 +101,26 @@ if (!dir.exists(output_dir)) {
 
 # region Step 1 - Find Files
 cli::cli_h2("Step 1: Finding ECG files")
+dataset_dir <- here::here("inst", "extdata", dataname)
+if (!dir.exists(dataset_dir)) {
+  cli::cli_abort(c(
+    "x" = "Dataset directory not found: {dataset_dir}",
+    "i" = "Verify dataset name and location under inst/extdata"
+  ))
+}
+
 file_paths <- find_all_files(
-  here::here("inst", "extdata", dataname),
+  dataset_dir,
   data_type = "regimes",
   classes = var_classes_include
 )
 cli::cli_inform(c("v" = "Found {length(file_paths)} files"))
+if (length(file_paths) == 0) {
+  cli::cli_abort(c(
+    "x" = "No files found for dataset {dataname}",
+    "i" = "Check classes/signals configuration or dataset contents"
+  ))
+}
 # endregion Step 1
 
 # region Step 2 - Read and Prepare Data
@@ -132,7 +171,7 @@ for (i in seq_along(tidy_dataset$truth)) {
   )
 }
 
-# Comment: Add signal length for later use
+# Add signal length for later use
 tidy_dataset <- tidy_dataset |>
   dplyr::mutate(length = purrr::map_int(ts, length))
 

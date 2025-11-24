@@ -1,53 +1,52 @@
 # region Generate Predictions with Grid Search
-# Comment: This script performs exhaustive grid search over all hyperparameters
-# Comment: Grid: regime_threshold × regime_landmark × min_gap_samples
-# Comment: Input: tidy_dataset.rds + matrix_profiles_w*.rds (from steps 10, 20)
-# Comment: Output: predictions_grid.rds with all combinations
+# This script performs exhaustive grid search over all hyperparameters
+# Grid: regime_threshold × regime_landmark × min_gap_samples
+# Input: tidy_dataset.rds + matrix_profiles_w*.rds (from steps 10, 20)
+# Output: predictions_grid.rds with all combinations
 
-library(cli)
-library(dplyr)
-library(purrr)
-library(tibble)
-library(here)
-library(furrr)
-library(future)
+suppressPackageStartupMessages({
+  library(cli, quietly = TRUE, warn.conflicts = FALSE)
+  library(dplyr, quietly = TRUE, warn.conflicts = FALSE)
+  library(purrr, quietly = TRUE, warn.conflicts = FALSE)
+  library(tibble, quietly = TRUE, warn.conflicts = FALSE)
+  library(here, quietly = TRUE, warn.conflicts = FALSE)
+  library(furrr, quietly = TRUE, warn.conflicts = FALSE)
+  library(future, quietly = TRUE, warn.conflicts = FALSE)
+})
 
-# Comment: Load FLOSS functions
+# Load FLOSS functions
 source(here::here("scripts", "helpers", "glue_fmt.R"), local = .GlobalEnv, encoding = "UTF-8")
 source(here::here("R", "floss_predict.R"), local = .GlobalEnv, encoding = "UTF-8")
-
-# Comment: Load clean_pred function
-script_files <- list.files(here::here("scripts", "common"), pattern = "*.R")
-purrr::walk(here::here("scripts", "common", script_files), source, local = .GlobalEnv, encoding = "UTF-8")
-rm(script_files)
+source(here::here("scripts", "common", "read_ecg.R"), local = .GlobalEnv, encoding = "UTF-8")
 
 # region Configuration
-# Comment: ===== DATASET SELECTION =====
-# Comment: Must match dataset from scripts 10 and 20
-
-dataname <- "afib_regimes"
-# dataname <- "vtachyarrhythmias"
-# dataname <- "malignantventricular"
+# ===== DATASET SELECTION =====
+# Must match dataset from scripts 10 and 20
+# CLI override: Rscript 30_predict_grid_search.R <dataname>
+default_dataname <- "afib_regimes"
+cli_args <- commandArgs(trailingOnly = TRUE)
+dataname <- if (length(cli_args) >= 1L && nzchar(cli_args[1L])) cli_args[1L] else default_dataname
+cli::cli_alert_info("Dataset selected: {dataname}")
 
 const_sample_freq <- 250
 
-# Comment: Grid search hyperparameters
-# Comment: regime_threshold: sensitivity for detecting regime changes (18 values: 0.05 to 0.9)
+# Grid search hyperparameters
+# regime_threshold: sensitivity for detecting regime changes (18 values: 0.05 to 0.9)
 var_regime_threshold <- seq(0.05, 0.9, by = 0.05)
 
-# Comment: regime_landmark: temporal lag in seconds where threshold is applied (15 values: 2s to 9s)
-# Comment: A landmark of 2 means detection occurs 2 seconds behind streaming position
+# regime_landmark: temporal lag in seconds where threshold is applied (15 values: 2s to 9s)
+# A landmark of 2 means detection occurs 2 seconds behind streaming position
 var_regime_landmark <- seq(2, 9, by = 0.5)
 
-# Comment: min_gap_samples: minimum distance between consecutive predictions (6 values)
-# Comment: This is the parameter used in clean_pred() to remove duplicates
-# Comment: Values: 200 (0.8s), 500 (2s), 1000 (4s), 2000 (8s), 3000 (12s), 5000 (20s) at 250Hz
+# min_gap_samples: minimum distance between consecutive predictions (6 values)
+# This is the parameter used in clean_pred() to remove duplicates
+# Values: 200 (0.8s), 500 (2s), 1000 (4s), 2000 (8s), 3000 (12s), 5000 (20s) at 250Hz
 var_min_gap_samples <- c(200, 500, 1000, 2000, 3000, 5000)
 
-# Comment: Window sizes (must match generated matrix profiles)
+# Window sizes (must match generated matrix profiles)
 var_window_size <- seq(25, 400, by = 25)
 
-# Comment: Input/Output paths
+# Input/Output paths
 input_dir <- here("output", "regime_detection", dataname, "generation")
 output_dir <- here("output", "regime_detection", dataname, "prediction")
 tidy_file <- file.path(input_dir, "tidy_dataset.rds")
@@ -56,12 +55,16 @@ intermediate_dir <- file.path(output_dir, "intermediate_predictions")
 dir.create(output_dir, recursive = TRUE, showWarnings = FALSE)
 dir.create(intermediate_dir, recursive = TRUE, showWarnings = FALSE)
 
-# Comment: Memory management - process in batches
-batch_size <- 4 # Comment: Process 4 window sizes at a time to manage memory
+# Memory management - process in batches
+batch_size <- 4 # Process 4 window sizes at a time to manage memory
 
-# Comment: Parallel processing
+# Parallel processing
 n_workers <- 20
 # endregion Configuration
+
+extract_window_id <- function(path) {
+  as.integer(gsub("[^0-9]", "", basename(path)))
+}
 
 cli::cli_h1("Regime Detection - Prediction Grid Search")
 cli::cli_inform(c("i" = "Dataset: {dataname}"))
@@ -85,11 +88,21 @@ if (!file.exists(tidy_file)) {
 
 tidy_dataset <- readRDS(tidy_file)
 cli::cli_inform(c("v" = "Loaded {nrow(tidy_dataset)} records"))
+
+# Validate required matrix profiles
+expected_mp_files <- file.path(input_dir, glue::glue("matrix_profiles_w{var_window_size}.rds"))
+missing_mp <- expected_mp_files[!file.exists(expected_mp_files)]
+if (length(missing_mp) > 0) {
+  cli::cli_abort(c(
+    "x" = "Missing matrix profile files for {length(missing_mp)} window sizes.",
+    "i" = paste("First missing file:", missing_mp[[1]])
+  ))
+}
 # endregion Step 1
 
 # region Step 2 - Create Grid
 cli::cli_h2("Step 2: Creating hyperparameter grid")
-# Comment: Grid without min_gap_samples (applied later after raw predictions)
+# Grid without min_gap_samples (applied later after raw predictions)
 base_grid <- expand.grid(
   regime_threshold = var_regime_threshold,
   regime_landmark = var_regime_landmark,
@@ -104,15 +117,35 @@ cli::cli_h2("Step 3: Generating predictions")
 cli::cli_inform(c("i" = "Processing window sizes in batches of {batch_size}"))
 cli::cli_inform(c("i" = "Parallel workers: {n_workers}"))
 
-# Comment: Set up parallel processing
+# Set up parallel processing
 future::plan(future::multicore, workers = n_workers)
 
 prediction_counter <- 0
 
 total_tic <- Sys.time()
 
-# Comment: Process window sizes in batches
-window_batches <- split(var_window_size, ceiling(seq_along(var_window_size) / batch_size))
+# Identify which windows still need predictions
+existing_intermediate <- list.files(intermediate_dir,
+  pattern = "predictions_w.*\\.rds$",
+  full.names = TRUE
+)
+windows_done <- sort(extract_window_id(existing_intermediate))
+missing_windows <- setdiff(var_window_size, windows_done)
+
+if (length(missing_windows) == 0) {
+  if (file.exists(output_file)) {
+    cli::cli_alert_info("All intermediate and final outputs already exist, skipping grid search.")
+    quit(status = 0)
+  }
+  cli::cli_alert_info("All intermediate files exist; skipping generation and proceeding to combine.")
+}
+
+# Process only missing window sizes in batches
+if (length(missing_windows) > 0) {
+  window_batches <- split(missing_windows, ceiling(seq_along(missing_windows) / batch_size))
+} else {
+  window_batches <- list()
+}
 
 for (batch_idx in seq_along(window_batches)) {
   batch_windows <- window_batches[[batch_idx]]
@@ -127,7 +160,7 @@ for (batch_idx in seq_along(window_batches)) {
       next
     }
 
-    # Comment: Load Matrix Profile for this window size
+    # Load Matrix Profile for this window size
     mp_file <- file.path(input_dir, glue::glue("matrix_profiles_w{w}.rds"))
     if (!file.exists(mp_file)) {
       cli::cli_alert_warning("Window {w}: Matrix Profile not found, skipping")
@@ -137,13 +170,13 @@ for (batch_idx in seq_along(window_batches)) {
     mp_dataset <- readRDS(mp_file)
     cli::cli_inform(c("i" = "Window {w}: Loaded {nrow(mp_dataset)} Matrix Profiles"))
 
-    # Comment: Extract only the necessary components to minimize globals size
+    # Extract only the necessary components to minimize globals size
     records_vec <- mp_dataset$record
     floss_list <- mp_dataset$floss
     truth_list <- tidy_dataset$truth
     truth_records <- tidy_dataset$record
 
-    # Comment: Process all records in parallel (pass only small vectors/lists as arguments)
+    # Process all records in parallel (pass only small vectors/lists as arguments)
     batch_predictions <- furrr::future_map(
       seq_len(nrow(mp_dataset)),
       function(record_idx,
@@ -161,18 +194,18 @@ for (batch_idx in seq_along(window_batches)) {
         record_results <- list()
         counter <- 0
 
-        # Comment: Apply all threshold × landmark combinations
+        # Apply all threshold × landmark combinations
         for (grid_idx in seq_len(nrow(base_grid))) {
           rt <- base_grid$regime_threshold[grid_idx]
           rl <- base_grid$regime_landmark[grid_idx]
 
-          # Comment: Generate RAW predictions (without clean_pred)
+          # Generate RAW predictions (without clean_pred)
           raw_pred <- floss_predict(floss_obj, w, 0, rt, rl)
 
-          # Comment: Now apply each min_gap_samples value
+          # Now apply each min_gap_samples value
           for (min_gap in var_min_gap_samples) {
-            # Comment: Apply clean_pred with this specific min_gap_samples
-            # Comment: Keeps first detection within each gap (timeout behavior)
+            # Apply clean_pred with this specific min_gap_samples
+            # Keeps first detection within each gap (timeout behavior)
             cleaned_pred <- clean_pred(raw_pred, min_gap)
 
             counter <- counter + 1
@@ -200,17 +233,17 @@ for (batch_idx in seq_along(window_batches)) {
       .options = furrr::furrr_options(seed = NULL)
     )
 
-    # Comment: Combine all record results for this window
+    # Combine all record results for this window
     window_predictions <- dplyr::bind_rows(batch_predictions)
     prediction_counter <- prediction_counter + nrow(window_predictions)
     saveRDS(window_predictions, file = window_file, compress = "xz")
     cli::cli_alert_success("Window {w}: Saved {nrow(window_predictions)} rows to {window_file}")
 
-    # Comment: Free memory after persisting this window
+    # Free memory after persisting this window
     rm(window_predictions, batch_predictions)
     gc()
 
-    # Comment: Free memory after each window size
+    # Free memory after each window size
     rm(mp_dataset)
     gc()
   }
@@ -242,9 +275,6 @@ if (length(intermediate_files) == 0) {
   ))
 }
 
-extract_window_id <- function(path) {
-  as.numeric(gsub("[^0-9]", "", basename(path)))
-}
 intermediate_files <- intermediate_files[order(vapply(
   intermediate_files,
   extract_window_id,
@@ -256,7 +286,7 @@ cli::cli_inform(c("i" = "Ficheiros intermédios encontrados: {length(intermediat
 predictions_grid <- purrr::map_dfr(intermediate_files, readRDS)
 cli::cli_inform(c("i" = "Total rows: {nrow(predictions_grid)}"))
 
-# Comment: Format hyperparameters
+# Format hyperparameters
 predictions_grid <- predictions_grid |>
   dplyr::mutate(
     regime_threshold = round(regime_threshold, 2),

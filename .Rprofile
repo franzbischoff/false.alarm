@@ -10,6 +10,7 @@ if (.Platform$OS.type == "windows") {
 
 # Activate renv for all kind of environments
 source("renv/activate.R")
+cli::cli_inform(c("i" = "Renv activated from .Rprofile"))
 
 # options(
 #   clustermq.scheduler = "ssh",
@@ -28,7 +29,7 @@ if (Sys.getenv("CI") == "") {
     if (Sys.getenv("RSTUDIO") == "") {
       # interactive and not RSTUDIO ENV
       # This is the default terminal environment
-      # cat("INTERACTIVE; no RSTUDIO\n")
+      # cli::cli_inform(c("i" = "INTERACTIVE; no RSTUDIO\n"))
       options(
         warnPartialMatchArgs = FALSE,
         warnPartialMatchDollar = FALSE,
@@ -121,13 +122,13 @@ if (Sys.getenv("CI") == "") {
         # Cleaning up function
         .Last <- function() {
           savehistory() # comment this line if you don't want to save history
-          # cat("bye bye...\n") # print this so we see if any non-interactive session is lost here
+          # cli::cli_inform(c("i" = "bye bye...\n")) # print this so we see if any non-interactive session is lost here
         }
       }
     } else {
       # interactive and RSTUDIO ENV
       # This is supposed to be the RSTUDIO terminal
-      # cat("INTERACTIVE; RSTUDIO\n")
+      # cli::cli_inform(c("i" = "INTERACTIVE; RSTUDIO\n"))
       # is RSTUDIO
       # suppressMessages(
       #   suppressWarnings({
@@ -143,15 +144,18 @@ if (Sys.getenv("CI") == "") {
     if (Sys.getenv("RSTUDIO") == "") {
       # non-interactive and not RSTUDIO ENV
       # This is the default non-interactive environment
-      # cat("NON-INTERACTIVE; no RSTUDIO\n")
+      cli::cli_inform(c("i" = "NON-INTERACTIVE; no RSTUDIO\n"))
+      invisible(NULL)
     } else {
       # non-interactive and RSTUDIO ENV
       # This is the supposed to be the background RSTUDIO environment
-      # cat("NON-INTERACTIVE; RSTUDIO\n")
+      cli::cli_inform(c("i" = "NON-INTERACTIVE; RSTUDIO\n"))
+      invisible(NULL)
     }
   }
 } else {
-  # cat("CI ENV\n")
+  cli::cli_inform(c("i" = "CI ENV\n"))
+  invisible(NULL)
   # is CI
   # suppressMessages(
   #   suppressWarnings({
