@@ -60,6 +60,7 @@ batch_size <- 4 # Process 4 window sizes at a time to manage memory
 
 # Parallel processing
 n_workers <- 20
+use_parallel <- n_workers > 1
 # endregion Configuration
 
 extract_window_id <- function(path) {
@@ -115,10 +116,15 @@ cli::cli_inform(c("i" = "Will apply {length(var_min_gap_samples)} min_gap_sample
 # region Step 3 - Generate Predictions
 cli::cli_h2("Step 3: Generating predictions")
 cli::cli_inform(c("i" = "Processing window sizes in batches of {batch_size}"))
-cli::cli_inform(c("i" = "Parallel workers: {n_workers}"))
+parallel_desc <- if (use_parallel) as.character(n_workers) else "1 (sequential)"
+cli::cli_inform(c("i" = "Parallel workers: {parallel_desc}"))
 
 # Set up parallel processing
-future::plan(future::multicore, workers = n_workers)
+if (use_parallel) {
+  future::plan(future::multicore, workers = n_workers)
+} else {
+  cli::cli_alert_info("n_workers == 1, running sequentially without futures")
+}
 
 prediction_counter <- 0
 
@@ -177,61 +183,77 @@ for (batch_idx in seq_along(window_batches)) {
     truth_records <- tidy_dataset$record
 
     # Process all records in parallel (pass only small vectors/lists as arguments)
-    batch_predictions <- furrr::future_map(
-      seq_len(nrow(mp_dataset)),
-      function(record_idx,
-               records_vec,
-               floss_list,
-               truth_list,
-               truth_records,
-               base_grid,
-               var_min_gap_samples,
-               w) {
-        record_id <- records_vec[record_idx]
-        floss_obj <- floss_list[[record_idx]]
-        truth <- truth_list[[which(truth_records == record_id)]]
+    map_fun <- function(record_idx,
+                        records_vec,
+                        floss_list,
+                        truth_list,
+                        truth_records,
+                        base_grid,
+                        var_min_gap_samples,
+                        w) {
+      record_id <- records_vec[record_idx]
+      floss_obj <- floss_list[[record_idx]]
+      truth <- truth_list[[which(truth_records == record_id)]]
 
-        record_results <- list()
-        counter <- 0
+      record_results <- list()
+      counter <- 0
 
-        # Apply all threshold × landmark combinations
-        for (grid_idx in seq_len(nrow(base_grid))) {
-          rt <- base_grid$regime_threshold[grid_idx]
-          rl <- base_grid$regime_landmark[grid_idx]
+      # Apply all threshold × landmark combinations
+      for (grid_idx in seq_len(nrow(base_grid))) {
+        rt <- base_grid$regime_threshold[grid_idx]
+        rl <- base_grid$regime_landmark[grid_idx]
 
-          # Generate RAW predictions (without clean_pred)
-          raw_pred <- floss_predict(floss_obj, w, 0, rt, rl)
+        # Generate RAW predictions (without clean_pred)
+        raw_pred <- floss_predict(floss_obj, w, 0, rt, rl)
 
-          # Now apply each min_gap_samples value
-          for (min_gap in var_min_gap_samples) {
-            # Apply clean_pred with this specific min_gap_samples
-            # Keeps first detection within each gap (timeout behavior)
-            cleaned_pred <- clean_pred(raw_pred, min_gap)
+        # Now apply each min_gap_samples value
+        for (min_gap in var_min_gap_samples) {
+          # Apply clean_pred with this specific min_gap_samples
+          # Keeps first detection within each gap (timeout behavior)
+          cleaned_pred <- clean_pred(raw_pred, min_gap)
 
-            counter <- counter + 1
-            record_results[[counter]] <- tibble::tibble(
-              record = record_id,
-              window_size = w,
-              regime_threshold = rt,
-              regime_landmark = rl,
-              min_gap_samples = min_gap,
-              truth = list(truth),
-              pred = list(cleaned_pred)
-            )
-          }
+          counter <- counter + 1
+          record_results[[counter]] <- tibble::tibble(
+            record = record_id,
+            window_size = w,
+            regime_threshold = rt,
+            regime_landmark = rl,
+            min_gap_samples = min_gap,
+            truth = list(truth),
+            pred = list(cleaned_pred)
+          )
         }
+      }
 
-        dplyr::bind_rows(record_results)
-      },
-      records_vec = records_vec,
-      floss_list = floss_list,
-      truth_list = truth_list,
-      truth_records = truth_records,
-      base_grid = base_grid,
-      var_min_gap_samples = var_min_gap_samples,
-      w = w,
-      .options = furrr::furrr_options(seed = NULL)
-    )
+      dplyr::bind_rows(record_results)
+    }
+
+    if (use_parallel) {
+      batch_predictions <- furrr::future_map(
+        seq_len(nrow(mp_dataset)),
+        map_fun,
+        records_vec = records_vec,
+        floss_list = floss_list,
+        truth_list = truth_list,
+        truth_records = truth_records,
+        base_grid = base_grid,
+        var_min_gap_samples = var_min_gap_samples,
+        w = w,
+        .options = furrr::furrr_options(seed = NULL)
+      )
+    } else {
+      batch_predictions <- purrr::map(
+        seq_len(nrow(mp_dataset)),
+        map_fun,
+        records_vec = records_vec,
+        floss_list = floss_list,
+        truth_list = truth_list,
+        truth_records = truth_records,
+        base_grid = base_grid,
+        var_min_gap_samples = var_min_gap_samples,
+        w = w
+      )
+    }
 
     # Combine all record results for this window
     window_predictions <- dplyr::bind_rows(batch_predictions)

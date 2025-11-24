@@ -78,21 +78,19 @@ floss_extract <- function(floss_list, params, infos) {
       output_idx <- if (alarm_time) x$offset else detection_idx
 
       if ((detection_idx - current_abs_min_idx) > floss_constraint) {
-        # IMPROVE: tweak floss_constraint
         # cli::cli_inform("abs_min_idx at {abs_min_idx}, value {cac[landmark]}.")
-        current_abs_min_idx <<- detection_idx
-        current_abs_min_value <<- cac[landmark]
-        all_regimes_idxs <<- c(all_regimes_idxs, output_idx)
-        all_regimes_values <<- c(all_regimes_values, current_abs_min_value)
+        current_abs_min_idx <<- detection_idx # nolint undesirable_operator_linter
+        current_abs_min_value <<- cac[landmark] # nolint undesirable_operator_linter
+        all_regimes_idxs <<- c(all_regimes_idxs, output_idx) # nolint undesirable_operator_linter
+        all_regimes_values <<- c(all_regimes_values, current_abs_min_value) # nolint undesirable_operator_linter
       }
       if (cac[landmark] < current_abs_min_value) {
-        if ((detection_idx - current_abs_min_idx) < floor(history / 2.0)) {
-          # IMPROVE: tweak floor(history / 2)
+        if ((detection_idx - current_abs_min_idx) < floss_constraint) {
           # cli::cli_inform("abs_min_idx2 at {abs_min_idx}, value {cac[landmark]}.")
-          current_abs_min_idx <<- detection_idx
-          current_abs_min_value <<- cac[landmark]
-          all_regimes_idxs <<- c(all_regimes_idxs, output_idx)
-          all_regimes_values <<- c(all_regimes_values, current_abs_min_value)
+          current_abs_min_idx <<- detection_idx # nolint undesirable_operator_linter
+          current_abs_min_value <<- cac[landmark] # nolint undesirable_operator_linter
+          all_regimes_idxs <<- c(all_regimes_idxs, output_idx) # nolint undesirable_operator_linter
+          all_regimes_values <<- c(all_regimes_values, current_abs_min_value) # nolint undesirable_operator_linter
         }
       }
     }

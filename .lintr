@@ -28,6 +28,7 @@ linters: linters_with_defaults(
   pipe_call_linter(),
   redundant_ifelse_linter(),
   regex_subset_linter(),
+  return_linter = NULL,
   semicolon_linter(allow_compound = TRUE),
   sprintf_linter(),
   string_boundary_linter(),
