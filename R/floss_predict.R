@@ -1,5 +1,5 @@
 floss_predict <- function(floss_list, window_size, time_constraint, regime_threshold,
-                          regime_landmark,
+                          regime_landmark, alarm_time = TRUE,
                           ez = 0.5, history = 5000L,
                           sample_freq = 250L, batch = 100L) {
   regimes <- floss_extract(floss_list,
@@ -8,6 +8,7 @@ floss_predict <- function(floss_list, window_size, time_constraint, regime_thres
       ez = ez,
       regime_threshold = regime_threshold,
       regime_landmark = floor(regime_landmark * sample_freq), # 3L sec from the end
+      alarm_time = alarm_time,
       batch = batch,
       history = history,
       mp_time_constraint = time_constraint,
@@ -44,6 +45,7 @@ floss_extract <- function(floss_list, params, infos) {
   # window_size <- params$window_size
   history <- params$history
   landmark <- history - params$regime_landmark # here is where we look for the minimum value
+  alarm_time <- isTRUE(params$alarm_time)
 
   if (params$mp_time_constraint > 0L && params$mp_time_constraint <= floor(params$history * 3.0 / 4.0)) {
     floss_constraint <- params$mp_time_constraint
@@ -72,22 +74,24 @@ floss_extract <- function(floss_list, params, infos) {
     # }
 
     if (cac[landmark] < regime_threshold) {
-      abs_min_idx <- x$offset - history + landmark + 1L
-      if ((abs_min_idx - current_abs_min_idx) > floss_constraint) {
+      detection_idx <- x$offset - history + landmark + 1L
+      output_idx <- if (alarm_time) x$offset else detection_idx
+
+      if ((detection_idx - current_abs_min_idx) > floss_constraint) {
         # IMPROVE: tweak floss_constraint
         # cli::cli_inform("abs_min_idx at {abs_min_idx}, value {cac[landmark]}.")
-        current_abs_min_idx <<- abs_min_idx
+        current_abs_min_idx <<- detection_idx
         current_abs_min_value <<- cac[landmark]
-        all_regimes_idxs <<- c(all_regimes_idxs, current_abs_min_idx)
+        all_regimes_idxs <<- c(all_regimes_idxs, output_idx)
         all_regimes_values <<- c(all_regimes_values, current_abs_min_value)
       }
       if (cac[landmark] < current_abs_min_value) {
-        if ((abs_min_idx - current_abs_min_idx) < floor(history / 2.0)) {
+        if ((detection_idx - current_abs_min_idx) < floor(history / 2.0)) {
           # IMPROVE: tweak floor(history / 2)
           # cli::cli_inform("abs_min_idx2 at {abs_min_idx}, value {cac[landmark]}.")
-          current_abs_min_idx <<- abs_min_idx
+          current_abs_min_idx <<- detection_idx
           current_abs_min_value <<- cac[landmark]
-          all_regimes_idxs <<- c(all_regimes_idxs, current_abs_min_idx)
+          all_regimes_idxs <<- c(all_regimes_idxs, output_idx)
           all_regimes_values <<- c(all_regimes_values, current_abs_min_value)
         }
       }
