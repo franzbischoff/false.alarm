@@ -3,9 +3,11 @@
 {
   "containerEnv": {
     "DEBUGME": "R_GlobalEnv",
-    "PGID": "1000",
-    "PUID": "1000",
-    "TZ": "Europe/Lisbon"
+    "TZ": "Europe/Lisbon",
+    "GIT_AUTHOR_NAME": "Francisco Bischoff",
+    "GIT_AUTHOR_EMAIL": "franzbischoff@gmail.com",
+    "GIT_COMMITTER_NAME": "Francisco Bischoff",
+    "GIT_COMMITTER_EMAIL": "franzbischoff@gmail.com"
   },
   "customizations": {
     "vscode": {
@@ -35,131 +37,6 @@
         "spmeesseman.vscode-taskexplorer",
         "usernamehw.errorlens"
       ]
-      // "settings": {
-      //   "editor.formatOnSave": true,
-      //   "editor.tabCompletion": "on",
-      //   "editor.tabSize": 2,
-      //   "editor.wordWrapColumn": 120,
-      //   "files.associations": {
-      //     ".whitesource": "jsonc",
-      //     "*.cls": "latex",
-      //     "*.sty": "latex"
-      //   },
-      //   "files.exclude": {
-      //     "**/.DS_Store": true,
-      //     "**/.git": true,
-      //     "**/.git/objects/**": true,
-      //     "**/.git/subtree-cache/**": true,
-      //     "**/.hg": true,
-      //     "**/.history": true,
-      //     "**/.httr-oauth": true,
-      //     "**/.RData": true,
-      //     "**/.Rhistory": true,
-      //     "**/.Rproj.user": true,
-      //     "**/.svn": true,
-      //     "**/CVS": true,
-      //     "**/dist/**": true,
-      //     "**/docs/**": false,
-      //     "**/log/**": true,
-      //     "**/logs/**": true,
-      //     "**/man/**": true,
-      //     "**/pdfs/**": true
-      //   },
-      //   "files.insertFinalNewline": true,
-      //   "files.trimTrailingWhitespace": true,
-      //   "files.watcherExclude": {
-      //     "**/.DS_Store": true,
-      //     "**/.git": true,
-      //     "**/.git/objects/**": true,
-      //     "**/.git/subtree-cache/**": true,
-      //     "**/.Rproj.user": true,
-      //     "**/dist/**": true,
-      //     "**/docs/**": true,
-      //     "**/log/**": true,
-      //     "**/logs/**": true,
-      //     "**/man/**": true,
-      //     "**/pdfs/**": true,
-      //     "**/renv/**": true,
-      //     "**/tmp/**": true
-      //   },
-      //   "git.enableCommitSigning": true,
-      //   "git.inputValidation": true,
-      //   "json.schemas": [
-      //     {
-      //       "fileMatch": [
-      //         "codemeta.json"
-      //       ],
-      //       "url": "https://raw.githubusercontent.com/codemeta/codemeta/master/codemeta.jsonld"
-      //     }
-      //   ],
-      //   "latex-workshop.bibtex-format.sort.enabled": true,
-      //   "latex-workshop.bibtex-format.sortby": [
-      //     "key",
-      //     "title"
-      //   ],
-      //   "latex-workshop.latex.autoBuild.run": "never",
-      //   "latex-workshop.view.pdf.viewer": "tab",
-      //   "markdown.validate.enabled": true,
-      //   "quarto.zotero.library": "web",
-      //   "r.alwaysUseActiveTerminal": true,
-      //   "r.bracketedPaste": true,
-      //   "r.debugger.timeouts.startup": 15000,
-      //   "r.helpPanel.cacheIndexFiles": "Workspace",
-      //   "r.lsp.diagnostics": true,
-      //   "r.plot.useHttpgd": false,
-      //   "r.rmarkdown.codeLensCommands": [
-      //     "r.runCurrentChunk",
-      //     "r.runAboveChunks",
-      //     "r.runAllChunks",
-      //     "r.runCurrentAndBelowChunks"
-      //   ],
-      //   "r.rmarkdown.knit.focusOutputChannel": false,
-      //   "r.rpath.linux": "/usr/local/bin/R",
-      //   "r.rterm.linux": "/usr/local/bin/radian",
-      //   "r.session.levelOfObjectDetail": "Detailed",
-      //   "r.session.objectLengthLimit": 100,
-      //   "r.workspaceViewer.showObjectSize": true,
-      //   "reflowMarkdown.preferredLineLength": 120,
-      //   "search.exclude": {
-      //     "**/_*/": true
-      //   },
-      //   "taskExplorer.enableAnsiconForAnt": false,
-      //   "taskExplorer.enabledTasks": {
-      //     "ant": false,
-      //     "bash": false,
-      //     "composer": false,
-      //     "gradle": false,
-      //     "grunt": false,
-      //     "gulp": false,
-      //     "make": false,
-      //     "maven": false,
-      //     "npm": false,
-      //     "perl": false,
-      //     "pipenv": false,
-      //     "powershell": false,
-      //     "python": false,
-      //     "ruby": false,
-      //     "tsc": false
-      //   },
-      //   "taskExplorer.enableSideBar": true,
-      //   "taskExplorer.exclude": [
-      //     "**/dist/**",
-      //     "**/log/**",
-      //     "**/logs/**",
-      //     "**/pdfs/**",
-      //     "**/renv/**",
-      //     "**/man/**",
-      //     "**/docs/**",
-      //     "**/tmp/**",
-      //     "**/.github/**",
-      //     "**/dev/**",
-      //     "/workspace/false.alarm/run.sh",
-      //     "**/.trunk/**"
-      //   ],
-      //   "taskExplorer.groupMaxLevel": 2,
-      //   "taskExplorer.groupSeparator": ": ",
-      //   "taskExplorer.showLastTasks": false
-      //}
     }
   },
   "features": {
@@ -169,7 +46,6 @@
     "ghcr.io/rocker-org/devcontainer-features/apt-packages:1": {
       "packages": [
         "curl",
-        "xclip",
         "gnupg",
         "less",
         "locales",
@@ -179,7 +55,13 @@
         "libzmq3-dev",
         "libudunits2-dev",
         "libgdal-dev",
-        "libmagick++-dev"
+        "libmagick++-dev",
+        "libnode-dev", // needed for jsonld
+        "build-essential",
+        "clang-format-14",
+        "qpdf", // to check PDFs generated by compilation of the package
+        "texlive-latex-base", // pdflatex
+        "fonts-inconsolata" // for inconsolata font in pdfs
       ]
     },
     "ghcr.io/rocker-org/devcontainer-features/pandoc:1": {
@@ -191,18 +73,19 @@
       "version": "latest"
     },
     "ghcr.io/rocker-org/devcontainer-features/r-packages:1": {
-      "packages": "jsonlite,languageserver,prompt,here,readr"
+      "packages": "jsonlite,languageserver,conflicted,prompt,here,readr,covr,miniCRAN,httpgd"
     },
     "ghcr.io/rocker-org/devcontainer-features/renv-cache:0": {}
   },
   // Or use a Dockerfile or Docker Compose file. More info: https://containers.dev/guide/dockerfile
   "image": "ghcr.io/rocker-org/devcontainer/r-ver:4.4",
-  "name": "false.alarm devcontainer"
+  "name": "false.alarm devcontainer",
   // Features to add to the dev container. More info: https://containers.dev/features.
   // "features": {},
   // Use 'forwardPorts' to make a list of ports inside the container available locally.
   // "forwardPorts": [],
   // Use 'postCreateCommand' to run commands after the container is created.
+  "postCreateCommand": "bash .devcontainer/post-create.sh"
   // "updateContentCommand": "Rscript -e 'renv::restore()'"
   // cd ${workspaceFolder} && Rscript -e \\'renv::restore()\\''"
   // Configure tool-specific properties.
