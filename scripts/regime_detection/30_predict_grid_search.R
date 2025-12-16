@@ -16,7 +16,7 @@ suppressPackageStartupMessages({
 
 # Load FLOSS functions
 source(here::here("scripts", "helpers", "glue_fmt.R"), local = .GlobalEnv, encoding = "UTF-8")
-source(here::here("R", "floss_predict.R"), local = .GlobalEnv, encoding = "UTF-8")
+source(here::here("scripts", "helpers", "predict_floss_changes.R"), local = .GlobalEnv, encoding = "UTF-8")
 source(here::here("scripts", "common", "read_ecg.R"), local = .GlobalEnv, encoding = "UTF-8")
 
 # region Configuration

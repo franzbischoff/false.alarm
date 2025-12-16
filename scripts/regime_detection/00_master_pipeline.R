@@ -18,7 +18,7 @@ suppressPackageStartupMessages({
 })
 
 # region Configuration
-default_dataname <- "afib_regimes"
+default_dataname <- "malignantventricular"
 cli_args <- commandArgs(trailingOnly = TRUE)
 dataname <- if (length(cli_args) >= 1L && nzchar(cli_args[1L])) cli_args[1L] else default_dataname
 rscript_bin <- if (nzchar(Sys.which("Rscript"))) {
