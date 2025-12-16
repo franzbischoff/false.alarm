@@ -16,13 +16,13 @@ suppressPackageStartupMessages({
 
 # Load FLOSS functions
 source(here::here("scripts", "helpers", "glue_fmt.R"), local = .GlobalEnv, encoding = "UTF-8")
-source(here::here("R", "floss_train.R"), local = .GlobalEnv, encoding = "UTF-8")
+source(here::here("scripts", "helpers", "compute_mp_floss.R"), local = .GlobalEnv, encoding = "UTF-8")
 
 # region Configuration
 # ===== DATASET SELECTION =====
 # Must match dataset from script 10
 # CLI override: Rscript 20_generate_matrix_profiles.R <dataname>
-default_dataname <- "afib_regimes"
+default_dataname <- "malignantventricular"
 cli_args <- commandArgs(trailingOnly = TRUE)
 dataname <- if (length(cli_args) >= 1L && nzchar(cli_args[1L])) cli_args[1L] else default_dataname
 cli::cli_alert_info("Dataset selected: {dataname}")
@@ -96,11 +96,11 @@ for (w in var_window_size) {
   tic <- Sys.time()
 
   # Compute FLOSS for all time series in parallel
-  # floss_train_regimes returns the arc curve (Matrix Profile derivative)
+  # floss_get_regimes returns the arc curve (Matrix Profile derivative)
   # Batch size: 100 samples, History buffer: 5000 samples
   floss_results <- furrr::future_map(
     tidy_dataset$ts,
-    ~ floss_train_regimes(.x, w, 0, 0),
+    ~ floss_get_regimes(.x, w, 0, 0),
     .options = furrr::furrr_options(seed = NULL)
   ) # Validate output
   checkmate::qassert(floss_results, "L+")

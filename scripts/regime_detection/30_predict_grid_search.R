@@ -23,7 +23,7 @@ source(here::here("scripts", "common", "read_ecg.R"), local = .GlobalEnv, encodi
 # ===== DATASET SELECTION =====
 # Must match dataset from scripts 10 and 20
 # CLI override: Rscript 30_predict_grid_search.R <dataname>
-default_dataname <- "afib_regimes"
+default_dataname <- "malignantventricular"
 cli_args <- commandArgs(trailingOnly = TRUE)
 dataname <- if (length(cli_args) >= 1L && nzchar(cli_args[1L])) cli_args[1L] else default_dataname
 cli::cli_alert_info("Dataset selected: {dataname}")

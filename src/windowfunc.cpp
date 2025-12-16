@@ -491,8 +491,8 @@ List muinvn_rcpp_parallel(const NumericVector data, uint32_t window_size) {
   // on Accurate Sum and Dot Product, Ogita et al
 
   NumericVector sig(data.length() - window_size + 1);
-  NumericVector mu = movsum_ogita_rcpp(data, window_size) / window_size;
-  NumericVector data2_sum = movsum_ogita_rcpp(data * data, window_size);
+  NumericVector const mu = movsum_ogita_rcpp(data, window_size) / window_size;
+  NumericVector const data2_sum = movsum_ogita_rcpp(data * data, window_size);
 
   MuinWorker muin_worker(data2_sum, mu, window_size, sig);
 
