@@ -2,11 +2,27 @@
 
 Este repositório contém todo o código e documentação de uma tese de doutoramento focada na deteção de mudanças de regime (concept drift / change points) em sinais de ECG em fluxo (250 Hz). A primeira parte deste doutoramento foca-se na detecção das mudanças de regime, enquanto que a segunda parte se concentra na classificação das alterações detetadas para diferenciar entre alterações supérfluas (ou falsos positivos) e alterações relevantes associadas a cinco tipos de alterações graves do ritmo cardíaco (Asystole, Extreme Bradycardia, Extreme Tachycardia, Ventricular Tachycardia and Ventricular Flutter/Fibrillation). A ideia inicial vem do CinC/Physionet Challenge 2015, que visava reduzir os alarmes falsos. Entretanto esta tese de doutoramento evoluiu para um foco mais amplo na deteção de mudanças de regime em sinais de ECG com a nuance de focar na implementação destes modelos em cenários de "low CPU and low memory", como dispositivos wearables. A pergunta principal é "can we accomplish this objective using a minimalist approach (low CPU, low memory) while maintaining robustness?"
 
-Inicialmente este projeto iniciou na linguagem R, utilizando dois frameworks para reprodutibilidade, o package `workflowr` que ajuda na organização dos relatórios e o package `targets` que ajuda na organização do pipeline de processamento. No entanto a implementação inicial baseou-se na premissa de que o algoritmo de detecção de mudanças era um "modelo" que seria treinado com hiperparâmetros, mas na verdade trata-se de um algoritmo que necessita apenas de um grid search para encontrar os melhores parâmetros. Assim, neste momento eu reiniciei a pipeline diretamente, sem o `targets` usando os ficheiros no formato regex `\.\/scripts\/(\d+)_([a-zA-Z_]{2,})\.R`.
+O algoritmo implementado baseia-se no Matrix Profile (MP) desenvolvido pela Universidade California Riverside (UCR). O MP é calculado em realtime, ótimo para streaming. A grande vantagem de calcular o MP é que assim que está calculado, permite aplicar diversos algoritmos em cima do MP, dentre eles deteção de motifs, discords e também deteção de mudanças de regime. A ideia é calcular o MP em janelas deslizantes (sliding windows) e aplicar os algoritmos de deteção de mudanças de regime em cima do MP. O algoritmo de deteção de mudanças de regime implementado é o FLOSS (Fast Low-cost Online Semantic Segmentation) que é uma versão modificada do FLUSS (Fast Low-cost Unipotent Semantic Segmentation) apropriada para streaming.
 
-O algoritmo que quero implementar baseia-se no Matrix Profile (MP) desenvolvido pela Universidade California Riverside (UCR). O MP é calculado em realtime, ótimo para streaming. A grande vantagem de calcular o MP é que assim que está calculado, permite aplicar diversos algoritmos em cima do MP, dentre eles deteção de motifs, discords e também deteção de mudanças de regime. A ideia é calcular o MP em janelas deslizantes (sliding windows) e aplicar os algoritmos de deteção de mudanças de regime em cima do MP. O algoritmo de deteção de mudanças de regime que pretendo implementar é o FLOSS (Fast Low-cost Online Semantic Segmentation) que é uma versão modificada do FLUSS (Fast Low-cost Unipotent Semantic Segmentation) apropriada para streaming.
+### Arquitetura da Pipeline de Deteção de Regime
 
-Caso seja necessário informações sobre a estrutura do projeto em R, consulte o ficheiro `PROJECT_STRUCTURE.md`.
+A pipeline de deteção de mudanças de regime está implementada em **scripts modulares** localizados em `scripts/regime_detection/` e **não utiliza mais o framework `targets`**. A pipeline foi simplificada em 4 scripts sequenciais (10, 20, 30, 40) organizados em 2 fases principais:
+
+#### FASE 1: GENERATION (Computação de Matrix Profiles)
+- **Script 10** (`10_prepare_data.R`): Preparação e normalização dos dados ECG
+- **Script 20** (`20_generate_matrix_profiles.R`): Computação dos Matrix Profiles usando o package `matrixprofiler` (não usa código C++ do diretório `src/`)
+
+#### FASE 2: PREDICTION (Grid Search e Exportação)
+- **Script 30** (`30_predict_grid_search.R`): Grid search exaustivo sobre hiperparâmetros usando funções do package `matrixprofiler` via helpers em `scripts/helpers/predict_floss_changes.R`
+- **Script 40** (`40_convert_to_csv.R`): Conversão dos resultados para formato CSV compatível com avaliação em Python
+
+**IMPORTANTE**: O código C++ no diretório `src/` foi utilizado em implementações anteriores com `targets`, mas a pipeline atual utiliza exclusivamente o package `matrixprofiler` através dos helpers:
+- `scripts/helpers/compute_mp_floss.R` (usado pelo script 20)
+- `scripts/helpers/predict_floss_changes.R` (usado pelo script 30)
+
+Os resultados são salvos em `output/regime_detection/{dataset}/` com estrutura organizada por dataset (afib_regimes, malignantventricular, vtachyarrhythmias).
+
+Caso seja necessário informações sobre a estrutura histórica do projeto em R (implementações antigas com `targets`), consulte o ficheiro `PROJECT_STRUCTURE.md`.
 
 ## Projeto paralelo em Python
 
@@ -23,26 +39,43 @@ Não crie ficheiros de documentação Markdown adicionais sem antes perguntar ao
 Sempre que o utilizador indicar que está a iniciar os trabalhos do dia, consulte o ficheiro `.github/copilot-memory.md` para obter as informações mais recentes sobre o estado do projeto.
 Quando o utilizador informar que encerrou os trabalhos do dia, atualize o ficheiro `.github/copilot-memory.md` com as informações mais recentes sobre o estado do projeto.
 
-## Tarefas Atuais
+## Status Atual da Fase 1 (Deteção de Mudanças de Regime)
 
-Visto que o projeto em Python já está a fazer a avaliação dos resultados dos detectores, neste projeto em R iremos neste momento focar-nos em transformar o dataset já processado pelo novo script simplificado da pipeline (sem o `targets`) para o formato esperado pelo script de avaliação em Python. Isto implica criar um novo script em R que leia os ficheiros de resultados gerados pelo algoritmo de MP/FLOSS e os converta para o formato CSV esperado pelo script de avaliação em Python, garantindo que todas as métricas necessárias estão corretamente calculadas e formatadas.
+✅ **CONCLUÍDO**: A primeira fase do doutoramento (deteção de mudanças de regime) está completa do ponto de vista de computação.
 
-## Hiperparâmetros do FLOSS - Grid Search Pendente
+- ✅ Pipeline modular implementada (scripts 10, 20, 30, 40) sem dependência do framework `targets`
+- ✅ Matrix Profiles computados para todos os window sizes usando `matrixprofiler` package
+- ✅ Grid search exaustivo executado sobre todas as combinações de hiperparâmetros
+- ✅ Resultados exportados para formato CSV compatível com o sistema de avaliação em Python
+- ✅ Dados prontos para comparação com baselines (adwin, kswin, hddm_a, hddm_w, page_hinkley)
 
-Atualmente o algoritmo FLOSS está a utilizar os seguintes hiperparâmetros:
+Os resultados do FLOSS estão salvos em `output/regime_detection/{dataset}/{dataset}_predictions.csv` e podem ser avaliados no projeto Python (https://github.com/franzbischoff/ts-segmentation) usando as mesmas métricas dos outros detectores.
 
-1. **window_size**: 350-400 (step 25) → 3 valores
-2. **regime_threshold**: 0.05-0.9 (step 0.05) → 18 valores  
-3. **regime_landmark**: 2-9 (step 0.5) → 15 valores (atraso temporal em segundos onde o threshold é aplicado)
+## Hiperparâmetros do FLOSS - Grid Search Completo
 
-**IMPORTANTE - Grid Search Adicional Necessário:**
+O algoritmo FLOSS foi testado com grid search exaustivo sobre 4 dimensões de hiperparâmetros (implementado em `scripts/regime_detection/30_predict_grid_search.R`):
 
-4. **min_gap_samples** (atualmente fixo em 200): Parâmetro da função `clean_pred(200, FALSE)` que define a distância mínima (em samples) entre predições consecutivas. No projeto Python, este parâmetro foi testado com os valores: **1000, 2000, 3000, 5000** samples.
+1. **window_size**: 25-400 (step 25) → **16 valores**
+   - Representa o tamanho da janela do Matrix Profile (0.1s a 1.6s a 250Hz)
+   - Computado na Fase 1 pelo script `20_generate_matrix_profiles.R`
 
-   - Valor atual: 200 samples (0.8s a 250Hz)
-   - Valores a testar: 1000, 2000, 3000, 5000 samples (4s, 8s, 12s, 20s a 250Hz)
-   - Localização no código: `scripts/1_compute_all_scores.R`, linha onde `clean_pred(200, TRUE)` é chamado
-   - **Ação pendente**: Adicionar `min_gap_samples` ao grid search completo para comparabilidade com os detectores Python
+2. **regime_threshold**: 0.05-0.9 (step 0.05) → **18 valores**
+   - Sensibilidade para detetar mudanças de regime (quanto maior, mais sensível)
+   - Aplicado sobre o Corrected Arc Curve (CAC) do FLOSS
+
+3. **regime_landmark**: 2-9 (step 0.5) → **15 valores**
+   - Atraso temporal em segundos onde o threshold é aplicado
+   - Representa o delay entre avaliação e detecção no streaming
+
+4. **min_gap_samples**: 200, 500, 1000, 2000, 3000, 5000 → **6 valores**
+   - Distância mínima (em samples) entre predições consecutivas
+   - Parâmetro da função `clean_pred()` para remover duplicatas
+   - Valores em segundos a 250Hz: 0.8s, 2s, 4s, 8s, 12s, 20s
+   - Garante comparabilidade com os detectores baseline do projeto Python
+
+**Total de combinações por registo**: 16 × 18 × 15 × 6 = **25,920 configurações**
+
+As predições são geradas em formato RAW e depois aplicadas todas as variações de `min_gap_samples`, permitindo testar diferentes estratégias de supressão de alarmes duplicados.
 
 ## Tarefas Futuras
 
