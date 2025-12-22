@@ -204,8 +204,6 @@
   "r.bracketedPaste": true,
   "r.debugger.timeouts.startup": 15000,
   "r.helpPanel.cacheIndexFiles": "Workspace",
-  "r.lsp.diagnostics": true,
-  "r.plot.useHttpgd": false,
   "r.rmarkdown.codeLensCommands": [
     "r.runCurrentChunk",
     "r.runAboveChunks",

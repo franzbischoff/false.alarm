@@ -33,7 +33,7 @@ if (knitr::is_latex_output()) {
 rlang::check_installed(c(
   "here", "glue", "visNetwork", "tibble", "kableExtra", "gridExtra",
   "ggplot2", "dplyr", "dbarts", "vip", "pdp", "patchwork", "fastshap",
-  "tune"
+  "tune", "doParallel", "reticulate"
 ))
 
 options(dplyr.summarise.inform = FALSE)

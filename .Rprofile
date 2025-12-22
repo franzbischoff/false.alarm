@@ -145,6 +145,10 @@ if (Sys.getenv("CI") == "") {
       # non-interactive and not RSTUDIO ENV
       # This is the default non-interactive environment
       cli::cli_inform(c("i" = "NON-INTERACTIVE; no RSTUDIO\n"))
+      options(languageserver.formatting_style = function(options) {
+        style <- styler::tidyverse_style(scope = "tokens", indent_by = 2)
+        style
+      })
       invisible(NULL)
     } else {
       # non-interactive and RSTUDIO ENV

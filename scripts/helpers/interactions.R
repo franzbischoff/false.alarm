@@ -16,6 +16,9 @@
 #' @param paropts List containing additional options to be passed on to
 #' \code{\link[foreach]{foreach}} when \code{parallel = TRUE}.
 #'
+#' @param seed Integer for reproducibility. If \code{NULL} (default), results
+#' will vary between runs. Set to a fixed integer (e.g., 123) for reproducibility.
+#'
 #' @param ... Additional optional arguments to be passed on to
 #' \code{\link[pdp]{partial}}.
 #'
@@ -76,8 +79,11 @@
 #'   xlab("") +
 #'   ylab("Interaction strength")
 #' }
-vint <- function(object, feature_names, data, type, n_jobs = 1, ...) {
+vint <- function(object, feature_names, data, type, n_jobs = 1, seed = NULL, ...) {
   checkmate::qassert(feature_names, "S+")
+
+  # Store current plan to restore it later
+  old_plan <- future::plan()
 
   all_pairs <- utils::combn(feature_names, m = 2) # two by two
   all_pairs <- purrr::array_tree(all_pairs, 2)
@@ -88,6 +94,11 @@ vint <- function(object, feature_names, data, type, n_jobs = 1, ...) {
     future::plan(future::sequential)
   } else {
     future::plan(future::multisession, workers = n_jobs)
+  }
+
+  # Set seed for reproducibility if provided
+  if (!is.null(seed)) {
+    set.seed(seed)
   }
 
   progressr::with_progress(
@@ -107,6 +118,9 @@ vint <- function(object, feature_names, data, type, n_jobs = 1, ...) {
     },
     handlers = progressr::handler_progress(format = "[:bar] :percent :eta :message")
   )
+
+  # Restore original plan
+  future::plan(old_plan)
 
   cli::cli_alert_info("Gathering statistics.")
   # compute the sd of the partials

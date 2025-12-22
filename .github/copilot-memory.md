@@ -52,4 +52,10 @@ A Fase 1 está completa. Aguardam-se instruções para:
 
 ---
 
-(Atualizado em 2025-12-20)
+## 2025-12-21 — Debug check_interactions parallel issue
+
+- Context: Working in `scripts/regime_detection/evaluation/parameter_analysis.R`, reached the `check_interactions()` step.
+- Issue: Interaction analysis not working when `parallel = TRUE`; debugging with non-parallel runs and smaller datasets.
+- Recent change: `best_fit` cannot be cached because leads to invalid results.
+
+(Atualizado em 2025-12-21)

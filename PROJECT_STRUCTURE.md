@@ -8,63 +8,30 @@
 
 ## Pipeline Principal
 
-A pipeline atual foi simplificada, migrando do framework `targets` para scripts numerados que executam sequencialmente o processamento de dados.
+### Atual (modular, sem `targets`)
 
 ```
 scripts/
-├── 1_compute_all_scores.R          # Script principal de computação (🔄 EM DESENVOLVIMENTO)
-│   ├── Calcula Matrix Profile (MP) usando FLOSS
-│   ├── Grid search de hiperparâmetros (window_size, regime_threshold, regime_landmark)
-│   ├── Gera predições de mudanças de regime
-│   ├── Calcula scores (F-score adaptado) comparando com ground truth
-│   └── Adiciona baseline (detecções a cada 1s e 4s)
-│
-├── 2_cross_validation.R            # Cross-validation 5-folds (🔄 EM DESENVOLVIMENTO)
-│   ├── Divide datasets em 5 folds
-│   ├── Identifica top-3 modelos por fold
-│   └── Calcula estatísticas (min, q25, median, q75, iqr, mean, max, sd)
-│
-├── common/                         # Funções auxiliares de processamento
-│   ├── compute_floss.R             # Cálculo do FLOSS
-│   ├── score_floss.R               # Métricas de avaliação
-│   ├── read_ecg.R                  # Leitura de sinais ECG
-│   ├── filter_data.R               # Filtros de sinal
-│   ├── find_all_files.R            # Descoberta de ficheiros
-│   ├── extract_regimes.R           # Extração de regimes
-│   ├── compute_companion_stats.R
-│   ├── compute_filters.R
-│   ├── compute_s_profile_with_stats.R
-│   ├── compute_streaming_profile.R
-│   ├── extract_regime_sample.R
-│   ├── fit_model.R
-│   ├── get_set_attributes.R
-│   ├── process_ts_in_file.R
-│   ├── sqi.R
-│   ├── utils_targets.R
-│   └── validate_data.R
-│
-├── regimes/                        # Funções específicas de regime
-│   ├── training_regimes.R
-│   └── predict_regimes.R
-│
-├── helpers/                        # Utilitários gerais
-│   └── glue_fmt.R
-│
-├── classification/                 # Pipeline de classificação (Fase 2)
-│
-├── _globals.R                      # Variáveis globais e configurações
-├── _targets.R                      # Pipeline targets (DEPRECIADO)
-├── _regime_change.R                # Experimento regime change (ARQUIVADO)
-├── _regime_change2.R               # Variante experimento (ARQUIVADO)
-├── _regime_change_holdout2.R       # Holdout set (ARQUIVADO)
-├── _regime_optimize.R              # Otimização (ARQUIVADO)
-├── _classifier.R                   # Pipeline classificação (FASE 2)
-├── _contrast_profile.R             # Experimento contrast (ARQUIVADO)
-└── _contrast_profile_ex.R          # Variante contrast (ARQUIVADO)
+└── regime_detection/
+  ├── 00_master_pipeline.R          # Orquestração
+  ├── 10_prepare_data.R             # Fase 1: preparação/normalização
+  ├── 20_generate_matrix_profiles.R # Fase 1: Matrix Profiles via matrixprofiler
+  ├── 30_predict_grid_search.R      # Fase 2: grid search FLOSS
+  ├── 40_convert_to_csv.R           # Fase 2: export para CSV (formato Python)
+  ├── helpers/
+  │   ├── compute_mp_floss.R
+  │   └── predict_floss_changes.R
+  └── evaluation/
+    ├── parameter_analysis.R      # Análise BART (FIRM, Permute, SHAP) c/ 4 parâmetros
+    └── README.md                 # Uso e opções de métrica/dataset
+
+scripts/helpers/parameter_analysis_helpers.R  # Funções de treino/SHAP/interações
 ```
 
-### Nota sobre Scripts com Underscore (`_`)
-Scripts que começam com `_` (underscore) são ficheiros de configuração para pipelines do framework `targets`. Estes definem DAGs (Directed Acyclic Graphs) de processamento mas foram depreciados em favor dos scripts numerados (1_, 2_, etc.) para o workflow de grid search.
+Outputs: `output/regime_detection/{dataset}/evaluation/models_aggregated.csv` (Python) + caches em `output/parameter_analysis/` (BART/SHAP/interaction).
+
+### Histórico (framework `targets`)
+Scripts com `_` (underscore) são DAGs antigos do `targets` e permanecem apenas como referência/arquivo.
 
 ---
 
