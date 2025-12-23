@@ -141,9 +141,15 @@ shap_explain <- function(model, train_data, test_data, features, nsim = 20, para
 #' @param seed Integer for reproducibility (default: 2022)
 #' @return ggplot object with importance data
 check_importance <- function(
-    model, train_data, test_data, features, type = c("firm", "permute", "shap"),
-    nsim = 20, parallel = FALSE, seed = 2022) {
+  model, train_data, test_data, features, type = c("firm", "permute", "shap"),
+  nsim = 20, parallel = FALSE, seed = 2022
+) {
   type <- match.arg(type)
+
+  if (parallel) {
+    Sys.setenv("_R_CHECK_LIMIT_CORES_" = FALSE)
+    doParallel::registerDoParallel(cores = parallelly::availableCores(methods = "system"))
+  }
 
   set.seed(seed)
   importances <- NULL
@@ -154,8 +160,30 @@ check_importance <- function(
       method = "firm",
       feature_names = features,
       pred.fun = function(object, newdata) {
-        pred <- predict(object, newdata)
-        return(pred$.pred)
+        tryCatch(
+          {
+            pred <- predict(object, newdata)
+            if (!is.null(names(pred))) {
+              res <- pred$.pred
+            } else {
+              res <- pred
+            }
+          },
+          error = function(e) {
+            print(e)
+            browser()
+          }
+        )
+
+        if (!is.vector(res)) {
+          if (any(dim(res) == 1)) {
+            res <- as.vector(res)
+          } else {
+            res <- colMeans(res)
+          }
+        }
+
+        return(res)
       },
       type = "regression",
       parallel = parallel,
@@ -172,8 +200,30 @@ check_importance <- function(
       feature_names = features,
       type = "ratio",
       pred_wrapper = function(object, newdata) {
-        pred <- predict(object, newdata)
-        pred$.pred
+        tryCatch(
+          {
+            pred <- predict(object, newdata)
+            if (!is.null(names(pred))) {
+              res <- pred$.pred
+            } else {
+              res <- pred
+            }
+          },
+          error = function(e) {
+            print(e)
+            browser()
+          }
+        )
+
+        if (!is.vector(res)) {
+          if (any(dim(res) == 1)) {
+            res <- as.vector(res)
+          } else {
+            res <- colMeans(res)
+          }
+        }
+
+        return(res)
       },
       nsim = nsim,
       metric = "rmse",
@@ -192,13 +242,35 @@ check_importance <- function(
       method = "shap",
       feature_names = features,
       pred_wrapper = function(object, newdata) {
-        pred <- predict(object, newdata)
-        pred$.pred
+        tryCatch(
+          {
+            pred <- predict(object, newdata)
+            if (!is.null(names(pred))) {
+              res <- pred$.pred
+            } else {
+              res <- pred
+            }
+          },
+          error = function(e) {
+            print(e)
+            browser()
+          }
+        )
+
+        if (!is.vector(res)) {
+          if (any(dim(res) == 1)) {
+            res <- as.vector(res)
+          } else {
+            res <- colMeans(res)
+          }
+        }
+
+        return(res)
       },
       nsim = nsim,
       train = as.data.frame(train_data),
       newdata = as.data.frame(test_data),
-      .parallel = parallel,
+      parallel = parallel,
       mapping = aes(fill = Variable),
       aesthetics = list(color = "grey35", linewidth = 0.8)
     )
@@ -206,6 +278,11 @@ check_importance <- function(
 
   importances$data <- importances$data |>
     dplyr::filter(!grepl("int_.*", Variable))
+
+  if (parallel) {
+    doParallel::stopImplicitCluster()
+    Sys.unsetenv("_R_CHECK_LIMIT_CORES_")
+  }
 
   return(importances)
 }

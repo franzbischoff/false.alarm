@@ -1,4 +1,3 @@
-#!/usr/bin/env Rscript
 #
 # Parameter Importance Analysis for Regime Detection
 #
@@ -171,69 +170,115 @@ if (rmse_val > 0.5 * sd(testing_data$mean)) {
   cli_alert_warning("RMSE is high relative to data variance. Results may be unreliable.")
 }
 
-set.seed(2022)
-data <- dplyr::slice_sample(train_data, n = 100)
-source(here::here("scripts", "helpers", "interactions.R"))
-interact <- vint(best_fit$fit$fit,
-    type = "regression",
-    feature_names = c("window_size", "regime_threshold", "regime_landmark"),
-    data = data,
-    n_jobs = 1,
-    seed = 2022
-  )
-print(interact)
-
-##
-f_names <- c("window_size", "regime_threshold", "regime_landmark")
-n_jobs <- 1
-object <- best_fit$fit$fit
-type <- "regression"
-set.seed(2022)
-data <- dplyr::slice_sample(train_data, n = 100)
-
-all_pairs <- utils::combn(f_names, m = 2) # two by two
-all_pairs <- purrr::array_tree(all_pairs, 2)
-
-future::plan(future::multisession, workers = n_jobs)
-
-parts <- furrr::future_map(all_pairs, function(x, ...) {
-  pdp::partial(object, pred.var = x, ...)
-  }, train = data, type = type, .options = furrr::furrr_options(seed = TRUE, scheduling = 1)
-)
-
-ints <- purrr::map_vec(parts, function(x) {
-  mean(c(
-    stats::sd(tapply(x$yhat, INDEX = x[[1]], FUN = stats::sd)),
-    stats::sd(tapply(x$yhat, INDEX = x[[2]], FUN = stats::sd))
-  ))
-})
-
-pairs <- purrr::transpose(all_pairs)
-
-res <- tibble::tibble(
-  "Variables" = paste0(pairs[[1]], "*", pairs[[2]]),
-  "Interaction" = ints
-)
-print(res)
-
-
 # =============================================================================
 # INTERACTION ANALYSIS
 # =============================================================================
 
 cli_h2("Analyzing Parameter Interactions")
 
-cache_interactions <- file.path(CACHE_DIR, glue::glue("interactions_{DATASET}_{METRIC}2.rds"))
+cache_interactions <- file.path(
+  CACHE_DIR,
+  glue::glue("interactions_{DATASET}_{METRIC}.rds")
+)
 
 if (file.exists(cache_interactions)) {
   cli_alert_info("Loading cached interactions...")
   interactions <- readRDS(cache_interactions)
 } else {
-  cli_alert_info("Computing 2-way interactions using FIRM/PDP...")
+  cli_alert_info("Computing 2-way interactions using PDP...")
   cli_alert_info("Expected pairs: {choose(length(predictors_names), 2)}")
 
-  interactions <- check_interactions(best_fit, train_data, predictors_names, parallel = PARALLEL)
+  if (PARALLEL) {
+    cli_alert_info("Parallel processing enabled for interaction computation")
 
+    n_jobs <- parallelly::availableCores(methods = "system") - 1
+
+    cli_alert_info("Using {n_jobs} cores for parallel processing")
+    cli_alert_info(
+      "This may take 10-20 minutes depending on data size..."
+    )
+
+    cli_alert_info("Warming up for parallel PDP computation...")
+
+    all_pairs <- utils::combn(predictors_names, m = 2)
+    all_pairs <- purrr::array_tree(all_pairs, 2)
+
+    Sys.setenv("_R_CHECK_LIMIT_CORES_" = FALSE)
+    parts <- purrr::map(all_pairs[1], function(x, ...) {
+      cl <- parallel::makeCluster(n_jobs)
+      doParallel::registerDoParallel(cl)
+      p <- pdp::partial(pred.var = x, ...)
+      parallel::stopCluster(cl)
+      p
+    },
+    object = best_fit$fit$fit, train = train_data,
+    type = "regression", parallel = TRUE
+    )
+
+    if (stats::sd(parts[[1]]$yhat) == 0) {
+      cli_alert_success("Parallel PDP warm-up complete as expected")
+    } else {
+      cli_alert_info(
+        "Parallel PDP warm-up returned valid results, acceptable"
+      )
+    }
+
+    cli_alert_info("Computing all interactions now...")
+    cli_alert_info("Using {n_jobs} cores for parallel processing")
+    cli_alert_info(
+      "This may take 20-40 minutes depending on data size..."
+    )
+
+    parts <- purrr::map(all_pairs, function(x, ...) {
+      cl <- parallel::makeCluster(n_jobs)
+      doParallel::registerDoParallel(cl)
+      p <- pdp::partial(pred.var = x, ...)
+      parallel::stopCluster(cl)
+      p
+    },
+    object = best_fit$fit$fit, train = train_data,
+    type = "regression", parallel = TRUE
+    )
+
+    Sys.unsetenv("_R_CHECK_LIMIT_CORES_")
+
+    if (stats::sd(parts[[1]]$yhat) == 0) {
+      cli_abort(
+        "Parallel PDP failed. Try setting PARALLEL = FALSE."
+      )
+    } else {
+      cli_alert_success("Parallel PDP computation complete")
+    }
+  } else {
+    cli_alert_info("Using sequential computation (PARALLEL = FALSE)")
+    parts <- lapply(all_pairs, function(pair) {
+      pdp::partial(
+        object = best_fit$fit$fit,
+        pred.var = pair,
+        train = train_data,
+        type = "regression",
+        ice = FALSE,
+        parallel = FALSE
+      )
+    })
+    cli_alert_success("Sequential PDP computation complete")
+  }
+
+  ints <- purrr::map_vec(parts, function(x) {
+    mean(c(
+      stats::sd(tapply(x$yhat, INDEX = x[[1]], FUN = stats::sd)),
+      stats::sd(tapply(x$yhat, INDEX = x[[2]], FUN = stats::sd))
+    ))
+  })
+
+  pairs <- purrr::transpose(all_pairs)
+
+  interactions <- tibble::tibble(
+    "Variables" = paste0(pairs[[1]], "*", pairs[[2]]),
+    "Interaction" = ints
+  )
+
+  interactions <- interactions |> dplyr::arrange(desc(Interaction))
   saveRDS(interactions, file = cache_interactions)
   cli_alert_success("Interactions saved to cache")
 }
@@ -266,6 +311,7 @@ if (file.exists(cache_importance)) {
 
   # Permutation
   cli_alert_info("2/3 Computing Permutation importance ({NSIM_PERM} iterations)...")
+  cli_alert_info("This is slower than FIRM (may take 40-60 minutes)...")
   importance_perm <- check_importance(best_fit, testing_data, testing_data, predictors_names,
     type = "permute", nsim = NSIM_PERM, parallel = PARALLEL
   )
@@ -277,7 +323,7 @@ if (file.exists(cache_importance)) {
 
   # SHAP
   cli_alert_info("3/3 Computing SHAP importance ({NSIM_SHAP} iterations)...")
-  cli_alert_info("This is the slowest step (may take 10-20 minutes)...")
+  cli_alert_info("This is the slowest step (may take more than 3 hours)...")
 
   importance_shap <- check_importance(best_fit, train_data, testing_data[, predictors_names], predictors_names,
     type = "shap", nsim = NSIM_SHAP, parallel = PARALLEL
