@@ -59,3 +59,52 @@ A Fase 1 está completa. Aguardam-se instruções para:
 - Recent change: `best_fit` cannot be cached because leads to invalid results.
 
 (Atualizado em 2025-12-21)
+
+---
+
+## 2025-12-25 — Análise de Importância de Parâmetros: Interpretação de Interações
+
+### Script de Análise
+`scripts/regime_detection/evaluation/parameter_analysis.R` implementa análise de importância dos hiperparâmetros FLOSS usando modelo BART com 3 métodos:
+- **FIRM** (Feature Importance Ranking Measure via ICE curves)
+- **Permutation Importance**
+- **SHAP** (SHapley Additive exPlanations)
+
+### **CRÍTICO: Interpretação dos Valores de Interação**
+
+#### Regra de Interpretação
+**Sempre usar o range OBSERVADO da métrica, não o teórico:**
+
+```r
+# CORRETO: Usar range observado nos dados
+observed_range <- max(metric_values) - min(metric_values)
+interaction_percentage <- (interaction_value / observed_range) * 100
+
+# INCORRETO: Usar range teórico [0, 1]
+# Subestima a verdadeira magnitude da interação
+```
+
+#### Exemplo Real (malignantventricular, f3_weighted)
+- **Range teórico**: [0, 1.0]
+- **Range observado**: [0, 0.744] ← usar este!
+- **Interação window_size × regime_threshold**: 0.0748
+  - Interpretação correta: 0.0748 / 0.744 = **10.05%** do desempenho alcançável
+  - Interpretação errada: 0.0748 / 1.0 = 7.48% (subestima)
+
+#### Justificação Técnica
+1. O modelo BART foi treinado no range [0, 0.744], não no teórico
+2. Nenhuma das 25,920 configurações alcançou valores fora deste range
+3. A interação mede desvio do efeito aditivo **dentro do espaço observado**
+4. Comparações entre datasets devem usar os respetivos ranges observados
+
+#### Rankings de Interação (Exemplo)
+```
+window_size × regime_threshold:     10.0% → FORTE (tunagem conjunta obrigatória)
+regime_threshold × regime_landmark:  8.4% → FORTE
+regime_threshold × min_gap_samples:  0.8% → FRACA
+window_size × min_gap_samples:       0.1% → MUITO FRACA (quase independentes)
+```
+
+**Para o relatório**: Sempre reportar interações como percentagem do range observado com interpretação clara de independência vs. acoplamento de parâmetros.
+
+(Atualizado em 2025-12-25)

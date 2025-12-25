@@ -18,7 +18,7 @@ linters: linters_with_defaults(
   missing_package_linter(),
   namespace_linter(),
   nested_ifelse_linter(),
-  # nonportable_path_linter(lax = TRUE),
+  nonportable_path_linter(lax = TRUE),
   numeric_leading_zero_linter(),
   object_length_linter(30),
   object_usage_linter = NULL,
@@ -40,4 +40,5 @@ linters: linters_with_defaults(
   yoda_test_linter()
   )
 exclusions: list("dev", "renv", "R/RcppExports.R", "README.Rmd", "papers")
+encoding: "UTF-8"
 

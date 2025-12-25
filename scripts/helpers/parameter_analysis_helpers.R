@@ -107,6 +107,7 @@ check_interactions <- function(model, train_data, features, parallel = FALSE, se
 #' @return Matrix of SHAP values
 shap_explain <- function(model, train_data, test_data, features, nsim = 20, parallel = FALSE) {
   if (parallel) {
+    Sys.setenv("_R_CHECK_LIMIT_CORES_" = FALSE)
     doParallel::registerDoParallel(cores = parallelly::availableCores(methods = "system"))
   }
 
@@ -119,11 +120,12 @@ shap_explain <- function(model, train_data, test_data, features, nsim = 20, para
       pred$.pred
     }, adjust = TRUE,
     newdata = data.matrix(test_data),
-    .parallel = parallel
+    parallel = parallel
   )
 
   if (parallel) {
     doParallel::stopImplicitCluster()
+    Sys.unsetenv("_R_CHECK_LIMIT_CORES_")
   }
 
   return(shap)

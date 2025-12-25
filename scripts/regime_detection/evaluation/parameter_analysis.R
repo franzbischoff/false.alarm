@@ -14,7 +14,7 @@
 # =============================================================================
 # nolint start
 DATASET <- "malignantventricular" # Options: malignantventricular, afib_regimes, vtachyarrhythmias
-METRIC <- "f3_weighted" # Options: f1_classic, f1_weighted, f3_classic, f3_weighted,
+METRIC <- "precision_10s" # Options: f1_classic, f1_weighted, f3_classic, f3_weighted,
 #          recall_4s, recall_10s, precision_4s, precision_10s,
 #          edd_median_s, fp_per_min,
 #          nab_score_standard, nab_score_low_fp, nab_score_low_fn
@@ -188,40 +188,17 @@ if (file.exists(cache_interactions)) {
   cli_alert_info("Computing 2-way interactions using PDP...")
   cli_alert_info("Expected pairs: {choose(length(predictors_names), 2)}")
 
+  all_pairs <- utils::combn(predictors_names, m = 2)
+  all_pairs <- purrr::array_tree(all_pairs, 2)
+  # this is needed because dbarts models are not directly compatible with pdp in parallel
+  fit_parsnip <- workflows::extract_fit_parsnip(best_fit)
+
   if (PARALLEL) {
     cli_alert_info("Parallel processing enabled for interaction computation")
 
     n_jobs <- parallelly::availableCores(methods = "system") - 1
 
-    cli_alert_info("Using {n_jobs} cores for parallel processing")
-    cli_alert_info(
-      "This may take 10-20 minutes depending on data size..."
-    )
-
-    cli_alert_info("Warming up for parallel PDP computation...")
-
-    all_pairs <- utils::combn(predictors_names, m = 2)
-    all_pairs <- purrr::array_tree(all_pairs, 2)
-
     Sys.setenv("_R_CHECK_LIMIT_CORES_" = FALSE)
-    parts <- purrr::map(all_pairs[1], function(x, ...) {
-      cl <- parallel::makeCluster(n_jobs)
-      doParallel::registerDoParallel(cl)
-      p <- pdp::partial(pred.var = x, ...)
-      parallel::stopCluster(cl)
-      p
-    },
-    object = best_fit$fit$fit, train = train_data,
-    type = "regression", parallel = TRUE
-    )
-
-    if (stats::sd(parts[[1]]$yhat) == 0) {
-      cli_alert_success("Parallel PDP warm-up complete as expected")
-    } else {
-      cli_alert_info(
-        "Parallel PDP warm-up returned valid results, acceptable"
-      )
-    }
 
     cli_alert_info("Computing all interactions now...")
     cli_alert_info("Using {n_jobs} cores for parallel processing")
@@ -229,18 +206,27 @@ if (file.exists(cache_interactions)) {
       "This may take 20-40 minutes depending on data size..."
     )
 
+    cl <- parallel::makeCluster(n_jobs)
+    doParallel::registerDoParallel(cl)
+
     parts <- purrr::map(all_pairs, function(x, ...) {
-      cl <- parallel::makeCluster(n_jobs)
-      doParallel::registerDoParallel(cl)
-      p <- pdp::partial(pred.var = x, ...)
-      parallel::stopCluster(cl)
-      p
+      pdp::partial(pred.var = x, ...)
     },
-    object = best_fit$fit$fit, train = train_data,
+    object = fit_parsnip, train = train_data,
     type = "regression", parallel = TRUE
     )
 
-    Sys.unsetenv("_R_CHECK_LIMIT_CORES_")
+    # engine <- workflows::extract_fit_engine(best_fit)
+
+    # parts <- pdp::partial(
+    #   object = engine,
+    #   pred.var = c("window_size", "regime_threshold"),
+    #   train = train_data,
+    #   type = "regression",
+    #   ice = FALSE,
+    #   parallel = TRUE,
+    #   pred.fun = function(obj, newdata) as.numeric(predict(obj, newdata))
+    # )
 
     if (stats::sd(parts[[1]]$yhat) == 0) {
       cli_abort(
@@ -249,11 +235,13 @@ if (file.exists(cache_interactions)) {
     } else {
       cli_alert_success("Parallel PDP computation complete")
     }
+    parallel::stopCluster(cl)
+    Sys.unsetenv("_R_CHECK_LIMIT_CORES_")
   } else {
     cli_alert_info("Using sequential computation (PARALLEL = FALSE)")
     parts <- lapply(all_pairs, function(pair) {
       pdp::partial(
-        object = best_fit$fit$fit,
+        object = fit_parsnip,
         pred.var = pair,
         train = train_data,
         type = "regression",
@@ -290,6 +278,8 @@ print(interactions)
 # IMPORTANCE ANALYSIS
 # =============================================================================
 
+# PARALLEL <- TRUE # Use parallel processing (20 cores available)
+
 cli_h2("Computing Variable Importance")
 
 cache_importance <- file.path(CACHE_DIR, glue::glue("importances_{DATASET}_{METRIC}.rds"))
@@ -303,14 +293,14 @@ if (file.exists(cache_importance)) {
   shap_fastshap_all_test <- importance_results$shap_fastshap_all_test
 } else {
   # FIRM
-  cli_alert_info("1/3 Computing FIRM importance (ICE curves)...")
+  cli_alert_info("1/3 Computing FIRM importance (ICE curves)...") # nolint nonportable_path_linter
   importance_firm <- check_importance(best_fit, testing_data, testing_data, predictors_names,
     type = "firm", nsim = NSIM_FIRM, parallel = PARALLEL
   )
   importance_firm_data <- ggplot2::ggplot_build(importance_firm)$plot$data
 
   # Permutation
-  cli_alert_info("2/3 Computing Permutation importance ({NSIM_PERM} iterations)...")
+  cli_alert_info("2/3 Computing Permutation importance ({NSIM_PERM} iterations)...") # nolint nonportable_path_linter
   cli_alert_info("This is slower than FIRM (may take 40-60 minutes)...")
   importance_perm <- check_importance(best_fit, testing_data, testing_data, predictors_names,
     type = "permute", nsim = NSIM_PERM, parallel = PARALLEL
@@ -322,8 +312,8 @@ if (file.exists(cache_importance)) {
     tidyr::pivot_longer(everything(), names_to = "Variable", values_to = "Importance")
 
   # SHAP
-  cli_alert_info("3/3 Computing SHAP importance ({NSIM_SHAP} iterations)...")
-  cli_alert_info("This is the slowest step (may take more than 3 hours)...")
+  cli_alert_info("3/3 Computing SHAP importance ({NSIM_SHAP} iterations)...") # nolint nonportable_path_linter
+  cli_alert_info("This is the slowest step (may take more than 5 hours)...")
 
   importance_shap <- check_importance(best_fit, train_data, testing_data[, predictors_names], predictors_names,
     type = "shap", nsim = NSIM_SHAP, parallel = PARALLEL

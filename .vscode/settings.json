@@ -212,7 +212,6 @@
   ],
   "r.rmarkdown.knit.focusOutputChannel": false,
   "r.session.levelOfObjectDetail": "Detailed",
-  "r.session.objectLengthLimit": 100,
   "r.useRenvLibPath": true,
   "r.workspaceViewer.showObjectSize": true,
   "reflowMarkdown.preferredLineLength": 120,
