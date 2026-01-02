@@ -14,7 +14,7 @@
 # =============================================================================
 # nolint start
 DATASET <- "malignantventricular" # Options: malignantventricular, afib_regimes, vtachyarrhythmias
-METRIC <- "precision_10s" # Options: f1_classic, f1_weighted, f3_classic, f3_weighted,
+METRIC <- "f3_weighted" # Options: f1_classic, f1_weighted, f3_classic, f3_weighted,
 #          recall_4s, recall_10s, precision_4s, precision_10s,
 #          edd_median_s, fp_per_min,
 #          nab_score_standard, nab_score_low_fp, nab_score_low_fn
