@@ -154,17 +154,39 @@ testing_data <- trained_model$testing_data
 
 cli_alert_success("Train/test split: {nrow(train_data)}/{nrow(testing_data)}")
 
+## best fit model
+
+cache_file <- file.path(CACHE_DIR, glue::glue("bart_bestengine_{DATASET}_{METRIC}.rds"))
+cache_file2 <- file.path(CACHE_DIR, glue::glue("bart_bestparsnip_{DATASET}_{METRIC}.rds"))
+
 # Fit final model
-set.seed(102)
-best_fit <- generics::fit(trained_model$model, train_data)
+if (file.exists(cache_file) && file.exists(cache_file2)) {
+  cli_alert_info("Loading cached best model from {.path {cache_file}}...")
+  bart_engine <- readRDS(cache_file)
+  bart_parsnip <- readRDS(cache_file2)
+} else {
+  cli_alert_info("Fitting best model on full training data...")
+  set.seed(102)
+  best_fit <- generics::fit(trained_model$model, train_data)
+
+  bart_parsnip <- workflows::extract_fit_parsnip(best_fit)
+  bart_engine <- workflows::extract_fit_engine(best_fit)
+
+  cli_alert_info("Saving best model to cache...")
+  saveRDS(bart_engine, file = cache_file)
+  saveRDS(bart_parsnip, file = cache_file2)
+  cli_alert_success("Best model saved to {.path {cache_file}}")
+}
 
 # Evaluate model performance
-pred <- predict(best_fit, testing_data)$.pred
+pred <- predict(bart_engine, testing_data)
+pred <- colMeans(pred)
+
 rmse_val <- yardstick::rmse_vec(testing_data$mean, pred)
 rsq_val <- yardstick::rsq_vec(testing_data$mean, pred)
 
-cli_alert_success("Model RMSE: {.val {round(rmse_val, 4)}}")
-cli_alert_success("Model R²: {.val {round(rsq_val, 4)}}")
+cli_alert_success("Model engine RMSE: {.val {round(rmse_val, 4)}}")
+cli_alert_success("Model engine R²: {.val {round(rsq_val, 4)}}")
 
 if (rmse_val > 0.5 * sd(testing_data$mean)) {
   cli_alert_warning("RMSE is high relative to data variance. Results may be unreliable.")
@@ -190,15 +212,18 @@ if (file.exists(cache_interactions)) {
 
   all_pairs <- utils::combn(predictors_names, m = 2)
   all_pairs <- purrr::array_tree(all_pairs, 2)
-  # this is needed because dbarts models are not directly compatible with pdp in parallel
-  fit_parsnip <- workflows::extract_fit_parsnip(best_fit)
+
+  set.seed(123)
+  partial_data <- train_data #|> dplyr::slice_sample(n = 100) # this is for debugging, use full data later
+
+  pdp_start_time <- Sys.time()
 
   if (PARALLEL) {
     cli_alert_info("Parallel processing enabled for interaction computation")
 
-    n_jobs <- parallelly::availableCores(methods = "system") - 1
+    n_jobs <- 20 # floor(parallelly::availableCores(methods = "system") / 2)
 
-    Sys.setenv("_R_CHECK_LIMIT_CORES_" = FALSE)
+    Sys.setenv("_R_CHECK_LIMIT_CORES_" = FALSE) # this is needed to use more than 2 cores
 
     cli_alert_info("Computing all interactions now...")
     cli_alert_info("Using {n_jobs} cores for parallel processing")
@@ -206,27 +231,61 @@ if (file.exists(cache_interactions)) {
       "This may take 20-40 minutes depending on data size..."
     )
 
-    cl <- parallel::makeCluster(n_jobs)
-    doParallel::registerDoParallel(cl)
+    compute_partial_parallel <- function(cluster_type) {
+      cli_alert_info("Creating {cluster_type} cluster")
+      cl <- parallel::makeCluster(n_jobs, type = cluster_type)
+      on.exit(
+        {
+          try(parallel::stopCluster(cl), silent = TRUE)
+        },
+        add = TRUE
+      )
 
-    parts <- purrr::map(all_pairs, function(x, ...) {
-      pdp::partial(pred.var = x, ...)
-    },
-    object = fit_parsnip, train = train_data,
-    type = "regression", parallel = TRUE
-    )
+      doParallel::registerDoParallel(cl)
 
-    # engine <- workflows::extract_fit_engine(best_fit)
+      parallel::clusterEvalQ(cl, { # ensure predict methods are registered on workers
+        library(parsnip)
+        library(dbarts)
+        library(pdp)
+      })
 
-    # parts <- pdp::partial(
-    #   object = engine,
-    #   pred.var = c("window_size", "regime_threshold"),
-    #   train = train_data,
-    #   type = "regression",
-    #   ice = FALSE,
-    #   parallel = TRUE,
-    #   pred.fun = function(obj, newdata) as.numeric(predict(obj, newdata))
+      cli_alert_info("foreach backend workers: {foreach::getDoParWorkers()}")
+
+      parts <- purrr::map(all_pairs, function(x, ...) {
+        pdp::partial(pred.var = x, ...)
+      },
+      object = bart_engine,
+      train = partial_data,
+      type = "regression",
+      parallel = TRUE,
+      ice = FALSE,
+      paropts = list(
+        .packages = c("parsnip", "dbarts", "pdp")
+      )
+      )
+      parts
+    }
+
+    # Default: PSOCK everywhere. On Linux, if we hit the pathological case
+    # (sd(yhat) == 0), retry with FORK which can behave differently for models
+    # backed by compiled code/external pointers.
+    parts <- compute_partial_parallel("PSOCK")
+    if (stats::sd(parts[[1]]$yhat) == 0 && .Platform$OS.type == "unix") {
+      cli_alert_warning("sd(yhat)==0 with PSOCK; retrying with FORK cluster")
+      parts <- compute_partial_parallel("FORK")
+    }
+
+    # sd(parts[[1]]$yhat)
+
+    # using bart_engine
+    # parts <- purrr::map(all_pairs, function(x, ...) {
+    #   pdp::partial(pred.var = x, ...)
+    # },
+    # object = bart_engine, train = partial_data,
+    # type = "regression", parallel = TRUE, ice = FALSE
     # )
+
+    Sys.unsetenv("_R_CHECK_LIMIT_CORES_") # restore the 2 cores limit
 
     if (stats::sd(parts[[1]]$yhat) == 0) {
       cli_abort(
@@ -235,22 +294,37 @@ if (file.exists(cache_interactions)) {
     } else {
       cli_alert_success("Parallel PDP computation complete")
     }
-    parallel::stopCluster(cl)
-    Sys.unsetenv("_R_CHECK_LIMIT_CORES_")
   } else {
     cli_alert_info("Using sequential computation (PARALLEL = FALSE)")
     parts <- lapply(all_pairs, function(pair) {
       pdp::partial(
-        object = fit_parsnip,
+        object = bart_engine,
         pred.var = pair,
-        train = train_data,
+        train = partial_data,
         type = "regression",
-        ice = FALSE,
         parallel = FALSE
       )
     })
+
+    # print(parts)
+    # [[1]]
+    #     window_size regime_threshold          yhat
+    # 1            25             0.05  2.888514e-03
+    # 2            50             0.05  3.250277e-03
+    # 3            75             0.05  6.816440e-04
+    # 4           100             0.05  1.989367e-03
+
+    # print(interactions)
+    # # A tibble: 1 × 2
+    #   Variables                    Interaction
+    #   <chr>                              <dbl>
+    # 1 window_size*regime_threshold     0.00745
+
     cli_alert_success("Sequential PDP computation complete")
   }
+
+  pdp_elapsed <- difftime(Sys.time(), pdp_start_time, units = "mins")
+  cli_alert_success("PDP computation time: {.val {round(as.numeric(pdp_elapsed), 2)}} minutes")
 
   ints <- purrr::map_vec(parts, function(x) {
     mean(c(
@@ -294,7 +368,7 @@ if (file.exists(cache_importance)) {
 } else {
   # FIRM
   cli_alert_info("1/3 Computing FIRM importance (ICE curves)...") # nolint nonportable_path_linter
-  importance_firm <- check_importance(best_fit, testing_data, testing_data, predictors_names,
+  importance_firm <- check_importance(bart_engine, testing_data, testing_data, predictors_names,
     type = "firm", nsim = NSIM_FIRM, parallel = PARALLEL
   )
   importance_firm_data <- ggplot2::ggplot_build(importance_firm)$plot$data
@@ -302,7 +376,7 @@ if (file.exists(cache_importance)) {
   # Permutation
   cli_alert_info("2/3 Computing Permutation importance ({NSIM_PERM} iterations)...") # nolint nonportable_path_linter
   cli_alert_info("This is slower than FIRM (may take 40-60 minutes)...")
-  importance_perm <- check_importance(best_fit, testing_data, testing_data, predictors_names,
+  importance_perm <- check_importance(bart_engine, testing_data, testing_data, predictors_names,
     type = "permute", nsim = NSIM_PERM, parallel = PARALLEL
   )
   importance_perm_plot_data <- ggplot2::ggplot_build(importance_perm)$plot$data
@@ -315,14 +389,14 @@ if (file.exists(cache_importance)) {
   cli_alert_info("3/3 Computing SHAP importance ({NSIM_SHAP} iterations)...") # nolint nonportable_path_linter
   cli_alert_info("This is the slowest step (may take more than 5 hours)...")
 
-  importance_shap <- check_importance(best_fit, train_data, testing_data[, predictors_names], predictors_names,
+  importance_shap <- check_importance(bart_engine, train_data, testing_data[, predictors_names], predictors_names,
     type = "shap", nsim = NSIM_SHAP, parallel = PARALLEL
   )
   importance_shap_data <- ggplot2::ggplot_build(importance_shap)$plot$data
 
   # SHAP explanations for dependence plots
   cli_alert_info("Generating SHAP explanations...")
-  shap_fastshap_all_test <- shap_explain(best_fit,
+  shap_fastshap_all_test <- shap_explain(bart_engine,
     train_data[, predictors_names],
     testing_data[, predictors_names],
     predictors_names,
