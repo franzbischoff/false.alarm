@@ -13,8 +13,8 @@
 # CONFIGURATION
 # =============================================================================
 # nolint start
-DATASET <- "malignantventricular" # Options: malignantventricular, afib_regimes, vtachyarrhythmias
-METRIC <- "f3_weighted" # Options: f1_classic, f1_weighted, f3_classic, f3_weighted,
+DATASET <- "vtachyarrhythmias" # Options: malignantventricular, afib_regimes, vtachyarrhythmias
+METRIC <- "precision_10s" # Options: f1_classic, f1_weighted, f3_classic, f3_weighted,
 #          recall_4s, recall_10s, precision_4s, precision_10s,
 #          edd_median_s, fp_per_min,
 #          nab_score_standard, nab_score_low_fp, nab_score_low_fn
@@ -154,31 +154,39 @@ testing_data <- trained_model$testing_data
 
 cli_alert_success("Train/test split: {nrow(train_data)}/{nrow(testing_data)}")
 
+# Fit final model
+cli_alert_info("Fitting best model on full training data...")
+set.seed(102)
+best_fit <- generics::fit(trained_model$model, train_data)
+bart_engine <- workflows::extract_fit_engine(best_fit)
+
 ## best fit model
 
-cache_file <- file.path(CACHE_DIR, glue::glue("bart_bestengine_{DATASET}_{METRIC}.rds"))
-cache_file2 <- file.path(CACHE_DIR, glue::glue("bart_bestparsnip_{DATASET}_{METRIC}.rds"))
+# cache_file <- file.path(CACHE_DIR, glue::glue("bart_bestengine_{DATASET}_{METRIC}.rds"))
+# cache_file2 <- file.path(CACHE_DIR, glue::glue("bart_bestparsnip_{DATASET}_{METRIC}.rds"))
 
 # Fit final model
-if (file.exists(cache_file) && file.exists(cache_file2)) {
-  cli_alert_info("Loading cached best model from {.path {cache_file}}...")
-  bart_engine <- readRDS(cache_file)
-  bart_parsnip <- readRDS(cache_file2)
-} else {
-  cli_alert_info("Fitting best model on full training data...")
-  set.seed(102)
-  best_fit <- generics::fit(trained_model$model, train_data)
+# if (file.exists(cache_file) && file.exists(cache_file2)) {
+#   cli_alert_info("Loading cached best model from {.path {cache_file}}...")
+#   bart_engine <- readRDS(cache_file)
+#   bart_parsnip <- readRDS(cache_file2)
+# } else {
+#   cli_alert_info("Fitting best model on full training data...")
+#   set.seed(102)
+#   best_fit <- generics::fit(trained_model$model, train_data)
 
-  bart_parsnip <- workflows::extract_fit_parsnip(best_fit)
-  bart_engine <- workflows::extract_fit_engine(best_fit)
+#   bart_parsnip <- workflows::extract_fit_parsnip(best_fit)
+#   bart_engine <- workflows::extract_fit_engine(best_fit)
 
-  cli_alert_info("Saving best model to cache...")
-  saveRDS(bart_engine, file = cache_file)
-  saveRDS(bart_parsnip, file = cache_file2)
-  cli_alert_success("Best model saved to {.path {cache_file}}")
-}
+#   cli_alert_info("Saving best model to cache...")
+#   saveRDS(bart_engine, file = cache_file)
+#   saveRDS(bart_parsnip, file = cache_file2)
+#   cli_alert_success("Best model saved to {.path {cache_file}}")
+# }
 
 # Evaluate model performance
+cli_alert_info("Evaluating model performance...")
+
 pred <- predict(bart_engine, testing_data)
 pred <- colMeans(pred)
 
@@ -189,7 +197,7 @@ cli_alert_success("Model engine RMSE: {.val {round(rmse_val, 4)}}")
 cli_alert_success("Model engine R²: {.val {round(rsq_val, 4)}}")
 
 if (rmse_val > 0.5 * sd(testing_data$mean)) {
-  cli_alert_warning("RMSE is high relative to data variance. Results may be unreliable.")
+  cli_abort("RMSE is high relative to data variance. Results may be unreliable.")
 }
 
 # =============================================================================
@@ -221,7 +229,7 @@ if (file.exists(cache_interactions)) {
   if (PARALLEL) {
     cli_alert_info("Parallel processing enabled for interaction computation")
 
-    n_jobs <- 20 # floor(parallelly::availableCores(methods = "system") / 2)
+    n_jobs <- parallelly::availableCores(methods = "system") - 2
 
     Sys.setenv("_R_CHECK_LIMIT_CORES_" = FALSE) # this is needed to use more than 2 cores
 
@@ -251,7 +259,29 @@ if (file.exists(cache_interactions)) {
 
       cli_alert_info("foreach backend workers: {foreach::getDoParWorkers()}")
 
-      parts <- purrr::map(all_pairs, function(x, ...) {
+      # Process first pair to detect early failures
+      cli_alert_info("Processing first pair as test...")
+      first_part <- pdp::partial(
+        object = bart_engine,
+        pred.var = all_pairs[[1]],
+        train = partial_data,
+        type = "regression",
+        parallel = TRUE,
+        ice = FALSE,
+        paropts = list(
+          .packages = c("parsnip", "dbarts", "pdp")
+        )
+      )
+
+      # Check if first result is valid
+      if (stats::sd(first_part$yhat) == 0) {
+        cli_alert_warning("First pair failed (sd=0), stopping early")
+        return(list(first_part)) # Return early with single item
+      }
+
+      # If first succeeded, process remaining pairs
+      cli_alert_success("First pair succeeded, processing remaining {length(all_pairs) - 1} pairs...")
+      remaining_parts <- purrr::map(all_pairs[-1], function(x, ...) {
         pdp::partial(pred.var = x, ...)
       },
       object = bart_engine,
@@ -263,7 +293,9 @@ if (file.exists(cache_interactions)) {
         .packages = c("parsnip", "dbarts", "pdp")
       )
       )
-      parts
+
+      # Combine first + remaining
+      c(list(first_part), remaining_parts)
     }
 
     # Default: PSOCK everywhere. On Linux, if we hit the pathological case
@@ -274,16 +306,6 @@ if (file.exists(cache_interactions)) {
       cli_alert_warning("sd(yhat)==0 with PSOCK; retrying with FORK cluster")
       parts <- compute_partial_parallel("FORK")
     }
-
-    # sd(parts[[1]]$yhat)
-
-    # using bart_engine
-    # parts <- purrr::map(all_pairs, function(x, ...) {
-    #   pdp::partial(pred.var = x, ...)
-    # },
-    # object = bart_engine, train = partial_data,
-    # type = "regression", parallel = TRUE, ice = FALSE
-    # )
 
     Sys.unsetenv("_R_CHECK_LIMIT_CORES_") # restore the 2 cores limit
 
