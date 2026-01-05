@@ -116,8 +116,30 @@ shap_explain <- function(model, train_data, test_data, features, nsim = 20, para
     feature_names = features,
     X = data.matrix(train_data), nsim = nsim,
     pred_wrapper = function(object, newdata) {
-      pred <- predict(object, newdata)
-      pred$.pred
+      tryCatch(
+        {
+          pred <- predict(object, newdata)
+          if (!is.null(names(pred))) {
+            res <- pred$.pred
+          } else {
+            res <- pred
+          }
+        },
+        error = function(e) {
+          print(e)
+          browser()
+        }
+      )
+
+      if (!is.vector(res)) {
+        if (any(dim(res) == 1)) {
+          res <- as.vector(res)
+        } else {
+          res <- colMeans(res)
+        }
+      }
+
+      return(res)
     }, adjust = TRUE,
     newdata = data.matrix(test_data),
     parallel = parallel
