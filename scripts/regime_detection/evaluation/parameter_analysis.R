@@ -13,13 +13,20 @@
 # CONFIGURATION
 # =============================================================================
 # nolint start
-DATASET <- "vtachyarrhythmias" # Options: malignantventricular, afib_regimes, vtachyarrhythmias
-METRIC <- "precision_10s" # Options: f1_classic, f1_weighted, f3_classic, f3_weighted,
+DATASET <- "malignantventricular" # Options: malignantventricular, afib_regimes, vtachyarrhythmias
+METRIC <- "f3_weighted" # Options: f1_classic, f1_weighted, f3_classic, f3_weighted,
 #          recall_4s, recall_10s, precision_4s, precision_10s,
 #          edd_median_s, fp_per_min,
 #          nab_score_standard, nab_score_low_fp, nab_score_low_fn
 
 PARALLEL <- TRUE # Use parallel processing (20 cores available)
+
+# When TRUE, make the custom pred.fun reproduce pdp's default behaviour for
+# matrix predictions (get_predictions.default() takes pred[, 1] and then mean()).
+# When FALSE, compute a more standard PDP: average predictions over *all*
+# observations in `newdata` for each grid-point.
+PDP_MATCH_PDP_DEFAULT <- FALSE
+
 CV_FOLDS <- 5 # Cross-validation folds
 CV_REPS <- 1 # CV repetitions
 BART_GRID <- 30 # Grid size for BART tree tuning
@@ -98,7 +105,7 @@ if (!outcome_name %in% colnames(raw_data)) {
 }
 
 # Prepare data for BART modeling
-cli_alert_info("Preparing aggregated dataset...")
+cli_alert_info("Preparing aggregated dataset for BART modeling...")
 tree_data <- raw_data |>
   select(all_of(c(predictors_names, outcome_name))) |>
   rename(mean = all_of(outcome_name)) |>
@@ -120,6 +127,8 @@ if (na_count > 0) {
 }
 
 cli_alert_success("Final dataset: {nrow(tree_data)} rows × {ncol(tree_data)} columns")
+
+# use this range to compare with the interactions later
 cli_alert_info("Metric range: [{round(min(tree_data$mean), 3)}, {round(max(tree_data$mean), 3)}]")
 
 # =============================================================================
@@ -154,31 +163,12 @@ testing_data <- trained_model$testing_data
 
 cli_alert_success("Train/test split: {nrow(train_data)}/{nrow(testing_data)}")
 
+cli_h3("Check final model performance on test data")
 # Fit final model
 cli_alert_info("Fitting best model on full training data...")
 set.seed(102)
 best_fit <- generics::fit(trained_model$model, train_data)
 bart_engine <- workflows::extract_fit_engine(best_fit)
-
-## best fit model
-
-# cache_file <- file.path(CACHE_DIR, glue::glue("bart_bestengine_{DATASET}_{METRIC}.rds"))
-
-# Fit final model
-# if (file.exists(cache_file)) {
-#   cli_alert_info("Loading cached best model from {.path {cache_file}}...")
-#   bart_engine <- readRDS(cache_file)
-# } else {
-#   cli_alert_info("Fitting best model on full training data...")
-#   set.seed(102)
-#   best_fit <- generics::fit(trained_model$model, train_data)
-
-#   bart_engine <- workflows::extract_fit_engine(best_fit)
-
-#   cli_alert_info("Saving best model to cache...")
-#   saveRDS(bart_engine, file = cache_file)
-#   cli_alert_success("Best model saved to {.path {cache_file}}")
-# }
 
 # Evaluate model performance
 cli_alert_info("Evaluating model performance...")
@@ -214,40 +204,11 @@ if (file.exists(cache_interactions)) {
   cli_alert_info("Computing 2-way interactions using PDP...")
   cli_alert_info("Expected pairs: {choose(length(predictors_names), 2)}")
 
-  # NOTE: In some setups (esp. containers), exporting a fitted BART engine
-  # (dbarts) to parallel workers can be unstable because the object contains
-  # compiled-code state/external pointers. A robust workaround is to cache the
-  # engine to disk and have each worker lazily load it once.
-  bart_engine_cache <- file.path(
-    CACHE_DIR,
-    glue::glue("bart_engine_{DATASET}_{METRIC}.rds")
-  )
-  if (!file.exists(bart_engine_cache)) {
-    saveRDS(bart_engine, bart_engine_cache)
-  }
-
-  pdp_pred_fun <- local({
-    engine <- NULL
-    function(object, newdata) {
-      if (is.null(engine)) {
-        engine <<- readRDS(object)
-      }
-
-      p <- stats::predict(engine, newdata)
-
-      if (is.matrix(p)) {
-        # dbarts can return draws as (ndraws x nobs) or (nobs x ndraws)
-        if (nrow(p) == nrow(newdata)) {
-          return(rowMeans(p))
-        }
-        if (ncol(p) == nrow(newdata)) {
-          return(colMeans(p))
-        }
-      }
-
-      as.numeric(p)
-    }
-  })
+  # IMPORTANT: the dbarts engine object is not reliably serializable.
+  # saveRDS()/readRDS() (and PSOCK exports) can silently degrade predict()
+  # to a constant output. For stable parallel PDP, initialize the engine
+  # inside each worker process (external pointers are created per-process).
+  model_cache_file <- cache_file
 
   all_pairs <- utils::combn(predictors_names, m = 2)
   all_pairs <- purrr::array_tree(all_pairs, 2)
@@ -260,15 +221,15 @@ if (file.exists(cache_interactions)) {
   if (PARALLEL) {
     cli_alert_info("Parallel processing enabled for interaction computation")
 
+    Sys.setenv("_R_CHECK_LIMIT_CORES_" = FALSE) # this is needed to use more than 2 cores
+
     system_cores <- parallelly::availableCores(methods = "system")
     cgroup_cores <- tryCatch(
-      parallelly::availableCores(methods = "cgroups2"),
+      parallelly::availableCores(methods = "cgroups2.cpu.max"),
       error = function(e) NA_integer_
     )
     effective_cores <- if (is.na(cgroup_cores)) system_cores else min(system_cores, cgroup_cores)
     n_jobs <- max(1, effective_cores - 2)
-
-    Sys.setenv("_R_CHECK_LIMIT_CORES_" = FALSE) # this is needed to use more than 2 cores
 
     cli_alert_info("Computing all interactions now...")
     cli_alert_info("Using {n_jobs} cores for parallel processing")
@@ -288,13 +249,16 @@ if (file.exists(cache_interactions)) {
 
       doParallel::registerDoParallel(cl)
 
-      parallel::clusterEvalQ(cl, { # ensure predict methods are registered on workers
-        library(parsnip)
-        library(dbarts)
-        library(pdp)
+      parallel::clusterExport(cl, c("model_cache_file"), envir = environment())
+      parallel::clusterEvalQ(cl, {
+        suppressPackageStartupMessages({
+          library(generics)
+          library(workflows)
+          library(parsnip)
+          library(dbarts)
+          library(pdp)
+        })
 
-        # Reduce the chance of oversubscription/nested-parallel issues
-        # that can cause flaky behaviour in compiled code.
         Sys.setenv(
           OMP_NUM_THREADS = "1",
           OPENBLAS_NUM_THREADS = "1",
@@ -302,162 +266,99 @@ if (file.exists(cache_interactions)) {
           VECLIB_MAXIMUM_THREADS = "1",
           NUMEXPR_NUM_THREADS = "1"
         )
+
+        # Build a per-worker engine. PSOCK cannot safely reuse the master's
+        # dbarts engine (external pointers), so we refit inside each process.
+        .tm <- readRDS(model_cache_file)
+        .train_data_local <- .tm$training_data
+        set.seed(102)
+        .fit_local <- generics::fit(.tm$model, .train_data_local)
+        .bart_engine_local <- workflows::extract_fit_engine(.fit_local)
+        NULL
       })
 
-      cli_alert_info("foreach backend workers: {foreach::getDoParWorkers()}")
+      cli_alert_info("Cluster ready; computing {length(all_pairs)} pairs with pdp::partial(parallel=TRUE)")
 
-      diag_parallel_state <- function(reason, first_part = NULL) {
-        diag_file <- file.path(
-          CACHE_DIR,
-          glue::glue("pdp_diag_{DATASET}_{METRIC}_{cluster_type}_{format(Sys.time(), '%Y%m%d_%H%M%S')}.txt")
-        )
+      # Capture the flag value in this scope so it survives export to workers.
+      match_pdp_default <- isTRUE(PDP_MATCH_PDP_DEFAULT)
 
-        # Small, deterministic newdata with variation to test predict() behaviour
-        newdata_test <- partial_data
-        newdata_test <- newdata_test[, predictors_names, drop = FALSE]
-        if (nrow(newdata_test) > 6) {
-          newdata_test <- newdata_test[seq_len(6), , drop = FALSE]
+      pred_fun_local <- function(object, newdata) {
+        # `object` is unused; prediction uses worker-local engine
+        # IMPORTANT: `pdp::partial()` expects `pred.fun` to return either
+        #   (a) a single number per grid-point (standard PDP), or
+        #   (b) a vector per observation (ICE).
+        # The default pdp implementation (when pred.fun = NULL) will compute
+        # `mean(get_predictions(...))` per grid-point.
+        #
+        # Resolve the worker-local engine explicitly (avoid relying on the
+        # calling environment after export).
+        engine <- get(".bart_engine_local", envir = .GlobalEnv)
+        p <- stats::predict(engine, newdata = newdata)
+
+        if (isTRUE(match_pdp_default)) {
+          # Match pdp's default:
+          # get_predictions.default() uses pred[, 1] if predict() returns a matrix,
+          # then pardep() takes mean(pred).
+          if (is.matrix(p) || is.data.frame(p)) {
+            p <- p[, 1L, drop = TRUE]
+          }
+          return(mean(as.numeric(p), na.rm = TRUE))
         }
 
-        # Force variation even if first rows are identical
-        for (j in seq_along(predictors_names)) {
-          col <- predictors_names[[j]]
-          if (!is.numeric(newdata_test[[col]])) {
-            suppressWarnings(newdata_test[[col]] <- as.numeric(newdata_test[[col]]))
+        # More standard PDP: average predictions across all observations.
+        if (is.matrix(p) || is.data.frame(p)) {
+          # Common dbarts shape: ndraws x nobs
+          if (ncol(p) == nrow(newdata)) {
+            return(mean(colMeans(p), na.rm = TRUE))
           }
-          if (nrow(newdata_test) >= 2 && is.finite(newdata_test[[col]][[1]])) {
-            newdata_test[[col]][[2]] <- newdata_test[[col]][[1]] + 1
+          # Alternative shape: nobs x ndraws
+          if (nrow(p) == nrow(newdata)) {
+            return(mean(rowMeans(p), na.rm = TRUE))
           }
+          return(mean(p, na.rm = TRUE))
         }
 
-        master_pred <- try(pdp_pred_fun(bart_engine_cache, newdata_test), silent = TRUE)
-        master_stats <- list(
-          ok = !inherits(master_pred, "try-error"),
-          length = if (!inherits(master_pred, "try-error")) length(master_pred) else NA_integer_,
-          sd = if (!inherits(master_pred, "try-error")) stats::sd(master_pred) else NA_real_,
-          range = if (!inherits(master_pred, "try-error")) range(master_pred) else c(NA_real_, NA_real_)
-        )
-
-        worker_fun <- function(engine_path, newdata) {
-          suppressPackageStartupMessages({
-            library(dbarts)
-            library(parsnip)
-          })
-          Sys.setenv(
-            OMP_NUM_THREADS = "1",
-            OPENBLAS_NUM_THREADS = "1",
-            MKL_NUM_THREADS = "1",
-            VECLIB_MAXIMUM_THREADS = "1",
-            NUMEXPR_NUM_THREADS = "1"
-          )
-
-          eng <- readRDS(engine_path)
-          p <- stats::predict(eng, newdata)
-          collapsed <- NULL
-          if (is.matrix(p)) {
-            if (nrow(p) == nrow(newdata)) {
-              collapsed <- rowMeans(p)
-            } else if (ncol(p) == nrow(newdata)) {
-              collapsed <- colMeans(p)
-            }
-          }
-          if (is.null(collapsed)) {
-            collapsed <- as.numeric(p)
-          }
-          list(
-            pid = Sys.getpid(),
-            r_version = R.version.string,
-            platform = R.version$platform,
-            predict_dim = if (is.matrix(p)) paste(dim(p), collapse = "x") else "not-matrix",
-            pred_length = length(collapsed),
-            pred_sd = stats::sd(collapsed),
-            pred_range = range(collapsed),
-            env_threads = Sys.getenv(c("OMP_NUM_THREADS", "OPENBLAS_NUM_THREADS", "MKL_NUM_THREADS"), unset = NA),
-            loaded = sort(loadedNamespaces())
-          )
-        }
-
-        worker_stats <- try(parallel::clusterCall(cl, worker_fun, bart_engine_cache, newdata_test), silent = TRUE)
-
-        txt <- c(
-          "# PDP parallel diagnostic",
-          glue::glue("time: {Sys.time()}"),
-          glue::glue("dataset: {DATASET}"),
-          glue::glue("metric: {METRIC}"),
-          glue::glue("cluster_type: {cluster_type}"),
-          glue::glue("n_jobs: {n_jobs}"),
-          glue::glue("reason: {reason}"),
-          "",
-          "## Master",
-          glue::glue("R: {R.version.string}"),
-          glue::glue("platform: {R.version$platform}"),
-          glue::glue("availableCores(system): {parallelly::availableCores(methods = 'system')}"),
-          glue::glue("master_pred ok: {master_stats$ok}"),
-          glue::glue("master_pred length: {master_stats$length}"),
-          glue::glue("master_pred sd: {master_stats$sd}"),
-          glue::glue("master_pred range: {paste(master_stats$range, collapse = ' .. ')}"),
-          glue::glue("env threads: {paste(Sys.getenv(c('OMP_NUM_THREADS','OPENBLAS_NUM_THREADS','MKL_NUM_THREADS'), unset = NA), collapse = ', ')}"),
-          "",
-          "## pdp::partial first_part",
-          glue::glue("first_part exists: {!is.null(first_part)}"),
-          if (!is.null(first_part)) glue::glue("first_part yhat sd: {stats::sd(first_part$yhat)}") else "",
-          if (!is.null(first_part)) glue::glue("first_part yhat range: {paste(range(first_part$yhat), collapse = ' .. ')}") else "",
-          "",
-          "## Workers",
-          if (inherits(worker_stats, "try-error")) {
-            paste0("clusterCall failed: ", as.character(worker_stats))
-          } else {
-            paste(capture.output(str(worker_stats, max.level = 2)), collapse = "\n")
-          },
-          "",
-          "## sessionInfo(master)",
-          paste(capture.output(sessionInfo()), collapse = "\n")
-        )
-
-        writeLines(txt, diag_file)
-        cli_alert_warning("Wrote PDP diagnostic log to {.path {diag_file}}")
-        invisible(diag_file)
+        mean(as.numeric(p), na.rm = TRUE)
       }
 
-      # Process first pair to detect early failures
+      # First pair as canary
       cli_alert_info("Processing first pair as test...")
       first_part <- pdp::partial(
-        object = bart_engine_cache,
-        pred.fun = pdp_pred_fun,
+        object = NULL,
+        pred.fun = pred_fun_local,
         pred.var = all_pairs[[1]],
         train = partial_data,
         type = "regression",
         parallel = TRUE,
         ice = FALSE,
         paropts = list(
-          .packages = c("parsnip", "dbarts", "pdp")
+          .packages = c("generics", "workflows", "parsnip", "dbarts", "pdp"),
+          .export = c("pred_fun_local")
         )
       )
 
-      # Check if first result is valid
       if (stats::sd(first_part$yhat) == 0) {
         cli_alert_warning("First pair failed (sd=0), stopping early")
-        diag_parallel_state("sd(yhat)==0 on first pair", first_part)
-        return(list(first_part)) # Return early with single item
+        return(list(first_part))
       }
 
-      # If first succeeded, process remaining pairs
       cli_alert_success("First pair succeeded, processing remaining {length(all_pairs) - 1} pairs...")
-      remaining_parts <- purrr::map(all_pairs[-1], function(x, ...) {
-        pdp::partial(pred.var = x, ...)
-      },
-      object = bart_engine_cache,
-      pred.fun = pdp_pred_fun,
-      train = partial_data,
-      type = "regression",
-      parallel = TRUE,
-      ice = FALSE,
-      paropts = list(
-        .packages = c("parsnip", "dbarts", "pdp")
-      )
-      )
+      remaining_parts <- purrr::map(all_pairs[-1], function(pair) {
+        pdp::partial(
+          object = NULL,
+          pred.fun = pred_fun_local,
+          pred.var = pair,
+          train = partial_data,
+          type = "regression",
+          parallel = TRUE,
+          ice = FALSE,
+          paropts = list(
+            .packages = c("generics", "workflows", "parsnip", "dbarts", "pdp"),
+            .export = c("pred_fun_local")
+          )
+        )
+      })
 
-      # Combine first + remaining
       c(list(first_part), remaining_parts)
     }
 
@@ -491,20 +392,6 @@ if (file.exists(cache_interactions)) {
       )
     })
 
-    # print(parts)
-    # [[1]]
-    #     window_size regime_threshold          yhat
-    # 1            25             0.05  2.888514e-03
-    # 2            50             0.05  3.250277e-03
-    # 3            75             0.05  6.816440e-04
-    # 4           100             0.05  1.989367e-03
-
-    # print(interactions)
-    # # A tibble: 1 × 2
-    #   Variables                    Interaction
-    #   <chr>                              <dbl>
-    # 1 window_size*regime_threshold     0.00745
-
     cli_alert_success("Sequential PDP computation complete")
   }
 
@@ -532,6 +419,11 @@ if (file.exists(cache_interactions)) {
 
 cli_alert_success("Interaction analysis complete")
 print(interactions)
+
+if (identical(Sys.getenv("STOP_AFTER_INTERACTIONS"), "1")) {
+  cli_alert_info("STOP_AFTER_INTERACTIONS=1 set; exiting early")
+  quit(save = "no", status = 0)
+}
 
 # =============================================================================
 # IMPORTANCE ANALYSIS
