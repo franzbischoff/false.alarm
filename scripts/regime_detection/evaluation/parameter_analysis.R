@@ -14,7 +14,7 @@
 # =============================================================================
 # nolint start
 DATASET <- "afib_regimes" # Options: malignantventricular, afib_regimes, vtachyarrhythmias
-METRIC <- "nab_score_standard" # Options: f1_classic, f1_weighted, f3_classic, f3_weighted,
+METRIC <- "f3_weighted" # Options: f1_classic, f1_weighted, f3_classic, f3_weighted,
 #          recall_4s, recall_10s, precision_4s, precision_10s,
 #          edd_median_s, fp_per_min,
 #          nab_score_standard, nab_score_low_fp, nab_score_low_fn
@@ -501,148 +501,17 @@ if (file.exists(cache_importance)) {
 cli_alert_success("Variable importance analysis complete")
 
 # =============================================================================
-# VISUALIZATION
+# VISUALIZATION AND SUMMARY
 # =============================================================================
-
-cli_h2("Generating Plots")
-
-# Plot 1: Interactions
-cli_alert_info("Creating interaction plot...")
-interactions_plot <- ggplot2::ggplot(interactions, ggplot2::aes(
-  x = reorder(Variables, Interaction),
-  y = Interaction, fill = Variables
-)) +
-  ggplot2::geom_col(color = "grey35", linewidth = 0.2) +
-  ggplot2::coord_flip() +
-  ggplot2::labs(
-    title = glue::glue("Parameter Interactions ({DATASET})"),
-    subtitle = glue::glue("Metric: {METRIC}"),
-    y = "Interaction Strength",
-    x = NULL
-  ) +
-  ggplot2::theme_bw() +
-  ggplot2::theme(legend.position = "none")
-
-print(interactions_plot)
-
-# Plot 2: Importance Comparison (3 methods side-by-side)
-cli_alert_info("Creating importance comparison plot...")
-
-importance_firm_plot <- ggplot2::ggplot(importance_firm, aes(
-  x = reorder(Variable, Importance),
-  y = Importance, fill = Variable
-)) +
-  ggplot2::geom_col(colour = "grey35", linewidth = 0.8, show.legend = FALSE) +
-  ggplot2::coord_flip() +
-  ggplot2::labs(
-    title = "FIRM",
-    subtitle = "ICE curves",
-    x = NULL, y = NULL
-  ) +
-  ggplot2::theme_bw() +
-  ggplot2::theme(plot.margin = margin(5, 5, 5, 10))
-
-importance_perm_plot <- ggplot2::ggplot(importance_perm, aes(
-  x = reorder(Variable, Importance, FUN = median),
-  y = Importance, fill = Variable
-)) +
-  ggplot2::geom_boxplot(colour = "grey35", linewidth = 0.5, show.legend = FALSE) +
-  ggplot2::coord_flip() +
-  ggplot2::labs(
-    title = "Permutation",
-    subtitle = glue::glue("{NSIM_PERM} iterations"),
-    x = NULL, y = NULL
-  ) +
-  ggplot2::theme_bw() +
-  ggplot2::theme(plot.margin = margin(5, 5, 5, 10))
-
-importance_shap_plot <- ggplot2::ggplot(importance_shap, aes(
-  x = reorder(Variable, Importance),
-  y = Importance, fill = Variable
-)) +
-  ggplot2::geom_col(colour = "grey35", linewidth = 0.8, show.legend = FALSE) +
-  ggplot2::coord_flip() +
-  ggplot2::labs(
-    title = "SHAP",
-    subtitle = glue::glue("{NSIM_SHAP} iterations"),
-    x = NULL, y = NULL
-  ) +
-  ggplot2::theme_bw() +
-  ggplot2::theme(plot.margin = margin(5, 5, 5, 10))
-
-all_importance <- (importance_firm_plot + plot_layout(tag_level = "keep")) |
-  (importance_perm_plot + plot_layout(tag_level = "keep")) |
-  (importance_shap_plot + plot_layout(tag_level = "keep")) +
-    plot_layout(guides = "collect")
-
-all_importance <- all_importance + plot_annotation(
-  title = glue::glue("Variable Importance ({DATASET} - {METRIC})"),
-  tag_levels = "A",
-  theme = ggplot2::theme_bw() + ggplot2::theme(plot.title = ggplot2::element_text(size = 16))
-)
-
-print(all_importance)
-
-# Plot 3: SHAP Dependence Plots (2×2 grid for 4 parameters)
-cli_alert_info("Creating SHAP dependence plots...")
-
-d1 <- shapviz::shapviz(shap_fastshap_all_test,
-  X = testing_data[, predictors_names],
-  baseline = mean(testing_data$mean)
-)
-
-shap_plots <- list()
-for (feat in predictors_names) {
-  shap_plots[[feat]] <- shapviz::sv_dependence(d1, feat, color_var = "auto") +
-    ggplot2::geom_smooth(method = "loess", colour = "#0000ff44", alpha = 0.2, se = FALSE) +
-    ggplot2::labs(y = "SHAP value", title = feat) +
-    ggplot2::theme_bw() +
-    ggplot2::theme(legend.position = "none")
-}
-
-all_shap <- wrap_plots(shap_plots, ncol = 2) +
-  plot_annotation(
-    title = glue::glue("SHAP Dependence Plots ({DATASET} - {METRIC})"),
-    subtitle = "Showing how each parameter affects model predictions",
-    theme = ggplot2::theme_bw()
-  )
-
-print(all_shap)
-
-# =============================================================================
-# SUMMARY
-# =============================================================================
-
-cli_h2("Analysis Summary")
-
-cli_alert_success("Dataset: {.val {DATASET}}")
-cli_alert_success("Metric: {.val {METRIC}}")
-cli_alert_success("Configurations analyzed: {.val {nrow(tree_data)}}")
-cli_alert_success("Model RMSE: {.val {round(rmse_val, 4)}}")
-cli_alert_success("Model R²: {.val {round(rsq_val, 4)}}")
-
-cli_h3("Top 3 Most Important Parameters (SHAP)")
-top_params <- importance_shap |>
-  arrange(desc(Importance)) |>
-  slice_head(n = 3) |>
-  pull(Variable)
-
-for (i in seq_along(top_params)) {
-  cli_alert_info("{i}. {.field {top_params[i]}}")
-}
-
-cli_h3("Strongest Interactions")
-top_interactions <- interactions |>
-  slice_head(n = 3)
-
-for (i in seq_len(nrow(top_interactions))) {
-  cli_alert_info("{i}. {.field {top_interactions$Variables[i]}} (strength: {round(top_interactions$Interaction[i], 3)})")
-}
-
-cli_h3("Cache Files")
-cli_alert_info("Model: {.path {cache_file}}")
-cli_alert_info("Interactions: {.path {cache_interactions}}")
-cli_alert_info("Importances: {.path {cache_importance}}")
-
-cli_alert_success("Analysis complete! Plots displayed above.")
-cli_alert_info("To analyze another metric, change METRIC variable and re-run.")
+# Visualization and summary code has been extracted to parameter_plots.R
+# to allow standalone use in Rmd documents.
+#
+# To generate plots:
+# source(here("scripts", "regime_detection", "evaluation", "parameter_plots.R"))
+#
+# Required objects must be in the environment:
+# - interactions, importance_firm, importance_perm, importance_shap
+# - shap_fastshap_all_test, testing_data, tree_data
+# - bart_engine, rmse_val, rsq_val
+# - DATASET, METRIC, NSIM_FIRM, NSIM_PERM, NSIM_SHAP
+# - cache_file, cache_interactions, cache_importance
