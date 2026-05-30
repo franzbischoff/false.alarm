@@ -126,7 +126,7 @@ shap_fastshap_all_test <- importance_results$shap_fastshap_all_test
 cli_alert_success("Loaded importance data for all methods")
 
 # For tree_data used in summary, we can reconstruct it from the original CSV
-csv_path <- here("output", "regime_detection", DATASET, "evaluation", "models_aggregated.csv")
+csv_path <- here("output", "regime_detection", DATASET, "evaluation", "floss", "models_aggregated.csv")
 if (!file.exists(csv_path)) {
   cli_abort("CSV file not found: {.path {csv_path}}")
 }

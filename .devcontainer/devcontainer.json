@@ -80,7 +80,7 @@
     "ghcr.io/rocker-org/devcontainer-features/renv-cache:0": {}
   },
   // Or use a Dockerfile or Docker Compose file. More info: https://containers.dev/guide/dockerfile
-  "image": "ghcr.io/rocker-org/devcontainer/r-ver:4.4",
+  "image": "ghcr.io/rocker-org/devcontainer/r-ver:4.6.0",
   "name": "false.alarm devcontainer",
   "runArgs": [
     "--cpus=24"

@@ -80,7 +80,7 @@ cli_alert_info("Parallel: {.val {PARALLEL}} ({parallelly::availableCores(methods
 
 cli_h2("Loading Data")
 
-csv_path <- here("output", "regime_detection", DATASET, "evaluation", "models_aggregated.csv")
+csv_path <- here("output", "regime_detection", DATASET, "evaluation", "floss", "models_aggregated.csv")
 
 if (!file.exists(csv_path)) {
   cli_abort("CSV file not found: {.path {csv_path}}")
